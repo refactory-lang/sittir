@@ -4461,8 +4461,9 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 	);
 }
 
-export function buildExceptClauseList(config: T.ExceptClauseList.Config): T.ExceptClauseList.Built {
-	const _value = config.value ?? [];
+export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClauseList.Built {
+	_assertNonEmpty(children, '_except_clause_list.children');
+	const _value = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -4470,9 +4471,7 @@ export function buildExceptClauseList(config: T.ExceptClauseList.Config): T.Exce
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: {
-					values: (...values: NonEmptyArray<T.Expression>) => buildExceptClauseList({ ...config, value: values })
-				}
+				$with: { values: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
 			},
 			{
 				values: () => _value
@@ -4731,8 +4730,8 @@ function _buildWithClauseParen(value: T.WithClauseWithItems): T.WithClauseParen.
 	);
 }
 
-export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> = {}): T.MatchBlockBlock.Built {
-	const _alternative = config.alternative ?? [];
+export function buildMatchBlockBlock(...children: T.CaseClause[]): T.MatchBlockBlock.Built {
+	const _alternative = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -4740,9 +4739,7 @@ export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> =
 				$source: 2 as const,
 				$named: true as const,
 				_alternative,
-				$with: {
-					alternatives: (...values: T.CaseClause[]) => buildMatchBlockBlock({ ...config, alternative: values })
-				}
+				$with: { alternatives: (...vs: T.CaseClause[]) => buildMatchBlockBlock(...vs) }
 			},
 			{
 				alternatives: () => _alternative

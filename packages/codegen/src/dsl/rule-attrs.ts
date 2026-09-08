@@ -1,5 +1,5 @@
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId, RuleAnnotations } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
 
@@ -39,10 +39,14 @@ export function structuralKey(rule: AnyRule): string {
 }
 
 export function withKindFacts<R extends AnyRule>(result: R, source: AnyRule): R {
-	const { hidden, inlinedFrom } = source;
-	const patch: { hidden?: boolean; inlinedFrom?: string } = {};
+	const { hidden, inlinedFrom, annotations } = source;
+	const patch: { hidden?: boolean; inlinedFrom?: string; annotations?: RuleAnnotations } = {};
 	if (hidden !== undefined && result.hidden !== hidden) patch.hidden = hidden;
 	if (inlinedFrom !== undefined && result.inlinedFrom === undefined) patch.inlinedFrom = inlinedFrom;
+	if (annotations !== undefined && result.annotations !== annotations) {
+		const merged = { ...result.annotations, ...annotations };
+		if (JSON.stringify(merged) !== JSON.stringify(result.annotations)) patch.annotations = merged;
+	}
 	return Object.keys(patch).length === 0 ? result : { ...result, ...patch };
 }
 

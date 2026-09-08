@@ -269,17 +269,10 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			case 'branch':
 			case 'polymorph':
 				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
-				if (node.hoisted) {
-					if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
-					if (templateEmission === 'emit') templateEmitter.emitGroup(node);
-					renderModuleEmitterInst?.emitGroup?.(node);
-				} else {
-					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
-					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-					renderModuleEmitterInst?.emitBranch?.(node);
-				}
+				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
+				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
+				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
+				renderModuleEmitterInst?.emitBranch?.(node);
 				break;
 			case 'supertype':
 				if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);

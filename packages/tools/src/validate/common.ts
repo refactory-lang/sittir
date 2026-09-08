@@ -1132,7 +1132,7 @@ interface ParsedNodeModel {
 		kind: string;
 		irKey?: string;
 		modelType?: string;
-		hoisted?: boolean;
+		annotations?: { readonly hoisted?: true };
 		slots?: ReadonlyArray<{ propertyName: string; kinds?: readonly string[]; storage?: string }>;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
@@ -1188,7 +1188,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
-		if (node.hoisted === true) hoistedKinds.add(node.kind);
+		if (node.annotations?.hoisted === true) hoistedKinds.add(node.kind);
 		if (node.slots !== undefined) {
 			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.kinds ?? []]));
 			slotStorage[node.kind] = Object.fromEntries(

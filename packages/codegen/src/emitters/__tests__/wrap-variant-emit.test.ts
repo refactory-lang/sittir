@@ -44,7 +44,7 @@ function makeHiddenGroupNodeMap() {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
-	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', helperRender, helperRender, { hoisted: true }));
+	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -52,7 +52,7 @@ function makeHiddenGroupNodeMap() {
 function makeNoFactoryHiddenGroupNodeMap() {
 	const nodeMap = makeHiddenGroupNodeMap();
 	const helper = nodeMap.nodes.get('_assignment_eq');
-	if (!helper || !(helper instanceof AbstractAssembledCompound) || !helper.hoisted)
+	if (!helper || !(helper instanceof AbstractAssembledCompound) || helper.annotations?.hoisted !== true)
 		throw new Error('Missing hidden helper group');
 	Object.defineProperty(helper, 'rawFactoryName', { value: undefined });
 	return nodeMap;
@@ -67,7 +67,7 @@ function makeTransparentHiddenGroupNodeMap() {
 	const helperRender = flatten(helperRule);
 	nodes.set(
 		'_export_statement_default',
-		new AssembledBranch('_export_statement_default', helperRender, helperRender, { hoisted: true })
+		new AssembledBranch('_export_statement_default', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } })
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -173,12 +173,10 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).not.toContain('[TSKindId.AssignmentEq]');
 	});
 
-	it('emits hidden helper wraps even when no factory surface exists', () => {
+	it('emits no wrap for a hoisted helper without a factory surface, like any other compound', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeNoFactoryHiddenGroupNodeMap() });
 
-		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
-		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
-		expect(wrapSrc).not.toContain('    $with: {},');
+		expect(wrapSrc).not.toContain('export function wrapAssignmentEq(');
 	});
 
 	it('flattens transparent hidden helper groups to their single wrapped child', () => {

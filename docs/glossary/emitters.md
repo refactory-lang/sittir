@@ -433,15 +433,6 @@ read the third pass's rules.
 // getters like `rawFactoryName`.
 ```
 
-### `packages/codegen/src/emitters/factories.ts::group`
-
-```text
-/**
-	 * Emit a group factory — field-carrying factory for hidden composition
-	 * fragments (polymorph form inner kinds).
-	 */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::separatedList`
 
 ```text
@@ -5127,6 +5118,13 @@ slot, the escaped suffix; `"{}"` when the slot has no flanks.
  */
 ```
 
+Hoisting does not enter the shape: a hoisted compound with a multiple sole
+slot is `spread` like any other (rust's token trees, typescript's string
+forms, python's `_except_clause_list` and `_match_block_block`). The seat the
+overlay derives from that shape is the kind's own builder passed through
+the parent's.
+
+
 ### `packages/codegen/src/emitters/shared.ts::wordCharAsciiTable`
 
 ```text
@@ -6777,15 +6775,6 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
 /**
 	 * Emit a branch wrap function — field-carrying (handles both regular
 	 * and container shapes; fields is `[]` for the container case).
-	 */
-```
-
-### `packages/codegen/src/emitters/wrap.ts::group`
-
-```text
-/**
-	 * Emit a group wrap function — hidden structural helpers still need lazy
-	 * accessors so native read payloads can drill through their child stubs.
 	 */
 ```
 
@@ -10847,6 +10836,11 @@ Only the factory, wrap, template and render-module emitters take the
 			   only for parity with `AssembledList`'s own live override, never
 			   actually populated for a compound. */
 ```
+
+Every node carries its rule's `annotations` (`hoisted`, `variant`,
+`variantOf`, …) as written; the tools read `annotations.hoisted` and there
+is no separate flag. A hoisted compound also serializes `name`.
+
 
 ### `packages/codegen/src/emitters/node-model.ts::serializeSlot`
 

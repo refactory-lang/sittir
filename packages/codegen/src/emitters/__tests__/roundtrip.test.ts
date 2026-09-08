@@ -85,7 +85,7 @@ describe('NodeMap structure', () => {
 		let groupCount = 0;
 		const assignmentVariantKinds = new Set<string>();
 		for (const [kind, node] of result.nodeMap.nodes) {
-			if (node instanceof AbstractAssembledCompound && node.hoisted) {
+			if (node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true) {
 				groupCount++;
 				if (kind.startsWith('_assignment_')) assignmentVariantKinds.add(kind);
 			}

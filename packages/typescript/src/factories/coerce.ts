@@ -696,9 +696,16 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_types: TSKindId.Types,
 	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_tuple_type_members: TSKindId.TupleTypeMembers,
+	_import_clause_group: TSKindId.ImportClauseGroup,
 	_ambient_declaration_global: TSKindId.AmbientDeclarationGlobal,
 	object_type_content: TSKindId.ObjectTypeContent,
-	_export_statement_default: TSKindId.ExportStatementDefault
+	_export_statement_default: TSKindId.ExportStatementDefault,
+	_string_double: TSKindId.StringDouble,
+	_string_single: TSKindId.StringSingle,
+	_arrow_function_parameter: TSKindId.ArrowFunctionParameter,
+	_export_statement_default_star_from: TSKindId.ExportStatementDefaultStarFrom,
+	_export_statement_default_default_kw: TSKindId.ExportStatementDefaultDefaultKw,
+	_for_header_lhs: TSKindId.ForHeaderLhs
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -739,7 +746,8 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_import_specifiers: 'import_specifier',
 	_types: 'type',
 	_type_parameters_elements: 'type_parameter',
-	_ambient_declaration_global: 'statement_block'
+	_ambient_declaration_global: 'statement_block',
+	_export_statement_default_star_from: 'string'
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -886,12 +894,30 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_type_members':
 			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
+		case '_import_clause_group':
+			return F.buildImportClauseGroup(children[0] as Parameters<typeof F.buildImportClauseGroup>[0]);
 		case '_ambient_declaration_global':
 			return F.buildAmbientDeclarationGlobal(children[0] as Parameters<typeof F.buildAmbientDeclarationGlobal>[0]);
 		case 'object_type_content':
 			return (F.buildObjectTypeContent as (...args: unknown[]) => unknown)(...children);
 		case '_export_statement_default':
 			return F.buildExportStatementDefault(children[0] as Parameters<typeof F.buildExportStatementDefault>[0]);
+		case '_string_double':
+			return F.buildStringDouble(...(children as Parameters<typeof F.buildStringDouble>));
+		case '_string_single':
+			return F.buildStringSingle(...(children as Parameters<typeof F.buildStringSingle>));
+		case '_arrow_function_parameter':
+			return F.buildArrowFunctionParameter(children[0] as Parameters<typeof F.buildArrowFunctionParameter>[0]);
+		case '_export_statement_default_star_from':
+			return F.buildExportStatementDefaultStarFrom(
+				children[0] as Parameters<typeof F.buildExportStatementDefaultStarFrom>[0]
+			);
+		case '_export_statement_default_default_kw':
+			return F.buildExportStatementDefaultDefaultKw(
+				children[0] as Parameters<typeof F.buildExportStatementDefaultDefaultKw>[0]
+			);
+		case '_for_header_lhs':
+			return F.buildForHeaderLhs(children[0] as Parameters<typeof F.buildForHeaderLhs>[0]);
 		default:
 			return undefined;
 	}
@@ -8236,32 +8262,78 @@ export function coerceToCallExpressionMember(
 	});
 }
 
-export function resolveStringDouble_elements(
-	value: T.StringDouble.LooseConfig['elements']
-): T.StringDouble['_elements'] {
-	return _resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(value, _K78, _K2);
+export function coerceToStringDouble(
+	...input: readonly (
+		| T.StringDouble.Loose
+		| LooseValue<
+				(T.UnescapedDoubleStringFragment | T.EscapeSequence) | string,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildStringDouble> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringDouble) {
+		const data = input[0];
+		const stored = (data as unknown as { _elements?: unknown })._elements;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildStringDouble(
+			...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(
+				children,
+				_K78,
+				_K2
+			) as unknown as Parameters<typeof F.buildStringDouble>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('elements' in head)) return input;
+		const v = (head as Record<string, unknown>)['elements'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildStringDouble(
+		...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(_elems, _K78, _K2) as unknown as Parameters<
+			typeof F.buildStringDouble
+		>)
+	);
 }
 
-export function coerceToStringDouble(input?: T.StringDouble.Loose): ReturnType<typeof F.buildStringDouble> {
-	if (!_isLooseConfig<T.StringDouble.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildStringDouble>;
-	return F.buildStringDouble({
-		elements: resolveStringDouble_elements(input?.elements)
-	});
-}
-
-export function resolveStringSingle_elements(
-	value: T.StringSingle.LooseConfig['elements']
-): T.StringSingle['_elements'] {
-	return _resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(value, _K79, _K2);
-}
-
-export function coerceToStringSingle(input?: T.StringSingle.Loose): ReturnType<typeof F.buildStringSingle> {
-	if (!_isLooseConfig<T.StringSingle.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildStringSingle>;
-	return F.buildStringSingle({
-		elements: resolveStringSingle_elements(input?.elements)
-	});
+export function coerceToStringSingle(
+	...input: readonly (
+		| T.StringSingle.Loose
+		| LooseValue<
+				(T.UnescapedSingleStringFragment | T.EscapeSequence) | string,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildStringSingle> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringSingle) {
+		const data = input[0];
+		const stored = (data as unknown as { _elements?: unknown })._elements;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildStringSingle(
+			...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(
+				children,
+				_K79,
+				_K2
+			) as unknown as Parameters<typeof F.buildStringSingle>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('elements' in head)) return input;
+		const v = (head as Record<string, unknown>)['elements'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildStringSingle(
+		...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(_elems, _K79, _K2) as unknown as Parameters<
+			typeof F.buildStringSingle
+		>)
+	);
 }
 
 export function resolveUpdateExpressionPostfix_argument(

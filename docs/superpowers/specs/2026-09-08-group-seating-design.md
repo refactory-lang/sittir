@@ -60,9 +60,16 @@ Only the forwarded parent (`buildMatchBlock`) builds its group from a config.
 `hasAnyField` is retired. Every route that creates a group stamps
 `annotations.hoisted` on the rule it creates: the variant lift in the
 transform, the `groups:` mint and the clause-hoist mint in enrich, and the
-group lift in link. Link collects `hoistedKinds` from that annotation and
-from nothing else. The three readers of the set are unchanged: normalize's
-inline gate, simplify's `inlineRefs`, assemble's `hoisted` stamp.
+group lift in link. The annotation is the only representation of the fact:
+there is no `hoistedKinds` set and no model flag. `withKindFacts` carries a
+rule's whole annotations bag across every root rebuild, and each reader
+takes the fact off the rule it holds — normalize's inline gate,
+`resolveGroupOrMultiInlineTarget`, `classifyNode`'s list peel, the overlays,
+the surface exclusions in bundle / `ir` / `is` / consts / generated tests,
+and the node model, which serializes `annotations` for the tools. A base
+emitter never branches on hoisting: a hoisted kind keeps its class, its shape
+and its builder, and the overlay passes what that builder produces — a built
+compound, a kind id, verbatim text — through the parent's builder.
 
 A hidden rule that no sittir route minted carries no stamp and is an
 ordinary hidden rule: the upstream grammar's own hidden sequences
@@ -81,7 +88,10 @@ patterns) stays the token or pattern leaf it already is, with no keys to
 seat; its seat is the parent's slot, where it is a kind-id or verbatim-text
 value, exactly as the model already holds it. The parse node has no
 children, so there is no slot to read from it. Only a slot-bearing hoisted
-body is a compound, and only a compound carries the model's `hoisted`.
+body is a compound. A hoisted compound with a multiple sole slot is spread-
+shaped like any other: rust's token trees, typescript's string forms and
+python's `_except_clause_list` / `_match_block_block` take their elements as
+arguments (`ir.delimTokenTree.paren.strict(a, TSKindId.Comma, b)`).
 
 An enrich mint's name never reaches the surface (its keys do), so the
 `_<parent>_group<n>` spelling only ever appears in diagnostics. Where an

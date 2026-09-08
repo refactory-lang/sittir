@@ -96,7 +96,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly applyPromotedRules: boolean;
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
-	readonly hoistedKinds = new Set<string>();
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -265,7 +264,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		name: raw.name,
 		rules,
 		supertypes,
-		hoistedKinds: linkCtx.hoistedKinds,
 		factoryInline,
 		externalRoles,
 		externals: raw.externals,
@@ -1421,8 +1419,7 @@ function classifyHiddenRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
-	if (rule.annotations?.hoisted === true) ctx.hoistedKinds.add(name);
-	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || ctx.hoistedKinds.has(name)) {
+	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.annotations?.hoisted === true) {
 		return { rule };
 	}
 

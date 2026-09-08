@@ -10988,6 +10988,9 @@ export interface ImportClauseDefaultImport {
 	readonly __inputHints__?: {
 		readonly identifier: KindEnum<'type', TSKindId.AnonType> | Identifier;
 	};
+	readonly __looseHints__?: {
+		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
+	};
 	identifier(): Identifier | TSKindId.AnonType;
 	importClauseGroup(): ImportClauseGroup | undefined;
 }
@@ -19817,14 +19820,19 @@ export namespace StringDouble {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]): T.StringDouble.Built;
+			elements(...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]): T.StringDouble.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringDouble>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringDouble>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.StringDouble>>];
+	export type BuildArgs = [...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.StringDouble, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.StringDouble
+		...children: LooseValue<
+			T.UnescapedDoubleStringFragment | T.EscapeSequence,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.StringDouble>;
 	export type Kind = '_string_double';
@@ -19835,14 +19843,19 @@ export namespace StringSingle {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]): T.StringSingle.Built;
+			elements(...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]): T.StringSingle.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringSingle>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringSingle>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.StringSingle>>];
+	export type BuildArgs = [...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.StringSingle, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.StringSingle
+		...children: LooseValue<
+			T.UnescapedSingleStringFragment | T.EscapeSequence,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.StringSingle>;
 	export type Kind = '_string_single';

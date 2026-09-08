@@ -625,7 +625,7 @@ export function resolveFactoryFieldNames(node: AssembledNode): readonly string[]
 }
 
 function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
-	if (!(node instanceof AbstractAssembledCompound) || node.hoisted) return null;
+	if (!(node instanceof AbstractAssembledCompound)) return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
 	return shape === 'direct' || shape === 'forwarded' ? 'direct' : null;
@@ -702,10 +702,6 @@ export function classifyFactoryShape(
 	if (node instanceof AssembledToken) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
-		if (node.hoisted) {
-			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
-			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
-		}
 		const slot = node.soleSlot;
 		if (slot !== undefined) {
 			if (isMultiple(slot)) return 'spread';

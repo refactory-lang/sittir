@@ -39,23 +39,13 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				break;
 			case 'branch':
 			case 'envelope':
-				if (node.hoisted) {
-					templateEmitter.emitGroup?.(node);
-					renderModuleEmitter.emitGroup?.(node);
-				} else {
-					templateEmitter.emitBranch?.(node);
-					renderModuleEmitter.emitBranch?.(node);
-				}
+				templateEmitter.emitBranch?.(node);
+				renderModuleEmitter.emitBranch?.(node);
 				break;
 			case 'polymorph':
 				if (node instanceof AssembledSupertype) break;
-				if (node.hoisted) {
-					templateEmitter.emitGroup?.(node);
-					renderModuleEmitter.emitGroup?.(node);
-				} else {
-					templateEmitter.emitBranch?.(node);
-					renderModuleEmitter.emitBranch?.(node);
-				}
+				templateEmitter.emitBranch?.(node);
+				renderModuleEmitter.emitBranch?.(node);
 				break;
 			case 'list':
 				templateEmitter.emitBranch?.(node);

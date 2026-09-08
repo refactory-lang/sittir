@@ -225,10 +225,6 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#emitNode(node);
 	}
 
-	emitGroup(node: AssembledNode): void {
-		this.#emitNode(node);
-	}
-
 	finalize(): EmittedTemplates {
 		dumpSlotMissLog(this.#config.grammar);
 		dumpSeamVariesTally(this.#config.grammar);
@@ -1302,12 +1298,10 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				break;
 			case 'branch':
 			case 'envelope':
-				if (node.hoisted) te.emitGroup(node);
-				else te.emitBranch(node);
+				te.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (node.hoisted) te.emitGroup(node);
-				else te.emitBranch(node);
+				te.emitBranch(node);
 				break;
 			case 'supertype':
 				break;

@@ -38,8 +38,11 @@ describe('expression_statement', () => {
 describe('expression_statement sub-factories', () => {
 	it('withSemi builds the parent', () => {
 		const node = ir.expressionStatement.withSemi({
-			expression: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.CharLiteral,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()?.$type).toBe(TSKindId.ExpressionStatementWithSemi);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -338,19 +341,19 @@ describe('token_tree_pattern', () => {
 
 describe('token_tree_pattern sub-factories', () => {
 	it('paren builds the parent', () => {
-		const node = ir.tokenTreePattern.paren({});
+		const node = ir.tokenTreePattern.paren();
 		expect(node.$type).toBe(TSKindId.TokenTreePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreePatternParen);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('bracket builds the parent', () => {
-		const node = ir.tokenTreePattern.bracket({});
+		const node = ir.tokenTreePattern.bracket();
 		expect(node.$type).toBe(TSKindId.TokenTreePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreePatternBracket);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('brace builds the parent', () => {
-		const node = ir.tokenTreePattern.brace({});
+		const node = ir.tokenTreePattern.brace();
 		expect(node.$type).toBe(TSKindId.TokenTreePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreePatternBrace);
 		expect(() => node.$render!()).not.toThrow();
@@ -421,37 +424,37 @@ describe('token_tree', () => {
 
 describe('token_tree sub-factories', () => {
 	it('paren builds the parent', () => {
-		const node = ir.tokenTree.paren({});
+		const node = ir.tokenTree.paren();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreeParen);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('bracket builds the parent', () => {
-		const node = ir.tokenTree.bracket({});
+		const node = ir.tokenTree.bracket();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreeBracket);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('brace builds the parent', () => {
-		const node = ir.tokenTree.brace({});
+		const node = ir.tokenTree.brace();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreeBrace);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('delimTokenTreeParen builds the parent', () => {
-		const node = ir.tokenTree.delimTokenTreeParen({});
+		const node = ir.tokenTree.delimTokenTreeParen();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.DelimTokenTreeParen);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('delimTokenTreeBracket builds the parent', () => {
-		const node = ir.tokenTree.delimTokenTreeBracket({});
+		const node = ir.tokenTree.delimTokenTreeBracket();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.DelimTokenTreeBracket);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('delimTokenTreeBrace builds the parent', () => {
-		const node = ir.tokenTree.delimTokenTreeBrace({});
+		const node = ir.tokenTree.delimTokenTreeBrace();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.DelimTokenTreeBrace);
 		expect(() => node.$render!()).not.toThrow();
@@ -2146,9 +2149,7 @@ describe('visibility_modifier sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('inPath builds the parent', () => {
-		const node = ir.visibilityModifier.inPath({
-			path: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
-		});
+		const node = ir.visibilityModifier.inPath({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3381,19 +3382,19 @@ describe('delim_token_tree', () => {
 
 describe('delim_token_tree sub-factories', () => {
 	it('paren builds the parent', () => {
-		const node = ir.delimTokenTree.paren({});
+		const node = ir.delimTokenTree.paren();
 		expect(node.$type).toBe(TSKindId.DelimTokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.DelimTokenTreeParen);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('bracket builds the parent', () => {
-		const node = ir.delimTokenTree.bracket({});
+		const node = ir.delimTokenTree.bracket();
 		expect(node.$type).toBe(TSKindId.DelimTokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.DelimTokenTreeBracket);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('brace builds the parent', () => {
-		const node = ir.delimTokenTree.brace({});
+		const node = ir.delimTokenTree.brace();
 		expect(node.$type).toBe(TSKindId.DelimTokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.DelimTokenTreeBrace);
 		expect(() => node.$render!()).not.toThrow();
@@ -3710,16 +3711,22 @@ describe('range_expression sub-factories', () => {
 	});
 	it('postfix builds the parent', () => {
 		const node = ir.rangeExpression.postfix({
-			start: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.CharLiteral,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.RangeExpression);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('prefix builds the parent', () => {
 		const node = ir.rangeExpression.prefix({
-			end: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.CharLiteral,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.RangeExpression);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5404,7 +5411,7 @@ describe('match_arm sub-factories', () => {
 				$named: true,
 				_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			content: [{ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any }]
+			content: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.MatchArm);
 		expect((node as any).content()?.$type).toBe(TSKindId.MatchArmWithComma);
@@ -5743,7 +5750,7 @@ describe('closure_expression sub-factories', () => {
 	it('expr builds the parent', () => {
 		const node = ir.closureExpression.expr({
 			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
-			content: [{ body: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any }]
+			content: [{ $type: TSKindId.Anonymous, $text: '_', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ClosureExpression);
 		expect((node as any).content()?.$type).toBe(TSKindId.ClosureExpressionExpr);
@@ -6467,9 +6474,7 @@ describe('or_pattern sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('prefix builds the parent', () => {
-		const node = ir.orPattern.prefix({
-			right: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-		});
+		const node = ir.orPattern.prefix({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.OrPattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.OrPatternPrefix);
 		expect(node.$render!().length).toBeGreaterThan(0);

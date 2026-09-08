@@ -1031,7 +1031,9 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	factoryInline: boolean = false;
 
-	readonly enrichment: NodeEnrichment;
+	get annotations(): RuleAnnotations | undefined {
+		return this.rule.annotations;
+	}
 
 	constructor(
 		kind: string,
@@ -1040,13 +1042,11 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 			factoryName?: string;
 			irKey?: string;
 			hidden?: boolean;
-			enrichment?: NodeEnrichment;
 			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
 		this.kind = kind;
 		this.rule = rule;
-		this.enrichment = opts?.enrichment ?? {};
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
@@ -1464,16 +1464,11 @@ export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword |
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
-export interface NodeEnrichment {
-	readonly hoisted?: true;
-}
-
 export interface CompoundOpts {
 	factoryName?: string;
 	irKey?: string;
 	hidden?: boolean;
 	variantChildKinds?: readonly VariantChild[];
-	hoisted?: true;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
 	slots?: readonly AssembledNonterminal[];
@@ -1486,10 +1481,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	readonly renderRule: RenderRule;
 	readonly variantChildKinds: readonly VariantChild[];
 
-	get hoisted(): boolean {
-		return this.enrichment.hoisted === true;
-	}
-
 	protected readonly _slots: readonly AssembledNonterminal[];
 
 	constructor(
@@ -1499,10 +1490,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		opts?: CompoundOpts,
 		rule: R = renderRule as R
 	) {
-		const hoisted = opts?.hoisted === true;
+		const hoisted = renderRule.annotations?.hoisted === true;
 		const factoryName =
 			opts?.factoryName ?? (hoisted && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
-		super(kind, rule, { ...opts, factoryName, enrichment: hoisted ? { hoisted: true } : {} });
+		super(kind, rule, { ...opts, factoryName });
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
@@ -1934,7 +1925,11 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			kind,
 			opts.simplifiedRule,
 			opts.renderRule,
-			{ kindEntries: opts.kindEntries, parseKindCollisionContext: opts.parseKindCollisionContext },
+			{
+				factoryName: nameNode(kind).factoryName,
+				kindEntries: opts.kindEntries,
+				parseKindCollisionContext: opts.parseKindCollisionContext
+			},
 			rule
 		);
 		const sep = rule.separator;

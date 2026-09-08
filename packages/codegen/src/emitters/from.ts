@@ -264,7 +264,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	const branchTarget = targetNode instanceof AbstractAssembledCompound && !targetNode.hoisted ? targetNode : null;
+	const branchTarget = targetNode instanceof AbstractAssembledCompound ? targetNode : null;
 	if (branchTarget !== null && fromForwardsToChildFactory(branchTarget, nodeMap)) {
 		const facts = soleSlotFacts(branchTarget, nodeMap);
 		if (!facts) return null;

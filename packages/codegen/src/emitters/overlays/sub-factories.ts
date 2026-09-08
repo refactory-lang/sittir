@@ -145,7 +145,7 @@ function hoistedCandidatesOf(
 			if (!isNodeRef(value)) continue;
 			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 			if (child === undefined || child.rawFactoryName === undefined || !isEmitted(child.kind)) continue;
-			if (!(child instanceof AbstractAssembledCompound) || !child.hoisted) continue;
+			if (!(child instanceof AbstractAssembledCompound) || child.annotations?.hoisted !== true) continue;
 			const naming = armNaming(node, value, nodeMap);
 			if (naming === undefined) continue;
 			const arm: NodeArm = { via: 'node', child, path: [] };
@@ -362,7 +362,7 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 		const value = slot.values[0]!;
 		if (!isNodeRef(value)) continue;
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
-		if (!(group instanceof AbstractAssembledCompound) || !group.hoisted) continue;
+		if (!(group instanceof AbstractAssembledCompound) || group.annotations?.hoisted !== true) continue;
 		if (group.rawFactoryName === undefined || classifyFactoryShape(group, nodeMap) !== 'config') continue;
 		seats.push({ slot, group });
 	}

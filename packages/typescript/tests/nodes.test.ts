@@ -232,13 +232,13 @@ describe('namespace_export sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringDouble builds the parent', () => {
-		const node = ir.namespaceExport.stringDouble({});
+		const node = ir.namespaceExport.stringDouble();
 		expect(node.$type).toBe(TSKindId.NamespaceExport);
 		expect((node as any).moduleExportName()?.$type).toBe(TSKindId.String);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('stringSingle builds the parent', () => {
-		const node = ir.namespaceExport.stringSingle({});
+		const node = ir.namespaceExport.stringSingle();
 		expect(node.$type).toBe(TSKindId.NamespaceExport);
 		expect((node as any).moduleExportName()?.$type).toBe(TSKindId.String);
 		expect(() => node.$render!()).not.toThrow();
@@ -1007,7 +1007,7 @@ describe('for_in_statement sub-factories', () => {
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
+			content: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ForInStatement);
 		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
@@ -2085,9 +2085,7 @@ describe('arrow_function sub-factories', () => {
 	it('parameter builds the parent', () => {
 		const node = ir.arrowFunction.parameter({
 			body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			content: [
-				{ parameter: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any }
-			]
+			content: [{ $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ArrowFunction);
 		expect((node as any).content()?.$type).toBe(TSKindId.ArrowFunctionParameter);
@@ -2786,13 +2784,13 @@ describe.skip('string', () => {
 
 describe.skip('string sub-factories', () => {
 	it('double builds the parent', () => {
-		const node = ir.string.double({});
+		const node = ir.string.double();
 		expect(node.$type).toBe(TSKindId.String);
 		expect((node as any).content()?.$type).toBe(TSKindId.StringDouble);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('single builds the parent', () => {
-		const node = ir.string.single({});
+		const node = ir.string.single();
 		expect(node.$type).toBe(TSKindId.String);
 		expect((node as any).content()?.$type).toBe(TSKindId.StringSingle);
 		expect(() => node.$render!()).not.toThrow();
@@ -3393,7 +3391,7 @@ describe('pair sub-factories', () => {
 	it('stringDouble builds the parent', () => {
 		const node = ir.pair.stringDouble({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: [{}]
+			key: []
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3402,7 +3400,7 @@ describe('pair sub-factories', () => {
 	it('stringSingle builds the parent', () => {
 		const node = ir.pair.stringSingle({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: [{}]
+			key: []
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3964,13 +3962,13 @@ describe('module sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringDouble builds the parent', () => {
-		const node = ir.module.stringDouble({ name: [{}] });
+		const node = ir.module.stringDouble({ name: [] });
 		expect(node.$type).toBe(TSKindId.Module);
 		expect((node as any).name()?.$type).toBe(TSKindId.String);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringSingle builds the parent', () => {
-		const node = ir.module.stringSingle({ name: [{}] });
+		const node = ir.module.stringSingle({ name: [] });
 		expect(node.$type).toBe(TSKindId.Module);
 		expect((node as any).name()?.$type).toBe(TSKindId.String);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -4018,13 +4016,13 @@ describe('internal_module sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringDouble builds the parent', () => {
-		const node = ir.internalModule.stringDouble({ name: [{}] });
+		const node = ir.internalModule.stringDouble({ name: [] });
 		expect(node.$type).toBe(TSKindId.InternalModule);
 		expect((node as any).name()?.$type).toBe(TSKindId.String);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringSingle builds the parent', () => {
-		const node = ir.internalModule.stringSingle({ name: [{}] });
+		const node = ir.internalModule.stringSingle({ name: [] });
 		expect(node.$type).toBe(TSKindId.InternalModule);
 		expect((node as any).name()?.$type).toBe(TSKindId.String);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -4235,7 +4233,7 @@ describe('enum_assignment sub-factories', () => {
 	it('stringDouble builds the parent', () => {
 		const node = ir.enumAssignment.stringDouble({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: [{}]
+			name: []
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4244,7 +4242,7 @@ describe('enum_assignment sub-factories', () => {
 	it('stringSingle builds the parent', () => {
 		const node = ir.enumAssignment.stringSingle({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: [{}]
+			name: []
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -5124,13 +5122,13 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringDouble builds the parent', () => {
-		const node = ir.literalType.stringDouble({});
+		const node = ir.literalType.stringDouble();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('stringSingle builds the parent', () => {
-		const node = ir.literalType.stringSingle({});
+		const node = ir.literalType.stringSingle();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(() => node.$render!()).not.toThrow();
@@ -5328,13 +5326,13 @@ describe('property_signature sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringDouble builds the parent', () => {
-		const node = ir.propertySignature.stringDouble({ name: [{}] });
+		const node = ir.propertySignature.stringDouble({ name: [] });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('stringSingle builds the parent', () => {
-		const node = ir.propertySignature.stringSingle({ name: [{}] });
+		const node = ir.propertySignature.stringSingle({ name: [] });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

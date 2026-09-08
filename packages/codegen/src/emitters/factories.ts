@@ -280,15 +280,6 @@ export namespace factory {
 		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
 	}
 
-	export function group(
-		output: string[],
-		node: FieldCarryingNode,
-		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
-	): void {
-		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
-	}
-
 	export function separatedList(
 		output: string[],
 		node: AssembledList,
@@ -930,7 +921,7 @@ function emitFieldCarryingFactory(
 	const forwardTargetNode = forwardTarget === null ? undefined : nodeMap.nodes.get(forwardTarget);
 	const forwardsToSeatedGroup =
 		forwardTargetNode instanceof AbstractAssembledCompound &&
-		forwardTargetNode.hoisted &&
+		forwardTargetNode.annotations?.hoisted === true &&
 		classifyFactoryShape(forwardTargetNode, nodeMap) === 'config';
 	if (forwardTarget !== null && !forwardsToSeatedGroup) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
@@ -1526,10 +1517,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
-	emitGroup(node: FieldCarryingNode): void {
-		factory.group(this.#output, node, this.#nodeMap, this.#kindEntries);
-	}
-
 	emitSeparatedList(node: AssembledList): void {
 		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries, this.#renderDefaults);
 	}
@@ -1571,13 +1558,11 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'polymorph':
 				if (node instanceof AssembledSupertype) break;
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'list':
 				this.emitSeparatedList(node);

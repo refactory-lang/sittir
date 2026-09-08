@@ -95,10 +95,10 @@ export function emitIs(config: EmitIsConfig): string {
 		switch (node.modelType) {
 			case 'branch':
 			case 'envelope':
-				structural = !node.hoisted;
+				structural = node.annotations?.hoisted !== true;
 				break;
 			case 'polymorph':
-				structural = !node.hoisted;
+				structural = node.annotations?.hoisted !== true;
 				break;
 			case 'supertype':
 				structural = false;

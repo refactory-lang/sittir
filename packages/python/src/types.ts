@@ -2321,6 +2321,9 @@ export interface ExceptClause {
 		readonly star_marker?: BooleanKeyword<'*'>;
 		readonly suite: KindEnum<'\n', TSKindId._SuiteEmpty> | SimpleStatements | SuiteBlock;
 	};
+	readonly __looseHints__?: {
+		readonly exception?: readonly (ExceptClauseAs | ExceptClauseList)[];
+	};
 	starMarker(): boolean | undefined;
 	exception(): ExceptClauseException | undefined;
 	suite(): SimpleStatements | SuiteBlock | TSKindId._SuiteEmpty;
@@ -3101,6 +3104,9 @@ export interface Slice {
 	readonly _start?: Expression;
 	readonly _stop?: Expression;
 	readonly _step?: SliceGroup;
+	readonly __looseHints__?: {
+		readonly step?: readonly Expression[];
+	};
 	start(): Expression | undefined;
 	stop(): Expression | undefined;
 	step(): SliceGroup | undefined;
@@ -9358,15 +9364,13 @@ export namespace ExceptClauseList {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			values(...values: NonEmptyArray<T.Expression>): T.ExceptClauseList.Built;
+			values(...vs: T.Expression[]): T.ExceptClauseList.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseList>;
-	export type BuildArgs = [config: ConfigOf<T.ExceptClauseList>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T.ExceptClauseList, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExceptClauseList
-	];
+	export type BuildArgs = [...children: T.Expression[]];
+	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.ExceptClauseList>;
 	export type Kind = '_except_clause_list';
 }
@@ -9516,15 +9520,13 @@ export namespace MatchBlockBlock {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			alternatives(...values: T.CaseClause[]): T.MatchBlockBlock.Built;
+			alternatives(...vs: T.CaseClause[]): T.MatchBlockBlock.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlockBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockBlock>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.MatchBlockBlock>>];
-	export type LooseArgs = [
-		config?: LooseConfigOf<T.MatchBlockBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MatchBlockBlock
-	];
+	export type BuildArgs = [...children: T.CaseClause[]];
+	export type LooseArgs = [...children: LooseValue<T.CaseClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Tree = TreeFor<TSKindId.MatchBlockBlock>;
 	export type Kind = '_match_block_block';
 }

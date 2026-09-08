@@ -2051,6 +2051,14 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // primary slot lookup) resolve instead of degrading to fragile fallbacks.
 ```
 
+Also carries the source root's whole `annotations` bag (merged over the
+result's own), because the annotation is the only representation of a
+kind-level declaration such as `hoisted`: a pass that rebuilds the root
+(normalize's wrapper collapse and choice factoring, `inlineSingleUseHidden`,
+simplify's canonicalisation, flatten) would otherwise drop it. Every root
+rebuild goes through here.
+
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::withId`
 
 ```text

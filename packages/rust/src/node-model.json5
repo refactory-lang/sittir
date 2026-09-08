@@ -3988,6 +3988,9 @@
       "factoryName": "argumentsElements",
       "irKey": "argumentsElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -4007,7 +4010,9 @@
       "factoryName": "_arrayExpressionList",
       "irKey": "arrayExpressionList",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attributes",
@@ -4066,7 +4071,9 @@
       "factoryName": "_arrayExpressionSemi",
       "irKey": "arrayExpressionSemi",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attributes",
@@ -4147,7 +4154,9 @@
       "factoryName": "_attributeInput",
       "irKey": "attributeInput",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "value",
@@ -4206,7 +4215,9 @@
       "factoryName": "_attributedArgument",
       "irKey": "attributedArgument",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attribute_item",
@@ -4265,7 +4276,9 @@
       "factoryName": "_attributedEnumVariant",
       "irKey": "attributedEnumVariant",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attribute_item",
@@ -4324,7 +4337,9 @@
       "factoryName": "_attributedFieldDeclaration",
       "irKey": "attributedFieldDeclaration",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attribute_item",
@@ -4383,7 +4398,9 @@
       "factoryName": "_attributedOrderedField",
       "irKey": "attributedOrderedField",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attribute_item",
@@ -4464,7 +4481,9 @@
       "factoryName": "_attributedParameter",
       "irKey": "attributedParameter",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attribute_item",
@@ -4553,7 +4572,9 @@
       "factoryName": "_attributedTypeParameter",
       "irKey": "attributedTypeParameter",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "attribute_item",
@@ -4645,7 +4666,9 @@
       "factoryName": "_blockCommentDocInner",
       "irKey": "blockCommentDocInner",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "doc",
@@ -4683,7 +4706,9 @@
       "factoryName": "_blockCommentDocOuter",
       "irKey": "blockCommentDocOuter",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "doc",
@@ -4721,7 +4746,9 @@
       "factoryName": "_closureExpressionBlock",
       "irKey": "closureExpressionBlock",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "return_type",
@@ -4780,7 +4807,9 @@
       "factoryName": "_closureExpressionExpr",
       "irKey": "closureExpressionExpr",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "body",
@@ -4942,7 +4971,9 @@
       "factoryName": "_delimTokenTreeBrace",
       "irKey": "delimTokenTreeBrace",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "delim_tokens",
@@ -4981,7 +5012,7 @@
         }
       ],
       "name": "_delim_token_tree_brace",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "delim_tokens"
       ]
@@ -4993,7 +5024,9 @@
       "factoryName": "_delimTokenTreeBracket",
       "irKey": "delimTokenTreeBracket",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "delim_tokens",
@@ -5032,7 +5065,7 @@
         }
       ],
       "name": "_delim_token_tree_bracket",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "delim_tokens"
       ]
@@ -5044,7 +5077,9 @@
       "factoryName": "_delimTokenTreeParen",
       "irKey": "delimTokenTreeParen",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "delim_tokens",
@@ -5083,7 +5118,7 @@
         }
       ],
       "name": "_delim_token_tree_paren",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "delim_tokens"
       ]
@@ -5108,6 +5143,9 @@
       "factoryName": "enumVariantListElements",
       "irKey": "enumVariantListElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -5267,7 +5305,9 @@
       "factoryName": "_expressionStatementWithSemi",
       "irKey": "expressionStatementWithSemi",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "expression",
@@ -5304,6 +5344,9 @@
       "factoryName": "fieldDeclarationListElements",
       "irKey": "fieldDeclarationListElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -5332,6 +5375,9 @@
       "factoryName": "fieldInitializerListElements",
       "irKey": "fieldInitializerListElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -5353,7 +5399,9 @@
       "factoryName": "_fieldPatternNamed",
       "irKey": "fieldPatternNamed",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "name",
@@ -5411,6 +5459,9 @@
       "typeName": "ForeignModItemSemi",
       "irKey": "foreignModItemSemi",
       "hidden": true,
+      "annotations": {
+        "hoisted": true
+      },
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "word": false,
@@ -5423,7 +5474,9 @@
       "factoryName": "_functionTypeFnForm",
       "irKey": "functionTypeFnForm",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "function_modifiers",
@@ -5461,7 +5514,9 @@
       "factoryName": "_functionTypeTraitForm",
       "irKey": "functionTypeTraitForm",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "trait",
@@ -5506,7 +5561,6 @@
       "factoryName": "implItemBody",
       "irKey": "implItemBody",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "declaration_list",
@@ -5543,7 +5597,6 @@
       "factoryName": "implItemNegativeClause",
       "irKey": "implItemNegativeClause",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "trait",
@@ -5595,7 +5648,6 @@
       "factoryName": "implItemPositiveClause",
       "irKey": "implItemPositiveClause",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "trait",
@@ -5818,7 +5870,6 @@
       "factoryName": "letChain",
       "irKey": "letChain",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "left",
@@ -5900,6 +5951,9 @@
       "factoryName": "lifetimes",
       "irKey": "lifetimes",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -5919,6 +5973,9 @@
       "factoryName": "lineCommentContent",
       "irKey": "lineCommentContent",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "pattern": ".*",
       "factoryShape": "text"
     },
@@ -5929,7 +5986,9 @@
       "factoryName": "_lineCommentDocInner",
       "irKey": "lineCommentDocInner",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "doc",
@@ -5967,7 +6026,9 @@
       "factoryName": "_lineCommentDocOuter",
       "irKey": "lineCommentDocOuter",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "doc",
@@ -6005,6 +6066,9 @@
       "factoryName": "lineCommentRegularDslash",
       "irKey": "lineCommentRegularDslash",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "factoryShape": "text"
     },
     {
@@ -6056,7 +6120,9 @@
       "factoryName": "_macroDefinitionBrace",
       "irKey": "macroDefinitionBrace",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "macro_rules",
@@ -6094,7 +6160,9 @@
       "factoryName": "_macroDefinitionBracket",
       "irKey": "macroDefinitionBracket",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "macro_rules",
@@ -6132,7 +6200,9 @@
       "factoryName": "_macroDefinitionParen",
       "irKey": "macroDefinitionParen",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "macro_rules",
@@ -6170,6 +6240,9 @@
       "factoryName": "macroRules",
       "irKey": "macroRules",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -6189,7 +6262,9 @@
       "factoryName": "_matchArmWithComma",
       "irKey": "matchArmWithComma",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "value",
@@ -6226,7 +6301,9 @@
       "factoryName": "_matchBlockArms",
       "irKey": "matchBlockArms",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "match_arm",
@@ -6284,6 +6361,9 @@
       "typeName": "ModItemExternal",
       "irKey": "modItemExternal",
       "hidden": true,
+      "annotations": {
+        "hoisted": true
+      },
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "word": false,
@@ -6341,7 +6421,9 @@
       "factoryName": "_orPatternBinary",
       "irKey": "orPatternBinary",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "left",
@@ -6400,7 +6482,9 @@
       "factoryName": "_orPatternPrefix",
       "irKey": "orPatternPrefix",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "right",
@@ -6437,6 +6521,9 @@
       "factoryName": "orderedFieldDeclarationListElements",
       "irKey": "orderedFieldDeclarationListElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -6478,6 +6565,9 @@
       "factoryName": "parametersElements",
       "irKey": "parametersElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -6548,6 +6638,9 @@
       "factoryName": "patterns",
       "irKey": "patterns",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -6567,6 +6660,9 @@
       "factoryName": "pointerTypeConst",
       "irKey": "pointerTypeConst",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
       "word": true,
@@ -6619,7 +6715,9 @@
       "factoryName": "_rangeExpressionBinary",
       "irKey": "rangeExpressionBinary",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "start",
@@ -6709,7 +6807,9 @@
       "factoryName": "_rangeExpressionPostfix",
       "irKey": "rangeExpressionPostfix",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "start",
@@ -6746,7 +6846,9 @@
       "factoryName": "_rangeExpressionPrefix",
       "irKey": "rangeExpressionPrefix",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "end",
@@ -6782,6 +6884,9 @@
       "typeName": "RangePatternLeftBare",
       "irKey": "rangePatternLeftBare",
       "hidden": true,
+      "annotations": {
+        "hoisted": true
+      },
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "word": false,
@@ -6794,7 +6899,9 @@
       "factoryName": "_rangePatternLeftWithRight",
       "irKey": "rangePatternLeftWithRight",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -6910,7 +7017,9 @@
       "factoryName": "_rangePatternPrefix",
       "irKey": "rangePatternPrefix",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7020,7 +7129,9 @@
       "factoryName": "_rangePatternWithLeft",
       "irKey": "rangePatternWithLeft",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "left",
@@ -7165,7 +7276,6 @@
       "irKey": "referenceExpressionRawMut",
       "hidden": false,
       "isParameterless": true,
-      "hoisted": false,
       "slots": [],
       "factoryShape": "config"
     },
@@ -7240,7 +7350,9 @@
       "factoryName": "_structItemBrace",
       "irKey": "structItemBrace",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "where_clause",
@@ -7299,7 +7411,9 @@
       "factoryName": "_structItemTuple",
       "irKey": "structItemTuple",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "body",
@@ -7357,6 +7471,9 @@
       "typeName": "StructItemUnit",
       "irKey": "structItemUnit",
       "hidden": true,
+      "annotations": {
+        "hoisted": true
+      },
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "word": false,
@@ -7369,6 +7486,9 @@
       "factoryName": "structPatternElements",
       "irKey": "structPatternElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -7451,7 +7571,9 @@
       "factoryName": "_tokenTreeBrace",
       "irKey": "tokenTreeBrace",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "tokens",
@@ -7500,7 +7622,7 @@
         }
       ],
       "name": "_token_tree_brace",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "tokens"
       ]
@@ -7512,7 +7634,9 @@
       "factoryName": "_tokenTreeBracket",
       "irKey": "tokenTreeBracket",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "tokens",
@@ -7561,7 +7685,7 @@
         }
       ],
       "name": "_token_tree_bracket",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "tokens"
       ]
@@ -7573,7 +7697,9 @@
       "factoryName": "_tokenTreeParen",
       "irKey": "tokenTreeParen",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "tokens",
@@ -7622,7 +7748,7 @@
         }
       ],
       "name": "_token_tree_paren",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "tokens"
       ]
@@ -7634,7 +7760,9 @@
       "factoryName": "_tokenTreePatternBrace",
       "irKey": "tokenTreePatternBrace",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "token_patterns",
@@ -7691,7 +7819,7 @@
         }
       ],
       "name": "_token_tree_pattern_brace",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "token_patterns"
       ]
@@ -7703,7 +7831,9 @@
       "factoryName": "_tokenTreePatternBracket",
       "irKey": "tokenTreePatternBracket",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "token_patterns",
@@ -7760,7 +7890,7 @@
         }
       ],
       "name": "_token_tree_pattern_bracket",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "token_patterns"
       ]
@@ -7772,7 +7902,9 @@
       "factoryName": "_tokenTreePatternParen",
       "irKey": "tokenTreePatternParen",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "token_patterns",
@@ -7829,7 +7961,7 @@
         }
       ],
       "name": "_token_tree_pattern_paren",
-      "factoryShape": "config",
+      "factoryShape": "spread",
       "factoryFields": [
         "token_patterns"
       ]
@@ -7929,6 +8061,9 @@
       "factoryName": "tuplePatternElements",
       "irKey": "tuplePatternElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -7995,7 +8130,9 @@
       "factoryName": "_typeArgument",
       "irKey": "typeArgument",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -8086,6 +8223,9 @@
       "factoryName": "typeArgumentsElements",
       "irKey": "typeArgumentsElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8114,6 +8254,9 @@
       "factoryName": "typeParametersElements",
       "irKey": "typeParametersElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8133,6 +8276,9 @@
       "factoryName": "useBoundsElements",
       "irKey": "useBoundsElements",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8173,6 +8319,9 @@
       "factoryName": "useClauses",
       "irKey": "useClauses",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8201,7 +8350,6 @@
       "factoryName": "visibilityModifierGroup",
       "irKey": "visibilityModifierGroup",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -8261,7 +8409,9 @@
       "factoryName": "_visibilityModifierInPath",
       "irKey": "visibilityModifierInPath",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "path",
@@ -8338,7 +8488,9 @@
       "factoryName": "_visibilityModifierPub",
       "irKey": "visibilityModifierPub",
       "hidden": false,
-      "hoisted": true,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "visibility_modifier_group",
@@ -8376,6 +8528,9 @@
       "factoryName": "wherePredicates",
       "irKey": "wherePredicates",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8407,7 +8562,6 @@
       "factoryName": "abstractType",
       "irKey": "abstractType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type_parameters",
@@ -8570,7 +8724,6 @@
       "factoryName": "arguments_",
       "irKey": "arguments",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "arguments_elements",
@@ -8607,7 +8760,6 @@
       "factoryName": "arrayExpression",
       "irKey": "arrayExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -8651,7 +8803,6 @@
       "factoryName": "arrayType",
       "irKey": "arrayType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "element",
@@ -8721,7 +8872,6 @@
       "factoryName": "assignmentExpression",
       "irKey": "assignmentExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "left",
@@ -8779,7 +8929,6 @@
       "factoryName": "associatedType",
       "irKey": "associatedType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -8893,7 +9042,6 @@
       "factoryName": "asyncBlock",
       "irKey": "asyncBlock",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "move_marker",
@@ -8962,7 +9110,6 @@
       "factoryName": "attribute",
       "irKey": "attribute",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "path",
@@ -9060,7 +9207,6 @@
       "factoryName": "attributeItem",
       "irKey": "attributeItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attribute",
@@ -9109,7 +9255,6 @@
       "factoryName": "awaitExpression",
       "irKey": "awaitExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "expression",
@@ -9167,7 +9312,6 @@
       "factoryName": "baseFieldInitializer",
       "irKey": "baseFieldInitializer",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -9203,7 +9347,6 @@
       "factoryName": "binaryExpression",
       "irKey": "binaryExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "left",
@@ -9382,7 +9525,6 @@
       "factoryName": "block",
       "irKey": "block",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "label",
@@ -9470,7 +9612,6 @@
       "factoryName": "blockComment",
       "irKey": "blockComment",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -9547,7 +9688,6 @@
       "factoryName": "boundedType",
       "irKey": "boundedType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "left",
@@ -9637,7 +9777,6 @@
       "factoryName": "bracketedType",
       "irKey": "bracketedType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -9693,7 +9832,6 @@
       "factoryName": "breakExpression",
       "irKey": "breakExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "label",
@@ -9751,7 +9889,6 @@
       "factoryName": "callExpression",
       "irKey": "callExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "function",
@@ -10113,7 +10250,6 @@
       "factoryName": "capturedPattern",
       "irKey": "capturedPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -10214,7 +10350,6 @@
       "factoryName": "closureExpression",
       "irKey": "closureExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "static_marker",
@@ -10346,7 +10481,6 @@
       "factoryName": "closureParameters",
       "irKey": "closureParameters",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "parameters",
@@ -10423,7 +10557,6 @@
       "factoryName": "compoundAssignmentExpr",
       "irKey": "compoundAssignmentExpr",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "left",
@@ -10515,7 +10648,6 @@
       "factoryName": "constBlock",
       "irKey": "constBlock",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "body",
@@ -10552,7 +10684,6 @@
       "factoryName": "constItem",
       "irKey": "constItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -10654,7 +10785,6 @@
       "factoryName": "constParameter",
       "irKey": "constParameter",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -10770,7 +10900,6 @@
       "factoryName": "continueExpression",
       "irKey": "continueExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "label",
@@ -10853,7 +10982,6 @@
       "factoryName": "declarationList",
       "irKey": "declarationList",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "declarations",
@@ -10901,7 +11029,6 @@
       "factoryName": "delimTokenTree",
       "irKey": "delimTokenTree",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -11031,7 +11158,6 @@
       "factoryName": "dynamicType",
       "irKey": "dynamicType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "trait",
@@ -11119,7 +11245,6 @@
       "factoryName": "elseClause",
       "irKey": "elseClause",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -11188,7 +11313,6 @@
       "factoryName": "enumItem",
       "irKey": "enumItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -11312,7 +11436,6 @@
       "factoryName": "enumVariant",
       "irKey": "enumVariant",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -11422,7 +11545,6 @@
       "factoryName": "enumVariantList",
       "irKey": "enumVariantList",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "enum_variant_list_elements",
@@ -11525,7 +11647,6 @@
       "factoryName": "expressionStatement",
       "irKey": "expressionStatement",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -11661,7 +11782,6 @@
       "factoryName": "externCrateDeclaration",
       "irKey": "externCrateDeclaration",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -11741,7 +11861,6 @@
       "factoryName": "externModifier",
       "irKey": "externModifier",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "abi",
@@ -11814,7 +11933,6 @@
       "factoryName": "fieldDeclaration",
       "irKey": "fieldDeclaration",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -11894,7 +12012,6 @@
       "factoryName": "fieldDeclarationList",
       "irKey": "fieldDeclarationList",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "field_declaration_list_elements",
@@ -11931,7 +12048,6 @@
       "factoryName": "fieldExpression",
       "irKey": "fieldExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -11997,7 +12113,6 @@
       "factoryName": "fieldInitializer",
       "irKey": "fieldInitializer",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attribute_item",
@@ -12085,7 +12200,6 @@
       "factoryName": "fieldInitializerList",
       "irKey": "fieldInitializerList",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "initializers",
@@ -12122,7 +12236,6 @@
       "factoryName": "fieldPattern",
       "irKey": "fieldPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "ref_marker",
@@ -12243,7 +12356,6 @@
       "factoryName": "forExpression",
       "irKey": "forExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "label",
@@ -12345,7 +12457,6 @@
       "factoryName": "forLifetimes",
       "irKey": "forLifetimes",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "lifetimes",
@@ -12382,7 +12493,6 @@
       "factoryName": "foreignModItem",
       "irKey": "foreignModItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12496,7 +12606,6 @@
       "factoryName": "functionItem",
       "irKey": "functionItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12694,7 +12803,6 @@
       "factoryName": "functionModifiers",
       "irKey": "functionModifiers",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "modifier",
@@ -12762,7 +12870,6 @@
       "factoryName": "functionSignatureItem",
       "irKey": "functionSignatureItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12938,7 +13045,6 @@
       "factoryName": "functionType",
       "irKey": "functionType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "for_lifetimes",
@@ -13060,7 +13166,6 @@
       "factoryName": "genBlock",
       "irKey": "genBlock",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "move_marker",
@@ -13118,7 +13223,6 @@
       "factoryName": "genericFunction",
       "irKey": "genericFunction",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "function",
@@ -13192,7 +13296,6 @@
       "factoryName": "genericPattern",
       "irKey": "genericPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -13258,7 +13361,6 @@
       "factoryName": "genericType",
       "irKey": "genericType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type",
@@ -13331,7 +13433,6 @@
       "factoryName": "genericTypeWithTurbofish",
       "irKey": "genericTypeWithTurbofish",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type",
@@ -13441,7 +13542,6 @@
       "factoryName": "higherRankedTraitBound",
       "irKey": "higherRankedTraitBound",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type_parameters",
@@ -13593,7 +13693,6 @@
       "factoryName": "ifExpression",
       "irKey": "ifExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "condition",
@@ -13701,7 +13800,6 @@
       "factoryName": "implItem",
       "irKey": "implItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "unsafe_marker",
@@ -13875,7 +13973,6 @@
       "factoryName": "indexExpression",
       "irKey": "indexExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "object",
@@ -13933,7 +14030,6 @@
       "factoryName": "innerAttributeItem",
       "irKey": "innerAttributeItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attribute",
@@ -14003,7 +14099,6 @@
       "factoryName": "label",
       "irKey": "label",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -14040,7 +14135,6 @@
       "factoryName": "lastMatchArm",
       "irKey": "lastMatchArm",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attributes",
@@ -14181,7 +14275,6 @@
       "factoryName": "letCondition",
       "irKey": "letCondition",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "pattern",
@@ -14239,7 +14332,6 @@
       "factoryName": "letDeclaration",
       "irKey": "letDeclaration",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "mutable_specifier",
@@ -14363,7 +14455,6 @@
       "factoryName": "lifetime",
       "irKey": "lifetime",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -14400,7 +14491,6 @@
       "factoryName": "lifetimeParameter",
       "irKey": "lifetimeParameter",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -14458,7 +14548,6 @@
       "factoryName": "lineComment",
       "irKey": "lineComment",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -14542,7 +14631,6 @@
       "factoryName": "loopExpression",
       "irKey": "loopExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "label",
@@ -14655,7 +14743,6 @@
       "factoryName": "macroDefinition",
       "irKey": "macroDefinition",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -14729,7 +14816,6 @@
       "factoryName": "macroInvocation",
       "irKey": "macroInvocation",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "macro",
@@ -14795,7 +14881,6 @@
       "factoryName": "macroRule",
       "irKey": "macroRule",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "left",
@@ -14876,7 +14961,6 @@
       "factoryName": "matchArm",
       "irKey": "matchArm",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attributes",
@@ -15052,7 +15136,6 @@
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "match_block_arms",
@@ -15089,7 +15172,6 @@
       "factoryName": "matchExpression",
       "irKey": "matchExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -15147,7 +15229,6 @@
       "factoryName": "matchPattern",
       "irKey": "matchPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "pattern",
@@ -15255,7 +15336,6 @@
       "factoryName": "modItem",
       "irKey": "modItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -15355,7 +15435,6 @@
       "factoryName": "mutPattern",
       "irKey": "mutPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "pattern",
@@ -15404,7 +15483,6 @@
       "factoryName": "negativeLiteral",
       "irKey": "negativeLiteral",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -15486,7 +15564,6 @@
       "factoryName": "orPattern",
       "irKey": "orPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -15530,7 +15607,6 @@
       "factoryName": "orderedFieldDeclarationList",
       "irKey": "orderedFieldDeclarationList",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attributes",
@@ -15567,7 +15643,6 @@
       "factoryName": "parameter",
       "irKey": "parameter",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "mutable_specifier",
@@ -15655,7 +15730,6 @@
       "factoryName": "parameters",
       "irKey": "parameters",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "parameters_elements",
@@ -15692,7 +15766,6 @@
       "factoryName": "parenthesizedExpression",
       "irKey": "parenthesizedExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "expression",
@@ -15841,7 +15914,6 @@
       "factoryName": "pointerType",
       "irKey": "pointerType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -15941,7 +16013,6 @@
       "factoryName": "qualifiedType",
       "irKey": "qualifiedType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type",
@@ -15999,7 +16070,6 @@
       "factoryName": "rangeExpression",
       "irKey": "rangeExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -16059,7 +16129,6 @@
       "factoryName": "rangePattern",
       "irKey": "rangePattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -16115,7 +16184,6 @@
       "factoryName": "rawStringLiteral",
       "irKey": "rawStringLiteral",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "raw_string_literal_start",
@@ -16238,7 +16306,6 @@
       "factoryName": "refPattern",
       "irKey": "refPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "pattern",
@@ -16274,7 +16341,6 @@
       "factoryName": "referenceExpression",
       "irKey": "referenceExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -16348,7 +16414,6 @@
       "factoryName": "referencePattern",
       "irKey": "referencePattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "mutable_specifier",
@@ -16406,7 +16471,6 @@
       "factoryName": "referenceType",
       "irKey": "referenceType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "lifetime",
@@ -16499,7 +16563,6 @@
       "factoryName": "removedTraitBound",
       "irKey": "removedTraitBound",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type",
@@ -16547,7 +16610,6 @@
       "factoryName": "returnExpression",
       "irKey": "returnExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "expression",
@@ -16594,7 +16656,6 @@
       "factoryName": "scopedIdentifier",
       "irKey": "scopedIdentifier",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "path",
@@ -16716,7 +16777,6 @@
       "factoryName": "scopedTypeIdentifier",
       "irKey": "scopedTypeIdentifier",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "path",
@@ -16838,7 +16898,6 @@
       "factoryName": "scopedTypeIdentifierInExpressionPosition",
       "irKey": "scopedTypeIdentifierInExpressionPosition",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "path",
@@ -16944,7 +17003,6 @@
       "factoryName": "scopedUseList",
       "irKey": "scopedUseList",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "path",
@@ -17055,7 +17113,6 @@
       "factoryName": "selfParameter",
       "irKey": "selfParameter",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "reference",
@@ -17153,7 +17210,6 @@
       "factoryName": "shorthandFieldInitializer",
       "irKey": "shorthandFieldInitializer",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attributes",
@@ -17255,7 +17311,6 @@
       "factoryName": "slicePattern",
       "irKey": "slicePattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "patterns",
@@ -17292,7 +17347,6 @@
       "factoryName": "sourceFile",
       "irKey": "sourceFile",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "shebang",
@@ -17414,7 +17468,6 @@
       "factoryName": "staticItem",
       "irKey": "staticItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -17593,7 +17646,6 @@
       "factoryName": "stringLiteral",
       "irKey": "stringLiteral",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "string_open",
@@ -17671,7 +17723,6 @@
       "factoryName": "structExpression",
       "irKey": "structExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -17745,7 +17796,6 @@
       "factoryName": "structItem",
       "irKey": "structItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -17863,7 +17913,6 @@
       "factoryName": "structPattern",
       "irKey": "structPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type",
@@ -17942,7 +17991,6 @@
       "factoryName": "tokenBindingPattern",
       "irKey": "tokenBindingPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -18000,7 +18048,6 @@
       "factoryName": "tokenRepetition",
       "irKey": "tokenRepetition",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "tokens",
@@ -18109,7 +18156,6 @@
       "factoryName": "tokenRepetitionPattern",
       "irKey": "tokenRepetitionPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "token_patterns",
@@ -18226,7 +18272,6 @@
       "factoryName": "tokenTree",
       "irKey": "tokenTree",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -18302,7 +18347,6 @@
       "factoryName": "tokenTreePattern",
       "irKey": "tokenTreePattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -18366,7 +18410,6 @@
       "factoryName": "traitBounds",
       "irKey": "traitBounds",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "bounds",
@@ -18418,7 +18461,6 @@
       "factoryName": "traitItem",
       "irKey": "traitItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -18610,7 +18652,6 @@
       "factoryName": "tryBlock",
       "irKey": "tryBlock",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "body",
@@ -18647,7 +18688,6 @@
       "factoryName": "tryExpression",
       "irKey": "tryExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -18695,7 +18735,6 @@
       "factoryName": "tupleExpression",
       "irKey": "tupleExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "attributes",
@@ -18753,7 +18792,6 @@
       "factoryName": "tuplePattern",
       "irKey": "tuplePattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "elements",
@@ -18790,7 +18828,6 @@
       "factoryName": "tupleStructPattern",
       "irKey": "tupleStructPattern",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type",
@@ -18864,7 +18901,6 @@
       "factoryName": "tupleType",
       "irKey": "tupleType",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "tuple_type_elements",
@@ -18925,7 +18961,6 @@
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type_arguments_elements",
@@ -18962,7 +18997,6 @@
       "factoryName": "typeBinding",
       "irKey": "typeBinding",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -19042,7 +19076,6 @@
       "factoryName": "typeCastExpression",
       "irKey": "typeCastExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -19100,7 +19133,6 @@
       "factoryName": "typeItem",
       "irKey": "typeItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -19246,7 +19278,6 @@
       "factoryName": "typeParameter",
       "irKey": "typeParameter",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -19326,7 +19357,6 @@
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "type_parameters_elements",
@@ -19423,7 +19453,6 @@
       "factoryName": "unaryExpression",
       "irKey": "unaryExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "operator",
@@ -19502,7 +19531,6 @@
       "factoryName": "unionItem",
       "irKey": "unionItem",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -19664,7 +19692,6 @@
       "factoryName": "unsafeBlock",
       "irKey": "unsafeBlock",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "body",
@@ -19713,7 +19740,6 @@
       "factoryName": "useAsClause",
       "irKey": "useAsClause",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "path",
@@ -19811,7 +19837,6 @@
       "factoryName": "useBounds",
       "irKey": "useBounds",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "bounds",
@@ -19848,7 +19873,6 @@
       "factoryName": "useDeclaration",
       "irKey": "useDeclaration",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "visibility_modifier",
@@ -19978,7 +20002,6 @@
       "factoryName": "useList",
       "irKey": "useList",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "use_clauses",
@@ -20015,7 +20038,6 @@
       "factoryName": "useWildcard",
       "irKey": "useWildcard",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "path",
@@ -20103,7 +20125,6 @@
       "factoryName": "variadicParameter",
       "irKey": "variadicParameter",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "mutable_specifier",
@@ -20173,7 +20194,6 @@
       "factoryName": "visibilityModifier",
       "irKey": "visibilityModifier",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "content",
@@ -20229,7 +20249,6 @@
       "factoryName": "whereClause",
       "irKey": "whereClause",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "where_predicates",
@@ -20266,7 +20285,6 @@
       "factoryName": "wherePredicate",
       "irKey": "wherePredicate",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "left",
@@ -20408,7 +20426,6 @@
       "factoryName": "whileExpression",
       "irKey": "whileExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "label",
@@ -20516,7 +20533,6 @@
       "factoryName": "yieldExpression",
       "irKey": "yieldExpression",
       "hidden": false,
-      "hoisted": false,
       "slots": [
         {
           "name": "expression",

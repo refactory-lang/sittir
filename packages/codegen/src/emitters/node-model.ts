@@ -1,3 +1,4 @@
+import type { RuleAnnotations } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledBranch,
@@ -56,6 +57,7 @@ interface SerializedNodeBase {
 	factoryName?: string;
 	irKey?: string;
 	hidden: boolean;
+	annotations?: RuleAnnotations;
 	isParameterless?: boolean;
 	stampExpression?: string;
 	factoryShape?: FactoryShape;
@@ -65,7 +67,6 @@ interface SerializedNodeBase {
 
 interface SerializedCompoundNode extends SerializedNodeBase {
 	modelType: 'branch' | 'envelope' | 'polymorph';
-	hoisted: boolean;
 	name?: string;
 	slots: SerializedSlot[];
 	separator?: string;
@@ -174,6 +175,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap): SerializedNode {
 		factoryName: node.factoryName,
 		irKey: node.irKey,
 		hidden: node.hidden,
+		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
 		...(node.parameterless ? { isParameterless: true } : {}),
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
@@ -226,10 +228,9 @@ function serializeCompoundNode(
 	const out: SerializedCompoundNode = {
 		...base,
 		modelType: node.modelType,
-		hoisted: node.hoisted,
 		slots: node.slots.map((slot) => serializeSlot(slot, nodeMap))
 	};
-	if (node.hoisted) out.name = node.kind;
+	if (node.annotations?.hoisted === true) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
 	return out;
 }

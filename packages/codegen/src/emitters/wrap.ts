@@ -100,27 +100,6 @@ export namespace wrap {
 		output.push(renameUnusedTreeParam(result));
 	}
 
-	export function group(
-		output: string[],
-		node: BranchLikeForWrap,
-		kindEntries: readonly KindEnumEntry[] | undefined,
-		nodeMap: NodeMap
-	): void {
-		const result = emitFieldCarryingWrap(
-			{
-				kind: node.kind,
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				exposesChildren: wrapExposesChildren(node, nodeMap)
-			},
-			node.slots,
-			[],
-			kindEntries,
-			nodeMap
-		);
-		output.push(renameUnusedTreeParam(result));
-	}
-
 	export function supertype(
 		output: string[],
 		node: AssembledSupertype,
@@ -905,11 +884,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
-	emitGroup(node: BranchLikeForWrap): void {
-		wrap.group(this.#output, node, this.#kindEntries, this.#nodeMap);
-		this.#emittedStructuralKinds.add(node.kind);
-	}
-
 	emitSupertype(node: AssembledSupertype): void {
 		wrap.supertype(this.#output, node, this.#kindEntries);
 		this.#emittedStructuralKinds.add(node.kind);
@@ -943,12 +917,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		switch (node.modelType) {
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'supertype':
 				this.emitSupertype(node);

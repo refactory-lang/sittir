@@ -145,7 +145,6 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 
 	emitBranch(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList): void {}
 
-	emitGroup(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph): void {}
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
 		return synthesizeRenderModuleBundle({
@@ -592,7 +591,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 					}
 				}
 			}
-			if (sep === undefined && node instanceof AbstractAssembledCompound && !node.hoisted) {
+			if (sep === undefined && node instanceof AbstractAssembledCompound) {
 				sep = node.separator ?? undefined;
 			}
 			if (sep !== undefined) separators.set(kind, sep);

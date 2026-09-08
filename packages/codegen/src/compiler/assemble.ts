@@ -151,7 +151,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	try {
 		for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 			const simplifiedRule = normalized.rules[kind]!;
-			const hoisted = normalized.hoistedKinds?.has(kind) === true;
+			const hoisted = renderRule.annotations?.hoisted === true;
 			const modelType = classifyNode(kind, simplifiedRule, {
 				renderRule,
 				variantParents,
@@ -183,8 +183,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 							kindEntries,
 							parseKindCollisionContext,
 							visibleAliasTargets: normalized.visibleAliasTargets,
-							simplifiedRules: normalized.rules,
-							...(hoisted ? { hoisted: true } : {})
+							simplifiedRules: normalized.rules
 						})
 					);
 					break;
@@ -763,7 +762,7 @@ function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set
 	const ownedByKind = new Set<string>();
 	for (const node of nodes.values()) {
 		if (node instanceof AssembledSupertype || !node.factoryName) continue;
-		if (node instanceof AbstractAssembledCompound && node.hoisted) continue;
+		if (node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) ownedByKind.add(short);
 	}
@@ -782,7 +781,7 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	const phase2: AssembledNode[] = [];
 	for (const node of nodes.values()) {
 		if (!node.factoryName) continue;
-		if (node instanceof AbstractAssembledCompound && node.hoisted) continue;
+		if (node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) phase1.push(node);
 		else phase2.push(node);

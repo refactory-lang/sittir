@@ -28,7 +28,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 	const enumEntries: { kind: string; values: string[] }[] = [];
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if ((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList) {
+		if ((node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) || node instanceof AssembledList) {
 			nodeKinds.push(kind);
 		} else if (node instanceof AssembledPattern) {
 			leafKinds.push(kind);

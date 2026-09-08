@@ -7,11 +7,11 @@ describe('hoistedCensus', () => {
 			nodes: [
 				{
 					kind: 'parent',
-					hoisted: false,
+					annotations: {},
 					slots: [{ name: 'seat', values: [{ seat: { kind: '_parent_arm', shape: 'arm', mount: 'arm' } }] }]
 				},
-				{ kind: '_parent_arm', hoisted: true, slots: [] },
-				{ kind: '_orphan', hoisted: true, slots: [] }
+				{ kind: '_parent_arm', annotations: { hoisted: true }, slots: [] },
+				{ kind: '_orphan', annotations: { hoisted: true }, slots: [] }
 			]
 		};
 		expect(hoistedCensus(model)).toEqual({
@@ -22,7 +22,7 @@ describe('hoistedCensus', () => {
 	});
 
 	it('accepts a keyed node map', () => {
-		const model = { nodes: { a: { kind: 'a', hoisted: true }, b: { kind: 'b' } } };
+		const model = { nodes: { a: { kind: 'a', annotations: { hoisted: true } }, b: { kind: 'b' } } };
 		expect(hoistedCensus(model).hoisted).toEqual(['a']);
 	});
 

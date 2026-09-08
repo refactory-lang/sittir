@@ -70,7 +70,7 @@ function mockBranch(renderRule: Rule): AssembledBranch {
 }
 
 function mockGroup(renderRule: Rule, name = 'g', kind = name): AssembledBranch {
-	return { modelType: 'branch', hoisted: true, renderRule, name, kind } as unknown as AssembledBranch;
+	return { modelType: 'branch', annotations: { hoisted: true }, renderRule, name, kind } as unknown as AssembledBranch;
 }
 
 describe('emitBranchTemplate', () => {

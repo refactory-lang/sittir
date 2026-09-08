@@ -36,16 +36,16 @@ const root: Rule<'evaluate'> = {
 	]
 };
 
-describe('link hoistedKinds', () => {
+describe('link keeps the hoisted annotation on the rule', () => {
 	it('collects a hidden rule that carries the hoisted annotation', () => {
 		const linked = link(raw({ root, _g: { ...fielded, annotations: { hoisted: true } } }));
 
-		expect([...(linked.hoistedKinds ?? [])]).toEqual(['_g']);
+		expect(linked.rules['_g']?.annotations?.hoisted).toBe(true);
 	});
 
 	it('does not hoist a hidden sequence for carrying a field', () => {
 		const linked = link(raw({ root, _g: fielded }));
 
-		expect([...(linked.hoistedKinds ?? [])]).toEqual([]);
+		expect(linked.rules['_g']?.annotations?.hoisted).toBeUndefined();
 	});
 });

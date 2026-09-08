@@ -6556,11 +6556,15 @@ function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockComme
 }
 
 export function buildTokenTreePatternParen(
-	config: Partial<T.TokenTreePatternParen.Config> = {}
+	...children: (
+		| T.TokenTreePattern
+		| T.TokenRepetitionPattern
+		| T.TokenBindingPattern
+		| T.Metavariable
+		| T._NonSpecialToken
+	)[]
 ): T.TokenTreePatternParen.Built {
-	const _token_patterns = coerceMixedEnumStorage<
-		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken)[]
-	>(config.tokenPatterns ?? [], []);
+	const _token_patterns = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6569,8 +6573,15 @@ export function buildTokenTreePatternParen(
 				$named: true as const,
 				_token_patterns,
 				$with: {
-					tokenPatterns: (value?: NonNullable<T.TokenTreePatternParen.Config>['tokenPatterns']) =>
-						buildTokenTreePatternParen({ ...config, tokenPatterns: value })
+					tokenPatterns: (
+						...vs: (
+							| T.TokenTreePattern
+							| T.TokenRepetitionPattern
+							| T.TokenBindingPattern
+							| T.Metavariable
+							| T._NonSpecialToken
+						)[]
+					) => buildTokenTreePatternParen(...vs)
 				}
 			},
 			{
@@ -6582,11 +6593,15 @@ export function buildTokenTreePatternParen(
 }
 
 export function buildTokenTreePatternBracket(
-	config: Partial<T.TokenTreePatternBracket.Config> = {}
+	...children: (
+		| T.TokenTreePattern
+		| T.TokenRepetitionPattern
+		| T.TokenBindingPattern
+		| T.Metavariable
+		| T._NonSpecialToken
+	)[]
 ): T.TokenTreePatternBracket.Built {
-	const _token_patterns = coerceMixedEnumStorage<
-		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken)[]
-	>(config.tokenPatterns ?? [], []);
+	const _token_patterns = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6595,8 +6610,15 @@ export function buildTokenTreePatternBracket(
 				$named: true as const,
 				_token_patterns,
 				$with: {
-					tokenPatterns: (value?: NonNullable<T.TokenTreePatternBracket.Config>['tokenPatterns']) =>
-						buildTokenTreePatternBracket({ ...config, tokenPatterns: value })
+					tokenPatterns: (
+						...vs: (
+							| T.TokenTreePattern
+							| T.TokenRepetitionPattern
+							| T.TokenBindingPattern
+							| T.Metavariable
+							| T._NonSpecialToken
+						)[]
+					) => buildTokenTreePatternBracket(...vs)
 				}
 			},
 			{
@@ -6608,11 +6630,15 @@ export function buildTokenTreePatternBracket(
 }
 
 export function buildTokenTreePatternBrace(
-	config: Partial<T.TokenTreePatternBrace.Config> = {}
+	...children: (
+		| T.TokenTreePattern
+		| T.TokenRepetitionPattern
+		| T.TokenBindingPattern
+		| T.Metavariable
+		| T._NonSpecialToken
+	)[]
 ): T.TokenTreePatternBrace.Built {
-	const _token_patterns = coerceMixedEnumStorage<
-		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken)[]
-	>(config.tokenPatterns ?? [], []);
+	const _token_patterns = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6621,8 +6647,15 @@ export function buildTokenTreePatternBrace(
 				$named: true as const,
 				_token_patterns,
 				$with: {
-					tokenPatterns: (value?: NonNullable<T.TokenTreePatternBrace.Config>['tokenPatterns']) =>
-						buildTokenTreePatternBrace({ ...config, tokenPatterns: value })
+					tokenPatterns: (
+						...vs: (
+							| T.TokenTreePattern
+							| T.TokenRepetitionPattern
+							| T.TokenBindingPattern
+							| T.Metavariable
+							| T._NonSpecialToken
+						)[]
+					) => buildTokenTreePatternBrace(...vs)
 				}
 			},
 			{
@@ -6633,11 +6666,10 @@ export function buildTokenTreePatternBrace(
 	);
 }
 
-export function buildTokenTreeParen(config: Partial<T.TokenTreeParen.Config> = {}): T.TokenTreeParen.Built {
-	const _tokens = coerceMixedEnumStorage<(T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]>(
-		config.tokens ?? [],
-		[]
-	);
+export function buildTokenTreeParen(
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+): T.TokenTreeParen.Built {
+	const _tokens = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6646,8 +6678,8 @@ export function buildTokenTreeParen(config: Partial<T.TokenTreeParen.Config> = {
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (value?: NonNullable<T.TokenTreeParen.Config>['tokens']) =>
-						buildTokenTreeParen({ ...config, tokens: value })
+					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
+						buildTokenTreeParen(...vs)
 				}
 			},
 			{
@@ -6658,11 +6690,10 @@ export function buildTokenTreeParen(config: Partial<T.TokenTreeParen.Config> = {
 	);
 }
 
-export function buildTokenTreeBracket(config: Partial<T.TokenTreeBracket.Config> = {}): T.TokenTreeBracket.Built {
-	const _tokens = coerceMixedEnumStorage<(T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]>(
-		config.tokens ?? [],
-		[]
-	);
+export function buildTokenTreeBracket(
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+): T.TokenTreeBracket.Built {
+	const _tokens = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6671,8 +6702,8 @@ export function buildTokenTreeBracket(config: Partial<T.TokenTreeBracket.Config>
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (value?: NonNullable<T.TokenTreeBracket.Config>['tokens']) =>
-						buildTokenTreeBracket({ ...config, tokens: value })
+					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
+						buildTokenTreeBracket(...vs)
 				}
 			},
 			{
@@ -6683,11 +6714,10 @@ export function buildTokenTreeBracket(config: Partial<T.TokenTreeBracket.Config>
 	);
 }
 
-export function buildTokenTreeBrace(config: Partial<T.TokenTreeBrace.Config> = {}): T.TokenTreeBrace.Built {
-	const _tokens = coerceMixedEnumStorage<(T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]>(
-		config.tokens ?? [],
-		[]
-	);
+export function buildTokenTreeBrace(
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+): T.TokenTreeBrace.Built {
+	const _tokens = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6696,8 +6726,8 @@ export function buildTokenTreeBrace(config: Partial<T.TokenTreeBrace.Config> = {
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (value?: NonNullable<T.TokenTreeBrace.Config>['tokens']) =>
-						buildTokenTreeBrace({ ...config, tokens: value })
+					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
+						buildTokenTreeBrace(...vs)
 				}
 			},
 			{
@@ -6709,12 +6739,9 @@ export function buildTokenTreeBrace(config: Partial<T.TokenTreeBrace.Config> = {
 }
 
 export function buildDelimTokenTreeParen(
-	config: Partial<T.DelimTokenTreeParen.Config> = {}
+	...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeParen.Built {
-	const _delim_tokens = coerceMixedEnumStorage<(T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>(
-		config.delimTokens ?? [],
-		[['$', TSKindId.Dollar] as const]
-	);
+	const _delim_tokens = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6723,8 +6750,8 @@ export function buildDelimTokenTreeParen(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (value?: NonNullable<T.DelimTokenTreeParen.Config>['delimTokens']) =>
-						buildDelimTokenTreeParen({ ...config, delimTokens: value })
+					delimTokens: (...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+						buildDelimTokenTreeParen(...vs)
 				}
 			},
 			{
@@ -6736,12 +6763,9 @@ export function buildDelimTokenTreeParen(
 }
 
 export function buildDelimTokenTreeBracket(
-	config: Partial<T.DelimTokenTreeBracket.Config> = {}
+	...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeBracket.Built {
-	const _delim_tokens = coerceMixedEnumStorage<(T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>(
-		config.delimTokens ?? [],
-		[['$', TSKindId.Dollar] as const]
-	);
+	const _delim_tokens = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6750,8 +6774,8 @@ export function buildDelimTokenTreeBracket(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (value?: NonNullable<T.DelimTokenTreeBracket.Config>['delimTokens']) =>
-						buildDelimTokenTreeBracket({ ...config, delimTokens: value })
+					delimTokens: (...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+						buildDelimTokenTreeBracket(...vs)
 				}
 			},
 			{
@@ -6763,12 +6787,9 @@ export function buildDelimTokenTreeBracket(
 }
 
 export function buildDelimTokenTreeBrace(
-	config: Partial<T.DelimTokenTreeBrace.Config> = {}
+	...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeBrace.Built {
-	const _delim_tokens = coerceMixedEnumStorage<(T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]>(
-		config.delimTokens ?? [],
-		[['$', TSKindId.Dollar] as const]
-	);
+	const _delim_tokens = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6777,8 +6798,8 @@ export function buildDelimTokenTreeBrace(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (value?: NonNullable<T.DelimTokenTreeBrace.Config>['delimTokens']) =>
-						buildDelimTokenTreeBrace({ ...config, delimTokens: value })
+					delimTokens: (...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+						buildDelimTokenTreeBrace(...vs)
 				}
 			},
 			{

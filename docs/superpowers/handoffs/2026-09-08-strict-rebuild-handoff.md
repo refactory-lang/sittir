@@ -178,6 +178,21 @@ inseparable):
   hoisted declared groups (array-of-children route), because
   `classifyChildFactorySurface` still refuses a hoisted kind.
 
+**Hoisted is the annotation only** (uncommitted on top of bf9fa4214, user
+ruling 2026-09-08): `LinkedGrammar.hoistedKinds`, `NodeEnrichment`, the model's
+`hoisted` flag and the `emitGroup` split in the base emitters are deleted;
+`AssembledNodeBase.annotations` reads the rule's bag; `withKindFacts` merges
+the whole bag across every root rebuild (it was being lost for 19 kinds);
+`node-model.json5` carries `annotations` on every node, so the census counts
+leaves too: 69 / 41 / 26. Finding accepted by the user: seven raw factories
+(rust `buildTokenTree{Paren,Bracket,Brace}`, typescript
+`buildString{Double,Single}`, python `buildExceptClauseList`,
+`buildMatchBlockBlock`) move from config to spread — the hoisted branch in
+`classifyFactoryShape` had been the only thing making them config. The strict
+examples spell `ir.delimTokenTree.paren.strict(a, TSKindId.Comma, b)` and
+`ir.string.single.strict(fragment)`, and the generated-rebuild ceiling fell
+to rust 3 / typescript 0 / python 0.
+
 Next, in order for the remaining plan: Task 5 (elements seat), Task 6
 (node-model `seat`, census unseated → 0), Task 7 (validators by seat), Task 8
 (emitter spellings), Task 9. Before the commit: regen all

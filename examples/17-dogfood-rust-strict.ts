@@ -53,17 +53,15 @@ export function deriveStrict() {
 	return ir.attributeItem.strict(
 		ir.attribute.strict({
 			path: id('derive'),
-			arguments: ir.delimTokenTree.paren.strict({
-				delimTokens: [
-					id('Debug'),
-					TSKindId.Comma,
-					id('Clone'),
-					TSKindId.Comma,
-					id('PartialEq'),
-					TSKindId.Comma,
-					id('Eq'),
-				],
-			}),
+			arguments: ir.delimTokenTree.paren.strict(
+				id('Debug'),
+				TSKindId.Comma,
+				id('Clone'),
+				TSKindId.Comma,
+				id('PartialEq'),
+				TSKindId.Comma,
+				id('Eq'),
+			),
 		})
 	);
 }
@@ -120,7 +118,7 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 function writeCall(format: string) {
 	return ir.macroInvocation.strict({
 		macro: id('write'),
-		arguments: ir.delimTokenTree.paren.strict({ delimTokens: [id('f'), TSKindId.Comma, str(format)] }),
+		arguments: ir.delimTokenTree.paren.strict(id('f'), TSKindId.Comma, str(format)),
 	});
 }
 

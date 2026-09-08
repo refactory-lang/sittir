@@ -756,7 +756,33 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_tuple_expression_elements: TSKindId.TupleExpressionElements,
 	_impl_item_body: TSKindId.ImplItemBody,
 	_impl_item_positive_clause: TSKindId.ImplItemPositiveClause,
-	_impl_item_negative_clause: TSKindId.ImplItemNegativeClause
+	_impl_item_negative_clause: TSKindId.ImplItemNegativeClause,
+	_closure_expression_expr: TSKindId.ClosureExpressionExpr,
+	_visibility_modifier_pub: TSKindId.VisibilityModifierPub,
+	_visibility_modifier_in_path: TSKindId.VisibilityModifierInPath,
+	_function_type_trait_form: TSKindId.FunctionTypeTraitForm,
+	_function_type_fn_form: TSKindId.FunctionTypeFnForm,
+	_or_pattern_prefix: TSKindId.OrPatternPrefix,
+	_range_expression_postfix: TSKindId.RangeExpressionPostfix,
+	_range_expression_prefix: TSKindId.RangeExpressionPrefix,
+	_expression_statement_with_semi: TSKindId.ExpressionStatementWithSemi,
+	_match_arm_with_comma: TSKindId.MatchArmWithComma,
+	_line_comment_doc_outer: TSKindId.LineCommentDocOuter,
+	_line_comment_doc_inner: TSKindId.LineCommentDocInner,
+	_block_comment_doc_outer: TSKindId.BlockCommentDocOuter,
+	_block_comment_doc_inner: TSKindId.BlockCommentDocInner,
+	_token_tree_pattern_paren: TSKindId.TokenTreePatternParen,
+	_token_tree_pattern_bracket: TSKindId.TokenTreePatternBracket,
+	_token_tree_pattern_brace: TSKindId.TokenTreePatternBrace,
+	_token_tree_paren: TSKindId.TokenTreeParen,
+	_token_tree_bracket: TSKindId.TokenTreeBracket,
+	_token_tree_brace: TSKindId.TokenTreeBrace,
+	_delim_token_tree_paren: TSKindId.DelimTokenTreeParen,
+	_delim_token_tree_bracket: TSKindId.DelimTokenTreeBracket,
+	_delim_token_tree_brace: TSKindId.DelimTokenTreeBrace,
+	_macro_definition_paren: TSKindId.MacroDefinitionParen,
+	_macro_definition_bracket: TSKindId.MacroDefinitionBracket,
+	_macro_definition_brace: TSKindId.MacroDefinitionBrace
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -812,7 +838,22 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_visibility_modifier_group: '_visibility_modifier_in_path',
 	_tuple_type_elements: '_type',
 	_tuple_expression_elements: '_expression',
-	_impl_item_body: 'declaration_list'
+	_impl_item_body: 'declaration_list',
+	_closure_expression_expr: '_expression',
+	_visibility_modifier_pub: '_visibility_modifier_group',
+	_function_type_fn_form: 'function_modifiers',
+	_or_pattern_prefix: '_pattern',
+	_range_expression_postfix: '_expression',
+	_range_expression_prefix: '_expression',
+	_expression_statement_with_semi: '_expression',
+	_match_arm_with_comma: '_expression',
+	_line_comment_doc_outer: '_line_doc_content',
+	_line_comment_doc_inner: '_line_doc_content',
+	_block_comment_doc_outer: '_block_comment_content',
+	_block_comment_doc_inner: '_block_comment_content',
+	_macro_definition_paren: '_macro_rules',
+	_macro_definition_bracket: '_macro_rules',
+	_macro_definition_brace: '_macro_rules'
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -971,6 +1012,60 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildImplItemPositiveClause(children[0] as Parameters<typeof F.buildImplItemPositiveClause>[0]);
 		case '_impl_item_negative_clause':
 			return F.buildImplItemNegativeClause(children[0] as Parameters<typeof F.buildImplItemNegativeClause>[0]);
+		case '_closure_expression_expr':
+			return F.buildClosureExpressionExpr(children[0] as Parameters<typeof F.buildClosureExpressionExpr>[0]);
+		case '_visibility_modifier_pub':
+			return F.buildVisibilityModifierPub(children[0] as Parameters<typeof F.buildVisibilityModifierPub>[0]);
+		case '_visibility_modifier_in_path':
+			return F.buildVisibilityModifierInPath(children[0] as Parameters<typeof F.buildVisibilityModifierInPath>[0]);
+		case '_function_type_trait_form':
+			return F.buildFunctionTypeTraitForm(children[0] as Parameters<typeof F.buildFunctionTypeTraitForm>[0]);
+		case '_function_type_fn_form':
+			return F.buildFunctionTypeFnForm(children[0] as Parameters<typeof F.buildFunctionTypeFnForm>[0]);
+		case '_or_pattern_prefix':
+			return F.buildOrPatternPrefix(children[0] as Parameters<typeof F.buildOrPatternPrefix>[0]);
+		case '_range_expression_postfix':
+			return F.buildRangeExpressionPostfix(children[0] as Parameters<typeof F.buildRangeExpressionPostfix>[0]);
+		case '_range_expression_prefix':
+			return F.buildRangeExpressionPrefix(children[0] as Parameters<typeof F.buildRangeExpressionPrefix>[0]);
+		case '_expression_statement_with_semi':
+			return F.buildExpressionStatementWithSemi(
+				children[0] as Parameters<typeof F.buildExpressionStatementWithSemi>[0]
+			);
+		case '_match_arm_with_comma':
+			return F.buildMatchArmWithComma(children[0] as Parameters<typeof F.buildMatchArmWithComma>[0]);
+		case '_line_comment_doc_outer':
+			return F.buildLineCommentDocOuter(children[0] as Parameters<typeof F.buildLineCommentDocOuter>[0]);
+		case '_line_comment_doc_inner':
+			return F.buildLineCommentDocInner(children[0] as Parameters<typeof F.buildLineCommentDocInner>[0]);
+		case '_block_comment_doc_outer':
+			return F.buildBlockCommentDocOuter(children[0] as Parameters<typeof F.buildBlockCommentDocOuter>[0]);
+		case '_block_comment_doc_inner':
+			return F.buildBlockCommentDocInner(children[0] as Parameters<typeof F.buildBlockCommentDocInner>[0]);
+		case '_token_tree_pattern_paren':
+			return F.buildTokenTreePatternParen(...(children as Parameters<typeof F.buildTokenTreePatternParen>));
+		case '_token_tree_pattern_bracket':
+			return F.buildTokenTreePatternBracket(...(children as Parameters<typeof F.buildTokenTreePatternBracket>));
+		case '_token_tree_pattern_brace':
+			return F.buildTokenTreePatternBrace(...(children as Parameters<typeof F.buildTokenTreePatternBrace>));
+		case '_token_tree_paren':
+			return F.buildTokenTreeParen(...(children as Parameters<typeof F.buildTokenTreeParen>));
+		case '_token_tree_bracket':
+			return F.buildTokenTreeBracket(...(children as Parameters<typeof F.buildTokenTreeBracket>));
+		case '_token_tree_brace':
+			return F.buildTokenTreeBrace(...(children as Parameters<typeof F.buildTokenTreeBrace>));
+		case '_delim_token_tree_paren':
+			return F.buildDelimTokenTreeParen(...(children as Parameters<typeof F.buildDelimTokenTreeParen>));
+		case '_delim_token_tree_bracket':
+			return F.buildDelimTokenTreeBracket(...(children as Parameters<typeof F.buildDelimTokenTreeBracket>));
+		case '_delim_token_tree_brace':
+			return F.buildDelimTokenTreeBrace(...(children as Parameters<typeof F.buildDelimTokenTreeBrace>));
+		case '_macro_definition_paren':
+			return F.buildMacroDefinitionParen(children[0] as Parameters<typeof F.buildMacroDefinitionParen>[0]);
+		case '_macro_definition_bracket':
+			return F.buildMacroDefinitionBracket(children[0] as Parameters<typeof F.buildMacroDefinitionBracket>[0]);
+		case '_macro_definition_brace':
+			return F.buildMacroDefinitionBrace(children[0] as Parameters<typeof F.buildMacroDefinitionBrace>[0]);
 		default:
 			return undefined;
 	}
@@ -1587,29 +1682,14 @@ const _K75: readonly string[] = [
 	'boolean_literal',
 	'integer_literal',
 	'float_literal',
-	'identifier',
-	'mutable_specifier',
-	'self',
-	'super',
-	'crate',
-	'_primitive_type',
-	'_token_tree_punctuation',
-	'_token_keywords'
-];
-const _K76: readonly string[] = ['string_literal', 'raw_string_literal', 'delim_token_tree'];
-const _K77: readonly string[] = [
-	'char_literal',
-	'boolean_literal',
-	'integer_literal',
-	'float_literal',
 	'self',
 	'identifier',
 	'metavariable',
 	'super',
 	'crate'
 ];
-const _K78: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
-const _K79: readonly string[] = [
+const _K76: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
+const _K77: readonly string[] = [
 	'parameter',
 	'self_parameter',
 	'variadic_parameter',
@@ -1626,9 +1706,9 @@ const _K79: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K80: readonly string[] = ['metavariable'];
-const _K81: readonly string[] = ['type_parameter', 'lifetime_parameter', 'const_parameter'];
-const _K82: readonly string[] = [
+const _K78: readonly string[] = ['metavariable'];
+const _K79: readonly string[] = ['type_parameter', 'lifetime_parameter', 'const_parameter'];
+const _K80: readonly string[] = [
 	'metavariable',
 	'unit_type',
 	'identifier',
@@ -1639,7 +1719,7 @@ const _K82: readonly string[] = [
 	'integer_literal',
 	'float_literal'
 ];
-const _K83: readonly string[] = [
+const _K81: readonly string[] = [
 	'abstract_type',
 	'reference_type',
 	'pointer_type',
@@ -7057,187 +7137,328 @@ export function coerceToBlockCommentDocInner(
 	);
 }
 
-export function resolveTokenTreePatternParen_tokenPatterns(
-	value: T.TokenTreePatternParen.LooseConfig['tokenPatterns']
-): T.TokenTreePatternParen['_token_patterns'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveMany<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-			>(value, _K6, _K7)
-		),
-		[]
-	);
-}
-
 export function coerceToTokenTreePatternParen(
-	input?: T.TokenTreePatternParen.Loose
+	...input: readonly (
+		| T.TokenTreePatternParen.Loose
+		| LooseValue<
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
 ): ReturnType<typeof F.buildTokenTreePatternParen> {
-	if (!_isLooseConfig<T.TokenTreePatternParen.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildTokenTreePatternParen>;
-	return F.buildTokenTreePatternParen({
-		tokenPatterns: resolveTokenTreePatternParen_tokenPatterns(input?.tokenPatterns)
-	});
-}
-
-export function resolveTokenTreePatternBracket_tokenPatterns(
-	value: T.TokenTreePatternBracket.LooseConfig['tokenPatterns']
-): T.TokenTreePatternBracket['_token_patterns'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveMany<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-			>(value, _K6, _K7)
-		),
-		[]
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenTreePatternParen) {
+		const data = input[0];
+		const stored = (data as unknown as { _token_patterns?: unknown })._token_patterns;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTokenTreePatternParen(
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+					>(children, _K6, _K7)
+				),
+				[]
+			) as unknown as Parameters<typeof F.buildTokenTreePatternParen>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('tokenPatterns' in head)) return input;
+		const v = (head as Record<string, unknown>)['tokenPatterns'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildTokenTreePatternParen(
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+				>(_elems, _K6, _K7)
+			),
+			[]
+		) as unknown as Parameters<typeof F.buildTokenTreePatternParen>)
 	);
 }
 
 export function coerceToTokenTreePatternBracket(
-	input?: T.TokenTreePatternBracket.Loose
+	...input: readonly (
+		| T.TokenTreePatternBracket.Loose
+		| LooseValue<
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
 ): ReturnType<typeof F.buildTokenTreePatternBracket> {
-	if (!_isLooseConfig<T.TokenTreePatternBracket.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildTokenTreePatternBracket>;
-	return F.buildTokenTreePatternBracket({
-		tokenPatterns: resolveTokenTreePatternBracket_tokenPatterns(input?.tokenPatterns)
-	});
-}
-
-export function resolveTokenTreePatternBrace_tokenPatterns(
-	value: T.TokenTreePatternBrace.LooseConfig['tokenPatterns']
-): T.TokenTreePatternBrace['_token_patterns'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveMany<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-			>(value, _K6, _K7)
-		),
-		[]
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenTreePatternBracket) {
+		const data = input[0];
+		const stored = (data as unknown as { _token_patterns?: unknown })._token_patterns;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTokenTreePatternBracket(
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+					>(children, _K6, _K7)
+				),
+				[]
+			) as unknown as Parameters<typeof F.buildTokenTreePatternBracket>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('tokenPatterns' in head)) return input;
+		const v = (head as Record<string, unknown>)['tokenPatterns'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildTokenTreePatternBracket(
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+				>(_elems, _K6, _K7)
+			),
+			[]
+		) as unknown as Parameters<typeof F.buildTokenTreePatternBracket>)
 	);
 }
 
 export function coerceToTokenTreePatternBrace(
-	input?: T.TokenTreePatternBrace.Loose
+	...input: readonly (
+		| T.TokenTreePatternBrace.Loose
+		| LooseValue<
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
 ): ReturnType<typeof F.buildTokenTreePatternBrace> {
-	if (!_isLooseConfig<T.TokenTreePatternBrace.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildTokenTreePatternBrace>;
-	return F.buildTokenTreePatternBrace({
-		tokenPatterns: resolveTokenTreePatternBrace_tokenPatterns(input?.tokenPatterns)
-	});
-}
-
-export function resolveTokenTreeParen_tokens(
-	value: T.TokenTreeParen.LooseConfig['tokens']
-): T.TokenTreeParen['_tokens'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(value, _K6, _K9)
-		),
-		[]
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenTreePatternBrace) {
+		const data = input[0];
+		const stored = (data as unknown as { _token_patterns?: unknown })._token_patterns;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTokenTreePatternBrace(
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+					>(children, _K6, _K7)
+				),
+				[]
+			) as unknown as Parameters<typeof F.buildTokenTreePatternBrace>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('tokenPatterns' in head)) return input;
+		const v = (head as Record<string, unknown>)['tokenPatterns'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildTokenTreePatternBrace(
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+				>(_elems, _K6, _K7)
+			),
+			[]
+		) as unknown as Parameters<typeof F.buildTokenTreePatternBrace>)
 	);
 }
 
-export function coerceToTokenTreeParen(input?: T.TokenTreeParen.Loose): ReturnType<typeof F.buildTokenTreeParen> {
-	if (!_isLooseConfig<T.TokenTreeParen.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildTokenTreeParen>;
-	return F.buildTokenTreeParen({
-		tokens: resolveTokenTreeParen_tokens(input?.tokens)
-	});
-}
-
-export function resolveTokenTreeBracket_tokens(
-	value: T.TokenTreeBracket.LooseConfig['tokens']
-): T.TokenTreeBracket['_tokens'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(value, _K6, _K9)
-		),
-		[]
+export function coerceToTokenTreeParen(
+	...input: readonly (
+		| T.TokenTreeParen.Loose
+		| LooseValue<
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreeParen> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenTreeParen) {
+		const data = input[0];
+		const stored = (data as unknown as { _tokens?: unknown })._tokens;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTokenTreeParen(
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K6, _K9)
+				),
+				[]
+			) as unknown as Parameters<typeof F.buildTokenTreeParen>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('tokens' in head)) return input;
+		const v = (head as Record<string, unknown>)['tokens'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildTokenTreeParen(
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K6, _K9)
+			),
+			[]
+		) as unknown as Parameters<typeof F.buildTokenTreeParen>)
 	);
 }
 
-export function coerceToTokenTreeBracket(input?: T.TokenTreeBracket.Loose): ReturnType<typeof F.buildTokenTreeBracket> {
-	if (!_isLooseConfig<T.TokenTreeBracket.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildTokenTreeBracket>;
-	return F.buildTokenTreeBracket({
-		tokens: resolveTokenTreeBracket_tokens(input?.tokens)
-	});
-}
-
-export function resolveTokenTreeBrace_tokens(
-	value: T.TokenTreeBrace.LooseConfig['tokens']
-): T.TokenTreeBrace['_tokens'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(value, _K6, _K9)
-		),
-		[]
+export function coerceToTokenTreeBracket(
+	...input: readonly (
+		| T.TokenTreeBracket.Loose
+		| LooseValue<
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreeBracket> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenTreeBracket) {
+		const data = input[0];
+		const stored = (data as unknown as { _tokens?: unknown })._tokens;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTokenTreeBracket(
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K6, _K9)
+				),
+				[]
+			) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('tokens' in head)) return input;
+		const v = (head as Record<string, unknown>)['tokens'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildTokenTreeBracket(
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K6, _K9)
+			),
+			[]
+		) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
 	);
 }
 
-export function coerceToTokenTreeBrace(input?: T.TokenTreeBrace.Loose): ReturnType<typeof F.buildTokenTreeBrace> {
-	if (!_isLooseConfig<T.TokenTreeBrace.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildTokenTreeBrace>;
-	return F.buildTokenTreeBrace({
-		tokens: resolveTokenTreeBrace_tokens(input?.tokens)
-	});
-}
-
-export function resolveDelimTokenTreeParen_delimTokens(
-	value: T.DelimTokenTreeParen.LooseConfig['delimTokens']
-): T.DelimTokenTreeParen['_delim_tokens'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(value, _K75, _K76)),
-		[['$', TSKindId.Dollar] as const]
+export function coerceToTokenTreeBrace(
+	...input: readonly (
+		| T.TokenTreeBrace.Loose
+		| LooseValue<
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+				T.LeafScalarMap,
+				T.LeafStringMap,
+				T.NamespaceMap
+		  >
+	)[]
+): ReturnType<typeof F.buildTokenTreeBrace> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenTreeBrace) {
+		const data = input[0];
+		const stored = (data as unknown as { _tokens?: unknown })._tokens;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildTokenTreeBrace(
+			...(coerceMixedEnumStorage(
+				_resolveKindEnum(children, () =>
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K6, _K9)
+				),
+				[]
+			) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('tokens' in head)) return input;
+		const v = (head as Record<string, unknown>)['tokens'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildTokenTreeBrace(
+		...(coerceMixedEnumStorage(
+			_resolveKindEnum(_elems, () =>
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K6, _K9)
+			),
+			[]
+		) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
 	);
 }
 
 export function coerceToDelimTokenTreeParen(
-	input?: T.DelimTokenTreeParen.Loose
+	...input: readonly (
+		| T.DelimTokenTreeParen.Loose
+		| LooseValue<T._NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildDelimTokenTreeParen> {
-	if (!_isLooseConfig<T.DelimTokenTreeParen.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildDelimTokenTreeParen>;
-	return F.buildDelimTokenTreeParen({
-		delimTokens: resolveDelimTokenTreeParen_delimTokens(input?.delimTokens)
-	});
-}
-
-export function resolveDelimTokenTreeBracket_delimTokens(
-	value: T.DelimTokenTreeBracket.LooseConfig['delimTokens']
-): T.DelimTokenTreeBracket['_delim_tokens'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(value, _K75, _K76)),
-		[['$', TSKindId.Dollar] as const]
-	);
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DelimTokenTreeParen) {
+		const data = input[0];
+		const stored = (data as unknown as { _delim_tokens?: unknown })._delim_tokens;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildDelimTokenTreeParen(...(children as unknown as Parameters<typeof F.buildDelimTokenTreeParen>));
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('delimTokens' in head)) return input;
+		const v = (head as Record<string, unknown>)['delimTokens'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildDelimTokenTreeParen(...(_elems as unknown as Parameters<typeof F.buildDelimTokenTreeParen>));
 }
 
 export function coerceToDelimTokenTreeBracket(
-	input?: T.DelimTokenTreeBracket.Loose
+	...input: readonly (
+		| T.DelimTokenTreeBracket.Loose
+		| LooseValue<T._NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildDelimTokenTreeBracket> {
-	if (!_isLooseConfig<T.DelimTokenTreeBracket.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildDelimTokenTreeBracket>;
-	return F.buildDelimTokenTreeBracket({
-		delimTokens: resolveDelimTokenTreeBracket_delimTokens(input?.delimTokens)
-	});
-}
-
-export function resolveDelimTokenTreeBrace_delimTokens(
-	value: T.DelimTokenTreeBrace.LooseConfig['delimTokens']
-): T.DelimTokenTreeBrace['_delim_tokens'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(value, _K75, _K76)),
-		[['$', TSKindId.Dollar] as const]
-	);
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DelimTokenTreeBracket) {
+		const data = input[0];
+		const stored = (data as unknown as { _delim_tokens?: unknown })._delim_tokens;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildDelimTokenTreeBracket(...(children as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>));
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('delimTokens' in head)) return input;
+		const v = (head as Record<string, unknown>)['delimTokens'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildDelimTokenTreeBracket(...(_elems as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>));
 }
 
 export function coerceToDelimTokenTreeBrace(
-	input?: T.DelimTokenTreeBrace.Loose
+	...input: readonly (
+		| T.DelimTokenTreeBrace.Loose
+		| LooseValue<T._NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	)[]
 ): ReturnType<typeof F.buildDelimTokenTreeBrace> {
-	if (!_isLooseConfig<T.DelimTokenTreeBrace.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildDelimTokenTreeBrace>;
-	return F.buildDelimTokenTreeBrace({
-		delimTokens: resolveDelimTokenTreeBrace_delimTokens(input?.delimTokens)
-	});
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DelimTokenTreeBrace) {
+		const data = input[0];
+		const stored = (data as unknown as { _delim_tokens?: unknown })._delim_tokens;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildDelimTokenTreeBrace(...(children as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>));
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('delimTokens' in head)) return input;
+		const v = (head as Record<string, unknown>)['delimTokens'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildDelimTokenTreeBrace(...(_elems as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>));
 }
 
 export function resolveFieldPatternNamed_name(
@@ -7345,8 +7566,8 @@ export function resolveRangePatternPrefix_right(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K77,
-				_K78
+				_K75,
+				_K76
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7380,8 +7601,8 @@ export function resolveRangePatternLeftWithRight_right(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K77,
-				_K78
+				_K75,
+				_K76
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7410,8 +7631,8 @@ export function resolveRangePatternWithLeft_left(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K77,
-				_K78
+				_K75,
+				_K76
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7545,7 +7766,7 @@ export function resolveAttributedParameter_content(
 ): T.AttributedParameter['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type>(value, _K17, _K79)
+			_resolveOne<T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type>(value, _K17, _K77)
 		),
 		[['_', TSKindId.Anonymous] as const]
 	);
@@ -7571,7 +7792,7 @@ export function resolveAttributedTypeParameter_attributeItems(
 export function resolveAttributedTypeParameter_content(
 	value: T.AttributedTypeParameter.LooseConfig['content']
 ): T.AttributedTypeParameter['_content'] {
-	return _resolveOne<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(value, _K80, _K81);
+	return _resolveOne<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(value, _K78, _K79);
 }
 
 export function coerceToAttributedTypeParameter(
@@ -7655,7 +7876,7 @@ export function coerceToAttributedOrderedField(
 export function resolveTypeArgument_content(value: T.TypeArgument.LooseConfig['content']): T.TypeArgument['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>(value, _K82, _K83)
+			_resolveOne<T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>(value, _K80, _K81)
 		),
 		[]
 	);

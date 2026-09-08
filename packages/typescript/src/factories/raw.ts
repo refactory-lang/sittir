@@ -6671,8 +6671,10 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 	);
 }
 
-export function buildStringDouble(config: Partial<T.StringDouble.Config> = {}): T.StringDouble.Built {
-	const _elements = config.elements ?? [];
+export function buildStringDouble(
+	...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]
+): T.StringDouble.Built {
+	const _elements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6680,10 +6682,7 @@ export function buildStringDouble(config: Partial<T.StringDouble.Config> = {}): 
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: {
-					elements: (...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) =>
-						buildStringDouble({ ...config, elements: values })
-				}
+				$with: { elements: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => buildStringDouble(...vs) }
 			},
 			{
 				elements: () => _elements
@@ -6693,8 +6692,10 @@ export function buildStringDouble(config: Partial<T.StringDouble.Config> = {}): 
 	);
 }
 
-export function buildStringSingle(config: Partial<T.StringSingle.Config> = {}): T.StringSingle.Built {
-	const _elements = config.elements ?? [];
+export function buildStringSingle(
+	...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]
+): T.StringSingle.Built {
+	const _elements = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -6702,10 +6703,7 @@ export function buildStringSingle(config: Partial<T.StringSingle.Config> = {}): 
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: {
-					elements: (...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) =>
-						buildStringSingle({ ...config, elements: values })
-				}
+				$with: { elements: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => buildStringSingle(...vs) }
 			},
 			{
 				elements: () => _elements

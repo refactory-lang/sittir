@@ -30,7 +30,7 @@ interface FlavorRefs {
 type CoerceEmitted = (node: AssembledNode) => boolean;
 
 function isHoistedCompound(node: AssembledNode): boolean {
-	return node instanceof AbstractAssembledCompound && node.hoisted;
+	return node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true;
 }
 
 function parentRefs(node: AssembledNode, coerceEmitted: CoerceEmitted): FlavorRefs {

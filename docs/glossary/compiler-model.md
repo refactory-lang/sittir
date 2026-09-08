@@ -2184,6 +2184,18 @@ can't be unified.
 	 */
 ```
 
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.annotations`
+
+The declarations stamped on the node's rule (`hoisted`, `variant`,
+`variantOf`, `default`, `preference`), read straight off the rule. This is
+the only representation of "hoisted": there is no model flag and no grammar
+set, so a base emitter cannot branch on hoisting by accident — the readers
+are the overlays (seating), the surface exclusions (bundle / `ir` / `is` /
+consts / generated tests, `irKey` phases) and the node model, which passes
+the bag through to the tools. `withKindFacts` keeps the bag on a root that
+a pass rebuilds.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.diagnosticRule`
 
 ```text
@@ -2652,15 +2664,6 @@ can't be unified.
  *  out the SUPERTYPE-body and list-shaped cases, which construct
  *  `AssembledSupertype`/`AssembledList` directly instead. */
 ```
-
-### `packages/codegen/src/compiler/model/node-map.ts::NodeEnrichment`
-
-`hoisted: true` is the only enrichment fact: the kind is a form of its parent
-(link's `hoistedKinds`, collected from the `annotations.hoisted` each minting
-route stamps). Only a compound carries it: an all-text hoisted arm keeps its
-token / pattern class and its seat is the parent's slot. A form carries no separate name, detect token, or
-parent pointer — the parent reaches it through the arm the sub-factory
-derivation names (`kindArmName`), and its factory emits its own kind.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.hoisted`
 

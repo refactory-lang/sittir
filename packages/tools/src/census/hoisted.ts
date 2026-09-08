@@ -16,7 +16,7 @@ interface CensusSlot {
 
 interface CensusNode {
 	readonly kind: string;
-	readonly hoisted?: boolean;
+	readonly annotations?: { readonly hoisted?: true };
 	readonly slots?: readonly CensusSlot[];
 }
 
@@ -27,7 +27,7 @@ export interface CensusModel {
 export function hoistedCensus(model: CensusModel): HoistedCensus {
 	const nodes = Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes);
 	const hoisted = nodes
-		.filter((n) => n.hoisted === true)
+		.filter((n) => n.annotations?.hoisted === true)
 		.map((n) => n.kind)
 		.sort();
 	const seatedSet = new Set<string>();

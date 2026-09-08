@@ -138,7 +138,7 @@ function emitBranchTest(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.hoisted) return;
+	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.annotations?.hoisted === true) return;
 	if (testConstructsWithChildren(node, nodeMap)) {
 		emitChildrenTest(lines, node, kind, key, kindEntries, nodeMap);
 		return;

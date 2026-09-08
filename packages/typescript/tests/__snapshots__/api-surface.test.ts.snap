@@ -683,8 +683,6 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "resolveSpreadElement_expression": "function",
   "resolveStatementBlock_automaticSemicolon": "function",
   "resolveStatementBlock_statements": "function",
-  "resolveStringDouble_elements": "function",
-  "resolveStringSingle_elements": "function",
   "resolveString_content": "function",
   "resolveSubscriptExpression_index": "function",
   "resolveSubscriptExpression_object": "function",

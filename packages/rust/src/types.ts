@@ -18217,17 +18217,34 @@ export namespace TokenTreePatternParen {
 		readonly $named: true;
 		readonly $with: {
 			tokenPatterns(
-				value?: NonNullable<T.TokenTreePatternParen.Config>['tokenPatterns']
+				...vs: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T._NonSpecialToken
+				)[]
 			): T.TokenTreePatternParen.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreePatternParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreePatternParen>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.TokenTreePatternParen>>];
+	export type BuildArgs = [
+		...children: (
+			| T.TokenTreePattern
+			| T.TokenRepetitionPattern
+			| T.TokenBindingPattern
+			| T.Metavariable
+			| T._NonSpecialToken
+		)[]
+	];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.TokenTreePatternParen, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TokenTreePatternParen
+		...children: LooseValue<
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TokenTreePatternParen>;
 	export type Kind = '_token_tree_pattern_paren';
@@ -18239,17 +18256,34 @@ export namespace TokenTreePatternBracket {
 		readonly $named: true;
 		readonly $with: {
 			tokenPatterns(
-				value?: NonNullable<T.TokenTreePatternBracket.Config>['tokenPatterns']
+				...vs: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T._NonSpecialToken
+				)[]
 			): T.TokenTreePatternBracket.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreePatternBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreePatternBracket>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.TokenTreePatternBracket>>];
+	export type BuildArgs = [
+		...children: (
+			| T.TokenTreePattern
+			| T.TokenRepetitionPattern
+			| T.TokenBindingPattern
+			| T.Metavariable
+			| T._NonSpecialToken
+		)[]
+	];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.TokenTreePatternBracket, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TokenTreePatternBracket
+		...children: LooseValue<
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TokenTreePatternBracket>;
 	export type Kind = '_token_tree_pattern_bracket';
@@ -18261,17 +18295,34 @@ export namespace TokenTreePatternBrace {
 		readonly $named: true;
 		readonly $with: {
 			tokenPatterns(
-				value?: NonNullable<T.TokenTreePatternBrace.Config>['tokenPatterns']
+				...vs: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T._NonSpecialToken
+				)[]
 			): T.TokenTreePatternBrace.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreePatternBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreePatternBrace>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.TokenTreePatternBrace>>];
+	export type BuildArgs = [
+		...children: (
+			| T.TokenTreePattern
+			| T.TokenRepetitionPattern
+			| T.TokenBindingPattern
+			| T.Metavariable
+			| T._NonSpecialToken
+		)[]
+	];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.TokenTreePatternBrace, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TokenTreePatternBrace
+		...children: LooseValue<
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TokenTreePatternBrace>;
 	export type Kind = '_token_tree_pattern_brace';
@@ -18282,14 +18333,19 @@ export namespace TokenTreeParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(value?: NonNullable<T.TokenTreeParen.Config>['tokens']): T.TokenTreeParen.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): T.TokenTreeParen.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeParen>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.TokenTreeParen>>];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.TokenTreeParen, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TokenTreeParen
+		...children: LooseValue<
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TokenTreeParen>;
 	export type Kind = '_token_tree_paren';
@@ -18300,16 +18356,21 @@ export namespace TokenTreeBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(value?: NonNullable<T.TokenTreeBracket.Config>['tokens']): T.TokenTreeBracket.Built;
+			tokens(
+				...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+			): T.TokenTreeBracket.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeBracket>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.TokenTreeBracket>>];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.TokenTreeBracket, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TokenTreeBracket
+		...children: LooseValue<
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TokenTreeBracket>;
 	export type Kind = '_token_tree_bracket';
@@ -18320,14 +18381,19 @@ export namespace TokenTreeBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(value?: NonNullable<T.TokenTreeBrace.Config>['tokens']): T.TokenTreeBrace.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): T.TokenTreeBrace.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeBrace>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.TokenTreeBrace>>];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.TokenTreeBrace, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TokenTreeBrace
+		...children: LooseValue<
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TokenTreeBrace>;
 	export type Kind = '_token_tree_brace';
@@ -18338,16 +18404,19 @@ export namespace DelimTokenTreeParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(value?: NonNullable<T.DelimTokenTreeParen.Config>['delimTokens']): T.DelimTokenTreeParen.Built;
+			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeParen.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeParen>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.DelimTokenTreeParen>>];
+	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.DelimTokenTreeParen, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.DelimTokenTreeParen
+		...children: LooseValue<
+			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.DelimTokenTreeParen>;
 	export type Kind = '_delim_token_tree_paren';
@@ -18358,16 +18427,19 @@ export namespace DelimTokenTreeBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(value?: NonNullable<T.DelimTokenTreeBracket.Config>['delimTokens']): T.DelimTokenTreeBracket.Built;
+			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBracket.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBracket>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.DelimTokenTreeBracket>>];
+	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.DelimTokenTreeBracket, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.DelimTokenTreeBracket
+		...children: LooseValue<
+			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.DelimTokenTreeBracket>;
 	export type Kind = '_delim_token_tree_bracket';
@@ -18378,16 +18450,19 @@ export namespace DelimTokenTreeBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(value?: NonNullable<T.DelimTokenTreeBrace.Config>['delimTokens']): T.DelimTokenTreeBrace.Built;
+			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBrace.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBrace>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.DelimTokenTreeBrace>>];
+	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.DelimTokenTreeBrace, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.DelimTokenTreeBrace
+		...children: LooseValue<
+			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.DelimTokenTreeBrace>;
 	export type Kind = '_delim_token_tree_brace';

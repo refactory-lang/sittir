@@ -110,7 +110,6 @@ export function pushAttrsToLeaves(
 export interface InlineRefsCtx {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly inlineKinds?: ReadonlySet<string>;
-	readonly hoistedKinds?: ReadonlySet<string>;
 }
 
 const EMPTY_INLINE_KINDS: ReadonlySet<string> = new Set();
@@ -172,7 +171,7 @@ export function resolveGroupOrMultiInlineTarget(ref: { readonly name: string }, 
 	const targetMultiplicity = (target as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
 	const isMulti =
 		extractRepeatShape(target) !== null || targetMultiplicity === 'array' || targetMultiplicity === 'nonEmptyArray';
-	return ctx.hoistedKinds?.has(ref.name) === true || isMulti ? target : null;
+	return target.annotations?.hoisted === true || isMulti ? target : null;
 }
 
 function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {

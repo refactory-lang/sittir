@@ -68,6 +68,12 @@ function collectSymbolNames(rule: Rule, out: string[] = []): string[] {
 // Core fix: optional group-lift ref is inlined, repeat stays
 // ---------------------------------------------------------------------------
 
+function withHoisted<R extends { annotations?: object }>(rules: Record<string, R>, kind: string): Record<string, R> {
+	const rule = rules[kind];
+	if (rule === undefined) throw new Error(`withHoisted: no rule '${kind}'`);
+	return { ...rules, [kind]: { ...rule, annotations: { ...rule.annotations, hoisted: true } } };
+}
+
 describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 	it('optional group-lift ref is replaced by its seq content', () => {
 		// Simulates const_item: parent has a `_const_item_optional1` ref with
@@ -124,7 +130,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
-				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_const_item_optional1']) },
+				grammar: makeNormalizedGrammar(withHoisted(normalizedRules, '_const_item_optional1')),
 				diagnostics: new DiagnosticSink()
 			})
 		);
@@ -173,7 +179,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
-				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_type_arguments_repeat1']) },
+				grammar: makeNormalizedGrammar(withHoisted(normalizedRules, '_type_arguments_repeat1')),
 				diagnostics: new DiagnosticSink()
 			})
 		);
@@ -216,7 +222,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const normalizedRules = flattenRules(inputRules);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
-				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_parent_group1']) },
+				grammar: makeNormalizedGrammar(withHoisted(normalizedRules, '_parent_group1')),
 				diagnostics: new DiagnosticSink()
 			})
 		);
@@ -271,7 +277,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const inlineKinds = new Set(['_let_declaration_optional1']);
 		const simplified = computeSimplifiedRules(
 			new SimplifyCtx({
-				grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: new Set(['_let_declaration_optional1']) },
+				grammar: makeNormalizedGrammar(withHoisted(normalizedRules, '_let_declaration_optional1')),
 				inlineKinds,
 				diagnostics: new DiagnosticSink()
 			})

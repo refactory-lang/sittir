@@ -96,7 +96,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if (!sub.rawFactoryName) continue;
 			if (
 				sub instanceof AssembledSupertype ||
-				(sub instanceof AbstractAssembledCompound && sub.hoisted) ||
+				(sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted === true) ||
 				sub instanceof AssembledToken
 			)
 				continue;
@@ -151,7 +151,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		const isStructuralFactory =
-			(node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList;
+			(node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) || node instanceof AssembledList;
 		const isLeafFactoryNode = node instanceof AssembledKeyword || node instanceof AssembledPattern;
 		if (!isStructuralFactory && !isLeafFactoryNode) {
 			continue;
@@ -172,7 +172,7 @@ export function emitIr(config: EmitIrConfig): string {
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
 			let bundle: string | undefined;
-			if ((sub instanceof AbstractAssembledCompound && !sub.hoisted) || sub instanceof AssembledList) {
+			if ((sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted !== true) || sub instanceof AssembledList) {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleRef(sub);
 			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern) {

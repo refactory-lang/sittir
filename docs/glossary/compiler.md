@@ -7377,13 +7377,12 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
 
-`hoistedKinds` is the set of hidden kinds that are forms of their parent — the
-rules a sittir route minted and stamped `annotations.hoisted` on — collected
-once by link and copied unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`,
-exactly as `supertypes` is. It replaced the GROUP wrapper node: a per-kind fact
-carried on the grammar cannot be dropped by a pass that rebuilds the rule.
-Readers: normalize's inline gate, simplify's `inlineRefs`, and assemble's
-`hoisted` stamp.
+There is no hoisted set on the grammar: the fact is the rule's
+`annotations.hoisted`, stamped by the minting route, and `withKindFacts`
+keeps the bag on a root that any pass rebuilds. Readers take it off the rule
+they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
+`classifyNode`'s list peel — and the model exposes it as
+`AssembledNodeBase.annotations`.
 
 ### `packages/codegen/src/compiler/types.ts::NormalizedGrammar`
 
@@ -9675,17 +9674,14 @@ source, one derivation.
 ```
 
 A hidden rule whose `annotations.hoisted` is stamped is a hoisted form of the
-kind that references it: the name is added to `LinkCtx.hoistedKinds` and the
-rule itself is left untouched. The stamp is declared by the route that minted
+kind that references it; the rule is left as it is. The stamp is declared by the route that minted
 the rule — the variant lift, a `groups:` entry, enrich's clause-hoist and
 promoted-arm mints, a `group()` patch, the group lift here — never inferred
 from the body's shape: a hidden sequence with a `field()` that no route
 stamped (an upstream rule, or an authored rule a parent merely aliases) is an
-ordinary hidden rule. A kind already in the set (a group-lift synthesized
-kind) is not reclassified. The set is the one source of the hoisted fact; it
-travels on the grammar (`LinkedGrammar.hoistedKinds` → normalize → assemble)
-the way `supertypes` does, so no rebuilding pass has to carry it and nothing
-re-derives it.
+ordinary hidden rule. The annotation is the one source of the hoisted fact: nothing collects it
+into a set and nothing re-derives it; `withKindFacts` carries the bag across
+every root rebuild so the assembled node still reads it.
 
 ### `packages/codegen/src/compiler/link.ts::flattenNestedChoiceMembers`
 

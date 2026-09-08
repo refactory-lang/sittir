@@ -4,7 +4,7 @@ import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.t
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
 import type { AttributeBuilder } from '../dsl/builders.ts';
-import { withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
+import { withAttrsFrom, withKindFacts, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { attributeBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -286,7 +286,9 @@ export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, Simplif
 	const simplified = simplifyRules(normalizedRules, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
-		canonicalized[kind] = fuseHeadRepeatLists(flatten(canonicalizeSeqOfLeaves(rule)));
+		const source = normalizedRules[kind];
+		const canonical = fuseHeadRepeatLists(flatten(canonicalizeSeqOfLeaves(rule)));
+		canonicalized[kind] = source === undefined ? canonical : withKindFacts(canonical, source);
 	}
 	if (process.env['SITTIR_ASSERT_UNIVERSAL_SHAPE'] === '1') {
 		for (const [kind, rule] of Object.entries(canonicalized)) {
@@ -315,7 +317,7 @@ function simplifyToFixpoint(
 	ctx: SimplifyCtx | undefined,
 	rules: Readonly<Record<string, RenderRule>>
 ): RenderRule {
-	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds, hoistedKinds: ctx?.grammar.hoistedKinds };
+	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds };
 	const MAX_ITERS = 16;
 	let current = rule;
 	for (let i = 0; i < MAX_ITERS; i++) {

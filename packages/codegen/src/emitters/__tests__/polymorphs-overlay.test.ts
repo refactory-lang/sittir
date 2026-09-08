@@ -224,7 +224,7 @@ describe('a hoisted kind in the middle of a flattened arm', () => {
 	it('gets a private wire set the grandparent routes through, and no export', () => {
 		const nodeMap = hoistedMiddleNodeMap();
 		const parent = nodeMap.nodes.get('_parent')!;
-		expect(parent instanceof AbstractAssembledCompound && parent.hoisted).toBe(true);
+		expect(parent.annotations?.hoisted).toBe(true);
 		const key = parent.factoryName!;
 		const text = emitPolymorphsOverlay({ nodeMap });
 		expect(text).toContain(`const ${key}: {`);

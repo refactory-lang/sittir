@@ -46,9 +46,7 @@ export function importTypesStrict() {
 					ir.importSpecifier({ content: 'FormatTrivia' })
 				)
 			),
-			source: ir.string.single.strict({
-				elements: [ir.unescapedSingleStringFragment('@sittir/types')],
-			}),
+			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
 		}),
 		terminator: ';',
 	});
