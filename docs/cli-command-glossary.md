@@ -333,6 +333,20 @@ Run pre-codegen grammar diagnostics
 pnpm exec tsx packages/cli/src/cli.ts tool grammar-diagnostics [options]
 ```
 
+### `tool hoisted-census`
+
+Count hoisted kinds and list the ones no parent slot seats
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool hoisted-census [options]
+```
+
 ### `tool inspect-refs`
 
 Inspect symbol references or derivation suggestions

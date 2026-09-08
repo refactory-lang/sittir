@@ -86,3 +86,4 @@ export {
 	resolveBackends
 } from './commands.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
+export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';

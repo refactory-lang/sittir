@@ -16,6 +16,7 @@ import { emitFactorySource } from './emit-factory-source.ts';
 import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
 import { grammarDiagnostics } from './grammar-diagnostics.ts';
+import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
 import { listKinds } from './list-kinds.ts';
@@ -48,6 +49,7 @@ export const toolModules: readonly CommandModule[] = [
 	exercise,
 	fieldProvenance,
 	grammarDiagnostics,
+	hoistedCensus,
 	inspectRefs,
 	inspectType,
 	listKinds,

@@ -17,6 +17,7 @@ const EXPECTED = [
 	'exercise',
 	'field-provenance',
 	'grammar-diagnostics',
+	'hoisted-census',
 	'inspect-refs',
 	'inspect-type',
 	'list-kinds',
@@ -35,7 +36,7 @@ const EXPECTED = [
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 29 converted tools', () => {
+	it('registers exactly the 30 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

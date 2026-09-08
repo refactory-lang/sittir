@@ -1164,15 +1164,19 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
  * empty maps when the grammar is unknown or the file is unavailable — mirrors the
  * legacy `loadFactoryMap` fail-soft behavior so bootstrap runs don't throw.
  */
-export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
+export function readNodeModelFile(grammar: string): string | undefined {
 	const p = NODE_MODEL_PATHS[grammar];
-	if (!p) return EMPTY_NODE_MODEL;
-	let raw: string;
+	if (!p) return undefined;
 	try {
-		raw = readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
+		return readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
 	} catch {
-		return EMPTY_NODE_MODEL;
+		return undefined;
 	}
+}
+
+export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
+	const raw = readNodeModelFile(grammar);
+	if (raw === undefined) return EMPTY_NODE_MODEL;
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const irKeys: Record<string, string> = {};
 	const modelTypes: Record<string, string> = {};
