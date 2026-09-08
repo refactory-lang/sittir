@@ -164,7 +164,7 @@ pub enum AnyTransport {
     SliceGroup(SliceGroupTransport),
     UnaryOperatorOperator(UnaryOperatorOperatorEnum),
     AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
-    ExceptClauseAs(ExceptClauseAsTransport),
+    ExceptClauseExceptionAs(ExceptClauseExceptionAsTransport),
     CaseTuplePattern(CaseTuplePatternTransport),
     CaseListPattern(CaseListPatternTransport),
     CaseAsPattern(CaseAsPatternTransport),
@@ -176,7 +176,7 @@ pub enum AnyTransport {
     PrintStatementPlain(PrintStatementPlainTransport),
     WildcardPattern(WildcardPatternTransport),
     SimplePatternNegative(SimplePatternNegativeTransport),
-    ExceptClauseList(ExceptClauseListTransport),
+    ExceptClauseExceptionList(ExceptClauseExceptionListTransport),
     ExceptClauseException(ExceptClauseExceptionTransport),
     AssignmentEq(AssignmentEqTransport),
     AssignmentType(AssignmentTypeTransport),
@@ -488,7 +488,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::SliceGroup(t) => t.fill_options(table),
             AnyTransport::UnaryOperatorOperator(t) => t.fill_options(table),
             AnyTransport::AugmentedAssignmentOperator(t) => t.fill_options(table),
-            AnyTransport::ExceptClauseAs(t) => t.fill_options(table),
+            AnyTransport::ExceptClauseExceptionAs(t) => t.fill_options(table),
             AnyTransport::CaseTuplePattern(t) => t.fill_options(table),
             AnyTransport::CaseListPattern(t) => t.fill_options(table),
             AnyTransport::CaseAsPattern(t) => t.fill_options(table),
@@ -500,7 +500,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::PrintStatementPlain(t) => t.fill_options(table),
             AnyTransport::WildcardPattern(t) => t.fill_options(table),
             AnyTransport::SimplePatternNegative(t) => t.fill_options(table),
-            AnyTransport::ExceptClauseList(t) => t.fill_options(table),
+            AnyTransport::ExceptClauseExceptionList(t) => t.fill_options(table),
             AnyTransport::ExceptClauseException(t) => t.fill_options(table),
             AnyTransport::AssignmentEq(t) => t.fill_options(table),
             AnyTransport::AssignmentType(t) => t.fill_options(table),
@@ -1250,9 +1250,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 252 => Ok(AnyTransport::AugmentedAssignmentOperator(
                     AugmentedAssignmentOperatorEnum::from_napi_value(env, napi_val)?
                 )),
-                // kind: _except_clause_as (_EXCEPT_CLAUSE_AS)
-                253 => Ok(AnyTransport::ExceptClauseAs(
-                    ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                // kind: _except_clause_exception_as (_EXCEPT_CLAUSE_EXCEPTION_AS)
+                253 => Ok(AnyTransport::ExceptClauseExceptionAs(
+                    ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_tuple_pattern (CASE_TUPLE_PATTERN)
                 254 => Ok(AnyTransport::CaseTuplePattern(
@@ -1298,9 +1298,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 264 => Ok(AnyTransport::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _except_clause_list (_EXCEPT_CLAUSE_LIST)
-                265 => Ok(AnyTransport::ExceptClauseList(
-                    ExceptClauseListTransport::from_napi_value(env, napi_val)?
+                // kind: _except_clause_exception_list (_EXCEPT_CLAUSE_EXCEPTION_LIST)
+                265 => Ok(AnyTransport::ExceptClauseExceptionList(
+                    ExceptClauseExceptionListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _except_clause_exception (_EXCEPT_CLAUSE_EXCEPTION)
                 266 => Ok(AnyTransport::ExceptClauseException(
@@ -18911,15 +18911,15 @@ impl ::std::fmt::Display for SimplePatternNegativeContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ExceptClauseExceptionContentTransportSlot {
-    ExceptClauseAs(ExceptClauseAsTransport),
-    ExceptClauseList(ExceptClauseListTransport),
+    ExceptClauseExceptionAs(ExceptClauseExceptionAsTransport),
+    ExceptClauseExceptionList(ExceptClauseExceptionListTransport),
 }
 
 impl ::sittir_core::options::FillOptions for ExceptClauseExceptionContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseAs(t) => t.fill_options(table),
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseList(t) => t.fill_options(table),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(t) => t.fill_options(table),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(t) => t.fill_options(table),
         }
     }
 }
@@ -18933,11 +18933,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseExceptionContentTran
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    253 => Ok(Self::ExceptClauseAs(
-                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::ExceptClauseExceptionAs(
+                        ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val)?
                     )),
-                    265 => Ok(Self::ExceptClauseList(
-                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
+                    265 => Ok(Self::ExceptClauseExceptionList(
+                        ExceptClauseExceptionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExceptClauseExceptionContentTransportSlot",
@@ -18950,11 +18950,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseExceptionContentTran
                     ::napi::Error::from_reason("$type property missing in ExceptClauseExceptionContentTransportSlot")
                 )?;
                 match kind_id {
-                    253 => Ok(Self::ExceptClauseAs(
-                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::ExceptClauseExceptionAs(
+                        ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val)?
                     )),
-                    265 => Ok(Self::ExceptClauseList(
-                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
+                    265 => Ok(Self::ExceptClauseExceptionList(
+                        ExceptClauseExceptionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExceptClauseExceptionContentTransportSlot",
@@ -18998,16 +18998,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptionContentTr
 
 fn except_clause_exception_content_transport_slot_to_any(t: ExceptClauseExceptionContentTransportSlot) -> AnyTransport {
     match t {
-        ExceptClauseExceptionContentTransportSlot::ExceptClauseAs(inner) => AnyTransport::ExceptClauseAs(inner),
-        ExceptClauseExceptionContentTransportSlot::ExceptClauseList(inner) => AnyTransport::ExceptClauseList(inner),
+        ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(inner) => AnyTransport::ExceptClauseExceptionAs(inner),
+        ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(inner) => AnyTransport::ExceptClauseExceptionList(inner),
     }
 }
 
 impl ::std::fmt::Display for ExceptClauseExceptionContentTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseAs(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
@@ -30583,7 +30583,7 @@ impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExceptClauseAsTransport {
+pub struct ExceptClauseExceptionAsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -30606,46 +30606,46 @@ pub struct ExceptClauseAsTransport {
     pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_as_after"))]
-    pub except_clause_as_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_as_before"))]
-    pub except_clause_as_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_exception_as_after"))]
+    pub except_clause_exception_as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_exception_as_before"))]
+    pub except_clause_exception_as_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExceptClauseAsTransport {
+impl ::std::fmt::Display for ExceptClauseExceptionAsTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_except_clause_as(self, f))
+        render_with_trivia!(self, f, render_except_clause_exception_as(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExceptClauseAsTransport {
+impl ::sittir_core::options::FillOptions for ExceptClauseExceptionAsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_AS_AS_AFTER]);
-        self.as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_AS_AS_BEFORE]);
-        self.except_clause_as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_AS_EXCEPT_CLAUSE_AS_AFTER]);
-        self.except_clause_as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_AS_EXCEPT_CLAUSE_AS_BEFORE]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_AFTER]);
+        self.as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_BEFORE]);
+        self.except_clause_exception_as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_AFTER]);
+        self.except_clause_exception_as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_BEFORE]);
         self.value.fill_options(table);
         self.alias.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseAsTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseExceptionAsTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExceptClauseAsTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseAsTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptionAsTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseAsTransport::to_napi_value(env, *val)
+        ExceptClauseExceptionAsTransport::to_napi_value(env, *val)
     }
 }
 
@@ -31393,7 +31393,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternNegativeTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExceptClauseListTransport {
+pub struct ExceptClauseExceptionListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -31416,37 +31416,37 @@ pub struct ExceptClauseListTransport {
     pub value_separator_space_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExceptClauseListTransport {
+impl ::std::fmt::Display for ExceptClauseExceptionListTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_except_clause_list(self, f))
+        render_with_trivia!(self, f, render_except_clause_exception_list(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExceptClauseListTransport {
+impl ::sittir_core::options::FillOptions for ExceptClauseExceptionListTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.value_separator_space_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_LIST_VALUE_SEPARATOR_SPACE_AFTER]);
-        self.value_separator_space_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_LIST_VALUE_SEPARATOR_SPACE_BEFORE]);
+        self.value_separator_space_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER]);
+        self.value_separator_space_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE]);
         self.value.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseListTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseExceptionListTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExceptClauseListTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExceptClauseExceptionListTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseListTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptionListTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseListTransport::to_napi_value(env, *val)
+        ExceptClauseExceptionListTransport::to_napi_value(env, *val)
     }
 }
 
@@ -44412,18 +44412,18 @@ fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, f: 
     ::std::fmt::Display::fmt(t, f)
 }
 
-fn render_except_clause_as(node: &ExceptClauseAsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let alias = View::new(&node.alias, "{}");
     let value = &node.value;
     let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let except_clause_as_after = options::spacing_text(node.except_clause_as_after.unwrap_or(0));
-    let except_clause_as_before = options::spacing_text(node.except_clause_as_before.unwrap_or(0));
-    write!(f, "{except_clause_as_before}{value}")?;
+    let except_clause_exception_as_after = options::spacing_text(node.except_clause_exception_as_after.unwrap_or(0));
+    let except_clause_exception_as_before = options::spacing_text(node.except_clause_exception_as_before.unwrap_or(0));
+    write!(f, "{except_clause_exception_as_before}{value}")?;
     if alias.is_present() {
         write!(f, "{as_before}as{as_after}{alias}")?;
     }
-    write!(f, "{except_clause_as_after}")?;
+    write!(f, "{except_clause_exception_as_after}")?;
     Ok(())
 }
 
@@ -44574,7 +44574,7 @@ fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, f: &mut
     Ok(())
 }
 
-fn render_except_clause_list(node: &ExceptClauseListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_except_clause_exception_list(node: &ExceptClauseExceptionListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     if node.value.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
             return f.write_str(text);
@@ -45387,7 +45387,7 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::SliceGroup(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::UnaryOperatorOperator(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::AugmentedAssignmentOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExceptClauseAs(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExceptClauseExceptionAs(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::CaseTuplePattern(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::CaseListPattern(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::CaseAsPattern(t) => ::std::fmt::Display::fmt(t, f),
@@ -45399,7 +45399,7 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::PrintStatementPlain(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::WildcardPattern(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::SimplePatternNegative(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExceptClauseList(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExceptClauseExceptionList(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::ExceptClauseException(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::AssignmentEq(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::AssignmentType(t) => ::std::fmt::Display::fmt(t, f),

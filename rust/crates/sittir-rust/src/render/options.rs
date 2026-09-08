@@ -2,7 +2,7 @@
 
 use ::sittir_core::options::ResolvedOptions;
 
-pub const SPACING_SITE_COUNT: usize = 891;
+pub const SPACING_SITE_COUNT: usize = 890;
 pub const DELIMITER_SITE_COUNT: usize = 18;
 
 pub const SITE_ABSTRACT_TYPE_ABSTRACT_TYPE_AFTER: usize = 0;
@@ -549,12 +549,12 @@ pub const SITE_RANGE_EXPRESSION_POSTFIX_RANGE_EXPRESSION_POSTFIX_BEFORE: usize =
 pub const SITE_RANGE_EXPRESSION_PREFIX_OPERATOR_AFTER: usize = 541;
 pub const SITE_RANGE_EXPRESSION_PREFIX_RANGE_EXPRESSION_PREFIX_AFTER: usize = 542;
 pub const SITE_RANGE_EXPRESSION_PREFIX_RANGE_EXPRESSION_PREFIX_BEFORE: usize = 543;
-pub const SITE_RANGE_PATTERN_LEFT_WITH_RIGHT_RANGE_PATTERN_LEFT_WITH_RIGHT_AFTER: usize = 544;
-pub const SITE_RANGE_PATTERN_LEFT_WITH_RIGHT_RANGE_PATTERN_LEFT_WITH_RIGHT_BEFORE: usize = 545;
-pub const SITE_RANGE_PATTERN_PREFIX_RANGE_PATTERN_PREFIX_AFTER: usize = 546;
-pub const SITE_RANGE_PATTERN_PREFIX_RANGE_PATTERN_PREFIX_BEFORE: usize = 547;
-pub const SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_AFTER: usize = 548;
-pub const SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_BEFORE: usize = 549;
+pub const SITE_RANGE_PATTERN_PREFIX_RANGE_PATTERN_PREFIX_AFTER: usize = 544;
+pub const SITE_RANGE_PATTERN_PREFIX_RANGE_PATTERN_PREFIX_BEFORE: usize = 545;
+pub const SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_AFTER: usize = 546;
+pub const SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_BEFORE: usize = 547;
+pub const SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_AFTER: usize = 548;
+pub const SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_BEFORE: usize = 549;
 pub const SITE_RAW_STRING_LITERAL_RAW_STRING_LITERAL_AFTER: usize = 550;
 pub const SITE_RAW_STRING_LITERAL_RAW_STRING_LITERAL_BEFORE: usize = 551;
 pub const SITE_REF_PATTERN_REF_AFTER: usize = 552;
@@ -870,32 +870,31 @@ pub const SITE_VISIBILITY_MODIFIER_GROUP_LPAREN_AFTER: usize = 861;
 pub const SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_BEFORE: usize = 862;
 pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_AFTER: usize = 863;
 pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_BEFORE: usize = 864;
-pub const SITE_VISIBILITY_MODIFIER_IN_PATH_IN_AFTER: usize = 865;
-pub const SITE_VISIBILITY_MODIFIER_IN_PATH_VISIBILITY_MODIFIER_IN_PATH_AFTER: usize = 866;
-pub const SITE_VISIBILITY_MODIFIER_IN_PATH_VISIBILITY_MODIFIER_IN_PATH_BEFORE: usize = 867;
-pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_AFTER: usize = 868;
-pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER: usize = 869;
-pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE: usize = 870;
-pub const SITE_WHERE_CLAUSE_WHERE_AFTER: usize = 871;
-pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_AFTER: usize = 872;
-pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_BEFORE: usize = 873;
-pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_AFTER: usize = 874;
-pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_BEFORE: usize = 875;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER: usize = 876;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE: usize = 877;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_END: usize = 878;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_START: usize = 879;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_AFTER: usize = 880;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_BEFORE: usize = 881;
-pub const SITE_WHILE_EXPRESSION_COLON_AFTER: usize = 882;
-pub const SITE_WHILE_EXPRESSION_COLON_BEFORE: usize = 883;
-pub const SITE_WHILE_EXPRESSION_WHILE_AFTER: usize = 884;
-pub const SITE_WHILE_EXPRESSION_WHILE_BEFORE: usize = 885;
-pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_AFTER: usize = 886;
-pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_BEFORE: usize = 887;
-pub const SITE_YIELD_EXPRESSION_YIELD_AFTER: usize = 888;
-pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER: usize = 889;
-pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_BEFORE: usize = 890;
+pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_AFTER: usize = 865;
+pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER: usize = 866;
+pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE: usize = 867;
+pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_AFTER: usize = 868;
+pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_BEFORE: usize = 869;
+pub const SITE_WHERE_CLAUSE_WHERE_AFTER: usize = 870;
+pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_AFTER: usize = 871;
+pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_BEFORE: usize = 872;
+pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_AFTER: usize = 873;
+pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_BEFORE: usize = 874;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER: usize = 875;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE: usize = 876;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_END: usize = 877;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_START: usize = 878;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_AFTER: usize = 879;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_BEFORE: usize = 880;
+pub const SITE_WHILE_EXPRESSION_COLON_AFTER: usize = 881;
+pub const SITE_WHILE_EXPRESSION_COLON_BEFORE: usize = 882;
+pub const SITE_WHILE_EXPRESSION_WHILE_AFTER: usize = 883;
+pub const SITE_WHILE_EXPRESSION_WHILE_BEFORE: usize = 884;
+pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_AFTER: usize = 885;
+pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_BEFORE: usize = 886;
+pub const SITE_YIELD_EXPRESSION_YIELD_AFTER: usize = 887;
+pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER: usize = 888;
+pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_BEFORE: usize = 889;
 pub const DELIM_ARGUMENTS_ELEMENTS_ELEMENT: usize = 0;
 pub const DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT: usize = 1;
 pub const DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT: usize = 2;
@@ -1463,12 +1462,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("range_expression_prefix", "operator_after", "operator_after", 157, &[157, 158, 159, 160, 161]),
     ("range_expression_prefix", "range_expression_prefix_after", "range_expression_prefix_after", 157, &[157, 158, 159, 160, 161]),
     ("range_expression_prefix", "range_expression_prefix_before", "range_expression_prefix_before", 157, &[157, 158, 159, 160, 161]),
-    ("range_pattern_left_with_right", "range_pattern_left_with_right_after", "range_pattern_left_with_right_after", 157, &[157, 158, 159, 160, 161]),
-    ("range_pattern_left_with_right", "range_pattern_left_with_right_before", "range_pattern_left_with_right_before", 157, &[157, 158, 159, 160, 161]),
     ("range_pattern_prefix", "range_pattern_prefix_after", "range_pattern_prefix_after", 157, &[157, 158, 159, 160, 161]),
     ("range_pattern_prefix", "range_pattern_prefix_before", "range_pattern_prefix_before", 157, &[157, 158, 159, 160, 161]),
     ("range_pattern_with_left", "range_pattern_with_left_after", "range_pattern_with_left_after", 157, &[157, 158, 159, 160, 161]),
     ("range_pattern_with_left", "range_pattern_with_left_before", "range_pattern_with_left_before", 157, &[157, 158, 159, 160, 161]),
+    ("range_pattern_with_left_with_right", "range_pattern_with_left_with_right_after", "range_pattern_with_left_with_right_after", 157, &[157, 158, 159, 160, 161]),
+    ("range_pattern_with_left_with_right", "range_pattern_with_left_with_right_before", "range_pattern_with_left_with_right_before", 157, &[157, 158, 159, 160, 161]),
     ("raw_string_literal", "raw_string_literal_after", "raw_string_literal_after", 157, &[157, 158, 159, 160, 161]),
     ("raw_string_literal", "raw_string_literal_before", "raw_string_literal_before", 157, &[157, 158, 159, 160, 161]),
     ("ref_pattern", "ref_after", "ref_after", 157, &[157, 158, 159, 160, 161]),
@@ -1784,12 +1783,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("visibility_modifier_group", "rparen_before", "rparen_before", 157, &[157, 158, 159, 160, 161]),
     ("visibility_modifier_group", "visibility_modifier_group_after", "visibility_modifier_group_after", 157, &[157, 158, 159, 160, 161]),
     ("visibility_modifier_group", "visibility_modifier_group_before", "visibility_modifier_group_before", 157, &[157, 158, 159, 160, 161]),
-    ("visibility_modifier_in_path", "in_after", "in_after", 157, &[157, 158, 159, 160, 161]),
-    ("visibility_modifier_in_path", "visibility_modifier_in_path_after", "visibility_modifier_in_path_after", 157, &[157, 158, 159, 160, 161]),
-    ("visibility_modifier_in_path", "visibility_modifier_in_path_before", "visibility_modifier_in_path_before", 157, &[157, 158, 159, 160, 161]),
     ("visibility_modifier_pub", "pub_after", "pub_after", 157, &[157, 158, 159, 160, 161]),
     ("visibility_modifier_pub", "visibility_modifier_pub_after", "visibility_modifier_pub_after", 157, &[157, 158, 159, 160, 161]),
     ("visibility_modifier_pub", "visibility_modifier_pub_before", "visibility_modifier_pub_before", 157, &[157, 158, 159, 160, 161]),
+    ("visibility_modifier_pub_in_path", "visibility_modifier_pub_in_path_after", "visibility_modifier_pub_in_path_after", 157, &[157, 158, 159, 160, 161]),
+    ("visibility_modifier_pub_in_path", "visibility_modifier_pub_in_path_before", "visibility_modifier_pub_in_path_before", 157, &[157, 158, 159, 160, 161]),
     ("where_clause", "where_after", "where_after", 157, &[157, 158, 159, 160, 161]),
     ("where_clause", "where_clause_after", "where_clause_after", 157, &[157, 158, 159, 160, 161]),
     ("where_clause", "where_clause_before", "where_clause_before", 157, &[157, 158, 159, 160, 161]),
@@ -1908,8 +1906,8 @@ pub static FLANK_SITES: &[(&str, usize)] = &[
     ("use_bounds_elements_start", 833),
     ("use_clauses_end", 838),
     ("use_clauses_start", 839),
-    ("where_predicates_end", 878),
-    ("where_predicates_start", 879),
+    ("where_predicates_end", 877),
+    ("where_predicates_start", 878),
 ];
 
 /// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
@@ -2062,9 +2060,9 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("range_expression_binary", &[537, 535, 534, 536]),
     ("range_expression_postfix", &[540, 538, 539]),
     ("range_expression_prefix", &[543, 541, 542]),
-    ("range_pattern_left_with_right", &[545, 544]),
-    ("range_pattern_prefix", &[547, 546]),
-    ("range_pattern_with_left", &[549, 548]),
+    ("range_pattern_prefix", &[545, 544]),
+    ("range_pattern_with_left", &[547, 546]),
+    ("range_pattern_with_left_with_right", &[549, 548]),
     ("raw_string_literal", &[551, 550]),
     ("ref_pattern", &[554, 552, 553]),
     ("reference_expression", &[557, 555, 556]),
@@ -2133,13 +2131,13 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("use_wildcard", &[855, 852, 851, 853, 854]),
     ("variadic_parameter", &[860, 857, 856, 858, 859]),
     ("visibility_modifier_group", &[864, 861, 862, 863]),
-    ("visibility_modifier_in_path", &[867, 865, 866]),
-    ("visibility_modifier_pub", &[870, 868, 869]),
-    ("where_clause", &[873, 871, 872]),
-    ("where_predicate", &[875, 874]),
-    ("where_predicates", &[881, 879, 878, 880]),
-    ("while_expression", &[887, 883, 882, 885, 884, 886]),
-    ("yield_expression", &[890, 888, 889]),
+    ("visibility_modifier_pub", &[867, 865, 866]),
+    ("visibility_modifier_pub_in_path", &[869, 868]),
+    ("where_clause", &[872, 870, 871]),
+    ("where_predicate", &[874, 873]),
+    ("where_predicates", &[880, 878, 877, 879]),
+    ("while_expression", &[886, 882, 881, 884, 883, 885]),
+    ("yield_expression", &[889, 887, 888]),
 ];
 
 pub static LABELS: &[(&str, &[u16])] = &[
@@ -2523,12 +2521,12 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("range_expression_postfix_before", &[157, 158, 159, 160, 161]),
     ("range_expression_prefix_after", &[157, 158, 159, 160, 161]),
     ("range_expression_prefix_before", &[157, 158, 159, 160, 161]),
-    ("range_pattern_left_with_right_after", &[157, 158, 159, 160, 161]),
-    ("range_pattern_left_with_right_before", &[157, 158, 159, 160, 161]),
     ("range_pattern_prefix_after", &[157, 158, 159, 160, 161]),
     ("range_pattern_prefix_before", &[157, 158, 159, 160, 161]),
     ("range_pattern_with_left_after", &[157, 158, 159, 160, 161]),
     ("range_pattern_with_left_before", &[157, 158, 159, 160, 161]),
+    ("range_pattern_with_left_with_right_after", &[157, 158, 159, 160, 161]),
+    ("range_pattern_with_left_with_right_before", &[157, 158, 159, 160, 161]),
     ("raw_after", &[157, 158, 159, 160, 161]),
     ("raw_string_literal_after", &[157, 158, 159, 160, 161]),
     ("raw_string_literal_before", &[157, 158, 159, 160, 161]),
@@ -2733,10 +2731,10 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("variadic_parameter_before", &[157, 158, 159, 160, 161]),
     ("visibility_modifier_group_after", &[157, 158, 159, 160, 161]),
     ("visibility_modifier_group_before", &[157, 158, 159, 160, 161]),
-    ("visibility_modifier_in_path_after", &[157, 158, 159, 160, 161]),
-    ("visibility_modifier_in_path_before", &[157, 158, 159, 160, 161]),
     ("visibility_modifier_pub_after", &[157, 158, 159, 160, 161]),
     ("visibility_modifier_pub_before", &[157, 158, 159, 160, 161]),
+    ("visibility_modifier_pub_in_path_after", &[157, 158, 159, 160, 161]),
+    ("visibility_modifier_pub_in_path_before", &[157, 158, 159, 160, 161]),
     ("where_after", &[157, 158, 159, 160, 161]),
     ("where_clause_after", &[157, 158, 159, 160, 161]),
     ("where_clause_before", &[157, 158, 159, 160, 161]),

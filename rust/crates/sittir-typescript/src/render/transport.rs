@@ -254,11 +254,11 @@ pub enum AnyTransport {
     ImportClauseDefaultImport(ImportClauseDefaultImportTransport),
     ExportStatementDefaultFrom(ExportStatementDefaultFromTransport),
     ExportStatementDefaultDeclaration(ExportStatementDefaultDeclarationTransport),
-    ExportStatementDefaultStarFrom(ExportStatementDefaultStarFromTransport),
-    ExportStatementDefaultNsFrom(ExportStatementDefaultNsFromTransport),
-    ExportStatementDefaultClauseFrom(ExportStatementDefaultClauseFromTransport),
-    ExportStatementDefaultDefaultKw(ExportStatementDefaultDefaultKwTransport),
-    ExportStatementDefaultValue(ExportStatementDefaultValueTransport),
+    ExportStatementDefaultFromStarFrom(ExportStatementDefaultFromStarFromTransport),
+    ExportStatementDefaultFromNsFrom(ExportStatementDefaultFromNsFromTransport),
+    ExportStatementDefaultFromClauseFrom(ExportStatementDefaultFromClauseFromTransport),
+    ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
+    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
     VariableDeclaratorPlain(VariableDeclaratorPlainTransport),
     VariableDeclaratorDefinite(VariableDeclaratorDefiniteTransport),
     MetaPropertyNewTarget(MetaPropertyNewTargetTransport),
@@ -767,11 +767,11 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::ImportClauseDefaultImport(t) => t.fill_options(table),
             AnyTransport::ExportStatementDefaultFrom(t) => t.fill_options(table),
             AnyTransport::ExportStatementDefaultDeclaration(t) => t.fill_options(table),
-            AnyTransport::ExportStatementDefaultStarFrom(t) => t.fill_options(table),
-            AnyTransport::ExportStatementDefaultNsFrom(t) => t.fill_options(table),
-            AnyTransport::ExportStatementDefaultClauseFrom(t) => t.fill_options(table),
-            AnyTransport::ExportStatementDefaultDefaultKw(t) => t.fill_options(table),
-            AnyTransport::ExportStatementDefaultValue(t) => t.fill_options(table),
+            AnyTransport::ExportStatementDefaultFromStarFrom(t) => t.fill_options(table),
+            AnyTransport::ExportStatementDefaultFromNsFrom(t) => t.fill_options(table),
+            AnyTransport::ExportStatementDefaultFromClauseFrom(t) => t.fill_options(table),
+            AnyTransport::ExportStatementDefaultDeclarationDefaultKw(t) => t.fill_options(table),
+            AnyTransport::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.fill_options(table),
             AnyTransport::VariableDeclaratorPlain(t) => t.fill_options(table),
             AnyTransport::VariableDeclaratorDefinite(t) => t.fill_options(table),
             AnyTransport::MetaPropertyNewTarget(t) => t.fill_options(table),
@@ -1980,25 +1980,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 404 => Ok(AnyTransport::ExportStatementDefaultDeclaration(
                     ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_star_from (_EXPORT_STATEMENT_DEFAULT_STAR_FROM)
-                405 => Ok(AnyTransport::ExportStatementDefaultStarFrom(
-                    ExportStatementDefaultStarFromTransport::from_napi_value(env, napi_val)?
+                // kind: _export_statement_default_from_star_from (_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM)
+                405 => Ok(AnyTransport::ExportStatementDefaultFromStarFrom(
+                    ExportStatementDefaultFromStarFromTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_ns_from (_EXPORT_STATEMENT_DEFAULT_NS_FROM)
-                406 => Ok(AnyTransport::ExportStatementDefaultNsFrom(
-                    ExportStatementDefaultNsFromTransport::from_napi_value(env, napi_val)?
+                // kind: _export_statement_default_from_ns_from (_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM)
+                406 => Ok(AnyTransport::ExportStatementDefaultFromNsFrom(
+                    ExportStatementDefaultFromNsFromTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_clause_from (_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM)
-                407 => Ok(AnyTransport::ExportStatementDefaultClauseFrom(
-                    ExportStatementDefaultClauseFromTransport::from_napi_value(env, napi_val)?
+                // kind: _export_statement_default_from_clause_from (_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM)
+                407 => Ok(AnyTransport::ExportStatementDefaultFromClauseFrom(
+                    ExportStatementDefaultFromClauseFromTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_default_kw (_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW)
-                408 => Ok(AnyTransport::ExportStatementDefaultDefaultKw(
-                    ExportStatementDefaultDefaultKwTransport::from_napi_value(env, napi_val)?
+                // kind: _export_statement_default_declaration_default_kw (_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)
+                408 => Ok(AnyTransport::ExportStatementDefaultDeclarationDefaultKw(
+                    ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_value (_EXPORT_STATEMENT_DEFAULT_VALUE)
-                409 => Ok(AnyTransport::ExportStatementDefaultValue(
-                    ExportStatementDefaultValueTransport::from_napi_value(env, napi_val)?
+                // kind: _export_statement_default_declaration_default_kw_value (_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)
+                409 => Ok(AnyTransport::ExportStatementDefaultDeclarationDefaultKwValue(
+                    ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _variable_declarator_plain (_VARIABLE_DECLARATOR_PLAIN)
                 410 => Ok(AnyTransport::VariableDeclaratorPlain(
@@ -42441,18 +42441,18 @@ impl ::std::fmt::Display for ImportClauseDefaultImportIdentifierTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ExportStatementDefaultFromContentTransportSlot {
-    ExportStatementDefaultStarFrom(ExportStatementDefaultStarFromTransport),
-    ExportStatementDefaultNsFrom(ExportStatementDefaultNsFromTransport),
-    ExportStatementDefaultClauseFrom(ExportStatementDefaultClauseFromTransport),
+    ExportStatementDefaultFromStarFrom(ExportStatementDefaultFromStarFromTransport),
+    ExportStatementDefaultFromNsFrom(ExportStatementDefaultFromNsFromTransport),
+    ExportStatementDefaultFromClauseFrom(ExportStatementDefaultFromClauseFromTransport),
     ExportClause(ExportClauseTransport),
 }
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultStarFrom(t) => t.fill_options(table),
-            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultNsFrom(t) => t.fill_options(table),
-            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultClauseFrom(t) => t.fill_options(table),
+            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromStarFrom(t) => t.fill_options(table),
+            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromNsFrom(t) => t.fill_options(table),
+            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromClauseFrom(t) => t.fill_options(table),
             ExportStatementDefaultFromContentTransportSlot::ExportClause(t) => t.fill_options(table),
         }
     }
@@ -42467,14 +42467,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromConten
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    405 => Ok(Self::ExportStatementDefaultStarFrom(
-                        ExportStatementDefaultStarFromTransport::from_napi_value(env, napi_val)?
+                    405 => Ok(Self::ExportStatementDefaultFromStarFrom(
+                        ExportStatementDefaultFromStarFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    406 => Ok(Self::ExportStatementDefaultNsFrom(
-                        ExportStatementDefaultNsFromTransport::from_napi_value(env, napi_val)?
+                    406 => Ok(Self::ExportStatementDefaultFromNsFrom(
+                        ExportStatementDefaultFromNsFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    407 => Ok(Self::ExportStatementDefaultClauseFrom(
-                        ExportStatementDefaultClauseFromTransport::from_napi_value(env, napi_val)?
+                    407 => Ok(Self::ExportStatementDefaultFromClauseFrom(
+                        ExportStatementDefaultFromClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
                     175 => Ok(Self::ExportClause(
                         ExportClauseTransport::from_napi_value(env, napi_val)?
@@ -42490,14 +42490,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromConten
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultFromContentTransportSlot")
                 )?;
                 match kind_id {
-                    405 => Ok(Self::ExportStatementDefaultStarFrom(
-                        ExportStatementDefaultStarFromTransport::from_napi_value(env, napi_val)?
+                    405 => Ok(Self::ExportStatementDefaultFromStarFrom(
+                        ExportStatementDefaultFromStarFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    406 => Ok(Self::ExportStatementDefaultNsFrom(
-                        ExportStatementDefaultNsFromTransport::from_napi_value(env, napi_val)?
+                    406 => Ok(Self::ExportStatementDefaultFromNsFrom(
+                        ExportStatementDefaultFromNsFromTransport::from_napi_value(env, napi_val)?
                     )),
-                    407 => Ok(Self::ExportStatementDefaultClauseFrom(
-                        ExportStatementDefaultClauseFromTransport::from_napi_value(env, napi_val)?
+                    407 => Ok(Self::ExportStatementDefaultFromClauseFrom(
+                        ExportStatementDefaultFromClauseFromTransport::from_napi_value(env, napi_val)?
                     )),
                     175 => Ok(Self::ExportClause(
                         ExportClauseTransport::from_napi_value(env, napi_val)?
@@ -42544,9 +42544,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromCont
 
 fn export_statement_default_from_content_transport_slot_to_any(t: ExportStatementDefaultFromContentTransportSlot) -> AnyTransport {
     match t {
-        ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultStarFrom(inner) => AnyTransport::ExportStatementDefaultStarFrom(inner),
-        ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultNsFrom(inner) => AnyTransport::ExportStatementDefaultNsFrom(inner),
-        ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultClauseFrom(inner) => AnyTransport::ExportStatementDefaultClauseFrom(inner),
+        ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromStarFrom(inner) => AnyTransport::ExportStatementDefaultFromStarFrom(inner),
+        ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromNsFrom(inner) => AnyTransport::ExportStatementDefaultFromNsFrom(inner),
+        ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromClauseFrom(inner) => AnyTransport::ExportStatementDefaultFromClauseFrom(inner),
         ExportStatementDefaultFromContentTransportSlot::ExportClause(inner) => AnyTransport::ExportClause(inner),
     }
 }
@@ -42554,9 +42554,9 @@ fn export_statement_default_from_content_transport_slot_to_any(t: ExportStatemen
 impl ::std::fmt::Display for ExportStatementDefaultFromContentTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultStarFrom(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultNsFrom(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultClauseFrom(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromStarFrom(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromNsFrom(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromClauseFrom(inner) => ::std::fmt::Display::fmt(inner, f),
             ExportStatementDefaultFromContentTransportSlot::ExportClause(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
@@ -42659,7 +42659,7 @@ impl ::std::fmt::Display for ExportStatementDefaultFromAutomaticSemicolonTranspo
 
 #[derive(Debug, Clone)]
 pub enum ExportStatementDefaultDeclarationContentTransportSlot {
-    ExportStatementDefaultDefaultKw(ExportStatementDefaultDefaultKwTransport),
+    ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
     FunctionDeclaration(FunctionDeclarationTransport),
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
     ClassDeclaration(ClassDeclarationTransport),
@@ -42679,7 +42679,7 @@ pub enum ExportStatementDefaultDeclarationContentTransportSlot {
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDefaultKw(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.fill_options(table),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.fill_options(table),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.fill_options(table),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.fill_options(table),
@@ -42707,8 +42707,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    408 => Ok(Self::ExportStatementDefaultDefaultKw(
-                        ExportStatementDefaultDefaultKwTransport::from_napi_value(env, napi_val)?
+                    408 => Ok(Self::ExportStatementDefaultDeclarationDefaultKw(
+                        ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val)?
                     )),
                     230 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
@@ -42763,8 +42763,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclaratio
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclarationContentTransportSlot")
                 )?;
                 match kind_id {
-                    408 => Ok(Self::ExportStatementDefaultDefaultKw(
-                        ExportStatementDefaultDefaultKwTransport::from_napi_value(env, napi_val)?
+                    408 => Ok(Self::ExportStatementDefaultDeclarationDefaultKw(
+                        ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val)?
                     )),
                     230 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
@@ -42850,7 +42850,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 
 fn export_statement_default_declaration_content_transport_slot_to_any(t: ExportStatementDefaultDeclarationContentTransportSlot) -> AnyTransport {
     match t {
-        ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDefaultKw(inner) => AnyTransport::ExportStatementDefaultDefaultKw(inner),
+        ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => AnyTransport::ExportStatementDefaultDeclarationDefaultKw(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(inner) => AnyTransport::FunctionDeclaration(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(inner) => AnyTransport::GeneratorFunctionDeclaration(inner),
         ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(inner) => AnyTransport::ClassDeclaration(inner),
@@ -42871,7 +42871,7 @@ fn export_statement_default_declaration_content_transport_slot_to_any(t: ExportS
 impl ::std::fmt::Display for ExportStatementDefaultDeclarationContentTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDefaultKw(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => ::std::fmt::Display::fmt(inner, f),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
@@ -42891,8 +42891,8 @@ impl ::std::fmt::Display for ExportStatementDefaultDeclarationContentTransportSl
 }
 
 #[derive(Debug, Clone)]
-pub enum ExportStatementDefaultDefaultKwContentTransportSlot {
-    ExportStatementDefaultValue(ExportStatementDefaultValueTransport),
+pub enum ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
+    ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
     FunctionDeclaration(FunctionDeclarationTransport),
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
     ClassDeclaration(ClassDeclarationTransport),
@@ -42909,30 +42909,30 @@ pub enum ExportStatementDefaultDefaultKwContentTransportSlot {
     AmbientDeclaration(AmbientDeclarationTransport),
 }
 
-impl ::sittir_core::options::FillOptions for ExportStatementDefaultDefaultKwContentTransportSlot {
+impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ExportStatementDefaultDefaultKwContentTransportSlot::ExportStatementDefaultValue(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::ClassDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::LexicalDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::VariableDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionSignature(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::AbstractClassDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::Module(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::InternalModule(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::TypeAliasDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::EnumDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::InterfaceDeclaration(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::ImportAlias(t) => t.fill_options(table),
-            ExportStatementDefaultDefaultKwContentTransportSlot::AmbientDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::LexicalDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::VariableDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionSignature(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AbstractClassDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::Module(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InternalModule(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::TypeAliasDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::EnumDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(t) => t.fill_options(table),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(t) => t.fill_options(table),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDefaultKwContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42940,8 +42940,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDefaultKwC
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    409 => Ok(Self::ExportStatementDefaultValue(
-                        ExportStatementDefaultValueTransport::from_napi_value(env, napi_val)?
+                    409 => Ok(Self::ExportStatementDefaultDeclarationDefaultKwValue(
+                        ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val)?
                     )),
                     230 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
@@ -42986,18 +42986,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDefaultKwC
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementDefaultDefaultKwContentTransportSlot",
+                        "unknown kind id {other} in ExportStatementDefaultDeclarationDefaultKwContentTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDefaultKwContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclarationDefaultKwContentTransportSlot")
                 )?;
                 match kind_id {
-                    409 => Ok(Self::ExportStatementDefaultValue(
-                        ExportStatementDefaultValueTransport::from_napi_value(env, napi_val)?
+                    409 => Ok(Self::ExportStatementDefaultDeclarationDefaultKwValue(
+                        ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val)?
                     )),
                     230 => Ok(Self::FunctionDeclaration(
                         FunctionDeclarationTransport::from_napi_value(env, napi_val)?
@@ -43042,104 +43042,104 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDefaultKwC
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementDefaultDefaultKwContentTransportSlot",
+                        "unknown kind id {other} in ExportStatementDefaultDeclarationDefaultKwContentTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ExportStatementDefaultDefaultKwContentTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ExportStatementDefaultDeclarationDefaultKwContentTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultDefaultKwContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementDefaultDefaultKwContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ExportStatementDefaultDeclarationDefaultKwContentTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultDefaultKwContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultDefaultKwContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDefaultKwContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultDefaultKwContentTransportSlot::to_napi_value(env, *val)
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn export_statement_default_default_kw_content_transport_slot_to_any(t: ExportStatementDefaultDefaultKwContentTransportSlot) -> AnyTransport {
+fn export_statement_default_declaration_default_kw_content_transport_slot_to_any(t: ExportStatementDefaultDeclarationDefaultKwContentTransportSlot) -> AnyTransport {
     match t {
-        ExportStatementDefaultDefaultKwContentTransportSlot::ExportStatementDefaultValue(inner) => AnyTransport::ExportStatementDefaultValue(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::FunctionDeclaration(inner) => AnyTransport::FunctionDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => AnyTransport::GeneratorFunctionDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::ClassDeclaration(inner) => AnyTransport::ClassDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::LexicalDeclaration(inner) => AnyTransport::LexicalDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::VariableDeclaration(inner) => AnyTransport::VariableDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::FunctionSignature(inner) => AnyTransport::FunctionSignature(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::AbstractClassDeclaration(inner) => AnyTransport::AbstractClassDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::Module(inner) => AnyTransport::Module(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::TypeAliasDeclaration(inner) => AnyTransport::TypeAliasDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::EnumDeclaration(inner) => AnyTransport::EnumDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => AnyTransport::InterfaceDeclaration(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::ImportAlias(inner) => AnyTransport::ImportAlias(inner),
-        ExportStatementDefaultDefaultKwContentTransportSlot::AmbientDeclaration(inner) => AnyTransport::AmbientDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => AnyTransport::ExportStatementDefaultDeclarationDefaultKwValue(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(inner) => AnyTransport::FunctionDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => AnyTransport::GeneratorFunctionDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(inner) => AnyTransport::ClassDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::LexicalDeclaration(inner) => AnyTransport::LexicalDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::VariableDeclaration(inner) => AnyTransport::VariableDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionSignature(inner) => AnyTransport::FunctionSignature(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AbstractClassDeclaration(inner) => AnyTransport::AbstractClassDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::Module(inner) => AnyTransport::Module(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::TypeAliasDeclaration(inner) => AnyTransport::TypeAliasDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::EnumDeclaration(inner) => AnyTransport::EnumDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => AnyTransport::InterfaceDeclaration(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(inner) => AnyTransport::ImportAlias(inner),
+        ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(inner) => AnyTransport::AmbientDeclaration(inner),
     }
 }
 
-impl ::std::fmt::Display for ExportStatementDefaultDefaultKwContentTransportSlot {
+impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ExportStatementDefaultDefaultKwContentTransportSlot::ExportStatementDefaultValue(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::ClassDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::LexicalDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::VariableDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::FunctionSignature(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::AbstractClassDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::Module(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::InternalModule(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::TypeAliasDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::EnumDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::ImportAlias(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExportStatementDefaultDefaultKwContentTransportSlot::AmbientDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::LexicalDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::VariableDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionSignature(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AbstractClassDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::Module(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InternalModule(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::TypeAliasDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::EnumDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InterfaceDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ImportAlias(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AmbientDeclaration(inner) => ::std::fmt::Display::fmt(inner, f),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum ExportStatementDefaultValueAutomaticSemicolonTransportSlot {
+pub enum ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
     Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_73_65_6d_69,
 }
 
-impl ::sittir_core::options::FillOptions for ExportStatementDefaultValueAutomaticSemicolonTransportSlot {
+impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ExportStatementDefaultValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => {}
-            ExportStatementDefaultValueAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => {}
+            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => {}
+            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => {}
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultValueAutomaticSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -43150,70 +43150,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultValueAutom
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementDefaultValueAutomaticSemicolonTransportSlot",
+                        "unknown kind id {other} in ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExportStatementDefaultValueAutomaticSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot")
                 )?;
                 match kind_id {
                     160 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     20 => Ok(Self::Literal3_73_65_6d_69),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExportStatementDefaultValueAutomaticSemicolonTransportSlot",
+                        "unknown kind id {other} in ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ExportStatementDefaultValueAutomaticSemicolonTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultValueAutomaticSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementDefaultValueAutomaticSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultValueAutomaticSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultValueAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultValueAutomaticSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultValueAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+        ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn export_statement_default_value_automatic_semicolon_transport_slot_to_any(t: ExportStatementDefaultValueAutomaticSemicolonTransportSlot) -> AnyTransport {
+fn export_statement_default_declaration_default_kw_value_automatic_semicolon_transport_slot_to_any(t: ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot) -> AnyTransport {
     match t {
-        ExportStatementDefaultValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
-        ExportStatementDefaultValueAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
+        ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => AnyTransport::Literal3_73_65_6d_69,
     }
 }
 
-impl ::std::fmt::Display for ExportStatementDefaultValueAutomaticSemicolonTransportSlot {
+impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            ExportStatementDefaultValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => f.write_str("\n"),
-            ExportStatementDefaultValueAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => f.write_str(";"),
+            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => f.write_str("\n"),
+            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => f.write_str(";"),
         }
     }
 }
@@ -62133,7 +62133,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarat
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExportStatementDefaultStarFromTransport {
+pub struct ExportStatementDefaultFromStarFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -62150,10 +62150,10 @@ pub struct ExportStatementDefaultStarFromTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: ::sittir_core::SlotValue<StringTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_star_from_after"))]
-    pub export_statement_default_star_from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_star_from_before"))]
-    pub export_statement_default_star_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_star_from_after"))]
+    pub export_statement_default_from_star_from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_star_from_before"))]
+    pub export_statement_default_from_star_from_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
     pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
@@ -62162,46 +62162,46 @@ pub struct ExportStatementDefaultStarFromTransport {
     pub star_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExportStatementDefaultStarFromTransport {
+impl ::std::fmt::Display for ExportStatementDefaultFromStarFromTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_export_statement_default_star_from(self, f))
+        render_with_trivia!(self, f, render_export_statement_default_from_star_from(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExportStatementDefaultStarFromTransport {
+impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromStarFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_star_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_EXPORT_STATEMENT_DEFAULT_STAR_FROM_AFTER]);
-        self.export_statement_default_star_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_EXPORT_STATEMENT_DEFAULT_STAR_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_FROM_AFTER]);
-        self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_FROM_BEFORE]);
-        self.star_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_STAR_AFTER]);
+        self.export_statement_default_from_star_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_AFTER]);
+        self.export_statement_default_from_star_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_BEFORE]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_FROM_AFTER]);
+        self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_FROM_BEFORE]);
+        self.star_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_STAR_AFTER]);
         self.source.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultStarFromTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromStarFromTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultStarFromTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultFromStarFromTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultStarFromTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromStarFromTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultStarFromTransport::to_napi_value(env, *val)
+        ExportStatementDefaultFromStarFromTransport::to_napi_value(env, *val)
     }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExportStatementDefaultNsFromTransport {
+pub struct ExportStatementDefaultFromNsFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -62220,56 +62220,56 @@ pub struct ExportStatementDefaultNsFromTransport {
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export"))]
     pub namespace_export: ::sittir_core::SlotValue<NamespaceExportTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_ns_from_after"))]
-    pub export_statement_default_ns_from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_ns_from_before"))]
-    pub export_statement_default_ns_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_ns_from_after"))]
+    pub export_statement_default_from_ns_from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_ns_from_before"))]
+    pub export_statement_default_from_ns_from_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
     pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
     pub from_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExportStatementDefaultNsFromTransport {
+impl ::std::fmt::Display for ExportStatementDefaultFromNsFromTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_export_statement_default_ns_from(self, f))
+        render_with_trivia!(self, f, render_export_statement_default_from_ns_from(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExportStatementDefaultNsFromTransport {
+impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromNsFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_ns_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_EXPORT_STATEMENT_DEFAULT_NS_FROM_AFTER]);
-        self.export_statement_default_ns_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_EXPORT_STATEMENT_DEFAULT_NS_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_FROM_AFTER]);
-        self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_FROM_BEFORE]);
+        self.export_statement_default_from_ns_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_AFTER]);
+        self.export_statement_default_from_ns_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_BEFORE]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_FROM_AFTER]);
+        self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_FROM_BEFORE]);
         self.source.fill_options(table);
         self.namespace_export.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultNsFromTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromNsFromTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultNsFromTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultFromNsFromTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultNsFromTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromNsFromTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultNsFromTransport::to_napi_value(env, *val)
+        ExportStatementDefaultFromNsFromTransport::to_napi_value(env, *val)
     }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExportStatementDefaultClauseFromTransport {
+pub struct ExportStatementDefaultFromClauseFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -62288,56 +62288,56 @@ pub struct ExportStatementDefaultClauseFromTransport {
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_clause_from_after"))]
-    pub export_statement_default_clause_from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_clause_from_before"))]
-    pub export_statement_default_clause_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_clause_from_after"))]
+    pub export_statement_default_from_clause_from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_clause_from_before"))]
+    pub export_statement_default_from_clause_from_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
     pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
     pub from_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExportStatementDefaultClauseFromTransport {
+impl ::std::fmt::Display for ExportStatementDefaultFromClauseFromTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_export_statement_default_clause_from(self, f))
+        render_with_trivia!(self, f, render_export_statement_default_from_clause_from(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExportStatementDefaultClauseFromTransport {
+impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromClauseFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_clause_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_AFTER]);
-        self.export_statement_default_clause_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_FROM_AFTER]);
-        self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_FROM_BEFORE]);
+        self.export_statement_default_from_clause_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_AFTER]);
+        self.export_statement_default_from_clause_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_BEFORE]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_AFTER]);
+        self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_BEFORE]);
         self.source.fill_options(table);
         self.export_clause.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultClauseFromTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromClauseFromTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultClauseFromTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultFromClauseFromTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultClauseFromTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromClauseFromTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultClauseFromTransport::to_napi_value(env, *val)
+        ExportStatementDefaultFromClauseFromTransport::to_napi_value(env, *val)
     }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExportStatementDefaultDefaultKwTransport {
+pub struct ExportStatementDefaultDeclarationDefaultKwTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -62353,53 +62353,53 @@ pub struct ExportStatementDefaultDefaultKwTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<ExportStatementDefaultDefaultKwContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_after"))]
     pub default_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_default_kw_after"))]
-    pub export_statement_default_default_kw_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_default_kw_before"))]
-    pub export_statement_default_default_kw_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_after"))]
+    pub export_statement_default_declaration_default_kw_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_before"))]
+    pub export_statement_default_declaration_default_kw_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExportStatementDefaultDefaultKwTransport {
+impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_export_statement_default_default_kw(self, f))
+        render_with_trivia!(self, f, render_export_statement_default_declaration_default_kw(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExportStatementDefaultDefaultKwTransport {
+impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationDefaultKwTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.default_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_DEFAULT_AFTER]);
-        self.export_statement_default_default_kw_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_AFTER]);
-        self.export_statement_default_default_kw_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_BEFORE]);
+        self.default_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_AFTER]);
+        self.export_statement_default_declaration_default_kw_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_AFTER]);
+        self.export_statement_default_declaration_default_kw_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_BEFORE]);
         self.content.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultDefaultKwTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultDefaultKwTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultDeclarationDefaultKwTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDefaultKwTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultDefaultKwTransport::to_napi_value(env, *val)
+        ExportStatementDefaultDeclarationDefaultKwTransport::to_napi_value(env, *val)
     }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExportStatementDefaultValueTransport {
+pub struct ExportStatementDefaultDeclarationDefaultKwValueTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -62417,45 +62417,45 @@ pub struct ExportStatementDefaultValueTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
-    pub automatic_semicolon: ::sittir_core::SlotValue<ExportStatementDefaultValueAutomaticSemicolonTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_value_after"))]
-    pub export_statement_default_value_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_value_before"))]
-    pub export_statement_default_value_before: Option<u16>,
+    pub automatic_semicolon: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_value_after"))]
+    pub export_statement_default_declaration_default_kw_value_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_value_before"))]
+    pub export_statement_default_declaration_default_kw_value_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExportStatementDefaultValueTransport {
+impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwValueTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_export_statement_default_value(self, f))
+        render_with_trivia!(self, f, render_export_statement_default_declaration_default_kw_value(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExportStatementDefaultValueTransport {
+impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationDefaultKwValueTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_value_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_VALUE_EXPORT_STATEMENT_DEFAULT_VALUE_AFTER]);
-        self.export_statement_default_value_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_VALUE_EXPORT_STATEMENT_DEFAULT_VALUE_BEFORE]);
+        self.export_statement_default_declaration_default_kw_value_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AFTER]);
+        self.export_statement_default_declaration_default_kw_value_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_BEFORE]);
         self.value.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultValueTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwValueTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultValueTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultDeclarationDefaultKwValueTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultValueTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclarationDefaultKwValueTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultValueTransport::to_napi_value(env, *val)
+        ExportStatementDefaultDeclarationDefaultKwValueTransport::to_napi_value(env, *val)
     }
 }
 
@@ -82307,54 +82307,54 @@ fn render_export_statement_default_declaration(node: &ExportStatementDefaultDecl
     Ok(())
 }
 
-fn render_export_statement_default_star_from(node: &ExportStatementDefaultStarFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_export_statement_default_from_star_from(node: &ExportStatementDefaultFromStarFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let source = &node.source;
-    let export_statement_default_star_from_after = options::spacing_text(node.export_statement_default_star_from_after.unwrap_or(0));
-    let export_statement_default_star_from_before = options::spacing_text(node.export_statement_default_star_from_before.unwrap_or(0));
+    let export_statement_default_from_star_from_after = options::spacing_text(node.export_statement_default_from_star_from_after.unwrap_or(0));
+    let export_statement_default_from_star_from_before = options::spacing_text(node.export_statement_default_from_star_from_before.unwrap_or(0));
     let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
     let star_after = options::spacing_text(node.star_after.unwrap_or(0));
-    write!(f, "{export_statement_default_star_from_before}*{star_after}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_star_from_after}")?;
+    write!(f, "{export_statement_default_from_star_from_before}*{star_after}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_from_star_from_after}")?;
     Ok(())
 }
 
-fn render_export_statement_default_ns_from(node: &ExportStatementDefaultNsFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_export_statement_default_from_ns_from(node: &ExportStatementDefaultFromNsFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let namespace_export = &node.namespace_export;
     let source = &node.source;
-    let export_statement_default_ns_from_after = options::spacing_text(node.export_statement_default_ns_from_after.unwrap_or(0));
-    let export_statement_default_ns_from_before = options::spacing_text(node.export_statement_default_ns_from_before.unwrap_or(0));
+    let export_statement_default_from_ns_from_after = options::spacing_text(node.export_statement_default_from_ns_from_after.unwrap_or(0));
+    let export_statement_default_from_ns_from_before = options::spacing_text(node.export_statement_default_from_ns_from_before.unwrap_or(0));
     let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    write!(f, "{export_statement_default_ns_from_before}{namespace_export}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_ns_from_after}")?;
+    write!(f, "{export_statement_default_from_ns_from_before}{namespace_export}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_from_ns_from_after}")?;
     Ok(())
 }
 
-fn render_export_statement_default_clause_from(node: &ExportStatementDefaultClauseFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_export_statement_default_from_clause_from(node: &ExportStatementDefaultFromClauseFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let export_clause = &node.export_clause;
     let source = &node.source;
-    let export_statement_default_clause_from_after = options::spacing_text(node.export_statement_default_clause_from_after.unwrap_or(0));
-    let export_statement_default_clause_from_before = options::spacing_text(node.export_statement_default_clause_from_before.unwrap_or(0));
+    let export_statement_default_from_clause_from_after = options::spacing_text(node.export_statement_default_from_clause_from_after.unwrap_or(0));
+    let export_statement_default_from_clause_from_before = options::spacing_text(node.export_statement_default_from_clause_from_before.unwrap_or(0));
     let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    write!(f, "{export_statement_default_clause_from_before}{export_clause}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_clause_from_after}")?;
+    write!(f, "{export_statement_default_from_clause_from_before}{export_clause}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_from_clause_from_after}")?;
     Ok(())
 }
 
-fn render_export_statement_default_default_kw(node: &ExportStatementDefaultDefaultKwTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_export_statement_default_declaration_default_kw(node: &ExportStatementDefaultDeclarationDefaultKwTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
     let default_after = options::spacing_text(node.default_after.unwrap_or(0));
-    let export_statement_default_default_kw_after = options::spacing_text(node.export_statement_default_default_kw_after.unwrap_or(0));
-    let export_statement_default_default_kw_before = options::spacing_text(node.export_statement_default_default_kw_before.unwrap_or(0));
-    write!(f, "{export_statement_default_default_kw_before}default{default_after}{content}{export_statement_default_default_kw_after}")?;
+    let export_statement_default_declaration_default_kw_after = options::spacing_text(node.export_statement_default_declaration_default_kw_after.unwrap_or(0));
+    let export_statement_default_declaration_default_kw_before = options::spacing_text(node.export_statement_default_declaration_default_kw_before.unwrap_or(0));
+    write!(f, "{export_statement_default_declaration_default_kw_before}default{default_after}{content}{export_statement_default_declaration_default_kw_after}")?;
     Ok(())
 }
 
-fn render_export_statement_default_value(node: &ExportStatementDefaultValueTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_export_statement_default_declaration_default_kw_value(node: &ExportStatementDefaultDeclarationDefaultKwValueTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let automatic_semicolon = &node.automatic_semicolon;
     let value = &node.value;
-    let export_statement_default_value_after = options::spacing_text(node.export_statement_default_value_after.unwrap_or(0));
-    let export_statement_default_value_before = options::spacing_text(node.export_statement_default_value_before.unwrap_or(0));
-    write!(f, "{export_statement_default_value_before}{value}{automatic_semicolon}{export_statement_default_value_after}")?;
+    let export_statement_default_declaration_default_kw_value_after = options::spacing_text(node.export_statement_default_declaration_default_kw_value_after.unwrap_or(0));
+    let export_statement_default_declaration_default_kw_value_before = options::spacing_text(node.export_statement_default_declaration_default_kw_value_before.unwrap_or(0));
+    write!(f, "{export_statement_default_declaration_default_kw_value_before}{value}{automatic_semicolon}{export_statement_default_declaration_default_kw_value_after}")?;
     Ok(())
 }
 
@@ -83456,11 +83456,11 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::ImportClauseDefaultImport(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::ExportStatementDefaultFrom(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::ExportStatementDefaultDeclaration(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExportStatementDefaultStarFrom(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExportStatementDefaultNsFrom(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExportStatementDefaultClauseFrom(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExportStatementDefaultDefaultKw(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExportStatementDefaultValue(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExportStatementDefaultFromStarFrom(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExportStatementDefaultFromNsFrom(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExportStatementDefaultFromClauseFrom(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExportStatementDefaultDeclarationDefaultKw(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::ExportStatementDefaultDeclarationDefaultKwValue(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::VariableDeclaratorPlain(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::VariableDeclaratorDefinite(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::MetaPropertyNewTarget(t) => ::std::fmt::Display::fmt(t, f),

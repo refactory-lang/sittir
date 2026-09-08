@@ -2193,20 +2193,6 @@ export interface RangeExpressionTransport {
   _content: SlotValue<Box<RangeExpressionContentTransportSlot>>
 }
 
-export interface RangePatternLeftWithRightTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _right: SlotValue<Box<RangePatternLeftWithRightRightTransportSlot>>
-  _content: SlotValue<Box<AnyTransport>>
-  _range_pattern_left_with_right_after?: number
-  _range_pattern_left_with_right_before?: number
-}
-
 export interface RangePatternPrefixTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2244,6 +2230,20 @@ export interface RangePatternWithLeftTransport {
   _content: SlotValue<Box<RangePatternWithLeftContentTransportSlot>>
   _range_pattern_with_left_after?: number
   _range_pattern_with_left_before?: number
+}
+
+export interface RangePatternWithLeftWithRightTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _right: SlotValue<Box<RangePatternWithLeftWithRightRightTransportSlot>>
+  _content: SlotValue<Box<AnyTransport>>
+  _range_pattern_with_left_with_right_after?: number
+  _range_pattern_with_left_with_right_before?: number
 }
 
 export interface RawStringLiteralTransport {
@@ -3358,7 +3358,7 @@ export interface VisibilityModifierGroupTransport {
   _visibility_modifier_group_before?: number
 }
 
-export interface VisibilityModifierInPathTransport {
+export interface VisibilityModifierPubInPathTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -3366,10 +3366,9 @@ export interface VisibilityModifierInPathTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _path: SlotValue<VisibilityModifierInPathPathTransportSlot>
-  _in_after?: number
-  _visibility_modifier_in_path_after?: number
-  _visibility_modifier_in_path_before?: number
+  _path: SlotValue<VisibilityModifierPubInPathPathTransportSlot>
+  _visibility_modifier_pub_in_path_after?: number
+  _visibility_modifier_pub_in_path_before?: number
 }
 
 export interface VisibilityModifierPubTransport {

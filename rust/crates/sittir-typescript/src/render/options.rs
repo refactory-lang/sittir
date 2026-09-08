@@ -247,36 +247,36 @@ pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_END: usize = 238;
 pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_START: usize = 239;
 pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_AFTER: usize = 240;
 pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_BEFORE: usize = 241;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_AFTER: usize = 242;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_BEFORE: usize = 243;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_FROM_AFTER: usize = 244;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_CLAUSE_FROM_FROM_BEFORE: usize = 245;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 246;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_END: usize = 247;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_START: usize = 248;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_AFTER: usize = 249;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_BEFORE: usize = 250;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: usize = 251;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_BEFORE: usize = 252;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_DEFAULT_AFTER: usize = 253;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_AFTER: usize = 254;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DEFAULT_KW_BEFORE: usize = 255;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 256;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_AFTER: usize = 257;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: usize = 258;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_BEFORE: usize = 259;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_EXPORT_STATEMENT_DEFAULT_NS_FROM_AFTER: usize = 260;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_EXPORT_STATEMENT_DEFAULT_NS_FROM_BEFORE: usize = 261;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_FROM_AFTER: usize = 262;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_NS_FROM_FROM_BEFORE: usize = 263;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_EXPORT_STATEMENT_DEFAULT_STAR_FROM_AFTER: usize = 264;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_EXPORT_STATEMENT_DEFAULT_STAR_FROM_BEFORE: usize = 265;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_FROM_AFTER: usize = 266;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_FROM_BEFORE: usize = 267;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_STAR_FROM_STAR_AFTER: usize = 268;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_VALUE_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 269;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_VALUE_EXPORT_STATEMENT_DEFAULT_VALUE_AFTER: usize = 270;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_VALUE_EXPORT_STATEMENT_DEFAULT_VALUE_BEFORE: usize = 271;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 242;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_END: usize = 243;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_START: usize = 244;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_AFTER: usize = 245;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_BEFORE: usize = 246;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: usize = 247;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_BEFORE: usize = 248;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_AFTER: usize = 249;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_AFTER: usize = 250;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_BEFORE: usize = 251;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 252;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AFTER: usize = 253;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_BEFORE: usize = 254;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 255;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_AFTER: usize = 256;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: usize = 257;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_BEFORE: usize = 258;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_AFTER: usize = 259;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_BEFORE: usize = 260;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_AFTER: usize = 261;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_BEFORE: usize = 262;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_AFTER: usize = 263;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_BEFORE: usize = 264;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_FROM_AFTER: usize = 265;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_FROM_BEFORE: usize = 266;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_AFTER: usize = 267;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_BEFORE: usize = 268;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_FROM_AFTER: usize = 269;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_FROM_BEFORE: usize = 270;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_STAR_AFTER: usize = 271;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_AFTER: usize = 272;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_BEFORE: usize = 273;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_AFTER: usize = 274;
@@ -1114,10 +1114,6 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("export_specifiers", "export_specifiers_start", "export_specifiers_start", 167, &[167, 168, 169, 170, 171]),
     ("export_specifiers", "export_specifiers_after", "export_specifiers_after", 167, &[167, 168, 169, 170, 171]),
     ("export_specifiers", "export_specifiers_before", "export_specifiers_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_clause_from", "export_statement_default_clause_from_after", "export_statement_default_clause_from_after", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_clause_from", "export_statement_default_clause_from_before", "export_statement_default_clause_from_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_clause_from", "from_after", "from_after", 168, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_clause_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169]),
     ("export_statement_default_declaration", "export_statement_default_declaration_end", "export_statement_default_declaration_end", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration", "export_statement_default_declaration_start", "export_statement_default_declaration_start", 167, &[167, 168, 169, 170, 171]),
@@ -1125,25 +1121,29 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("export_statement_default_declaration", "export_before", "export_before", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration", "export_statement_default_declaration_after", "export_statement_default_declaration_after", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration", "export_statement_default_declaration_before", "export_statement_default_declaration_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_default_kw", "default_after", "default_after", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_default_kw", "export_statement_default_default_kw_after", "export_statement_default_default_kw_after", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_default_kw", "export_statement_default_default_kw_before", "export_statement_default_default_kw_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw", "default_after", "default_after", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw", "export_statement_default_declaration_default_kw_after", "export_statement_default_declaration_default_kw_after", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw", "export_statement_default_declaration_default_kw_before", "export_statement_default_declaration_default_kw_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw_value", "automatic_semicolon_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("export_statement_default_declaration_default_kw_value", "export_statement_default_declaration_default_kw_value_after", "export_statement_default_declaration_default_kw_value_after", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw_value", "export_statement_default_declaration_default_kw_value_before", "export_statement_default_declaration_default_kw_value_before", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_default_from", "automatic_semicolon_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_default_from", "export_after", "export_after", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_default_from", "export_statement_default_from_after", "export_statement_default_from_after", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_default_from", "export_statement_default_from_before", "export_statement_default_from_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_ns_from", "export_statement_default_ns_from_after", "export_statement_default_ns_from_after", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_ns_from", "export_statement_default_ns_from_before", "export_statement_default_ns_from_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_ns_from", "from_after", "from_after", 168, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_ns_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_star_from", "export_statement_default_star_from_after", "export_statement_default_star_from_after", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_star_from", "export_statement_default_star_from_before", "export_statement_default_star_from_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_star_from", "from_after", "from_after", 168, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_star_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_star_from", "star_after", "star_after", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_value", "automatic_semicolon_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("export_statement_default_value", "export_statement_default_value_after", "export_statement_default_value_after", 167, &[167, 168, 169, 170, 171]),
-    ("export_statement_default_value", "export_statement_default_value_before", "export_statement_default_value_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_clause_from", "export_statement_default_from_clause_from_after", "export_statement_default_from_clause_from_after", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_clause_from", "export_statement_default_from_clause_from_before", "export_statement_default_from_clause_from_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_clause_from", "from_after", "from_after", 168, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_clause_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_ns_from", "export_statement_default_from_ns_from_after", "export_statement_default_from_ns_from_after", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_ns_from", "export_statement_default_from_ns_from_before", "export_statement_default_from_ns_from_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_ns_from", "from_after", "from_after", 168, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_ns_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_star_from", "export_statement_default_from_star_from_after", "export_statement_default_from_star_from_after", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_star_from", "export_statement_default_from_star_from_before", "export_statement_default_from_star_from_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_star_from", "from_after", "from_after", 168, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_star_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_star_from", "star_after", "star_after", 167, &[167, 168, 169, 170, 171]),
     ("export_statement_equals_export", "eq_after", "eq_after", 168, &[167, 168, 169, 170, 171]),
     ("export_statement_equals_export", "eq_before", "eq_before", 168, &[167, 168, 169, 170, 171]),
     ("export_statement_equals_export", "export_after", "export_after", 167, &[167, 168, 169, 170, 171]),
@@ -1750,8 +1750,8 @@ pub static FLANK_SITES: &[(&str, usize)] = &[
     ("enum_body_elements_start", 221),
     ("export_specifiers_end", 238),
     ("export_specifiers_start", 239),
-    ("export_statement_default_declaration_end", 247),
-    ("export_statement_default_declaration_start", 248),
+    ("export_statement_default_declaration_end", 243),
+    ("export_statement_default_declaration_start", 244),
     ("extends_clause_end", 302),
     ("extends_clause_start", 303),
     ("extends_type_clause_end", 311),
@@ -1872,13 +1872,13 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("export_clause", &[229, 230, 231, 228]),
     ("export_specifier", &[235, 233, 232, 234]),
     ("export_specifiers", &[241, 239, 238, 240]),
-    ("export_statement_default_clause_from", &[243, 245, 244, 242]),
-    ("export_statement_default_declaration", &[252, 248, 247, 250, 249, 251]),
-    ("export_statement_default_default_kw", &[255, 253, 254]),
-    ("export_statement_default_from", &[259, 257, 258]),
-    ("export_statement_default_ns_from", &[261, 263, 262, 260]),
-    ("export_statement_default_star_from", &[265, 268, 267, 266, 264]),
-    ("export_statement_default_value", &[271, 270]),
+    ("export_statement_default_declaration", &[248, 244, 243, 246, 245, 247]),
+    ("export_statement_default_declaration_default_kw", &[251, 249, 250]),
+    ("export_statement_default_declaration_default_kw_value", &[254, 253]),
+    ("export_statement_default_from", &[258, 256, 257]),
+    ("export_statement_default_from_clause_from", &[260, 262, 261, 259]),
+    ("export_statement_default_from_ns_from", &[264, 266, 265, 263]),
+    ("export_statement_default_from_star_from", &[268, 271, 270, 269, 267]),
     ("export_statement_equals_export", &[276, 274, 273, 272, 275]),
     ("export_statement_namespace_export", &[282, 280, 279, 278, 284, 283, 281]),
     ("export_statement_type_export", &[290, 288, 287, 286, 292, 291, 289]),
@@ -2200,22 +2200,22 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("export_specifiers_before", &[167, 168, 169, 170, 171]),
     ("export_specifiers_end", &[167, 168, 169, 170, 171]),
     ("export_specifiers_start", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_clause_from_after", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_clause_from_before", &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration_after", &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration_before", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw_after", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw_before", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw_value_after", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_declaration_default_kw_value_before", &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration_end", &[167, 168, 169, 170, 171]),
     ("export_statement_default_declaration_start", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_default_kw_after", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_default_kw_before", &[167, 168, 169, 170, 171]),
     ("export_statement_default_from_after", &[167, 168, 169, 170, 171]),
     ("export_statement_default_from_before", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_ns_from_after", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_ns_from_before", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_star_from_after", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_star_from_before", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_value_after", &[167, 168, 169, 170, 171]),
-    ("export_statement_default_value_before", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_clause_from_after", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_clause_from_before", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_ns_from_after", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_ns_from_before", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_star_from_after", &[167, 168, 169, 170, 171]),
+    ("export_statement_default_from_star_from_before", &[167, 168, 169, 170, 171]),
     ("export_statement_equals_export_after", &[167, 168, 169, 170, 171]),
     ("export_statement_equals_export_before", &[167, 168, 169, 170, 171]),
     ("export_statement_namespace_export_after", &[167, 168, 169, 170, 171]),

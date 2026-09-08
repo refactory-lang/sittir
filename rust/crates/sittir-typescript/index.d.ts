@@ -1049,7 +1049,7 @@ export interface ExportSpecifierTransport {
   _export_specifier_before?: number
 }
 
-export interface ExportStatementDefaultClauseFromTransport {
+export interface ExportStatementDefaultDeclarationDefaultKwTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1057,12 +1057,24 @@ export interface ExportStatementDefaultClauseFromTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _source: SlotValue<StringTransport>
-  _export_clause: SlotValue<ExportClauseTransport>
-  _export_statement_default_clause_from_after?: number
-  _export_statement_default_clause_from_before?: number
-  _from_after?: number
-  _from_before?: number
+  _content: SlotValue<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot>
+  _default_after?: number
+  _export_statement_default_declaration_default_kw_after?: number
+  _export_statement_default_declaration_default_kw_before?: number
+}
+
+export interface ExportStatementDefaultDeclarationDefaultKwValueTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _value: SlotValue<ExpressionTransport>
+  _automatic_semicolon: SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot>
+  _export_statement_default_declaration_default_kw_value_after?: number
+  _export_statement_default_declaration_default_kw_value_before?: number
 }
 
 export interface ExportStatementDefaultDeclarationTransport {
@@ -1084,7 +1096,7 @@ export interface ExportStatementDefaultDeclarationTransport {
   _export_statement_default_declaration_before?: number
 }
 
-export interface ExportStatementDefaultDefaultKwTransport {
+export interface ExportStatementDefaultFromClauseFromTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1092,10 +1104,44 @@ export interface ExportStatementDefaultDefaultKwTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: SlotValue<ExportStatementDefaultDefaultKwContentTransportSlot>
-  _default_after?: number
-  _export_statement_default_default_kw_after?: number
-  _export_statement_default_default_kw_before?: number
+  _source: SlotValue<StringTransport>
+  _export_clause: SlotValue<ExportClauseTransport>
+  _export_statement_default_from_clause_from_after?: number
+  _export_statement_default_from_clause_from_before?: number
+  _from_after?: number
+  _from_before?: number
+}
+
+export interface ExportStatementDefaultFromNsFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _source: SlotValue<StringTransport>
+  _namespace_export: SlotValue<NamespaceExportTransport>
+  _export_statement_default_from_ns_from_after?: number
+  _export_statement_default_from_ns_from_before?: number
+  _from_after?: number
+  _from_before?: number
+}
+
+export interface ExportStatementDefaultFromStarFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _source: SlotValue<StringTransport>
+  _export_statement_default_from_star_from_after?: number
+  _export_statement_default_from_star_from_before?: number
+  _from_after?: number
+  _from_before?: number
+  _star_after?: number
 }
 
 export interface ExportStatementDefaultFromTransport {
@@ -1113,38 +1159,6 @@ export interface ExportStatementDefaultFromTransport {
   _export_statement_default_from_before?: number
 }
 
-export interface ExportStatementDefaultNsFromTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _source: SlotValue<StringTransport>
-  _namespace_export: SlotValue<NamespaceExportTransport>
-  _export_statement_default_ns_from_after?: number
-  _export_statement_default_ns_from_before?: number
-  _from_after?: number
-  _from_before?: number
-}
-
-export interface ExportStatementDefaultStarFromTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _source: SlotValue<StringTransport>
-  _export_statement_default_star_from_after?: number
-  _export_statement_default_star_from_before?: number
-  _from_after?: number
-  _from_before?: number
-  _star_after?: number
-}
-
 export interface ExportStatementDefaultTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1154,20 +1168,6 @@ export interface ExportStatementDefaultTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: SlotValue<ExportStatementDefaultContentTransportSlot>
-}
-
-export interface ExportStatementDefaultValueTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _value: SlotValue<ExpressionTransport>
-  _automatic_semicolon: SlotValue<ExportStatementDefaultValueAutomaticSemicolonTransportSlot>
-  _export_statement_default_value_after?: number
-  _export_statement_default_value_before?: number
 }
 
 export interface ExportStatementEqualsExportTransport {

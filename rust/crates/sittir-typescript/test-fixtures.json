@@ -14253,7 +14253,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))))) (comment) statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))) terminator: (automatic_semicolon))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))))) (comment) statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))) terminator: (automatic_semicolon))))))",
     "wrappedText": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
     "wrappedOffset": 0
   },
@@ -14504,7 +14504,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))))))",
     "wrappedText": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n",
     "wrappedOffset": 0
   },
@@ -14613,7 +14613,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "// a comment\nexport default class A{}\n",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))))",
     "wrappedText": "// a comment\nexport default class A{}\n",
     "wrappedOffset": 0
   },
@@ -51509,7 +51509,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default abstract class C{ }\nexport default class C{ }\n\nexport class C{ }\n\nexport default interface I{}\nexport interface I{}",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (abstract_class_declaration name: (type_identifier) body: (class_body)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (interface_declaration name: (type_identifier) body: (interface_body)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (abstract_class_declaration name: (type_identifier) body: (class_body)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))) statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (interface_declaration name: (type_identifier) body: (interface_body)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (interface_declaration name: (type_identifier) body: (interface_body))))))",
     "wrappedText": "export default abstract class C{ }\nexport default class C{ }\n\nexport class C{ }\n\nexport default interface I{}\nexport interface I{}",
     "wrappedOffset": 0
   },
@@ -51603,7 +51603,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export default abstract class C{ }",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (abstract_class_declaration name: (type_identifier) body: (class_body))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (abstract_class_declaration name: (type_identifier) body: (class_body))))))",
     "wrappedText": "export default abstract class C{ }",
     "wrappedOffset": 0
   },
@@ -51698,7 +51698,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export default class C{ }\n",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon))))))",
     "wrappedText": "export default class C{ }\n",
     "wrappedOffset": 0
   },
@@ -51877,7 +51877,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export default interface I{}",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (interface_declaration name: (type_identifier) body: (interface_body))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (interface_declaration name: (type_identifier) body: (interface_body))))))",
     "wrappedText": "export default interface I{}",
     "wrappedOffset": 0
   },
@@ -84402,7 +84402,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default function foo(): bar\n",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon)))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon)))))))",
     "wrappedText": "export default function foo(): bar\n",
     "wrappedOffset": 0
   },
@@ -84511,7 +84511,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export default function foo(): bar\n",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_default_kw declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon))))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)) terminator: (automatic_semicolon))))))",
     "wrappedText": "export default function foo(): bar\n",
     "wrappedOffset": 0
   },

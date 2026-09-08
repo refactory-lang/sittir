@@ -171,12 +171,12 @@ pub const SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_AFTER: usize = 162;
 pub const SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_BEFORE: usize = 163;
 pub const SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER: usize = 164;
 pub const SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE: usize = 165;
-pub const SITE_EXCEPT_CLAUSE_AS_AS_AFTER: usize = 166;
-pub const SITE_EXCEPT_CLAUSE_AS_AS_BEFORE: usize = 167;
-pub const SITE_EXCEPT_CLAUSE_AS_EXCEPT_CLAUSE_AS_AFTER: usize = 168;
-pub const SITE_EXCEPT_CLAUSE_AS_EXCEPT_CLAUSE_AS_BEFORE: usize = 169;
-pub const SITE_EXCEPT_CLAUSE_LIST_VALUE_SEPARATOR_SPACE_AFTER: usize = 170;
-pub const SITE_EXCEPT_CLAUSE_LIST_VALUE_SEPARATOR_SPACE_BEFORE: usize = 171;
+pub const SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_AFTER: usize = 166;
+pub const SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_BEFORE: usize = 167;
+pub const SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_AFTER: usize = 168;
+pub const SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_BEFORE: usize = 169;
+pub const SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER: usize = 170;
+pub const SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE: usize = 171;
 pub const SITE_EXEC_STATEMENT_EXEC_AFTER: usize = 172;
 pub const SITE_EXEC_STATEMENT_EXEC_STATEMENT_AFTER: usize = 173;
 pub const SITE_EXEC_STATEMENT_EXEC_STATEMENT_BEFORE: usize = 174;
@@ -684,12 +684,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("except_clause", "except_clause_before", "except_clause_before", 108, &[108, 109, 101]),
     ("except_clause", "star_marker_after", "star_marker_after", 108, &[108, 109, 101]),
     ("except_clause", "star_marker_before", "star_marker_before", 108, &[108, 109, 101]),
-    ("except_clause_as", "as_after", "as_after", 108, &[108, 109, 101]),
-    ("except_clause_as", "as_before", "as_before", 108, &[108, 109, 101]),
-    ("except_clause_as", "except_clause_as_after", "except_clause_as_after", 108, &[108, 109, 101]),
-    ("except_clause_as", "except_clause_as_before", "except_clause_as_before", 108, &[108, 109, 101]),
-    ("except_clause_list", "value_separator_space_after", "comma_separator_space_after", 109, &[108, 109, 101]),
-    ("except_clause_list", "value_separator_space_before", "comma_separator_space_before", 108, &[108, 109, 101]),
+    ("except_clause_exception_as", "as_after", "as_after", 108, &[108, 109, 101]),
+    ("except_clause_exception_as", "as_before", "as_before", 108, &[108, 109, 101]),
+    ("except_clause_exception_as", "except_clause_exception_as_after", "except_clause_exception_as_after", 108, &[108, 109, 101]),
+    ("except_clause_exception_as", "except_clause_exception_as_before", "except_clause_exception_as_before", 108, &[108, 109, 101]),
+    ("except_clause_exception_list", "value_separator_space_after", "comma_separator_space_after", 109, &[108, 109, 101]),
+    ("except_clause_exception_list", "value_separator_space_before", "comma_separator_space_before", 108, &[108, 109, 101]),
     ("exec_statement", "exec_after", "exec_after", 108, &[108, 109, 101]),
     ("exec_statement", "exec_statement_after", "exec_statement_after", 108, &[108, 109, 101]),
     ("exec_statement", "exec_statement_before", "exec_statement_before", 108, &[108, 109, 101]),
@@ -1159,9 +1159,9 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("eq_marker_before", &[108, 109, 101]),
     ("except_after", &[108, 109, 101]),
     ("except_clause_after", &[108, 109, 101]),
-    ("except_clause_as_after", &[108, 109, 101]),
-    ("except_clause_as_before", &[108, 109, 101]),
     ("except_clause_before", &[108, 109, 101]),
+    ("except_clause_exception_as_after", &[108, 109, 101]),
+    ("except_clause_exception_as_before", &[108, 109, 101]),
     ("exec_after", &[108, 109, 101]),
     ("exec_statement_after", &[108, 109, 101]),
     ("exec_statement_before", &[108, 109, 101]),

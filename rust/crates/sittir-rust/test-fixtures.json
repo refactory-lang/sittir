@@ -68630,14 +68630,15 @@
                   "$type": 370,
                   "$source": 0,
                   "$named": true,
-                  "$other": [
-                    108
-                  ],
                   "$span": {
                     "start": 80,
                     "end": 91
                   },
                   "$nodeHandle": 249108103227,
+                  "$slotOrder": [
+                    "in",
+                    "scoped_identifier"
+                  ],
                   "_path": {
                     "$type": 249,
                     "$source": 0,
@@ -68723,7 +68724,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "pub fn a() {}\npub(super)fn b() {}\npub(self)fn c() {}\npub(crate)fn c() {}\npub(in crate::d)fn e() {}",
-    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (super)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (self)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (crate)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (super)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (self)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (crate)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_pub_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block)))",
     "wrappedText": "pub fn a() {}\npub(super)fn b() {}\npub(self)fn c() {}\npub(crate)fn c() {}\npub(in crate::d)fn e() {}",
     "wrappedOffset": 0
   },
@@ -69131,14 +69132,15 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$other": [
-                108
-              ],
               "$span": {
                 "start": 80,
                 "end": 91
               },
               "$nodeHandle": 249108103253,
+              "$slotOrder": [
+                "in",
+                "scoped_identifier"
+              ],
               "_path": {
                 "$type": 249,
                 "$source": 0,
@@ -69217,7 +69219,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub(in crate::d)fn e() {}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_pub_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block))",
     "wrappedText": "pub(in crate::d)fn e() {}",
     "wrappedOffset": 0
   },
@@ -69453,14 +69455,15 @@
             "$type": 370,
             "$source": 0,
             "$named": true,
-            "$other": [
-              108
-            ],
             "$span": {
               "start": 80,
               "end": 91
             },
             "$nodeHandle": 249108103266,
+            "$slotOrder": [
+              "in",
+              "scoped_identifier"
+            ],
             "_path": {
               "$type": 249,
               "$source": 0,
@@ -69501,7 +69504,7 @@
     "pattern": "visibility_modifier",
     "edits": [],
     "expectedSourceOut": "pub(in crate::d)",
-    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_in_path (scoped_identifier path: (crate) name: (identifier))))))",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_pub_in_path (scoped_identifier path: (crate) name: (identifier))))))",
     "wrappedText": "pub(in crate::d) fn _f() {}",
     "wrappedOffset": 0
   },
@@ -135714,7 +135717,7 @@
                             "$nodeHandle": 511101108334,
                             "$slotOrder": [
                               "left",
-                              "range_pattern_left_with_right"
+                              "range_pattern_with_left_with_right"
                             ],
                             "_content": {
                               "$type": 402,
@@ -135819,7 +135822,7 @@
                                 "$nodeHandle": 511101108341,
                                 "$slotOrder": [
                                   "left",
-                                  "range_pattern_left_with_right"
+                                  "range_pattern_with_left_with_right"
                                 ],
                                 "_content": {
                                   "$type": 402,
@@ -135928,7 +135931,7 @@
                             "$nodeHandle": 511101108347,
                             "$slotOrder": [
                               "left",
-                              "range_pattern_left_with_right"
+                              "range_pattern_with_left_with_right"
                             ],
                             "_content": {
                               "$type": 402,
@@ -136028,7 +136031,7 @@
                             "$nodeHandle": 511101108353,
                             "$slotOrder": [
                               "left",
-                              "range_pattern_left_with_right"
+                              "range_pattern_with_left_with_right"
                             ],
                             "_content": {
                               "$type": 402,
@@ -136123,7 +136126,7 @@
                           "$nodeHandle": 511101108358,
                           "$slotOrder": [
                             "left",
-                            "range_pattern_left_bare"
+                            "range_pattern_with_left_bare"
                           ],
                           "_content": 403
                         }
@@ -136660,7 +136663,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}\nmatch name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma value: (boolean_literal))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma value: (boolean_literal))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))))",
     "wrappedText": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}\nmatch name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}",
     "wrappedOffset": 0
   },
@@ -136906,7 +136909,7 @@
                       "$nodeHandle": 511101108493,
                       "$slotOrder": [
                         "left",
-                        "range_pattern_left_with_right"
+                        "range_pattern_with_left_with_right"
                       ],
                       "_content": {
                         "$type": 402,
@@ -137011,7 +137014,7 @@
                           "$nodeHandle": 511101108500,
                           "$slotOrder": [
                             "left",
-                            "range_pattern_left_with_right"
+                            "range_pattern_with_left_with_right"
                           ],
                           "_content": {
                             "$type": 402,
@@ -137120,7 +137123,7 @@
                       "$nodeHandle": 511101108506,
                       "$slotOrder": [
                         "left",
-                        "range_pattern_left_with_right"
+                        "range_pattern_with_left_with_right"
                       ],
                       "_content": {
                         "$type": 402,
@@ -137220,7 +137223,7 @@
                       "$nodeHandle": 511101108512,
                       "$slotOrder": [
                         "left",
-                        "range_pattern_left_with_right"
+                        "range_pattern_with_left_with_right"
                       ],
                       "_content": {
                         "$type": 402,
@@ -137315,7 +137318,7 @@
                     "$nodeHandle": 511101108517,
                     "$slotOrder": [
                       "left",
-                      "range_pattern_left_bare"
+                      "range_pattern_with_left_bare"
                     ],
                     "_content": 403
                   }
@@ -137542,7 +137545,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))",
     "wrappedText": "fn _f() { let _ = match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}; }",
     "wrappedOffset": 18
   },
@@ -138526,7 +138529,7 @@
           "$nodeHandle": 511101108848,
           "$slotOrder": [
             "left",
-            "range_pattern_left_with_right"
+            "range_pattern_with_left_with_right"
           ],
           "_content": {
             "$type": 402,
@@ -138567,7 +138570,7 @@
     "pattern": "captured_pattern",
     "edits": [],
     "expectedSourceOut": "a@1...5",
-    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))))",
+    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal)))))",
     "wrappedText": "fn _f() { let a@1...5 = (); }",
     "wrappedOffset": 14
   },
@@ -138600,7 +138603,7 @@
           "$nodeHandle": 511101108851,
           "$slotOrder": [
             "left",
-            "range_pattern_left_with_right"
+            "range_pattern_with_left_with_right"
           ],
           "_content": {
             "$type": 402,
@@ -138641,7 +138644,7 @@
     "pattern": "captured_pattern",
     "edits": [],
     "expectedSourceOut": "a@b...c",
-    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier)))))",
+    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))",
     "wrappedText": "fn _f() { let a@b...c = (); }",
     "wrappedOffset": 14
   },
@@ -138674,7 +138677,7 @@
           "$nodeHandle": 511101108854,
           "$slotOrder": [
             "left",
-            "range_pattern_left_with_right"
+            "range_pattern_with_left_with_right"
           ],
           "_content": {
             "$type": 402,
@@ -138715,7 +138718,7 @@
     "pattern": "captured_pattern",
     "edits": [],
     "expectedSourceOut": "a@b..=c",
-    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier)))))",
+    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))",
     "wrappedText": "fn _f() { let a@b..=c = (); }",
     "wrappedOffset": 14
   },
@@ -138930,7 +138933,7 @@
               "$nodeHandle": 511101108864,
               "$slotOrder": [
                 "left",
-                "range_pattern_left_with_right"
+                "range_pattern_with_left_with_right"
               ],
               "_content": {
                 "$type": 402,
@@ -138980,7 +138983,7 @@
     "pattern": "tuple_struct_pattern",
     "edits": [],
     "expectedSourceOut": "Some(1...5)",
-    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))))",
+    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal))))))",
     "wrappedText": "fn _f() { let Some(1...5) = (); }",
     "wrappedOffset": 14
   },
@@ -139008,7 +139011,7 @@
         "$nodeHandle": 511101108872,
         "$slotOrder": [
           "left",
-          "range_pattern_left_with_right"
+          "range_pattern_with_left_with_right"
         ],
         "_content": {
           "$type": 402,
@@ -139036,7 +139039,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "1...5",
-    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal))))",
     "wrappedText": "fn _f() { let 1...5 = (); }",
     "wrappedOffset": 14
   },
@@ -139064,7 +139067,7 @@
         "$nodeHandle": 511101108874,
         "$slotOrder": [
           "left",
-          "range_pattern_left_with_right"
+          "range_pattern_with_left_with_right"
         ],
         "_content": {
           "$type": 402,
@@ -139092,7 +139095,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "1...5",
-    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_left_with_right right: (integer_literal))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal))))",
     "wrappedText": "fn _f() { let 1...5 = (); }",
     "wrappedOffset": 14
   },
@@ -139120,7 +139123,7 @@
         "$nodeHandle": 511101108876,
         "$slotOrder": [
           "left",
-          "range_pattern_left_with_right"
+          "range_pattern_with_left_with_right"
         ],
         "_content": {
           "$type": 402,
@@ -139148,7 +139151,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "b...c",
-    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))",
     "wrappedText": "fn _f() { let b...c = (); }",
     "wrappedOffset": 14
   },
@@ -139176,7 +139179,7 @@
         "$nodeHandle": 511101108878,
         "$slotOrder": [
           "left",
-          "range_pattern_left_with_right"
+          "range_pattern_with_left_with_right"
         ],
         "_content": {
           "$type": 402,
@@ -139204,7 +139207,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "b..=c",
-    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_with_right right: (identifier))))",
+    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))",
     "wrappedText": "fn _f() { let b..=c = (); }",
     "wrappedOffset": 14
   },
@@ -139232,7 +139235,7 @@
         "$nodeHandle": 511101108880,
         "$slotOrder": [
           "left",
-          "range_pattern_left_bare"
+          "range_pattern_with_left_bare"
         ],
         "_content": 403
       }
@@ -139246,7 +139249,7 @@
     "pattern": "range_pattern",
     "edits": [],
     "expectedSourceOut": "d..",
-    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (identifier) (range_pattern_left_bare)))",
+    "expectedReparseTree": "(range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare)))",
     "wrappedText": "fn _f() { let d.. = (); }",
     "wrappedOffset": 14
   },

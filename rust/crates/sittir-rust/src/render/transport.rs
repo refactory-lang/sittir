@@ -230,7 +230,7 @@ pub enum AnyTransport {
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     ClosureExpressionExpr(ClosureExpressionExprTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
-    VisibilityModifierInPath(VisibilityModifierInPathTransport),
+    VisibilityModifierPubInPath(VisibilityModifierPubInPathTransport),
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
     FunctionTypeFnForm(FunctionTypeFnFormTransport),
     ModItemExternal(ModItemExternalTransport),
@@ -263,8 +263,8 @@ pub enum AnyTransport {
     MacroDefinitionBracket(MacroDefinitionBracketTransport),
     MacroDefinitionBrace(MacroDefinitionBraceTransport),
     RangePatternPrefix(RangePatternPrefixTransport),
-    RangePatternLeftWithRight(RangePatternLeftWithRightTransport),
-    RangePatternLeftBare(RangePatternLeftBareTransport),
+    RangePatternWithLeftWithRight(RangePatternWithLeftWithRightTransport),
+    RangePatternWithLeftBare(RangePatternWithLeftBareTransport),
     RangePatternWithLeft(RangePatternWithLeftTransport),
     StructItemBrace(StructItemBraceTransport),
     StructItemTuple(StructItemTupleTransport),
@@ -512,7 +512,7 @@ pub enum AnyTransport {
     Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74,
     Literal90_64_6f_74_5f_64_6f_74_5f_65_71,
     Literal91_64_6f_6c_6c_61_72,
-    Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65,
+    Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65,
 }
 
 impl ::sittir_core::options::FillOptions for AnyTransport {
@@ -728,7 +728,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::ClosureExpressionBlock(t) => t.fill_options(table),
             AnyTransport::ClosureExpressionExpr(t) => t.fill_options(table),
             AnyTransport::VisibilityModifierPub(t) => t.fill_options(table),
-            AnyTransport::VisibilityModifierInPath(t) => t.fill_options(table),
+            AnyTransport::VisibilityModifierPubInPath(t) => t.fill_options(table),
             AnyTransport::FunctionTypeTraitForm(t) => t.fill_options(table),
             AnyTransport::FunctionTypeFnForm(t) => t.fill_options(table),
             AnyTransport::ModItemExternal(t) => t.fill_options(table),
@@ -761,8 +761,8 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::MacroDefinitionBracket(t) => t.fill_options(table),
             AnyTransport::MacroDefinitionBrace(t) => t.fill_options(table),
             AnyTransport::RangePatternPrefix(t) => t.fill_options(table),
-            AnyTransport::RangePatternLeftWithRight(t) => t.fill_options(table),
-            AnyTransport::RangePatternLeftBare(t) => t.fill_options(table),
+            AnyTransport::RangePatternWithLeftWithRight(t) => t.fill_options(table),
+            AnyTransport::RangePatternWithLeftBare(t) => t.fill_options(table),
             AnyTransport::RangePatternWithLeft(t) => t.fill_options(table),
             AnyTransport::StructItemBrace(t) => t.fill_options(table),
             AnyTransport::StructItemTuple(t) => t.fill_options(table),
@@ -1010,7 +1010,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => {}
             AnyTransport::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => {}
             AnyTransport::Literal91_64_6f_6c_6c_61_72 => {}
-            AnyTransport::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => {}
+            AnyTransport::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => {}
         }
     }
 }
@@ -1858,9 +1858,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 369 => Ok(AnyTransport::VisibilityModifierPub(
                     VisibilityModifierPubTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _visibility_modifier_in_path (_VISIBILITY_MODIFIER_IN_PATH)
-                370 => Ok(AnyTransport::VisibilityModifierInPath(
-                    VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                // kind: _visibility_modifier_pub_in_path (_VISIBILITY_MODIFIER_PUB_IN_PATH)
+                370 => Ok(AnyTransport::VisibilityModifierPubInPath(
+                    VisibilityModifierPubInPathTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _function_type_trait_form (_FUNCTION_TYPE_TRAIT_FORM)
                 371 => Ok(AnyTransport::FunctionTypeTraitForm(
@@ -1990,13 +1990,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 401 => Ok(AnyTransport::RangePatternPrefix(
                     RangePatternPrefixTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _range_pattern_left_with_right (_RANGE_PATTERN_LEFT_WITH_RIGHT)
-                402 => Ok(AnyTransport::RangePatternLeftWithRight(
-                    RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
+                // kind: _range_pattern_with_left_with_right (_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT)
+                402 => Ok(AnyTransport::RangePatternWithLeftWithRight(
+                    RangePatternWithLeftWithRightTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _range_pattern_left_bare (_RANGE_PATTERN_LEFT_BARE)
-                403 => Ok(AnyTransport::RangePatternLeftBare(
-                    RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
+                // kind: _range_pattern_with_left_bare (_RANGE_PATTERN_WITH_LEFT_BARE)
+                403 => Ok(AnyTransport::RangePatternWithLeftBare(
+                    RangePatternWithLeftBareTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_pattern_with_left (_RANGE_PATTERN_WITH_LEFT)
                 404 => Ok(AnyTransport::RangePatternWithLeft(
@@ -27803,7 +27803,7 @@ impl ::std::fmt::Display for StructPatternElementsElementTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum VisibilityModifierGroupContentTransportSlot {
-    VisibilityModifierInPath(VisibilityModifierInPathTransport),
+    VisibilityModifierPubInPath(VisibilityModifierPubInPathTransport),
     Literal19_73_65_6c_66,
     Literal20_73_75_70_65_72,
     Literal21_63_72_61_74_65,
@@ -27812,7 +27812,7 @@ pub enum VisibilityModifierGroupContentTransportSlot {
 impl ::sittir_core::options::FillOptions for VisibilityModifierGroupContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            VisibilityModifierGroupContentTransportSlot::VisibilityModifierInPath(t) => t.fill_options(table),
+            VisibilityModifierGroupContentTransportSlot::VisibilityModifierPubInPath(t) => t.fill_options(table),
             VisibilityModifierGroupContentTransportSlot::Literal19_73_65_6c_66 => {}
             VisibilityModifierGroupContentTransportSlot::Literal20_73_75_70_65_72 => {}
             VisibilityModifierGroupContentTransportSlot::Literal21_63_72_61_74_65 => {}
@@ -27832,8 +27832,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroupContentTr
                     132 => Ok(Self::Literal19_73_65_6c_66),
                     133 => Ok(Self::Literal20_73_75_70_65_72),
                     134 => Ok(Self::Literal21_63_72_61_74_65),
-                    370 => Ok(Self::VisibilityModifierInPath(
-                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                    370 => Ok(Self::VisibilityModifierPubInPath(
+                        VisibilityModifierPubInPathTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in VisibilityModifierGroupContentTransportSlot",
@@ -27849,8 +27849,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroupContentTr
                     132 => Ok(Self::Literal19_73_65_6c_66),
                     133 => Ok(Self::Literal20_73_75_70_65_72),
                     134 => Ok(Self::Literal21_63_72_61_74_65),
-                    370 => Ok(Self::VisibilityModifierInPath(
-                        VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                    370 => Ok(Self::VisibilityModifierPubInPath(
+                        VisibilityModifierPubInPathTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in VisibilityModifierGroupContentTransportSlot",
@@ -27894,7 +27894,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierGroupContent
 
 fn visibility_modifier_group_content_transport_slot_to_any(t: VisibilityModifierGroupContentTransportSlot) -> AnyTransport {
     match t {
-        VisibilityModifierGroupContentTransportSlot::VisibilityModifierInPath(inner) => AnyTransport::VisibilityModifierInPath(inner),
+        VisibilityModifierGroupContentTransportSlot::VisibilityModifierPubInPath(inner) => AnyTransport::VisibilityModifierPubInPath(inner),
         VisibilityModifierGroupContentTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
         VisibilityModifierGroupContentTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
         VisibilityModifierGroupContentTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
@@ -27904,7 +27904,7 @@ fn visibility_modifier_group_content_transport_slot_to_any(t: VisibilityModifier
 impl ::std::fmt::Display for VisibilityModifierGroupContentTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            VisibilityModifierGroupContentTransportSlot::VisibilityModifierInPath(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierGroupContentTransportSlot::VisibilityModifierPubInPath(inner) => ::std::fmt::Display::fmt(inner, f),
             VisibilityModifierGroupContentTransportSlot::Literal19_73_65_6c_66 => f.write_str("self"),
             VisibilityModifierGroupContentTransportSlot::Literal20_73_75_70_65_72 => f.write_str("super"),
             VisibilityModifierGroupContentTransportSlot::Literal21_63_72_61_74_65 => f.write_str("crate"),
@@ -29062,7 +29062,7 @@ impl ::std::fmt::Display for ClosureExpressionExprBodyTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum VisibilityModifierInPathPathTransportSlot {
+pub enum VisibilityModifierPubInPathPathTransportSlot {
     Identifier(IdentifierTransport),
     Metavariable(MetavariableTransport),
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -29071,21 +29071,21 @@ pub enum VisibilityModifierInPathPathTransportSlot {
     Literal21_63_72_61_74_65,
 }
 
-impl ::sittir_core::options::FillOptions for VisibilityModifierInPathPathTransportSlot {
+impl ::sittir_core::options::FillOptions for VisibilityModifierPubInPathPathTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            VisibilityModifierInPathPathTransportSlot::Identifier(t) => t.fill_options(table),
-            VisibilityModifierInPathPathTransportSlot::Metavariable(t) => t.fill_options(table),
-            VisibilityModifierInPathPathTransportSlot::ScopedIdentifier(t) => t.fill_options(table),
-            VisibilityModifierInPathPathTransportSlot::Literal19_73_65_6c_66 => {}
-            VisibilityModifierInPathPathTransportSlot::Literal20_73_75_70_65_72 => {}
-            VisibilityModifierInPathPathTransportSlot::Literal21_63_72_61_74_65 => {}
+            VisibilityModifierPubInPathPathTransportSlot::Identifier(t) => t.fill_options(table),
+            VisibilityModifierPubInPathPathTransportSlot::Metavariable(t) => t.fill_options(table),
+            VisibilityModifierPubInPathPathTransportSlot::ScopedIdentifier(t) => t.fill_options(table),
+            VisibilityModifierPubInPathPathTransportSlot::Literal19_73_65_6c_66 => {}
+            VisibilityModifierPubInPathPathTransportSlot::Literal20_73_75_70_65_72 => {}
+            VisibilityModifierPubInPathPathTransportSlot::Literal21_63_72_61_74_65 => {}
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierInPathPathTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierPubInPathPathTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -29166,14 +29166,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierInPathPathTran
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VisibilityModifierInPathPathTransportSlot",
+                        "unknown kind id {other} in VisibilityModifierPubInPathPathTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in VisibilityModifierInPathPathTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in VisibilityModifierPubInPathPathTransportSlot")
                 )?;
                 match kind_id {
                     132 => Ok(Self::Literal19_73_65_6c_66),
@@ -29249,65 +29249,65 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierInPathPathTran
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in VisibilityModifierInPathPathTransportSlot",
+                        "unknown kind id {other} in VisibilityModifierPubInPathPathTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("VisibilityModifierInPathPathTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("VisibilityModifierPubInPathPathTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierInPathPathTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierPubInPathPathTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VisibilityModifierInPathPathTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("VisibilityModifierPubInPathPathTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierInPathPathTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierPubInPathPathTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        VisibilityModifierInPathPathTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        VisibilityModifierPubInPathPathTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierInPathPathTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierPubInPathPathTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        VisibilityModifierInPathPathTransportSlot::to_napi_value(env, *val)
+        VisibilityModifierPubInPathPathTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn visibility_modifier_in_path_path_transport_slot_to_any(t: VisibilityModifierInPathPathTransportSlot) -> AnyTransport {
+fn visibility_modifier_pub_in_path_path_transport_slot_to_any(t: VisibilityModifierPubInPathPathTransportSlot) -> AnyTransport {
     match t {
-        VisibilityModifierInPathPathTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        VisibilityModifierInPathPathTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        VisibilityModifierInPathPathTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        VisibilityModifierInPathPathTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
-        VisibilityModifierInPathPathTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
-        VisibilityModifierInPathPathTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
+        VisibilityModifierPubInPathPathTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        VisibilityModifierPubInPathPathTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        VisibilityModifierPubInPathPathTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        VisibilityModifierPubInPathPathTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
+        VisibilityModifierPubInPathPathTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
+        VisibilityModifierPubInPathPathTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
     }
 }
 
-impl ::std::fmt::Display for VisibilityModifierInPathPathTransportSlot {
+impl ::std::fmt::Display for VisibilityModifierPubInPathPathTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            VisibilityModifierInPathPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            VisibilityModifierInPathPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
-            VisibilityModifierInPathPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            VisibilityModifierInPathPathTransportSlot::Literal19_73_65_6c_66 => f.write_str("self"),
-            VisibilityModifierInPathPathTransportSlot::Literal20_73_75_70_65_72 => f.write_str("super"),
-            VisibilityModifierInPathPathTransportSlot::Literal21_63_72_61_74_65 => f.write_str("crate"),
+            VisibilityModifierPubInPathPathTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierPubInPathPathTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierPubInPathPathTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            VisibilityModifierPubInPathPathTransportSlot::Literal19_73_65_6c_66 => f.write_str("self"),
+            VisibilityModifierPubInPathPathTransportSlot::Literal20_73_75_70_65_72 => f.write_str("super"),
+            VisibilityModifierPubInPathPathTransportSlot::Literal21_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
@@ -37790,7 +37790,7 @@ impl ::std::fmt::Display for RangePatternPrefixContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum RangePatternLeftWithRightRightTransportSlot {
+pub enum RangePatternWithLeftWithRightRightTransportSlot {
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -37806,28 +37806,28 @@ pub enum RangePatternLeftWithRightRightTransportSlot {
     Literal21_63_72_61_74_65,
 }
 
-impl ::sittir_core::options::FillOptions for RangePatternLeftWithRightRightTransportSlot {
+impl ::sittir_core::options::FillOptions for RangePatternWithLeftWithRightRightTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            RangePatternLeftWithRightRightTransportSlot::StringLiteral(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::RawStringLiteral(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::CharLiteral(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::BooleanLiteral(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::IntegerLiteral(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::FloatLiteral(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::NegativeLiteral(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::Identifier(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::Metavariable(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::ScopedIdentifier(t) => t.fill_options(table),
-            RangePatternLeftWithRightRightTransportSlot::Literal19_73_65_6c_66 => {}
-            RangePatternLeftWithRightRightTransportSlot::Literal20_73_75_70_65_72 => {}
-            RangePatternLeftWithRightRightTransportSlot::Literal21_63_72_61_74_65 => {}
+            RangePatternWithLeftWithRightRightTransportSlot::StringLiteral(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::RawStringLiteral(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteral(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::BooleanLiteral(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::IntegerLiteral(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::FloatLiteral(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::NegativeLiteral(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::Identifier(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::Metavariable(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::ScopedIdentifier(t) => t.fill_options(table),
+            RangePatternWithLeftWithRightRightTransportSlot::Literal19_73_65_6c_66 => {}
+            RangePatternWithLeftWithRightRightTransportSlot::Literal20_73_75_70_65_72 => {}
+            RangePatternWithLeftWithRightRightTransportSlot::Literal21_63_72_61_74_65 => {}
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftWithRightRightTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftWithRightRightTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37935,14 +37935,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftWithRightRightTr
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in RangePatternLeftWithRightRightTransportSlot",
+                        "unknown kind id {other} in RangePatternWithLeftWithRightRightTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in RangePatternLeftWithRightRightTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in RangePatternWithLeftWithRightRightTransportSlot")
                 )?;
                 match kind_id {
                     132 => Ok(Self::Literal19_73_65_6c_66),
@@ -38045,102 +38045,102 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftWithRightRightTr
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in RangePatternLeftWithRightRightTransportSlot",
+                        "unknown kind id {other} in RangePatternWithLeftWithRightRightTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("RangePatternLeftWithRightRightTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("RangePatternWithLeftWithRightRightTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RangePatternLeftWithRightRightTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for RangePatternWithLeftWithRightRightTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RangePatternLeftWithRightRightTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("RangePatternWithLeftWithRightRightTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternLeftWithRightRightTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternWithLeftWithRightRightTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        RangePatternLeftWithRightRightTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        RangePatternWithLeftWithRightRightTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternLeftWithRightRightTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternWithLeftWithRightRightTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        RangePatternLeftWithRightRightTransportSlot::to_napi_value(env, *val)
+        RangePatternWithLeftWithRightRightTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn range_pattern_left_with_right_right_transport_slot_to_any(t: RangePatternLeftWithRightRightTransportSlot) -> AnyTransport {
+fn range_pattern_with_left_with_right_right_transport_slot_to_any(t: RangePatternWithLeftWithRightRightTransportSlot) -> AnyTransport {
     match t {
-        RangePatternLeftWithRightRightTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        RangePatternLeftWithRightRightTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        RangePatternLeftWithRightRightTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        RangePatternLeftWithRightRightTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        RangePatternLeftWithRightRightTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        RangePatternLeftWithRightRightTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        RangePatternLeftWithRightRightTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
-        RangePatternLeftWithRightRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        RangePatternLeftWithRightRightTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        RangePatternLeftWithRightRightTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        RangePatternLeftWithRightRightTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
-        RangePatternLeftWithRightRightTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
-        RangePatternLeftWithRightRightTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
+        RangePatternWithLeftWithRightRightTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        RangePatternWithLeftWithRightRightTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
+        RangePatternWithLeftWithRightRightTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
+        RangePatternWithLeftWithRightRightTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
     }
 }
 
-impl ::std::fmt::Display for RangePatternLeftWithRightRightTransportSlot {
+impl ::std::fmt::Display for RangePatternWithLeftWithRightRightTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternLeftWithRightRightTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternLeftWithRightRightTransportSlot::Literal19_73_65_6c_66 => f.write_str("self"),
-            RangePatternLeftWithRightRightTransportSlot::Literal20_73_75_70_65_72 => f.write_str("super"),
-            RangePatternLeftWithRightRightTransportSlot::Literal21_63_72_61_74_65 => f.write_str("crate"),
+            RangePatternWithLeftWithRightRightTransportSlot::StringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::RawStringLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::CharLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::BooleanLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::IntegerLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::FloatLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::NegativeLiteral(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::Metavariable(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::ScopedIdentifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftWithRightRightTransportSlot::Literal19_73_65_6c_66 => f.write_str("self"),
+            RangePatternWithLeftWithRightRightTransportSlot::Literal20_73_75_70_65_72 => f.write_str("super"),
+            RangePatternWithLeftWithRightRightTransportSlot::Literal21_63_72_61_74_65 => f.write_str("crate"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum RangePatternLeftWithRightContentTransportSlot {
+pub enum RangePatternWithLeftWithRightContentTransportSlot {
     Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74,
     Literal90_64_6f_74_5f_64_6f_74_5f_65_71,
     Literal88_64_6f_74_5f_64_6f_74,
 }
 
-impl ::sittir_core::options::FillOptions for RangePatternLeftWithRightContentTransportSlot {
+impl ::sittir_core::options::FillOptions for RangePatternWithLeftWithRightContentTransportSlot {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            RangePatternLeftWithRightContentTransportSlot::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => {}
-            RangePatternLeftWithRightContentTransportSlot::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => {}
-            RangePatternLeftWithRightContentTransportSlot::Literal88_64_6f_74_5f_64_6f_74 => {}
+            RangePatternWithLeftWithRightContentTransportSlot::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => {}
+            RangePatternWithLeftWithRightContentTransportSlot::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => {}
+            RangePatternWithLeftWithRightContentTransportSlot::Literal88_64_6f_74_5f_64_6f_74 => {}
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftWithRightContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftWithRightContentTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38152,73 +38152,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftWithRightContent
                     140 => Ok(Self::Literal90_64_6f_74_5f_64_6f_74_5f_65_71),
                     102 => Ok(Self::Literal88_64_6f_74_5f_64_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in RangePatternLeftWithRightContentTransportSlot",
+                        "unknown kind id {other} in RangePatternWithLeftWithRightContentTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in RangePatternLeftWithRightContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in RangePatternWithLeftWithRightContentTransportSlot")
                 )?;
                 match kind_id {
                     71 => Ok(Self::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74),
                     140 => Ok(Self::Literal90_64_6f_74_5f_64_6f_74_5f_65_71),
                     102 => Ok(Self::Literal88_64_6f_74_5f_64_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in RangePatternLeftWithRightContentTransportSlot",
+                        "unknown kind id {other} in RangePatternWithLeftWithRightContentTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("RangePatternLeftWithRightContentTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("RangePatternWithLeftWithRightContentTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RangePatternLeftWithRightContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for RangePatternWithLeftWithRightContentTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RangePatternLeftWithRightContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("RangePatternWithLeftWithRightContentTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternLeftWithRightContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternWithLeftWithRightContentTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        RangePatternLeftWithRightContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        RangePatternWithLeftWithRightContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternLeftWithRightContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternWithLeftWithRightContentTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        RangePatternLeftWithRightContentTransportSlot::to_napi_value(env, *val)
+        RangePatternWithLeftWithRightContentTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn range_pattern_left_with_right_content_transport_slot_to_any(t: RangePatternLeftWithRightContentTransportSlot) -> AnyTransport {
+fn range_pattern_with_left_with_right_content_transport_slot_to_any(t: RangePatternWithLeftWithRightContentTransportSlot) -> AnyTransport {
     match t {
-        RangePatternLeftWithRightContentTransportSlot::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => AnyTransport::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74,
-        RangePatternLeftWithRightContentTransportSlot::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => AnyTransport::Literal90_64_6f_74_5f_64_6f_74_5f_65_71,
-        RangePatternLeftWithRightContentTransportSlot::Literal88_64_6f_74_5f_64_6f_74 => AnyTransport::Literal88_64_6f_74_5f_64_6f_74,
+        RangePatternWithLeftWithRightContentTransportSlot::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => AnyTransport::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74,
+        RangePatternWithLeftWithRightContentTransportSlot::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => AnyTransport::Literal90_64_6f_74_5f_64_6f_74_5f_65_71,
+        RangePatternWithLeftWithRightContentTransportSlot::Literal88_64_6f_74_5f_64_6f_74 => AnyTransport::Literal88_64_6f_74_5f_64_6f_74,
     }
 }
 
-impl ::std::fmt::Display for RangePatternLeftWithRightContentTransportSlot {
+impl ::std::fmt::Display for RangePatternWithLeftWithRightContentTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternLeftWithRightContentTransportSlot::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => f.write_str("..."),
-            RangePatternLeftWithRightContentTransportSlot::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => f.write_str("..="),
-            RangePatternLeftWithRightContentTransportSlot::Literal88_64_6f_74_5f_64_6f_74 => f.write_str(".."),
+            RangePatternWithLeftWithRightContentTransportSlot::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => f.write_str("..."),
+            RangePatternWithLeftWithRightContentTransportSlot::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => f.write_str("..="),
+            RangePatternWithLeftWithRightContentTransportSlot::Literal88_64_6f_74_5f_64_6f_74 => f.write_str(".."),
         }
     }
 }
@@ -38558,15 +38558,15 @@ impl ::std::fmt::Display for RangePatternWithLeftLeftTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum RangePatternWithLeftContentTransportSlot {
-    RangePatternLeftWithRight(RangePatternLeftWithRightTransport),
-    Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65,
+    RangePatternWithLeftWithRight(RangePatternWithLeftWithRightTransport),
+    Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65,
 }
 
 impl ::sittir_core::options::FillOptions for RangePatternWithLeftContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            RangePatternWithLeftContentTransportSlot::RangePatternLeftWithRight(t) => t.fill_options(table),
-            RangePatternWithLeftContentTransportSlot::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => {}
+            RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(t) => t.fill_options(table),
+            RangePatternWithLeftContentTransportSlot::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => {}
         }
     }
 }
@@ -38580,9 +38580,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftContentTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    403 => Ok(Self::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65),
-                    402 => Ok(Self::RangePatternLeftWithRight(
-                        RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
+                    403 => Ok(Self::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65),
+                    402 => Ok(Self::RangePatternWithLeftWithRight(
+                        RangePatternWithLeftWithRightTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RangePatternWithLeftContentTransportSlot",
@@ -38595,9 +38595,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftContentTrans
                     ::napi::Error::from_reason("$type property missing in RangePatternWithLeftContentTransportSlot")
                 )?;
                 match kind_id {
-                    403 => Ok(Self::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65),
-                    402 => Ok(Self::RangePatternLeftWithRight(
-                        RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
+                    403 => Ok(Self::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65),
+                    402 => Ok(Self::RangePatternWithLeftWithRight(
+                        RangePatternWithLeftWithRightTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RangePatternWithLeftContentTransportSlot",
@@ -38641,16 +38641,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternWithLeftContentTra
 
 fn range_pattern_with_left_content_transport_slot_to_any(t: RangePatternWithLeftContentTransportSlot) -> AnyTransport {
     match t {
-        RangePatternWithLeftContentTransportSlot::RangePatternLeftWithRight(inner) => AnyTransport::RangePatternLeftWithRight(inner),
-        RangePatternWithLeftContentTransportSlot::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => AnyTransport::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65,
+        RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(inner) => AnyTransport::RangePatternWithLeftWithRight(inner),
+        RangePatternWithLeftContentTransportSlot::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => AnyTransport::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65,
     }
 }
 
 impl ::std::fmt::Display for RangePatternWithLeftContentTransportSlot {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            RangePatternWithLeftContentTransportSlot::RangePatternLeftWithRight(inner) => ::std::fmt::Display::fmt(inner, f),
-            RangePatternWithLeftContentTransportSlot::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => f.write_str(".."),
+            RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(inner) => ::std::fmt::Display::fmt(inner, f),
+            RangePatternWithLeftContentTransportSlot::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => f.write_str(".."),
         }
     }
 }
@@ -56466,7 +56466,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierPubTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct VisibilityModifierInPathTransport {
+pub struct VisibilityModifierPubInPathTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -56482,47 +56482,44 @@ pub struct VisibilityModifierInPathTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
-    pub path: ::sittir_core::SlotValue<VisibilityModifierInPathPathTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_in_path_after"))]
-    pub visibility_modifier_in_path_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_in_path_before"))]
-    pub visibility_modifier_in_path_before: Option<u16>,
+    pub path: ::sittir_core::SlotValue<VisibilityModifierPubInPathPathTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_pub_in_path_after"))]
+    pub visibility_modifier_pub_in_path_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_pub_in_path_before"))]
+    pub visibility_modifier_pub_in_path_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for VisibilityModifierInPathTransport {
+impl ::std::fmt::Display for VisibilityModifierPubInPathTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_visibility_modifier_in_path(self, f))
+        render_with_trivia!(self, f, render_visibility_modifier_pub_in_path(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for VisibilityModifierInPathTransport {
+impl ::sittir_core::options::FillOptions for VisibilityModifierPubInPathTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.in_after.get_or_insert(table.spacing[options::SITE_VISIBILITY_MODIFIER_IN_PATH_IN_AFTER]);
-        self.visibility_modifier_in_path_after.get_or_insert(table.spacing[options::SITE_VISIBILITY_MODIFIER_IN_PATH_VISIBILITY_MODIFIER_IN_PATH_AFTER]);
-        self.visibility_modifier_in_path_before.get_or_insert(table.spacing[options::SITE_VISIBILITY_MODIFIER_IN_PATH_VISIBILITY_MODIFIER_IN_PATH_BEFORE]);
+        self.visibility_modifier_pub_in_path_after.get_or_insert(table.spacing[options::SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_AFTER]);
+        self.visibility_modifier_pub_in_path_before.get_or_insert(table.spacing[options::SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_BEFORE]);
         self.path.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierInPathTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierPubInPathTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        VisibilityModifierInPathTransport::from_napi_value(env, napi_val).map(Box::new)
+        VisibilityModifierPubInPathTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierInPathTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierPubInPathTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        VisibilityModifierInPathTransport::to_napi_value(env, *val)
+        VisibilityModifierPubInPathTransport::to_napi_value(env, *val)
     }
 }
 
@@ -58862,7 +58859,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternPrefixTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct RangePatternLeftWithRightTransport {
+pub struct RangePatternWithLeftWithRightTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -58878,52 +58875,52 @@ pub struct RangePatternLeftWithRightTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: ::sittir_core::SlotValue<Box<RangePatternLeftWithRightRightTransportSlot>>,
+    pub right: ::sittir_core::SlotValue<Box<RangePatternWithLeftWithRightRightTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_left_with_right_after"))]
-    pub range_pattern_left_with_right_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_left_with_right_before"))]
-    pub range_pattern_left_with_right_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_with_left_with_right_after"))]
+    pub range_pattern_with_left_with_right_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_with_left_with_right_before"))]
+    pub range_pattern_with_left_with_right_before: Option<u16>,
 }
 
-impl ::std::fmt::Display for RangePatternLeftWithRightTransport {
+impl ::std::fmt::Display for RangePatternWithLeftWithRightTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_range_pattern_left_with_right(self, f))
+        render_with_trivia!(self, f, render_range_pattern_with_left_with_right(self, f))
     }
 }
 
-impl ::sittir_core::options::FillOptions for RangePatternLeftWithRightTransport {
+impl ::sittir_core::options::FillOptions for RangePatternWithLeftWithRightTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.range_pattern_left_with_right_after.get_or_insert(table.spacing[options::SITE_RANGE_PATTERN_LEFT_WITH_RIGHT_RANGE_PATTERN_LEFT_WITH_RIGHT_AFTER]);
-        self.range_pattern_left_with_right_before.get_or_insert(table.spacing[options::SITE_RANGE_PATTERN_LEFT_WITH_RIGHT_RANGE_PATTERN_LEFT_WITH_RIGHT_BEFORE]);
+        self.range_pattern_with_left_with_right_after.get_or_insert(table.spacing[options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_AFTER]);
+        self.range_pattern_with_left_with_right_before.get_or_insert(table.spacing[options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_BEFORE]);
         self.right.fill_options(table);
         self.content.fill_options(table);
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternLeftWithRightTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternWithLeftWithRightTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        RangePatternLeftWithRightTransport::from_napi_value(env, napi_val).map(Box::new)
+        RangePatternWithLeftWithRightTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternLeftWithRightTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternWithLeftWithRightTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        RangePatternLeftWithRightTransport::to_napi_value(env, *val)
+        RangePatternWithLeftWithRightTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct RangePatternLeftBareTransport {
+pub struct RangePatternWithLeftBareTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -58933,19 +58930,19 @@ pub struct RangePatternLeftBareTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for RangePatternLeftBareTransport {
+impl ::std::fmt::Display for RangePatternWithLeftBareTransport {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         render_with_trivia!(self, f, f.write_str(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for RangePatternLeftBareTransport {
+impl ::sittir_core::options::FillOptions for RangePatternWithLeftBareTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftBareTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -58974,7 +58971,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftBareTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -59000,7 +58997,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RangePatternLeftBareTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for RangePatternWithLeftBareTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -59010,22 +59007,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for RangePatternLeftBareTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternLeftBareTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RangePatternWithLeftBareTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        RangePatternLeftBareTransport::from_napi_value(env, napi_val).map(Box::new)
+        RangePatternWithLeftBareTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternLeftBareTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternWithLeftBareTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        RangePatternLeftBareTransport::to_napi_value(env, *val)
+        RangePatternWithLeftBareTransport::to_napi_value(env, *val)
     }
 }
 
@@ -77781,12 +77778,11 @@ fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, f: &mut
     Ok(())
 }
 
-fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_visibility_modifier_pub_in_path(node: &VisibilityModifierPubInPathTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let path = &node.path;
-    let in_after = options::spacing_text(node.in_after.unwrap_or(0));
-    let visibility_modifier_in_path_after = options::spacing_text(node.visibility_modifier_in_path_after.unwrap_or(0));
-    let visibility_modifier_in_path_before = options::spacing_text(node.visibility_modifier_in_path_before.unwrap_or(0));
-    write!(f, "{visibility_modifier_in_path_before}in{in_after}{path}{visibility_modifier_in_path_after}")?;
+    let visibility_modifier_pub_in_path_after = options::spacing_text(node.visibility_modifier_pub_in_path_after.unwrap_or(0));
+    let visibility_modifier_pub_in_path_before = options::spacing_text(node.visibility_modifier_pub_in_path_before.unwrap_or(0));
+    write!(f, "{visibility_modifier_pub_in_path_before}in{path}{visibility_modifier_pub_in_path_after}")?;
     Ok(())
 }
 
@@ -78235,16 +78231,16 @@ fn render_range_pattern_prefix(node: &RangePatternPrefixTransport, f: &mut ::std
     Ok(())
 }
 
-fn render_range_pattern_left_with_right(node: &RangePatternLeftWithRightTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_range_pattern_with_left_with_right(node: &RangePatternWithLeftWithRightTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
     let right = &node.right;
-    let range_pattern_left_with_right_after = options::spacing_text(node.range_pattern_left_with_right_after.unwrap_or(0));
-    let range_pattern_left_with_right_before = options::spacing_text(node.range_pattern_left_with_right_before.unwrap_or(0));
-    write!(f, "{range_pattern_left_with_right_before}{content}{right}{range_pattern_left_with_right_after}")?;
+    let range_pattern_with_left_with_right_after = options::spacing_text(node.range_pattern_with_left_with_right_after.unwrap_or(0));
+    let range_pattern_with_left_with_right_before = options::spacing_text(node.range_pattern_with_left_with_right_before.unwrap_or(0));
+    write!(f, "{range_pattern_with_left_with_right_before}{content}{right}{range_pattern_with_left_with_right_after}")?;
     Ok(())
 }
 
-fn render_range_pattern_left_bare(t: &RangePatternLeftBareTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_range_pattern_with_left_bare(t: &RangePatternWithLeftBareTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     f.write_str(&t.text)
 }
 
@@ -79373,7 +79369,7 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::ClosureExpressionBlock(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::ClosureExpressionExpr(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::VisibilityModifierPub(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::VisibilityModifierInPath(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::VisibilityModifierPubInPath(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::FunctionTypeTraitForm(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::FunctionTypeFnForm(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::ModItemExternal(t) => ::std::fmt::Display::fmt(t, f),
@@ -79406,8 +79402,8 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::MacroDefinitionBracket(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::MacroDefinitionBrace(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::RangePatternPrefix(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::RangePatternLeftWithRight(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::RangePatternLeftBare(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangePatternWithLeftWithRight(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::RangePatternWithLeftBare(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::RangePatternWithLeft(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::StructItemBrace(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::StructItemTuple(t) => ::std::fmt::Display::fmt(t, f),
@@ -79655,7 +79651,7 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => f.write_str("..."),
             AnyTransport::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => f.write_str("..="),
             AnyTransport::Literal91_64_6f_6c_6c_61_72 => f.write_str("$"),
-            AnyTransport::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_6c_65_66_74_5f_62_61_72_65 => f.write_str(".."),
+            AnyTransport::Literal92_5f_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => f.write_str(".."),
         }
     }
 }

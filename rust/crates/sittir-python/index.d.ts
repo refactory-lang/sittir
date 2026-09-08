@@ -804,7 +804,7 @@ export interface EngineOptions {
   options?: string
 }
 
-export interface ExceptClauseAsTransport {
+export interface ExceptClauseExceptionAsTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -816,8 +816,21 @@ export interface ExceptClauseAsTransport {
   _alias?: SlotValue<ExpressionTransport>
   _as_after?: number
   _as_before?: number
-  _except_clause_as_after?: number
-  _except_clause_as_before?: number
+  _except_clause_exception_as_after?: number
+  _except_clause_exception_as_before?: number
+}
+
+export interface ExceptClauseExceptionListTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _value: Array<SlotValue<ExpressionTransport>>
+  _value_separator_space_after?: number
+  _value_separator_space_before?: number
 }
 
 export interface ExceptClauseExceptionTransport {
@@ -829,19 +842,6 @@ export interface ExceptClauseExceptionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: SlotValue<ExceptClauseExceptionContentTransportSlot>
-}
-
-export interface ExceptClauseListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _value: Array<SlotValue<ExpressionTransport>>
-  _value_separator_space_after?: number
-  _value_separator_space_before?: number
 }
 
 export interface ExceptClauseTransport {
