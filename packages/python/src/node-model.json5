@@ -3163,10 +3163,10 @@
       "kind": "_except_clause_as",
       "modelType": "branch",
       "typeName": "ExceptClauseAs",
-      "factoryName": "_exceptClauseAs",
+      "factoryName": "exceptClauseAs",
       "irKey": "exceptClauseAs",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -3211,7 +3211,6 @@
           ]
         }
       ],
-      "name": "_except_clause_as",
       "factoryShape": "config",
       "factoryFields": [
         "value",
@@ -3222,10 +3221,10 @@
       "kind": "_except_clause_exception",
       "modelType": "polymorph",
       "typeName": "ExceptClauseException",
-      "factoryName": "exceptClauseException",
+      "factoryName": "_exceptClauseException",
       "irKey": "exceptClauseException",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "content",
@@ -3257,6 +3256,7 @@
           ]
         }
       ],
+      "name": "_except_clause_exception",
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -3266,10 +3266,10 @@
       "kind": "_except_clause_list",
       "modelType": "envelope",
       "typeName": "ExceptClauseList",
-      "factoryName": "exceptClauseList",
+      "factoryName": "_exceptClauseList",
       "irKey": "exceptClauseList",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "value",
@@ -3293,7 +3293,8 @@
           ]
         }
       ],
-      "factoryShape": "spread",
+      "name": "_except_clause_list",
+      "factoryShape": "config",
       "factoryFields": [
         "value"
       ]
@@ -3406,10 +3407,10 @@
       "kind": "_key_value_pattern",
       "modelType": "branch",
       "typeName": "KeyValuePattern",
-      "factoryName": "_keyValuePattern",
+      "factoryName": "keyValuePattern",
       "irKey": "keyValuePattern",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "key",
@@ -3566,7 +3567,6 @@
           ]
         }
       ],
-      "name": "_key_value_pattern",
       "factoryShape": "config",
       "factoryFields": [
         "key",
@@ -4054,10 +4054,10 @@
       "kind": "_slice_group",
       "modelType": "envelope",
       "typeName": "SliceGroup",
-      "factoryName": "sliceGroup",
+      "factoryName": "_sliceGroup",
       "irKey": "sliceGroup",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "expression",
@@ -4081,6 +4081,7 @@
           ]
         }
       ],
+      "name": "_slice_group",
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
@@ -4216,10 +4217,10 @@
       "kind": "_suite_block",
       "modelType": "envelope",
       "typeName": "SuiteBlock",
-      "factoryName": "suiteBlock",
+      "factoryName": "_suiteBlock",
       "irKey": "suiteBlock",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "block",
@@ -4243,6 +4244,7 @@
           ]
         }
       ],
+      "name": "_suite_block",
       "factoryShape": "forwarded",
       "forwardsTo": "block",
       "factoryFields": [
@@ -4326,10 +4328,10 @@
       "kind": "_with_clause_paren",
       "modelType": "envelope",
       "typeName": "WithClauseParen",
-      "factoryName": "withClauseParen",
+      "factoryName": "_withClauseParen",
       "irKey": "withClauseParen",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "with_clause_with_items",
@@ -4353,6 +4355,7 @@
           ]
         }
       ],
+      "name": "_with_clause_paren",
       "factoryShape": "forwarded",
       "forwardsTo": "_with_clause_with_items",
       "factoryFields": [
@@ -4382,10 +4385,10 @@
       "kind": "_yield_from_clause",
       "modelType": "envelope",
       "typeName": "YieldFromClause",
-      "factoryName": "yieldFromClause",
+      "factoryName": "_yieldFromClause",
       "irKey": "yieldFromClause",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "expression",
@@ -4409,6 +4412,7 @@
           ]
         }
       ],
+      "name": "_yield_from_clause",
       "factoryShape": "direct",
       "factoryFields": [
         "expression"

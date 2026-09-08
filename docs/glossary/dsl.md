@@ -2945,6 +2945,25 @@ registered but later unused still counts as a sibling.
 // the same `id: rule.id ?? input.id` every builder stamps.
 ```
 
+### `packages/codegen/src/dsl/annotations.ts::withAnnotations`
+
+Merge annotations onto a runtime rule. An ALIAS is transparent: the
+annotation lands on its content, which is the rule the alias faces, so a
+stamp on `alias($._x, $.x)` reads back from `$._x`'s body. Lives in its own
+module because both the transform (variant lift, `patches` lowering) and
+wire / enrich (the `groups:` and clause-hoist mints) stamp through it, and
+neither may import the other.
+
+
+### `packages/codegen/src/dsl/annotations.ts::withHoistedAnnotation`
+
+`withAnnotations(rule, { hoisted: true })`: the one spelling of the hoisted
+declaration. Every route that mints a rule which is a form of its parent
+stamps through here; link's `classifyHiddenRule` reads the stamp and nothing
+else decides hoisting. Stamp the body, not a wrapper around it — evaluate
+unwraps `prec` and a stamp on the wrapper is lost.
+
+
 ### `packages/codegen/src/dsl/builders.ts::slotShaped`
 
 ```text
@@ -3781,13 +3800,6 @@ registered but later unused still counts as a sibling.
 ```text
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
-```
-
-### `packages/codegen/src/dsl/rule-transforms.ts::hasAnyField`
-
-```text
-// Genuinely link-phase only — see "Rule IR and snapshots" in
-// docs/compiler-phase-glossary.md for the phase-scoping rationale.
 ```
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::Mult`
@@ -4858,6 +4870,13 @@ registered but later unused still counts as a sibling.
 // entire parser identity) with it, while the IR still models the kind —
 // the "VAPORIZED" phantom divergence. See getEnrichVisibleGroupSources.
 ```
+
+Each clause group is stamped `annotations.hoisted` (`withHoistedAnnotation`)
+in place, right after its unalias pass — not at the merge, because
+`collapseSingletonMintOrdinals` rereads `clauseGroupRules` after the merge and
+a stamp made there would be lost. The stamp is the declaration link collects
+`hoistedKinds` from; enrich is one of its minting routes.
+
 
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
@@ -5976,6 +5995,10 @@ field labels instead of taking the minted `element` field.
 		   same decline as the per-arm path — the markers collapse into the
 		   parent's own slots instead of minting a group kind. */
 ```
+
+A promoted arm's body is re-registered with `annotations.hoisted` stamped: the
+promotion is a mint, and the seat it declares is what link collects.
+
 
 ### `packages/codegen/src/dsl/enrich.ts::synthesizeFieldEnumRules`
 

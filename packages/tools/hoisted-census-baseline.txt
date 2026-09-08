@@ -1,3 +1,3 @@
-rust: hoisted=33 seated=0 unseated=33
-typescript: hoisted=40 seated=0 unseated=40
-python: hoisted=8 seated=0 unseated=8
+rust: hoisted=46 seated=0 unseated=46
+typescript: hoisted=32 seated=0 unseated=32
+python: hoisted=12 seated=0 unseated=12

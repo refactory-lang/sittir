@@ -4144,10 +4144,10 @@
       "kind": "_attribute_input",
       "modelType": "polymorph",
       "typeName": "AttributeInput",
-      "factoryName": "attributeInput",
+      "factoryName": "_attributeInput",
       "irKey": "attributeInput",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "value",
@@ -4192,6 +4192,7 @@
           ]
         }
       ],
+      "name": "_attribute_input",
       "factoryShape": "config",
       "factoryFields": [
         "value",
@@ -4202,10 +4203,10 @@
       "kind": "_attributed_argument",
       "modelType": "branch",
       "typeName": "AttributedArgument",
-      "factoryName": "attributedArgument",
+      "factoryName": "_attributedArgument",
       "irKey": "attributedArgument",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "attribute_item",
@@ -4250,6 +4251,7 @@
           ]
         }
       ],
+      "name": "_attributed_argument",
       "factoryShape": "config",
       "factoryFields": [
         "attribute_item",
@@ -4260,10 +4262,10 @@
       "kind": "_attributed_enum_variant",
       "modelType": "branch",
       "typeName": "AttributedEnumVariant",
-      "factoryName": "attributedEnumVariant",
+      "factoryName": "_attributedEnumVariant",
       "irKey": "attributedEnumVariant",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "attribute_item",
@@ -4308,6 +4310,7 @@
           ]
         }
       ],
+      "name": "_attributed_enum_variant",
       "factoryShape": "config",
       "factoryFields": [
         "attribute_item",
@@ -4318,10 +4321,10 @@
       "kind": "_attributed_field_declaration",
       "modelType": "branch",
       "typeName": "AttributedFieldDeclaration",
-      "factoryName": "attributedFieldDeclaration",
+      "factoryName": "_attributedFieldDeclaration",
       "irKey": "attributedFieldDeclaration",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "attribute_item",
@@ -4366,6 +4369,7 @@
           ]
         }
       ],
+      "name": "_attributed_field_declaration",
       "factoryShape": "config",
       "factoryFields": [
         "attribute_item",
@@ -4457,10 +4461,10 @@
       "kind": "_attributed_parameter",
       "modelType": "branch",
       "typeName": "AttributedParameter",
-      "factoryName": "attributedParameter",
+      "factoryName": "_attributedParameter",
       "irKey": "attributedParameter",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "attribute_item",
@@ -4535,6 +4539,7 @@
           ]
         }
       ],
+      "name": "_attributed_parameter",
       "factoryShape": "config",
       "factoryFields": [
         "attribute_item",
@@ -4545,10 +4550,10 @@
       "kind": "_attributed_type_parameter",
       "modelType": "branch",
       "typeName": "AttributedTypeParameter",
-      "factoryName": "attributedTypeParameter",
+      "factoryName": "_attributedTypeParameter",
       "irKey": "attributedTypeParameter",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "attribute_item",
@@ -4617,6 +4622,7 @@
           ]
         }
       ],
+      "name": "_attributed_type_parameter",
       "factoryShape": "config",
       "factoryFields": [
         "attribute_item",
@@ -4771,10 +4777,10 @@
       "kind": "_closure_expression_expr",
       "modelType": "polymorph",
       "typeName": "ClosureExpressionExpr",
-      "factoryName": "closureExpressionExpr",
+      "factoryName": "_closureExpressionExpr",
       "irKey": "closureExpressionExpr",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "body",
@@ -4804,6 +4810,7 @@
           ]
         }
       ],
+      "name": "_closure_expression_expr",
       "factoryShape": "direct",
       "factoryFields": [
         "body"
@@ -5413,10 +5420,10 @@
       "kind": "_function_type_fn_form",
       "modelType": "envelope",
       "typeName": "FunctionTypeFnForm",
-      "factoryName": "functionTypeFnForm",
+      "factoryName": "_functionTypeFnForm",
       "irKey": "functionTypeFnForm",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "function_modifiers",
@@ -5440,6 +5447,7 @@
           ]
         }
       ],
+      "name": "_function_type_fn_form",
       "factoryShape": "forwarded",
       "forwardsTo": "function_modifiers",
       "factoryFields": [
@@ -5450,10 +5458,10 @@
       "kind": "_function_type_trait_form",
       "modelType": "polymorph",
       "typeName": "FunctionTypeTraitForm",
-      "factoryName": "functionTypeTraitForm",
+      "factoryName": "_functionTypeTraitForm",
       "irKey": "functionTypeTraitForm",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "trait",
@@ -5485,6 +5493,7 @@
           ]
         }
       ],
+      "name": "_function_type_trait_form",
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
@@ -5531,10 +5540,10 @@
       "kind": "_impl_item_negative_clause",
       "modelType": "polymorph",
       "typeName": "ImplItemNegativeClause",
-      "factoryName": "_implItemNegativeClause",
+      "factoryName": "implItemNegativeClause",
       "irKey": "implItemNegativeClause",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "trait",
@@ -5574,7 +5583,6 @@
           ]
         }
       ],
-      "name": "_impl_item_negative_clause",
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
@@ -5584,10 +5592,10 @@
       "kind": "_impl_item_positive_clause",
       "modelType": "polymorph",
       "typeName": "ImplItemPositiveClause",
-      "factoryName": "_implItemPositiveClause",
+      "factoryName": "implItemPositiveClause",
       "irKey": "implItemPositiveClause",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "trait",
@@ -5627,7 +5635,6 @@
           ]
         }
       ],
-      "name": "_impl_item_positive_clause",
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
@@ -6046,10 +6053,10 @@
       "kind": "_macro_definition_brace",
       "modelType": "envelope",
       "typeName": "MacroDefinitionBrace",
-      "factoryName": "macroDefinitionBrace",
+      "factoryName": "_macroDefinitionBrace",
       "irKey": "macroDefinitionBrace",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "macro_rules",
@@ -6073,6 +6080,7 @@
           ]
         }
       ],
+      "name": "_macro_definition_brace",
       "factoryShape": "forwarded",
       "forwardsTo": "_macro_rules",
       "factoryFields": [
@@ -6083,10 +6091,10 @@
       "kind": "_macro_definition_bracket",
       "modelType": "envelope",
       "typeName": "MacroDefinitionBracket",
-      "factoryName": "macroDefinitionBracket",
+      "factoryName": "_macroDefinitionBracket",
       "irKey": "macroDefinitionBracket",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "macro_rules",
@@ -6110,6 +6118,7 @@
           ]
         }
       ],
+      "name": "_macro_definition_bracket",
       "factoryShape": "forwarded",
       "forwardsTo": "_macro_rules",
       "factoryFields": [
@@ -6120,10 +6129,10 @@
       "kind": "_macro_definition_paren",
       "modelType": "envelope",
       "typeName": "MacroDefinitionParen",
-      "factoryName": "macroDefinitionParen",
+      "factoryName": "_macroDefinitionParen",
       "irKey": "macroDefinitionParen",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "macro_rules",
@@ -6147,6 +6156,7 @@
           ]
         }
       ],
+      "name": "_macro_definition_paren",
       "factoryShape": "forwarded",
       "forwardsTo": "_macro_rules",
       "factoryFields": [
@@ -7982,10 +7992,10 @@
       "kind": "_type_argument",
       "modelType": "branch",
       "typeName": "TypeArgument",
-      "factoryName": "typeArgument",
+      "factoryName": "_typeArgument",
       "irKey": "typeArgument",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "content",
@@ -8062,6 +8072,7 @@
           ]
         }
       ],
+      "name": "_type_argument",
       "factoryShape": "config",
       "factoryFields": [
         "content",
@@ -8247,10 +8258,10 @@
       "kind": "_visibility_modifier_in_path",
       "modelType": "polymorph",
       "typeName": "VisibilityModifierInPath",
-      "factoryName": "visibilityModifierInPath",
+      "factoryName": "_visibilityModifierInPath",
       "irKey": "visibilityModifierInPath",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "path",
@@ -8314,6 +8325,7 @@
           ]
         }
       ],
+      "name": "_visibility_modifier_in_path",
       "factoryShape": "direct",
       "factoryFields": [
         "path"
@@ -8323,10 +8335,10 @@
       "kind": "_visibility_modifier_pub",
       "modelType": "envelope",
       "typeName": "VisibilityModifierPub",
-      "factoryName": "visibilityModifierPub",
+      "factoryName": "_visibilityModifierPub",
       "irKey": "visibilityModifierPub",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "visibility_modifier_group",
@@ -8350,6 +8362,7 @@
           ]
         }
       ],
+      "name": "_visibility_modifier_pub",
       "factoryShape": "forwarded",
       "forwardsTo": "_visibility_modifier_group",
       "factoryFields": [

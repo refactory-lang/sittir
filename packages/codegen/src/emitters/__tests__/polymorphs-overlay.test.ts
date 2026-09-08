@@ -7,6 +7,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
+import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar covering the sub-factory shapes exercised here:
@@ -187,5 +188,83 @@ describe('emitPolymorphsOverlay', () => {
 		expect(warn).toHaveBeenCalledWith(
 			'[codegen] grandparent_b: sub-factory sharedLeaf skipped (ambiguous): parent_x.sharedLeaf, parent_y.sharedLeaf'
 		);
+	});
+});
+
+function hoistedMiddleNodeMap(): NodeMap {
+	return buildNodeMap({
+		grandparent: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: '_parent' },
+				{ type: SYMBOL, name: 'leaf_a' }
+			]
+		},
+		_parent: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'leaf_a' },
+				{ type: SYMBOL, name: 'leaf_b' }
+			],
+			annotations: { hoisted: true }
+		},
+		leaf_a: { type: PATTERN, value: '[a-z]+' },
+		leaf_b: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'identifier' } },
+				{ type: FIELD, name: 'y', content: { type: SYMBOL, name: 'identifier' } }
+			]
+		},
+		identifier: { type: PATTERN, value: '[0-9]+' }
+	});
+}
+
+describe('a hoisted kind in the middle of a flattened arm', () => {
+	it('gets a private wire set the grandparent routes through, and no export', () => {
+		const nodeMap = hoistedMiddleNodeMap();
+		const parent = nodeMap.nodes.get('_parent')!;
+		expect(parent instanceof AbstractAssembledCompound && parent.hoisted).toBe(true);
+		const key = parent.factoryName!;
+		const text = emitPolymorphsOverlay({ nodeMap });
+		expect(text).toContain(`const ${key}: {`);
+		expect(text).not.toContain(`export const ${key}`);
+		expect(text).toContain(`grandparent$leafB(F.buildGrandparent, ${key}.leafB.strict)`);
+		expect(text.indexOf(`const ${key}: {`)).toBeLessThan(text.indexOf('export const grandparent'));
+	});
+});
+
+describe('a single hoisted group splices onto its parent', () => {
+	it('wraps strict with a both-or-neither config and keeps the base spread first', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'try' }, { type: SYMBOL, name: 'clause' }] },
+			clause: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: 'catch' },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: '_clause_group' } },
+					{ type: FIELD, name: 'body', content: { type: PATTERN, value: '.+' } }
+				]
+			},
+			_clause_group: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '(' },
+					{ type: FIELD, name: 'parameter', content: { type: PATTERN, value: '[a-z]+' } },
+					{ type: OPTIONAL, content: { type: FIELD, name: 'type', content: { type: PATTERN, value: '[A-Z]+' } } },
+					{ type: STRING, value: ')' }
+				],
+				annotations: { hoisted: true }
+			}
+		});
+		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const clause$splice =');
+		expect(out).toContain(
+			`ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
+		);
+		expect(out).toContain('export const clause: typeof B.clause & {');
+		expect(out).toContain('strict: clause$splice(F.buildClause, F.buildClauseGroup)');
+		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$splice('));
 	});
 });

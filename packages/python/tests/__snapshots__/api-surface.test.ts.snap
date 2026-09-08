@@ -312,6 +312,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "resolveExceptClauseAs_alias": "function",
   "resolveExceptClauseAs_value": "function",
   "resolveExceptClauseException_content": "function",
+  "resolveExceptClauseList_values": "function",
   "resolveExceptClause_exception": "function",
   "resolveExceptClause_starMarker": "function",
   "resolveExceptClause_suite": "function",

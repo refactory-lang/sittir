@@ -512,51 +512,12 @@ export interface IsGuards {
 	ImplItemBody<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemBody };
-	AttributeInput<T extends { readonly $type: number } | number>(
+	ImplItemPositiveClause<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeInput };
-	ClosureExpressionExpr<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemPositiveClause };
+	ImplItemNegativeClause<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionExpr };
-	VisibilityModifierPub<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierPub };
-	VisibilityModifierInPath<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierInPath };
-	FunctionTypeTraitForm<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionTypeTraitForm };
-	FunctionTypeFnForm<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionTypeFnForm };
-	MacroDefinitionParen<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionParen };
-	MacroDefinitionBracket<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBracket };
-	MacroDefinitionBrace<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBrace };
-	AttributedFieldDeclaration<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedFieldDeclaration };
-	AttributedEnumVariant<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedEnumVariant };
-	AttributedParameter<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedParameter };
-	AttributedTypeParameter<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedTypeParameter };
-	AttributedArgument<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedArgument };
-	TypeArgument<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeArgument };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemNegativeClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
@@ -828,47 +789,12 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
 	ImplItemBody(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImplItemBody };
-	AttributeInput(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.AttributeInput };
-	ClosureExpressionExpr(
+	ImplItemPositiveClause(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ClosureExpressionExpr };
-	VisibilityModifierPub(
+	): asserts v is { readonly $type: TSKindId.ImplItemPositiveClause };
+	ImplItemNegativeClause(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.VisibilityModifierPub };
-	VisibilityModifierInPath(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
-	FunctionTypeTraitForm(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
-	FunctionTypeFnForm(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
-	MacroDefinitionParen(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.MacroDefinitionParen };
-	MacroDefinitionBracket(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
-	MacroDefinitionBrace(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
-	AttributedFieldDeclaration(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
-	AttributedEnumVariant(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
-	AttributedParameter(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedParameter };
-	AttributedTypeParameter(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedTypeParameter };
-	AttributedArgument(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedArgument };
-	TypeArgument(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TypeArgument };
+	): asserts v is { readonly $type: TSKindId.ImplItemNegativeClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): asserts v is DeclarationStatement;
@@ -1095,21 +1021,8 @@ export const is = {
 	TupleExpressionElements: _g(TSKindId.TupleExpressionElements),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
-	AttributeInput: _g(TSKindId.AttributeInput),
-	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
-	VisibilityModifierPub: _g(TSKindId.VisibilityModifierPub),
-	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
-	FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
-	FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
-	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
-	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
-	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
-	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
-	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
-	AttributedParameter: _g(TSKindId.AttributedParameter),
-	AttributedTypeParameter: _g(TSKindId.AttributedTypeParameter),
-	AttributedArgument: _g(TSKindId.AttributedArgument),
-	TypeArgument: _g(TSKindId.TypeArgument),
+	ImplItemPositiveClause: _g(TSKindId.ImplItemPositiveClause),
+	ImplItemNegativeClause: _g(TSKindId.ImplItemNegativeClause),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	declarationStatement: _sg(_supertype_declarationStatement_ids),
@@ -1326,21 +1239,8 @@ export const assert = {
 	TupleExpressionElements: _makeAssert('TupleExpressionElements', is.TupleExpressionElements as _AnyGuard),
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
 	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
-	AttributeInput: _makeAssert('AttributeInput', is.AttributeInput as _AnyGuard),
-	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
-	VisibilityModifierPub: _makeAssert('VisibilityModifierPub', is.VisibilityModifierPub as _AnyGuard),
-	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
-	FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
-	FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
-	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
-	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
-	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
-	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
-	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
-	AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),
-	AttributedTypeParameter: _makeAssert('AttributedTypeParameter', is.AttributedTypeParameter as _AnyGuard),
-	AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
-	TypeArgument: _makeAssert('TypeArgument', is.TypeArgument as _AnyGuard),
+	ImplItemPositiveClause: _makeAssert('ImplItemPositiveClause', is.ImplItemPositiveClause as _AnyGuard),
+	ImplItemNegativeClause: _makeAssert('ImplItemNegativeClause', is.ImplItemNegativeClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),

@@ -19,6 +19,7 @@ import {
 	type AssembledBranch,
 	type AssembledPattern,
 	type AssembledEnum,
+	AbstractAssembledCompound,
 	AssembledList,
 	AssembledEnvelope,
 	AssembledPolymorph,
@@ -926,7 +927,12 @@ function emitFieldCarryingFactory(
 		resolvedForwardTarget !== null && kindEntries !== undefined && !hasCatalogEntry(kindEntries, resolvedForwardTarget)
 			? null
 			: resolvedForwardTarget;
-	if (forwardTarget !== null) {
+	const forwardTargetNode = forwardTarget === null ? undefined : nodeMap.nodes.get(forwardTarget);
+	const forwardsToSeatedGroup =
+		forwardTargetNode instanceof AbstractAssembledCompound &&
+		forwardTargetNode.hoisted &&
+		classifyFactoryShape(forwardTargetNode, nodeMap) === 'config';
+	if (forwardTarget !== null && !forwardsToSeatedGroup) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
 		const targetSurface = constructorSurface(forwardTarget, nodeMap, kindEntries);

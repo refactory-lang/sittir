@@ -13,60 +13,60 @@ export function rebuildSpliceGenerated() {
 			}),
 		}), ir.attributeItem.strict(ir.attribute.strict({
 			path: ir.identifier("derive"),
-			input: ir.attributeInput.strict({
+			input: {
 				arguments: ir.delimTokenTree.paren.strict({
 					delimTokens: [ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")],
 				}),
-			}),
+			},
 		})), ir.enumItem.strict({
 			visibilityModifier: ir.visibilityModifier.pub.strict(),
 			name: ir.identifier("SpliceError"),
-			body: ir.enumVariantList.strict(ir.enumVariantListElements.strict(ir.attributedEnumVariant.strict({
+			body: ir.enumVariantList.strict(ir.enumVariantListElements.strict({
 				enumVariant: ir.enumVariant.strict({
 					name: ir.identifier("InvalidRange"),
-					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict(ir.attributedFieldDeclaration.strict({
+					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
 							type: TSKindId.U32,
 						}),
-					}), ir.attributedFieldDeclaration.strict({
+					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
 							type: TSKindId.U32,
 						}),
-					}))),
+					})),
 				}),
-			}), ir.attributedEnumVariant.strict({
+			}, {
 				enumVariant: ir.enumVariant.strict({
 					name: ir.identifier("OutOfBounds"),
-					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict(ir.attributedFieldDeclaration.strict({
+					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
 							type: TSKindId.U32,
 						}),
-					}), ir.attributedFieldDeclaration.strict({
+					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("source_len"),
 							type: TSKindId.Usize,
 						}),
-					}))),
+					})),
 				}),
-			}), ir.attributedEnumVariant.strict({
+			}, {
 				enumVariant: ir.enumVariant.strict({
 					name: ir.identifier("NonCharBoundary"),
-					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict(ir.attributedFieldDeclaration.strict({
+					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
 							type: TSKindId.U32,
 						}),
-					}), ir.attributedFieldDeclaration.strict({
+					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
 							type: TSKindId.U32,
 						}),
-					}))),
+					})),
 				}),
-			}))),
+			})),
 		}), ir.implItem.strict({
 			traitClause: ir.implItem.positiveClause.strict(ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
@@ -78,11 +78,11 @@ export function rebuildSpliceGenerated() {
 			type: ir.identifier("SpliceError"),
 			content: ir.implItem.body.strict(ir.declarationList.strict(ir.functionItem.strict({
 				name: ir.identifier("fmt"),
-				parameters: ir.parameters.strict(ir.parametersElements.strict(ir.attributedParameter.strict({
+				parameters: ir.parameters.strict(ir.parametersElements.strict({
 					content: ir.selfParameter.strict({
 						reference: true,
 					}),
-				}), ir.attributedParameter.strict({
+				}, {
 					content: ir.parameter.strict({
 						name: ir.identifier("f"),
 						type: ir.referenceType.strict({
@@ -95,13 +95,13 @@ export function rebuildSpliceGenerated() {
 									}),
 									name: ir.identifier("Formatter"),
 								}),
-								typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict(ir.typeArgument.strict({
+								typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({
 									content: ir.lifetime.strict(ir.identifier("_")),
-								}))),
+								})),
 							}),
 						}),
 					}),
-				}))),
+				})),
 				returnType: ir.scopedTypeIdentifier.strict({
 					path: ir.scopedIdentifier.strict({
 						path: ir.identifier("std"),
@@ -215,32 +215,32 @@ export function rebuildSpliceGenerated() {
 		}), ir.functionItem.strict({
 			visibilityModifier: ir.visibilityModifier.pub.strict(),
 			name: ir.identifier("apply_edits"),
-			parameters: ir.parameters.strict(ir.parametersElements.strict(ir.attributedParameter.strict({
+			parameters: ir.parameters.strict(ir.parametersElements.strict({
 				content: ir.parameter.strict({
 					name: ir.identifier("source"),
 					type: ir.referenceType.strict({
 						type: TSKindId.Str,
 					}),
 				}),
-			}), ir.attributedParameter.strict({
+			}, {
 				content: ir.parameter.strict({
 					mutableSpecifier: true,
 					name: ir.identifier("edits"),
 					type: ir.genericType.strict({
 						type: ir.identifier("Vec"),
-						typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict(ir.typeArgument.strict({
+						typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({
 							content: ir.identifier("Edit"),
-						}))),
+						})),
 					}),
 				}),
-			}))),
+			})),
 			returnType: ir.genericType.strict({
 				type: ir.identifier("Result"),
-				typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict(ir.typeArgument.strict({
+				typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({
 					content: ir.identifier("String"),
-				}), ir.typeArgument.strict({
+				}, {
 					content: ir.identifier("SpliceError"),
-				}))),
+				})),
 			}),
 			body: ir.block.strict({
 				statements: [ir.letDeclaration.strict({
@@ -273,7 +273,7 @@ export function rebuildSpliceGenerated() {
 							consequence: ir.block.strict({
 								statements: [ir.expressionStatement.withSemi.strict(ir.returnExpression.strict(ir.callExpression.strict({
 									function: ir.identifier("Err"),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({
 										expression: ir.structExpression.strict({
 											name: ir.scopedTypeIdentifierInExpressionPosition.strict({
 												path: ir.identifier("SpliceError"),
@@ -293,7 +293,7 @@ export function rebuildSpliceGenerated() {
 												}),
 											}))),
 										}),
-									}))),
+									})),
 								})))],
 							}),
 						})), ir.expressionStatement.strict(ir.ifExpression.strict({
@@ -311,7 +311,7 @@ export function rebuildSpliceGenerated() {
 							consequence: ir.block.strict({
 								statements: [ir.expressionStatement.withSemi.strict(ir.returnExpression.strict(ir.callExpression.strict({
 									function: ir.identifier("Err"),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({
 										expression: ir.structExpression.strict({
 											name: ir.scopedTypeIdentifierInExpressionPosition.strict({
 												path: ir.identifier("SpliceError"),
@@ -327,7 +327,7 @@ export function rebuildSpliceGenerated() {
 												name: ir.identifier("source_len"),
 											}))),
 										}),
-									}))),
+									})),
 								})))],
 							}),
 						})), ir.expressionStatement.strict(ir.ifExpression.strict({
@@ -339,7 +339,7 @@ export function rebuildSpliceGenerated() {
 											value: ir.identifier("source"),
 											field: ir.identifier("is_char_boundary"),
 										}),
-										arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+										arguments: ir.arguments.strict(ir.argumentsElements.strict({
 											expression: ir.typeCastExpression.strict({
 												value: ir.fieldExpression.strict({
 													value: ir.identifier("e"),
@@ -347,7 +347,7 @@ export function rebuildSpliceGenerated() {
 												}),
 												type: TSKindId.Usize,
 											}),
-										}))),
+										})),
 									}),
 								}),
 								operator: TSKindId.PipePipe,
@@ -358,7 +358,7 @@ export function rebuildSpliceGenerated() {
 											value: ir.identifier("source"),
 											field: ir.identifier("is_char_boundary"),
 										}),
-										arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+										arguments: ir.arguments.strict(ir.argumentsElements.strict({
 											expression: ir.typeCastExpression.strict({
 												value: ir.fieldExpression.strict({
 													value: ir.identifier("e"),
@@ -366,14 +366,14 @@ export function rebuildSpliceGenerated() {
 												}),
 												type: TSKindId.Usize,
 											}),
-										}))),
+										})),
 									}),
 								}),
 							}),
 							consequence: ir.block.strict({
 								statements: [ir.expressionStatement.withSemi.strict(ir.returnExpression.strict(ir.callExpression.strict({
 									function: ir.identifier("Err"),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({
 										expression: ir.structExpression.strict({
 											name: ir.scopedTypeIdentifierInExpressionPosition.strict({
 												path: ir.identifier("SpliceError"),
@@ -393,7 +393,7 @@ export function rebuildSpliceGenerated() {
 												}),
 											}))),
 										}),
-									}))),
+									})),
 								})))],
 							}),
 						}))],
@@ -403,7 +403,7 @@ export function rebuildSpliceGenerated() {
 						value: ir.identifier("edits"),
 						field: ir.identifier("sort_by"),
 					}),
-					arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+					arguments: ir.arguments.strict(ir.argumentsElements.strict({
 						expression: ir.closureExpression.strict({
 							parameters: ir.closureParameters.strict("a", "b"),
 							content: ir.closureExpression.expr.strict(ir.block.strict({
@@ -417,18 +417,18 @@ export function rebuildSpliceGenerated() {
 												}),
 												field: ir.identifier("cmp"),
 											}),
-											arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+											arguments: ir.arguments.strict(ir.argumentsElements.strict({
 												expression: ir.referenceExpression.strict({
 													value: ir.fieldExpression.strict({
 														value: ir.identifier("a"),
 														field: ir.identifier("start_pos"),
 													}),
 												}),
-											}))),
+											})),
 										}),
 										field: ir.identifier("then_with"),
 									}),
-									arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+									arguments: ir.arguments.strict(ir.argumentsElements.strict({
 										expression: ir.closureExpression.strict({
 											parameters: ir.closureParameters.strict(),
 											content: ir.closureExpression.expr.strict(ir.callExpression.strict({
@@ -439,23 +439,23 @@ export function rebuildSpliceGenerated() {
 													}),
 													field: ir.identifier("cmp"),
 												}),
-												arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+												arguments: ir.arguments.strict(ir.argumentsElements.strict({
 													expression: ir.referenceExpression.strict({
 														value: ir.fieldExpression.strict({
 															value: ir.identifier("a"),
 															field: ir.identifier("end_pos"),
 														}),
 													}),
-												}))),
+												})),
 											})),
 											staticMarker: true,
 										}),
-									}))),
+									})),
 								}),
 							})),
 							staticMarker: true,
 						}),
-					}))),
+					})),
 				})), ir.letDeclaration.strict({
 					mutableSpecifier: true,
 					pattern: ir.identifier("buf"),
@@ -464,9 +464,9 @@ export function rebuildSpliceGenerated() {
 							path: ir.identifier("String"),
 							name: ir.identifier("from"),
 						}),
-						arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+						arguments: ir.arguments.strict(ir.argumentsElements.strict({
 							expression: ir.identifier("source"),
-						}))),
+						})),
 					}),
 				}), ir.expressionStatement.strict(ir.forExpression.strict({
 					pattern: ir.identifier("e"),
@@ -495,28 +495,28 @@ export function rebuildSpliceGenerated() {
 								value: ir.identifier("buf"),
 								field: ir.identifier("replace_range"),
 							}),
-							arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+							arguments: ir.arguments.strict(ir.argumentsElements.strict({
 								expression: ir.rangeExpression.binary.strict({
 									start: ir.identifier("start"),
 									operator: TSKindId.DotDot,
 									end: ir.identifier("end"),
 								}),
-							}), ir.attributedArgument.strict({
+							}, {
 								expression: ir.referenceExpression.strict({
 									value: ir.fieldExpression.strict({
 										value: ir.identifier("e"),
 										field: ir.identifier("inserted_text"),
 									}),
 								}),
-							}))),
+							})),
 						}))],
 					}),
 				}))],
 				trailingExpression: ir.callExpression.strict({
 					function: ir.identifier("Ok"),
-					arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
+					arguments: ir.arguments.strict(ir.argumentsElements.strict({
 						expression: ir.identifier("buf"),
-					}))),
+					})),
 				}),
 			}),
 		})],

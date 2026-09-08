@@ -4410,10 +4410,10 @@
       "kind": "_ambient_declaration_global",
       "modelType": "envelope",
       "typeName": "AmbientDeclarationGlobal",
-      "factoryName": "_ambientDeclarationGlobal",
+      "factoryName": "ambientDeclarationGlobal",
       "irKey": "ambientDeclarationGlobal",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "body",
@@ -4437,7 +4437,6 @@
           ]
         }
       ],
-      "name": "_ambient_declaration_global",
       "factoryShape": "forwarded",
       "forwardsTo": "statement_block",
       "factoryFields": [
@@ -4448,10 +4447,10 @@
       "kind": "_ambient_declaration_module",
       "modelType": "branch",
       "typeName": "AmbientDeclarationModule",
-      "factoryName": "_ambientDeclarationModule",
+      "factoryName": "ambientDeclarationModule",
       "irKey": "ambientDeclarationModule",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -4523,7 +4522,6 @@
           ]
         }
       ],
-      "name": "_ambient_declaration_module",
       "factoryShape": "config",
       "factoryFields": [
         "name",
@@ -4535,10 +4533,10 @@
       "kind": "_arrow_function_parameter",
       "modelType": "polymorph",
       "typeName": "ArrowFunctionParameter",
-      "factoryName": "arrowFunctionParameter",
+      "factoryName": "_arrowFunctionParameter",
       "irKey": "arrowFunctionParameter",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "parameter",
@@ -4570,6 +4568,7 @@
           ]
         }
       ],
+      "name": "_arrow_function_parameter",
       "factoryShape": "direct",
       "factoryFields": [
         "parameter"
@@ -5595,10 +5594,10 @@
       "kind": "_export_statement_default_from",
       "modelType": "branch",
       "typeName": "ExportStatementDefaultFrom",
-      "factoryName": "exportStatementDefaultFrom",
+      "factoryName": "_exportStatementDefaultFrom",
       "irKey": "exportStatementDefaultFrom",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "content",
@@ -5673,6 +5672,7 @@
           ]
         }
       ],
+      "name": "_export_statement_default_from",
       "factoryShape": "config",
       "factoryFields": [
         "content",
@@ -5845,10 +5845,10 @@
       "kind": "_export_statement_equals_export",
       "modelType": "branch",
       "typeName": "ExportStatementEqualsExport",
-      "factoryName": "_exportStatementEqualsExport",
+      "factoryName": "exportStatementEqualsExport",
       "irKey": "exportStatementEqualsExport",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "expression",
@@ -5899,7 +5899,6 @@
           ]
         }
       ],
-      "name": "_export_statement_equals_export",
       "factoryShape": "config",
       "factoryFields": [
         "expression",
@@ -5910,10 +5909,10 @@
       "kind": "_export_statement_namespace_export",
       "modelType": "branch",
       "typeName": "ExportStatementNamespaceExport",
-      "factoryName": "_exportStatementNamespaceExport",
+      "factoryName": "exportStatementNamespaceExport",
       "irKey": "exportStatementNamespaceExport",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "name",
@@ -5964,7 +5963,6 @@
           ]
         }
       ],
-      "name": "_export_statement_namespace_export",
       "factoryShape": "config",
       "factoryFields": [
         "name",
@@ -5975,10 +5973,10 @@
       "kind": "_export_statement_type_export",
       "modelType": "branch",
       "typeName": "ExportStatementTypeExport",
-      "factoryName": "_exportStatementTypeExport",
+      "factoryName": "exportStatementTypeExport",
       "irKey": "exportStatementTypeExport",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "export_clause",
@@ -6050,7 +6048,6 @@
           ]
         }
       ],
-      "name": "_export_statement_type_export",
       "factoryShape": "config",
       "factoryFields": [
         "export_clause",
@@ -6074,10 +6071,10 @@
       "kind": "_extends_clause_single",
       "modelType": "branch",
       "typeName": "ExtendsClauseSingle",
-      "factoryName": "_extendsClauseSingle",
+      "factoryName": "extendsClauseSingle",
       "irKey": "extendsClauseSingle",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "value",
@@ -6122,7 +6119,6 @@
           ]
         }
       ],
-      "name": "_extends_clause_single",
       "factoryShape": "config",
       "factoryFields": [
         "value",
@@ -6230,10 +6226,10 @@
       "kind": "_for_header_lhs",
       "modelType": "polymorph",
       "typeName": "ForHeaderLhs",
-      "factoryName": "forHeaderLhs",
+      "factoryName": "_forHeaderLhs",
       "irKey": "forHeaderLhs",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "left",
@@ -6265,6 +6261,7 @@
           ]
         }
       ],
+      "name": "_for_header_lhs",
       "factoryShape": "direct",
       "factoryFields": [
         "left"
@@ -6404,10 +6401,10 @@
       "kind": "_import_clause_default_import",
       "modelType": "branch",
       "typeName": "ImportClauseDefaultImport",
-      "factoryName": "importClauseDefaultImport",
+      "factoryName": "_importClauseDefaultImport",
       "irKey": "importClauseDefaultImport",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "identifier",
@@ -6458,6 +6455,7 @@
           ]
         }
       ],
+      "name": "_import_clause_default_import",
       "factoryShape": "config",
       "factoryFields": [
         "identifier",
@@ -6468,10 +6466,10 @@
       "kind": "_import_clause_group",
       "modelType": "polymorph",
       "typeName": "ImportClauseGroup",
-      "factoryName": "importClauseGroup",
+      "factoryName": "_importClauseGroup",
       "irKey": "importClauseGroup",
       "hidden": false,
-      "hoisted": false,
+      "hoisted": true,
       "slots": [
         {
           "name": "content",
@@ -6503,6 +6501,7 @@
           ]
         }
       ],
+      "name": "_import_clause_group",
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -6934,9 +6933,9 @@
       "modelType": "branch",
       "typeName": "_Number",
       "factoryName": "_number",
-      "irKey": "number",
+      "irKey": "_number",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "operator",
@@ -6981,7 +6980,6 @@
           ]
         }
       ],
-      "name": "_number",
       "factoryShape": "config",
       "factoryFields": [
         "operator",
@@ -7348,10 +7346,10 @@
       "kind": "_type_query_call_expression",
       "modelType": "branch",
       "typeName": "TypeQueryCallExpression",
-      "factoryName": "_typeQueryCallExpression",
+      "factoryName": "typeQueryCallExpression",
       "irKey": "typeQueryCallExpression",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "function",
@@ -7420,7 +7418,6 @@
           ]
         }
       ],
-      "name": "_type_query_call_expression",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -7431,10 +7428,10 @@
       "kind": "_type_query_call_expression_in_type_annotation",
       "modelType": "branch",
       "typeName": "TypeQueryCallExpressionInTypeAnnotation",
-      "factoryName": "_typeQueryCallExpressionInTypeAnnotation",
+      "factoryName": "typeQueryCallExpressionInTypeAnnotation",
       "irKey": "typeQueryCallExpressionInTypeAnnotation",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "function",
@@ -7487,7 +7484,6 @@
           ]
         }
       ],
-      "name": "_type_query_call_expression_in_type_annotation",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -7498,10 +7494,10 @@
       "kind": "_type_query_instantiation_expression",
       "modelType": "branch",
       "typeName": "TypeQueryInstantiationExpression",
-      "factoryName": "_typeQueryInstantiationExpression",
+      "factoryName": "typeQueryInstantiationExpression",
       "irKey": "typeQueryInstantiationExpression",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "function",
@@ -7570,7 +7566,6 @@
           ]
         }
       ],
-      "name": "_type_query_instantiation_expression",
       "factoryShape": "config",
       "factoryFields": [
         "function",
@@ -7581,10 +7576,10 @@
       "kind": "_type_query_member_expression",
       "modelType": "branch",
       "typeName": "TypeQueryMemberExpression",
-      "factoryName": "_typeQueryMemberExpression",
+      "factoryName": "typeQueryMemberExpression",
       "irKey": "typeQueryMemberExpression",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "object",
@@ -7693,7 +7688,6 @@
           ]
         }
       ],
-      "name": "_type_query_member_expression",
       "factoryShape": "config",
       "factoryFields": [
         "object",
@@ -7705,10 +7699,10 @@
       "kind": "_type_query_member_expression_in_type_annotation",
       "modelType": "branch",
       "typeName": "TypeQueryMemberExpressionInTypeAnnotation",
-      "factoryName": "_typeQueryMemberExpressionInTypeAnnotation",
+      "factoryName": "typeQueryMemberExpressionInTypeAnnotation",
       "irKey": "typeQueryMemberExpressionInTypeAnnotation",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "object",
@@ -7777,7 +7771,6 @@
           ]
         }
       ],
-      "name": "_type_query_member_expression_in_type_annotation",
       "factoryShape": "config",
       "factoryFields": [
         "object",
@@ -7788,10 +7781,10 @@
       "kind": "_type_query_subscript_expression",
       "modelType": "branch",
       "typeName": "TypeQuerySubscriptExpression",
-      "factoryName": "_typeQuerySubscriptExpression",
+      "factoryName": "typeQuerySubscriptExpression",
       "irKey": "typeQuerySubscriptExpression",
       "hidden": false,
-      "hoisted": true,
+      "hoisted": false,
       "slots": [
         {
           "name": "object",
@@ -7884,7 +7877,6 @@
           ]
         }
       ],
-      "name": "_type_query_subscript_expression",
       "factoryShape": "config",
       "factoryFields": [
         "object",

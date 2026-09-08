@@ -892,7 +892,7 @@ export function classifyNode(
 		hoisted?: boolean;
 	}
 ): ModelType {
-	if (opts?.hoisted) {
+	if (opts?.hoisted && !isAllTextShape(rule)) {
 		if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
 		return compoundModelType(rule);
 	}

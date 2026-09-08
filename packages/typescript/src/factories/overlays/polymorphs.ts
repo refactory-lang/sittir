@@ -18,16 +18,48 @@ const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
 // merges or partitions a config.
 const _o = (config: unknown) => config as Record<string, unknown>;
 const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
+// A spliced group is present as a whole or absent as a whole: the second
+// overload forbids every one of its keys.
+type NoneOf<T> = { [K in keyof T]?: never };
+const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '$type' in v;
 
-const exportStatementDefaultFrom$automaticSemicolon =
+const _exportStatementDefaultFrom$automaticSemicolon =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
-const exportStatementDefaultFrom$semi =
+const _exportStatementDefaultFrom$semi =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
-export const exportStatementDefaultFrom: typeof B.exportStatementDefaultFrom & {
+const _exportStatementDefaultFrom$starFrom =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _exportStatementDefaultFrom$nsFrom =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'namespaceExport' || key === 'source') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const _exportStatementDefaultFrom$clauseFrom =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'exportClause' || key === 'source') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const _exportStatementDefaultFrom: {
 	automaticSemicolon: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'automaticSemicolon'>
@@ -44,21 +76,111 @@ export const exportStatementDefaultFrom: typeof B.exportStatementDefaultFrom & {
 			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'automaticSemicolon'>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
+	starFrom: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildExportStatementDefaultStarFrom>;
+			}
+		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToExportStatementDefaultStarFrom>;
+			}
+		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+	};
+	nsFrom: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof F.buildExportStatementDefaultNsFrom>[0]
+		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof C.coerceToExportStatementDefaultNsFrom>[0]
+		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+	};
+	clauseFrom: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof F.buildExportStatementDefaultClauseFrom>[0]
+		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof C.coerceToExportStatementDefaultClauseFrom>[0]
+		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+	};
 } = {
-	...B.exportStatementDefaultFrom,
 	automaticSemicolon: {
-		strict: exportStatementDefaultFrom$automaticSemicolon(
+		strict: _exportStatementDefaultFrom$automaticSemicolon(
 			F.buildExportStatementDefaultFrom,
 			TSKindId.AutomaticSemicolon
 		),
-		coerce: exportStatementDefaultFrom$automaticSemicolon(
+		coerce: _exportStatementDefaultFrom$automaticSemicolon(
 			C.coerceToExportStatementDefaultFrom,
 			TSKindId.AutomaticSemicolon
 		)
 	},
 	semi: {
-		strict: exportStatementDefaultFrom$semi(F.buildExportStatementDefaultFrom, TSKindId.Semi),
-		coerce: exportStatementDefaultFrom$semi(C.coerceToExportStatementDefaultFrom, TSKindId.Semi)
+		strict: _exportStatementDefaultFrom$semi(F.buildExportStatementDefaultFrom, TSKindId.Semi),
+		coerce: _exportStatementDefaultFrom$semi(C.coerceToExportStatementDefaultFrom, TSKindId.Semi)
+	},
+	starFrom: {
+		strict: _exportStatementDefaultFrom$starFrom(
+			F.buildExportStatementDefaultFrom,
+			F.buildExportStatementDefaultStarFrom
+		),
+		coerce: _exportStatementDefaultFrom$starFrom(
+			C.coerceToExportStatementDefaultFrom,
+			C.coerceToExportStatementDefaultStarFrom
+		)
+	},
+	nsFrom: {
+		strict: _exportStatementDefaultFrom$nsFrom(F.buildExportStatementDefaultFrom, F.buildExportStatementDefaultNsFrom),
+		coerce: _exportStatementDefaultFrom$nsFrom(
+			C.coerceToExportStatementDefaultFrom,
+			C.coerceToExportStatementDefaultNsFrom
+		)
+	},
+	clauseFrom: {
+		strict: _exportStatementDefaultFrom$clauseFrom(
+			F.buildExportStatementDefaultFrom,
+			F.buildExportStatementDefaultClauseFrom
+		),
+		coerce: _exportStatementDefaultFrom$clauseFrom(
+			C.coerceToExportStatementDefaultFrom,
+			C.coerceToExportStatementDefaultClauseFrom
+		)
+	}
+};
+
+const _exportStatementDefaultDeclaration$defaultKw =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _exportStatementDefaultDeclaration: {
+	defaultKw: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildExportStatementDefaultDefaultKw>;
+			}
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToExportStatementDefaultDefaultKw>;
+			}
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+} = {
+	defaultKw: {
+		strict: _exportStatementDefaultDeclaration$defaultKw(
+			F.buildExportStatementDefaultDeclaration,
+			F.buildExportStatementDefaultDefaultKw
+		),
+		coerce: _exportStatementDefaultDeclaration$defaultKw(
+			C.coerceToExportStatementDefaultDeclaration,
+			C.coerceToExportStatementDefaultDefaultKw
+		)
 	}
 };
 
@@ -74,7 +196,23 @@ const exportStatementDefault$semi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefault$starFrom =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefault$nsFrom =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefault$clauseFrom =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatementDefault$declaration =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefault$defaultKw =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -89,18 +227,42 @@ export const exportStatementDefault: typeof B.exportStatementDefault & {
 	};
 	automaticSemicolon: {
 		strict: (
-			...args: ArgsOf<typeof exportStatementDefaultFrom.automaticSemicolon.strict>
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.automaticSemicolon.strict>
 		) => ReturnType<typeof F.buildExportStatementDefault>;
 		coerce: (
-			...args: ArgsOf<typeof exportStatementDefaultFrom.automaticSemicolon.coerce>
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.automaticSemicolon.coerce>
 		) => ReturnType<typeof C.coerceToExportStatementDefault>;
 	};
 	semi: {
 		strict: (
-			...args: ArgsOf<typeof exportStatementDefaultFrom.semi.strict>
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.semi.strict>
 		) => ReturnType<typeof F.buildExportStatementDefault>;
 		coerce: (
-			...args: ArgsOf<typeof exportStatementDefaultFrom.semi.coerce>
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.semi.coerce>
+		) => ReturnType<typeof C.coerceToExportStatementDefault>;
+	};
+	starFrom: {
+		strict: (
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.starFrom.strict>
+		) => ReturnType<typeof F.buildExportStatementDefault>;
+		coerce: (
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.starFrom.coerce>
+		) => ReturnType<typeof C.coerceToExportStatementDefault>;
+	};
+	nsFrom: {
+		strict: (
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.nsFrom.strict>
+		) => ReturnType<typeof F.buildExportStatementDefault>;
+		coerce: (
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.nsFrom.coerce>
+		) => ReturnType<typeof C.coerceToExportStatementDefault>;
+	};
+	clauseFrom: {
+		strict: (
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.clauseFrom.strict>
+		) => ReturnType<typeof F.buildExportStatementDefault>;
+		coerce: (
+			...args: ArgsOf<typeof _exportStatementDefaultFrom.clauseFrom.coerce>
 		) => ReturnType<typeof C.coerceToExportStatementDefault>;
 	};
 	declaration: {
@@ -109,6 +271,14 @@ export const exportStatementDefault: typeof B.exportStatementDefault & {
 		) => ReturnType<typeof F.buildExportStatementDefault>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefault>;
+	};
+	defaultKw: {
+		strict: (
+			...args: ArgsOf<typeof _exportStatementDefaultDeclaration.defaultKw.strict>
+		) => ReturnType<typeof F.buildExportStatementDefault>;
+		coerce: (
+			...args: ArgsOf<typeof _exportStatementDefaultDeclaration.defaultKw.coerce>
 		) => ReturnType<typeof C.coerceToExportStatementDefault>;
 	};
 } = {
@@ -120,22 +290,53 @@ export const exportStatementDefault: typeof B.exportStatementDefault & {
 	automaticSemicolon: {
 		strict: exportStatementDefault$automaticSemicolon(
 			F.buildExportStatementDefault,
-			exportStatementDefaultFrom.automaticSemicolon.strict
+			_exportStatementDefaultFrom.automaticSemicolon.strict
 		),
 		coerce: exportStatementDefault$automaticSemicolon(
 			C.coerceToExportStatementDefault,
-			exportStatementDefaultFrom.automaticSemicolon.coerce
+			_exportStatementDefaultFrom.automaticSemicolon.coerce
 		)
 	},
 	semi: {
-		strict: exportStatementDefault$semi(F.buildExportStatementDefault, exportStatementDefaultFrom.semi.strict),
-		coerce: exportStatementDefault$semi(C.coerceToExportStatementDefault, exportStatementDefaultFrom.semi.coerce)
+		strict: exportStatementDefault$semi(F.buildExportStatementDefault, _exportStatementDefaultFrom.semi.strict),
+		coerce: exportStatementDefault$semi(C.coerceToExportStatementDefault, _exportStatementDefaultFrom.semi.coerce)
+	},
+	starFrom: {
+		strict: exportStatementDefault$starFrom(F.buildExportStatementDefault, _exportStatementDefaultFrom.starFrom.strict),
+		coerce: exportStatementDefault$starFrom(
+			C.coerceToExportStatementDefault,
+			_exportStatementDefaultFrom.starFrom.coerce
+		)
+	},
+	nsFrom: {
+		strict: exportStatementDefault$nsFrom(F.buildExportStatementDefault, _exportStatementDefaultFrom.nsFrom.strict),
+		coerce: exportStatementDefault$nsFrom(C.coerceToExportStatementDefault, _exportStatementDefaultFrom.nsFrom.coerce)
+	},
+	clauseFrom: {
+		strict: exportStatementDefault$clauseFrom(
+			F.buildExportStatementDefault,
+			_exportStatementDefaultFrom.clauseFrom.strict
+		),
+		coerce: exportStatementDefault$clauseFrom(
+			C.coerceToExportStatementDefault,
+			_exportStatementDefaultFrom.clauseFrom.coerce
+		)
 	},
 	declaration: {
 		strict: exportStatementDefault$declaration(F.buildExportStatementDefault, F.buildExportStatementDefaultDeclaration),
 		coerce: exportStatementDefault$declaration(
 			C.coerceToExportStatementDefault,
 			C.coerceToExportStatementDefaultDeclaration
+		)
+	},
+	defaultKw: {
+		strict: exportStatementDefault$defaultKw(
+			F.buildExportStatementDefault,
+			_exportStatementDefaultDeclaration.defaultKw.strict
+		),
+		coerce: exportStatementDefault$defaultKw(
+			C.coerceToExportStatementDefault,
+			_exportStatementDefaultDeclaration.defaultKw.coerce
 		)
 	}
 };
@@ -144,7 +345,23 @@ const exportStatement$default =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatement$defaultStarFrom =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatement$defaultNsFrom =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatement$defaultClauseFrom =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const exportStatement$defaultDeclaration =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatement$defaultDefaultKw =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -165,12 +382,42 @@ export const exportStatement: typeof B.exportStatement & {
 		strict: (...args: ArgsOf<typeof F.buildExportStatementDefault>) => ReturnType<typeof F.buildExportStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToExportStatementDefault>) => ReturnType<typeof C.coerceToExportStatement>;
 	};
+	defaultStarFrom: {
+		strict: (
+			...args: ArgsOf<typeof exportStatementDefault.starFrom.strict>
+		) => ReturnType<typeof F.buildExportStatement>;
+		coerce: (
+			...args: ArgsOf<typeof exportStatementDefault.starFrom.coerce>
+		) => ReturnType<typeof C.coerceToExportStatement>;
+	};
+	defaultNsFrom: {
+		strict: (...args: ArgsOf<typeof exportStatementDefault.nsFrom.strict>) => ReturnType<typeof F.buildExportStatement>;
+		coerce: (
+			...args: ArgsOf<typeof exportStatementDefault.nsFrom.coerce>
+		) => ReturnType<typeof C.coerceToExportStatement>;
+	};
+	defaultClauseFrom: {
+		strict: (
+			...args: ArgsOf<typeof exportStatementDefault.clauseFrom.strict>
+		) => ReturnType<typeof F.buildExportStatement>;
+		coerce: (
+			...args: ArgsOf<typeof exportStatementDefault.clauseFrom.coerce>
+		) => ReturnType<typeof C.coerceToExportStatement>;
+	};
 	defaultDeclaration: {
 		strict: (
 			...args: ArgsOf<typeof exportStatementDefault.declaration.strict>
 		) => ReturnType<typeof F.buildExportStatement>;
 		coerce: (
 			...args: ArgsOf<typeof exportStatementDefault.declaration.coerce>
+		) => ReturnType<typeof C.coerceToExportStatement>;
+	};
+	defaultDefaultKw: {
+		strict: (
+			...args: ArgsOf<typeof exportStatementDefault.defaultKw.strict>
+		) => ReturnType<typeof F.buildExportStatement>;
+		coerce: (
+			...args: ArgsOf<typeof exportStatementDefault.defaultKw.coerce>
 		) => ReturnType<typeof C.coerceToExportStatement>;
 	};
 	typeExport: {
@@ -199,9 +446,25 @@ export const exportStatement: typeof B.exportStatement & {
 		strict: exportStatement$default(F.buildExportStatement, F.buildExportStatementDefault),
 		coerce: exportStatement$default(C.coerceToExportStatement, C.coerceToExportStatementDefault)
 	},
+	defaultStarFrom: {
+		strict: exportStatement$defaultStarFrom(F.buildExportStatement, exportStatementDefault.starFrom.strict),
+		coerce: exportStatement$defaultStarFrom(C.coerceToExportStatement, exportStatementDefault.starFrom.coerce)
+	},
+	defaultNsFrom: {
+		strict: exportStatement$defaultNsFrom(F.buildExportStatement, exportStatementDefault.nsFrom.strict),
+		coerce: exportStatement$defaultNsFrom(C.coerceToExportStatement, exportStatementDefault.nsFrom.coerce)
+	},
+	defaultClauseFrom: {
+		strict: exportStatement$defaultClauseFrom(F.buildExportStatement, exportStatementDefault.clauseFrom.strict),
+		coerce: exportStatement$defaultClauseFrom(C.coerceToExportStatement, exportStatementDefault.clauseFrom.coerce)
+	},
 	defaultDeclaration: {
 		strict: exportStatement$defaultDeclaration(F.buildExportStatement, exportStatementDefault.declaration.strict),
 		coerce: exportStatement$defaultDeclaration(C.coerceToExportStatement, exportStatementDefault.declaration.coerce)
+	},
+	defaultDefaultKw: {
+		strict: exportStatement$defaultDefaultKw(F.buildExportStatement, exportStatementDefault.defaultKw.strict),
+		coerce: exportStatement$defaultDefaultKw(C.coerceToExportStatement, exportStatementDefault.defaultKw.coerce)
 	},
 	typeExport: {
 		strict: exportStatement$typeExport(F.buildExportStatement, F.buildExportStatementTypeExport),
@@ -345,17 +608,17 @@ export const importStatement: typeof B.importStatement & {
 	importRequireClause: { strict: F.buildImportRequireClause, coerce: C.coerceToImportRequireClause }
 };
 
-const importClauseDefaultImport$identifier =
+const _importClauseDefaultImport$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'identifier'> & { identifier: ArgsOf<CF> }): ReturnType<PF> => {
 		const { identifier: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, identifier: _c(child)(...(seated as readonly unknown[])) });
 	};
-const importClauseDefaultImport$type =
+const _importClauseDefaultImport$type =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'identifier'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, identifier: value });
-export const importClauseDefaultImport: typeof B.importClauseDefaultImport & {
+const _importClauseDefaultImport: {
 	identifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'identifier'> & {
@@ -377,14 +640,13 @@ export const importClauseDefaultImport: typeof B.importClauseDefaultImport & {
 		) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
 	};
 } = {
-	...B.importClauseDefaultImport,
 	identifier: {
-		strict: importClauseDefaultImport$identifier(F.buildImportClauseDefaultImport, F.buildIdentifier),
-		coerce: importClauseDefaultImport$identifier(C.coerceToImportClauseDefaultImport, C.coerceToIdentifier)
+		strict: _importClauseDefaultImport$identifier(F.buildImportClauseDefaultImport, F.buildIdentifier),
+		coerce: _importClauseDefaultImport$identifier(C.coerceToImportClauseDefaultImport, C.coerceToIdentifier)
 	},
 	type: {
-		strict: importClauseDefaultImport$type(F.buildImportClauseDefaultImport, TSKindId.AnonType),
-		coerce: importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.AnonType)
+		strict: _importClauseDefaultImport$type(F.buildImportClauseDefaultImport, TSKindId.AnonType),
+		coerce: _importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.AnonType)
 	}
 };
 
@@ -423,16 +685,16 @@ export const importClause: typeof B.importClause & {
 	};
 	identifier: {
 		strict: (
-			...args: ArgsOf<typeof importClauseDefaultImport.identifier.strict>
+			...args: ArgsOf<typeof _importClauseDefaultImport.identifier.strict>
 		) => ReturnType<typeof F.buildImportClause>;
 		coerce: (
-			...args: ArgsOf<typeof importClauseDefaultImport.identifier.coerce>
+			...args: ArgsOf<typeof _importClauseDefaultImport.identifier.coerce>
 		) => ReturnType<typeof C.coerceToImportClause>;
 	};
 	type: {
-		strict: (...args: ArgsOf<typeof importClauseDefaultImport.type.strict>) => ReturnType<typeof F.buildImportClause>;
+		strict: (...args: ArgsOf<typeof _importClauseDefaultImport.type.strict>) => ReturnType<typeof F.buildImportClause>;
 		coerce: (
-			...args: ArgsOf<typeof importClauseDefaultImport.type.coerce>
+			...args: ArgsOf<typeof _importClauseDefaultImport.type.coerce>
 		) => ReturnType<typeof C.coerceToImportClause>;
 	};
 } = {
@@ -450,12 +712,12 @@ export const importClause: typeof B.importClause & {
 		coerce: importClause$defaultImport(C.coerceToImportClause, C.coerceToImportClauseDefaultImport)
 	},
 	identifier: {
-		strict: importClause$identifier(F.buildImportClause, importClauseDefaultImport.identifier.strict),
-		coerce: importClause$identifier(C.coerceToImportClause, importClauseDefaultImport.identifier.coerce)
+		strict: importClause$identifier(F.buildImportClause, _importClauseDefaultImport.identifier.strict),
+		coerce: importClause$identifier(C.coerceToImportClause, _importClauseDefaultImport.identifier.coerce)
 	},
 	type: {
-		strict: importClause$type(F.buildImportClause, importClauseDefaultImport.type.strict),
-		coerce: importClause$type(C.coerceToImportClause, importClauseDefaultImport.type.coerce)
+		strict: importClause$type(F.buildImportClause, _importClauseDefaultImport.type.strict),
+		coerce: importClause$type(C.coerceToImportClause, _importClauseDefaultImport.type.coerce)
 	}
 };
 
@@ -467,6 +729,17 @@ const importSpecifier$typeof =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'importKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, importKind: value });
+const importSpecifier$as =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'alias') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
 export const importSpecifier: typeof B.importSpecifier & {
 	type: {
 		strict: (
@@ -484,7 +757,15 @@ export const importSpecifier: typeof B.importSpecifier & {
 			config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'importKind'>
 		) => ReturnType<typeof C.coerceToImportSpecifier>;
 	};
-	as: { strict: typeof F.buildImportSpecifierAs; coerce: typeof C.coerceToImportSpecifierAs };
+	as: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildImportSpecifier>[0], 'content'> & ArgsOf<typeof F.buildImportSpecifierAs>[0]
+		) => ReturnType<typeof F.buildImportSpecifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'content'> &
+				ArgsOf<typeof C.coerceToImportSpecifierAs>[0]
+		) => ReturnType<typeof C.coerceToImportSpecifier>;
+	};
 } = {
 	...B.importSpecifier,
 	type: {
@@ -495,7 +776,10 @@ export const importSpecifier: typeof B.importSpecifier & {
 		strict: importSpecifier$typeof(F.buildImportSpecifier, TSKindId.Typeof),
 		coerce: importSpecifier$typeof(C.coerceToImportSpecifier, TSKindId.Typeof)
 	},
-	as: { strict: F.buildImportSpecifierAs, coerce: C.coerceToImportSpecifierAs }
+	as: {
+		strict: importSpecifier$as(F.buildImportSpecifier, F.buildImportSpecifierAs),
+		coerce: importSpecifier$as(C.coerceToImportSpecifier, C.coerceToImportSpecifierAs)
+	}
 };
 
 const importAttribute$with =
@@ -646,7 +930,89 @@ export const lexicalDeclaration: typeof B.lexicalDeclaration & {
 	}
 };
 
+const _variableDeclaratorPlain$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _variableDeclaratorPlain$objectPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _variableDeclaratorPlain$arrayPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _variableDeclaratorPlain: {
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildVariableDeclaratorPlain>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildIdentifier>;
+			}
+		) => ReturnType<typeof F.buildVariableDeclaratorPlain>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToVariableDeclaratorPlain>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToVariableDeclaratorPlain>;
+	};
+	objectPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildVariableDeclaratorPlain>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildObjectPattern>;
+			}
+		) => ReturnType<typeof F.buildVariableDeclaratorPlain>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToVariableDeclaratorPlain>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToObjectPattern>;
+			}
+		) => ReturnType<typeof C.coerceToVariableDeclaratorPlain>;
+	};
+	arrayPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildVariableDeclaratorPlain>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildArrayPattern>;
+			}
+		) => ReturnType<typeof F.buildVariableDeclaratorPlain>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToVariableDeclaratorPlain>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToArrayPattern>;
+			}
+		) => ReturnType<typeof C.coerceToVariableDeclaratorPlain>;
+	};
+} = {
+	identifier: {
+		strict: _variableDeclaratorPlain$identifier(F.buildVariableDeclaratorPlain, F.buildIdentifier),
+		coerce: _variableDeclaratorPlain$identifier(C.coerceToVariableDeclaratorPlain, C.coerceToIdentifier)
+	},
+	objectPattern: {
+		strict: _variableDeclaratorPlain$objectPattern(F.buildVariableDeclaratorPlain, F.buildObjectPattern),
+		coerce: _variableDeclaratorPlain$objectPattern(C.coerceToVariableDeclaratorPlain, C.coerceToObjectPattern)
+	},
+	arrayPattern: {
+		strict: _variableDeclaratorPlain$arrayPattern(F.buildVariableDeclaratorPlain, F.buildArrayPattern),
+		coerce: _variableDeclaratorPlain$arrayPattern(C.coerceToVariableDeclaratorPlain, C.coerceToArrayPattern)
+	}
+};
+
 const variableDeclarator$plain =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const variableDeclarator$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const variableDeclarator$objectPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const variableDeclarator$arrayPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -661,6 +1027,30 @@ export const variableDeclarator: typeof B.variableDeclarator & {
 			...args: ArgsOf<typeof C.coerceToVariableDeclaratorPlain>
 		) => ReturnType<typeof C.coerceToVariableDeclarator>;
 	};
+	identifier: {
+		strict: (
+			...args: ArgsOf<typeof _variableDeclaratorPlain.identifier.strict>
+		) => ReturnType<typeof F.buildVariableDeclarator>;
+		coerce: (
+			...args: ArgsOf<typeof _variableDeclaratorPlain.identifier.coerce>
+		) => ReturnType<typeof C.coerceToVariableDeclarator>;
+	};
+	objectPattern: {
+		strict: (
+			...args: ArgsOf<typeof _variableDeclaratorPlain.objectPattern.strict>
+		) => ReturnType<typeof F.buildVariableDeclarator>;
+		coerce: (
+			...args: ArgsOf<typeof _variableDeclaratorPlain.objectPattern.coerce>
+		) => ReturnType<typeof C.coerceToVariableDeclarator>;
+	};
+	arrayPattern: {
+		strict: (
+			...args: ArgsOf<typeof _variableDeclaratorPlain.arrayPattern.strict>
+		) => ReturnType<typeof F.buildVariableDeclarator>;
+		coerce: (
+			...args: ArgsOf<typeof _variableDeclaratorPlain.arrayPattern.coerce>
+		) => ReturnType<typeof C.coerceToVariableDeclarator>;
+	};
 	definite: {
 		strict: (...args: ArgsOf<typeof F.buildVariableDeclaratorDefinite>) => ReturnType<typeof F.buildVariableDeclarator>;
 		coerce: (
@@ -673,9 +1063,100 @@ export const variableDeclarator: typeof B.variableDeclarator & {
 		strict: variableDeclarator$plain(F.buildVariableDeclarator, F.buildVariableDeclaratorPlain),
 		coerce: variableDeclarator$plain(C.coerceToVariableDeclarator, C.coerceToVariableDeclaratorPlain)
 	},
+	identifier: {
+		strict: variableDeclarator$identifier(F.buildVariableDeclarator, _variableDeclaratorPlain.identifier.strict),
+		coerce: variableDeclarator$identifier(C.coerceToVariableDeclarator, _variableDeclaratorPlain.identifier.coerce)
+	},
+	objectPattern: {
+		strict: variableDeclarator$objectPattern(F.buildVariableDeclarator, _variableDeclaratorPlain.objectPattern.strict),
+		coerce: variableDeclarator$objectPattern(
+			C.coerceToVariableDeclarator,
+			_variableDeclaratorPlain.objectPattern.coerce
+		)
+	},
+	arrayPattern: {
+		strict: variableDeclarator$arrayPattern(F.buildVariableDeclarator, _variableDeclaratorPlain.arrayPattern.strict),
+		coerce: variableDeclarator$arrayPattern(C.coerceToVariableDeclarator, _variableDeclaratorPlain.arrayPattern.coerce)
+	},
 	definite: {
 		strict: variableDeclarator$definite(F.buildVariableDeclarator, F.buildVariableDeclaratorDefinite),
 		coerce: variableDeclarator$definite(C.coerceToVariableDeclarator, C.coerceToVariableDeclaratorDefinite)
+	}
+};
+
+const forInStatement$lhs =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const forInStatement$varKind =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'left' || key === 'value') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const forInStatement$letConstKind =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'kind' || key === 'left' || key === 'automaticSemicolon') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+export const forInStatement: typeof B.forInStatement & {
+	lhs: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForInStatement>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildForHeaderLhs>;
+			}
+		) => ReturnType<typeof F.buildForInStatement>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForInStatement>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToForHeaderLhs>;
+			}
+		) => ReturnType<typeof C.coerceToForInStatement>;
+	};
+	varKind: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForInStatement>[0], 'content'> & ArgsOf<typeof F.buildForHeaderVarKind>[0]
+		) => ReturnType<typeof F.buildForInStatement>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForInStatement>[0], 'content'> &
+				ArgsOf<typeof C.coerceToForHeaderVarKind>[0]
+		) => ReturnType<typeof C.coerceToForInStatement>;
+	};
+	letConstKind: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForInStatement>[0], 'content'> &
+				ArgsOf<typeof F.buildForHeaderLetConstKind>[0]
+		) => ReturnType<typeof F.buildForInStatement>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForInStatement>[0], 'content'> &
+				ArgsOf<typeof C.coerceToForHeaderLetConstKind>[0]
+		) => ReturnType<typeof C.coerceToForInStatement>;
+	};
+} = {
+	...B.forInStatement,
+	lhs: {
+		strict: forInStatement$lhs(F.buildForInStatement, F.buildForHeaderLhs),
+		coerce: forInStatement$lhs(C.coerceToForInStatement, C.coerceToForHeaderLhs)
+	},
+	varKind: {
+		strict: forInStatement$varKind(F.buildForInStatement, F.buildForHeaderVarKind),
+		coerce: forInStatement$varKind(C.coerceToForInStatement, C.coerceToForHeaderVarKind)
+	},
+	letConstKind: {
+		strict: forInStatement$letConstKind(F.buildForInStatement, F.buildForHeaderLetConstKind),
+		coerce: forInStatement$letConstKind(C.coerceToForInStatement, C.coerceToForHeaderLetConstKind)
 	}
 };
 
@@ -918,6 +1399,44 @@ export const switchCase: typeof B.switchCase & {
 		strict: switchCase$sequenceExpression(F.buildSwitchCase, F.buildSequenceExpression),
 		coerce: switchCase$sequenceExpression(C.coerceToSwitchCase, C.coerceToSequenceExpression)
 	}
+};
+
+const catchClause$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'catchClauseGroup'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'parameter' || key === 'type') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, catchClauseGroup: _c(child)(inner) } : rest);
+	};
+export const catchClause: typeof B.catchClause & {
+	strict: (
+		config:
+			| ArgsOf<typeof F.buildCatchClause>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildCatchClause>[0]>, 'catchClauseGroup'> &
+					(ArgsOf<typeof F.buildCatchClauseGroup>[0] | NoneOf<ArgsOf<typeof F.buildCatchClauseGroup>[0]>))
+	) => ReturnType<typeof F.buildCatchClause>;
+	coerce: (
+		config:
+			| ArgsOf<typeof C.coerceToCatchClause>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToCatchClause>[0]>, 'catchClauseGroup'> &
+					(ArgsOf<typeof C.coerceToCatchClauseGroup>[0] | NoneOf<ArgsOf<typeof C.coerceToCatchClauseGroup>[0]>))
+	) => ReturnType<typeof C.coerceToCatchClause>;
+} = {
+	...B.catchClause,
+	strict: catchClause$splice(F.buildCatchClause, F.buildCatchClauseGroup),
+	coerce: catchClause$splice(C.coerceToCatchClause, C.coerceToCatchClauseGroup)
 };
 
 const parenthesizedExpression$typed =
@@ -1593,16 +2112,66 @@ export const generatorFunctionDeclaration: typeof B.generatorFunctionDeclaration
 	}
 };
 
+const arrowFunction$parameter =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
 export const arrowFunction: typeof B.arrowFunction & {
-	parameter: { strict: typeof F.buildArrowFunctionParameter; coerce: typeof C.coerceToArrowFunctionParameter };
+	parameter: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildArrowFunctionParameter>;
+			}
+		) => ReturnType<typeof F.buildArrowFunction>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToArrowFunctionParameter>;
+			}
+		) => ReturnType<typeof C.coerceToArrowFunction>;
+	};
 	callSignature: { strict: typeof F.buildCallSignature; coerce: typeof C.coerceToCallSignature };
 } = {
 	...B.arrowFunction,
-	parameter: { strict: F.buildArrowFunctionParameter, coerce: C.coerceToArrowFunctionParameter },
+	parameter: {
+		strict: arrowFunction$parameter(F.buildArrowFunction, F.buildArrowFunctionParameter),
+		coerce: arrowFunction$parameter(C.coerceToArrowFunction, C.coerceToArrowFunctionParameter)
+	},
 	callSignature: { strict: F.buildCallSignature, coerce: C.coerceToCallSignature }
 };
 
+const _callExpressionCall$import =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _callExpressionCall: {
+	import: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpressionCall>[0], 'function'> & {
+				function: ArgsOf<typeof F.buildImport>;
+			}
+		) => ReturnType<typeof F.buildCallExpressionCall>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpressionCall>[0], 'function'> & {
+				function: ArgsOf<typeof C.coerceToImport>;
+			}
+		) => ReturnType<typeof C.coerceToCallExpressionCall>;
+	};
+} = {
+	import: {
+		strict: _callExpressionCall$import(F.buildCallExpressionCall, F.buildImport),
+		coerce: _callExpressionCall$import(C.coerceToCallExpressionCall, C.coerceToImport)
+	}
+};
+
 const callExpression$call =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const callExpression$import =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -1619,6 +2188,10 @@ export const callExpression: typeof B.callExpression & {
 		strict: (...args: ArgsOf<typeof F.buildCallExpressionCall>) => ReturnType<typeof F.buildCallExpression>;
 		coerce: (...args: ArgsOf<typeof C.coerceToCallExpressionCall>) => ReturnType<typeof C.coerceToCallExpression>;
 	};
+	import: {
+		strict: (...args: ArgsOf<typeof _callExpressionCall.import.strict>) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (...args: ArgsOf<typeof _callExpressionCall.import.coerce>) => ReturnType<typeof C.coerceToCallExpression>;
+	};
 	templateCall: {
 		strict: (...args: ArgsOf<typeof F.buildCallExpressionTemplateCall>) => ReturnType<typeof F.buildCallExpression>;
 		coerce: (
@@ -1634,6 +2207,10 @@ export const callExpression: typeof B.callExpression & {
 	call: {
 		strict: callExpression$call(F.buildCallExpression, F.buildCallExpressionCall),
 		coerce: callExpression$call(C.coerceToCallExpression, C.coerceToCallExpressionCall)
+	},
+	import: {
+		strict: callExpression$import(F.buildCallExpression, _callExpressionCall.import.strict),
+		coerce: callExpression$import(C.coerceToCallExpression, _callExpressionCall.import.coerce)
 	},
 	templateCall: {
 		strict: callExpression$templateCall(F.buildCallExpression, F.buildCallExpressionTemplateCall),
@@ -2255,6 +2832,25 @@ const binaryExpression$instanceof =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
+const binaryExpression$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'binaryExpressionIn'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'left' || key === 'right') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, binaryExpressionIn: _c(child)(inner) } : rest);
+	};
 export const binaryExpression: typeof B.binaryExpression & {
 	ampAmp: {
 		strict: (
@@ -2448,6 +3044,18 @@ export const binaryExpression: typeof B.binaryExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>
 		) => ReturnType<typeof C.coerceToBinaryExpression>;
 	};
+	strict: (
+		config:
+			| ArgsOf<typeof F.buildBinaryExpression>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildBinaryExpression>[0]>, 'binaryExpressionIn'> &
+					(ArgsOf<typeof F.buildBinaryExpressionIn>[0] | NoneOf<ArgsOf<typeof F.buildBinaryExpressionIn>[0]>))
+	) => ReturnType<typeof F.buildBinaryExpression>;
+	coerce: (
+		config:
+			| ArgsOf<typeof C.coerceToBinaryExpression>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToBinaryExpression>[0]>, 'binaryExpressionIn'> &
+					(ArgsOf<typeof C.coerceToBinaryExpressionIn>[0] | NoneOf<ArgsOf<typeof C.coerceToBinaryExpressionIn>[0]>))
+	) => ReturnType<typeof C.coerceToBinaryExpression>;
 	in: { strict: typeof F.buildBinaryExpressionIn; coerce: typeof C.coerceToBinaryExpressionIn };
 } = {
 	...B.binaryExpression,
@@ -2547,6 +3155,8 @@ export const binaryExpression: typeof B.binaryExpression & {
 		strict: binaryExpression$instanceof(F.buildBinaryExpression, TSKindId.Instanceof),
 		coerce: binaryExpression$instanceof(C.coerceToBinaryExpression, TSKindId.Instanceof)
 	},
+	strict: binaryExpression$splice(F.buildBinaryExpression, F.buildBinaryExpressionIn),
+	coerce: binaryExpression$splice(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn),
 	in: { strict: F.buildBinaryExpressionIn, coerce: C.coerceToBinaryExpressionIn }
 };
 
@@ -3306,11 +3916,56 @@ export const asExpression: typeof B.asExpression & {
 	}
 };
 
+const ambientDeclarationModule$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const ambientDeclarationModule$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+export const ambientDeclarationModule: typeof B.ambientDeclarationModule & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAmbientDeclarationModule>[0], 'terminator'>
+		) => ReturnType<typeof F.buildAmbientDeclarationModule>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAmbientDeclarationModule>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToAmbientDeclarationModule>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAmbientDeclarationModule>[0], 'terminator'>
+		) => ReturnType<typeof F.buildAmbientDeclarationModule>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAmbientDeclarationModule>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToAmbientDeclarationModule>;
+	};
+} = {
+	...B.ambientDeclarationModule,
+	automaticSemicolon: {
+		strict: ambientDeclarationModule$automaticSemicolon(F.buildAmbientDeclarationModule, TSKindId.AutomaticSemicolon),
+		coerce: ambientDeclarationModule$automaticSemicolon(C.coerceToAmbientDeclarationModule, TSKindId.AutomaticSemicolon)
+	},
+	semi: {
+		strict: ambientDeclarationModule$semi(F.buildAmbientDeclarationModule, TSKindId.Semi),
+		coerce: ambientDeclarationModule$semi(C.coerceToAmbientDeclarationModule, TSKindId.Semi)
+	}
+};
+
 const ambientDeclaration$global =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const ambientDeclaration$module =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$automaticSemicolon =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$semi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -3327,6 +3982,22 @@ export const ambientDeclaration: typeof B.ambientDeclaration & {
 			...args: ArgsOf<typeof C.coerceToAmbientDeclarationModule>
 		) => ReturnType<typeof C.coerceToAmbientDeclaration>;
 	};
+	automaticSemicolon: {
+		strict: (
+			...args: ArgsOf<typeof ambientDeclarationModule.automaticSemicolon.strict>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: (
+			...args: ArgsOf<typeof ambientDeclarationModule.automaticSemicolon.coerce>
+		) => ReturnType<typeof C.coerceToAmbientDeclaration>;
+	};
+	semi: {
+		strict: (
+			...args: ArgsOf<typeof ambientDeclarationModule.semi.strict>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: (
+			...args: ArgsOf<typeof ambientDeclarationModule.semi.coerce>
+		) => ReturnType<typeof C.coerceToAmbientDeclaration>;
+	};
 } = {
 	...B.ambientDeclaration,
 	global: {
@@ -3336,6 +4007,20 @@ export const ambientDeclaration: typeof B.ambientDeclaration & {
 	module: {
 		strict: ambientDeclaration$module(F.buildAmbientDeclaration, F.buildAmbientDeclarationModule),
 		coerce: ambientDeclaration$module(C.coerceToAmbientDeclaration, C.coerceToAmbientDeclarationModule)
+	},
+	automaticSemicolon: {
+		strict: ambientDeclaration$automaticSemicolon(
+			F.buildAmbientDeclaration,
+			ambientDeclarationModule.automaticSemicolon.strict
+		),
+		coerce: ambientDeclaration$automaticSemicolon(
+			C.coerceToAmbientDeclaration,
+			ambientDeclarationModule.automaticSemicolon.coerce
+		)
+	},
+	semi: {
+		strict: ambientDeclaration$semi(F.buildAmbientDeclaration, ambientDeclarationModule.semi.strict),
+		coerce: ambientDeclaration$semi(C.coerceToAmbientDeclaration, ambientDeclarationModule.semi.coerce)
 	}
 };
 
@@ -3847,6 +4532,70 @@ export const optionalParameter: typeof B.optionalParameter & {
 	}
 };
 
+const typeQueryCallExpressionInTypeAnnotation$import =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryCallExpressionInTypeAnnotation$typeQueryMemberExpressionInTypeAnnotation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'object' || key === 'property') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+export const typeQueryCallExpressionInTypeAnnotation: typeof B.typeQueryCallExpressionInTypeAnnotation & {
+	import: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> & {
+				function: ArgsOf<typeof F.buildImport>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> & {
+				function: ArgsOf<typeof C.coerceToImport>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpressionInTypeAnnotation>;
+	};
+	typeQueryMemberExpressionInTypeAnnotation: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> &
+				ArgsOf<typeof F.buildTypeQueryMemberExpressionInTypeAnnotation>[0]
+		) => ReturnType<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> &
+				ArgsOf<typeof C.coerceToTypeQueryMemberExpressionInTypeAnnotation>[0]
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpressionInTypeAnnotation>;
+	};
+} = {
+	...B.typeQueryCallExpressionInTypeAnnotation,
+	import: {
+		strict: typeQueryCallExpressionInTypeAnnotation$import(
+			F.buildTypeQueryCallExpressionInTypeAnnotation,
+			F.buildImport
+		),
+		coerce: typeQueryCallExpressionInTypeAnnotation$import(
+			C.coerceToTypeQueryCallExpressionInTypeAnnotation,
+			C.coerceToImport
+		)
+	},
+	typeQueryMemberExpressionInTypeAnnotation: {
+		strict: typeQueryCallExpressionInTypeAnnotation$typeQueryMemberExpressionInTypeAnnotation(
+			F.buildTypeQueryCallExpressionInTypeAnnotation,
+			F.buildTypeQueryMemberExpressionInTypeAnnotation
+		),
+		coerce: typeQueryCallExpressionInTypeAnnotation$typeQueryMemberExpressionInTypeAnnotation(
+			C.coerceToTypeQueryCallExpressionInTypeAnnotation,
+			C.coerceToTypeQueryMemberExpressionInTypeAnnotation
+		)
+	}
+};
+
 const tupleParameter$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
@@ -4186,11 +4935,384 @@ export const typePredicateAnnotation: typeof B.typePredicateAnnotation & {
 	}
 };
 
+const typeQueryMemberExpression$dot =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
+const typeQueryMemberExpression$qmarkDot =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
+export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
+	dot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>
+		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>
+		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
+	};
+	qmarkDot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>
+		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>
+		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
+	};
+} = {
+	...B.typeQueryMemberExpression,
+	dot: {
+		strict: typeQueryMemberExpression$dot(F.buildTypeQueryMemberExpression, TSKindId.Dot),
+		coerce: typeQueryMemberExpression$dot(C.coerceToTypeQueryMemberExpression, TSKindId.Dot)
+	},
+	qmarkDot: {
+		strict: typeQueryMemberExpression$qmarkDot(F.buildTypeQueryMemberExpression, TSKindId.QmarkDot),
+		coerce: typeQueryMemberExpression$qmarkDot(C.coerceToTypeQueryMemberExpression, TSKindId.QmarkDot)
+	}
+};
+
+const typeQueryCallExpression$import =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryCallExpression$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryCallExpression$typeQueryMemberExpression =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'object' || key === 'content' || key === 'property') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+const typeQueryCallExpression$dot =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryCallExpression$qmarkDot =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryCallExpression$typeQuerySubscriptExpression =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'object' || key === 'index') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
+	import: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof F.buildImport>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof C.coerceToImport>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof F.buildIdentifier>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+	};
+	typeQueryMemberExpression: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> &
+				ArgsOf<typeof F.buildTypeQueryMemberExpression>[0]
+		) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> &
+				ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0]
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+	};
+	dot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.dot.strict>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.dot.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+	};
+	qmarkDot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.qmarkDot.strict>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.qmarkDot.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+	};
+	typeQuerySubscriptExpression: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> &
+				ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0]
+		) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> &
+				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
+		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+	};
+} = {
+	...B.typeQueryCallExpression,
+	import: {
+		strict: typeQueryCallExpression$import(F.buildTypeQueryCallExpression, F.buildImport),
+		coerce: typeQueryCallExpression$import(C.coerceToTypeQueryCallExpression, C.coerceToImport)
+	},
+	identifier: {
+		strict: typeQueryCallExpression$identifier(F.buildTypeQueryCallExpression, F.buildIdentifier),
+		coerce: typeQueryCallExpression$identifier(C.coerceToTypeQueryCallExpression, C.coerceToIdentifier)
+	},
+	typeQueryMemberExpression: {
+		strict: typeQueryCallExpression$typeQueryMemberExpression(
+			F.buildTypeQueryCallExpression,
+			F.buildTypeQueryMemberExpression
+		),
+		coerce: typeQueryCallExpression$typeQueryMemberExpression(
+			C.coerceToTypeQueryCallExpression,
+			C.coerceToTypeQueryMemberExpression
+		)
+	},
+	dot: {
+		strict: typeQueryCallExpression$dot(F.buildTypeQueryCallExpression, typeQueryMemberExpression.dot.strict),
+		coerce: typeQueryCallExpression$dot(C.coerceToTypeQueryCallExpression, typeQueryMemberExpression.dot.coerce)
+	},
+	qmarkDot: {
+		strict: typeQueryCallExpression$qmarkDot(F.buildTypeQueryCallExpression, typeQueryMemberExpression.qmarkDot.strict),
+		coerce: typeQueryCallExpression$qmarkDot(
+			C.coerceToTypeQueryCallExpression,
+			typeQueryMemberExpression.qmarkDot.coerce
+		)
+	},
+	typeQuerySubscriptExpression: {
+		strict: typeQueryCallExpression$typeQuerySubscriptExpression(
+			F.buildTypeQueryCallExpression,
+			F.buildTypeQuerySubscriptExpression
+		),
+		coerce: typeQueryCallExpression$typeQuerySubscriptExpression(
+			C.coerceToTypeQueryCallExpression,
+			C.coerceToTypeQuerySubscriptExpression
+		)
+	}
+};
+
+const typeQueryInstantiationExpression$import =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryInstantiationExpression$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryInstantiationExpression$typeQueryMemberExpression =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'object' || key === 'content' || key === 'property') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+const typeQueryInstantiationExpression$dot =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryInstantiationExpression$qmarkDot =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typeQueryInstantiationExpression$typeQuerySubscriptExpression =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'object' || key === 'index') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationExpression & {
+	import: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof F.buildImport>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof C.coerceToImport>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof F.buildIdentifier>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+	};
+	typeQueryMemberExpression: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> &
+				ArgsOf<typeof F.buildTypeQueryMemberExpression>[0]
+		) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> &
+				ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0]
+		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+	};
+	dot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.dot.strict>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.dot.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+	};
+	qmarkDot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.qmarkDot.strict>;
+			}
+		) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+				function: ArgsOf<typeof typeQueryMemberExpression.qmarkDot.coerce>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+	};
+	typeQuerySubscriptExpression: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> &
+				ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0]
+		) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> &
+				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
+		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+	};
+} = {
+	...B.typeQueryInstantiationExpression,
+	import: {
+		strict: typeQueryInstantiationExpression$import(F.buildTypeQueryInstantiationExpression, F.buildImport),
+		coerce: typeQueryInstantiationExpression$import(C.coerceToTypeQueryInstantiationExpression, C.coerceToImport)
+	},
+	identifier: {
+		strict: typeQueryInstantiationExpression$identifier(F.buildTypeQueryInstantiationExpression, F.buildIdentifier),
+		coerce: typeQueryInstantiationExpression$identifier(
+			C.coerceToTypeQueryInstantiationExpression,
+			C.coerceToIdentifier
+		)
+	},
+	typeQueryMemberExpression: {
+		strict: typeQueryInstantiationExpression$typeQueryMemberExpression(
+			F.buildTypeQueryInstantiationExpression,
+			F.buildTypeQueryMemberExpression
+		),
+		coerce: typeQueryInstantiationExpression$typeQueryMemberExpression(
+			C.coerceToTypeQueryInstantiationExpression,
+			C.coerceToTypeQueryMemberExpression
+		)
+	},
+	dot: {
+		strict: typeQueryInstantiationExpression$dot(
+			F.buildTypeQueryInstantiationExpression,
+			typeQueryMemberExpression.dot.strict
+		),
+		coerce: typeQueryInstantiationExpression$dot(
+			C.coerceToTypeQueryInstantiationExpression,
+			typeQueryMemberExpression.dot.coerce
+		)
+	},
+	qmarkDot: {
+		strict: typeQueryInstantiationExpression$qmarkDot(
+			F.buildTypeQueryInstantiationExpression,
+			typeQueryMemberExpression.qmarkDot.strict
+		),
+		coerce: typeQueryInstantiationExpression$qmarkDot(
+			C.coerceToTypeQueryInstantiationExpression,
+			typeQueryMemberExpression.qmarkDot.coerce
+		)
+	},
+	typeQuerySubscriptExpression: {
+		strict: typeQueryInstantiationExpression$typeQuerySubscriptExpression(
+			F.buildTypeQueryInstantiationExpression,
+			F.buildTypeQuerySubscriptExpression
+		),
+		coerce: typeQueryInstantiationExpression$typeQuerySubscriptExpression(
+			C.coerceToTypeQueryInstantiationExpression,
+			C.coerceToTypeQuerySubscriptExpression
+		)
+	}
+};
+
 const typeQuery$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const typeQuery$memberExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$dot =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$qmarkDot =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -4219,6 +5341,16 @@ export const typeQuery: typeof B.typeQuery & {
 		strict: (...args: ArgsOf<typeof F.buildTypeQueryMemberExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		coerce: (...args: ArgsOf<typeof C.coerceToTypeQueryMemberExpression>) => ReturnType<typeof C.coerceToTypeQuery>;
 	};
+	dot: {
+		strict: (...args: ArgsOf<typeof typeQueryMemberExpression.dot.strict>) => ReturnType<typeof F.buildTypeQuery>;
+		coerce: (...args: ArgsOf<typeof typeQueryMemberExpression.dot.coerce>) => ReturnType<typeof C.coerceToTypeQuery>;
+	};
+	qmarkDot: {
+		strict: (...args: ArgsOf<typeof typeQueryMemberExpression.qmarkDot.strict>) => ReturnType<typeof F.buildTypeQuery>;
+		coerce: (
+			...args: ArgsOf<typeof typeQueryMemberExpression.qmarkDot.coerce>
+		) => ReturnType<typeof C.coerceToTypeQuery>;
+	};
 	callExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQueryCallExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		coerce: (...args: ArgsOf<typeof C.coerceToTypeQueryCallExpression>) => ReturnType<typeof C.coerceToTypeQuery>;
@@ -4246,6 +5378,14 @@ export const typeQuery: typeof B.typeQuery & {
 	memberExpression: {
 		strict: typeQuery$memberExpression(F.buildTypeQuery, F.buildTypeQueryMemberExpression),
 		coerce: typeQuery$memberExpression(C.coerceToTypeQuery, C.coerceToTypeQueryMemberExpression)
+	},
+	dot: {
+		strict: typeQuery$dot(F.buildTypeQuery, typeQueryMemberExpression.dot.strict),
+		coerce: typeQuery$dot(C.coerceToTypeQuery, typeQueryMemberExpression.dot.coerce)
+	},
+	qmarkDot: {
+		strict: typeQuery$qmarkDot(F.buildTypeQuery, typeQueryMemberExpression.qmarkDot.strict),
+		coerce: typeQuery$qmarkDot(C.coerceToTypeQuery, typeQueryMemberExpression.qmarkDot.coerce)
 	},
 	callExpression: {
 		strict: typeQuery$callExpression(F.buildTypeQuery, F.buildTypeQueryCallExpression),
@@ -4624,6 +5764,17 @@ const indexSignature$plus =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'sign'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, sign: value });
+const indexSignature$colon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'indexType') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
 export const indexSignature: typeof B.indexSignature & {
 	dash: {
 		strict: (
@@ -4641,7 +5792,16 @@ export const indexSignature: typeof B.indexSignature & {
 			config: OmitEach<ArgsOf<typeof C.coerceToIndexSignature>[0], 'sign'>
 		) => ReturnType<typeof C.coerceToIndexSignature>;
 	};
-	colon: { strict: typeof F.buildIndexSignatureColon; coerce: typeof C.coerceToIndexSignatureColon };
+	colon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIndexSignature>[0], 'content'> &
+				ArgsOf<typeof F.buildIndexSignatureColon>[0]
+		) => ReturnType<typeof F.buildIndexSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIndexSignature>[0], 'content'> &
+				ArgsOf<typeof C.coerceToIndexSignatureColon>[0]
+		) => ReturnType<typeof C.coerceToIndexSignature>;
+	};
 	mappedTypeClause: { strict: typeof F.buildMappedTypeClause; coerce: typeof C.coerceToMappedTypeClause };
 } = {
 	...B.indexSignature,
@@ -4653,7 +5813,10 @@ export const indexSignature: typeof B.indexSignature & {
 		strict: indexSignature$plus(F.buildIndexSignature, TSKindId.Plus),
 		coerce: indexSignature$plus(C.coerceToIndexSignature, TSKindId.Plus)
 	},
-	colon: { strict: F.buildIndexSignatureColon, coerce: C.coerceToIndexSignatureColon },
+	colon: {
+		strict: indexSignature$colon(F.buildIndexSignature, F.buildIndexSignatureColon),
+		coerce: indexSignature$colon(C.coerceToIndexSignature, C.coerceToIndexSignatureColon)
+	},
 	mappedTypeClause: { strict: F.buildMappedTypeClause, coerce: C.coerceToMappedTypeClause }
 };
 
@@ -4708,15 +5871,15 @@ export const functionType: typeof B.functionType & {
 	}
 };
 
-const importClauseGroup$namespaceImport =
+const _importClauseGroup$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const importClauseGroup$namedImports =
+const _importClauseGroup$namedImports =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const importClauseGroup: typeof B.importClauseGroup & {
+const _importClauseGroup: {
 	namespaceImport: {
 		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
 		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof C.coerceToImportClauseGroup>;
@@ -4726,59 +5889,582 @@ export const importClauseGroup: typeof B.importClauseGroup & {
 		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof C.coerceToImportClauseGroup>;
 	};
 } = {
-	...B.importClauseGroup,
 	namespaceImport: {
-		strict: importClauseGroup$namespaceImport(F.buildImportClauseGroup, F.buildNamespaceImport),
-		coerce: importClauseGroup$namespaceImport(C.coerceToImportClauseGroup, C.coerceToNamespaceImport)
+		strict: _importClauseGroup$namespaceImport(F.buildImportClauseGroup, F.buildNamespaceImport),
+		coerce: _importClauseGroup$namespaceImport(C.coerceToImportClauseGroup, C.coerceToNamespaceImport)
 	},
 	namedImports: {
-		strict: importClauseGroup$namedImports(F.buildImportClauseGroup, F.buildNamedImports),
-		coerce: importClauseGroup$namedImports(C.coerceToImportClauseGroup, C.coerceToNamedImports)
+		strict: _importClauseGroup$namedImports(F.buildImportClauseGroup, F.buildNamedImports),
+		coerce: _importClauseGroup$namedImports(C.coerceToImportClauseGroup, C.coerceToNamedImports)
 	}
 };
 
-const arrowFunctionParameter$identifier =
+const _catchClauseGroup$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'parameter'> & { parameter: ArgsOf<CF> }): ReturnType<PF> => {
+		const { parameter: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, parameter: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _catchClauseGroup$objectPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'parameter'> & { parameter: ArgsOf<CF> }): ReturnType<PF> => {
+		const { parameter: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, parameter: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _catchClauseGroup$arrayPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'parameter'> & { parameter: ArgsOf<CF> }): ReturnType<PF> => {
+		const { parameter: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, parameter: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _catchClauseGroup: {
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+				parameter: ArgsOf<typeof F.buildIdentifier>;
+			}
+		) => ReturnType<typeof F.buildCatchClauseGroup>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCatchClauseGroup>[0], 'parameter'> & {
+				parameter: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToCatchClauseGroup>;
+	};
+	objectPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+				parameter: ArgsOf<typeof F.buildObjectPattern>;
+			}
+		) => ReturnType<typeof F.buildCatchClauseGroup>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCatchClauseGroup>[0], 'parameter'> & {
+				parameter: ArgsOf<typeof C.coerceToObjectPattern>;
+			}
+		) => ReturnType<typeof C.coerceToCatchClauseGroup>;
+	};
+	arrayPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCatchClauseGroup>[0], 'parameter'> & {
+				parameter: ArgsOf<typeof F.buildArrayPattern>;
+			}
+		) => ReturnType<typeof F.buildCatchClauseGroup>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCatchClauseGroup>[0], 'parameter'> & {
+				parameter: ArgsOf<typeof C.coerceToArrayPattern>;
+			}
+		) => ReturnType<typeof C.coerceToCatchClauseGroup>;
+	};
+} = {
+	identifier: {
+		strict: _catchClauseGroup$identifier(F.buildCatchClauseGroup, F.buildIdentifier),
+		coerce: _catchClauseGroup$identifier(C.coerceToCatchClauseGroup, C.coerceToIdentifier)
+	},
+	objectPattern: {
+		strict: _catchClauseGroup$objectPattern(F.buildCatchClauseGroup, F.buildObjectPattern),
+		coerce: _catchClauseGroup$objectPattern(C.coerceToCatchClauseGroup, C.coerceToObjectPattern)
+	},
+	arrayPattern: {
+		strict: _catchClauseGroup$arrayPattern(F.buildCatchClauseGroup, F.buildArrayPattern),
+		coerce: _catchClauseGroup$arrayPattern(C.coerceToCatchClauseGroup, C.coerceToArrayPattern)
+	}
+};
+
+const exportStatementNamespaceExport$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const exportStatementNamespaceExport$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+export const exportStatementNamespaceExport: typeof B.exportStatementNamespaceExport & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementNamespaceExport>[0], 'terminator'>
+		) => ReturnType<typeof F.buildExportStatementNamespaceExport>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementNamespaceExport>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToExportStatementNamespaceExport>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementNamespaceExport>[0], 'terminator'>
+		) => ReturnType<typeof F.buildExportStatementNamespaceExport>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementNamespaceExport>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToExportStatementNamespaceExport>;
+	};
+} = {
+	...B.exportStatementNamespaceExport,
+	automaticSemicolon: {
+		strict: exportStatementNamespaceExport$automaticSemicolon(
+			F.buildExportStatementNamespaceExport,
+			TSKindId.AutomaticSemicolon
+		),
+		coerce: exportStatementNamespaceExport$automaticSemicolon(
+			C.coerceToExportStatementNamespaceExport,
+			TSKindId.AutomaticSemicolon
+		)
+	},
+	semi: {
+		strict: exportStatementNamespaceExport$semi(F.buildExportStatementNamespaceExport, TSKindId.Semi),
+		coerce: exportStatementNamespaceExport$semi(C.coerceToExportStatementNamespaceExport, TSKindId.Semi)
+	}
+};
+
+const exportStatementTypeExport$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const exportStatementTypeExport$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+export const exportStatementTypeExport: typeof B.exportStatementTypeExport & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementTypeExport>[0], 'terminator'>
+		) => ReturnType<typeof F.buildExportStatementTypeExport>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementTypeExport>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToExportStatementTypeExport>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementTypeExport>[0], 'terminator'>
+		) => ReturnType<typeof F.buildExportStatementTypeExport>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementTypeExport>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToExportStatementTypeExport>;
+	};
+} = {
+	...B.exportStatementTypeExport,
+	automaticSemicolon: {
+		strict: exportStatementTypeExport$automaticSemicolon(F.buildExportStatementTypeExport, TSKindId.AutomaticSemicolon),
+		coerce: exportStatementTypeExport$automaticSemicolon(
+			C.coerceToExportStatementTypeExport,
+			TSKindId.AutomaticSemicolon
+		)
+	},
+	semi: {
+		strict: exportStatementTypeExport$semi(F.buildExportStatementTypeExport, TSKindId.Semi),
+		coerce: exportStatementTypeExport$semi(C.coerceToExportStatementTypeExport, TSKindId.Semi)
+	}
+};
+
+const exportStatementEqualsExport$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const exportStatementEqualsExport$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+export const exportStatementEqualsExport: typeof B.exportStatementEqualsExport & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementEqualsExport>[0], 'terminator'>
+		) => ReturnType<typeof F.buildExportStatementEqualsExport>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementEqualsExport>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToExportStatementEqualsExport>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementEqualsExport>[0], 'terminator'>
+		) => ReturnType<typeof F.buildExportStatementEqualsExport>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementEqualsExport>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToExportStatementEqualsExport>;
+	};
+} = {
+	...B.exportStatementEqualsExport,
+	automaticSemicolon: {
+		strict: exportStatementEqualsExport$automaticSemicolon(
+			F.buildExportStatementEqualsExport,
+			TSKindId.AutomaticSemicolon
+		),
+		coerce: exportStatementEqualsExport$automaticSemicolon(
+			C.coerceToExportStatementEqualsExport,
+			TSKindId.AutomaticSemicolon
+		)
+	},
+	semi: {
+		strict: exportStatementEqualsExport$semi(F.buildExportStatementEqualsExport, TSKindId.Semi),
+		coerce: exportStatementEqualsExport$semi(C.coerceToExportStatementEqualsExport, TSKindId.Semi)
+	}
+};
+
+const _binaryExpressionIn$privatePropertyIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _binaryExpressionIn: {
+	privatePropertyIdentifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildBinaryExpressionIn>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildPrivatePropertyIdentifier>;
+			}
+		) => ReturnType<typeof F.buildBinaryExpressionIn>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpressionIn>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToBinaryExpressionIn>;
+	};
+} = {
+	privatePropertyIdentifier: {
+		strict: _binaryExpressionIn$privatePropertyIdentifier(F.buildBinaryExpressionIn, F.buildPrivatePropertyIdentifier),
+		coerce: _binaryExpressionIn$privatePropertyIdentifier(
+			C.coerceToBinaryExpressionIn,
+			C.coerceToPrivatePropertyIdentifier
+		)
+	}
+};
+
+const _classBodyMethod$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const _classBodyMethod$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const _classBodyMethod: {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMethod>[0], 'terminator'>
+		) => ReturnType<typeof F.buildClassBodyMethod>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMethod>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToClassBodyMethod>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMethod>[0], 'terminator'>
+		) => ReturnType<typeof F.buildClassBodyMethod>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMethod>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToClassBodyMethod>;
+	};
+} = {
+	automaticSemicolon: {
+		strict: _classBodyMethod$automaticSemicolon(F.buildClassBodyMethod, TSKindId.AutomaticSemicolon),
+		coerce: _classBodyMethod$automaticSemicolon(C.coerceToClassBodyMethod, TSKindId.AutomaticSemicolon)
+	},
+	semi: {
+		strict: _classBodyMethod$semi(F.buildClassBodyMethod, TSKindId.Semi),
+		coerce: _classBodyMethod$semi(C.coerceToClassBodyMethod, TSKindId.Semi)
+	}
+};
+
+const _classBodyMethodSig$functionSignatureAutomaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const _classBodyMethodSig$comma =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const _classBodyMethodSig: {
+	functionSignatureAutomaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMethodSig>[0], 'terminator'>
+		) => ReturnType<typeof F.buildClassBodyMethodSig>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMethodSig>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToClassBodyMethodSig>;
+	};
+	comma: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMethodSig>[0], 'terminator'>
+		) => ReturnType<typeof F.buildClassBodyMethodSig>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMethodSig>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToClassBodyMethodSig>;
+	};
+} = {
+	functionSignatureAutomaticSemicolon: {
+		strict: _classBodyMethodSig$functionSignatureAutomaticSemicolon(
+			F.buildClassBodyMethodSig,
+			TSKindId.FunctionSignatureAutomaticSemicolon
+		),
+		coerce: _classBodyMethodSig$functionSignatureAutomaticSemicolon(
+			C.coerceToClassBodyMethodSig,
+			TSKindId.FunctionSignatureAutomaticSemicolon
+		)
+	},
+	comma: {
+		strict: _classBodyMethodSig$comma(F.buildClassBodyMethodSig, TSKindId.Comma),
+		coerce: _classBodyMethodSig$comma(C.coerceToClassBodyMethodSig, TSKindId.Comma)
+	}
+};
+
+const _classBodyMember$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const _classBodyMember$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const _classBodyMember$comma =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'terminator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, terminator: value });
+const _classBodyMember: {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMember>[0], 'terminator'>
+		) => ReturnType<typeof F.buildClassBodyMember>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMember>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToClassBodyMember>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMember>[0], 'terminator'>
+		) => ReturnType<typeof F.buildClassBodyMember>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMember>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToClassBodyMember>;
+	};
+	comma: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMember>[0], 'terminator'>
+		) => ReturnType<typeof F.buildClassBodyMember>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMember>[0], 'terminator'>
+		) => ReturnType<typeof C.coerceToClassBodyMember>;
+	};
+} = {
+	automaticSemicolon: {
+		strict: _classBodyMember$automaticSemicolon(F.buildClassBodyMember, TSKindId.AutomaticSemicolon),
+		coerce: _classBodyMember$automaticSemicolon(C.coerceToClassBodyMember, TSKindId.AutomaticSemicolon)
+	},
+	semi: {
+		strict: _classBodyMember$semi(F.buildClassBodyMember, TSKindId.Semi),
+		coerce: _classBodyMember$semi(C.coerceToClassBodyMember, TSKindId.Semi)
+	},
+	comma: {
+		strict: _classBodyMember$comma(F.buildClassBodyMember, TSKindId.Comma),
+		coerce: _classBodyMember$comma(C.coerceToClassBodyMember, TSKindId.Comma)
+	}
+};
+
+const _indexSignatureColon$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _indexSignatureColon: {
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIndexSignatureColon>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildIdentifier>;
+			}
+		) => ReturnType<typeof F.buildIndexSignatureColon>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIndexSignatureColon>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToIndexSignatureColon>;
+	};
+} = {
+	identifier: {
+		strict: _indexSignatureColon$identifier(F.buildIndexSignatureColon, F.buildIdentifier),
+		coerce: _indexSignatureColon$identifier(C.coerceToIndexSignatureColon, C.coerceToIdentifier)
+	}
+};
+
+const _arrowFunctionParameter$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const arrowFunctionParameter: typeof B.arrowFunctionParameter & {
+const _arrowFunctionParameter: {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
 		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToArrowFunctionParameter>;
 	};
 } = {
-	...B.arrowFunctionParameter,
 	identifier: {
-		strict: arrowFunctionParameter$identifier(F.buildArrowFunctionParameter, F.buildIdentifier),
-		coerce: arrowFunctionParameter$identifier(C.coerceToArrowFunctionParameter, C.coerceToIdentifier)
+		strict: _arrowFunctionParameter$identifier(F.buildArrowFunctionParameter, F.buildIdentifier),
+		coerce: _arrowFunctionParameter$identifier(C.coerceToArrowFunctionParameter, C.coerceToIdentifier)
 	}
 };
 
-const forHeaderLhs$parenthesizedExpression =
+const _exportStatementDefaultStarFrom$stringDouble =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const forHeaderLhs$parenthesizedExpressionTyped =
+const _exportStatementDefaultStarFrom$stringSingle =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const forHeaderLhs$sequenceExpression =
+const _exportStatementDefaultStarFrom: {
+	stringDouble: {
+		strict: (...args: ArgsOf<typeof string.double.strict>) => ReturnType<typeof F.buildExportStatementDefaultStarFrom>;
+		coerce: (
+			...args: ArgsOf<typeof string.double.coerce>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultStarFrom>;
+	};
+	stringSingle: {
+		strict: (...args: ArgsOf<typeof string.single.strict>) => ReturnType<typeof F.buildExportStatementDefaultStarFrom>;
+		coerce: (
+			...args: ArgsOf<typeof string.single.coerce>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultStarFrom>;
+	};
+} = {
+	stringDouble: {
+		strict: _exportStatementDefaultStarFrom$stringDouble(F.buildExportStatementDefaultStarFrom, string.double.strict),
+		coerce: _exportStatementDefaultStarFrom$stringDouble(C.coerceToExportStatementDefaultStarFrom, string.double.coerce)
+	},
+	stringSingle: {
+		strict: _exportStatementDefaultStarFrom$stringSingle(F.buildExportStatementDefaultStarFrom, string.single.strict),
+		coerce: _exportStatementDefaultStarFrom$stringSingle(C.coerceToExportStatementDefaultStarFrom, string.single.coerce)
+	}
+};
+
+const _exportStatementDefaultValue$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultValue$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, automaticSemicolon: value });
+const _exportStatementDefaultValue: {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultValue>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof F.buildExportStatementDefaultValue>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultValue>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultValue>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultValue>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof F.buildExportStatementDefaultValue>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultValue>[0], 'automaticSemicolon'>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultValue>;
+	};
+} = {
+	automaticSemicolon: {
+		strict: _exportStatementDefaultValue$automaticSemicolon(
+			F.buildExportStatementDefaultValue,
+			TSKindId.AutomaticSemicolon
+		),
+		coerce: _exportStatementDefaultValue$automaticSemicolon(
+			C.coerceToExportStatementDefaultValue,
+			TSKindId.AutomaticSemicolon
+		)
+	},
+	semi: {
+		strict: _exportStatementDefaultValue$semi(F.buildExportStatementDefaultValue, TSKindId.Semi),
+		coerce: _exportStatementDefaultValue$semi(C.coerceToExportStatementDefaultValue, TSKindId.Semi)
+	}
+};
+
+const _exportStatementDefaultDefaultKw$value =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const forHeaderLhs$identifier =
+const _exportStatementDefaultDefaultKw$automaticSemicolon =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const forHeaderLhs$decoratorMemberExpression =
+const _exportStatementDefaultDefaultKw$semi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const forHeaderLhs$decoratorCallExpression =
+const _exportStatementDefaultDefaultKw: {
+	value: {
+		strict: (
+			...args: ArgsOf<typeof F.buildExportStatementDefaultValue>
+		) => ReturnType<typeof F.buildExportStatementDefaultDefaultKw>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToExportStatementDefaultValue>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDefaultKw>;
+	};
+	automaticSemicolon: {
+		strict: (
+			...args: ArgsOf<typeof _exportStatementDefaultValue.automaticSemicolon.strict>
+		) => ReturnType<typeof F.buildExportStatementDefaultDefaultKw>;
+		coerce: (
+			...args: ArgsOf<typeof _exportStatementDefaultValue.automaticSemicolon.coerce>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDefaultKw>;
+	};
+	semi: {
+		strict: (
+			...args: ArgsOf<typeof _exportStatementDefaultValue.semi.strict>
+		) => ReturnType<typeof F.buildExportStatementDefaultDefaultKw>;
+		coerce: (
+			...args: ArgsOf<typeof _exportStatementDefaultValue.semi.coerce>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDefaultKw>;
+	};
+} = {
+	value: {
+		strict: _exportStatementDefaultDefaultKw$value(
+			F.buildExportStatementDefaultDefaultKw,
+			F.buildExportStatementDefaultValue
+		),
+		coerce: _exportStatementDefaultDefaultKw$value(
+			C.coerceToExportStatementDefaultDefaultKw,
+			C.coerceToExportStatementDefaultValue
+		)
+	},
+	automaticSemicolon: {
+		strict: _exportStatementDefaultDefaultKw$automaticSemicolon(
+			F.buildExportStatementDefaultDefaultKw,
+			_exportStatementDefaultValue.automaticSemicolon.strict
+		),
+		coerce: _exportStatementDefaultDefaultKw$automaticSemicolon(
+			C.coerceToExportStatementDefaultDefaultKw,
+			_exportStatementDefaultValue.automaticSemicolon.coerce
+		)
+	},
+	semi: {
+		strict: _exportStatementDefaultDefaultKw$semi(
+			F.buildExportStatementDefaultDefaultKw,
+			_exportStatementDefaultValue.semi.strict
+		),
+		coerce: _exportStatementDefaultDefaultKw$semi(
+			C.coerceToExportStatementDefaultDefaultKw,
+			_exportStatementDefaultValue.semi.coerce
+		)
+	}
+};
+
+const _forHeaderLhs$parenthesizedExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const forHeaderLhs: typeof B.forHeaderLhs & {
+const _forHeaderLhs$parenthesizedExpressionTyped =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _forHeaderLhs$sequenceExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _forHeaderLhs$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _forHeaderLhs$decoratorMemberExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _forHeaderLhs$decoratorCallExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _forHeaderLhs: {
 	parenthesizedExpression: {
 		strict: (...args: ArgsOf<typeof F.buildParenthesizedExpression>) => ReturnType<typeof F.buildForHeaderLhs>;
 		coerce: (...args: ArgsOf<typeof C.coerceToParenthesizedExpression>) => ReturnType<typeof C.coerceToForHeaderLhs>;
@@ -4818,41 +6504,176 @@ export const forHeaderLhs: typeof B.forHeaderLhs & {
 		) => ReturnType<typeof C.coerceToForHeaderLhs>;
 	};
 } = {
-	...B.forHeaderLhs,
 	parenthesizedExpression: {
-		strict: forHeaderLhs$parenthesizedExpression(F.buildForHeaderLhs, F.buildParenthesizedExpression),
-		coerce: forHeaderLhs$parenthesizedExpression(C.coerceToForHeaderLhs, C.coerceToParenthesizedExpression)
+		strict: _forHeaderLhs$parenthesizedExpression(F.buildForHeaderLhs, F.buildParenthesizedExpression),
+		coerce: _forHeaderLhs$parenthesizedExpression(C.coerceToForHeaderLhs, C.coerceToParenthesizedExpression)
 	},
 	parenthesizedExpressionTyped: {
-		strict: forHeaderLhs$parenthesizedExpressionTyped(F.buildForHeaderLhs, parenthesizedExpression.typed.strict),
-		coerce: forHeaderLhs$parenthesizedExpressionTyped(C.coerceToForHeaderLhs, parenthesizedExpression.typed.coerce)
+		strict: _forHeaderLhs$parenthesizedExpressionTyped(F.buildForHeaderLhs, parenthesizedExpression.typed.strict),
+		coerce: _forHeaderLhs$parenthesizedExpressionTyped(C.coerceToForHeaderLhs, parenthesizedExpression.typed.coerce)
 	},
 	sequenceExpression: {
-		strict: forHeaderLhs$sequenceExpression(F.buildForHeaderLhs, parenthesizedExpression.sequence.strict),
-		coerce: forHeaderLhs$sequenceExpression(C.coerceToForHeaderLhs, parenthesizedExpression.sequence.coerce)
+		strict: _forHeaderLhs$sequenceExpression(F.buildForHeaderLhs, parenthesizedExpression.sequence.strict),
+		coerce: _forHeaderLhs$sequenceExpression(C.coerceToForHeaderLhs, parenthesizedExpression.sequence.coerce)
 	},
 	identifier: {
-		strict: forHeaderLhs$identifier(F.buildForHeaderLhs, parenthesizedExpression.identifier.strict),
-		coerce: forHeaderLhs$identifier(C.coerceToForHeaderLhs, parenthesizedExpression.identifier.coerce)
+		strict: _forHeaderLhs$identifier(F.buildForHeaderLhs, parenthesizedExpression.identifier.strict),
+		coerce: _forHeaderLhs$identifier(C.coerceToForHeaderLhs, parenthesizedExpression.identifier.coerce)
 	},
 	decoratorMemberExpression: {
-		strict: forHeaderLhs$decoratorMemberExpression(
+		strict: _forHeaderLhs$decoratorMemberExpression(
 			F.buildForHeaderLhs,
 			parenthesizedExpression.decoratorMemberExpression.strict
 		),
-		coerce: forHeaderLhs$decoratorMemberExpression(
+		coerce: _forHeaderLhs$decoratorMemberExpression(
 			C.coerceToForHeaderLhs,
 			parenthesizedExpression.decoratorMemberExpression.coerce
 		)
 	},
 	decoratorCallExpression: {
-		strict: forHeaderLhs$decoratorCallExpression(
+		strict: _forHeaderLhs$decoratorCallExpression(
 			F.buildForHeaderLhs,
 			parenthesizedExpression.decoratorCallExpression.strict
 		),
-		coerce: forHeaderLhs$decoratorCallExpression(
+		coerce: _forHeaderLhs$decoratorCallExpression(
 			C.coerceToForHeaderLhs,
 			parenthesizedExpression.decoratorCallExpression.coerce
 		)
+	}
+};
+
+const _forHeaderVarKind$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _forHeaderVarKind$objectPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _forHeaderVarKind$arrayPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _forHeaderVarKind: {
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForHeaderVarKind>[0], 'left'> & { left: ArgsOf<typeof F.buildIdentifier> }
+		) => ReturnType<typeof F.buildForHeaderVarKind>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForHeaderVarKind>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToForHeaderVarKind>;
+	};
+	objectPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForHeaderVarKind>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildObjectPattern>;
+			}
+		) => ReturnType<typeof F.buildForHeaderVarKind>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForHeaderVarKind>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToObjectPattern>;
+			}
+		) => ReturnType<typeof C.coerceToForHeaderVarKind>;
+	};
+	arrayPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForHeaderVarKind>[0], 'left'> & { left: ArgsOf<typeof F.buildArrayPattern> }
+		) => ReturnType<typeof F.buildForHeaderVarKind>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForHeaderVarKind>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToArrayPattern>;
+			}
+		) => ReturnType<typeof C.coerceToForHeaderVarKind>;
+	};
+} = {
+	identifier: {
+		strict: _forHeaderVarKind$identifier(F.buildForHeaderVarKind, F.buildIdentifier),
+		coerce: _forHeaderVarKind$identifier(C.coerceToForHeaderVarKind, C.coerceToIdentifier)
+	},
+	objectPattern: {
+		strict: _forHeaderVarKind$objectPattern(F.buildForHeaderVarKind, F.buildObjectPattern),
+		coerce: _forHeaderVarKind$objectPattern(C.coerceToForHeaderVarKind, C.coerceToObjectPattern)
+	},
+	arrayPattern: {
+		strict: _forHeaderVarKind$arrayPattern(F.buildForHeaderVarKind, F.buildArrayPattern),
+		coerce: _forHeaderVarKind$arrayPattern(C.coerceToForHeaderVarKind, C.coerceToArrayPattern)
+	}
+};
+
+const _forHeaderLetConstKind$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _forHeaderLetConstKind$objectPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _forHeaderLetConstKind$arrayPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _forHeaderLetConstKind: {
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildIdentifier>;
+			}
+		) => ReturnType<typeof F.buildForHeaderLetConstKind>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForHeaderLetConstKind>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToIdentifier>;
+			}
+		) => ReturnType<typeof C.coerceToForHeaderLetConstKind>;
+	};
+	objectPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildObjectPattern>;
+			}
+		) => ReturnType<typeof F.buildForHeaderLetConstKind>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForHeaderLetConstKind>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToObjectPattern>;
+			}
+		) => ReturnType<typeof C.coerceToForHeaderLetConstKind>;
+	};
+	arrayPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildForHeaderLetConstKind>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildArrayPattern>;
+			}
+		) => ReturnType<typeof F.buildForHeaderLetConstKind>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToForHeaderLetConstKind>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToArrayPattern>;
+			}
+		) => ReturnType<typeof C.coerceToForHeaderLetConstKind>;
+	};
+} = {
+	identifier: {
+		strict: _forHeaderLetConstKind$identifier(F.buildForHeaderLetConstKind, F.buildIdentifier),
+		coerce: _forHeaderLetConstKind$identifier(C.coerceToForHeaderLetConstKind, C.coerceToIdentifier)
+	},
+	objectPattern: {
+		strict: _forHeaderLetConstKind$objectPattern(F.buildForHeaderLetConstKind, F.buildObjectPattern),
+		coerce: _forHeaderLetConstKind$objectPattern(C.coerceToForHeaderLetConstKind, C.coerceToObjectPattern)
+	},
+	arrayPattern: {
+		strict: _forHeaderLetConstKind$arrayPattern(F.buildForHeaderLetConstKind, F.buildArrayPattern),
+		coerce: _forHeaderLetConstKind$arrayPattern(C.coerceToForHeaderLetConstKind, C.coerceToArrayPattern)
 	}
 };

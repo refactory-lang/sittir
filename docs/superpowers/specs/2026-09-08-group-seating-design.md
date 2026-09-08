@@ -64,15 +64,24 @@ group lift in link. Link collects `hoistedKinds` from that annotation and
 from nothing else. The three readers of the set are unchanged: normalize's
 inline gate, simplify's `inlineRefs`, assemble's `hoisted` stamp.
 
-An upstream hidden sequence has no author and therefore no stamp. The eight
-that are hoisted today by the heuristic get an entry in the override's
-`patches` block: `variant()` where the rule is an arm of the parent's choice
-(the six `_type_query_*` rules), a new `group()` verb where it is not
-(`_number`, `_key_value_pattern`), lowering to the same annotation. A hidden
-sequence with no entry is an ordinary hidden rule: normalize splices a
-single-use one into its parent, a multi-use one is a kind of its own. The
-validation counts say which of those is right for each rule; none of the
-eight may move a count.
+A hidden rule that no sittir route minted carries no stamp and is an
+ordinary hidden rule: the upstream grammar's own hidden sequences
+(`_number`, the `_type_query_*` rules, `_key_value_pattern`) and an authored
+hidden rule that a parent merely aliases (`_impl_item_positive_clause`,
+`_extends_clause_single`, `_except_clause_as`). Normalize splices a single-use
+one into its parent; a multi-use one is a kind of its own. Neither class gets
+a `patches` entry to keep the seat the heuristic gave it; where an author
+wants a seat, the `group()` verb in `patches` declares it (`'.'` is the rule
+itself) and lowers to the same annotation.
+
+A variant arm is a mint, so it is hoisted whether or not its body has a
+`field()`. Hoisting never changes a kind's class: an arm whose body is all
+text (`_struct_item_unit` is `;`, `_line_comment_regular_dslash` is two
+patterns) stays the token or pattern leaf it already is, with no keys to
+seat; its seat is the parent's slot, where it is a kind-id or verbatim-text
+value, exactly as the model already holds it. The parse node has no
+children, so there is no slot to read from it. Only a slot-bearing hoisted
+body is a compound, and only a compound carries the model's `hoisted`.
 
 An enrich mint's name never reaches the surface (its keys do), so the
 `_<parent>_group<n>` spelling only ever appears in diagnostics. Where an
@@ -206,8 +215,7 @@ case for a hoisted non-form kind, which the element seat replaces.
 - `packages/tools/src/validate/common.ts` (`nodeToConfig` by seating shape),
   `packages/tools/src/emit/factory-source.ts` (the three spellings), the
   generated examples, their ceiling and the package `examples-verify` rows.
-- Overrides: eight `patches` entries for the upstream sequences. Surface
-  change for the field-less declared groups: `ir.typeArgument`,
+- Overrides: none. Surface change for the field-less declared groups: `ir.typeArgument`,
   `ir.attributedParameter`, `ir.visibilityModifierPub`,
   `ir.visibilityModifierInPath`, `ir.yieldFromClause` leave `ir`; their
   callers in examples and tests move to the parent.

@@ -4461,9 +4461,8 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 	);
 }
 
-export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClauseList.Built {
-	_assertNonEmpty(children, '_except_clause_list.children');
-	const _value = children;
+export function buildExceptClauseList(config: T.ExceptClauseList.Config): T.ExceptClauseList.Built {
+	const _value = config.value ?? [];
 	return withMethods(
 		withAccessors(
 			{
@@ -4471,7 +4470,9 @@ export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClau
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: { values: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
+				$with: {
+					values: (...values: NonEmptyArray<T.Expression>) => buildExceptClauseList({ ...config, value: values })
+				}
 			},
 			{
 				values: () => _value

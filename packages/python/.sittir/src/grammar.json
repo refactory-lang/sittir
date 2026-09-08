@@ -5875,7 +5875,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_raise_statement_optional1": {
       "type": "SEQ",
@@ -5892,7 +5895,10 @@
             "name": "expression"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_subjects": {
       "type": "SEQ",
@@ -5937,7 +5943,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_case_patterns": {
       "type": "SEQ",
@@ -5988,7 +5997,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_with_clause_with_items": {
       "type": "SEQ",
@@ -6039,7 +6051,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_function_definition_optional1": {
       "type": "SEQ",
@@ -6056,7 +6071,10 @@
             "name": "type"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_exec_statement_optional1": {
       "type": "SEQ",
@@ -6104,7 +6122,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_types": {
       "type": "SEQ",
@@ -6155,7 +6176,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_argument_list_elements": {
       "type": "SEQ",
@@ -6248,7 +6272,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_expression_list_expressions": {
       "type": "PREC_RIGHT",
@@ -6285,6 +6312,9 @@
             ]
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_list_pattern_case_patterns": {
@@ -6336,7 +6366,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_dict_pattern_elements": {
       "type": "SEQ",
@@ -6421,7 +6454,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_pattern_list_patterns": {
       "type": "SEQ",
@@ -6454,7 +6490,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_subscripts": {
       "type": "PREC",
@@ -6521,6 +6560,9 @@
             ]
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_dictionary_elements": {
@@ -6590,7 +6632,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_slice_group": {
       "type": "SEQ",
@@ -6611,7 +6656,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_augmented_assignment_operator": {
       "type": "PREC",
@@ -7049,7 +7097,10 @@
               }
             ]
           }
-        ]
+        ],
+        "annotations": {
+          "hoisted": true
+        }
       }
     },
     "_except_clause_list": {
@@ -7083,7 +7134,10 @@
             ]
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_except_clause_exception": {
       "type": "CHOICE",
@@ -7114,7 +7168,10 @@
           "named": true,
           "value": "except_clause_list"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_kw_comma": {
       "type": "PREC_LEFT",
@@ -7143,7 +7200,10 @@
             "name": "_right_hand_side"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_assignment_type": {
       "type": "SEQ",
@@ -7160,7 +7220,10 @@
             "name": "type"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_assignment_typed": {
       "type": "SEQ",
@@ -7189,7 +7252,10 @@
             "name": "_right_hand_side"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_expression_statement_tuple": {
       "type": "SEQ",
@@ -7245,7 +7311,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_with_clause_bare": {
       "type": "SEQ",
@@ -7296,7 +7365,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_with_clause_paren": {
       "type": "SEQ",
@@ -7325,7 +7397,10 @@
           "type": "STRING",
           "value": ")"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_match_block_block": {
       "type": "SEQ",
@@ -7349,7 +7424,10 @@
           "type": "SYMBOL",
           "name": "_dedent"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_suite_block": {
       "type": "SEQ",
@@ -7362,7 +7440,10 @@
           "type": "SYMBOL",
           "name": "block"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_comparison_operator_comparator": {
       "type": "SEQ",
@@ -7437,7 +7518,10 @@
           "type": "SYMBOL",
           "name": "primary_expression"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_yield_from_clause": {
       "type": "SEQ",
@@ -7450,7 +7534,10 @@
           "type": "SYMBOL",
           "name": "expression"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     }
   },
   "extras": [

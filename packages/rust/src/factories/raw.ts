@@ -3507,22 +3507,7 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 	);
 }
 
-export function buildMatchBlock(value?: T.MatchBlockArms): ReturnType<typeof _buildMatchBlock>;
-export function buildMatchBlock(_config: T.MatchBlockArms.Config): ReturnType<typeof _buildMatchBlock>;
-export function buildMatchBlock(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildMatchBlock(args[0] as T.MatchBlockArms);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.MatchBlockArms as const);
-	return prebuilt
-		? _buildMatchBlock(args[0] as T.MatchBlockArms)
-		: _buildMatchBlock((buildMatchBlockArms as (...a: unknown[]) => unknown)(...args) as T.MatchBlockArms);
-}
-function _buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built {
+export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built {
 	const _match_block_arms = value;
 	return withMethods(
 		withAccessors(

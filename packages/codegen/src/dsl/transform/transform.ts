@@ -21,6 +21,9 @@ import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import { isPreference } from '../primitives/preference.ts';
 import type { PreferencePlaceholder } from '../primitives/preference.ts';
+import { isGroupPlaceholder } from '../primitives/group.ts';
+import type { GroupPlaceholder } from '../primitives/group.ts';
+import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import {
 	wireRegisterSymbolRename,
 	wireHasAuthoredRule,
@@ -93,17 +96,6 @@ export function applyPreference(rule: RuntimeRule, patch: PreferencePlaceholder,
 	throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
 }
 
-function withAnnotations(rule: unknown, extra: RuleAnnotations): RuntimeRule {
-	const node = rule as { type?: string; content?: unknown; annotations?: RuleAnnotations };
-	if (node?.type === 'ALIAS' && node.content !== null && typeof node.content === 'object') {
-		const content = node.content as { annotations?: RuleAnnotations };
-		return {
-			...(node as object),
-			content: { ...(content as object), annotations: { ...content.annotations, ...extra } }
-		} as unknown as RuntimeRule;
-	}
-	return { ...(node as object), annotations: { ...node.annotations, ...extra } } as unknown as RuntimeRule;
-}
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
 	return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
@@ -121,7 +113,8 @@ export type PatchValue =
 	| AliasPlaceholder
 	| VariantPlaceholder
 	| ArmDefaultPlaceholder
-	| PreferencePlaceholder;
+	| PreferencePlaceholder
+	| GroupPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -130,7 +123,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -306,7 +299,7 @@ function buildHoistedVariants(
 		const altContent = lift === null ? altMember : lift.body;
 		const hoistedMembers = seqMembers.map((m, i) => (i === resolvedPos ? altContent : m));
 		const hoistedSeq = reconstructContainer(core, hoistedMembers);
-		const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
+		const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
 		if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
 			throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 		}
@@ -368,7 +361,7 @@ function renameEnrichLift(
 	hiddenName: string,
 	visibleName: string
 ): RuntimeRule {
-	if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+	if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, withHoistedAnnotation(lift.body));
 	wireRegisterSymbolRename(lift.liftName, hiddenName);
 	return {
 		...(aliasMember as object),
@@ -482,6 +475,9 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	}
 	if (isArmDefault(patch)) {
 		return withAnnotations(originalMember, { default: true });
+	}
+	if (isGroupPlaceholder(patch)) {
+		return withAnnotations(originalMember, { hoisted: true });
 	}
 	if (isPreference(patch)) {
 		return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? '(unknown)');
@@ -764,7 +760,7 @@ export function registerAliasedVariant(
 		);
 	}
 	const body = factored ? factored.nonEmpty : originalMember;
-	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))) {
+	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(withHoistedAnnotation(body as RuntimeRule)))) {
 		throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 	}
 	const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);

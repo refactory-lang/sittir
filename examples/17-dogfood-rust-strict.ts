@@ -45,26 +45,24 @@ export function useEditStrict() {
 }
 
 /**
- * `#[derive(Debug, Clone, PartialEq, Eq)]`. The attribute's argument list is
- * the `input` slot, not an `arguments` key — an unrecognised key is
- * dropped silently, which makes a wrong spelling look like a missing feature.
+ * `#[derive(Debug, Clone, PartialEq, Eq)]`. The attribute's argument list
+ * belongs to the `input` group, which is spliced onto `attribute`: its keys
+ * (`value`, `arguments`) sit directly on the config and come as a whole.
  */
 export function deriveStrict() {
 	return ir.attributeItem.strict(
 		ir.attribute.strict({
 			path: id('derive'),
-			input: ir.attributeInput.strict({
-				arguments: ir.delimTokenTree.paren.strict({
-					delimTokens: [
-						id('Debug'),
-						TSKindId.Comma,
-						id('Clone'),
-						TSKindId.Comma,
-						id('PartialEq'),
-						TSKindId.Comma,
-						id('Eq'),
-					],
-				}),
+			arguments: ir.delimTokenTree.paren.strict({
+				delimTokens: [
+					id('Debug'),
+					TSKindId.Comma,
+					id('Clone'),
+					TSKindId.Comma,
+					id('PartialEq'),
+					TSKindId.Comma,
+					id('Eq'),
+				],
 			}),
 		})
 	);

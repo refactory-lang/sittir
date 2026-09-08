@@ -379,6 +379,7 @@ export const ir: {
 	readonly casePattern: typeof F.casePattern;
 	readonly unionPattern: typeof F.unionPattern;
 	readonly dictPattern: typeof F.dictPattern;
+	readonly keyValuePattern: typeof F.keyValuePattern;
 	readonly keywordPattern: typeof F.keywordPattern;
 	readonly splatPattern: typeof F.splatPattern;
 	readonly classPattern: typeof F.classPattern;
@@ -447,7 +448,7 @@ export const ir: {
 	readonly patternListPatterns: typeof F.patternListPatterns;
 	readonly subscripts: typeof F.subscripts;
 	readonly dictionaryElements: typeof F.dictionaryElements;
-	readonly sliceGroup: typeof F.sliceGroup;
+	readonly exceptClauseAs: typeof F.exceptClauseAs;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
 	readonly caseListPattern: typeof F.caseListPattern;
 	readonly caseAsPattern: typeof F.caseAsPattern;
@@ -457,13 +458,8 @@ export const ir: {
 	readonly printChevronArguments: typeof F.printChevronArguments;
 	readonly printStatementChevron: typeof F.printStatementChevron;
 	readonly printStatementPlain: typeof F.printStatementPlain;
-	readonly exceptClauseList: typeof F.exceptClauseList;
-	readonly exceptClauseException: typeof F.exceptClauseException;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
-	readonly withClauseParen: typeof F.withClauseParen;
-	readonly suiteBlock: typeof F.suiteBlock;
-	readonly yieldFromClause: typeof F.yieldFromClause;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -598,6 +594,7 @@ export const ir: {
 	casePattern: F.casePattern,
 	unionPattern: F.unionPattern,
 	dictPattern: F.dictPattern,
+	keyValuePattern: F.keyValuePattern,
 	keywordPattern: F.keywordPattern,
 	splatPattern: F.splatPattern,
 	classPattern: F.classPattern,
@@ -666,7 +663,7 @@ export const ir: {
 	patternListPatterns: F.patternListPatterns,
 	subscripts: F.subscripts,
 	dictionaryElements: F.dictionaryElements,
-	sliceGroup: F.sliceGroup,
+	exceptClauseAs: F.exceptClauseAs,
 	caseTuplePattern: F.caseTuplePattern,
 	caseListPattern: F.caseListPattern,
 	caseAsPattern: F.caseAsPattern,
@@ -676,13 +673,8 @@ export const ir: {
 	printChevronArguments: F.printChevronArguments,
 	printStatementChevron: F.printStatementChevron,
 	printStatementPlain: F.printStatementPlain,
-	exceptClauseList: F.exceptClauseList,
-	exceptClauseException: F.exceptClauseException,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
-	withClauseParen: F.withClauseParen,
-	suiteBlock: F.suiteBlock,
-	yieldFromClause: F.yieldFromClause,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,

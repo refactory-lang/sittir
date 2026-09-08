@@ -696,11 +696,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_types: TSKindId.Types,
 	_type_parameters_elements: TSKindId.TypeParametersElements,
 	_tuple_type_members: TSKindId.TupleTypeMembers,
-	_import_clause_group: TSKindId.ImportClauseGroup,
+	_ambient_declaration_global: TSKindId.AmbientDeclarationGlobal,
 	object_type_content: TSKindId.ObjectTypeContent,
-	_export_statement_default: TSKindId.ExportStatementDefault,
-	_arrow_function_parameter: TSKindId.ArrowFunctionParameter,
-	_for_header_lhs: TSKindId.ForHeaderLhs
+	_export_statement_default: TSKindId.ExportStatementDefault
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -740,7 +738,8 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_export_specifiers: 'export_specifier',
 	_import_specifiers: 'import_specifier',
 	_types: 'type',
-	_type_parameters_elements: 'type_parameter'
+	_type_parameters_elements: 'type_parameter',
+	_ambient_declaration_global: 'statement_block'
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -887,16 +886,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_type_members':
 			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
-		case '_import_clause_group':
-			return F.buildImportClauseGroup(children[0] as Parameters<typeof F.buildImportClauseGroup>[0]);
+		case '_ambient_declaration_global':
+			return F.buildAmbientDeclarationGlobal(children[0] as Parameters<typeof F.buildAmbientDeclarationGlobal>[0]);
 		case 'object_type_content':
 			return (F.buildObjectTypeContent as (...args: unknown[]) => unknown)(...children);
 		case '_export_statement_default':
 			return F.buildExportStatementDefault(children[0] as Parameters<typeof F.buildExportStatementDefault>[0]);
-		case '_arrow_function_parameter':
-			return F.buildArrowFunctionParameter(children[0] as Parameters<typeof F.buildArrowFunctionParameter>[0]);
-		case '_for_header_lhs':
-			return F.buildForHeaderLhs(children[0] as Parameters<typeof F.buildForHeaderLhs>[0]);
 		default:
 			return undefined;
 	}

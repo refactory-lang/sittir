@@ -157,14 +157,16 @@ git commit --no-verify -q -m "feat(tools): hoisted-census tool — hoisted kinds
 
 **Files:**
 - Modify: `packages/codegen/src/types/rule.ts:31-36` (`RuleAnnotations.hoisted?: true`)
-- Modify: `packages/codegen/src/dsl/transform/transform.ts:305-312` (variant lift stamps)
-- Modify: `packages/codegen/src/dsl/wire/wire.ts:900-905` (declared `groups:` body stamps)
-- Modify: `packages/codegen/src/dsl/enrich.ts:156` (clause-hoist mints stamp at the merge)
+- Create: `packages/codegen/src/dsl/annotations.ts` (`withAnnotations` moved out of `transform.ts`, `withHoistedAnnotation`)
+- Modify: `packages/codegen/src/dsl/transform/transform.ts` (the three variant-lift paths stamp the arm body BEFORE the prec wrapper — evaluate unwraps prec and drops a wrapper's annotation)
+- Modify: `packages/codegen/src/dsl/wire/wire.ts:900-905` (declared `groups:` body stamps, `stampHoistedFn`)
+- Modify: `packages/codegen/src/dsl/enrich.ts` (clause groups stamped in place right after the unalias loop — `collapseSingletonMintOrdinals` rereads them after the merge; promoted symbol arms stamped in `mintStructuredChoiceArm`)
 - Modify: `packages/codegen/src/compiler/link.ts:64,195-214,1422-1440,2040-2063` (collect from annotation; group lift stamps; no `hasAnyField`)
+- Modify: `packages/codegen/src/compiler/assemble.ts` (`classifyNode`: the hoisted shortcut skips an all-text body — a leaf arm keeps its token/pattern class)
+- Modify: `packages/codegen/src/emitters/shared.ts` (`isAuthoredCompound`, `isWrapChildrenKind`: hoisted no longer means unnameable to the from() coercer — `ir.visibilityModifier('pub')` must keep routing by keyword text)
 - Delete: `hasAnyField` in `packages/codegen/src/dsl/rule-transforms.ts:68-84` and `packages/codegen/src/dsl/__tests__/has-any-field.test.ts`
 - Create: `packages/codegen/src/dsl/primitives/group.ts` (`group()` placeholder), export from `packages/codegen/src/dsl/index.ts:5` and `packages/codegen/src/dsl/dsl-authoring.ts:20`
 - Modify: `packages/codegen/src/dsl/transform/transform.ts:118-124,476-500` (`PatchValue` + `resolvePatch` lowering)
-- Modify: `packages/typescript/grammar.sittir.ts` (patches for `_number`, the six `_type_query_*`), `packages/python/grammar.sittir.ts` (`_key_value_pattern`)
 - Test: `packages/codegen/src/dsl/__tests__/group-annotation.test.ts`, `packages/codegen/src/compiler/__tests__/link-hoisted-annotation.test.ts`
 
 **Interfaces:**
@@ -348,24 +350,11 @@ Expected: the new test PASSES. Any other failure is isolated by stash-and-rerun 
 Regenerate all three grammars (Global Constraints). Re-run the Step 1 script writing `hoisted-after-<g>.txt` and diff:
 
 Run: `for g in rust typescript python; do diff /tmp/hoisted-before-$g.txt /tmp/hoisted-after-$g.txt && echo "$g identical"; done`
-Expected at this point: the eight upstream kinds are MISSING from `after` (typescript `_number`, `_type_query_call_expression`, `_type_query_call_expression_in_type_annotation`, `_type_query_instantiation_expression`, `_type_query_member_expression`, `_type_query_member_expression_in_type_annotation`, `_type_query_subscript_expression`; python `_key_value_pattern`), and the four field-less declared groups are NEW (rust `_visibility_modifier_pub`, `_visibility_modifier_in_path`, `_type_argument`, `_attributed_parameter`, `_attributed_field_declaration`, `_attributed_enum_variant`, `_attributed_type_parameter`, `_attributed_argument`; python `_yield_from_clause`). Any other line in the diff is a finding: stop and review it before Step 12.
+Expected (ruling 2026-09-08: hoisted means a sittir route minted the rule — overlay treatment is driven by annotations, i.e. sittir provenance): 17 kinds LEAVE — the eight upstream hidden sequences (typescript `_number`, the six `_type_query_*`; python `_key_value_pattern`) and nine authored hidden rules a parent reaches only through `alias($._x, $.x)` (rust `_impl_item_positive_clause`, `_impl_item_negative_clause`; typescript `_ambient_declaration_global`, `_ambient_declaration_module`, `_export_statement_equals_export`, `_export_statement_namespace_export`, `_export_statement_type_export`, `_extends_clause_single`; python `_except_clause_as`) — none gets a `patches` entry; they are ordinary hidden rules with flat `ir` entries. 35 kinds ARRIVE: the nine field-less declared groups (rust `_visibility_modifier_pub`, `_visibility_modifier_in_path`, `_type_argument`, `_attributed_parameter`, `_attributed_field_declaration`, `_attributed_enum_variant`, `_attributed_type_parameter`, `_attributed_argument`; python `_yield_from_clause`) and 26 field-less variant arms. Nine of the arms are all-text (rust `_foreign_mod_item_semi`, `_line_comment_content`, `_line_comment_regular_dslash`, `_mod_item_external`, `_pointer_type_const`, `_range_pattern_left_bare`, `_struct_item_unit`; typescript `_meta_property_import_meta`, `_meta_property_new_target`): they are in link's set but keep their token / pattern class and carry no model `hoisted` (`classifyNode`). Any other line in the diff is a finding: stop and review it.
 
-- [ ] **Step 12: Author the eight upstream entries**
+- [ ] **Step 12: A hoisted arm stays reachable by its keyword text**
 
-`packages/typescript/grammar.sittir.ts`, in the `patches:` block:
-
-```ts
-_number: { '': group() },
-_type_query_call_expression: { '': group() },
-_type_query_call_expression_in_type_annotation: { '': group() },
-_type_query_instantiation_expression: { '': group() },
-_type_query_member_expression: { '': group() },
-_type_query_member_expression_in_type_annotation: { '': group() },
-_type_query_subscript_expression: { '': group() },
-```
-
-`packages/python/grammar.sittir.ts`: `_key_value_pattern: { '': group() },`. Import `group` where `variant` is imported. Regenerate; re-run the diff.
-Expected: only the declared-group additions remain in the diff.
+`packages/codegen/src/emitters/shared.ts`: `isAuthoredCompound` and `isWrapChildrenKind` drop their `!node.hoisted` clause. Without it the from() coercer's `_KEYWORD_BRANCH_BY_TEXT` loses `pub → _visibility_modifier_pub` and `ir.visibilityModifier('pub')` routes the string into the in-path arm (`pub(in pub)`). The examples-verify tests are the gate for this; `validate counts` does not exercise the bare-string route.
 
 - [ ] **Step 13: The declared-group additions are the surface change; gate them**
 
@@ -373,9 +362,9 @@ Run: `pnpm exec tsx packages/cli/src/cli.ts validate counts`
 Expected: every number equal to the Global Constraints baseline. If a rust count moved, the moved kind is one of the newly hoisted declared groups and the failure is reviewed, not reverted (the spec predicts they seat as shape 1 or 3; until Tasks 3 and 5 land, a newly hoisted declared group with no mount is unreachable from `ir` but its render and wrap must be unchanged).
 
 Run: `for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts tool hoisted-census --grammar $g; done`
-Expected: rust hoisted 42 (33 + 9), typescript 40, python 9.
+Expected: rust hoisted 46, typescript 32, python 12 (33 + 15 − 2, 40 + 5 − 13, 8 + 6 − 2; the nine all-text arms are leaves and do not count).
 
-Run the `ir` ratchet tests (`pnpm exec vitest run packages/codegen/src/emitters/__tests__/ir-leaf-exposure.test.ts` and the per-package `ir` count tests named there); re-baseline to the new callable counts with the departing entries listed in the commit message: rust `visibilityModifierPub`, `visibilityModifierInPath`, `typeArgument`, `attributedParameter`, `attributedFieldDeclaration`, `attributedEnumVariant`, `attributedTypeParameter`, `attributedArgument`; python `yieldFromClause`. Move every caller of those entries in `examples/` and `packages/*/tests` to the parent (a python scan for the names); the entries return through Tasks 3 and 5 as mounts, not as flat keys.
+Run the `ir` ratchet tests (`pnpm exec vitest run packages/codegen/src/emitters/__tests__/ir-leaf-exposure.test.ts` and the per-package `ir` count tests named there); re-baseline to the new callable counts with the departing entries listed in the commit message: rust `visibilityModifierPub`, `visibilityModifierInPath`, `typeArgument`, `attributedParameter`, `attributedFieldDeclaration`, `attributedEnumVariant`, `attributedTypeParameter`, `attributedArgument`, `attributeInput`, `closureExpressionExpr`, `functionTypeFnForm`, `functionTypeTraitForm`, `macroDefinitionBrace`, `macroDefinitionBracket`, `macroDefinitionParen`; typescript `arrowFunctionParameter`, `exportStatementDefaultFrom`, `forHeaderLhs`, `importClauseDefaultImport`, `importClauseGroup`; python `yieldFromClause`, `withClauseParen`, `suiteBlock`, `sliceGroup`, `exceptClauseList`, `exceptClauseException`. The 17 kinds that leave the hoisted set arrive as flat entries (typescript gains twelve, rust and python two each), so the typescript ceiling RISES; that is the ruling's surface, not new debt. Move every caller of those entries in `examples/` and `packages/*/tests` to the parent (a python scan for the names); the entries return through Tasks 3 and 5 as mounts, not as flat keys.
 
 - [ ] **Step 14: Glossary and commit**
 
@@ -606,7 +595,7 @@ Expected: PASS.
 
 - [ ] **Step 7: Move the forwarded parent's config overload into the seating**
 
-In `factories.ts:924-960` the forwarded wrapper emits a config-argument overload plus prebuilt detection when the target is config-shaped. Delete that: keep the direct overload (`(value?: T.<Target>)`) and the `args.length === 0` / non-object branch; drop `targetOverloads`, `prebuilt` and the `targetFn(...args)` call. `spliceSeatOf` already returns the forwarded parent's seat when the target is a hoisted config-shaped kind (`_match_block_arms`), so the overlay supplies `ir.matchBlock.strict({ matchArm, lastArm })`. Update `packages/codegen/src/emitters/__tests__/hoisted-form-from.test.ts` or whichever test pins the prebuilt wrapper (find it with a python scan for `prebuilt`), asserting the wrapper no longer emits it.
+The forwarded wrapper in `factories.ts` (`emitFieldCarryingFactory`) serves every forwarded parent — the list forwards (`buildParameters(...elements)`, 35 / 13 / 20 wrappers across the grammars) as much as `buildMatchBlock` — so it is not deleted. It is skipped only when the target is a hoisted, config-shaped group (`forwardsToSeatedGroup`): that parent keeps the direct signature (`buildMatchBlock(value?: T.MatchBlockArms)`), and `spliceSeatOf` returns its seat, so the overlay supplies `ir.matchBlock.strict({ matchArm, lastArm })` through the positional `spliceShape` (a built value or `undefined` passes straight through, anything else is the group's config). No test pinned the prebuilt wrapper. The config-parent `spliceShape` also accepts the parent's own input, because the wrapped `strict` must still satisfy the bundle's signature (`typeof B.<key> & { strict }` is an intersection): the direct spelling with the built group under the seat key stays valid.
 
 - [ ] **Step 8: Regenerate, gate, probe**
 

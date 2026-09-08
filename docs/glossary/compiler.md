@@ -872,10 +872,16 @@ parents.
  * (`collectFixedLiteral`) and a slot-free single-member seq has already
  * collapsed to its survivor — into a `ModelType`.
  *
- * A hoisted kind (`opts.hoisted`, the link-stamped fact) is decided first:
- * 'list' when its peeled core (`peelSeparatedListCore`) is a separated-list
- * shape (`isSeparatedListShape`), else `compoundModelType`
- * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'). Otherwise a
+ * A hoisted kind (`opts.hoisted`, the link-stamped fact) with a body that
+ * is not all text (`isAllTextShape`) is decided first: 'list' when its
+ * peeled core (`peelSeparatedListCore`) is a separated-list shape
+ * (`isSeparatedListShape`), else `compoundModelType`
+ * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'). A hoisted
+ * all-text body is a leaf like any other — a variant arm such as
+ * `_struct_item_unit` (`;`) or `_line_comment_regular_dslash` (two
+ * patterns) has no keys to seat; its seat is the parent's slot, where it
+ * is a kind-id or verbatim-text value, and the parse node has no children
+ * to read a slot from. Otherwise a
  * fielded/multiplicity-free body dispatches structurally: an enum
  * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
  * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
@@ -7371,9 +7377,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
 
-`hoistedKinds` is the set of hidden kinds that are forms of their parent — a
-hidden SEQ with a field, or a group-lift synthesized kind — stamped once by
-link and copied unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`,
+`hoistedKinds` is the set of hidden kinds that are forms of their parent — the
+rules a sittir route minted and stamped `annotations.hoisted` on — collected
+once by link and copied unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`,
 exactly as `supertypes` is. It replaced the GROUP wrapper node: a per-kind fact
 carried on the grammar cannot be dropped by a pass that rebuilds the rule.
 Readers: normalize's inline gate, simplify's `inlineRefs`, and assemble's
@@ -9668,14 +9674,18 @@ source, one derivation.
 // Other hidden rules survive as-is — Assemble classifies by structure
 ```
 
-A hidden SEQ that contains a field anywhere (`hasAnyField`: `repeat(field(...))`,
-`optional(field(...))`, a choice of fields — python's `_import_list` is the
-textbook case) is a hoisted form of the kind that references it: the name is
-added to `LinkCtx.hoistedKinds` and the rule itself is left untouched. A kind
-already in that set (a group-lift synthesized kind) is not reclassified. This
-set is the one source of the hoisted fact; it travels on the grammar
-(`LinkedGrammar.hoistedKinds` → normalize → assemble) the way `supertypes`
-does, so no rebuilding pass has to carry it and nothing re-derives it.
+A hidden rule whose `annotations.hoisted` is stamped is a hoisted form of the
+kind that references it: the name is added to `LinkCtx.hoistedKinds` and the
+rule itself is left untouched. The stamp is declared by the route that minted
+the rule — the variant lift, a `groups:` entry, enrich's clause-hoist and
+promoted-arm mints, a `group()` patch, the group lift here — never inferred
+from the body's shape: a hidden sequence with a `field()` that no route
+stamped (an upstream rule, or an authored rule a parent merely aliases) is an
+ordinary hidden rule. A kind already in the set (a group-lift synthesized
+kind) is not reclassified. The set is the one source of the hoisted fact; it
+travels on the grammar (`LinkedGrammar.hoistedKinds` → normalize → assemble)
+the way `supertypes` does, so no rebuilding pass has to carry it and nothing
+re-derives it.
 
 ### `packages/codegen/src/compiler/link.ts::flattenNestedChoiceMembers`
 
@@ -9947,6 +9957,11 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 ```text
 // deep first
 ```
+
+Each lifted body is registered with `annotations.hoisted` stamped, the same
+declaration every other minting route makes; `classifyHiddenRule` collects
+the set from that annotation alone.
+
 
 ### `packages/codegen/src/compiler/link.ts::liftRule`
 
@@ -10917,7 +10932,7 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 ### `packages/codegen/src/compiler/assemble.ts::hasSlotBearingContent`
 
 ```text
-// Replaces the link-phase `hasAnyField(rule) || hasAnyChild(rule)` walk with
+// The one structural "is there a named field or a rule reference here" walk,
 // the same, narrower question — see "classifyNode's RenderRule-only design"
 // in docs/compiler-phase-glossary.md.
 ```

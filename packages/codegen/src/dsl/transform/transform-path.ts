@@ -56,6 +56,7 @@ export class ApplyPathSkip extends Error {
 }
 
 export function parsePath(pathStr: string): PathSegment[] {
+	if (pathStr === '.') return [];
 	if (typeof pathStr !== 'string' || pathStr.length === 0) {
 		throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
 	}

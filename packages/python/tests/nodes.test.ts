@@ -310,6 +310,48 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.Assignment);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('assignmentEq builds the parent', () => {
+		const node = ir.expressionStatement.assignmentEq({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.Assignment);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assignmentType builds the parent', () => {
+		const node = ir.expressionStatement.assignmentType({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			content: [
+				{
+					$type: TSKindId.Type,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.Assignment);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assignmentTyped builds the parent', () => {
+		const node = ir.expressionStatement.assignmentTyped({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: {
+				$type: TSKindId.Type,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.Assignment);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('augmentedAssignment builds the parent', () => {
 		const node = ir.expressionStatement.augmentedAssignment({
 			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
@@ -858,6 +900,19 @@ describe('for_statement', () => {
 			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any
 		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('for_statement sub-factories', () => {
+	it('block builds the parent', () => {
+		const node = ir.forStatement.block({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			body: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ForStatement);
+		expect((node as any).body()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2181,6 +2236,24 @@ describe('keyword_pattern sub-factories', () => {
 		expect((node as any).value()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('integer builds the parent', () => {
+		const node = ir.keywordPattern.integer({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: ['test'] }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('float builds the parent', () => {
+		const node = ir.keywordPattern.float({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: ['test'] }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('complexPattern builds the parent', () => {
 		const node = ir.keywordPattern.complexPattern({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
@@ -2858,24 +2931,35 @@ describe('assignment', () => {
 });
 
 describe('assignment sub-factories', () => {
-	it('eq builds the _assignment_eq form', () => {
-		const node = ir.assignment.eq({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
-		expect(node.$type).toBe(TSKindId.AssignmentEq);
+	it('eq builds the parent', () => {
+		const node = ir.assignment.eq({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.Assignment);
+		expect((node as any).content()?.$type).toBe(TSKindId.AssignmentEq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('type builds the _assignment_type form', () => {
+	it('type builds the parent', () => {
 		const node = ir.assignment.type({
-			$type: TSKindId.Type,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		} as any);
-		expect(node.$type).toBe(TSKindId.AssignmentType);
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			content: [
+				{
+					$type: TSKindId.Type,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.Assignment);
+		expect((node as any).content()?.$type).toBe(TSKindId.AssignmentType);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('typed builds the _assignment_typed form', () => {
+	it('typed builds the parent', () => {
 		const node = ir.assignment.typed({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -2885,7 +2969,8 @@ describe('assignment sub-factories', () => {
 			} as any,
 			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
-		expect(node.$type).toBe(TSKindId.AssignmentTyped);
+		expect(node.$type).toBe(TSKindId.Assignment);
+		expect((node as any).content()?.$type).toBe(TSKindId.AssignmentTyped);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

@@ -276,6 +276,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'expression_statement',
 	'case_pattern',
 	'parenthesized_expression',
+	'_assignment_eq',
 	'_simple_statements',
 	'print_statement',
 	'chevron',
@@ -326,7 +327,6 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'_print_arguments',
 	'_print_chevron_arguments',
 	'print_statement_plain',
-	'_assignment_eq',
 	'_assignment_type',
 	'_expression_statement_tuple',
 	'_with_clause_bare',
@@ -715,7 +715,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_pattern_list_patterns: TSKindId.PatternListPatterns,
 	_subscripts: TSKindId.Subscripts,
 	_dictionary_elements: TSKindId.DictionaryElements,
-	_slice_group: TSKindId.SliceGroup,
 	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	case_list_pattern: TSKindId.CaseListPattern,
 	comprehension_clauses: TSKindId.ComprehensionClauses,
@@ -723,13 +722,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_print_arguments: TSKindId.PrintArguments,
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_plain: TSKindId.PrintStatementPlain,
-	_except_clause_list: TSKindId.ExceptClauseList,
-	_except_clause_exception: TSKindId.ExceptClauseException,
 	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
-	_with_clause_bare: TSKindId.WithClauseBare,
-	_with_clause_paren: TSKindId.WithClauseParen,
-	_suite_block: TSKindId.SuiteBlock,
-	_yield_from_clause: TSKindId.YieldFromClause
+	_with_clause_bare: TSKindId.WithClauseBare
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -771,19 +765,14 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_expression_list_expressions: 'expression',
 	_list_pattern_case_patterns: 'case_pattern',
 	_pattern_list_patterns: 'pattern',
-	_slice_group: 'expression',
 	case_tuple_pattern: '_list_pattern_case_patterns',
 	case_list_pattern: '_list_pattern_case_patterns',
 	_parenthesized_import_list: '_import_list',
 	_print_arguments: 'expression',
 	_print_chevron_arguments: 'expression',
 	print_statement_plain: '_print_arguments',
-	_except_clause_list: 'expression',
 	_expression_statement_tuple: 'expression',
-	_with_clause_bare: 'with_item',
-	_with_clause_paren: '_with_clause_with_items',
-	_suite_block: 'block',
-	_yield_from_clause: 'expression'
+	_with_clause_bare: 'with_item'
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -914,8 +903,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildSubscripts as (...args: unknown[]) => unknown)(...children);
 		case '_dictionary_elements':
 			return (F.buildDictionaryElements as (...args: unknown[]) => unknown)(...children);
-		case '_slice_group':
-			return F.buildSliceGroup(children[0] as Parameters<typeof F.buildSliceGroup>[0]);
 		case 'case_tuple_pattern':
 			return F.buildCaseTuplePattern(children[0] as Parameters<typeof F.buildCaseTuplePattern>[0]);
 		case 'case_list_pattern':
@@ -930,20 +917,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPrintChevronArguments as (...args: unknown[]) => unknown)(...children);
 		case 'print_statement_plain':
 			return F.buildPrintStatementPlain(children[0] as Parameters<typeof F.buildPrintStatementPlain>[0]);
-		case '_except_clause_list':
-			return F.buildExceptClauseList(...(children as Parameters<typeof F.buildExceptClauseList>));
-		case '_except_clause_exception':
-			return F.buildExceptClauseException(children[0] as Parameters<typeof F.buildExceptClauseException>[0]);
 		case '_expression_statement_tuple':
 			return (F.buildExpressionStatementTuple as (...args: unknown[]) => unknown)(...children);
 		case '_with_clause_bare':
 			return (F.buildWithClauseBare as (...args: unknown[]) => unknown)(...children);
-		case '_with_clause_paren':
-			return F.buildWithClauseParen(children[0] as Parameters<typeof F.buildWithClauseParen>[0]);
-		case '_suite_block':
-			return F.buildSuiteBlock(children[0] as Parameters<typeof F.buildSuiteBlock>[0]);
-		case '_yield_from_clause':
-			return F.buildYieldFromClause(children[0] as Parameters<typeof F.buildYieldFromClause>[0]);
 		default:
 			return undefined;
 	}
@@ -4854,30 +4831,20 @@ export function coerceToSimplePatternNegative(
 	});
 }
 
-export function coerceToExceptClauseList(
-	...input: readonly (
-		| T.ExceptClauseList.Loose
-		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
-): ReturnType<typeof F.buildExceptClauseList> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExceptClauseList) {
-		const data = input[0];
-		const stored = (data as unknown as { _value?: unknown })._value;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExceptClauseList(
-			...(_resolveMany<T.Expression>(children, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('value' in head)) return input;
-		const v = (head as Record<string, unknown>)['value'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildExceptClauseList(
-		...(_resolveMany<T.Expression>(_elems, _K6, _K7) as unknown as Parameters<typeof F.buildExceptClauseList>)
-	);
+export function resolveExceptClauseList_values(
+	value: T.ExceptClauseList.LooseConfig['value']
+): T.ExceptClauseList['_value'] {
+	const resolved = _resolveMany<T.Expression>(value, _K6, _K7);
+	_assertNonEmpty(resolved, '_except_clause_list.values');
+	return resolved;
+}
+
+export function coerceToExceptClauseList(input: T.ExceptClauseList.Loose): ReturnType<typeof F.buildExceptClauseList> {
+	if (!_isLooseConfig<T.ExceptClauseList.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildExceptClauseList>;
+	return F.buildExceptClauseList({
+		value: _requireField('_except_clause_list', 'value', resolveExceptClauseList_values(input.value))
+	});
 }
 
 export function resolveExceptClauseException_content(

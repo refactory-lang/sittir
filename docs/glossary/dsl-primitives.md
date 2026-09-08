@@ -367,6 +367,20 @@ tie-break when several arms admit the same bare value.
 
     patches: { impl_item: { '3/0/0/0': arm.default } }
 
+### `packages/codegen/src/dsl/primitives/group.ts::group`
+
+`group()` is the `patches` declaration that a rule is a form of its parent:
+`resolvePatch` lowers it to `annotations.hoisted` on the addressed rule, the
+same stamp the variant lift and the `groups:` / clause-hoist mints make. The
+path `'.'` addresses the rule itself, so an authored hidden rule a parent
+only aliases can be declared a seat without restating its body:
+
+    patches: { _except_clause_as: { '.': group() } }
+
+It carries no data; it is a placeholder like `arm.default`, recognised by
+`isGroupPlaceholder` (`__sittirPlaceholder: 'group'`).
+
+
 ### `packages/codegen/src/dsl/primitives/variant.ts::VariantPlaceholder`
 
 ```text

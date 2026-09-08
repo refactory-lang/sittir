@@ -50,7 +50,7 @@ export function isSlotBearingCompound(
 export function isAuthoredCompound(
 	node: AssembledNode
 ): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph {
-	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.hoisted;
+	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
 export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPattern | AssembledEnum {
@@ -893,7 +893,7 @@ export function isWrapChildrenKind(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): boolean {
-	const compound = node instanceof AbstractAssembledCompound && !node.hoisted;
+	const compound = node instanceof AbstractAssembledCompound;
 	if (!compound && !(node instanceof AssembledList)) return false;
 	if (!node.rawFactoryName) return false;
 	if (kind.startsWith('_') && !node.userFacing) return false;

@@ -582,6 +582,15 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 /** Wrap a rule fn so its return value has visibleExternals refs rewritten. */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::stampHoistedFn`
+
+Wrap a `groups:` rule fn so its body carries `annotations.hoisted`. A
+`groups:` entry is a declaration that the minted rule is a form of its parent;
+the stamp is made where the body is produced so it reaches both executions of
+the grammar (tree-sitter's CLI and sittir's `evaluate()`). Only the `groups`
+section stamps — an `injects:` or authored hidden rule is an ordinary rule.
+
+
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWireVisibleExternalsRewrite`
 
 ```text

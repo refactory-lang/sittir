@@ -10988,9 +10988,6 @@ export interface ImportClauseDefaultImport {
 	readonly __inputHints__?: {
 		readonly identifier: KindEnum<'type', TSKindId.AnonType> | Identifier;
 	};
-	readonly __looseHints__?: {
-		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
-	};
 	identifier(): Identifier | TSKindId.AnonType;
 	importClauseGroup(): ImportClauseGroup | undefined;
 }

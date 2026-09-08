@@ -823,21 +823,8 @@ export const ir: {
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
 	readonly referenceExpressionRawMut: typeof F.referenceExpressionRawMut;
 	readonly implItemBody: typeof F.implItemBody;
-	readonly attributeInput: typeof F.attributeInput;
-	readonly closureExpressionExpr: typeof F.closureExpressionExpr;
-	readonly visibilityModifierPub: typeof F.visibilityModifierPub;
-	readonly visibilityModifierInPath: typeof F.visibilityModifierInPath;
-	readonly functionTypeTraitForm: typeof F.functionTypeTraitForm;
-	readonly functionTypeFnForm: typeof F.functionTypeFnForm;
-	readonly macroDefinitionParen: typeof F.macroDefinitionParen;
-	readonly macroDefinitionBracket: typeof F.macroDefinitionBracket;
-	readonly macroDefinitionBrace: typeof F.macroDefinitionBrace;
-	readonly attributedFieldDeclaration: typeof F.attributedFieldDeclaration;
-	readonly attributedEnumVariant: typeof F.attributedEnumVariant;
-	readonly attributedParameter: typeof F.attributedParameter;
-	readonly attributedTypeParameter: typeof F.attributedTypeParameter;
-	readonly attributedArgument: typeof F.attributedArgument;
-	readonly typeArgument: typeof F.typeArgument;
+	readonly implItemPositiveClause: typeof F.implItemPositiveClause;
+	readonly implItemNegativeClause: typeof F.implItemNegativeClause;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -1116,21 +1103,8 @@ export const ir: {
 	tupleExpressionElements: F.tupleExpressionElements,
 	referenceExpressionRawMut: F.referenceExpressionRawMut,
 	implItemBody: F.implItemBody,
-	attributeInput: F.attributeInput,
-	closureExpressionExpr: F.closureExpressionExpr,
-	visibilityModifierPub: F.visibilityModifierPub,
-	visibilityModifierInPath: F.visibilityModifierInPath,
-	functionTypeTraitForm: F.functionTypeTraitForm,
-	functionTypeFnForm: F.functionTypeFnForm,
-	macroDefinitionParen: F.macroDefinitionParen,
-	macroDefinitionBracket: F.macroDefinitionBracket,
-	macroDefinitionBrace: F.macroDefinitionBrace,
-	attributedFieldDeclaration: F.attributedFieldDeclaration,
-	attributedEnumVariant: F.attributedEnumVariant,
-	attributedParameter: F.attributedParameter,
-	attributedTypeParameter: F.attributedTypeParameter,
-	attributedArgument: F.attributedArgument,
-	typeArgument: F.typeArgument,
+	implItemPositiveClause: F.implItemPositiveClause,
+	implItemNegativeClause: F.implItemNegativeClause,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,

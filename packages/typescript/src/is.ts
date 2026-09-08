@@ -316,6 +316,9 @@ export interface IsGuards {
 	extendsClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExtendsClause };
+	ExtendsClauseSingle<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExtendsClauseSingle };
 	implementsClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplementsClause };
@@ -373,6 +376,14 @@ export interface IsGuards {
 	typeAnnotation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeAnnotation };
+	TypeQueryMemberExpressionInTypeAnnotation<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & {
+		readonly $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
+	};
+	TypeQueryCallExpressionInTypeAnnotation<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation };
 	asserts<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Asserts };
@@ -415,6 +426,18 @@ export interface IsGuards {
 	typePredicateAnnotation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypePredicateAnnotation };
+	TypeQueryMemberExpression<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryMemberExpression };
+	TypeQuerySubscriptExpression<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQuerySubscriptExpression };
+	TypeQueryCallExpression<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryCallExpression };
+	TypeQueryInstantiationExpression<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQueryInstantiationExpression };
 	typeQuery<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeQuery };
@@ -430,6 +453,9 @@ export interface IsGuards {
 	literalType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LiteralType };
+	Number<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId._Number };
 	flowMaybeType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FlowMaybeType };
@@ -505,27 +531,27 @@ export interface IsGuards {
 	TupleTypeMembers<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleTypeMembers };
-	ImportClauseGroup<T extends { readonly $type: number } | number>(
+	AmbientDeclarationGlobal<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportClauseGroup };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationGlobal };
+	AmbientDeclarationModule<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationModule };
 	objectTypeContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ObjectTypeContent };
 	ExportStatementDefault<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementDefault };
-	ArrowFunctionParameter<T extends { readonly $type: number } | number>(
+	ExportStatementNamespaceExport<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrowFunctionParameter };
-	ImportClauseDefaultImport<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementNamespaceExport };
+	ExportStatementTypeExport<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportClauseDefaultImport };
-	ExportStatementDefaultFrom<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementTypeExport };
+	ExportStatementEqualsExport<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementDefaultFrom };
-	ForHeaderLhs<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderLhs };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number } | number): v is ModuleExportName;
 	declaration(v: { readonly $type: string | number } | number): v is Declaration;
@@ -709,6 +735,9 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ImportRequireClause };
 	extendsClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExtendsClause };
+	ExtendsClauseSingle(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.ExtendsClauseSingle };
 	implementsClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImplementsClause };
 	ambientDeclaration(
 		v: { readonly $type: number } | number
@@ -750,6 +779,12 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.OptingTypeAnnotation };
 	typeAnnotation(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TypeAnnotation };
+	TypeQueryMemberExpressionInTypeAnnotation(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation };
+	TypeQueryCallExpressionInTypeAnnotation(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation };
 	asserts(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Asserts };
 	assertsAnnotation(
 		v: { readonly $type: number } | number
@@ -772,11 +807,24 @@ export interface AssertGuards {
 	typePredicateAnnotation(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TypePredicateAnnotation };
+	TypeQueryMemberExpression(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.TypeQueryMemberExpression };
+	TypeQuerySubscriptExpression(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.TypeQuerySubscriptExpression };
+	TypeQueryCallExpression(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.TypeQueryCallExpression };
+	TypeQueryInstantiationExpression(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.TypeQueryInstantiationExpression };
 	typeQuery(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TypeQuery };
 	indexTypeQuery(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.IndexTypeQuery };
 	lookupType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LookupType };
 	mappedTypeClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MappedTypeClause };
 	literalType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LiteralType };
+	Number(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId._Number };
 	flowMaybeType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FlowMaybeType };
 	parenthesizedType(
 		v: { readonly $type: number } | number
@@ -812,25 +860,27 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TypeParametersElements };
 	TupleTypeMembers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TupleTypeMembers };
-	ImportClauseGroup(
+	AmbientDeclarationGlobal(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ImportClauseGroup };
+	): asserts v is { readonly $type: TSKindId.AmbientDeclarationGlobal };
+	AmbientDeclarationModule(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.AmbientDeclarationModule };
 	objectTypeContent(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
 	ExportStatementDefault(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
-	ArrowFunctionParameter(
+	ExportStatementNamespaceExport(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
-	ImportClauseDefaultImport(
+	): asserts v is { readonly $type: TSKindId.ExportStatementNamespaceExport };
+	ExportStatementTypeExport(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
-	ExportStatementDefaultFrom(
+	): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
+	ExportStatementEqualsExport(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFrom };
-	ForHeaderLhs(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
+	): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	moduleExportName(v: { readonly $type: string | number } | number): asserts v is ModuleExportName;
 	declaration(v: { readonly $type: string | number } | number): asserts v is Declaration;
@@ -995,6 +1045,7 @@ export const is = {
 	instantiationExpression: _g(TSKindId.InstantiationExpression),
 	importRequireClause: _g(TSKindId.ImportRequireClause),
 	extendsClause: _g(TSKindId.ExtendsClause),
+	ExtendsClauseSingle: _g(TSKindId.ExtendsClauseSingle),
 	implementsClause: _g(TSKindId.ImplementsClause),
 	ambientDeclaration: _g(TSKindId.AmbientDeclaration),
 	abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
@@ -1014,6 +1065,8 @@ export const is = {
 	addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
 	optingTypeAnnotation: _g(TSKindId.OptingTypeAnnotation),
 	typeAnnotation: _g(TSKindId.TypeAnnotation),
+	TypeQueryMemberExpressionInTypeAnnotation: _g(TSKindId.TypeQueryMemberExpressionInTypeAnnotation),
+	TypeQueryCallExpressionInTypeAnnotation: _g(TSKindId.TypeQueryCallExpressionInTypeAnnotation),
 	asserts: _g(TSKindId.Asserts),
 	assertsAnnotation: _g(TSKindId.AssertsAnnotation),
 	tupleParameter: _g(TSKindId.TupleParameter),
@@ -1028,11 +1081,16 @@ export const is = {
 	genericType: _g(TSKindId.GenericType),
 	typePredicate: _g(TSKindId.TypePredicate),
 	typePredicateAnnotation: _g(TSKindId.TypePredicateAnnotation),
+	TypeQueryMemberExpression: _g(TSKindId.TypeQueryMemberExpression),
+	TypeQuerySubscriptExpression: _g(TSKindId.TypeQuerySubscriptExpression),
+	TypeQueryCallExpression: _g(TSKindId.TypeQueryCallExpression),
+	TypeQueryInstantiationExpression: _g(TSKindId.TypeQueryInstantiationExpression),
 	typeQuery: _g(TSKindId.TypeQuery),
 	indexTypeQuery: _g(TSKindId.IndexTypeQuery),
 	lookupType: _g(TSKindId.LookupType),
 	mappedTypeClause: _g(TSKindId.MappedTypeClause),
 	literalType: _g(TSKindId.LiteralType),
+	Number: _g(TSKindId._Number),
 	flowMaybeType: _g(TSKindId.FlowMaybeType),
 	parenthesizedType: _g(TSKindId.ParenthesizedType),
 	typeArguments: _g(TSKindId.TypeArguments),
@@ -1058,13 +1116,13 @@ export const is = {
 	Types: _g(TSKindId.Types),
 	TypeParametersElements: _g(TSKindId.TypeParametersElements),
 	TupleTypeMembers: _g(TSKindId.TupleTypeMembers),
-	ImportClauseGroup: _g(TSKindId.ImportClauseGroup),
+	AmbientDeclarationGlobal: _g(TSKindId.AmbientDeclarationGlobal),
+	AmbientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
-	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
-	ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
-	ExportStatementDefaultFrom: _g(TSKindId.ExportStatementDefaultFrom),
-	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
+	ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
+	ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
+	ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	moduleExportName: _sg(_supertype_moduleExportName_ids),
 	declaration: _sg(_supertype_declaration_ids),
@@ -1216,6 +1274,7 @@ export const assert = {
 	instantiationExpression: _makeAssert('instantiationExpression', is.instantiationExpression as _AnyGuard),
 	importRequireClause: _makeAssert('importRequireClause', is.importRequireClause as _AnyGuard),
 	extendsClause: _makeAssert('extendsClause', is.extendsClause as _AnyGuard),
+	ExtendsClauseSingle: _makeAssert('ExtendsClauseSingle', is.ExtendsClauseSingle as _AnyGuard),
 	implementsClause: _makeAssert('implementsClause', is.implementsClause as _AnyGuard),
 	ambientDeclaration: _makeAssert('ambientDeclaration', is.ambientDeclaration as _AnyGuard),
 	abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
@@ -1235,6 +1294,14 @@ export const assert = {
 	addingTypeAnnotation: _makeAssert('addingTypeAnnotation', is.addingTypeAnnotation as _AnyGuard),
 	optingTypeAnnotation: _makeAssert('optingTypeAnnotation', is.optingTypeAnnotation as _AnyGuard),
 	typeAnnotation: _makeAssert('typeAnnotation', is.typeAnnotation as _AnyGuard),
+	TypeQueryMemberExpressionInTypeAnnotation: _makeAssert(
+		'TypeQueryMemberExpressionInTypeAnnotation',
+		is.TypeQueryMemberExpressionInTypeAnnotation as _AnyGuard
+	),
+	TypeQueryCallExpressionInTypeAnnotation: _makeAssert(
+		'TypeQueryCallExpressionInTypeAnnotation',
+		is.TypeQueryCallExpressionInTypeAnnotation as _AnyGuard
+	),
 	asserts: _makeAssert('asserts', is.asserts as _AnyGuard),
 	assertsAnnotation: _makeAssert('assertsAnnotation', is.assertsAnnotation as _AnyGuard),
 	tupleParameter: _makeAssert('tupleParameter', is.tupleParameter as _AnyGuard),
@@ -1249,11 +1316,22 @@ export const assert = {
 	genericType: _makeAssert('genericType', is.genericType as _AnyGuard),
 	typePredicate: _makeAssert('typePredicate', is.typePredicate as _AnyGuard),
 	typePredicateAnnotation: _makeAssert('typePredicateAnnotation', is.typePredicateAnnotation as _AnyGuard),
+	TypeQueryMemberExpression: _makeAssert('TypeQueryMemberExpression', is.TypeQueryMemberExpression as _AnyGuard),
+	TypeQuerySubscriptExpression: _makeAssert(
+		'TypeQuerySubscriptExpression',
+		is.TypeQuerySubscriptExpression as _AnyGuard
+	),
+	TypeQueryCallExpression: _makeAssert('TypeQueryCallExpression', is.TypeQueryCallExpression as _AnyGuard),
+	TypeQueryInstantiationExpression: _makeAssert(
+		'TypeQueryInstantiationExpression',
+		is.TypeQueryInstantiationExpression as _AnyGuard
+	),
 	typeQuery: _makeAssert('typeQuery', is.typeQuery as _AnyGuard),
 	indexTypeQuery: _makeAssert('indexTypeQuery', is.indexTypeQuery as _AnyGuard),
 	lookupType: _makeAssert('lookupType', is.lookupType as _AnyGuard),
 	mappedTypeClause: _makeAssert('mappedTypeClause', is.mappedTypeClause as _AnyGuard),
 	literalType: _makeAssert('literalType', is.literalType as _AnyGuard),
+	Number: _makeAssert('Number', is.Number as _AnyGuard),
 	flowMaybeType: _makeAssert('flowMaybeType', is.flowMaybeType as _AnyGuard),
 	parenthesizedType: _makeAssert('parenthesizedType', is.parenthesizedType as _AnyGuard),
 	typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
@@ -1279,13 +1357,16 @@ export const assert = {
 	Types: _makeAssert('Types', is.Types as _AnyGuard),
 	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
 	TupleTypeMembers: _makeAssert('TupleTypeMembers', is.TupleTypeMembers as _AnyGuard),
-	ImportClauseGroup: _makeAssert('ImportClauseGroup', is.ImportClauseGroup as _AnyGuard),
+	AmbientDeclarationGlobal: _makeAssert('AmbientDeclarationGlobal', is.AmbientDeclarationGlobal as _AnyGuard),
+	AmbientDeclarationModule: _makeAssert('AmbientDeclarationModule', is.AmbientDeclarationModule as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
-	ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
-	ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
-	ExportStatementDefaultFrom: _makeAssert('ExportStatementDefaultFrom', is.ExportStatementDefaultFrom as _AnyGuard),
-	ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
+	ExportStatementNamespaceExport: _makeAssert(
+		'ExportStatementNamespaceExport',
+		is.ExportStatementNamespaceExport as _AnyGuard
+	),
+	ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
+	ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
 	declaration: _makeAssert('declaration', is.declaration as _AnyGuard),

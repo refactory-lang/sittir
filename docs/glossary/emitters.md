@@ -747,6 +747,13 @@ read the third pass's rules.
 // else in the emitted source.
 ```
 
+The forwarded wrapper (the overloads plus the `$type`-probing body that
+forwards a config or a spread to the target factory) is not emitted when the
+target is a hoisted, config-shaped group: that parent keeps the direct
+signature only, and the overlay's splice seat (`spliceShape`) supplies the
+config form. Group seating is emitted in one place.
+
+
 ### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
 
 ```text
@@ -8852,6 +8859,16 @@ pipeline — which falls back to string equality.
 // config-literal widening — see glossary.
 ```
 
+### `packages/codegen/src/emitters/shared.ts::isAuthoredCompound`
+
+A compound that is not a list: `AssembledBranch`, `AssembledEnvelope` or
+`AssembledPolymorph`, hoisted or not. Hoisting seats a kind on its parent; it
+does not make the kind unnameable to the from() coercer, whose keyword and
+string routes build through the raw factory — `ir.visibilityModifier('pub')`
+routes by the text `pub` into the hoisted `_visibility_modifier_pub` arm, and
+would otherwise fall through to the in-path arm and render `pub(in pub)`.
+
+
 ### `packages/codegen/src/emitters/shared.ts::wordConstructibleText`
 
 ```text
@@ -9245,6 +9262,12 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 // A separated list is a list by construction; any other branch qualifies
 // only when its factory takes the children directly.
 ```
+
+A hoisted compound is admitted like any other; the children-wrap route
+still requires a child factory surface (`classifyChildFactorySurface`), which
+a hoisted kind does not have today, so its `_wrapKindIds` entry is decided
+there, not by the hoisted flag here.
+
 
 ### `packages/codegen/src/emitters/shared.ts::classifyTemplateEmission`
 
@@ -14094,6 +14117,42 @@ The strict/coerce expression pair for a parent builder; `coerce` is absent when 
 
 The strict/coerce expression pair for an arm: a direct child uses its own factories (strict builder doubling as the coerce seat when no coercer exists); a flattened arm references the decorated child const emitted above (`<childKey>.<path>.strict` / `.coerce`).
 
+A flattened arm through a hoisted child references that child's private
+wiring const under the same `<childKey>.<path>` spelling.
+
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::spliceShape`
+
+The method behind a splice seat. For a config parent: partition the
+caller's keys into the group's (`configKeysOf`) and the rest; when any group
+key carries a value, build the group from them and seat it under the slot
+key, otherwise pass the rest through — the type is the parent's own input
+(the direct spelling with the built group under the seat key, and
+`undefined` where the parent's argument is optional) or `OmitEach<parent
+config, seat> & (group config | NoneOf<group config>)`, so the spliced keys
+come together or not at all. The wrapped `strict` must satisfy the bundle's
+signature too, which is why the parent's own input stays accepted. For a positional parent (a forwarded wrapper such as
+`match_block`) there is nothing to partition: a built value or `undefined`
+passes straight to the parent, anything else is the group's config and is
+built first. The `$type` probe (`_built`) is what the raw forwarded wrapper
+used to do; it lives here now, once, because the seating is the overlay's.
+
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSplice`
+
+Applies `spliceShape` to the parent's own strict/coerce pair and the group's
+raw factory / coercer, producing the `strict` (and `coerce`) entries that
+override the bundle's inside the parent's wiring const — the `...B.<key>`
+spread stays first so the wrapped entry wins.
+
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::isHoistedCompound`
+
+A compound the model seats on its parent. Decides two things in this
+emitter: the kind gets a private wiring key (`collectPolymorphWires`) and its
+wiring const is not exported (`emitPolymorphsOverlay`).
+
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::AliasWire`
 
 A form wire with no seat: the child kind is a complete alternative of the parent's rule, so the wire is the child's own factory pair exposed under the parent, not a transformation method.
@@ -14109,6 +14168,18 @@ Transformation-method identifier for one sub-factory: `<parentKey>$<name>`, with
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::collectPolymorphWires`
 
 The single derivation of which sub-factories the polymorph overlay actually wires — traversal order (children before flattened parents), per-parent filtered entry lists (ambiguity and slot-collision resolved in `subFactoriesOf`; unreferenceable children filtered here, and a flattened arm survives only when the child's ALREADY-EMITTED wire set — children visit first, DFS post-order — carries the referenced property, because the child's context-sensitive derivation under this parent can name entries the child's own top-level set resolved away), the emission predicates, and the bundle key map. Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. Alias wires from `variantAliasWires` ride the same sets: a parent enters the map when it has seated subs or alias forms. Any consumer deriving the wire set independently will drift — this map is the fact.
+
+A hoisted compound has no bundle key, so `keyByKind` gives it a private one —
+its `factoryName` (`_visibilityModifierPub`) — and it gets a wire set like
+any parent. That set is never exported; it exists so a parent's flattened
+arm (`visibilityModifier.inPath` two hops down through the hoisted `pub`
+form) has a decorated child const to reference. Without it every arm routed
+through a hoisted kind was dropped as a context mismatch.
+
+A wire set also carries the parent's splice seat (`spliceSeatOf`) when the
+group's factory is emitted; a parent with a seat and no subs still enters
+the map, because the seat rewrites its `strict`.
+
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
@@ -14189,6 +14260,52 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  one such slot has no unambiguous narrowing target, so it isn't
  *  eligible for sub-factories at all. */
 ```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::derive`
+
+The per-kind derivation behind `subFactoriesOf`. Three seat modes feed one
+resolution tail (`resolveCandidates`): the lone choice slot (`choiceSlotOf`)
+yields one arm per value — literal arms, node arms, and the child's own
+sub-factories flattened up under leaf-relative names; a forwarding hop
+(`forwardedTargetKind`) passes the target's sub-factories through re-seated
+in the hop's slot; and a lone kind-enum slot yields literal arms. On top of
+whichever mode applies, `hoistedCandidatesOf` adds a direct arm for every
+hoisted kind seated in any OTHER non-multiple choice slot, and is the only
+source when the parent has no lone slot at all (`for_header` with a kind
+slot and a left-hand slot, `export_statement` with its default arms): a
+hoisted kind has no flat `ir` entry, so its parent's sub-factory is the one
+way to build it, whatever else the parent holds. Visible kinds in a second
+choice slot are not mounted — they are reachable on `ir` already.
+
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::hoistedCandidatesOf`
+
+The shape-1 seat for a hoisted arm: one candidate per hoisted compound
+(`AbstractAssembledCompound` with `hoisted`) in every non-multiple slot with
+two or more values, except the slot `derive` already walks. Each candidate
+carries its own residual (the parent's other slots), which is why
+`resolveCandidates` reads the residual off the entry. A single-valued slot
+is not a choice; a hoisted kind there is a splice seat (shape 2), not an
+arm.
+
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::spliceSeatOf`
+
+The shape-2 seat: the parent's one non-multiple slot whose value set is
+exactly one hoisted, config-shaped kind. Such a group is not an arm (there is
+nothing to choose between) and has no name a caller would type; its keys are
+spliced onto the parent's `strict` by the overlay (`emitSplice`), present as
+a whole or absent as a whole. A parent with two such seats gets none and the
+census reports it. A hoisted kind in a single-valued slot that is
+direct- or forwarded-shaped is not a splice seat either: it has one key and
+no keys to splice, and the parent's own slot already takes it.
+
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::configKeysOf`
+
+A compound's config keys, the one list both the config-shaped arm merge
+(`armConfigKeys`) and the splice seat partition by.
+
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::loneEnumChoiceSlot`
 
@@ -14272,6 +14389,11 @@ with two pure literal enum slots (`import_statement`: the `type` modifier and
  *  and anything still ambiguous is reported as a diagnostic and dropped. */
 ```
 
+The slot-collision check reads each entry's own residual: candidates from
+different slots of the same parent (`hoistedCandidatesOf`) have different
+residuals.
+
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
 
 Top-level entry: derives the sub-factory set for a kind with an empty visiting context and caches per (nodeMap, predicate, kind). The cache is read ONLY for top-level queries — a nested derivation (non-empty visiting set) always recomputes, because ambiguity and flattening are context-sensitive: a cached context-free result served into a cyclic context (or vice versa) yields order-dependent wire sets. True cycles short-circuit to the empty set through a per-derivation in-progress guard. A kind with no choice slot but a forwarding hop (`forwardedTargetKind`: sole slot seating exactly one emitted child kind) passes the child's sub-factories through — each entry re-seated in the hop's own slot under a leaf-relative name, its wire referencing the child const's matching property. Both the choice-slot and forwarding branches feed one shared resolution tail (`resolveCandidates`: name-ambiguity and slot-collision filtering), so the two seat modes cannot diverge in how claims are settled.
@@ -14328,6 +14450,14 @@ Top-level entry: derives the sub-factory set for a kind with an empty visiting c
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
+
+A hoisted parent's wiring const is module-private — `const <factoryName>: {
+… } = { … }` with no `export` and no `...B.<key>` spread, since the bundle
+has no entry for it — and is emitted before the parents that flatten
+through it (post-order).
+
+`NoneOf<T>` (every key of `T` forbidden) and `_built` (the `$type` probe)
+ride in the erased-helper block for the splice methods.
 
 
 ### `packages/codegen/src/emitters/options.ts::OptionsShape`

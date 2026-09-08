@@ -178,6 +178,9 @@ export interface IsGuards {
 	dictPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictPattern };
+	KeyValuePattern<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.KeyValuePattern };
 	keywordPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.KeywordPattern };
@@ -382,9 +385,9 @@ export interface IsGuards {
 	DictionaryElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictionaryElements };
-	SliceGroup<T extends { readonly $type: number } | number>(
+	ExceptClauseAs<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SliceGroup };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseAs };
 	caseTuplePattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseTuplePattern };
@@ -412,27 +415,12 @@ export interface IsGuards {
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
-	ExceptClauseList<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseList };
-	ExceptClauseException<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseException };
 	ExpressionStatementTuple<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
-	WithClauseParen<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseParen };
-	SuiteBlock<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteBlock };
-	YieldFromClause<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	simpleStatement(v: { readonly $type: string | number } | number): v is SimpleStatement;
@@ -520,6 +508,7 @@ export interface AssertGuards {
 	casePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CasePattern };
 	unionPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UnionPattern };
 	dictPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.DictPattern };
+	KeyValuePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.KeyValuePattern };
 	keywordPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.KeywordPattern };
 	splatPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SplatPattern };
 	classPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ClassPattern };
@@ -628,7 +617,7 @@ export interface AssertGuards {
 	DictionaryElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.DictionaryElements };
-	SliceGroup(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SliceGroup };
+	ExceptClauseAs(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExceptClauseAs };
 	caseTuplePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseTuplePattern };
 	caseListPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseListPattern };
 	caseAsPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseAsPattern };
@@ -648,17 +637,10 @@ export interface AssertGuards {
 	printStatementPlain(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.PrintStatementPlain };
-	ExceptClauseList(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExceptClauseList };
-	ExceptClauseException(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ExceptClauseException };
 	ExpressionStatementTuple(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithClauseBare };
-	WithClauseParen(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithClauseParen };
-	SuiteBlock(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SuiteBlock };
-	YieldFromClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.YieldFromClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	simpleStatement(v: { readonly $type: string | number } | number): asserts v is SimpleStatement;
@@ -761,6 +743,7 @@ export const is = {
 	casePattern: _g(TSKindId.CasePattern),
 	unionPattern: _g(TSKindId.UnionPattern),
 	dictPattern: _g(TSKindId.DictPattern),
+	KeyValuePattern: _g(TSKindId.KeyValuePattern),
 	keywordPattern: _g(TSKindId.KeywordPattern),
 	splatPattern: _g(TSKindId.SplatPattern),
 	classPattern: _g(TSKindId.ClassPattern),
@@ -829,7 +812,7 @@ export const is = {
 	PatternListPatterns: _g(TSKindId.PatternListPatterns),
 	Subscripts: _g(TSKindId.Subscripts),
 	DictionaryElements: _g(TSKindId.DictionaryElements),
-	SliceGroup: _g(TSKindId.SliceGroup),
+	ExceptClauseAs: _g(TSKindId.ExceptClauseAs),
 	caseTuplePattern: _g(TSKindId.CaseTuplePattern),
 	caseListPattern: _g(TSKindId.CaseListPattern),
 	caseAsPattern: _g(TSKindId.CaseAsPattern),
@@ -839,13 +822,8 @@ export const is = {
 	PrintChevronArguments: _g(TSKindId.PrintChevronArguments),
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
-	ExceptClauseList: _g(TSKindId.ExceptClauseList),
-	ExceptClauseException: _g(TSKindId.ExceptClauseException),
 	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	WithClauseBare: _g(TSKindId.WithClauseBare),
-	WithClauseParen: _g(TSKindId.WithClauseParen),
-	SuiteBlock: _g(TSKindId.SuiteBlock),
-	YieldFromClause: _g(TSKindId.YieldFromClause),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	simpleStatement: _sg(_supertype_simpleStatement_ids),
@@ -938,6 +916,7 @@ export const assert = {
 	casePattern: _makeAssert('casePattern', is.casePattern as _AnyGuard),
 	unionPattern: _makeAssert('unionPattern', is.unionPattern as _AnyGuard),
 	dictPattern: _makeAssert('dictPattern', is.dictPattern as _AnyGuard),
+	KeyValuePattern: _makeAssert('KeyValuePattern', is.KeyValuePattern as _AnyGuard),
 	keywordPattern: _makeAssert('keywordPattern', is.keywordPattern as _AnyGuard),
 	splatPattern: _makeAssert('splatPattern', is.splatPattern as _AnyGuard),
 	classPattern: _makeAssert('classPattern', is.classPattern as _AnyGuard),
@@ -1006,7 +985,7 @@ export const assert = {
 	PatternListPatterns: _makeAssert('PatternListPatterns', is.PatternListPatterns as _AnyGuard),
 	Subscripts: _makeAssert('Subscripts', is.Subscripts as _AnyGuard),
 	DictionaryElements: _makeAssert('DictionaryElements', is.DictionaryElements as _AnyGuard),
-	SliceGroup: _makeAssert('SliceGroup', is.SliceGroup as _AnyGuard),
+	ExceptClauseAs: _makeAssert('ExceptClauseAs', is.ExceptClauseAs as _AnyGuard),
 	caseTuplePattern: _makeAssert('caseTuplePattern', is.caseTuplePattern as _AnyGuard),
 	caseListPattern: _makeAssert('caseListPattern', is.caseListPattern as _AnyGuard),
 	caseAsPattern: _makeAssert('caseAsPattern', is.caseAsPattern as _AnyGuard),
@@ -1016,13 +995,8 @@ export const assert = {
 	PrintChevronArguments: _makeAssert('PrintChevronArguments', is.PrintChevronArguments as _AnyGuard),
 	printStatementChevron: _makeAssert('printStatementChevron', is.printStatementChevron as _AnyGuard),
 	printStatementPlain: _makeAssert('printStatementPlain', is.printStatementPlain as _AnyGuard),
-	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
-	ExceptClauseException: _makeAssert('ExceptClauseException', is.ExceptClauseException as _AnyGuard),
 	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
 	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
-	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
-	SuiteBlock: _makeAssert('SuiteBlock', is.SuiteBlock as _AnyGuard),
-	YieldFromClause: _makeAssert('YieldFromClause', is.YieldFromClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),

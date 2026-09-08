@@ -1,3 +1,4 @@
+import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn, applyPreference } from '../transform/transform.ts';
@@ -816,6 +817,12 @@ function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMa
 	return rule;
 }
 
+function stampHoistedFn(fn: RuleFn): RuleFn {
+	return function hoistedRuleFn($, previous) {
+		return withHoistedAnnotation(fn($, previous));
+	};
+}
+
 function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyMap<string, string>): RuleFn {
 	return function visibleExternalsRewritingRuleFn($, previous) {
 		const result = fn($, previous);
@@ -899,7 +906,8 @@ export function applyWirePatternReplacement(
 			);
 		}
 		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-		rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+		const registered = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}
 
 	if (candidates.length === 0) return;

@@ -4,12 +4,21 @@ import { AbstractAssembledCompound, type AssembledNode } from '../../compiler/mo
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
+	isValidIdent,
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo
 } from '../shared.ts';
 import { valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
-import { armConfigKeys, armIsConfigShaped, subFactoriesOf, type SubFactory } from './sub-factories.ts';
+import {
+	armConfigKeys,
+	armIsConfigShaped,
+	configKeysOf,
+	spliceSeatOf,
+	subFactoriesOf,
+	type SpliceSeat,
+	type SubFactory
+} from './sub-factories.ts';
 import { bundleEntries, overlayFrame, overlayImportPath } from './module.ts';
 import { camelCase } from '../refine-emit.ts';
 
@@ -19,6 +28,10 @@ interface FlavorRefs {
 }
 
 type CoerceEmitted = (node: AssembledNode) => boolean;
+
+function isHoistedCompound(node: AssembledNode): boolean {
+	return node instanceof AbstractAssembledCompound && node.hoisted;
+}
 
 function parentRefs(node: AssembledNode, coerceEmitted: CoerceEmitted): FlavorRefs {
 	return {
@@ -76,6 +89,7 @@ export interface PolymorphWireSet {
 	readonly node: AssembledNode;
 	readonly subs: readonly SubFactory[];
 	readonly aliases: readonly AliasWire[];
+	readonly splice?: SpliceSeat;
 }
 
 export interface PolymorphWires {
@@ -102,6 +116,11 @@ export function collectPolymorphWires(
 	const coerceEmitted: CoerceEmitted = (node) =>
 		node.fromFunctionName !== undefined && classifyFromEmission(node.kind, node, { nodeMap, kindEntries }) === 'emit';
 	const keyByKind = new Map(bundleEntries(nodeMap, generatedIdTables).map((e) => [e.node.kind, e.exportName]));
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!isHoistedCompound(node) || node.factoryName === undefined || !isValidIdent(node.factoryName)) continue;
+		if (node.rawFactoryName === undefined || !isEmitted(kind) || keyByKind.has(kind)) continue;
+		keyByKind.set(kind, node.factoryName);
+	}
 	const warn = options.silent ? () => {} : (message: string) => console.warn(message);
 
 	const order: string[] = [];
@@ -143,9 +162,11 @@ export function collectPolymorphWires(
 			return childRefs(sub, keyByKind, coerceEmitted) !== undefined;
 		});
 		const aliases = variantAliasWires(node, nodeMap, isEmitted, subs);
-		if (subs.length > 0 || aliases.length > 0) {
+		const seat = spliceSeatOf(node, nodeMap);
+		const splice = seat !== undefined && isEmitted(seat.group.kind) ? seat : undefined;
+		if (subs.length > 0 || aliases.length > 0 || splice !== undefined) {
 			order.push(node.kind);
-			byKind.set(node.kind, { parentKey, node, subs, aliases });
+			byKind.set(node.kind, { parentKey, node, subs, aliases, ...(splice ? { splice } : {}) });
 		}
 		seen.add(node.kind);
 	}
@@ -177,6 +198,10 @@ const ERASED_HELPERS = [
 	'const _o = (config: unknown) => config as Record<string, unknown>;',
 	'const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> =>',
 	'\t({ ..._o(config), ...extra });',
+	'// A spliced group is present as a whole or absent as a whole: the second',
+	'// overload forbids every one of its keys.',
+	'type NoneOf<T> = { [K in keyof T]?: never };',
+	'const _built = (v: unknown): boolean => typeof v === \'object\' && v !== null && \'$type\' in v;',
 	''
 ];
 
@@ -266,6 +291,66 @@ function shape(
 	};
 }
 
+function spliceShape(k: string, mergeKeys: readonly string[], m: string, positional: boolean): WireShape {
+	if (positional) {
+		return {
+			method: [
+				`const ${m} = <${PFV}, ${CF}>(parent: PF, child: CF) =>`,
+				`	(config: ArgsOf<PF>[0] | ArgsOf<CF>[0]): ReturnType<PF> =>`,
+				`		config === undefined || _built(config) ? ${CALL_P}(config) : ${CALL_P}(${CALL_C}(config));`
+			],
+			paramFor: (p, c) => `(config: ArgsOf<typeof ${p}>[0] | ArgsOf<typeof ${c}>[0])`
+		};
+	}
+	const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const spliced = (p: string, c: string): string =>
+		`ArgsOf<${p}>[0] | (OmitEach<NonNullable<ArgsOf<${p}>[0]>, '${k}'> & (ArgsOf<${c}>[0] | NoneOf<ArgsOf<${c}>[0]>))`;
+	return {
+		method: [
+			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
+			`	(config: ${spliced('PF', 'CF')}): ReturnType<PF> => {`,
+			`		if (config === undefined) return ${CALL_P}(config);`,
+			`		const rest: Record<string, unknown> = {};`,
+			`		const inner: Record<string, unknown> = {};`,
+			`		let seated = false;`,
+			`		for (const [key, value] of Object.entries(_o(config))) {`,
+			`			if (${keyTests}) {`,
+			`				inner[key] = value;`,
+			`				seated = seated || value !== undefined;`,
+			`			} else rest[key] = value;`,
+			`		}`,
+			`		return ${CALL_P}(seated ? { ...rest, ${k}: ${CALL_C}(inner) } : rest);`,
+			`	};`
+		],
+		paramFor: (p, c) => `(config: ${spliced(`typeof ${p}`, `typeof ${c}`)})`
+	};
+}
+
+function emitSplice(
+	parent: AssembledNode,
+	parentKey: string,
+	seat: SpliceSeat,
+	wires: PolymorphWires,
+	nodeMap: NodeMap
+): SubEmission {
+	const m = methodName(parentKey, 'splice');
+	const p = parentRefs(parent, wires.coerceEmitted);
+	const c: FlavorRefs = {
+		strict: `F.${seat.group.rawFactoryName}`,
+		coerce: wires.coerceEmitted(seat.group) ? `C.${seat.group.fromFunctionName}` : undefined
+	};
+	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
+	const s = spliceShape(seat.slot.configKey, configKeysOf(seat.group), m, positional);
+	const typeFor = (pRef: string, cRef: string): string => `${s.paramFor(pRef, cRef)} => ReturnType<typeof ${pRef}>`;
+	return {
+		method: s.method,
+		strictApply: `${m}(${p.strict}, ${c.strict})`,
+		strictType: typeFor(p.strict, c.strict),
+		coerceApply: p.coerce && c.coerce ? `${m}(${p.coerce}, ${c.coerce})` : undefined,
+		coerceType: p.coerce && c.coerce ? typeFor(p.coerce, c.coerce) : undefined
+	};
+}
+
 interface SubEmission {
 	readonly method: readonly string[];
 	readonly strictApply: string;
@@ -344,6 +429,17 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				wireTypes.push(`	${sub.name}: { strict: ${emission.strictType}; coerce: ${emission.coerceType} };`);
 			}
 		}
+		if (wireSet.splice !== undefined) {
+			const emission = emitSplice(wireSet.node, wireSet.parentKey, wireSet.splice, wires, nodeMap);
+			methods.push(...emission.method);
+			if (emission.coerceApply === undefined) {
+				wireLines.push(`	strict: ${emission.strictApply},`);
+				wireTypes.push(`	strict: ${emission.strictType};`);
+			} else {
+				wireLines.push(`	strict: ${emission.strictApply}, coerce: ${emission.coerceApply},`);
+				wireTypes.push(`	strict: ${emission.strictType}; coerce: ${emission.coerceType};`);
+			}
+		}
 		for (const alias of wireSet.aliases) {
 			const strictRef = `F.${alias.child.rawFactoryName}`;
 			const coerceRef = wires.coerceEmitted(alias.child) ? `C.${alias.child.fromFunctionName}` : undefined;
@@ -361,10 +457,16 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				emittedHelpers = true;
 			}
 			blocks.push(...methods);
-			blocks.push(`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`);
-			blocks.push(...wireTypes);
-			blocks.push(`} = {`);
-			blocks.push(`	...B.${wireSet.parentKey},`);
+			if (isHoistedCompound(wireSet.node)) {
+				blocks.push(`const ${wireSet.parentKey}: {`);
+				blocks.push(...wireTypes);
+				blocks.push(`} = {`);
+			} else {
+				blocks.push(`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`);
+				blocks.push(...wireTypes);
+				blocks.push(`} = {`);
+				blocks.push(`	...B.${wireSet.parentKey},`);
+			}
 			blocks.push(...wireLines);
 			blocks.push('};', '');
 		}

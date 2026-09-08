@@ -755,14 +755,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_tuple_type_elements: TSKindId.TupleTypeElements,
 	_tuple_expression_elements: TSKindId.TupleExpressionElements,
 	_impl_item_body: TSKindId.ImplItemBody,
-	_closure_expression_expr: TSKindId.ClosureExpressionExpr,
-	_visibility_modifier_pub: TSKindId.VisibilityModifierPub,
-	_visibility_modifier_in_path: TSKindId.VisibilityModifierInPath,
-	_function_type_trait_form: TSKindId.FunctionTypeTraitForm,
-	_function_type_fn_form: TSKindId.FunctionTypeFnForm,
-	_macro_definition_paren: TSKindId.MacroDefinitionParen,
-	_macro_definition_bracket: TSKindId.MacroDefinitionBracket,
-	_macro_definition_brace: TSKindId.MacroDefinitionBrace
+	_impl_item_positive_clause: TSKindId.ImplItemPositiveClause,
+	_impl_item_negative_clause: TSKindId.ImplItemNegativeClause
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -818,13 +812,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	_visibility_modifier_group: '_visibility_modifier_in_path',
 	_tuple_type_elements: '_type',
 	_tuple_expression_elements: '_expression',
-	_impl_item_body: 'declaration_list',
-	_closure_expression_expr: '_expression',
-	_visibility_modifier_pub: '_visibility_modifier_group',
-	_function_type_fn_form: 'function_modifiers',
-	_macro_definition_paren: '_macro_rules',
-	_macro_definition_bracket: '_macro_rules',
-	_macro_definition_brace: '_macro_rules'
+	_impl_item_body: 'declaration_list'
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -979,22 +967,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildTupleExpressionElements as (...args: unknown[]) => unknown)(...children);
 		case '_impl_item_body':
 			return F.buildImplItemBody(children[0] as Parameters<typeof F.buildImplItemBody>[0]);
-		case '_closure_expression_expr':
-			return F.buildClosureExpressionExpr(children[0] as Parameters<typeof F.buildClosureExpressionExpr>[0]);
-		case '_visibility_modifier_pub':
-			return F.buildVisibilityModifierPub(children[0] as Parameters<typeof F.buildVisibilityModifierPub>[0]);
-		case '_visibility_modifier_in_path':
-			return F.buildVisibilityModifierInPath(children[0] as Parameters<typeof F.buildVisibilityModifierInPath>[0]);
-		case '_function_type_trait_form':
-			return F.buildFunctionTypeTraitForm(children[0] as Parameters<typeof F.buildFunctionTypeTraitForm>[0]);
-		case '_function_type_fn_form':
-			return F.buildFunctionTypeFnForm(children[0] as Parameters<typeof F.buildFunctionTypeFnForm>[0]);
-		case '_macro_definition_paren':
-			return F.buildMacroDefinitionParen(children[0] as Parameters<typeof F.buildMacroDefinitionParen>[0]);
-		case '_macro_definition_bracket':
-			return F.buildMacroDefinitionBracket(children[0] as Parameters<typeof F.buildMacroDefinitionBracket>[0]);
-		case '_macro_definition_brace':
-			return F.buildMacroDefinitionBrace(children[0] as Parameters<typeof F.buildMacroDefinitionBrace>[0]);
+		case '_impl_item_positive_clause':
+			return F.buildImplItemPositiveClause(children[0] as Parameters<typeof F.buildImplItemPositiveClause>[0]);
+		case '_impl_item_negative_clause':
+			return F.buildImplItemNegativeClause(children[0] as Parameters<typeof F.buildImplItemNegativeClause>[0]);
 		default:
 			return undefined;
 	}

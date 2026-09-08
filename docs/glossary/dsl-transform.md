@@ -25,6 +25,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *                 Parentheses are required.
  *   - `name:`   — field traversal: descend through field('name', ...)
  *                 at the current position. Hard-errors on mismatch.
+ *   - `.`       — the rule itself (an empty segment list), for a patch
+ *                 that annotates the whole rule (`group()`).
  *
  * Migration errors:
  *   - `*`       — use `_` instead
@@ -725,6 +727,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // declared via wire's placeholder injection.
 ```
 
+Each hoisted body is stamped `annotations.hoisted` BEFORE
+`wrapVariantBodyInParentPrec`: evaluate unwraps `prec` and a stamp on the
+wrapper is dropped, so the stamp must sit on the seq itself.
+
+
 ### `packages/codegen/src/dsl/transform/transform.ts::registerHoistedVariantConflicts`
 
 ```text
@@ -793,6 +800,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * unreferenced rule.
  */
 ```
+
+A lift deposited under the patch-chosen name is stamped `annotations.hoisted`
+on the way in; an authored body of that name is left as authored.
+
 
 ### `packages/codegen/src/dsl/transform/transform.ts::variantBranchIsUnmaterializable`
 
@@ -1022,6 +1033,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // only one side of the pipeline knows about. Only an anonymous body (a seq,
 // a choice, a string) needs a hidden rule to carry it.
 ```
+
+The registered body is stamped `annotations.hoisted` inside `bodyWrapper`
+(before any prec wrapper), so the variant arm declares itself a seat on its
+parent; link collects the set from that stamp.
+
 
 ### `packages/codegen/src/dsl/transform/transform.ts::factorOutEmptiness`
 
@@ -1406,6 +1422,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (rendered `content`) instead of leaking a stray `value` field
 // the template would drop.
 ```
+
+A `group()` placeholder lowers to `annotations.hoisted` on the addressed
+rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
+
 
 ### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
 

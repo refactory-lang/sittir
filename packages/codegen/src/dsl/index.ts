@@ -3,6 +3,7 @@ export { role } from './primitives/role.ts';
 export { enrich } from './enrich.ts';
 export { alias } from './primitives/alias.ts';
 export { variant } from './primitives/variant.ts';
+export { group } from './primitives/group.ts';
 export { arm } from './primitives/arm.ts';
 export { preference } from './primitives/preference.ts';
 export { field } from './primitives/field.ts';

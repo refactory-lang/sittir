@@ -65,32 +65,6 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 	}
 }
 
-export function hasAnyField(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case FIELD:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyField);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case ALIAS:
-		case TOKEN:
-			return hasAnyField(rule.content);
-		case SYMBOL:
-		case SUPERTYPE:
-		case STRING:
-		case PATTERN:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-			return false;
-		default:
-			return assertNever(rule);
-	}
-}
-
 export function pushAttrsToLeaves(
 	rule: AnyRule,
 	multiplicity: 'optional' | 'array' | 'nonEmptyArray' | undefined,

@@ -61,7 +61,6 @@ import type {
 	LinkedRefineForm,
 	NarrowedField
 } from './types.ts';
-import { hasAnyField } from '../dsl/rule-transforms.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -206,10 +205,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, lifted.rules);
 		for (const synthKind of lifted.synthesizedKinds) {
 			const body = rules[synthKind];
-			if (body && !linkCtx.hoistedKinds.has(synthKind)) {
-				rules[synthKind] = liftSeparators(body, linkCtx);
-				linkCtx.hoistedKinds.add(synthKind);
-			}
+			if (body) rules[synthKind] = liftSeparators(body, linkCtx);
 		}
 	}
 
@@ -1425,17 +1421,13 @@ function classifyHiddenRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
+	if (rule.annotations?.hoisted === true) ctx.hoistedKinds.add(name);
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || ctx.hoistedKinds.has(name)) {
 		return { rule };
 	}
 
 	if (rule.type === CHOICE) {
 		return classifyHiddenChoiceRule(rule, ctx, name, rules);
-	}
-
-	if (isSeq(rule)) {
-		if (hasAnyField(rule)) ctx.hoistedKinds.add(name);
-		return { rule };
 	}
 
 	return { rule };
@@ -2053,7 +2045,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 			const { liftedBody, replacement } = liftRule(target, synName, discriminator);
 
 			parentBody = replaceAtPath(parentBody, path, replacement);
-			newRules[synName] = liftedBody;
+			newRules[synName] = { ...liftedBody, annotations: { ...liftedBody.annotations, hoisted: true } };
 			synthesizedKinds.push(synName);
 		}
 

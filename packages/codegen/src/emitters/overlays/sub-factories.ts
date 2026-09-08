@@ -1,5 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import {
+	AbstractAssembledCompound,
 	AssembledList,
 	isNodeRef,
 	isTerminalValue,
@@ -129,6 +130,32 @@ function claimantOf(entry: SubFactory): string {
 	return [entry.arm.child.kind, ...entry.arm.path].join('.');
 }
 
+function hoistedCandidatesOf(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	isEmitted: IsEmittedPredicate,
+	exclude: AssembledNonterminal | undefined
+): Candidate[] {
+	if (!isSlotBearingCompound(node)) return [];
+	const out: Candidate[] = [];
+	for (const s of node.slots) {
+		if (s === exclude || isMultiple(s) || s.values.length < 2) continue;
+		const residual = node.slots.filter((f) => f !== s);
+		for (const value of s.values) {
+			if (!isNodeRef(value)) continue;
+			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
+			if (child === undefined || child.rawFactoryName === undefined || !isEmitted(child.kind)) continue;
+			if (!(child instanceof AbstractAssembledCompound) || !child.hoisted) continue;
+			const naming = armNaming(node, value, nodeMap);
+			if (naming === undefined) continue;
+			const arm: NodeArm = { via: 'node', child, path: [] };
+			const entry: SubFactory = { name: naming.name, slot: s, residual, arm };
+			out.push({ ...naming, entry, claimant: claimantOf(entry) });
+		}
+	}
+	return out;
+}
+
 function derive(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -145,7 +172,10 @@ function derive(
 		const forwardChild = targetKind === null ? undefined : nodeMap.nodes.get(targetKind);
 		if (forwardChild === undefined || !isEmitted(forwardChild.kind) || visiting.has(forwardChild.kind)) {
 			const enumSlot = loneEnumChoiceSlot(node);
-			if (enumSlot === undefined) return EMPTY;
+			if (enumSlot === undefined) {
+				const hoisted = hoistedCandidatesOf(node, nodeMap, isEmitted, undefined);
+				return hoisted.length === 0 ? EMPTY : resolveCandidates(node, hoisted, nodeMap, isEmitted, nextVisiting);
+			}
 			slot = enumSlot;
 		} else {
 			slot = node.soleSlot!;
@@ -158,7 +188,7 @@ function derive(
 				const entry: SubFactory = { name, slot, residual, arm };
 				candidates.push({ name, entry, claimant: claimantOf(entry) });
 			}
-			return resolveCandidates(node, candidates, residual, nodeMap, isEmitted, nextVisiting);
+			return resolveCandidates(node, candidates, nodeMap, isEmitted, nextVisiting);
 		}
 	}
 
@@ -206,14 +236,14 @@ function derive(
 			candidates.push({ name: flatName, entry, claimant: claimantOf(entry) });
 		}
 	}
+	candidates.push(...hoistedCandidatesOf(node, nodeMap, isEmitted, slot));
 
-	return resolveCandidates(node, candidates, residual, nodeMap, isEmitted, nextVisiting);
+	return resolveCandidates(node, candidates, nodeMap, isEmitted, nextVisiting);
 }
 
 function resolveCandidates(
 	node: AssembledNode,
 	candidates: Candidate[],
-	residual: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	isEmitted: IsEmittedPredicate,
 	nextVisiting: ReadonlySet<string>
@@ -253,9 +283,9 @@ function resolveCandidates(
 		});
 	}
 
-	const residualKeys = new Set(residual.map((f) => f.configKey));
 	const entries: SubFactory[] = [];
 	for (const entry of resolved) {
+		const residualKeys = new Set(entry.residual.map((f) => f.configKey));
 		const keys = armConfigKeys(entry, nodeMap, { isEmitted }, nextVisiting);
 		const collides = keys.some((k) => residualKeys.has(k));
 		if (collides) {
@@ -318,6 +348,31 @@ function subFactoriesInternal(
 	return result;
 }
 
+export interface SpliceSeat {
+	readonly slot: AssembledNonterminal;
+	readonly group: AssembledNode;
+}
+
+export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat | undefined {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
+	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return undefined;
+	const seats: SpliceSeat[] = [];
+	for (const slot of node.slots) {
+		if (isMultiple(slot) || slot.values.length !== 1) continue;
+		const value = slot.values[0]!;
+		if (!isNodeRef(value)) continue;
+		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
+		if (!(group instanceof AbstractAssembledCompound) || !group.hoisted) continue;
+		if (group.rawFactoryName === undefined || classifyFactoryShape(group, nodeMap) !== 'config') continue;
+		seats.push({ slot, group });
+	}
+	return seats.length === 1 ? seats[0] : undefined;
+}
+
+export function configKeysOf(node: AssembledNode): readonly string[] {
+	return isSlotBearingCompound(node) ? node.slots.map((f) => f.configKey) : [];
+}
+
 export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts: SubFactoryOptions = {}): SubFactorySet {
 	return subFactoriesInternal(node, nodeMap, opts.isEmitted ?? DEFAULT_IS_EMITTED, new Set());
 }
@@ -341,7 +396,7 @@ export function armConfigKeys(
 	if (arm.via === 'value') return [];
 	if (arm.path.length === 0) {
 		if (!armIsConfigShaped(sub, nodeMap, opts)) return [];
-		return isSlotBearingCompound(arm.child) ? arm.child.slots.map((f) => f.configKey) : [];
+		return configKeysOf(arm.child);
 	}
 	if (visiting.has(arm.child.kind)) return [];
 	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);

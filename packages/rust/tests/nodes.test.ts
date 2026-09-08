@@ -2146,7 +2146,9 @@ describe('visibility_modifier sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('inPath builds the parent', () => {
-		const node = ir.visibilityModifier.inPath({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
+		const node = ir.visibilityModifier.inPath({
+			path: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3673,6 +3675,33 @@ describe('range_expression sub-factories', () => {
 		const node = ir.rangeExpression.binary({
 			start: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
 			operator: '..',
+			end: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangeExpression);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('dotDot builds the parent', () => {
+		const node = ir.rangeExpression.dotDot({
+			start: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
+			end: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangeExpression);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('dotDotDot builds the parent', () => {
+		const node = ir.rangeExpression.dotDotDot({
+			start: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
+			end: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangeExpression);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('dotDotEq builds the parent', () => {
+		const node = ir.rangeExpression.dotDotEq({
+			start: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
 			end: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.RangeExpression);
@@ -5714,7 +5743,7 @@ describe('closure_expression sub-factories', () => {
 	it('expr builds the parent', () => {
 		const node = ir.closureExpression.expr({
 			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
-			content: [{ $type: TSKindId.Anonymous, $text: '_', $source: 2, $named: true } as any]
+			content: [{ body: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.ClosureExpression);
 		expect((node as any).content()?.$type).toBe(TSKindId.ClosureExpressionExpr);
@@ -6333,9 +6362,35 @@ describe('range_pattern sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.RangePatternWithLeft);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('leftWithRight builds the parent', () => {
+		const node = ir.rangePattern.leftWithRight({
+			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any,
+			content: '...',
+			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.RangePatternWithLeft);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('prefix builds the parent', () => {
 		const node = ir.rangePattern.prefix({
 			content: '..=',
+			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.RangePatternPrefix);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('dotDotEq builds the parent', () => {
+		const node = ir.rangePattern.dotDotEq({
+			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.RangePatternPrefix);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('dotDot builds the parent', () => {
+		const node = ir.rangePattern.dotDot({
 			right: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePattern);
