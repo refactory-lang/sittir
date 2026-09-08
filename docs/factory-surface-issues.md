@@ -109,8 +109,21 @@ composes the mounts in slot order rather than refusing the second.
 Generated: typescript `ir.arguments.strict("result", TSKindId.Comma, "format")`.
 Error at render: `unknown kind id 14 in ArgumentsArgumentsTransportSlot`. The
 comma is the list's separator, which the list factory supplies itself, and the
-two operands print as bare text where an expression node is wanted. Both are
-the emitter's element projection, not the surface.
+two operands print as bare text where an expression node is wanted.
+
+The wrap layer already answers this: a slot's contents are filtered to the
+kinds the slot admits, so `arguments._arguments` reads as `["result","format"]`
+with the comma in `$other`, and `nodeToConfig` handles that shape correctly.
+The example emitter does not use it — it re-reads each child raw through
+`handle.read`, which hands the separator back as an element.
+
+Feeding the emitter `materializeWrappedNodeData` instead does fix this, and
+typescript's rebuild count falls, but it costs rust: the wrapped read collapses
+a token tree's `_non_special_token` children to bare text, so
+`ir.delimTokenTree.paren.strict("Debug", {}, "Clone")` loses the identifier and
+punctuation the raw read carried, and the rust rebuild throws again. Both reads
+are lossy in different places; the emitter needs the wrapped read's slot
+filtering without its text collapse.
 
 ## Loose surface
 
