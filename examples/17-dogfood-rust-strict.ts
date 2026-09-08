@@ -1,4 +1,4 @@
-import { Delimiter, ir } from '@sittir/rust';
+import { Delimiter, ir, TSKindId } from '@sittir/rust';
 
 // Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a
@@ -31,6 +31,8 @@ const id = (text: string) => ir.identifier(text);
 const ns = (path: string, name: string) => ir.scopedIdentifier.strict({ path: id(path), name: id(name) });
 const scopedTy = (path: Parameters<typeof ir.scopedTypeIdentifier.strict>[0]['path'], name: string) =>
 	ir.scopedTypeIdentifier.strict({ path, name: id(name) });
+const str = (text: string) =>
+	ir.stringLiteral.strict({ stringOpen: ir.stringLiteralOpen('"'), elements: [ir.stringContent(text)] });
 
 /** `use crate::types::Edit;` */
 export function useEditStrict() {
@@ -52,8 +54,16 @@ export function deriveStrict() {
 		ir.attribute.strict({
 			path: id('derive'),
 			input: ir.attributeInput.strict({
-				arguments: ir.delimTokenTree.paren({
-					delimTokens: ['Debug', ',', 'Clone', ',', 'PartialEq', ',', 'Eq'],
+				arguments: ir.delimTokenTree.paren.strict({
+					delimTokens: [
+						id('Debug'),
+						TSKindId.Comma,
+						id('Clone'),
+						TSKindId.Comma,
+						id('PartialEq'),
+						TSKindId.Comma,
+						id('Eq'),
+					],
 				}),
 			}),
 		})
@@ -109,12 +119,10 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 	});
 }
 
-function writeCall(format: string, args: readonly string[]) {
+function writeCall(format: string) {
 	return ir.macroInvocation.strict({
 		macro: id('write'),
-		arguments: ir.delimTokenTree.paren({
-			delimTokens: ['f', ',', format, ...args.flatMap((arg) => [',', arg])],
-		}),
+		arguments: ir.delimTokenTree.paren.strict({ delimTokens: [id('f'), TSKindId.Comma, str(format)] }),
 	});
 }
 
@@ -149,16 +157,16 @@ export function displayImplStrict() {
 								matchArm: [
 									ir.matchArm.withComma({
 										pattern: armPattern('InvalidRange', ['start', 'end'] as const),
-										content: [writeCall('"invalid range"', ['start', 'end'])],
+										content: [writeCall('invalid edit range: start={start}, end={end}')],
 									}),
 									ir.matchArm.withComma({
 										pattern: armPattern('OutOfBounds', ['end', 'source_len'] as const),
-										content: [writeCall('"out of bounds"', ['end', 'source_len'])],
+										content: [writeCall('edit out of bounds: end={end} > source length={source_len}')],
 									}),
 								],
 								lastArm: ir.lastMatchArm.strict({
 									pattern: armPattern('NonCharBoundary', ['start', 'end'] as const),
-									value: writeCall('"non-char boundary"', ['start', 'end']),
+									value: writeCall('edit range not at UTF-8 char boundary: start={start}, end={end}'),
 								}),
 							}),
 						}),

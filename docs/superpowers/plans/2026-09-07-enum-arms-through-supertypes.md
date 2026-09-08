@@ -492,7 +492,7 @@ Reclassified slots: <list from Step 3>" -- packages/rust/.sittir packages/rust/s
 
 ---
 
-### Task 4: `ir` exposes aliased pattern leaves by the model's fact
+### Task 4: `ir` exposes aliased pattern leaves by the model's fact — DONE (hidden keywords stay off: their value is the id; a hidden pattern whose key keeps its underscore stays off; ceilings rust 274, typescript 253, python 201)
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/ir.ts:243-253` (`isFlatLeafOrKeyword`)
@@ -617,7 +617,7 @@ git commit -m "chore(generated): regenerate for the ir leaf exposure" -- package
 
 ---
 
-### Task 5: The rust strict example spells its token trees strictly
+### Task 5: The rust strict example spells its token trees strictly — DONE
 
 **Files:**
 - Modify: `examples/17-dogfood-rust-strict.ts` (`deriveStrict`, `writeCall`, the three `writeCall(...)` call sites, helper consts)
@@ -677,7 +677,7 @@ git commit -m "chore(examples): the rust strict dogfood spells its token trees s
 
 ---
 
-### Task 6: Spec status
+### Task 6: Spec status — DONE
 
 - [ ] **Step 1:** In `docs/superpowers/specs/2026-09-07-strict-rebuild-from-source-design.md` change the status line to `> **Status:** Storage and exposure landed (2026-09-07); the emitter follows its own plan.` and commit:
 

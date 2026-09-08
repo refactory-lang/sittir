@@ -1,6 +1,6 @@
 # Strict rebuild from source — the factory emitter and the gaps it measures
 
-> **Status:** Design (2026-09-07). Follows the skip-list retirement; depends on
+> **Status:** Storage and exposure landed (2026-09-08); the emitter follows its own plan.
 > the value-storage taxonomy (a value that resolves to a kind is stored as
 > its kind id).
 

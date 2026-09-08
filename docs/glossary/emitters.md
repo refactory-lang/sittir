@@ -11988,12 +11988,17 @@ preference; the literal texts are not part of the surface.
 ### `packages/codegen/src/emitters/ir.ts::isFlatLeafOrKeyword`
 
 ```text
-/** Does this keyword / pattern / enum kind get a flat `ir.<irKey>` entry —
- *  visible, not inlined, with a factory, a legal identifier for a key and a
- *  catalog id? One predicate for the pre-pass that maps flat keys to their
- *  factory references and for the two emission loops, so a group can learn
- *  whether it shares its name with a kind by the same rule that would have
- *  surfaced that kind. */
+/** Does this keyword / pattern kind get a flat `ir.<irKey>` entry —
+ *  user-facing (the assemble-time fact: visible, or hidden but an alias
+ *  source or a variant child; sittir's own whitespace kinds are not), not
+ *  inlined, with a factory, a public key (a legal identifier with no
+ *  leading underscore — a hidden pattern whose key kept one, python's
+ *  `_string_content` beside `string_content`, is not a second surface)
+ *  and a catalog id? A hidden keyword gets no entry: its value is its kind
+ *  id, so a slot takes `TSKindId.<Kind>` and there is nothing to build;
+ *  an enum of literals gets none for the same reason, per member. One
+ *  predicate for the pre-pass that maps flat keys to their factory
+ *  references and for the two emission loops. */
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`

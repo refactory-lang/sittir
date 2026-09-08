@@ -10,6 +10,7 @@ import {
 	AssembledToken,
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory } from './shared.ts';
+import { isHiddenKind } from '../dsl/rule-patterns.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
 } from './kind-discriminant.ts';
 import { bundleEntries } from './overlays/module.ts';
@@ -247,9 +248,9 @@ function isFlatLeafOrKeyword(
 	node: AssembledNode,
 	kindEntries: ReturnType<typeof collectKindEntries> | undefined
 ): boolean {
-	if (kind.startsWith('_') || node.factoryInline) return false;
-	if (!(node instanceof AssembledKeyword) && !(node instanceof AssembledPattern)) return false;
-	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
+	if (!node.userFacing || node.factoryInline) return false;
+	if (node instanceof AssembledKeyword ? isHiddenKind(kind) : !(node instanceof AssembledPattern)) return false;
+	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey) || node.irKey.startsWith('_')) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
 }
 
