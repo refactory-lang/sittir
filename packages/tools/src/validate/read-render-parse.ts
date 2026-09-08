@@ -416,9 +416,9 @@ export interface ReadRenderParseResult {
  * hard-fails decoding (`Missing field _content`).
  */
 export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
-	const leading = data.$triviaData?.leading;
+	const leading = data.$_trivia?.leading;
 	if (!leading || leading.length === 0) return 0;
-	const stripped = { ...data, $triviaData: { ...data.$triviaData, leading: undefined } } as AnyNodeData;
+	const stripped = { ...data, $_trivia: { ...data.$_trivia, leading: undefined } } as AnyNodeData;
 	return render(data).length - render(stripped).length;
 }
 

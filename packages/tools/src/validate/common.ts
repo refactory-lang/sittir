@@ -443,7 +443,7 @@ export interface NativeNodeCoords {
 	childIndex?: number;
 	/**
 	 * Set instead of `handle`/`childIndex` for a match found inside
-	 * `$triviaData` — those entries are fully materialized at read time
+	 * `$_trivia` — those entries are fully materialized at read time
 	 * (not lazy stubs), so they carry no handle+child-index coordinates
 	 * to re-read them by. Callers must use this data directly rather
 	 * than calling `handle.read(handle, childIndex)`.
@@ -469,7 +469,7 @@ function pushNativeCandidates(value: unknown, out: AnyNodeData[]): void {
 /**
  * Native NodeData's addressable child positions: named-slot (`_foo`) and
  * legacy (`$fields`) values, the anonymous-token bucket (`$other`), and
- * attached trivia (`$triviaData.leading`/`.trailing` — comment/extras
+ * attached trivia (`$_trivia.leading`/`.trailing` — comment/extras
  * nodes read_node.rs attaches to a SIBLING rather than re-parenting into
  * the normal field/children tree, so this is the only place they're
  * reachable from).
@@ -487,7 +487,7 @@ function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
 		}
 	}
 	pushNativeCandidates(d.$other, out);
-	const trivia = d.$triviaData;
+	const trivia = d.$_trivia;
 	if (trivia) {
 		pushNativeCandidates(trivia.leading, out);
 		pushNativeCandidates(trivia.trailing, out);
@@ -496,7 +496,7 @@ function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
 }
 
 function isTriviaEntry(parent: AnyNodeData, child: AnyNodeData): boolean {
-	const trivia = parent.$triviaData;
+	const trivia = parent.$_trivia;
 	if (!trivia) return false;
 	return (trivia.leading?.includes(child) ?? false) || (trivia.trailing?.includes(child) ?? false);
 }
@@ -1668,7 +1668,7 @@ interface ReadNodeLike {
 	readonly $childIndex?: number;
 	readonly $other?: unknown | readonly unknown[];
 	readonly $named?: boolean;
-	readonly $triviaData?: NodeTrivia;
+	readonly $_trivia?: NodeTrivia;
 }
 
 /**
@@ -2120,10 +2120,10 @@ function buildWithFactory(
  * the other place a node is remade from its config.
  */
 function carryTrivia(source: ReadNodeLike, built: unknown): unknown {
-	const trivia = source.$triviaData;
+	const trivia = source.$_trivia;
 	if (trivia === undefined || built === null || typeof built !== 'object') return built;
 	if (trivia.leading === undefined && trivia.trailing === undefined) return built;
-	(built as Record<string, unknown>).$triviaData = trivia;
+	(built as Record<string, unknown>).$_trivia = trivia;
 	return built;
 }
 

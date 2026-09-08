@@ -16987,7 +16987,7 @@
                 "end": 232
               },
               "$nodeHandle": 68719476807,
-              "$triviaData": {
+              "$_trivia": {
                 "leading": [
                   {
                     "$type": 320,
@@ -17648,7 +17648,7 @@
             "end": 232
           },
           "$nodeHandle": 68719476843,
-          "$triviaData": {
+          "$_trivia": {
             "leading": [
               {
                 "$type": 320,
@@ -18255,7 +18255,7 @@
           "end": 232
         },
         "$nodeHandle": 68719476871,
-        "$triviaData": {
+        "$_trivia": {
           "leading": [
             {
               "$type": 320,
@@ -18588,7 +18588,7 @@
         "end": 232
       },
       "$nodeHandle": 68719476768,
-      "$triviaData": {
+      "$_trivia": {
         "leading": [
           {
             "$type": 320,
@@ -44175,7 +44175,7 @@
             "end": 131
           },
           "$nodeHandle": 171798691908,
-          "$triviaData": {
+          "$_trivia": {
             "leading": [
               {
                 "$type": 320,
@@ -44884,7 +44884,7 @@
         "end": 131
       },
       "$nodeHandle": 171798691841,
-      "$triviaData": {
+      "$_trivia": {
         "leading": [
           {
             "$type": 320,
@@ -55209,7 +55209,7 @@
                           "end": 114
                         },
                         "$nodeHandle": 206158430228,
-                        "$triviaData": {
+                        "$_trivia": {
                           "leading": [
                             {
                               "$type": 320,
@@ -55425,7 +55425,7 @@
                       "end": 114
                     },
                     "$nodeHandle": 206158430239,
-                    "$triviaData": {
+                    "$_trivia": {
                       "leading": [
                         {
                           "$type": 320,
@@ -55608,7 +55608,7 @@
               "end": 114
             },
             "$nodeHandle": 206158430266,
-            "$triviaData": {
+            "$_trivia": {
               "leading": [
                 {
                   "$type": 320,
@@ -55769,7 +55769,7 @@
             "end": 114
           },
           "$nodeHandle": 206158430271,
-          "$triviaData": {
+          "$_trivia": {
             "leading": [
               {
                 "$type": 320,
@@ -81391,7 +81391,7 @@
             "end": 38
           },
           "$nodeHandle": 279172874244,
-          "$triviaData": {
+          "$_trivia": {
             "leading": [
               {
                 "$type": 323,
@@ -81469,7 +81469,7 @@
         "end": 38
       },
       "$nodeHandle": 279172874241,
-      "$triviaData": {
+      "$_trivia": {
         "leading": [
           {
             "$type": 323,

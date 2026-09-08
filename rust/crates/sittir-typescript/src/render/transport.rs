@@ -44116,7 +44116,7 @@ pub struct ProgramTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_hash_bang_line"))]
     pub hash_bang_line: Option<::sittir_core::SlotValue<HashBangLineTransport>>,
@@ -44205,7 +44205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashBangLineTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -44234,7 +44234,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashBangLineTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -44292,7 +44292,7 @@ pub struct ExportStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementContentTransportSlot>,
@@ -44345,7 +44345,7 @@ pub struct NamespaceExportTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_export_name"))]
     pub module_export_name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameTransportSlot>,
@@ -44416,7 +44416,7 @@ pub struct ExportClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifiers"))]
     pub export_specifiers: Option<::sittir_core::SlotValue<ExportSpecifiersTransport>>,
@@ -44487,7 +44487,7 @@ pub struct ExportSpecifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_kind"))]
     pub export_kind: Option<::sittir_core::SlotValue<Box<AnyTransport>>>,
@@ -44578,7 +44578,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
             ::napi::ValueType::Number => "import".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "import".to_string())
             }
         };
@@ -44607,7 +44607,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -44665,7 +44665,7 @@ pub struct ImportStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause"))]
     pub import_clause: Option<::sittir_core::SlotValue<Box<AnyTransport>>>,
@@ -44739,7 +44739,7 @@ pub struct ImportClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportClauseContentTransportSlot>,
@@ -44792,7 +44792,7 @@ pub struct NamespaceImportTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -44863,7 +44863,7 @@ pub struct NamedImportsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifiers"))]
     pub import_specifiers: Option<::sittir_core::SlotValue<ImportSpecifiersTransport>>,
@@ -44934,7 +44934,7 @@ pub struct ImportSpecifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_kind"))]
     pub import_kind: Option<::sittir_core::SlotValue<Box<AnyTransport>>>,
@@ -44996,7 +44996,7 @@ pub struct ImportAttributeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_kind"))]
     pub attribute_kind: ::sittir_core::SlotValue<Box<AnyTransport>>,
@@ -45058,7 +45058,7 @@ pub struct ExpressionStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
@@ -45120,7 +45120,7 @@ pub struct VariableDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
@@ -45200,7 +45200,7 @@ pub struct LexicalDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
     pub kind: ::sittir_core::SlotValue<KindEnum>,
@@ -45277,7 +45277,7 @@ pub struct VariableDeclaratorTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<VariableDeclaratorContentTransportSlot>,
@@ -45330,7 +45330,7 @@ pub struct StatementBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
@@ -45413,7 +45413,7 @@ pub struct ElseClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
@@ -45478,7 +45478,7 @@ pub struct IfStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
@@ -45549,7 +45549,7 @@ pub struct SwitchStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
@@ -45617,7 +45617,7 @@ pub struct ForStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_initializer"))]
     pub initializer: ::sittir_core::SlotValue<ForStatementInitializerTransportSlot>,
@@ -45706,7 +45706,7 @@ pub struct ForInStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_marker"))]
     pub await_marker: Option<::sittir_core::SlotValue<KwAwaitMarkerTransport>>,
@@ -45795,7 +45795,7 @@ pub struct WhileStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
@@ -45863,7 +45863,7 @@ pub struct DoStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
@@ -45940,7 +45940,7 @@ pub struct TryStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
@@ -46011,7 +46011,7 @@ pub struct WithStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
@@ -46079,7 +46079,7 @@ pub struct BreakStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<::sittir_core::SlotValue<IdentifierTransport>>,
@@ -46147,7 +46147,7 @@ pub struct ContinueStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<::sittir_core::SlotValue<IdentifierTransport>>,
@@ -46215,7 +46215,7 @@ pub struct DebuggerStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<DebuggerStatementTerminatorTransportSlot>,
@@ -46280,7 +46280,7 @@ pub struct ReturnStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<ReturnStatementExpressionTransportSlot>>,
@@ -46348,7 +46348,7 @@ pub struct ThrowStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ThrowStatementExpressionTransportSlot>,
@@ -46436,7 +46436,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
             ::napi::ValueType::Number => ";".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ";".to_string())
             }
         };
@@ -46465,7 +46465,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -46523,7 +46523,7 @@ pub struct LabeledStatementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: ::sittir_core::SlotValue<StatementIdentifierTransport>,
@@ -46591,7 +46591,7 @@ pub struct SwitchBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases"))]
     pub cases: Option<Vec<::sittir_core::SlotValue<SwitchBodyCasesTransportSlot>>>,
@@ -46671,7 +46671,7 @@ pub struct SwitchCaseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<SwitchCaseValueTransportSlot>,
@@ -46754,7 +46754,7 @@ pub struct SwitchDefaultTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
@@ -46834,7 +46834,7 @@ pub struct CatchClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
@@ -46902,7 +46902,7 @@ pub struct FinallyClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
@@ -46967,7 +46967,7 @@ pub struct ParenthesizedExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedExpressionContentTransportSlot>>,
@@ -47038,7 +47038,7 @@ pub struct YieldExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
@@ -47106,7 +47106,7 @@ pub struct ObjectTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPropertiesTransportSlot>>>>,
@@ -47189,7 +47189,7 @@ pub struct ObjectPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPatternPropertiesTransportSlot>>>>,
@@ -47272,7 +47272,7 @@ pub struct AssignmentPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<PatternTransport>,
@@ -47340,7 +47340,7 @@ pub struct ObjectAssignmentPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ObjectAssignmentPatternLeftTransportSlot>,
@@ -47408,7 +47408,7 @@ pub struct ArrayTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayElementsTransportSlot>>>>,
@@ -47491,7 +47491,7 @@ pub struct ArrayPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayPatternElementsTransportSlot>>>>,
@@ -47574,7 +47574,7 @@ pub struct NestedIdentifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<NestedIdentifierObjectTransportSlot>>,
@@ -47642,7 +47642,7 @@ pub struct ClassTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -47728,7 +47728,7 @@ pub struct ClassDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -47817,7 +47817,7 @@ pub struct ClassHeritageTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ClassHeritageContentTransportSlot>,
@@ -47870,7 +47870,7 @@ pub struct FunctionExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
     pub async_marker: Option<::sittir_core::SlotValue<KwAsyncMarkerTransport>>,
@@ -47950,7 +47950,7 @@ pub struct FunctionDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
     pub async_marker: Option<::sittir_core::SlotValue<KwAsyncMarkerTransport>>,
@@ -48033,7 +48033,7 @@ pub struct GeneratorFunctionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
     pub async_marker: Option<::sittir_core::SlotValue<KwAsyncMarkerTransport>>,
@@ -48119,7 +48119,7 @@ pub struct GeneratorFunctionDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
     pub async_marker: Option<::sittir_core::SlotValue<KwAsyncMarkerTransport>>,
@@ -48208,7 +48208,7 @@ pub struct ArrowFunctionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
     pub async_marker: Option<::sittir_core::SlotValue<KwAsyncMarkerTransport>>,
@@ -48305,7 +48305,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "?.".to_string())
             }
         };
@@ -48363,7 +48363,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -48421,7 +48421,7 @@ pub struct CallExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<CallExpressionContentTransportSlot>>,
@@ -48474,7 +48474,7 @@ pub struct NewExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constructor"))]
     pub constructor: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
@@ -48545,7 +48545,7 @@ pub struct AwaitExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -48610,7 +48610,7 @@ pub struct MemberExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<MemberExpressionObjectTransportSlot>>,
@@ -48675,7 +48675,7 @@ pub struct SubscriptExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<SubscriptExpressionObjectTransportSlot>>,
@@ -48752,7 +48752,7 @@ pub struct AssignmentExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_using_marker"))]
     pub using_marker: Option<::sittir_core::SlotValue<KwUsingMarkerTransport>>,
@@ -48823,7 +48823,7 @@ pub struct AugmentedAssignmentExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<AugmentedAssignmentExpressionLeftTransportSlot>>,
@@ -48888,7 +48888,7 @@ pub struct SpreadElementTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -48953,7 +48953,7 @@ pub struct TernaryExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -49030,7 +49030,7 @@ pub struct BinaryExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
@@ -49098,7 +49098,7 @@ pub struct UnaryExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<UnaryExpressionOperatorEnum>,
@@ -49160,7 +49160,7 @@ pub struct UpdateExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<UpdateExpressionContentTransportSlot>>,
@@ -49213,7 +49213,7 @@ pub struct SequenceExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
@@ -49284,7 +49284,7 @@ pub struct StringTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<StringContentTransportSlot>,
@@ -49355,7 +49355,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedDoubleStringFragmentTra
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -49384,7 +49384,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedDoubleStringFragmentTra
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -49460,7 +49460,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedSingleStringFragmentTra
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -49489,7 +49489,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnescapedSingleStringFragmentTra
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -49565,7 +49565,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -49594,7 +49594,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -49670,7 +49670,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommentTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -49699,7 +49699,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -49757,7 +49757,7 @@ pub struct TemplateStringTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<TemplateStringElementsTransportSlot>>>,
@@ -49822,7 +49822,7 @@ pub struct TemplateSubstitutionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<TemplateSubstitutionExpressionTransportSlot>,
@@ -49893,7 +49893,7 @@ pub struct RegexTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<RegexPatternTransport, true>,
@@ -49979,7 +49979,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexPatternTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -50008,7 +50008,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexPatternTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50084,7 +50084,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexFlagsTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -50113,7 +50113,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RegexFlagsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50189,7 +50189,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -50218,7 +50218,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50294,7 +50294,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -50323,7 +50323,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50399,7 +50399,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrivatePropertyIdentifierTranspo
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -50428,7 +50428,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrivatePropertyIdentifierTranspo
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50486,7 +50486,7 @@ pub struct MetaPropertyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<MetaPropertyContentTransportSlot>,
@@ -50559,7 +50559,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThisTransport {
             ::napi::ValueType::Number => "this".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "this".to_string())
             }
         };
@@ -50588,7 +50588,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThisTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50666,7 +50666,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
             ::napi::ValueType::Number => "super".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "super".to_string())
             }
         };
@@ -50695,7 +50695,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50773,7 +50773,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
             ::napi::ValueType::Number => "true".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "true".to_string())
             }
         };
@@ -50802,7 +50802,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50880,7 +50880,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
             ::napi::ValueType::Number => "false".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "false".to_string())
             }
         };
@@ -50909,7 +50909,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -50987,7 +50987,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NullTransport {
             ::napi::ValueType::Number => "null".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "null".to_string())
             }
         };
@@ -51016,7 +51016,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NullTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -51094,7 +51094,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UndefinedTransport {
             ::napi::ValueType::Number => "undefined".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "undefined".to_string())
             }
         };
@@ -51123,7 +51123,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UndefinedTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -51181,7 +51181,7 @@ pub struct ArgumentsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<Vec<Option<::sittir_core::SlotValue<ArgumentsArgumentsTransportSlot>>>>,
@@ -51264,7 +51264,7 @@ pub struct DecoratorTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<DecoratorContentTransportSlot>,
@@ -51329,7 +51329,7 @@ pub struct DecoratorMemberExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<DecoratorMemberExpressionObjectTransportSlot>>,
@@ -51397,7 +51397,7 @@ pub struct DecoratorCallExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<DecoratorCallExpressionFunctionTransportSlot>,
@@ -51462,7 +51462,7 @@ pub struct ClassBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<ClassBodyContentTransportSlot>>>,
@@ -51542,7 +51542,7 @@ pub struct FormalParametersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_elements"))]
     pub formal_parameters_elements: Option<::sittir_core::SlotValue<FormalParametersElementsTransport>>,
@@ -51613,7 +51613,7 @@ pub struct ClassStaticBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
@@ -51681,7 +51681,7 @@ pub struct RestPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lhs_expression"))]
     pub lhs_expression: ::sittir_core::SlotValue<RestPatternLhsExpressionTransportSlot>,
@@ -51746,7 +51746,7 @@ pub struct MethodDefinitionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
@@ -51850,7 +51850,7 @@ pub struct PairTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
     pub key: ::sittir_core::SlotValue<PairKeyTransportSlot>,
@@ -51918,7 +51918,7 @@ pub struct PairPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
     pub key: ::sittir_core::SlotValue<PairPatternKeyTransportSlot>,
@@ -51986,7 +51986,7 @@ pub struct ComputedPropertyNameTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -52274,7 +52274,7 @@ pub struct PublicFieldDefinitionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -52387,7 +52387,7 @@ pub struct NonNullExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -52452,7 +52452,7 @@ pub struct MethodSignatureTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
@@ -52553,7 +52553,7 @@ pub struct AbstractMethodSignatureTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
@@ -52651,7 +52651,7 @@ pub struct FunctionSignatureTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
     pub async_marker: Option<::sittir_core::SlotValue<KwAsyncMarkerTransport>>,
@@ -52731,7 +52731,7 @@ pub struct DecoratorParenthesizedExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<DecoratorParenthesizedExpressionContentTransportSlot>,
@@ -52802,7 +52802,7 @@ pub struct TypeAssertionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
@@ -52864,7 +52864,7 @@ pub struct AsExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -52932,7 +52932,7 @@ pub struct SatisfiesExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -53000,7 +53000,7 @@ pub struct InstantiationExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -53062,7 +53062,7 @@ pub struct ImportRequireClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -53148,7 +53148,7 @@ pub struct ExtendsClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single"))]
     pub extends_clause_single: Vec<::sittir_core::SlotValue<ExtendsClauseSingleTransport>>,
@@ -53225,7 +53225,7 @@ pub struct ExtendsClauseSingleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -53287,7 +53287,7 @@ pub struct ImplementsClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
@@ -53364,7 +53364,7 @@ pub struct AmbientDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AmbientDeclarationContentTransportSlot>>,
@@ -53429,7 +53429,7 @@ pub struct AbstractClassDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -53521,7 +53521,7 @@ pub struct ModuleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<ModuleNameTransportSlot>,
@@ -53589,7 +53589,7 @@ pub struct InternalModuleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<InternalModuleNameTransportSlot>,
@@ -53657,7 +53657,7 @@ pub struct ImportAliasTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -53734,7 +53734,7 @@ pub struct NestedTypeIdentifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module"))]
     pub module: ::sittir_core::SlotValue<NestedTypeIdentifierModuleTransportSlot>,
@@ -53802,7 +53802,7 @@ pub struct InterfaceDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -53876,7 +53876,7 @@ pub struct ExtendsTypeClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<::sittir_core::SlotValue<ExtendsTypeClauseTypeTransportSlot>>,
@@ -53953,7 +53953,7 @@ pub struct EnumDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const_marker"))]
     pub const_marker: Option<::sittir_core::SlotValue<KwConstMarkerTransport>>,
@@ -54024,7 +54024,7 @@ pub struct EnumBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements"))]
     pub enum_body_elements: Option<::sittir_core::SlotValue<EnumBodyElementsTransport>>,
@@ -54095,7 +54095,7 @@ pub struct EnumAssignmentTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<EnumAssignmentNameTransportSlot>,
@@ -54163,7 +54163,7 @@ pub struct TypeAliasDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -54353,7 +54353,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideModifierTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "override".to_string())
             }
         };
@@ -54411,7 +54411,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideModifierTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -54469,7 +54469,7 @@ pub struct RequiredParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -54561,7 +54561,7 @@ pub struct OptionalParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -54659,7 +54659,7 @@ pub struct OmittingTypeAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -54724,7 +54724,7 @@ pub struct AddingTypeAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -54789,7 +54789,7 @@ pub struct OptingTypeAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -54854,7 +54854,7 @@ pub struct TypeAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -54919,7 +54919,7 @@ pub struct TypeQueryMemberExpressionInTypeAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot>>,
@@ -54987,7 +54987,7 @@ pub struct TypeQueryCallExpressionInTypeAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<Box<TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot>>,
@@ -55049,7 +55049,7 @@ pub struct AssertsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AssertsContentTransportSlot>>,
@@ -55114,7 +55114,7 @@ pub struct AssertsAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts"))]
     pub asserts: ::sittir_core::SlotValue<AssertsTransport>,
@@ -55179,7 +55179,7 @@ pub struct TupleParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<TupleParameterNameTransportSlot>,
@@ -55241,7 +55241,7 @@ pub struct OptionalTupleParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -55309,7 +55309,7 @@ pub struct OptionalTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -55374,7 +55374,7 @@ pub struct RestTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -55439,7 +55439,7 @@ pub struct ConstructorTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
     pub abstract_marker: Option<::sittir_core::SlotValue<KwAbstractMarkerTransport>>,
@@ -55519,7 +55519,7 @@ pub struct TemplateTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<TemplateTypeContentTransportSlot>,
@@ -55590,7 +55590,7 @@ pub struct TemplateLiteralTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<TemplateLiteralTypeElementsTransportSlot>>>,
@@ -55655,7 +55655,7 @@ pub struct InferTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -55729,7 +55729,7 @@ pub struct ConditionalTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -55815,7 +55815,7 @@ pub struct GenericTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
@@ -55877,7 +55877,7 @@ pub struct TypePredicateTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<TypePredicateNameTransportSlot>,
@@ -55945,7 +55945,7 @@ pub struct TypePredicateAnnotationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate"))]
     pub type_predicate: ::sittir_core::SlotValue<TypePredicateTransport>,
@@ -56010,7 +56010,7 @@ pub struct TypeQueryMemberExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>,
@@ -56075,7 +56075,7 @@ pub struct TypeQuerySubscriptExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>,
@@ -56149,7 +56149,7 @@ pub struct TypeQueryCallExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<Box<TypeQueryCallExpressionFunctionTransportSlot>>,
@@ -56211,7 +56211,7 @@ pub struct TypeQueryInstantiationExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<TypeQueryInstantiationExpressionFunctionTransportSlot>,
@@ -56273,7 +56273,7 @@ pub struct TypeQueryTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<TypeQueryContentTransportSlot>,
@@ -56338,7 +56338,7 @@ pub struct IndexTypeQueryTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
@@ -56403,7 +56403,7 @@ pub struct LookupTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
@@ -56477,7 +56477,7 @@ pub struct MappedTypeClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -56554,7 +56554,7 @@ pub struct LiteralTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<LiteralTypeContentTransportSlot>,
@@ -56607,7 +56607,7 @@ pub struct _NumberTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<NumberOperatorEnum>,
@@ -56689,7 +56689,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExistentialTypeTransport {
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
@@ -56718,7 +56718,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExistentialTypeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -56776,7 +56776,7 @@ pub struct FlowMaybeTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
@@ -56841,7 +56841,7 @@ pub struct ParenthesizedTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -57045,7 +57045,7 @@ pub struct TypeArgumentsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
@@ -57116,7 +57116,7 @@ pub struct ObjectTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening"))]
     pub opening: ::sittir_core::SlotValue<Box<AnyTransport>>,
@@ -57193,7 +57193,7 @@ pub struct CallSignatureTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -57258,7 +57258,7 @@ pub struct PropertySignatureTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
@@ -57341,7 +57341,7 @@ pub struct TypeParametersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements"))]
     pub type_parameters_elements: ::sittir_core::SlotValue<TypeParametersElementsTransport>,
@@ -57412,7 +57412,7 @@ pub struct TypeParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const_marker"))]
     pub const_marker: Option<::sittir_core::SlotValue<KwConstMarkerTransport>>,
@@ -57480,7 +57480,7 @@ pub struct DefaultTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -57545,7 +57545,7 @@ pub struct ConstraintTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -57607,7 +57607,7 @@ pub struct ConstructSignatureTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_marker"))]
     pub abstract_marker: Option<::sittir_core::SlotValue<KwAbstractMarkerTransport>>,
@@ -57681,7 +57681,7 @@ pub struct IndexSignatureTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
     pub sign: Option<::sittir_core::SlotValue<Box<AnyTransport>>>,
@@ -57767,7 +57767,7 @@ pub struct ArrayTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
@@ -57838,7 +57838,7 @@ pub struct TupleTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_members"))]
     pub tuple_type_members: Option<::sittir_core::SlotValue<TupleTypeMembersTransport>>,
@@ -57909,7 +57909,7 @@ pub struct ReadonlyTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -57974,7 +57974,7 @@ pub struct UnionTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
@@ -58042,7 +58042,7 @@ pub struct IntersectionTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
@@ -58110,7 +58110,7 @@ pub struct FunctionTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -58199,7 +58199,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeIdentifierTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -58228,7 +58228,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeIdentifierTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -58312,7 +58312,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAwaitMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "await".to_string())
             }
         };
@@ -58370,7 +58370,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAwaitMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -58454,7 +58454,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "async".to_string())
             }
         };
@@ -58512,7 +58512,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -58596,7 +58596,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUsingMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "using".to_string())
             }
         };
@@ -58654,7 +58654,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUsingMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -58738,7 +58738,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "static".to_string())
             }
         };
@@ -58796,7 +58796,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -58880,7 +58880,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwDeclareMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "declare".to_string())
             }
         };
@@ -58938,7 +58938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwDeclareMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -59022,7 +59022,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "abstract".to_string())
             }
         };
@@ -59080,7 +59080,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -59164,7 +59164,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAccessorMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "accessor".to_string())
             }
         };
@@ -59222,7 +59222,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAccessorMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -59306,7 +59306,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "const".to_string())
             }
         };
@@ -59364,7 +59364,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -59422,7 +59422,7 @@ pub struct ExportSpecifiersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier"))]
     pub export_specifier: Vec<::sittir_core::SlotValue<ExportSpecifierTransport>>,
@@ -59496,7 +59496,7 @@ pub struct ImportSpecifiersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier"))]
     pub import_specifier: Vec<::sittir_core::SlotValue<ImportSpecifierTransport>>,
@@ -59570,7 +59570,7 @@ pub struct FormalParametersElementsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter"))]
     pub formal_parameter: Vec<::sittir_core::SlotValue<FormalParametersElementsFormalParameterTransportSlot>>,
@@ -59644,7 +59644,7 @@ pub struct EnumBodyElementsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<EnumBodyElementsContentTransportSlot>>>,
@@ -59718,7 +59718,7 @@ pub struct TypesTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
@@ -59792,7 +59792,7 @@ pub struct TypeParametersElementsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter"))]
     pub type_parameter: Vec<::sittir_core::SlotValue<TypeParameterTransport>>,
@@ -59866,7 +59866,7 @@ pub struct TupleTypeMembersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member"))]
     pub tuple_type_member: Vec<::sittir_core::SlotValue<TupleTypeMembersTupleTypeMemberTransportSlot>>,
@@ -59940,7 +59940,7 @@ pub struct ImportClauseGroupTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportClauseGroupContentTransportSlot>,
@@ -60005,7 +60005,7 @@ pub struct CatchClauseGroupTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
     pub parameter: ::sittir_core::SlotValue<CatchClauseGroupParameterTransportSlot>,
@@ -60667,7 +60667,7 @@ pub struct AmbientDeclarationGlobalTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
@@ -60732,7 +60732,7 @@ pub struct AmbientDeclarationModuleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -60815,7 +60815,7 @@ pub struct ObjectTypeContentTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<ObjectTypeContentContentTransportSlot>>>,
@@ -60892,7 +60892,7 @@ pub struct ExportStatementDefaultTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultContentTransportSlot>,
@@ -60945,7 +60945,7 @@ pub struct ExportStatementNamespaceExportTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -61025,7 +61025,7 @@ pub struct ExportStatementTypeExportTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
@@ -61108,7 +61108,7 @@ pub struct ExportStatementEqualsExportTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -61182,7 +61182,7 @@ pub struct BinaryExpressionInTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<Box<BinaryExpressionInLeftTransportSlot>>,
@@ -61244,7 +61244,7 @@ pub struct ClassBodyMethodTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -61318,7 +61318,7 @@ pub struct ClassBodyMethodSigTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ClassBodyMethodSigTerminatorTransportSlot>,
@@ -61380,7 +61380,7 @@ pub struct ClassBodyMemberTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ClassBodyMemberTerminatorTransportSlot>,
@@ -61442,7 +61442,7 @@ pub struct IndexSignatureColonTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IndexSignatureColonNameTransportSlot>,
@@ -61510,7 +61510,7 @@ pub struct ImportStatementClauseFromTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: ::sittir_core::SlotValue<StringTransport>,
@@ -61578,7 +61578,7 @@ pub struct ImportSpecifierAsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<ImportSpecifierAsNameTransportSlot>,
@@ -61646,7 +61646,7 @@ pub struct ParenthesizedExpressionTypedTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
@@ -61708,7 +61708,7 @@ pub struct CallExpressionCallTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<Box<CallExpressionCallFunctionTransportSlot>>,
@@ -61773,7 +61773,7 @@ pub struct CallExpressionTemplateCallTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<Box<CallExpressionTemplateCallFunctionTransportSlot>>,
@@ -61835,7 +61835,7 @@ pub struct CallExpressionMemberTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
     pub function: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
@@ -61906,7 +61906,7 @@ pub struct StringDoubleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<StringDoubleElementsTransportSlot, true>>>,
@@ -61971,7 +61971,7 @@ pub struct StringSingleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<StringSingleElementsTransportSlot, true>>>,
@@ -62036,7 +62036,7 @@ pub struct UpdateExpressionPostfixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -62098,7 +62098,7 @@ pub struct UpdateExpressionPrefixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<OperatorEnum>,
@@ -62160,7 +62160,7 @@ pub struct ArrowFunctionParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
     pub parameter: ::sittir_core::SlotValue<ArrowFunctionParameterParameterTransportSlot>,
@@ -62213,7 +62213,7 @@ pub struct ClassHeritageExtendsClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause"))]
     pub extends_clause: ::sittir_core::SlotValue<ExtendsClauseTransport>,
@@ -62275,7 +62275,7 @@ pub struct ImportClauseDefaultImportTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: ::sittir_core::SlotValue<ImportClauseDefaultImportIdentifierTransportSlot>,
@@ -62337,7 +62337,7 @@ pub struct ExportStatementDefaultFromTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultFromContentTransportSlot>,
@@ -62405,7 +62405,7 @@ pub struct ExportStatementDefaultDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
@@ -62482,7 +62482,7 @@ pub struct ExportStatementDefaultFromStarFromTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: ::sittir_core::SlotValue<StringTransport>,
@@ -62553,7 +62553,7 @@ pub struct ExportStatementDefaultFromNsFromTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: ::sittir_core::SlotValue<StringTransport>,
@@ -62621,7 +62621,7 @@ pub struct ExportStatementDefaultFromClauseFromTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: ::sittir_core::SlotValue<StringTransport>,
@@ -62689,7 +62689,7 @@ pub struct ExportStatementDefaultDeclarationDefaultKwTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot>,
@@ -62754,7 +62754,7 @@ pub struct ExportStatementDefaultDeclarationDefaultKwValueTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -62816,7 +62816,7 @@ pub struct VariableDeclaratorPlainTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<VariableDeclaratorPlainNameTransportSlot>,
@@ -62887,7 +62887,7 @@ pub struct VariableDeclaratorDefiniteTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -62975,7 +62975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyNewTargetTransport {
             ::napi::ValueType::Number => "new . target".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "new . target".to_string())
             }
         };
@@ -63004,7 +63004,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyNewTargetTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -63082,7 +63082,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyImportMetaTransport 
             ::napi::ValueType::Number => "import . meta".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "import . meta".to_string())
             }
         };
@@ -63111,7 +63111,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyImportMetaTransport 
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -63169,7 +63169,7 @@ pub struct ForHeaderLhsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForHeaderLhsLeftTransportSlot>,
@@ -63222,7 +63222,7 @@ pub struct ForHeaderVarKindTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForHeaderVarKindLeftTransportSlot>,
@@ -63290,7 +63290,7 @@ pub struct ForHeaderLetConstKindTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
     pub kind: ::sittir_core::SlotValue<KindEnum>,
@@ -63381,7 +63381,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AutomaticSemicolonTransport {
             }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
             }
         };
@@ -63439,7 +63439,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AutomaticSemicolonTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -63517,7 +63517,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAutomaticSemico
             ::napi::ValueType::Number => "\n".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
             }
         };
@@ -63546,7 +63546,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAutomaticSemico
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -63622,7 +63622,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateCharsTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -63651,7 +63651,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateCharsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -63727,7 +63727,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TernaryQmarkTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -63756,7 +63756,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TernaryQmarkTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -63832,7 +63832,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -63861,7 +63861,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -63937,7 +63937,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrorTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -63966,7 +63966,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrorTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64042,7 +64042,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -64071,7 +64071,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64147,7 +64147,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorRecoveryTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -64176,7 +64176,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorRecoveryTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64252,7 +64252,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -64281,7 +64281,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TightTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64357,7 +64357,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -64386,7 +64386,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SpaceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64462,7 +64462,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -64491,7 +64491,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64567,7 +64567,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -64596,7 +64596,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64672,7 +64672,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_default()
             }
         };
@@ -64701,7 +64701,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64779,7 +64779,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
             ::napi::ValueType::Number => "*".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
             }
         };
@@ -64808,7 +64808,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64886,7 +64886,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
             ::napi::ValueType::Number => "as".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "as".to_string())
             }
         };
@@ -64915,7 +64915,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -64993,7 +64993,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
             ::napi::ValueType::Number => "{".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "{".to_string())
             }
         };
@@ -65022,7 +65022,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65100,7 +65100,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
             ::napi::ValueType::Number => "}".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "}".to_string())
             }
         };
@@ -65129,7 +65129,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65207,7 +65207,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
             ::napi::ValueType::Number => "type".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "type".to_string())
             }
         };
@@ -65236,7 +65236,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65314,7 +65314,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeofTransport {
             ::napi::ValueType::Number => "typeof".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "typeof".to_string())
             }
         };
@@ -65343,7 +65343,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeofTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65421,7 +65421,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonImportTransport {
             ::napi::ValueType::Number => "import".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "import".to_string())
             }
         };
@@ -65450,7 +65450,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonImportTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65528,7 +65528,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
             ::napi::ValueType::Number => ";".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ";".to_string())
             }
         };
@@ -65557,7 +65557,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65635,7 +65635,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
             ::napi::ValueType::Number => "with".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "with".to_string())
             }
         };
@@ -65664,7 +65664,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65742,7 +65742,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
             ::napi::ValueType::Number => "assert".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "assert".to_string())
             }
         };
@@ -65771,7 +65771,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65849,7 +65849,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VarTransport {
             ::napi::ValueType::Number => "var".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "var".to_string())
             }
         };
@@ -65878,7 +65878,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VarTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -65956,7 +65956,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
             ::napi::ValueType::Number => "else".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "else".to_string())
             }
         };
@@ -65985,7 +65985,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66063,7 +66063,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
             ::napi::ValueType::Number => "if".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "if".to_string())
             }
         };
@@ -66092,7 +66092,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66170,7 +66170,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchTransport {
             ::napi::ValueType::Number => "switch".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "switch".to_string())
             }
         };
@@ -66199,7 +66199,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66277,7 +66277,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
             ::napi::ValueType::Number => "for".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "for".to_string())
             }
         };
@@ -66306,7 +66306,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66384,7 +66384,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
             ::napi::ValueType::Number => "(".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "(".to_string())
             }
         };
@@ -66413,7 +66413,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66491,7 +66491,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
             ::napi::ValueType::Number => ")".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ")".to_string())
             }
         };
@@ -66520,7 +66520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66598,7 +66598,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
             ::napi::ValueType::Number => "while".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "while".to_string())
             }
         };
@@ -66627,7 +66627,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66705,7 +66705,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoTransport {
             ::napi::ValueType::Number => "do".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "do".to_string())
             }
         };
@@ -66734,7 +66734,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66812,7 +66812,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
             ::napi::ValueType::Number => "try".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "try".to_string())
             }
         };
@@ -66841,7 +66841,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -66919,7 +66919,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
             ::napi::ValueType::Number => "break".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "break".to_string())
             }
         };
@@ -66948,7 +66948,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67026,7 +67026,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
             ::napi::ValueType::Number => "continue".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "continue".to_string())
             }
         };
@@ -67055,7 +67055,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67133,7 +67133,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DebuggerTransport {
             ::napi::ValueType::Number => "debugger".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "debugger".to_string())
             }
         };
@@ -67162,7 +67162,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DebuggerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67240,7 +67240,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
             ::napi::ValueType::Number => "return".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "return".to_string())
             }
         };
@@ -67269,7 +67269,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67347,7 +67347,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowTransport {
             ::napi::ValueType::Number => "throw".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "throw".to_string())
             }
         };
@@ -67376,7 +67376,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67454,7 +67454,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
             ::napi::ValueType::Number => ":".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ":".to_string())
             }
         };
@@ -67483,7 +67483,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67561,7 +67561,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
             ::napi::ValueType::Number => "case".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "case".to_string())
             }
         };
@@ -67590,7 +67590,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67668,7 +67668,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
             ::napi::ValueType::Number => "default".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "default".to_string())
             }
         };
@@ -67697,7 +67697,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67775,7 +67775,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchTransport {
             ::napi::ValueType::Number => "catch".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "catch".to_string())
             }
         };
@@ -67804,7 +67804,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67882,7 +67882,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
             ::napi::ValueType::Number => "finally".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "finally".to_string())
             }
         };
@@ -67911,7 +67911,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -67989,7 +67989,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
             ::napi::ValueType::Number => "yield".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "yield".to_string())
             }
         };
@@ -68018,7 +68018,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68096,7 +68096,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
             ::napi::ValueType::Number => "=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "=".to_string())
             }
         };
@@ -68125,7 +68125,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68203,7 +68203,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
             ::napi::ValueType::Number => "[".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "[".to_string())
             }
         };
@@ -68232,7 +68232,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68310,7 +68310,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
             ::napi::ValueType::Number => "]".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "]".to_string())
             }
         };
@@ -68339,7 +68339,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68417,7 +68417,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
             ::napi::ValueType::Number => ".".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ".".to_string())
             }
         };
@@ -68446,7 +68446,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68524,7 +68524,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonClassTransport {
             ::napi::ValueType::Number => "class".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "class".to_string())
             }
         };
@@ -68553,7 +68553,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonClassTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68631,7 +68631,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTransport {
             ::napi::ValueType::Number => "function".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "function".to_string())
             }
         };
@@ -68660,7 +68660,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68738,7 +68738,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqGtTransport {
             ::napi::ValueType::Number => "=>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "=>".to_string())
             }
         };
@@ -68767,7 +68767,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqGtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68845,7 +68845,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkDotTransport {
             ::napi::ValueType::Number => "?.".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "?.".to_string())
             }
         };
@@ -68874,7 +68874,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkDotTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -68952,7 +68952,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewTransport {
             ::napi::ValueType::Number => "new".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "new".to_string())
             }
         };
@@ -68981,7 +68981,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69059,7 +69059,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
             ::napi::ValueType::Number => "await".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "await".to_string())
             }
         };
@@ -69088,7 +69088,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69166,7 +69166,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotDotDotTransport {
             ::napi::ValueType::Number => "...".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "...".to_string())
             }
         };
@@ -69195,7 +69195,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotDotDotTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69273,7 +69273,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
             ::napi::ValueType::Number => "?".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "?".to_string())
             }
         };
@@ -69302,7 +69302,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69380,7 +69380,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpTransport {
             ::napi::ValueType::Number => "&&".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "&&".to_string())
             }
         };
@@ -69409,7 +69409,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69487,7 +69487,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeTransport {
             ::napi::ValueType::Number => "||".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "||".to_string())
             }
         };
@@ -69516,7 +69516,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69594,7 +69594,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
             ::napi::ValueType::Number => ">>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>".to_string())
             }
         };
@@ -69623,7 +69623,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69701,7 +69701,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtTransport {
             ::napi::ValueType::Number => ">>>".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>>".to_string())
             }
         };
@@ -69730,7 +69730,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69808,7 +69808,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
             ::napi::ValueType::Number => "<<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "<<".to_string())
             }
         };
@@ -69837,7 +69837,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -69915,7 +69915,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
             ::napi::ValueType::Number => "&".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "&".to_string())
             }
         };
@@ -69944,7 +69944,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70022,7 +70022,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
             ::napi::ValueType::Number => "^".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "^".to_string())
             }
         };
@@ -70051,7 +70051,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70129,7 +70129,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
             ::napi::ValueType::Number => "|".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "|".to_string())
             }
         };
@@ -70158,7 +70158,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70236,7 +70236,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
             ::napi::ValueType::Number => "+".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "+".to_string())
             }
         };
@@ -70265,7 +70265,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70343,7 +70343,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
             ::napi::ValueType::Number => "-".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "-".to_string())
             }
         };
@@ -70372,7 +70372,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70450,7 +70450,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
             ::napi::ValueType::Number => "/".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "/".to_string())
             }
         };
@@ -70479,7 +70479,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70557,7 +70557,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
             ::napi::ValueType::Number => "%".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "%".to_string())
             }
         };
@@ -70586,7 +70586,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70664,7 +70664,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
             ::napi::ValueType::Number => "**".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "**".to_string())
             }
         };
@@ -70693,7 +70693,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70771,7 +70771,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
             ::napi::ValueType::Number => "<".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "<".to_string())
             }
         };
@@ -70800,7 +70800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70878,7 +70878,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
             ::napi::ValueType::Number => "<=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "<=".to_string())
             }
         };
@@ -70907,7 +70907,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -70985,7 +70985,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
             ::napi::ValueType::Number => "==".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "==".to_string())
             }
         };
@@ -71014,7 +71014,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71092,7 +71092,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqEqTransport {
             ::napi::ValueType::Number => "===".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "===".to_string())
             }
         };
@@ -71121,7 +71121,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71199,7 +71199,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
             ::napi::ValueType::Number => "!=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "!=".to_string())
             }
         };
@@ -71228,7 +71228,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71306,7 +71306,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqEqTransport {
             ::napi::ValueType::Number => "!==".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "!==".to_string())
             }
         };
@@ -71335,7 +71335,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71413,7 +71413,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
             ::napi::ValueType::Number => ">=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ">=".to_string())
             }
         };
@@ -71442,7 +71442,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71520,7 +71520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
             ::napi::ValueType::Number => ">".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ">".to_string())
             }
         };
@@ -71549,7 +71549,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71627,7 +71627,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkTransport {
             ::napi::ValueType::Number => "??".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "??".to_string())
             }
         };
@@ -71656,7 +71656,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71734,7 +71734,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InstanceofTransport {
             ::napi::ValueType::Number => "instanceof".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "instanceof".to_string())
             }
         };
@@ -71763,7 +71763,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InstanceofTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71841,7 +71841,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BquoteTransport {
             ::napi::ValueType::Number => "`".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "`".to_string())
             }
         };
@@ -71870,7 +71870,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BquoteTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -71948,7 +71948,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DollarLbraceTransport {
             ::napi::ValueType::Number => "${".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "${".to_string())
             }
         };
@@ -71977,7 +71977,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DollarLbraceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72055,7 +72055,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
             ::napi::ValueType::Number => "@".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "@".to_string())
             }
         };
@@ -72084,7 +72084,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72162,7 +72162,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
             ::napi::ValueType::Number => "static".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "static".to_string())
             }
         };
@@ -72191,7 +72191,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72269,7 +72269,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyTransport {
             ::napi::ValueType::Number => "readonly".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "readonly".to_string())
             }
         };
@@ -72298,7 +72298,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72376,7 +72376,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GetTransport {
             ::napi::ValueType::Number => "get".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "get".to_string())
             }
         };
@@ -72405,7 +72405,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GetTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72483,7 +72483,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SetTransport {
             ::napi::ValueType::Number => "set".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "set".to_string())
             }
         };
@@ -72512,7 +72512,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SetTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72590,7 +72590,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclareTransport {
             ::napi::ValueType::Number => "declare".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "declare".to_string())
             }
         };
@@ -72619,7 +72619,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclareTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72697,7 +72697,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceTransport {
             ::napi::ValueType::Number => "namespace".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "namespace".to_string())
             }
         };
@@ -72726,7 +72726,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72804,7 +72804,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicTransport {
             ::napi::ValueType::Number => "public".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "public".to_string())
             }
         };
@@ -72833,7 +72833,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -72911,7 +72911,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrivateTransport {
             ::napi::ValueType::Number => "private".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "private".to_string())
             }
         };
@@ -72940,7 +72940,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrivateTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73018,7 +73018,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ProtectedKindTransport {
             ::napi::ValueType::Number => "protected".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "protected".to_string())
             }
         };
@@ -73047,7 +73047,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ProtectedKindTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73125,7 +73125,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideTransport {
             ::napi::ValueType::Number => "override".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "override".to_string())
             }
         };
@@ -73154,7 +73154,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73232,7 +73232,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonModuleTransport {
             ::napi::ValueType::Number => "module".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "module".to_string())
             }
         };
@@ -73261,7 +73261,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonModuleTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73339,7 +73339,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyKindTransport {
             ::napi::ValueType::Number => "any".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "any".to_string())
             }
         };
@@ -73368,7 +73368,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyKindTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73446,7 +73446,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonNumberTransport {
             ::napi::ValueType::Number => "number".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "number".to_string())
             }
         };
@@ -73475,7 +73475,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonNumberTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73553,7 +73553,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanTransport {
             ::napi::ValueType::Number => "boolean".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "boolean".to_string())
             }
         };
@@ -73582,7 +73582,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73660,7 +73660,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonStringTransport {
             ::napi::ValueType::Number => "string".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "string".to_string())
             }
         };
@@ -73689,7 +73689,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonStringTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73767,7 +73767,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SymbolTransport {
             ::napi::ValueType::Number => "symbol".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "symbol".to_string())
             }
         };
@@ -73796,7 +73796,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SymbolTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73874,7 +73874,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportTransport {
             ::napi::ValueType::Number => "export".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "export".to_string())
             }
         };
@@ -73903,7 +73903,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -73981,7 +73981,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonObjectTransport {
             ::napi::ValueType::Number => "object".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "object".to_string())
             }
         };
@@ -74010,7 +74010,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonObjectTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74088,7 +74088,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
             ::napi::ValueType::Number => "async".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "async".to_string())
             }
         };
@@ -74117,7 +74117,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74195,7 +74195,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
             ::napi::ValueType::Number => "let".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "let".to_string())
             }
         };
@@ -74224,7 +74224,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74302,7 +74302,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
             ::napi::ValueType::Number => "!".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "!".to_string())
             }
         };
@@ -74331,7 +74331,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74409,7 +74409,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTransport {
             ::napi::ValueType::Number => "abstract".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "abstract".to_string())
             }
         };
@@ -74438,7 +74438,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74516,7 +74516,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
             ::napi::ValueType::Number => "const".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "const".to_string())
             }
         };
@@ -74545,7 +74545,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74623,7 +74623,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SatisfiesTransport {
             ::napi::ValueType::Number => "satisfies".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "satisfies".to_string())
             }
         };
@@ -74652,7 +74652,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SatisfiesTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74730,7 +74730,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequireTransport {
             ::napi::ValueType::Number => "require".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "require".to_string())
             }
         };
@@ -74759,7 +74759,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequireTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74837,7 +74837,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
             ::napi::ValueType::Number => "extends".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "extends".to_string())
             }
         };
@@ -74866,7 +74866,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -74944,7 +74944,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplementsTransport {
             ::napi::ValueType::Number => "implements".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "implements".to_string())
             }
         };
@@ -74973,7 +74973,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplementsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75051,7 +75051,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterfaceTransport {
             ::napi::ValueType::Number => "interface".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "interface".to_string())
             }
         };
@@ -75080,7 +75080,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterfaceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75158,7 +75158,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
             ::napi::ValueType::Number => "enum".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "enum".to_string())
             }
         };
@@ -75187,7 +75187,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75265,7 +75265,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashQmarkColonTransport {
             ::napi::ValueType::Number => "-?:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "-?:".to_string())
             }
         };
@@ -75294,7 +75294,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashQmarkColonTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75372,7 +75372,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusQmarkColonTransport {
             ::napi::ValueType::Number => "+?:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "+?:".to_string())
             }
         };
@@ -75401,7 +75401,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusQmarkColonTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75479,7 +75479,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkColonTransport {
             ::napi::ValueType::Number => "?:".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "?:".to_string())
             }
         };
@@ -75508,7 +75508,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkColonTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75586,7 +75586,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAssertsTransport {
             ::napi::ValueType::Number => "asserts".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "asserts".to_string())
             }
         };
@@ -75615,7 +75615,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAssertsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75693,7 +75693,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InferTransport {
             ::napi::ValueType::Number => "infer".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "infer".to_string())
             }
         };
@@ -75722,7 +75722,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InferTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75800,7 +75800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
             ::napi::ValueType::Number => "is".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "is".to_string())
             }
         };
@@ -75829,7 +75829,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -75907,7 +75907,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyofTransport {
             ::napi::ValueType::Number => "keyof".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "keyof".to_string())
             }
         };
@@ -75936,7 +75936,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyofTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76014,7 +76014,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
             ::napi::ValueType::Number => "in".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "in".to_string())
             }
         };
@@ -76043,7 +76043,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76121,7 +76121,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UniqueTransport {
             ::napi::ValueType::Number => "unique symbol".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "unique symbol".to_string())
             }
         };
@@ -76150,7 +76150,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UniqueTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76228,7 +76228,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VoidTransport {
             ::napi::ValueType::Number => "void".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "void".to_string())
             }
         };
@@ -76257,7 +76257,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VoidTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76335,7 +76335,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnknownTransport {
             ::napi::ValueType::Number => "unknown".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "unknown".to_string())
             }
         };
@@ -76364,7 +76364,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnknownTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76442,7 +76442,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTransport {
             ::napi::ValueType::Number => "never".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "never".to_string())
             }
         };
@@ -76471,7 +76471,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76549,7 +76549,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbracePipeTransport {
             ::napi::ValueType::Number => "{|".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "{|".to_string())
             }
         };
@@ -76578,7 +76578,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LbracePipeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76656,7 +76656,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeRbraceTransport {
             ::napi::ValueType::Number => "|}".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "|}".to_string())
             }
         };
@@ -76685,7 +76685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeRbraceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76763,7 +76763,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsingTransport {
             ::napi::ValueType::Number => "using".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "using".to_string())
             }
         };
@@ -76792,7 +76792,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsingTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76870,7 +76870,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AccessorTransport {
             ::napi::ValueType::Number => "accessor".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "accessor".to_string())
             }
         };
@@ -76899,7 +76899,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AccessorTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -76977,7 +76977,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
             ::napi::ValueType::Number => ",".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ",".to_string())
             }
         };
@@ -77006,7 +77006,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77084,7 +77084,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OfTransport {
             ::napi::ValueType::Number => "of".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "of".to_string())
             }
         };
@@ -77113,7 +77113,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OfTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77191,7 +77191,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
             ::napi::ValueType::Number => "+=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "+=".to_string())
             }
         };
@@ -77220,7 +77220,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77298,7 +77298,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
             ::napi::ValueType::Number => "-=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "-=".to_string())
             }
         };
@@ -77327,7 +77327,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77405,7 +77405,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
             ::napi::ValueType::Number => "*=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "*=".to_string())
             }
         };
@@ -77434,7 +77434,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77512,7 +77512,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
             ::napi::ValueType::Number => "/=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "/=".to_string())
             }
         };
@@ -77541,7 +77541,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77619,7 +77619,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
             ::napi::ValueType::Number => "%=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "%=".to_string())
             }
         };
@@ -77648,7 +77648,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77726,7 +77726,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
             ::napi::ValueType::Number => "^=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "^=".to_string())
             }
         };
@@ -77755,7 +77755,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77833,7 +77833,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
             ::napi::ValueType::Number => "&=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "&=".to_string())
             }
         };
@@ -77862,7 +77862,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -77940,7 +77940,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
             ::napi::ValueType::Number => "|=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "|=".to_string())
             }
         };
@@ -77969,7 +77969,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78047,7 +78047,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
             ::napi::ValueType::Number => ">>=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>=".to_string())
             }
         };
@@ -78076,7 +78076,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78154,7 +78154,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtEqTransport {
             ::napi::ValueType::Number => ">>>=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| ">>>=".to_string())
             }
         };
@@ -78183,7 +78183,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78261,7 +78261,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
             ::napi::ValueType::Number => "<<=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "<<=".to_string())
             }
         };
@@ -78290,7 +78290,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78368,7 +78368,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
             ::napi::ValueType::Number => "**=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "**=".to_string())
             }
         };
@@ -78397,7 +78397,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78475,7 +78475,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpEqTransport {
             ::napi::ValueType::Number => "&&=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "&&=".to_string())
             }
         };
@@ -78504,7 +78504,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78582,7 +78582,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeEqTransport {
             ::napi::ValueType::Number => "||=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "||=".to_string())
             }
         };
@@ -78611,7 +78611,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78689,7 +78689,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkEqTransport {
             ::napi::ValueType::Number => "??=".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "??=".to_string())
             }
         };
@@ -78718,7 +78718,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkEqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78796,7 +78796,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
             ::napi::ValueType::Number => "~".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "~".to_string())
             }
         };
@@ -78825,7 +78825,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TildeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -78903,7 +78903,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteTransport {
             ::napi::ValueType::Number => "delete".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "delete".to_string())
             }
         };
@@ -78932,7 +78932,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79010,7 +79010,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusPlusTransport {
             ::napi::ValueType::Number => "++".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "++".to_string())
             }
         };
@@ -79039,7 +79039,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusPlusTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79117,7 +79117,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashDashTransport {
             ::napi::ValueType::Number => "--".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "--".to_string())
             }
         };
@@ -79146,7 +79146,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashDashTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79224,7 +79224,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
             ::napi::ValueType::Number => "global".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "global".to_string())
             }
         };
@@ -79253,7 +79253,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79331,7 +79331,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
             ::napi::ValueType::Number => "from".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "from".to_string())
             }
         };
@@ -79360,7 +79360,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79438,7 +79438,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
             ::napi::ValueType::Number => "\"".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "\"".to_string())
             }
         };
@@ -79467,7 +79467,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79545,7 +79545,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SquoteTransport {
             ::napi::ValueType::Number => "'".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "'".to_string())
             }
         };
@@ -79574,7 +79574,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SquoteTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79652,7 +79652,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TargetTransport {
             ::napi::ValueType::Number => "target".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "target".to_string())
             }
         };
@@ -79681,7 +79681,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TargetTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,
@@ -79759,7 +79759,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaTransport {
             ::napi::ValueType::Number => "meta".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$triviaData")?;
+                __trivia = obj.get("$_trivia")?;
                 obj.get("$text")?.unwrap_or_else(|| "meta".to_string())
             }
         };
@@ -79788,7 +79788,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
         Ok(Self {
             transport_source,
             transport_named,

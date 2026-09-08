@@ -65,7 +65,7 @@ export function markEdited<T extends object>(data: T): Omit<T, '$text'> {
  */
 function isUntouchedSubtree(record: Record<string, unknown>): boolean {
 	if (typeof record.$text !== 'string') return false;
-	if (record.$triviaData != null) return false;
+	if (record.$_trivia != null) return false;
 	for (const [key, child] of Object.entries(record)) {
 		if (!key.startsWith('_') && key !== '$other') continue;
 		for (const entry of Array.isArray(child) ? child : [child]) {

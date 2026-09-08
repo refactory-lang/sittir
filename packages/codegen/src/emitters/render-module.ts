@@ -2723,7 +2723,7 @@ function renderLeafTransportNapiImpls(
 	}
 	lines.push(`            _ => {`);
 	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`                __trivia = obj.get("$triviaData")?;`);
+	lines.push(`                __trivia = obj.get("$_trivia")?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
 			? `                obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
@@ -2857,7 +2857,7 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 		rustType: 'Option<f64>',
 		bridgeMap: '.map(|v| v as u16)'
 	},
-	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
+	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
 ];
 
 const TRANSPORT_TEXT_FIELD: TransportMetadataField = {

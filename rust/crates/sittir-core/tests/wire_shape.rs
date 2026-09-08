@@ -171,6 +171,6 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$span"
             | "$nodeHandle"
             | "$childIndex"
-            | "$triviaData"
+            | "$_trivia"
     ) || key.starts_with('_')
 }

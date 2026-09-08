@@ -124,7 +124,7 @@ function isTriviaObject(value: unknown): value is NodeTrivia {
 }
 
 function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
-	(node as unknown as Record<string, unknown>).$triviaData = triviaData;
+	(node as unknown as Record<string, unknown>).$_trivia = triviaData;
 }
 
 /**
@@ -143,7 +143,7 @@ function carryTriviaThroughWith(node: AnyNodeData): void {
 		const rebuild = setter as (...args: unknown[]) => unknown;
 		setters[key] = (...args: unknown[]): unknown => {
 			const rebuilt = rebuild(...args);
-			const trivia = node.$triviaData;
+			const trivia = node.$_trivia;
 			if (trivia !== undefined && isNodeData(rebuilt)) setTriviaData(rebuilt, trivia);
 			return rebuilt;
 		};

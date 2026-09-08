@@ -34,7 +34,7 @@ export interface NodeTrivia {
 export class Printed {
 	readonly $named = true as const;
 	/** Set by the construction funnel from the read node this was built from. */
-	$triviaData?: ReadTrivia;
+	$_trivia?: ReadTrivia;
 	constructor(
 		readonly $type: number | string,
 		readonly source: string,
@@ -47,7 +47,7 @@ export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
 	readonly $nodeHandle?: number;
-	readonly $triviaData?: ReadTrivia;
+	readonly $_trivia?: ReadTrivia;
 }
 
 const INDENT = '\t';
@@ -152,7 +152,7 @@ function printListOptions(options: Record<string, unknown>, ctx: PrintContext): 
 }
 
 export function triviaOf(node: ReadNodeLike | undefined): NodeTrivia | undefined {
-	const trivia = node?.$triviaData;
+	const trivia = node?.$_trivia;
 	if (!trivia) return undefined;
 	const texts = (list: readonly unknown[] | undefined): string[] =>
 		(list ?? []).map((t) => (t as ReadNodeLike).$text).filter((t): t is string => typeof t === 'string');

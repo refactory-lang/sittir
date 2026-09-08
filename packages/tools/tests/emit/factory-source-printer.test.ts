@@ -57,7 +57,7 @@ describe('printValue', () => {
 	});
 	it('appends a node trivia call from the trivia the value carries', () => {
 		const printed = new Printed(2, 'ir.functionItem.strict({})', 'function_item');
-		printed.$triviaData = { leading: [{ $text: '// a' }] } as never;
+		printed.$_trivia = { leading: [{ $text: '// a' }] } as never;
 		expect(printValue(printed, ctx, 0)).toBe('ir.functionItem.strict({}).$trivia({ leading: ["// a"] })');
 	});
 });

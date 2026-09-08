@@ -195,7 +195,7 @@ struct NodeDataSer<'a> {
     )]
     child_index: &'a Option<u16>,
     #[serde(
-        rename = "$triviaData",
+        rename = "$_trivia",
         default,
         skip_serializing_if = "Option::is_none"
     )]
@@ -230,7 +230,7 @@ struct NodeDataDe {
     node_handle: Option<u64>,
     #[serde(rename = "$childIndex", default)]
     child_index: Option<u16>,
-    #[serde(rename = "$triviaData", default)]
+    #[serde(rename = "$_trivia", default)]
     trivia_data: Option<NodeTrivia>,
     #[serde(rename = "$slotOrder", default)]
     slot_order: Option<Vec<String>>,
