@@ -195,12 +195,6 @@ function wrapDirectArg(kind: string, value: unknown, ctx: PrintContext): unknown
 	return printVerbatimText(value, leaf, ctx, kinds);
 }
 
-function splitVariant(config: unknown): { readonly form: string | undefined; readonly config: unknown } {
-	if (!isPlainObject(config)) return { form: undefined, config };
-	const { $variant, ...rest } = config;
-	return { form: typeof $variant === 'string' ? camelCase($variant) : undefined, config: rest };
-}
-
 function camelCase(kind: string): string {
 	return kind.replace(/^_+/, '').replace(/_([a-z0-9])/g, (_m, c: string) => c.toUpperCase());
 }
@@ -256,11 +250,9 @@ export function printingFactoryMap(
 				}
 				case 'config':
 				default: {
-					const { form, config } = splitVariant(args[0] ?? {});
-					const wrapped = wrapTextLeaves(kind, config, ctx);
-					const formPath = form === undefined ? path : `${path}.${form}`;
+					const wrapped = wrapTextLeaves(kind, args[0] ?? {}, ctx);
 					const argSource = printValue(wrapped, ctx, 0);
-					return new Printed(id, `${formPath}.strict(${argSource})`, kind, handleOf(args[0]), argSource);
+					return new Printed(id, `${path}.strict(${argSource})`, kind, handleOf(args[0]), argSource);
 				}
 			}
 		};
@@ -315,22 +307,6 @@ function withPublicNames<T>(record: Record<string, T>): Record<string, T> {
 	for (const [kind, value] of Object.entries(record)) {
 		const publicName = kind.replace(/^_+/, '');
 		if (!(publicName in out)) out[publicName] = value;
-	}
-	return out;
-}
-
-function withHiddenChildKinds(polymorphVariants: PolymorphVariantMap): PolymorphVariantMap {
-	const out: Record<string, PolymorphVariantMap[string]> = {};
-	for (const [parent, desc] of Object.entries(polymorphVariants)) {
-		if (desc.definedBy !== 'override') {
-			out[parent] = desc;
-			continue;
-		}
-		const childKind: Record<string, string> = { ...desc.childKind };
-		for (const [kind, variant] of Object.entries(desc.childKind)) {
-			if (!(`_${kind}` in childKind)) childKind[`_${kind}`] = variant;
-		}
-		out[parent] = { ...desc, childKind };
 	}
 	return out;
 }
@@ -488,7 +464,6 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),
 		factoryFields: withPublicNames(model.factoryFields),
 		factorySlots: withPublicNames(model.factorySlots),
-		polymorphVariants: withHiddenChildKinds(model.polymorphVariants)
 	};
 	const rootKind = typeof root.$type === 'number' ? kindNameFromId(root.$type) : root.$type;
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);

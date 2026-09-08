@@ -67,7 +67,7 @@ export function rebuildSpliceGenerated() {
 					}))),
 				}),
 			}))),
-		}), ir.implItem.positiveClause.strict({
+		}), ir.implItem.strict({
 			traitClause: ir.implItem.positiveClause.strict(ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
@@ -113,16 +113,16 @@ export function rebuildSpliceGenerated() {
 					statements: [ir.expressionStatement.strict(ir.matchExpression.strict({
 						value: TSKindId.Self,
 						body: ir.matchBlock.strict({
-							matchArm: [ir.matchArm.withComma.strict({
+							matchArm: [ir.matchArm.strict({
 								pattern: ir.matchPattern.strict({
 									pattern: ir.structPattern.strict({
 										type: ir.scopedTypeIdentifier.strict({
 											path: ir.identifier("SpliceError"),
 											name: ir.identifier("InvalidRange"),
 										}),
-										fields: ir.structPatternElements.strict(ir.fieldPattern.named.strict({
+										fields: ir.structPatternElements.strict(ir.fieldPattern.strict({
 											content: ir.identifier("start"),
-										}), ir.fieldPattern.named.strict({
+										}), ir.fieldPattern.strict({
 											content: ir.identifier("end"),
 										})),
 									}),
@@ -138,16 +138,16 @@ export function rebuildSpliceGenerated() {
 										}),
 									}),
 								}),
-							}), ir.matchArm.withComma.strict({
+							}), ir.matchArm.strict({
 								pattern: ir.matchPattern.strict({
 									pattern: ir.structPattern.strict({
 										type: ir.scopedTypeIdentifier.strict({
 											path: ir.identifier("SpliceError"),
 											name: ir.identifier("OutOfBounds"),
 										}),
-										fields: ir.structPatternElements.strict(ir.fieldPattern.named.strict({
+										fields: ir.structPatternElements.strict(ir.fieldPattern.strict({
 											content: ir.identifier("end"),
-										}), ir.fieldPattern.named.strict({
+										}), ir.fieldPattern.strict({
 											content: ir.identifier("source_len"),
 										})),
 									}),
@@ -178,9 +178,9 @@ export function rebuildSpliceGenerated() {
 											path: ir.identifier("SpliceError"),
 											name: ir.identifier("NonCharBoundary"),
 										}),
-										fields: ir.structPatternElements.strict(ir.fieldPattern.named.strict({
+										fields: ir.structPatternElements.strict(ir.fieldPattern.strict({
 											content: ir.identifier("start"),
-										}), ir.fieldPattern.named.strict({
+										}), ir.fieldPattern.strict({
 											content: ir.identifier("end"),
 										})),
 									}),
@@ -201,7 +201,7 @@ export function rebuildSpliceGenerated() {
 				}),
 			}))),
 			unsafeMarker: true,
-		}), ir.implItem.positiveClause.strict({
+		}), ir.implItem.strict({
 			traitClause: ir.implItem.positiveClause.strict(ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
@@ -404,7 +404,7 @@ export function rebuildSpliceGenerated() {
 						field: ir.identifier("sort_by"),
 					}),
 					arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
-						expression: ir.closureExpression.expr.strict({
+						expression: ir.closureExpression.strict({
 							parameters: ir.closureParameters.strict("a", "b"),
 							content: ir.closureExpression.expr.strict(ir.block.strict({
 								trailingExpression: ir.callExpression.strict({
@@ -429,7 +429,7 @@ export function rebuildSpliceGenerated() {
 										field: ir.identifier("then_with"),
 									}),
 									arguments: ir.arguments.strict(ir.argumentsElements.strict(ir.attributedArgument.strict({
-										expression: ir.closureExpression.expr.strict({
+										expression: ir.closureExpression.strict({
 											parameters: ir.closureParameters.strict(),
 											content: ir.closureExpression.expr.strict(ir.callExpression.strict({
 												function: ir.fieldExpression.strict({

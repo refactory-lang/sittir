@@ -67,10 +67,9 @@ Generated: `ir.block.strict({ statements: [ir.letDeclaration.strict({ … })] })
 Error: `TS2322: Type 'Built' is not assignable to type 'ExpressionStatement | DeclarationStatement | KindEnum<";", TSKindId.Semi>'` (typescript: `'Statement | KindEnum<";", TSKindId.Semi>'`).
 The slot's union names the hidden `_declaration_statement` / `_statement` wrappers, which have no builder of their own, so a concrete item cannot be seated where the grammar seats it.
 
-### S4 — The validators' config vocabulary is not the strict config's (slot keys resolved; form inference open)
+### S4 — The validators' config vocabulary is not the strict config's — RESOLVED
 
-Resolved half: the read stores an unnamed slot under the child's kind (`_parameter`, `_impl_item_body`); the factory map now stamps those spellings as the slot's `wireKeys` (the set the wrap accepts) and `nodeToConfig` resolves a read key to its slot through them, so the projection and the strict config name the same slot.
-Open half: `ir.foreignModItem.body.strict({ declarations: […] })` where strict wants `content` — the variant inference stamps a `$variant` on a node whenever a child kind appears in some polymorph's `childKind` map, so a `declaration_list` under `_impl_item_body` is projected as `foreign_mod_item`'s `body` form. A variant should be inferred only from a `<parent>_<variant>` helper kind.
+Two causes, both in `nodeToConfig`. The read stores an unnamed slot under the child's kind (`_parameter`, `_impl_item_body`); the factory map now stamps those spellings as the slot's `wireKeys` (the set the wrap accepts) and the projection resolves a read key to its slot through them. And the projection stamped a `$variant` and promoted a "variant child's" surface into the parent whenever a child kind appeared in some polymorph's map, which projected a `declaration_list` under an impl body as `foreignModItem.body`; no generated code reads `$variant` (polymorphs were retired into transforms), so the inference and its promotion are gone. `ir.implItem.strict({ traitClause: ir.implItem.positiveClause.strict(…), content: ir.implItem.body.strict(ir.declarationList.strict(…)) })` now prints as the hand-written strict example spells it.
 
 ### S5 — An attributed single-slot wrapper projects to `{}` — RESOLVED
 

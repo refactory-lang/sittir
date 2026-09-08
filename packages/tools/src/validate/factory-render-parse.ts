@@ -24,7 +24,7 @@
  */
 
 import type { AnyNodeData } from '@sittir/types';
-import type { PolymorphVariantMap, FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
+import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
@@ -303,7 +303,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
-	polymorphVariants: PolymorphVariantMap;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
@@ -313,7 +312,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
-	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
 	if (!factoryModulePath) {
 		return {
@@ -322,7 +320,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
 			importFailure: null
 		};
@@ -337,7 +334,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		polymorphVariants = mapData.polymorphVariants;
 		const typesModulePath = FACTORY_MODULE_PATHS[grammar]?.replace('factories/raw.ts', 'types.ts');
 		if (typesModulePath) {
 			try {
@@ -370,7 +366,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 					fieldAliasMap,
 					factoryFields,
 					factorySlots,
-					polymorphVariants,
 					kindNameFromId,
 					importFailure: { message }
 				};
@@ -382,7 +377,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
 			importFailure: null
 		};
@@ -395,7 +389,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
 			importFailure: { message }
 		};
@@ -478,7 +471,6 @@ function buildFactoryNodeData(
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>,
-	polymorphVariants: PolymorphVariantMap,
 	entryName: string,
 	inputSource: string,
 	errors: {
@@ -496,7 +488,7 @@ function buildFactoryNodeData(
 		return buildFactoryNodeFromReference(
 			referenceData,
 			renderedKind,
-			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants },
+			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots },
 			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId }
 		) as AnyNodeData | null;
 	} catch (e) {
@@ -527,7 +519,6 @@ export async function validateFactoryRenderParse(
 		fieldAliasMap,
 		factoryFields,
 		factorySlots,
-		polymorphVariants,
 		kindNameFromId,
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
@@ -665,7 +656,6 @@ export async function validateFactoryRenderParse(
 					fieldAliasMap,
 					factoryFields,
 					factorySlots,
-					polymorphVariants,
 					entry.name,
 					inputSource,
 					errors,

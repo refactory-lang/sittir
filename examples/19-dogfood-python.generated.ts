@@ -21,13 +21,13 @@ export function rebuildPython4spaceGenerated() {
 				type: ir.type.strict(ir.identifier("str")),
 			}))),
 			returnType: ir.type.strict(ir.identifier("None")),
-			body: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
+			body: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict(ir.assignment.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("user_id"),
 				}),
 				content: ir.assignment.eq.strict(ir.identifier("user_id")),
-			})))), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict(ir.assignment.eq.strict({
+			})))), ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.expressionStatement.strict(ir.assignment.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("name"),

@@ -3,7 +3,7 @@ import { ir, TSKindId, Delimiter } from '@sittir/typescript';
 
 export function rebuildFormatGenerated() {
 	return ir.program.strict({
-		statements: [ir.importStatement.clauseFrom.strict({
+		statements: [ir.importStatement.strict({
 			importClause: TSKindId.AnonType,
 			fromClause: ir.importStatement.clauseFrom.strict({
 				importClause: ir.importClause.strict(ir.namedImports.strict(ir.importSpecifiers.strict(ir.importSpecifier.strict({
@@ -94,7 +94,7 @@ export function rebuildFormatGenerated() {
 					kind: TSKindId.Const,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("leading"),
-						value: ir.binaryExpression.in.strict({
+						value: ir.binaryExpression.strict({
 							left: ir.memberExpression.strict({
 								object: ir.identifier("boundary"),
 								separator: TSKindId.Dot,
@@ -109,7 +109,7 @@ export function rebuildFormatGenerated() {
 					kind: TSKindId.Const,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("trailing"),
-						value: ir.binaryExpression.in.strict({
+						value: ir.binaryExpression.strict({
 							left: ir.memberExpression.strict({
 								object: ir.identifier("boundary"),
 								separator: TSKindId.Dot,
@@ -147,13 +147,13 @@ export function rebuildFormatGenerated() {
 					terminator: TSKindId.Semi,
 				}), ir.ifStatement.strict({
 					condition: ir.parenthesizedExpression.typed.strict({
-						expression: ir.binaryExpression.in.strict({
+						expression: ir.binaryExpression.strict({
 							left: ir.unaryExpression.strict({
 								operator: TSKindId.Bang,
 								argument: ir.identifier("trivia"),
 							}),
 							operator: TSKindId.PipePipe,
-							right: ir.binaryExpression.in.strict({
+							right: ir.binaryExpression.strict({
 								left: ir.memberExpression.strict({
 									object: ir.identifier("trivia"),
 									separator: TSKindId.Dot,
@@ -178,7 +178,7 @@ export function rebuildFormatGenerated() {
 								separator: TSKindId.Dot,
 								property: ir.privatePropertyIdentifier("sort"),
 							}),
-							arguments: ir.arguments.strict(ir.arrowFunction.callSignature.strict({
+							arguments: ir.arguments.strict(ir.arrowFunction.strict({
 								content: ir.callSignature.strict({
 									parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
 										pattern: ir.identifier("a"),
@@ -186,7 +186,7 @@ export function rebuildFormatGenerated() {
 										pattern: ir.identifier("b"),
 									}))),
 								}),
-								body: ir.binaryExpression.in.strict({
+								body: ir.binaryExpression.strict({
 									left: ir.memberExpression.strict({
 										object: ir.identifier("b"),
 										separator: TSKindId.Dot,
@@ -250,8 +250,8 @@ export function rebuildFormatGenerated() {
 						}), ir.expressionStatement.strict({
 							expression: ir.assignmentExpression.strict({
 								left: ir.identifier("result"),
-								right: ir.binaryExpression.in.strict({
-									left: ir.binaryExpression.in.strict({
+								right: ir.binaryExpression.strict({
+									left: ir.binaryExpression.strict({
 										left: ir.callExpression.call.strict({
 											function: ir.memberExpression.strict({
 												object: ir.identifier("result"),
@@ -334,7 +334,7 @@ export function rebuildFormatGenerated() {
 						terminator: TSKindId.Semi,
 					}), ir.returnStatement.strict({
 						expression: ir.object.strict(ir.spreadElement.strict(ir.identifier("format")), TSKindId.Comma, ir.spreadElement.strict({
-							expression: ir.binaryExpression.in.strict({
+							expression: ir.binaryExpression.strict({
 								left: ir.binaryExpression.strict({
 									left: ir.identifier("trivia"),
 									operator: TSKindId.BangEqEq,
@@ -344,7 +344,7 @@ export function rebuildFormatGenerated() {
 								right: ir.object.strict("trivia"),
 							}),
 						}), TSKindId.Comma, ir.spreadElement.strict({
-							expression: ir.binaryExpression.in.strict({
+							expression: ir.binaryExpression.strict({
 								left: ir.binaryExpression.strict({
 									left: ir.identifier("kinds"),
 									operator: TSKindId.BangEqEq,
@@ -398,7 +398,7 @@ export function rebuildFormatGenerated() {
 							separator: TSKindId.Dot,
 							property: ir.privatePropertyIdentifier("map"),
 						}),
-						arguments: ir.arguments.strict(ir.arrowFunction.callSignature.strict({
+						arguments: ir.arguments.strict(ir.arrowFunction.strict({
 							content: ir.callSignature.strict({
 								parameters: ir.formalParameters.strict(ir.formalParametersElements.strict(ir.requiredParameter.strict({
 									pattern: ir.identifier("item"),
@@ -407,7 +407,7 @@ export function rebuildFormatGenerated() {
 							body: ir.statementBlock.strict({
 								statements: [ir.ifStatement.strict({
 									condition: ir.parenthesizedExpression.typed.strict({
-										expression: ir.binaryExpression.in.strict({
+										expression: ir.binaryExpression.strict({
 											left: ir.memberExpression.strict({
 												object: ir.identifier("item"),
 												separator: TSKindId.Dot,
@@ -425,7 +425,7 @@ export function rebuildFormatGenerated() {
 									kind: TSKindId.Const,
 									declarators: [ir.variableDeclarator.plain.strict({
 										name: ir.identifier("newOffset"),
-										value: ir.binaryExpression.in.strict({
+										value: ir.binaryExpression.strict({
 											left: ir.memberExpression.strict({
 												object: ir.identifier("item"),
 												separator: TSKindId.Dot,
