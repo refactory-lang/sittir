@@ -173,15 +173,27 @@ function textLeafOfSlot(kind: string, property: string, ctx: PrintContext): stri
 	return kinds.find((k) => ctx.textLeafKinds!.has(k));
 }
 
+/**
+ * A slot whose storage is `verbatim` holds text, never a kind id, so the
+ * literal-text resolution chain does not apply to it: that chain answers
+ * "which literal token spells this", and it falls back to the full name chain,
+ * which matches any identifier that happens to share a rule's name (python's
+ * `list` as a type annotation became `TSKindId.List`, rendering `[]`).
+ */
+function storesKindId(storage: string | undefined): boolean {
+	return storage !== 'verbatim';
+}
+
 function printVerbatimText(
 	text: string,
 	leaf: string | undefined,
 	ctx: PrintContext,
-	slotKinds: readonly string[] = []
+	slotKinds: readonly string[] = [],
+	storage?: string
 ): unknown {
 	if (leaf !== undefined) return new Printed(leaf, `${ctx.irPathOfKind(leaf)}(${JSON.stringify(text)})`, leaf);
 	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
-	const id = ctx.memberIdOfText?.(text);
+	const id = storesKindId(storage) ? ctx.memberIdOfText?.(text) : undefined;
 	if (id !== undefined) return id;
 	if (ctx.textLeafKinds?.has('identifier')) {
 		return new Printed('identifier', `${ctx.irPathOfKind('identifier')}(${JSON.stringify(text)})`, 'identifier');
@@ -199,7 +211,9 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 		}
 		const leaf = textLeafOfSlot(kind, property, ctx);
 		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
-		const wrap = (v: unknown): unknown => (typeof v === 'string' ? printVerbatimText(v, leaf, ctx, kinds) : v);
+		const storage = ctx.slotStorage?.[kind]?.[property];
+		const wrap = (v: unknown): unknown =>
+			typeof v === 'string' ? printVerbatimText(v, leaf, ctx, kinds, storage) : v;
 		out[property] = Array.isArray(value) ? value.map(wrap) : wrap(value);
 	}
 	return out;
@@ -239,7 +253,8 @@ function wrapDirectArg(kind: string, value: unknown, ctx: PrintContext): unknown
 	const property = properties.length === 1 ? properties[0] : undefined;
 	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, ctx);
 	const kinds = property === undefined ? [] : (ctx.slotKinds?.[kind]?.[property] ?? []);
-	return printVerbatimText(value, leaf, ctx, kinds);
+	const storage = property === undefined ? undefined : ctx.slotStorage?.[kind]?.[property];
+	return printVerbatimText(value, leaf, ctx, kinds, storage);
 }
 
 function camelCase(kind: string): string {

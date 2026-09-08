@@ -52,7 +52,7 @@ export function rebuildPython4spaceGenerated() {
 	}), ir.functionDefinition.block.strict({
 		name: ir.identifier("find_user"),
 		parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.typedParameter.strict({
-			type: ir.type.strict(TSKindId.List),
+			type: ir.type.strict(ir.identifier("list")),
 			content: ir.identifier("users"),
 		}), ir.typedParameter.strict({
 			type: ir.type.strict(ir.identifier("int")),
