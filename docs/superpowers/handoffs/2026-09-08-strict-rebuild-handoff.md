@@ -337,6 +337,82 @@ down, not new debt.
 Next: Task 9 closing gates, the two composition findings above, the
 typescript census residue, and the `fields: a, b,` print.
 
+## After Task 9 — the seating surface closed out
+
+Everything below landed after the plan's Task 9, driven by rulings during the
+session. `ir-render-parse` is now CLEAN on all three grammars: rust
+1259/1259, typescript 1063/1063, python 1286/1286.
+
+**The tuple seat.** A hoisted child whose OWN surface takes rest parameters
+(`spread`, or a list's `elements`, which also carries an options bag) seats as
+a tuple on its parent's slot: `ir.structPattern.strict({ type, fields: [a, b] })`.
+All keys are named keys, so the tuple is only needed when the parent is a
+branch with named slots; a parent that takes its sole slot positionally already
+spreads the child's arguments into its own call. That retired the bare
+`fields: a, b,` print, which was a syntax error.
+
+**Seats and mounts compose.** Three defects of one class fell out of the tuple
+seat and are fixed at the root. A seat or mount wired to a child's RAW builder
+collapses that child's own seats, so `seatBearing` routes a seat-bearing child
+through its overlay entry and the collector visits every node-arm child so the
+entry is declared first; a child in a cycle keeps the raw builder. A mount
+route dropped the parent's seats, so `composeSeats` folds a kind's seats onto
+its factory and names the result `<key>$seated`, which every mount builds on —
+the name is required because a call expression has no `typeof` for the
+parameter types. And a leaf binding has no `strict`, because its strict and
+loose forms are one call.
+
+**Nested variants nest.** A variant patched inside another variant's position
+is minted inside that variant's rule, so the name composes:
+`_except_clause_exception_as`. `nestVariantsByPath` derives that from the patch
+paths alone, in `patchSetsOf`, so injection and transform agree; only the
+minted name composes, the arm keeps its short name. The spelling nests to
+match, so `ir.visibilityModifier.pub.inPath` replaces the flat `inPath` that
+read as `pub`'s sibling. `emittedArmPath` is the ONE derivation of an arm's
+spelling — the overlay's child references, the seat stamps and the generated
+per-kind tests all go through it, after the rename exposed three that had
+drifted. Grammar sources moved with it: python's authored `_except_clause_as`
+and its conflicts, and rust's range-pattern variants, which lost the redundant
+`left_` prefix the nesting now carries.
+
+**A group that is itself a choice is not a splice.** Splicing flattens the
+group's one key onto the parent and erases the choice inside it, which is why
+`except_clause`'s `list` arm had no spelling at all. Such a group mounts as an
+arm with its arms nested: `ir.exceptClause.exception.as.strict(…)`. The test is
+whether the group has arms of its own, NOT whether it was declared with
+`variant()` — one variant is not a choice, and rust's `attribute.input` reads
+better spliced than routed.
+
+**Arms of one slot chain onto arms of another.** A kind with two arm-seated
+slots has to name both in one call (`except a, b:` needs the exception's `list`
+and the suite's `block`), and each arm is a whole route wrapping the parent, so
+a caller could otherwise pick only one. A later slot's arms are emitted again
+under each earlier arm, applied to it:
+`ir.exceptClause.exception.list.block.strict({ exception: [a, b], suite: [block] })`.
+Exactly one kind across the three grammars needs this today.
+
+**The rebuild ceiling was a masked measurement.** The recorded 3 / 0 / 0 was
+three rust TS1005 syntax errors, and a syntax error suppresses semantic
+checking for the WHOLE program: restoring only the old rust file makes
+typescript and python report zero while their files are byte-identical. The
+true numbers were 16 / 25 / 14. Fixing resolution through a factoryless
+supertype wrapper (`soleWrappedNode`) then made the rust rebuild construct and
+render for the first time, and the ceiling now stands at 10 / 23 / 14 with the
+rust `examples-verify` renders row flipped to passing.
+
+**What the ceiling still measures.** These are real, not typing noise: rust and
+python render but are not byte-identical because comments and blank lines are
+not printed (rust 1848 of 4389 characters, python 409 of 421), and typescript
+still throws on S12. S12 also records the blind spot that let this accumulate:
+`read-render-parse` never constructs, and `factory-render-parse` passes no tree
+handle, so `resolveChild` halts and children are never rebuilt. The example
+emitter is the only consumer that rebuilds a tree bottom-up.
+
+Next, in order: S12's three steps (the emitter switches to
+`materializeWrappedNodeData`, a slot's supertype resolves to its text leaves,
+and the punctuation-prints-as-`{}` case gets traced), then trivia, then the
+five unseated typescript kinds.
+
 ## Gotchas
 
 - Text searches are hook-blocked unless `.infigraph/.search-fallback-allowed`
