@@ -461,10 +461,62 @@ equal to a KIND NAME onto that kind's id, so the identifier `list` becomes
 `TSKindId.List`. That one is pre-existing and is the same "wrong leaf chosen"
 class as the `ir.escapeSequence("hi")` case.
 
-Next, in order: the typescript census residue (it buys a rendering rebuild),
-then trivia (rust renders 1848 of 4389 characters, python 409 of 421, both from
-missing comments and blank lines), then the remaining rust and python ceiling
-rows.
+## S8 closed — the typescript rebuild renders, ceiling 6 / 0 / 7
+
+`6ada856b1`. The typescript residue was never a seating gap. **A hoisted
+compound has no flat `ir` binding** — hoisting is exactly what keeps it out of
+the bundle — yet the emitter spelled every unseated one as `ir.<irKey>`, a path
+that by construction never exists.
+
+All five typescript census residues reach `ir` by a route the census does not
+measure: the **variant form** their parent declares. The entry is the CHILD's
+own builder namespaced under the parent —
+`ir.importStatement.clauseFrom.strict` IS `F.buildImportStatementClauseFrom` —
+so it yields the child kind for the caller to seat. That is the alias-form
+convention `examples/18-dogfood-typescript-strict.ts` already documents in its
+header and spells by hand; the generated rebuild now matches it exactly.
+
+| kind | declared form |
+| --- | --- |
+| `_binary_expression_in` | `ir.binaryExpression.in` |
+| `_class_body_member` | `ir.classBody.member` |
+| `_class_body_method` | `ir.classBody.method` |
+| `_class_body_method_sig` | `ir.classBody.methodSig` |
+| `_import_statement_clause_from` | `ir.importStatement.clauseFrom` |
+
+`irPathResolver` composes that path for a hoisted kind, walking up while each
+parent is itself hoisted and stopping at the first kind that owns a flat
+binding. **The form alone cannot decide it**: non-hoisted kinds are declared
+under variant forms too (`export_statement.default`,
+`import_clause.named_imports`) and their flat spelling is canonical, so
+hoistedness is the discriminator. Distinguish the two shapes that share the
+namespace — `ir.binaryExpression.in` is the child's builder, while
+`ir.binaryExpression.ampAmp` is `binaryExpression$ampAmp(F.buildBinaryExpression,
+TSKindId.AmpAmp)`, which pins a determined slot and yields the PARENT.
+
+Two corrections to what was recorded before: the `slot-collision` drop
+(`sub-factories.ts:333`) is on `import_clause`, not `source` —
+`import_statement` has no `source` slot at all — and that drop is correct and
+irrelevant, since the kind was never going to be reached through a seat. The
+reverted `keepNested` is therefore NOT needed for this row.
+
+Gates: typescript's `examples-verify` "renders" row is now a plain `it`;
+validate counts, `ir-render-parse` and the full suite unchanged; ceiling
+**6 / 0 / 7**, no syntax errors masking it.
+
+Rust's 6: two `undefined` arguments to `ir.visibilityModifier.pub` (S2's
+no-argument form call) and four overload misses. Python's 7: five `Built` not
+assignable to `SimpleStatements | CompoundStatement`, one `ir.type.strict(
+TSKindId.List)` where an expression was wanted — `memberIdOfText` maps any text
+equal to a KIND NAME onto that kind's id, so the identifier `list` becomes
+`TSKindId.List`, the same "wrong leaf chosen" class as `ir.escapeSequence("hi")`.
+
+The census still lists those five as unseated, and that stays correct: they are
+spelled, not seated. `unseated` measures seats, not reachability.
+
+Next, in order: trivia (rust renders 1848 of 4389 characters, python 409 of
+421, both from missing comments and blank lines), then the remaining rust and
+python ceiling rows.
 
 ## Gotchas
 
