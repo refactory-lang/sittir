@@ -14132,19 +14132,36 @@ built first. The `$type` probe (`_built`) is what the raw forwarded wrapper
 used to do; it lives here now, once, because the seating is the overlay's.
 
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSplice`
 
-Applies `spliceShape` to the parent's own strict/coerce pair and the group's
-raw factory / coercer, producing the `strict` (and `coerce`) entries that
-override the bundle's inside the parent's wiring const — the `...B.<key>`
-spread stays first so the wrapped entry wins.
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::elementsShape`
 
+The method behind an elements seat. An element is the group's config when
+it is a plain object without `$type` whose keys are all the group's config
+keys (`configTest`); anything else passes through unchanged. A config
+parent: the seat's array is mapped and the parent called with the rest. A
+list parent (`spread`): the elements arrive as rest arguments and are mapped
+in place, options object included, which the key test leaves alone. The
+type admits the parent's own input or the group's config per element.
+
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
+
+One seat's method, its application, and its parameter-type transform.
+Seats compose: `emitPolymorphsOverlay` threads the parent's `strict` (and
+`coerce`) through the splice seat then each elements seat, so a parent with
+both gets `m2(m1(F.parent, F.g1), F.g2)`, and threads the parameter TYPE the
+same way — each `paramFor` takes the type expression the previous seat
+produced rather than a `typeof` reference, which is why `SeatShape.paramFor`
+takes a type string where `WireShape.paramFor` takes a reference.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::isHoistedCompound`
 
-A compound the model seats on its parent. Decides two things in this
-emitter: the kind gets a private wiring key (`collectPolymorphWires`) and its
-wiring const is not exported (`emitPolymorphsOverlay`).
+A non-list compound the model seats on its parent. Decides two things in
+this emitter: the kind gets a private wiring key (`collectPolymorphWires`)
+and its wiring const is not exported (`emitPolymorphsOverlay`). A list is
+excluded whatever its annotation says — a group-lifted list carries
+`hoisted` but is bundled and bound on `ir` like any list, so its wiring
+const must be the export `ir` reaches (its elements seat lives there).
 
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::AliasWire`
@@ -14173,6 +14190,9 @@ through a hoisted kind was dropped as a context mismatch.
 A wire set also carries the parent's splice seat (`spliceSeatOf`) when the
 group's factory is emitted; a parent with a seat and no subs still enters
 the map, because the seat rewrites its `strict`.
+
+A wire set also carries the parent's elements seats (`elementsSeatOf`) whose
+group factory is emitted; a parent with only seats still enters the map.
 
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
@@ -14282,6 +14302,12 @@ carries its own residual (the parent's other slots), which is why
 is not a choice; a hoisted kind there is a splice seat (shape 2), not an
 arm.
 
+A hoisted LEAF in such a slot mounts too, the way the lone-slot loop mounts
+leaves: a keyword or token with no factory becomes a value arm carrying its
+kind-id storage, a pattern becomes a node arm on its text factory. The seat
+passes the leaf's value through the parent's builder; the leaf keeps its
+shape and builder.
+
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::spliceSeatOf`
 
@@ -14294,6 +14320,19 @@ census reports it. A hoisted kind in a single-valued slot that is
 direct- or forwarded-shaped is not a splice seat either: it has one key and
 no keys to splice, and the parent's own slot already takes it.
 
+
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::elementsSeatOf`
+
+The shape-3 seats: every multiple slot — a compound's list slot or a list
+kind's own elements — among whose values exactly one is a hoisted,
+config-shaped compound (python `comparison_operator.comparators` holding
+`_comparison_operator_comparator`; rust's `_type_arguments_elements` holding
+`_type_argument` beside the bare types it also admits). A repeated group
+cannot splice, so the slot takes the group's configs among its elements and
+the overlay builds each one (`elementsShape`); an element that is not a
+config of that group — a built node, a kind id — passes through. A parent
+may have several; each gets its own wire, composed in slot order.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::configKeysOf`
 

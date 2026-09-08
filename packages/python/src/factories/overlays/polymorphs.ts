@@ -12,6 +12,7 @@ export * from './refines.js';
 // every wire method routes through these two sites.
 const _p = <R>(f: unknown) => f as (arg: unknown) => R;
 const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
+const _s = <R>(f: unknown) => f as (...a: readonly unknown[]) => R;
 // A kind's Config is a declared interface, and those are not assignable
 // to an index signature — so reading or spreading one generically needs
 // an erasure. It lives here, once, rather than at every method that
@@ -2206,6 +2207,70 @@ export const casePattern: typeof B.casePattern & {
 	}
 };
 
+const unionPattern$patterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'sign' || key === 'content');
+	return (
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'patterns'> & {
+					patterns: ReadonlyArray<
+						| ArgsOf<CF>[0]
+						| (NonNullable<ArgsOf<PF>[0]> extends { readonly patterns?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const seat = _o(config)['patterns'];
+		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
+		return _p<ReturnType<PF>>(parent)({ ..._o(config), patterns: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) });
+	};
+};
+export const unionPattern: typeof B.unionPattern & {
+	strict: (
+		config:
+			| ArgsOf<typeof F.buildUnionPattern>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildUnionPattern>[0]>, 'patterns'> & {
+					patterns: ReadonlyArray<
+						| ArgsOf<typeof F.buildSimplePatternNegative>[0]
+						| (NonNullable<ArgsOf<typeof F.buildUnionPattern>[0]> extends { readonly patterns?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	) => ReturnType<typeof F.buildUnionPattern>;
+	coerce: (
+		config:
+			| ArgsOf<typeof C.coerceToUnionPattern>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToUnionPattern>[0]>, 'patterns'> & {
+					patterns: ReadonlyArray<
+						| ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
+						| (NonNullable<ArgsOf<typeof C.coerceToUnionPattern>[0]> extends { readonly patterns?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	) => ReturnType<typeof C.coerceToUnionPattern>;
+} = {
+	...B.unionPattern,
+	strict: unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative),
+	coerce: unionPattern$patterns(C.coerceToUnionPattern, C.coerceToSimplePatternNegative)
+};
+
 const keyValuePattern$classPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -3012,6 +3077,76 @@ export const binaryOperator: typeof B.binaryOperator & {
 		strict: binaryOperator$gtGt(F.buildBinaryOperator, TSKindId.GtGt),
 		coerce: binaryOperator$gtGt(C.coerceToBinaryOperator, TSKindId.GtGt)
 	}
+};
+
+const comparisonOperator$comparators = <
+	PF extends (config: never) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'operators' || key === 'primaryExpression');
+	return (
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'comparators'> & {
+					comparators: ReadonlyArray<
+						| ArgsOf<CF>[0]
+						| (NonNullable<ArgsOf<PF>[0]> extends { readonly comparators?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const seat = _o(config)['comparators'];
+		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
+		return _p<ReturnType<PF>>(parent)({
+			..._o(config),
+			comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))
+		});
+	};
+};
+export const comparisonOperator: typeof B.comparisonOperator & {
+	strict: (
+		config:
+			| ArgsOf<typeof F.buildComparisonOperator>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof F.buildComparisonOperator>[0]>, 'comparators'> & {
+					comparators: ReadonlyArray<
+						| ArgsOf<typeof F.buildComparisonOperatorComparator>[0]
+						| (NonNullable<ArgsOf<typeof F.buildComparisonOperator>[0]> extends { readonly comparators?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	) => ReturnType<typeof F.buildComparisonOperator>;
+	coerce: (
+		config:
+			| ArgsOf<typeof C.coerceToComparisonOperator>[0]
+			| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToComparisonOperator>[0]>, 'comparators'> & {
+					comparators: ReadonlyArray<
+						| ArgsOf<typeof C.coerceToComparisonOperatorComparator>[0]
+						| (NonNullable<ArgsOf<typeof C.coerceToComparisonOperator>[0]> extends { readonly comparators?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	) => ReturnType<typeof C.coerceToComparisonOperator>;
+} = {
+	...B.comparisonOperator,
+	strict: comparisonOperator$comparators(F.buildComparisonOperator, F.buildComparisonOperatorComparator),
+	coerce: comparisonOperator$comparators(C.coerceToComparisonOperator, C.coerceToComparisonOperatorComparator)
 };
 
 const patternList$comma =

@@ -1,6 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
-import { AbstractAssembledCompound, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledList, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -14,6 +14,7 @@ import {
 	armConfigKeys,
 	armIsConfigShaped,
 	configKeysOf,
+	elementsSeatOf,
 	spliceSeatOf,
 	subFactoriesOf,
 	type SpliceSeat,
@@ -30,7 +31,9 @@ interface FlavorRefs {
 type CoerceEmitted = (node: AssembledNode) => boolean;
 
 function isHoistedCompound(node: AssembledNode): boolean {
-	return node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true;
+	return (
+		node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.annotations?.hoisted === true
+	);
 }
 
 function parentRefs(node: AssembledNode, coerceEmitted: CoerceEmitted): FlavorRefs {
@@ -90,6 +93,7 @@ export interface PolymorphWireSet {
 	readonly subs: readonly SubFactory[];
 	readonly aliases: readonly AliasWire[];
 	readonly splice?: SpliceSeat;
+	readonly elements?: readonly SpliceSeat[];
 }
 
 export interface PolymorphWires {
@@ -164,9 +168,17 @@ export function collectPolymorphWires(
 		const aliases = variantAliasWires(node, nodeMap, isEmitted, subs);
 		const seat = spliceSeatOf(node, nodeMap);
 		const splice = seat !== undefined && isEmitted(seat.group.kind) ? seat : undefined;
-		if (subs.length > 0 || aliases.length > 0 || splice !== undefined) {
+		const elements = elementsSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind));
+		if (subs.length > 0 || aliases.length > 0 || splice !== undefined || elements.length > 0) {
 			order.push(node.kind);
-			byKind.set(node.kind, { parentKey, node, subs, aliases, ...(splice ? { splice } : {}) });
+			byKind.set(node.kind, {
+				parentKey,
+				node,
+				subs,
+				aliases,
+				...(splice ? { splice } : {}),
+				...(elements.length > 0 ? { elements } : {})
+			});
 		}
 		seen.add(node.kind);
 	}
@@ -191,6 +203,7 @@ const ERASED_HELPERS = [
 	'// every wire method routes through these two sites.',
 	'const _p = <R,>(f: unknown) => f as (arg: unknown) => R;',
 	'const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;',
+	'const _s = <R,>(f: unknown) => f as (...a: readonly unknown[]) => R;',
 	"// A kind's Config is a declared interface, and those are not assignable",
 	'// to an index signature — so reading or spreading one generically needs',
 	'// an erasure. It lives here, once, rather than at every method that',
@@ -291,7 +304,13 @@ function shape(
 	};
 }
 
-function spliceShape(k: string, mergeKeys: readonly string[], m: string, positional: boolean): WireShape {
+interface SeatShape {
+	readonly method: readonly string[];
+	readonly paramFor: (parentParamType: string, childRef: string) => string;
+	readonly spread?: true;
+}
+
+function spliceShape(k: string, mergeKeys: readonly string[], m: string, positional: boolean): SeatShape {
 	if (positional) {
 		return {
 			method: [
@@ -299,16 +318,16 @@ function spliceShape(k: string, mergeKeys: readonly string[], m: string, positio
 				`	(config: ArgsOf<PF>[0] | ArgsOf<CF>[0]): ReturnType<PF> =>`,
 				`		config === undefined || _built(config) ? ${CALL_P}(config) : ${CALL_P}(${CALL_C}(config));`
 			],
-			paramFor: (p, c) => `(config: ArgsOf<typeof ${p}>[0] | ArgsOf<typeof ${c}>[0])`
+			paramFor: (p, c) => `(config: ${p} | ArgsOf<typeof ${c}>[0])`
 		};
 	}
 	const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
 	const spliced = (p: string, c: string): string =>
-		`ArgsOf<${p}>[0] | (OmitEach<NonNullable<ArgsOf<${p}>[0]>, '${k}'> & (ArgsOf<${c}>[0] | NoneOf<ArgsOf<${c}>[0]>))`;
+		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & (ArgsOf<${c}>[0] | NoneOf<ArgsOf<${c}>[0]>))`;
 	return {
 		method: [
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
-			`	(config: ${spliced('PF', 'CF')}): ReturnType<PF> => {`,
+			`	(config: ${spliced('ArgsOf<PF>[0]', 'CF')}): ReturnType<PF> => {`,
 			`		if (config === undefined) return ${CALL_P}(config);`,
 			`		const rest: Record<string, unknown> = {};`,
 			`		const inner: Record<string, unknown> = {};`,
@@ -322,33 +341,80 @@ function spliceShape(k: string, mergeKeys: readonly string[], m: string, positio
 			`		return ${CALL_P}(seated ? { ...rest, ${k}: ${CALL_C}(inner) } : rest);`,
 			`	};`
 		],
-		paramFor: (p, c) => `(config: ${spliced(`typeof ${p}`, `typeof ${c}`)})`
+		paramFor: (p, c) => `(config: ${spliced(p, `typeof ${c}`)})`
 	};
 }
 
-function emitSplice(
+const PFS = 'PF extends (...args: never[]) => unknown';
+
+function configTest(keys: readonly string[]): string {
+	const keyTests = keys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ') || 'false';
+	return `(e: unknown): boolean => typeof e === 'object' && e !== null && !('$type' in e) && Object.keys(e).every((key) => ${keyTests})`;
+}
+
+function elementsShape(k: string, groupKeys: readonly string[], m: string, spread: boolean): SeatShape {
+	if (spread) {
+		return {
+			method: [
+				`const ${m} = <${PFS}, ${CF}>(parent: PF, child: CF) => {`,
+				`	const isConfig = ${configTest(groupKeys)};`,
+				`	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>`,
+				`		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? ${CALL_C}(e) : e)));`,
+				`};`
+			],
+			paramFor: (p, c) => `(...args: ReadonlyArray<${p} | ArgsOf<typeof ${c}>[0]>)`,
+			spread: true
+		};
+	}
+	const seated = (p: string, c: string): string =>
+		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & { ${k}: ReadonlyArray<ArgsOf<${c}>[0] | (NonNullable<${p}> extends { readonly ${k}?: infer E } ? (E extends readonly (infer I)[] ? I : never) : never)> })`;
+	return {
+		method: [
+			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) => {`,
+			`	const isConfig = ${configTest(groupKeys)};`,
+			`	return (config: ${seated('ArgsOf<PF>[0]', 'CF')}): ReturnType<PF> => {`,
+			`		if (config === undefined) return ${CALL_P}(config);`,
+			`		const seat = _o(config)[${JSON.stringify(k)}];`,
+			`		if (!Array.isArray(seat)) return ${CALL_P}(config);`,
+			`		return ${CALL_P}({ ..._o(config), ${k}: seat.map((e) => (isConfig(e) ? ${CALL_C}(e) : e)) });`,
+			`	};`,
+			`};`
+		],
+		paramFor: (p, c) => `(config: ${seated(p, `typeof ${c}`)})`
+	};
+}
+
+interface SeatEmission {
+	readonly method: readonly string[];
+	readonly apply: (parentExpr: string, childRef: string) => string;
+	readonly paramFor: (parentParamType: string, childRef: string) => string;
+	readonly child: FlavorRefs;
+	readonly spread: boolean;
+}
+
+function seatEmission(
 	parent: AssembledNode,
 	parentKey: string,
 	seat: SpliceSeat,
+	kind: 'splice' | 'elements',
 	wires: PolymorphWires,
 	nodeMap: NodeMap
-): SubEmission {
-	const m = methodName(parentKey, 'splice');
-	const p = parentRefs(parent, wires.coerceEmitted);
-	const c: FlavorRefs = {
+): SeatEmission {
+	const m = methodName(parentKey, kind === 'splice' ? 'splice' : seat.slot.configKey);
+	const child: FlavorRefs = {
 		strict: `F.${seat.group.rawFactoryName}`,
 		coerce: wires.coerceEmitted(seat.group) ? `C.${seat.group.fromFunctionName}` : undefined
 	};
-	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
-	const s = spliceShape(seat.slot.configKey, configKeysOf(seat.group), m, positional);
-	const typeFor = (pRef: string, cRef: string): string => `${s.paramFor(pRef, cRef)} => ReturnType<typeof ${pRef}>`;
-	return {
-		method: s.method,
-		strictApply: `${m}(${p.strict}, ${c.strict})`,
-		strictType: typeFor(p.strict, c.strict),
-		coerceApply: p.coerce && c.coerce ? `${m}(${p.coerce}, ${c.coerce})` : undefined,
-		coerceType: p.coerce && c.coerce ? typeFor(p.coerce, c.coerce) : undefined
-	};
+	const s =
+		kind === 'splice'
+			? spliceShape(
+					seat.slot.configKey,
+					configKeysOf(seat.group),
+					m,
+					resolveDirectFactorySlot(parent, nodeMap) !== undefined
+				)
+			: elementsShape(seat.slot.configKey, configKeysOf(seat.group), m, parent instanceof AssembledList);
+	return { method: s.method, apply: (pe, c) => `${m}(${pe}, ${c})`, paramFor: s.paramFor, child, spread: s.spread === true };
 }
 
 interface SubEmission {
@@ -429,15 +495,42 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				wireTypes.push(`	${sub.name}: { strict: ${emission.strictType}; coerce: ${emission.coerceType} };`);
 			}
 		}
-		if (wireSet.splice !== undefined) {
-			const emission = emitSplice(wireSet.node, wireSet.parentKey, wireSet.splice, wires, nodeMap);
-			methods.push(...emission.method);
-			if (emission.coerceApply === undefined) {
-				wireLines.push(`	strict: ${emission.strictApply},`);
-				wireTypes.push(`	strict: ${emission.strictType};`);
+		const seats: SeatEmission[] = [
+			...(wireSet.splice ? [seatEmission(wireSet.node, wireSet.parentKey, wireSet.splice, 'splice', wires, nodeMap)] : []),
+			...(wireSet.elements ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'elements', wires, nodeMap))
+		];
+		if (seats.length > 0) {
+			const p = parentRefs(wireSet.node, wires.coerceEmitted);
+			const spread = seats.some((s) => s.spread);
+			let strictExpr = p.strict;
+			let strictParam = spread ? `ArgsOf<typeof ${p.strict}>[number]` : `ArgsOf<typeof ${p.strict}>[0]`;
+			let strictParams = '';
+			let coerceExpr = p.coerce;
+			let coerceParam = p.coerce ? (spread ? `ArgsOf<typeof ${p.coerce}>[number]` : `ArgsOf<typeof ${p.coerce}>[0]`) : undefined;
+			let coerceParams = '';
+			const inner = (params: string): string => params.slice(params.indexOf(': ') + 2, -1);
+			for (const seat of seats) {
+				methods.push(...seat.method);
+				strictParams = seat.paramFor(strictParam, seat.child.strict);
+				strictParam = inner(strictParams);
+				strictExpr = seat.apply(strictExpr, seat.child.strict);
+				if (coerceExpr !== undefined && coerceParam !== undefined && seat.child.coerce !== undefined) {
+					coerceParams = seat.paramFor(coerceParam, seat.child.coerce);
+					coerceParam = inner(coerceParams);
+					coerceExpr = seat.apply(coerceExpr, seat.child.coerce);
+				} else {
+					coerceExpr = undefined;
+					coerceParam = undefined;
+				}
+			}
+			if (coerceExpr === undefined) {
+				wireLines.push(`	strict: ${strictExpr},`);
+				wireTypes.push(`	strict: ${strictParams} => ReturnType<typeof ${p.strict}>;`);
 			} else {
-				wireLines.push(`	strict: ${emission.strictApply}, coerce: ${emission.coerceApply},`);
-				wireTypes.push(`	strict: ${emission.strictType}; coerce: ${emission.coerceType};`);
+				wireLines.push(`	strict: ${strictExpr}, coerce: ${coerceExpr},`);
+				wireTypes.push(
+					`	strict: ${strictParams} => ReturnType<typeof ${p.strict}>; coerce: ${coerceParams} => ReturnType<typeof ${p.coerce}>;`
+				);
 			}
 		}
 		for (const alias of wireSet.aliases) {

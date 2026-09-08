@@ -144,10 +144,19 @@ function hoistedCandidatesOf(
 		for (const value of s.values) {
 			if (!isNodeRef(value)) continue;
 			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-			if (child === undefined || child.rawFactoryName === undefined || !isEmitted(child.kind)) continue;
-			if (!(child instanceof AbstractAssembledCompound) || child.annotations?.hoisted !== true) continue;
+			if (child === undefined || child.annotations?.hoisted !== true) continue;
 			const naming = armNaming(node, value, nodeMap);
 			if (naming === undefined) continue;
+			if (child.rawFactoryName === undefined) {
+				const storage = textStorageOf(value, nodeMap);
+				if (storage === undefined) continue;
+				const arm: ValueArm = { via: 'value', storage };
+				const entry: SubFactory = { name: naming.name, slot: s, residual, arm };
+				out.push({ ...naming, entry, claimant: claimantOf(entry) });
+				continue;
+			}
+			if (!isEmitted(child.kind)) continue;
+			if (!isSlotBearingCompound(child) && !isTextLeaf(child)) continue;
 			const arm: NodeArm = { via: 'node', child, path: [] };
 			const entry: SubFactory = { name: naming.name, slot: s, residual, arm };
 			out.push({ ...naming, entry, claimant: claimantOf(entry) });
@@ -367,6 +376,25 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 		seats.push({ slot, group });
 	}
 	return seats.length === 1 ? seats[0] : undefined;
+}
+
+export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly SpliceSeat[] {
+	if (!isSlotBearingCompound(node)) return [];
+	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
+	const seats: SpliceSeat[] = [];
+	for (const slot of node.slots) {
+		if (!isMultiple(slot) || slot.values.length === 0) continue;
+		const groups: AssembledNode[] = [];
+		for (const value of slot.values) {
+			if (!isNodeRef(value)) continue;
+			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
+			if (!(child instanceof AbstractAssembledCompound) || child.annotations?.hoisted !== true) continue;
+			if (child.rawFactoryName === undefined || classifyFactoryShape(child, nodeMap) !== 'config') continue;
+			groups.push(child);
+		}
+		if (groups.length === 1) seats.push({ slot, group: groups[0]! });
+	}
+	return seats;
 }
 
 export function configKeysOf(node: AssembledNode): readonly string[] {

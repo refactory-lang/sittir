@@ -12,6 +12,7 @@ export * from './refines.js';
 // every wire method routes through these two sites.
 const _p = <R>(f: unknown) => f as (arg: unknown) => R;
 const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
+const _s = <R>(f: unknown) => f as (...a: readonly unknown[]) => R;
 // A kind's Config is a declared interface, and those are not assignable
 // to an index signature — so reading or spreading one generically needs
 // an erasure. It lives here, once, rather than at every method that

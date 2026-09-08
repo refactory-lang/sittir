@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
@@ -266,5 +266,41 @@ describe('a single hoisted group splices onto its parent', () => {
 		expect(out).toContain('export const clause: typeof B.clause & {');
 		expect(out).toContain('strict: clause$splice(F.buildClause, F.buildClauseGroup)');
 		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$splice('));
+	});
+});
+
+describe('a repeated hoisted group seats as an array of its configs', () => {
+	it('builds each element from its config and keeps built elements', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'cmp' }, { type: SYMBOL, name: 'comparison' }] },
+			comparison: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
+					{
+						type: FIELD,
+						name: 'comparators',
+						content: { type: REPEAT1, content: { type: SYMBOL, name: '_comparison_comparator' } }
+					}
+				]
+			},
+			_comparison_comparator: {
+				type: SEQ,
+				members: [
+					{
+						type: FIELD,
+						name: 'operators',
+						content: { type: CHOICE, members: [{ type: STRING, value: '<' }, { type: STRING, value: '==' }] }
+					},
+					{ type: FIELD, name: 'right', content: { type: PATTERN, value: '[a-z]+' } }
+				],
+				annotations: { hoisted: true }
+			}
+		});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const comparison$comparators =');
+		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
+		expect(out).toContain('strict: comparison$comparators(F.buildComparison, F.buildComparisonComparator)');
+		expect(out).toContain("{ comparators: ReadonlyArray<ArgsOf<typeof F.buildComparisonComparator>[0]");
 	});
 });

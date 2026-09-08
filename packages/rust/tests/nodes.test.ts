@@ -6379,6 +6379,14 @@ describe('range_pattern sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.RangePatternWithLeft);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('leftBare builds the parent', () => {
+		const node = ir.rangePattern.leftBare({
+			left: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RangePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.RangePatternWithLeft);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('prefix builds the parent', () => {
 		const node = ir.rangePattern.prefix({
 			content: '..=',

@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
@@ -9,6 +9,7 @@ import type { NodeMap } from '../../compiler/types.ts';
 import {
 	armConfigKeys,
 	choiceSlotOf,
+	elementsSeatOf,
 	spliceSeatOf,
 	subFactoriesOf,
 	type NodeArm,
@@ -390,5 +391,43 @@ describe('spliceSeatOf', () => {
 	it('returns nothing for a choice of arms', () => {
 		const nodeMap = twoChoiceSlotsNodeMap();
 		expect(spliceSeatOf(nodeMap.nodes.get('header')!, nodeMap)).toBeUndefined();
+	});
+});
+
+export function comparisonNodeMap(): NodeMap {
+	return buildNodeMap({
+		root: { type: SEQ, members: [{ type: STRING, value: 'cmp' }, { type: SYMBOL, name: 'comparison' }] },
+		comparison: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
+				{ type: FIELD, name: 'comparators', content: { type: REPEAT1, content: { type: SYMBOL, name: '_comparison_comparator' } } }
+			]
+		},
+		_comparison_comparator: {
+			type: SEQ,
+			members: [
+				{
+					type: FIELD,
+					name: 'operators',
+					content: { type: CHOICE, members: [{ type: STRING, value: '<' }, { type: STRING, value: '==' }] }
+				},
+				{ type: FIELD, name: 'right', content: { type: PATTERN, value: '[a-z]+' } }
+			],
+			annotations: { hoisted: true }
+		}
+	});
+}
+
+describe('elementsSeatOf', () => {
+	it('finds a repeated hoisted config-shaped group', () => {
+		const nodeMap = comparisonNodeMap();
+		const seats = elementsSeatOf(nodeMap.nodes.get('comparison')!, nodeMap);
+		expect(seats.map((s) => [s.slot.name, s.group.kind])).toEqual([['comparators', '_comparison_comparator']]);
+		expect(spliceSeatOf(nodeMap.nodes.get('comparison')!, nodeMap)).toBeUndefined();
+	});
+	it('returns nothing for a single-valued seat', () => {
+		const nodeMap = clauseNodeMap();
+		expect(elementsSeatOf(nodeMap.nodes.get('clause')!, nodeMap)).toEqual([]);
 	});
 });

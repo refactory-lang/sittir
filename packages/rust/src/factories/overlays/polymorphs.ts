@@ -12,6 +12,7 @@ export * from './refines.js';
 // every wire method routes through these two sites.
 const _p = <R>(f: unknown) => f as (arg: unknown) => R;
 const _c = (f: unknown) => f as (...a: readonly unknown[]) => unknown;
+const _s = <R>(f: unknown) => f as (...a: readonly unknown[]) => R;
 // A kind's Config is a declared interface, and those are not assignable
 // to an index signature — so reading or spreading one generically needs
 // an erasure. It lives here, once, rather than at every method that
@@ -7291,6 +7292,10 @@ const _rangePatternWithLeft$leftWithRight =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
+const _rangePatternWithLeft$leftBare =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, content: value });
 const _rangePatternWithLeft: {
 	leftWithRight: {
 		strict: (
@@ -7302,10 +7307,22 @@ const _rangePatternWithLeft: {
 				ArgsOf<typeof C.coerceToRangePatternLeftWithRight>[0]
 		) => ReturnType<typeof C.coerceToRangePatternWithLeft>;
 	};
+	leftBare: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'>
+		) => ReturnType<typeof F.buildRangePatternWithLeft>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'>
+		) => ReturnType<typeof C.coerceToRangePatternWithLeft>;
+	};
 } = {
 	leftWithRight: {
 		strict: _rangePatternWithLeft$leftWithRight(F.buildRangePatternWithLeft, F.buildRangePatternLeftWithRight),
 		coerce: _rangePatternWithLeft$leftWithRight(C.coerceToRangePatternWithLeft, C.coerceToRangePatternLeftWithRight)
+	},
+	leftBare: {
+		strict: _rangePatternWithLeft$leftBare(F.buildRangePatternWithLeft, TSKindId.RangePatternLeftBare),
+		coerce: _rangePatternWithLeft$leftBare(C.coerceToRangePatternWithLeft, TSKindId.RangePatternLeftBare)
 	}
 };
 
@@ -7353,6 +7370,10 @@ const rangePattern$leftWithRight =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const rangePattern$leftBare =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const rangePattern$prefix =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -7378,6 +7399,12 @@ export const rangePattern: typeof B.rangePattern & {
 			...args: ArgsOf<typeof _rangePatternWithLeft.leftWithRight.coerce>
 		) => ReturnType<typeof C.coerceToRangePattern>;
 	};
+	leftBare: {
+		strict: (...args: ArgsOf<typeof _rangePatternWithLeft.leftBare.strict>) => ReturnType<typeof F.buildRangePattern>;
+		coerce: (
+			...args: ArgsOf<typeof _rangePatternWithLeft.leftBare.coerce>
+		) => ReturnType<typeof C.coerceToRangePattern>;
+	};
 	prefix: {
 		strict: (...args: ArgsOf<typeof F.buildRangePatternPrefix>) => ReturnType<typeof F.buildRangePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToRangePatternPrefix>) => ReturnType<typeof C.coerceToRangePattern>;
@@ -7399,6 +7426,10 @@ export const rangePattern: typeof B.rangePattern & {
 	leftWithRight: {
 		strict: rangePattern$leftWithRight(F.buildRangePattern, _rangePatternWithLeft.leftWithRight.strict),
 		coerce: rangePattern$leftWithRight(C.coerceToRangePattern, _rangePatternWithLeft.leftWithRight.coerce)
+	},
+	leftBare: {
+		strict: rangePattern$leftBare(F.buildRangePattern, _rangePatternWithLeft.leftBare.strict),
+		coerce: rangePattern$leftBare(C.coerceToRangePattern, _rangePatternWithLeft.leftBare.coerce)
 	},
 	prefix: {
 		strict: rangePattern$prefix(F.buildRangePattern, F.buildRangePatternPrefix),
@@ -7535,6 +7566,234 @@ export const blockComment: typeof B.blockComment & {
 		strict: blockComment$content(F.buildBlockComment, F.buildBlockCommentContent),
 		coerce: blockComment$content(C.coerceToBlockComment, C.coerceToBlockCommentContent)
 	}
+};
+
+const enumVariantListElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'attributeItem' || key === 'enumVariant');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+export const enumVariantListElements: typeof B.enumVariantListElements & {
+	strict: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof F.buildEnumVariantListElements>[number] | ArgsOf<typeof F.buildAttributedEnumVariant>[0]
+		>
+	) => ReturnType<typeof F.buildEnumVariantListElements>;
+	coerce: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof C.coerceToEnumVariantListElements>[number] | ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
+		>
+	) => ReturnType<typeof C.coerceToEnumVariantListElements>;
+} = {
+	...B.enumVariantListElements,
+	strict: enumVariantListElements$element(F.buildEnumVariantListElements, F.buildAttributedEnumVariant),
+	coerce: enumVariantListElements$element(C.coerceToEnumVariantListElements, C.coerceToAttributedEnumVariant)
+};
+
+const fieldDeclarationListElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'attributeItem' || key === 'fieldDeclaration');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+export const fieldDeclarationListElements: typeof B.fieldDeclarationListElements & {
+	strict: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof F.buildFieldDeclarationListElements>[number] | ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
+		>
+	) => ReturnType<typeof F.buildFieldDeclarationListElements>;
+	coerce: (
+		...args: ReadonlyArray<
+			| ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]
+			| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
+		>
+	) => ReturnType<typeof C.coerceToFieldDeclarationListElements>;
+} = {
+	...B.fieldDeclarationListElements,
+	strict: fieldDeclarationListElements$element(F.buildFieldDeclarationListElements, F.buildAttributedFieldDeclaration),
+	coerce: fieldDeclarationListElements$element(
+		C.coerceToFieldDeclarationListElements,
+		C.coerceToAttributedFieldDeclaration
+	)
+};
+
+const orderedFieldDeclarationListElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'attributeItem' || key === 'visibilityModifier' || key === 'type');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+export const orderedFieldDeclarationListElements: typeof B.orderedFieldDeclarationListElements & {
+	strict: (
+		...args: ReadonlyArray<
+			| ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number]
+			| ArgsOf<typeof F.buildAttributedOrderedField>[0]
+		>
+	) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements>;
+	coerce: (
+		...args: ReadonlyArray<
+			| ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]
+			| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
+		>
+	) => ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements>;
+} = {
+	...B.orderedFieldDeclarationListElements,
+	strict: orderedFieldDeclarationListElements$element(
+		F.buildOrderedFieldDeclarationListElements,
+		F.buildAttributedOrderedField
+	),
+	coerce: orderedFieldDeclarationListElements$element(
+		C.coerceToOrderedFieldDeclarationListElements,
+		C.coerceToAttributedOrderedField
+	)
+};
+
+const typeParametersElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+export const typeParametersElements: typeof B.typeParametersElements & {
+	strict: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof F.buildTypeParametersElements>[number] | ArgsOf<typeof F.buildAttributedTypeParameter>[0]
+		>
+	) => ReturnType<typeof F.buildTypeParametersElements>;
+	coerce: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof C.coerceToTypeParametersElements>[number] | ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
+		>
+	) => ReturnType<typeof C.coerceToTypeParametersElements>;
+} = {
+	...B.typeParametersElements,
+	strict: typeParametersElements$element(F.buildTypeParametersElements, F.buildAttributedTypeParameter),
+	coerce: typeParametersElements$element(C.coerceToTypeParametersElements, C.coerceToAttributedTypeParameter)
+};
+
+const parametersElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+export const parametersElements: typeof B.parametersElements & {
+	strict: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof F.buildParametersElements>[number] | ArgsOf<typeof F.buildAttributedParameter>[0]
+		>
+	) => ReturnType<typeof F.buildParametersElements>;
+	coerce: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof C.coerceToParametersElements>[number] | ArgsOf<typeof C.coerceToAttributedParameter>[0]
+		>
+	) => ReturnType<typeof C.coerceToParametersElements>;
+} = {
+	...B.parametersElements,
+	strict: parametersElements$element(F.buildParametersElements, F.buildAttributedParameter),
+	coerce: parametersElements$element(C.coerceToParametersElements, C.coerceToAttributedParameter)
+};
+
+const typeArgumentsElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'content' || key === 'traitBounds');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+export const typeArgumentsElements: typeof B.typeArgumentsElements & {
+	strict: (
+		...args: ReadonlyArray<ArgsOf<typeof F.buildTypeArgumentsElements>[number] | ArgsOf<typeof F.buildTypeArgument>[0]>
+	) => ReturnType<typeof F.buildTypeArgumentsElements>;
+	coerce: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof C.coerceToTypeArgumentsElements>[number] | ArgsOf<typeof C.coerceToTypeArgument>[0]
+		>
+	) => ReturnType<typeof C.coerceToTypeArgumentsElements>;
+} = {
+	...B.typeArgumentsElements,
+	strict: typeArgumentsElements$element(F.buildTypeArgumentsElements, F.buildTypeArgument),
+	coerce: typeArgumentsElements$element(C.coerceToTypeArgumentsElements, C.coerceToTypeArgument)
+};
+
+const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'attributeItem' || key === 'expression');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+export const argumentsElements: typeof B.argumentsElements & {
+	strict: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof F.buildArgumentsElements>[number] | ArgsOf<typeof F.buildAttributedArgument>[0]
+		>
+	) => ReturnType<typeof F.buildArgumentsElements>;
+	coerce: (
+		...args: ReadonlyArray<
+			ArgsOf<typeof C.coerceToArgumentsElements>[number] | ArgsOf<typeof C.coerceToAttributedArgument>[0]
+		>
+	) => ReturnType<typeof C.coerceToArgumentsElements>;
+} = {
+	...B.argumentsElements,
+	strict: argumentsElements$element(F.buildArgumentsElements, F.buildAttributedArgument),
+	coerce: argumentsElements$element(C.coerceToArgumentsElements, C.coerceToAttributedArgument)
 };
 
 const implItemPositiveClause$identifier =
