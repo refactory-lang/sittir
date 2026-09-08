@@ -1,0 +1,212 @@
+# Groups seat on their parent
+
+> **Status:** Design (2026-09-08). Follows the strict-rebuild design, whose
+> generated rebuilds measure the gap this closes: the parent-factory row and
+> the no-argument form row in `docs/factory-surface-issues.md`.
+
+## Problem
+
+A group is a hidden sequence that binds co-optional slots to one another:
+`optional(seq('(', field('parameter', …), optional(field('type', …)), ')'))`
+in a catch clause, `repeat1(seq(field('operators', …), field('primary_expression', …)))`
+in a comparison, the three arms of a `for` header. The parser needs it as a
+rule; the author of an override mints or names it to give the parse tree
+enough structure. Neither of those is a reason for a user of the factories
+to see it: the intent of a group is "these slots come and go together", and
+the honest surface for that is the parent's config, narrowed by types.
+
+Groups reach the model by four routes and the model treats them by a fifth
+fact that none of the routes state:
+
+| Route | Example | Who authored it |
+|---|---|---|
+| `variant()` in the override lifts a choice arm into `_<parent>_<variant>` | `_for_header_let_const_kind` | us |
+| `groups:` in the override mints a named hidden rule | `_comparison_operator_comparator` | us |
+| enrich's clause hoist mints `_<parent>_group<n>` | `_catch_clause_group` | enrich |
+| the upstream grammar's own hidden sequences | `_key_value_pattern`, `_type_query_*` | tree-sitter |
+
+Link decides which of these are "a form of the parent" by `hasAnyField`: a
+hidden SEQ containing a `field()` anywhere is added to `hoistedKinds`, one
+without is left as an ordinary kind. The declaration plays no part. So the
+same `groups:` surface lands on two different generated surfaces:
+`type_argument`, `attributed_parameter`, `visibility_modifier_in_path` and
+`yield_from_clause` carry no field and are ordinary kinds with a flat `ir`
+entry, while `match_block_arms`, `attributed_ordered_field` and
+`comparison_operator_comparator` carry one and are hoisted.
+
+Hoisted kinds are correctly kept off the flat `ir`. Their only path to a
+user is the polymorph overlay, which mounts an arm on the parent's namespace
+as a sub-factory. That derivation fires only for a parent with exactly one
+single-valued choice slot, a forwarded target, or a lone enum choice, so a
+parent with a second choice slot (`for_in_statement` has the in-or-of
+operator, `export_statement` has several) or a repeated seat gets nothing:
+
+| Grammar | hoisted | mounted | unmounted, builder exists |
+|---|---|---|---|
+| rust | 33 | 30 | 3 |
+| typescript | 40 | 29 | 11 |
+| python | 8 | 6 | 2 |
+
+And a config-shaped parent handed an inline object in a group's seat passes
+it through unbuilt (`const _content = config.content;`) while typing the seat
+as the group's Built, so the strict rebuilds spell the intended surface and
+fail both the type-check and the transport (`Missing field _operators`).
+Only the forwarded parent (`buildMatchBlock`) builds its group from a config.
+
+## Decision
+
+### The hoisted stamp is declared, never inferred
+
+`hasAnyField` is retired. Every route that creates a group stamps
+`annotations.hoisted` on the rule it creates: the variant lift in the
+transform, the `groups:` mint and the clause-hoist mint in enrich, and the
+group lift in link. Link collects `hoistedKinds` from that annotation and
+from nothing else. The three readers of the set are unchanged: normalize's
+inline gate, simplify's `inlineRefs`, assemble's `hoisted` stamp.
+
+An upstream hidden sequence has no author and therefore no stamp. The eight
+that are hoisted today by the heuristic get an entry in the override's
+`patches` block: `variant()` where the rule is an arm of the parent's choice
+(the six `_type_query_*` rules), a new `group()` verb where it is not
+(`_number`, `_key_value_pattern`), lowering to the same annotation. A hidden
+sequence with no entry is an ordinary hidden rule: normalize splices a
+single-use one into its parent, a multi-use one is a kind of its own. The
+validation counts say which of those is right for each rule; none of the
+eight may move a count.
+
+An enrich mint's name never reaches the surface (its keys do), so the
+`_<parent>_group<n>` spelling only ever appears in diagnostics. Where an
+authored name is wanted the `group()` entry carries it.
+
+### Shape 1 — choice arms: a sub-factory is the parent's overload projected down
+
+The mechanism exists and is right. The generated seating for a config-shaped
+arm already takes the parent's config minus the seat with the arm's keys
+spliced in, partitions by the arm's declared keys, builds the arm and seats
+it:
+
+```ts
+(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> =>
+	_p(parent)({ ...rest, content: _c(child)(inner) })
+```
+
+That parameter type is one overload of the parent, and the sub-factory is
+that overload with the arm fixed by its name. The parent's own call keeps
+taking the built arm; it gains no overloads and no prebuilt detection, so
+each arm has exactly one runtime pathway. A direct-shaped arm keeps taking
+its arguments under the seat key, since it has no keys to splice.
+
+What changes is the derivation gate in `subFactoriesOf`: a hoisted kind in
+any single-valued slot of the parent mounts under its arm name, regardless
+of how many other choice slots the parent has. The arm name is the variant
+annotation when there is one and the parent-prefix-stripped kind otherwise,
+exactly as `kindArmName` derives it today. A key collision between the arm
+and the parent stays the existing `slot-collision` diagnostic.
+
+This mounts the eleven unmounted arms: rust `range_pattern` left_with_right;
+typescript `export_statement` default_clause_from, default_kw,
+default_ns_from, default_star_from, default_value, `extends_clause` single,
+`for_header` var_kind and let_const_kind, `type_query` call and member in
+type annotation.
+
+### Shape 2 — an optional group splices onto the parent
+
+A group that occurs at most once in its seat has no name worth exposing. Its
+keys become keys of the parent's config, and the parent's factory carries
+two overloads per group, both keys or neither (per arm, when the group has
+arms). The overlay partitions the parent's keys, builds the group into the
+seat when its keys are present and leaves the seat empty otherwise. The
+co-optional binding is a type fact; nothing is checked at runtime.
+
+A mandatory single group is the degenerate case with one overload. Today's
+forwarded parent already accepts the group's Config that way
+(`buildMatchBlock(config: MatchBlockArms.Config)`), emitted by the base
+factories from the forwarding shape; that overload is this seating, derived
+from the hoisted fact instead, and emitted where the rest of it is.
+
+Kinds: typescript `_catch_clause_group`; rust `_match_block_arms`; and, once
+the four field-less declared groups carry the stamp, `_visibility_modifier_pub`,
+`_visibility_modifier_in_path` and `_yield_from_clause` as arms of their
+parents' choices (shape 1) rather than kinds of their own.
+
+### Shape 3 — a repeated group is an array of its configs
+
+A group under `repeat` cannot splice. The parent's list slot takes an array
+of the group's flattened config objects, the overlay builds each element,
+and the parent's Built keeps the group's Built in the slot:
+
+```ts
+ir.comparisonOperator({
+	left: ir.identifier("x"),
+	comparators: [{ operators: TSKindId.EqEq, primaryExpression: ir.identifier("y") }]
+})
+```
+
+Kinds: python `_comparison_operator_comparator` and `_key_value_pattern`,
+rust `_attributed_ordered_field`, and the elements `type_argument` and
+`attributed_parameter` once they carry the stamp.
+
+### All of it is overlay logic
+
+Every seating above is decided by provenance: a kind is hoisted because a
+route stamped it so, an arm is named because a variant annotation names it.
+Annotation-driven surface is what the overlay layer is for, so all three
+shapes are emitted by the overlays and nothing else moves. The base factory
+of a parent keeps its raw signature, its seat typed as the group's Built;
+the overlay wraps it with the widened surface, as it already wraps a parent
+that has sub-factories, and `ir` binds the overlaid parent. The forwarded
+wrapper's config-argument overload in the base factories is the one
+pre-existing piece of group seating outside the overlays; it moves in, so
+one emitter owns the seating.
+
+No group is on the flat `ir`. No `$type` marker and no prebuilt detection
+exist for a group: the overlay always builds from keys. The fact it reads,
+"this slot's kind is a hoisted node with these slots", is already in the
+model (a slot's `kinds` and the node's `hoisted` and slot list), so the
+validators' `nodeToConfig`, which splices the read's group child into the
+parent's config, and the factory source emitter, which prints the
+sub-factory call for shape 1, the spliced keys for shape 2 and the inline
+objects for shape 3, read the same model rather than a second stamp.
+
+## Blast radius
+
+- `packages/codegen/src/compiler/link.ts`: `classifyHiddenRule` loses the
+  `hasAnyField` branch; `hoistedKinds` is collected from the annotation.
+- `packages/codegen/src/dsl/transform/transform.ts` (variant lift),
+  `packages/codegen/src/dsl/enrich.ts` (`groups:` mint, clause-hoist mint):
+  stamp `annotations.hoisted`. New `group()` primitive under
+  `packages/codegen/src/dsl/primitives/` and its `patches` lowering.
+- `packages/codegen/src/emitters/overlays/sub-factories.ts`: the derivation
+  gate. `packages/codegen/src/emitters/overlays/polymorphs.ts`: the shape 2
+  and shape 3 seatings and the forwarded parent's config-argument overload,
+  which leaves `factories.ts`. `ir.ts` binds the overlaid parent where it
+  does not already. The base factories, `types.ts`, the factory map and the
+  node model are untouched.
+- `packages/tools/src/validate/common.ts` (`nodeToConfig` splice) and
+  `packages/tools/src/emit/factory-source.ts` (the three spellings).
+- Overrides: eight `patches` entries for the upstream sequences. Surface
+  change for the field-less declared groups: `ir.typeArgument`,
+  `ir.attributedParameter`, `ir.visibilityModifierPub`,
+  `ir.visibilityModifierInPath`, `ir.yieldFromClause` leave `ir`; their
+  callers in examples and tests move to the parent.
+- All three generated packages, the generated examples and their ceiling,
+  the glossary entries for `LinkedGrammar.hoistedKinds`,
+  `classifyHiddenRule`, `NodeEnrichment`, `AbstractAssembledCompound.hoisted`
+  and the sub-factory derivation.
+
+## Verification
+
+- `sittir validate counts` unchanged for all three grammars, compared as
+  numbers; parity fixtures identical. The stamp change alone must move
+  nothing: every kind hoisted by the heuristic today is hoisted by an
+  annotation or an override entry afterwards, checked by diffing the
+  hoisted set before and after.
+- The hoisted census: unmounted-and-unseated is 0 / 0 / 0.
+- `pnpm run gen:examples` and the ceiling: the rebuild type-error counts
+  only fall, and the three package `examples-verify` rows that name the
+  parent-factory gap flip from expected-fail to pass.
+- The `ir` builder ratchets are re-baselined once, with the five rust and
+  one python entries that leave the flat surface accounted for by name.
+- Targeted probes: `ir.forInStatement.letConstKind(…)`, a catch clause with
+  and without its parameter, the python comparison above, each rendered and
+  re-parsed to the source tree.

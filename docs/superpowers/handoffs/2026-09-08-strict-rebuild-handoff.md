@@ -1,7 +1,7 @@
 # Handoff — strict rebuild from source (2026-09-08)
 
 Branch `feat/strict-rebuild-from-source`, stacked on #272 (`feat/enrich-skip-list-retirement`).
-Nothing pushed, no PR open. Fifteen commits from 6c6c3dd42; `git log --oneline master..` lists them.
+Nothing pushed, no PR open. Sixteen commits from 6c6c3dd42 (4f4f5ef31 = inline-group emitter spelling, ceilings 19/31/10); `git log --oneline master..` lists them.
 
 ## What landed, in order
 
@@ -53,14 +53,19 @@ Nothing pushed, no PR open. Fifteen commits from 6c6c3dd42; `git log --oneline m
 
 S4 and S5 resolved. Open, in order of leverage:
 
-- **S9** (codegen) — a config-shaped parent does not build its hoisted group
-  from a config: `buildForInStatement` passes `config.content` through and its
-  Config demands the group's Built, while `buildMatchBlock` (forwarded) already
-  accepts `MatchBlockArms.Config` and builds it. The group builders exist in
-  raw.ts but are not on `ir`. The emitter prints the intended spelling
-  (`content: { kind: TSKindId.Const, left: … }`); make types.ts/factories.ts
-  accept the group's Config in the parent's slot and call the builder. Rust's
-  render also throws "seated is not iterable" on a list slot handed one node.
+- **S9** — spec written, not started:
+  `docs/superpowers/specs/2026-09-08-group-seating-design.md`. Groups never
+  reach the flat `ir`; shape 1 (choice arms) = sub-factories as the parent's
+  overload projected down (the existing `structItem$brace` seating, gate
+  widened to any single slot); shape 2 (single group) = keys spliced onto the
+  parent with both-or-neither overloads; shape 3 (repeated group) = array of
+  the group's configs in the list slot. `hasAnyField` is retired; `hoisted`
+  comes from `annotations.hoisted` stamped by each minting route, with
+  `patches` entries (`variant()` / new `group()`) for the eight upstream
+  hidden seqs. All seating logic is overlay-emitter code; base factories,
+  `types.ts`, factory map and node model untouched. Census 2026-09-08:
+  hoisted 33/40/8, mounted 30/29/6, unmounted 3/11/2 (rust/ts/py).
+  The emitter already prints the shape 3 spelling; S2 folds into this.
 - **S3** — statement slots take only the hidden statement wrappers.
 - **S2** — a no-argument form call is rejected (`ir.parameters.strict()`).
 - **S6** — verbatim text in expression/pattern positions with no leaf to wrap.
