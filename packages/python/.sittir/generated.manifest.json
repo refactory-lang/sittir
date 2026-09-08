@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "b21f28225b421e6eabf7694bc3f1c5a7b3769f49b66d5c847f8b69f2ac272922",
+  "source_hash": "22b4f9f4994708da78187477f5d2ef7a3a8b848de0bb0b9dc77c1337b93ce043",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "7cca52b4bc0f1aec58b78f53e0c042e6aca5579aab56548bd3e1440906f252f1",
     "packages/python/.sittir/grammar.js": "98c9b09f5c4efdbcb46fd84faac3e4a58faf5cfad3dc2ef91a618d6512f1817d",
@@ -23,7 +23,7 @@
     "packages/python/src/factories/bundle.ts": "b615152dcfa33caf74e3e356f1ab528b0be2e1e83998a753eac7efd0ae19898e",
     "packages/python/src/factories/coerce.ts": "67211ecb45a06177a70df93cf416d19b120ef782d88c85d18723ee1598a4bc8f",
     "packages/python/src/factories/index.ts": "287c5925f18c613c19a65e4f46f847da704d8f5883715d524904624f8625a046",
-    "packages/python/src/factories/overlays/polymorphs.ts": "7d3fbc1510fa770e5456e718ef210b8fe3990d2df90d80fd06b364571f205584",
+    "packages/python/src/factories/overlays/polymorphs.ts": "26ae21e1e20783ede5d5311e5a9b5cdb5277b514d79b47c007f323f49022c4ab",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "02f436a31728bcf2c9ca153f834311fa2f7542aa0eceea17228c70a13ae5606a",
@@ -32,7 +32,7 @@
     "packages/python/src/index.ts": "d9191e0f17488612ea9b14f06fd250c186333748e53cd60129b4925e34714110",
     "packages/python/src/ir.ts": "0135ad973044d6bb54a0908b14882f9ad590d1d5d5cdac0e08f44dc646c96316",
     "packages/python/src/is.ts": "ba8008e50e5f226af54ad2e1fdefab44f935693cde41ed35e5b86c023f82dbc2",
-    "packages/python/src/node-model.json5": "0028d761731be0e3fdf2adcf60f3b0cfeb1f06872309bfe528b1ec370bd9f3f7",
+    "packages/python/src/node-model.json5": "48d3d44ef54203b962ed3ff6102e71cec8fdaecd3ead84554c809a0668a74122",
     "packages/python/src/options.ts": "4d153a16a22325fbadb1dc1b7ed3391313b4494d0b0d6b5b9ee2c4f76921bcaf",
     "packages/python/src/render-engine.ts": "fcc45ec4608a066a7491d575700c3f1d704dfcf4048c8883feeb659a9b569018",
     "packages/python/src/types.ts": "34a7ba769bd7348894cce7569baf4d3a3f8a72cd4036419830691cb352043082",

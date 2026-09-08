@@ -14388,6 +14388,16 @@ leaf has no `strict` at all because its strict and loose forms are one call. A
 child in a cycle with its parent cannot be declared first, so it keeps the raw
 builder.
 
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::isChoiceGroup`
+
+Whether a slot's value is a group that is ITSELF a choice. Such a group has
+arms a caller must name, so it mounts as an arm and its own arms nest under
+it: `ir.exceptClause.exception.as`, `…exception.list`. Splicing it would
+flatten its one key onto the parent and leave the choice with no spelling at
+all, which is what made a nested arm unreachable. A group with nothing to
+choose between still splices — one variant is not a choice, and rust's
+`attribute.input` reads better spliced than routed.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::spliceSeatOf`
 
 The shape-2 seat: the parent's one non-multiple slot whose value set is

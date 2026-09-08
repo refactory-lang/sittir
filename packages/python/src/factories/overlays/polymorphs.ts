@@ -316,15 +316,7 @@ const _assignmentEq$assignment =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _assignmentEq$augmentedAssignment =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _assignmentEq$patternList =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _assignmentEq$patternListPatterns =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -332,7 +324,7 @@ const _assignmentEq$yield =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _assignmentEq$yieldFromClause =
+const _assignmentEq$augmentedAssignment =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -345,25 +337,17 @@ const _assignmentEq: {
 		strict: (...args: ArgsOf<typeof F.buildAssignment>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToAssignment>) => ReturnType<typeof C.coerceToAssignmentEq>;
 	};
-	augmentedAssignment: {
-		strict: (...args: ArgsOf<typeof F.buildAugmentedAssignment>) => ReturnType<typeof F.buildAssignmentEq>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAugmentedAssignment>) => ReturnType<typeof C.coerceToAssignmentEq>;
-	};
 	patternList: {
 		strict: (...args: ArgsOf<typeof F.buildPatternList>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToPatternList>) => ReturnType<typeof C.coerceToAssignmentEq>;
-		patterns: {
-			strict: (...args: ArgsOf<typeof patternList.patterns.strict>) => ReturnType<typeof F.buildAssignmentEq>;
-			coerce: (...args: ArgsOf<typeof patternList.patterns.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
-		};
 	};
 	yield: {
 		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof C.coerceToAssignmentEq>;
-		fromClause: {
-			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildAssignmentEq>;
-			coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
-		};
+	};
+	augmentedAssignment: {
+		strict: (...args: ArgsOf<typeof F.buildAugmentedAssignment>) => ReturnType<typeof F.buildAssignmentEq>;
+		coerce: (...args: ArgsOf<typeof C.coerceToAugmentedAssignment>) => ReturnType<typeof C.coerceToAssignmentEq>;
 	};
 } = {
 	expressionList: {
@@ -374,25 +358,17 @@ const _assignmentEq: {
 		strict: _assignmentEq$assignment(F.buildAssignmentEq, F.buildAssignment),
 		coerce: _assignmentEq$assignment(C.coerceToAssignmentEq, C.coerceToAssignment)
 	},
-	augmentedAssignment: {
-		strict: _assignmentEq$augmentedAssignment(F.buildAssignmentEq, F.buildAugmentedAssignment),
-		coerce: _assignmentEq$augmentedAssignment(C.coerceToAssignmentEq, C.coerceToAugmentedAssignment)
-	},
 	patternList: {
 		strict: _assignmentEq$patternList(F.buildAssignmentEq, F.buildPatternList),
-		coerce: _assignmentEq$patternList(C.coerceToAssignmentEq, C.coerceToPatternList),
-		patterns: {
-			strict: _assignmentEq$patternListPatterns(F.buildAssignmentEq, patternList.patterns.strict),
-			coerce: _assignmentEq$patternListPatterns(C.coerceToAssignmentEq, patternList.patterns.coerce)
-		}
+		coerce: _assignmentEq$patternList(C.coerceToAssignmentEq, C.coerceToPatternList)
 	},
 	yield: {
 		strict: _assignmentEq$yield(F.buildAssignmentEq, F.buildYield),
-		coerce: _assignmentEq$yield(C.coerceToAssignmentEq, C.coerceToYield),
-		fromClause: {
-			strict: _assignmentEq$yieldFromClause(F.buildAssignmentEq, yield_.fromClause.strict),
-			coerce: _assignmentEq$yieldFromClause(C.coerceToAssignmentEq, yield_.fromClause.coerce)
-		}
+		coerce: _assignmentEq$yield(C.coerceToAssignmentEq, C.coerceToYield)
+	},
+	augmentedAssignment: {
+		strict: _assignmentEq$augmentedAssignment(F.buildAssignmentEq, F.buildAugmentedAssignment),
+		coerce: _assignmentEq$augmentedAssignment(C.coerceToAssignmentEq, C.coerceToAugmentedAssignment)
 	}
 };
 
@@ -803,6 +779,30 @@ const assignment$type =
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
+const assignment$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$unionType =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$constrainedType =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$memberType =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
 const assignment$typed =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -836,6 +836,54 @@ export const assignment: typeof B.assignment & {
 				content: ArgsOf<typeof C.coerceToAssignmentType>;
 			}
 		) => ReturnType<typeof C.coerceToAssignment>;
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.identifier.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.identifier.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		unionType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.unionType.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.unionType.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		constrainedType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.constrainedType.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.constrainedType.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		memberType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.memberType.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.memberType.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
 	};
 	typed: {
 		strict: (
@@ -853,7 +901,23 @@ export const assignment: typeof B.assignment & {
 	},
 	type: {
 		strict: assignment$type(F.buildAssignment, F.buildAssignmentType),
-		coerce: assignment$type(C.coerceToAssignment, C.coerceToAssignmentType)
+		coerce: assignment$type(C.coerceToAssignment, C.coerceToAssignmentType),
+		identifier: {
+			strict: assignment$identifier(F.buildAssignment, _assignmentType.identifier.strict),
+			coerce: assignment$identifier(C.coerceToAssignment, _assignmentType.identifier.coerce)
+		},
+		unionType: {
+			strict: assignment$unionType(F.buildAssignment, _assignmentType.unionType.strict),
+			coerce: assignment$unionType(C.coerceToAssignment, _assignmentType.unionType.coerce)
+		},
+		constrainedType: {
+			strict: assignment$constrainedType(F.buildAssignment, _assignmentType.constrainedType.strict),
+			coerce: assignment$constrainedType(C.coerceToAssignment, _assignmentType.constrainedType.coerce)
+		},
+		memberType: {
+			strict: assignment$memberType(F.buildAssignment, _assignmentType.memberType.strict),
+			coerce: assignment$memberType(C.coerceToAssignment, _assignmentType.memberType.coerce)
+		}
 	},
 	typed: {
 		strict: assignment$typed(F.buildAssignment, F.buildAssignmentTyped),
@@ -874,6 +938,22 @@ const expressionStatement$assignmentEq =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const expressionStatement$assignmentType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$unionType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$constrainedType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$memberType =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -914,6 +994,38 @@ export const expressionStatement: typeof B.expressionStatement & {
 		type: {
 			strict: (...args: ArgsOf<typeof assignment.type.strict>) => ReturnType<typeof F.buildExpressionStatement>;
 			coerce: (...args: ArgsOf<typeof assignment.type.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		identifier: {
+			strict: (
+				...args: ArgsOf<typeof assignment.type.identifier.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof assignment.type.identifier.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		unionType: {
+			strict: (
+				...args: ArgsOf<typeof assignment.type.unionType.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof assignment.type.unionType.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		constrainedType: {
+			strict: (
+				...args: ArgsOf<typeof assignment.type.constrainedType.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof assignment.type.constrainedType.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		memberType: {
+			strict: (
+				...args: ArgsOf<typeof assignment.type.memberType.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof assignment.type.memberType.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
 		};
 		typed: {
 			strict: (...args: ArgsOf<typeof assignment.typed.strict>) => ReturnType<typeof F.buildExpressionStatement>;
@@ -956,6 +1068,22 @@ export const expressionStatement: typeof B.expressionStatement & {
 		type: {
 			strict: expressionStatement$assignmentType(F.buildExpressionStatement, assignment.type.strict),
 			coerce: expressionStatement$assignmentType(C.coerceToExpressionStatement, assignment.type.coerce)
+		},
+		identifier: {
+			strict: expressionStatement$identifier(F.buildExpressionStatement, assignment.type.identifier.strict),
+			coerce: expressionStatement$identifier(C.coerceToExpressionStatement, assignment.type.identifier.coerce)
+		},
+		unionType: {
+			strict: expressionStatement$unionType(F.buildExpressionStatement, assignment.type.unionType.strict),
+			coerce: expressionStatement$unionType(C.coerceToExpressionStatement, assignment.type.unionType.coerce)
+		},
+		constrainedType: {
+			strict: expressionStatement$constrainedType(F.buildExpressionStatement, assignment.type.constrainedType.strict),
+			coerce: expressionStatement$constrainedType(C.coerceToExpressionStatement, assignment.type.constrainedType.coerce)
+		},
+		memberType: {
+			strict: expressionStatement$memberType(F.buildExpressionStatement, assignment.type.memberType.strict),
+			coerce: expressionStatement$memberType(C.coerceToExpressionStatement, assignment.type.memberType.coerce)
 		},
 		typed: {
 			strict: expressionStatement$assignmentTyped(F.buildExpressionStatement, assignment.typed.strict),
@@ -1651,47 +1779,6 @@ const _exceptClauseException: {
 	}
 };
 
-const exceptClause$splice =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config:
-			| ArgsOf<PF>[0]
-			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'exception'> &
-					({ content: ArgsOf<CF>[0] } | NoneOf<{ content: ArgsOf<CF>[0] }>))
-	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		let seated = false;
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content') {
-				inner[key] = value;
-				seated = seated || value !== undefined;
-			} else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, exception: _c(child)(inner['content']) } : rest);
-	};
-const exceptClause$seated: (
-	config:
-		| ArgsOf<typeof F.buildExceptClause>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildExceptClause>[0]>, 'exception'> &
-				(
-					| { content: ArgsOf<typeof F.buildExceptClauseException>[0] }
-					| NoneOf<{ content: ArgsOf<typeof F.buildExceptClauseException>[0] }>
-				))
-) => ReturnType<typeof F.buildExceptClause> = exceptClause$splice(F.buildExceptClause, F.buildExceptClauseException);
-const exceptClause$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToExceptClause>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToExceptClause>[0]>, 'exception'> &
-				(
-					| { content: ArgsOf<typeof C.coerceToExceptClauseException>[0] }
-					| NoneOf<{ content: ArgsOf<typeof C.coerceToExceptClauseException>[0] }>
-				))
-) => ReturnType<typeof C.coerceToExceptClause> = exceptClause$splice(
-	C.coerceToExceptClause,
-	C.coerceToExceptClauseException
-);
 const exceptClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
@@ -1708,55 +1795,117 @@ const exceptClause$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, suite: value });
+const exceptClause$exception =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
+		const { exception: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionAs =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
+		const { exception: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
+		const { exception: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+	};
 export const exceptClause: typeof B.exceptClause & {
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof exceptClause$seated>[0], 'suite'> & {
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & {
 				suite: ArgsOf<typeof F.buildSimpleStatements>;
 			}
-		) => ReturnType<typeof exceptClause$seated>;
+		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof exceptClause$seatedCoerce>[0], 'suite'> & {
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
 				suite: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
-		) => ReturnType<typeof exceptClause$seatedCoerce>;
+		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
 	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof exceptClause$seated>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteBlock> }
-		) => ReturnType<typeof exceptClause$seated>;
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteBlock> }
+		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof exceptClause$seatedCoerce>[0], 'suite'> & {
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
 				suite: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
-		) => ReturnType<typeof exceptClause$seatedCoerce>;
+		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof exceptClause$seated>[0], 'suite'>
-		) => ReturnType<typeof exceptClause$seated>;
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'>
+		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof exceptClause$seatedCoerce>[0], 'suite'>
-		) => ReturnType<typeof exceptClause$seatedCoerce>;
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'>
+		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
-	strict: typeof exceptClause$seated;
-	coerce: typeof exceptClause$seatedCoerce;
+	exception: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+				exception: ArgsOf<typeof F.buildExceptClauseException>;
+			}
+		) => ReturnType<typeof F.buildExceptClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+				exception: ArgsOf<typeof C.coerceToExceptClauseException>;
+			}
+		) => ReturnType<typeof C.coerceToExceptClause>;
+		as: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.as.strict>;
+				}
+			) => ReturnType<typeof F.buildExceptClause>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.as.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToExceptClause>;
+		};
+		list: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.list.strict>;
+				}
+			) => ReturnType<typeof F.buildExceptClause>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.list.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToExceptClause>;
+		};
+	};
 } = {
 	...B.exceptClause,
 	inline: {
-		strict: exceptClause$inline(exceptClause$seated, F.buildSimpleStatements),
-		coerce: exceptClause$inline(exceptClause$seatedCoerce, C.coerceToSimpleStatements)
+		strict: exceptClause$inline(F.buildExceptClause, F.buildSimpleStatements),
+		coerce: exceptClause$inline(C.coerceToExceptClause, C.coerceToSimpleStatements)
 	},
 	block: {
-		strict: exceptClause$block(exceptClause$seated, F.buildSuiteBlock),
-		coerce: exceptClause$block(exceptClause$seatedCoerce, C.coerceToSuiteBlock)
+		strict: exceptClause$block(F.buildExceptClause, F.buildSuiteBlock),
+		coerce: exceptClause$block(C.coerceToExceptClause, C.coerceToSuiteBlock)
 	},
 	empty: {
-		strict: exceptClause$empty(exceptClause$seated, TSKindId._SuiteEmpty),
-		coerce: exceptClause$empty(exceptClause$seatedCoerce, TSKindId._SuiteEmpty)
+		strict: exceptClause$empty(F.buildExceptClause, TSKindId._SuiteEmpty),
+		coerce: exceptClause$empty(C.coerceToExceptClause, TSKindId._SuiteEmpty)
 	},
-	strict: exceptClause$seated,
-	coerce: exceptClause$seatedCoerce
+	exception: {
+		strict: exceptClause$exception(F.buildExceptClause, F.buildExceptClauseException),
+		coerce: exceptClause$exception(C.coerceToExceptClause, C.coerceToExceptClauseException),
+		as: {
+			strict: exceptClause$exceptionAs(F.buildExceptClause, _exceptClauseException.as.strict),
+			coerce: exceptClause$exceptionAs(C.coerceToExceptClause, _exceptClauseException.as.coerce)
+		},
+		list: {
+			strict: exceptClause$exceptionList(F.buildExceptClause, _exceptClauseException.list.strict),
+			coerce: exceptClause$exceptionList(C.coerceToExceptClause, _exceptClauseException.list.coerce)
+		}
+	}
 };
 
 const finallyClause$inline =

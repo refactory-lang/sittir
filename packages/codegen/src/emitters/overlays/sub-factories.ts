@@ -135,12 +135,14 @@ function hoistedCandidatesOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	isEmitted: IsEmittedPredicate,
-	exclude: AssembledNonterminal | undefined
+	exclude: AssembledNonterminal | undefined,
+	visiting: ReadonlySet<string>
 ): Candidate[] {
 	if (!isSlotBearingCompound(node)) return [];
 	const out: Candidate[] = [];
 	for (const s of node.slots) {
-		if (s === exclude || isMultiple(s) || s.values.length < 2) continue;
+		if (s === exclude || isMultiple(s)) continue;
+		if (s.values.length < 2 && !s.values.some((v) => isChoiceGroup(node, v, nodeMap, isEmitted, visiting))) continue;
 		const residual = node.slots.filter((f) => f !== s);
 		for (const value of s.values) {
 			if (!isNodeRef(value)) continue;
@@ -161,9 +163,40 @@ function hoistedCandidatesOf(
 			const arm: NodeArm = { via: 'node', child, path: [] };
 			const entry: SubFactory = { name: naming.name, slot: s, residual, arm };
 			out.push({ ...naming, entry, claimant: claimantOf(entry) });
+			if (visiting.has(child.kind)) continue;
+			for (const inner of subFactoriesInternal(child, nodeMap, isEmitted, new Set([...visiting, node.kind])).entries) {
+				if (inner.arm.via !== 'node') continue;
+				const nested: NodeArm = { via: 'node', child, path: [inner.name], leaf: inner.arm.leaf ?? inner.arm.child };
+				const leafName = kindArmName(node.kind, nested.leaf!);
+				out.push({
+					name: leafName,
+					entry: { name: leafName, slot: s, residual, arm: nested },
+					claimant: claimantOf({ name: leafName, slot: s, residual, arm: nested })
+				});
+			}
 		}
 	}
 	return out;
+}
+
+/**
+ * Whether a slot's value is a group that is ITSELF a choice. Such a group has
+ * arms a caller must name, so it mounts as an arm and its own arms nest under
+ * it (`ir.exceptClause.exception.as`). Splicing it would flatten one key onto
+ * the parent and leave the choice with no spelling at all. A group with
+ * nothing to choose between still splices — one variant is not a choice.
+ */
+function isChoiceGroup(
+	parent: AssembledNode,
+	value: NodeOrTerminal,
+	nodeMap: NodeMap,
+	isEmitted: IsEmittedPredicate,
+	visiting: ReadonlySet<string>
+): boolean {
+	if (!isNodeRef(value)) return false;
+	const group = nodeMap.nodes.get(storageKindOfRef(value.node));
+	if (group === undefined || group.annotations?.hoisted !== true || visiting.has(group.kind)) return false;
+	return subFactoriesInternal(group, nodeMap, isEmitted, new Set([...visiting, parent.kind])).entries.length > 0;
 }
 
 function derive(
@@ -183,7 +216,7 @@ function derive(
 		if (forwardChild === undefined || !isEmitted(forwardChild.kind) || visiting.has(forwardChild.kind)) {
 			const enumSlot = loneEnumChoiceSlot(node);
 			if (enumSlot === undefined) {
-				const hoisted = hoistedCandidatesOf(node, nodeMap, isEmitted, undefined);
+				const hoisted = hoistedCandidatesOf(node, nodeMap, isEmitted, undefined, nextVisiting);
 				return hoisted.length === 0 ? EMPTY : resolveCandidates(node, hoisted, nodeMap, isEmitted, nextVisiting);
 			}
 			slot = enumSlot;
@@ -246,7 +279,7 @@ function derive(
 			candidates.push({ name: flatName, entry, claimant: claimantOf(entry) });
 		}
 	}
-	candidates.push(...hoistedCandidatesOf(node, nodeMap, isEmitted, slot));
+	candidates.push(...hoistedCandidatesOf(node, nodeMap, isEmitted, slot, nextVisiting));
 
 	return resolveCandidates(node, candidates, nodeMap, isEmitted, nextVisiting);
 }
@@ -372,6 +405,7 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 		if (isMultiple(slot) || slot.values.length !== 1) continue;
 		const value = slot.values[0]!;
 		if (!isNodeRef(value)) continue;
+		if (isChoiceGroup(node, value, nodeMap, DEFAULT_IS_EMITTED, new Set())) continue;
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (!(group instanceof AbstractAssembledCompound) || group.annotations?.hoisted !== true) continue;
 		if (group.rawFactoryName === undefined) continue;

@@ -7443,7 +7443,8 @@
               "unresolved": true,
               "seat": {
                 "kind": "_except_clause_exception",
-                "shape": "splice"
+                "shape": "arm",
+                "mount": "exception"
               }
             }
           ]

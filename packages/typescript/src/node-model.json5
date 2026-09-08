@@ -6553,7 +6553,8 @@
               "unresolved": true,
               "seat": {
                 "kind": "_import_clause_group",
-                "shape": "splice"
+                "shape": "arm",
+                "mount": "importClauseGroup"
               }
             }
           ]
@@ -10346,7 +10347,8 @@
               "unresolved": true,
               "seat": {
                 "kind": "_catch_clause_group",
-                "shape": "splice"
+                "shape": "arm",
+                "mount": "group"
               }
             }
           ]

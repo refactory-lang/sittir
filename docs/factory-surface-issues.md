@@ -105,6 +105,16 @@ Error: `TS2322: Type 'true' is not assignable to type 'string | number | ArrayEx
 token choice, so no kind survives for a caller to name. Every other literal
 has one (`integerLiteral`, `floatLiteral`, `charLiteral`, `stringLiteral`).
 
+### S11 — Two arm slots cannot both be named in one call
+
+Wanted: python `except a, b:` with a block suite, which needs the exception's
+`list` arm and the suite's `block` arm at once.
+Error: `ir surface: except_clause seats two arms in one config (exception.list, block); no spelling calls both`.
+Each arm is emitted as its own route wrapping the parent, so a caller picks
+one. A kind with two arm-seated slots has no route that applies both. The
+routes would have to compose, each returning a surface that still offers the
+others.
+
 ## Loose surface
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant
