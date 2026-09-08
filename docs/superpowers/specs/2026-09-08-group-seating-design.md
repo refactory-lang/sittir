@@ -162,11 +162,30 @@ one emitter owns the seating.
 No group is on the flat `ir`. No `$type` marker and no prebuilt detection
 exist for a group: the overlay always builds from keys. The fact it reads,
 "this slot's kind is a hoisted node with these slots", is already in the
-model (a slot's `kinds` and the node's `hoisted` and slot list), so the
-validators' `nodeToConfig`, which splices the read's group child into the
-parent's config, and the factory source emitter, which prints the
-sub-factory call for shape 1, the spliced keys for shape 2 and the inline
-objects for shape 3, read the same model rather than a second stamp.
+model (a slot's `kinds` and the node's `hoisted` and slot list); the shape
+and the arm name are what the overlay derives from it.
+
+### The node model and the example emitter follow
+
+The tools do not re-derive that. The serialized node model
+(`packages/<g>/src/node-model.json5`) carries, per slot value that is a
+hoisted kind, what the overlay decided: the seating shape (`arm`, `splice`
+or `elements`) and, for an arm, the mount name. Its readers consume the
+stamp:
+
+- the validators' `nodeToConfig` splices the read's group child into the
+  parent's config for a spliced seat, keeps it as an inline object for an
+  element seat, and leaves an arm seat to the dispatcher, which builds it
+  through the mount;
+- the factory source emitter prints the sub-factory call for an arm, the
+  spliced keys for a spliced seat, and the inline objects for an element
+  seat, so `pnpm run gen:examples` rebuilds the three dogfood targets in the
+  new spelling and the ceiling and the package `examples-verify` rows move
+  with them.
+
+The printing factory map in the emitter already resolves a mount through
+`printingFactoryMap`; it gains the two other seatings and loses its special
+case for a hoisted non-form kind, which the element seat replaces.
 
 ## Blast radius
 
@@ -180,10 +199,13 @@ objects for shape 3, read the same model rather than a second stamp.
   gate. `packages/codegen/src/emitters/overlays/polymorphs.ts`: the shape 2
   and shape 3 seatings and the forwarded parent's config-argument overload,
   which leaves `factories.ts`. `ir.ts` binds the overlaid parent where it
-  does not already. The base factories, `types.ts`, the factory map and the
-  node model are untouched.
-- `packages/tools/src/validate/common.ts` (`nodeToConfig` splice) and
-  `packages/tools/src/emit/factory-source.ts` (the three spellings).
+  does not already. The base factories, `types.ts` and the factory map are
+  untouched.
+- `packages/codegen/src/emitters/node-model.ts`: the seating shape and mount
+  name per hoisted slot value, serialized from the overlay's derivation.
+- `packages/tools/src/validate/common.ts` (`nodeToConfig` by seating shape),
+  `packages/tools/src/emit/factory-source.ts` (the three spellings), the
+  generated examples, their ceiling and the package `examples-verify` rows.
 - Overrides: eight `patches` entries for the upstream sequences. Surface
   change for the field-less declared groups: `ir.typeArgument`,
   `ir.attributedParameter`, `ir.visibilityModifierPub`,
@@ -202,9 +224,11 @@ objects for shape 3, read the same model rather than a second stamp.
   annotation or an override entry afterwards, checked by diffing the
   hoisted set before and after.
 - The hoisted census: unmounted-and-unseated is 0 / 0 / 0.
-- `pnpm run gen:examples` and the ceiling: the rebuild type-error counts
-  only fall, and the three package `examples-verify` rows that name the
-  parent-factory gap flip from expected-fail to pass.
+- `pnpm run gen:examples` and the ceiling: the rebuilds are regenerated
+  from the seating stamps, the type-error counts only fall, and the three
+  package `examples-verify` rows that name the parent-factory gap flip from
+  expected-fail to pass. The emit tests pin one printed example per seating
+  shape.
 - The `ir` builder ratchets are re-baselined once, with the five rust and
   one python entries that leave the flat surface accounted for by name.
 - Targeted probes: `ir.forInStatement.letConstKind(…)`, a catch clause with
