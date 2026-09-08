@@ -3731,11 +3731,21 @@ export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
 export type KwAsyncMarker = TSKindId.KwAsyncMarker;
-export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, '+' | '-' | '~'>;
-export type AugmentedAssignmentOperator = Terminal<
-	TSKindId.AugmentedAssignmentOperator,
-	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
->;
+export type UnaryOperatorOperator = TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde;
+export type AugmentedAssignmentOperator =
+	| TSKindId.PlusEq
+	| TSKindId.DashEq
+	| TSKindId.StarEq
+	| TSKindId.SlashEq
+	| TSKindId.AtEq
+	| TSKindId.SlashSlashEq
+	| TSKindId.PercentEq
+	| TSKindId.StarStarEq
+	| TSKindId.GtGtEq
+	| TSKindId.LtLtEq
+	| TSKindId.AmpEq
+	| TSKindId.CaretEq
+	| TSKindId.PipeEq;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type _StringContent = Terminal<TSKindId._StringContent, string>;
@@ -6431,13 +6441,6 @@ export interface LineContinuationNs extends LeafNs<
 	LineContinuationTree,
 	'line_continuation'
 > {}
-export interface AugmentedAssignmentOperatorNs extends LeafNs<
-	AugmentedAssignmentOperator,
-	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=',
-	AugmentedAssignmentOperator.Built,
-	AugmentedAssignmentOperatorTree,
-	'_augmented_assignment_operator'
-> {}
 export interface StringStartNs extends LeafNs<
 	StringStart,
 	string,
@@ -6634,7 +6637,6 @@ export interface NamespaceMap {
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.Comment]: CommentNs;
 	[TSKindId.LineContinuation]: LineContinuationNs;
-	[TSKindId.AugmentedAssignmentOperator]: AugmentedAssignmentOperatorNs;
 	[TSKindId.StringStart]: StringStartNs;
 	[TSKindId._StringContent]: _StringContentNs;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolationNs;
@@ -9824,21 +9826,6 @@ export namespace LineContinuation {
 	export type LooseArgs = LineContinuationNs['LooseArgs'];
 	export type Tree = LineContinuationNs['Tree'];
 	export type Kind = 'line_continuation';
-}
-export namespace AugmentedAssignmentOperator {
-	export type Config = AugmentedAssignmentOperatorNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.AugmentedAssignmentOperator;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=';
-	}
-	export type Loose = AugmentedAssignmentOperatorNs['Loose'];
-	export type LooseConfig = AugmentedAssignmentOperatorNs['LooseConfig'];
-	export type BuildArgs = AugmentedAssignmentOperatorNs['BuildArgs'];
-	export type LooseArgs = AugmentedAssignmentOperatorNs['LooseArgs'];
-	export type Tree = AugmentedAssignmentOperatorNs['Tree'];
-	export type Kind = '_augmented_assignment_operator';
 }
 export namespace StringStart {
 	export type Config = StringStartNs['Config'];

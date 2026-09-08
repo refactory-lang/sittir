@@ -16,9 +16,6 @@ import * as F from './factories/index.js';
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
 export const synonym = {
-	boolean(value: boolean): ReturnType<typeof F.buildBooleanLiteral> {
-		return F.buildBooleanLiteral(value ? 'true' : 'false');
-	},
 	number: Object.assign(
 		function number(value: number): ReturnType<typeof F.buildIntegerLiteral> | ReturnType<typeof F.buildFloatLiteral> {
 			return Number.isInteger(value) ? F.buildIntegerLiteral(String(value)) : F.buildFloatLiteral(String(value));
@@ -182,7 +179,6 @@ export const nonSpecialToken: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -194,7 +190,6 @@ export const nonSpecialToken: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -278,7 +273,6 @@ export const expressionExceptRange: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -323,7 +317,6 @@ export const expressionExceptRange: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -370,7 +363,6 @@ export const expression: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -416,7 +408,6 @@ export const expression: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -496,7 +487,6 @@ export const condition: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -543,7 +533,6 @@ export const condition: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -582,7 +571,6 @@ export const pattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
@@ -606,7 +594,6 @@ export const pattern: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral,
@@ -632,14 +619,12 @@ export const literal: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral
 };
@@ -648,7 +633,6 @@ export const literalPattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
@@ -656,7 +640,6 @@ export const literalPattern: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral
@@ -864,11 +847,9 @@ export const ir: {
 	readonly self: typeof F.buildSelf;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
-	readonly fragmentSpecifier: typeof F.buildFragmentSpecifier;
 	readonly integerLiteral: typeof F.buildIntegerLiteral;
 	readonly charLiteral: typeof F.buildCharLiteral;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
-	readonly booleanLiteral: typeof F.buildBooleanLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly shebang: typeof F.buildShebang;
 	readonly metavariable: typeof F.buildMetavariable;
@@ -884,7 +865,6 @@ export const ir: {
 	readonly await: typeof F.awaitExpression;
 	readonly binary: typeof F.binaryExpression;
 	readonly binding: typeof F.tokenBindingPattern;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly bounded: typeof F.boundedType;
 	readonly break: typeof F.breakExpression;
 	readonly call: typeof F.callExpression;
@@ -1157,11 +1137,9 @@ export const ir: {
 	crate: F.buildCrate,
 
 	// Leaf node factories
-	fragmentSpecifier: F.buildFragmentSpecifier,
 	integerLiteral: F.buildIntegerLiteral,
 	charLiteral: F.buildCharLiteral,
 	escapeSequence: F.buildEscapeSequence,
-	booleanLiteral: F.buildBooleanLiteral,
 	identifier: F.buildIdentifier,
 	shebang: F.buildShebang,
 	metavariable: F.buildMetavariable,
@@ -1179,7 +1157,6 @@ export const ir: {
 	await: F.awaitExpression,
 	binary: F.binaryExpression,
 	binding: F.tokenBindingPattern,
-	boolean: F.buildBooleanLiteral,
 	bounded: F.boundedType,
 	break: F.breakExpression,
 	call: F.callExpression,

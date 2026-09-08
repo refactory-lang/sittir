@@ -356,7 +356,6 @@ export const tupleTypeMember: {
 
 export const primaryType: {
 	readonly parenthesized: typeof F.parenthesizedType;
-	readonly predefined: typeof F.buildPredefinedType;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly nestedIdentifier: typeof F.nestedTypeIdentifier;
 	readonly generic: typeof F.genericType;
@@ -376,7 +375,6 @@ export const primaryType: {
 	readonly union: typeof F.unionType;
 } = {
 	parenthesized: F.parenthesizedType,
-	predefined: F.buildPredefinedType,
 	identifier: F.buildIdentifier,
 	nestedIdentifier: F.nestedTypeIdentifier,
 	generic: F.genericType,
@@ -582,8 +580,6 @@ export const ir: {
 	readonly regexFlags: typeof F.buildRegexFlags;
 	readonly number: typeof F.buildNumber;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
-	readonly accessibilityModifier: typeof F.buildAccessibilityModifier;
-	readonly predefinedType: typeof F.buildPredefinedType;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
 	readonly abstractClass: typeof F.abstractClassDeclaration;
@@ -627,7 +623,6 @@ export const ir: {
 	readonly optional: typeof F.optionalParameter;
 	readonly parameter: typeof F.tupleParameter;
 	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly predefined: typeof F.buildPredefinedType;
 	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly query: typeof F.typeQuery;
 	readonly readonly: typeof F.readonlyType;
@@ -864,8 +859,6 @@ export const ir: {
 	regexFlags: F.buildRegexFlags,
 	number: F.buildNumber,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
-	accessibilityModifier: F.buildAccessibilityModifier,
-	predefinedType: F.buildPredefinedType,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
 
@@ -911,7 +904,6 @@ export const ir: {
 	optional: F.optionalParameter,
 	parameter: F.tupleParameter,
 	parenthesized: F.parenthesizedExpression,
-	predefined: F.buildPredefinedType,
 	privateIdentifier: F.buildPrivatePropertyIdentifier,
 	query: F.typeQuery,
 	readonly: F.readonlyType,

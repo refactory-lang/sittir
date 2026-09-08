@@ -4071,20 +4071,6 @@ export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
 	);
 }
 
-export function buildAugmentedAssignmentOperator(
-	text: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
-): T.AugmentedAssignmentOperator.Built {
-	return withMethods(
-		{
-			$type: TSKindId.AugmentedAssignmentOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildExceptClauseAs(config: T.ExceptClauseAs.Config): T.ExceptClauseAs.Built {
 	const _value = config.value;
 	const _alias = config.alias;
@@ -5184,7 +5170,6 @@ export type FluentKindMap = {
 	_subscripts: T.Subscripts.Built;
 	_dictionary_elements: T.DictionaryElements.Built;
 	_slice_group: T.SliceGroup.Built;
-	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
 	_except_clause_as: T.ExceptClauseAs.Built;
 	case_tuple_pattern: T.CaseTuplePattern.Built;
 	case_list_pattern: T.CaseListPattern.Built;
@@ -5362,7 +5347,6 @@ export const _factoryMap = {
 	_subscripts: buildSubscripts,
 	_dictionary_elements: buildDictionaryElements,
 	_slice_group: buildSliceGroup,
-	_augmented_assignment_operator: buildAugmentedAssignmentOperator,
 	_except_clause_as: buildExceptClauseAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,

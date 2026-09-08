@@ -149,7 +149,6 @@ export const _fromMap = {
 	_subscripts: coerceToSubscripts,
 	_dictionary_elements: coerceToDictionaryElements,
 	_slice_group: coerceToSliceGroup,
-	_augmented_assignment_operator: coerceToAugmentedAssignmentOperator,
 	_except_clause_as: coerceToExceptClauseAs,
 	case_tuple_pattern: coerceToCaseTuplePattern,
 	case_list_pattern: coerceToCaseListPattern,
@@ -338,7 +337,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34,
 	35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
 	64, 66, 71, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
-	101, 120, 130, 131, 132, 233, 236, 237, 238, 263
+	101, 120, 130, 131, 132, 233, 236, 237, 238, 252, 263
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
@@ -3316,7 +3315,7 @@ export function resolveUnaryOperator_operator(
 	value: T.UnaryOperator.LooseConfig['operator']
 ): T.UnaryOperator['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<T.UnaryOperatorOperator>(value, '_unary_operator_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'+' | '-' | '~'>(value, '_unary_operator_operator')),
 		[['+', TSKindId.Plus] as const, ['-', TSKindId.Dash] as const, ['~', TSKindId.Tilde] as const]
 	);
 }
@@ -3431,7 +3430,10 @@ export function resolveAugmentedAssignment_operator(
 ): T.AugmentedAssignment['_operator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<T.AugmentedAssignmentOperator>(value, '_augmented_assignment_operator')
+			_resolveOneLeaf<'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='>(
+				value,
+				'_augmented_assignment_operator'
+			)
 		),
 		[
 			['+=', TSKindId.PlusEq] as const,
@@ -4599,13 +4601,6 @@ export function coerceToSliceGroup(input?: T.SliceGroup.Loose): ReturnType<typeo
 			_K7
 		)
 	);
-}
-
-export function coerceToAugmentedAssignmentOperator(
-	input: T.AugmentedAssignmentOperator.Loose
-): ReturnType<typeof F.buildAugmentedAssignmentOperator> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildAugmentedAssignmentOperator>;
-	return F.buildAugmentedAssignmentOperator(input as Parameters<typeof F.buildAugmentedAssignmentOperator>[0]);
 }
 
 export function resolveExceptClauseAs_value(value: T.ExceptClauseAs.LooseConfig['value']): T.ExceptClauseAs['_value'] {

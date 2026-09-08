@@ -5160,6 +5160,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 
 export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_operator', '_argument']);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.UnaryOperator as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -5356,6 +5357,8 @@ export function wrapAssignment(
 
 export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_left', '_operator', '_right']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.AugmentedAssignment as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,

@@ -55,7 +55,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "coerceToAssignmentTyped": "function",
   "coerceToAttribute": "function",
   "coerceToAugmentedAssignment": "function",
-  "coerceToAugmentedAssignmentOperator": "function",
   "coerceToAwait": "function",
   "coerceToBinaryOperator": "function",
   "coerceToBlock": "function",

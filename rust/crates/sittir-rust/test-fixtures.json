@@ -4690,7 +4690,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "x",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -4719,7 +4719,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "y",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -4755,7 +4755,7 @@
             },
             "$nodeHandle": 38654705796
           },
-          "_return_type": "i32",
+          "_return_type": 33,
           "_body": {
             "$type": 299,
             "$source": 0,
@@ -4874,7 +4874,7 @@
                       "$type": 238,
                       "$source": 0,
                       "$named": true,
-                      "_type": "str",
+                      "_type": 43,
                       "$other": [
                         74
                       ],
@@ -5066,7 +5066,7 @@
             "$type": 226,
             "$source": 0,
             "$named": true,
-            "_element": "u32",
+            "_element": 32,
             "_length": "2",
             "$other": [
               46,
@@ -5702,7 +5702,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "x",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -5761,7 +5761,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "x",
-                    "_type": "i64",
+                    "_type": 35,
                     "$other": [
                       5
                     ],
@@ -6379,7 +6379,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "x",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -6408,7 +6408,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "y",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -6444,7 +6444,7 @@
         },
         "$nodeHandle": 38654705905
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -6579,7 +6579,7 @@
                   "$type": 238,
                   "$source": 0,
                   "$named": true,
-                  "_type": "str",
+                  "_type": 43,
                   "$other": [
                     74
                   ],
@@ -6787,7 +6787,7 @@
         "$type": 226,
         "$source": 0,
         "$named": true,
-        "_element": "u32",
+        "_element": 32,
         "_length": "2",
         "$other": [
           46,
@@ -7487,7 +7487,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "x",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -7546,7 +7546,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "x",
-                "_type": "i64",
+                "_type": 35,
                 "$other": [
                   5
                 ],
@@ -8154,7 +8154,7 @@
               "$source": 0,
               "$named": true,
               "_name": "x",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -8183,7 +8183,7 @@
               "$source": 0,
               "$named": true,
               "_name": "y",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -8262,7 +8262,7 @@
                 "$type": 238,
                 "$source": 0,
                 "$named": true,
-                "_type": "str",
+                "_type": 43,
                 "$other": [
                   74
                 ],
@@ -8690,7 +8690,7 @@
               "$source": 0,
               "$named": true,
               "_name": "x",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -8749,7 +8749,7 @@
               "$source": 0,
               "$named": true,
               "_name": "x",
-              "_type": "i64",
+              "_type": 35,
               "$other": [
                 5
               ],
@@ -9818,7 +9818,7 @@
       "$source": 0,
       "$named": true,
       "_name": "x",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -9853,7 +9853,7 @@
       "$source": 0,
       "$named": true,
       "_name": "y",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -9892,7 +9892,7 @@
         "$type": 238,
         "$source": 0,
         "$named": true,
-        "_type": "str",
+        "_type": 43,
         "$other": [
           74
         ],
@@ -10108,7 +10108,7 @@
       "$source": 0,
       "$named": true,
       "_name": "x",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -10143,7 +10143,7 @@
       "$source": 0,
       "$named": true,
       "_name": "x",
-      "_type": "i64",
+      "_type": 35,
       "$other": [
         5
       ],
@@ -10673,7 +10673,7 @@
       "$type": 238,
       "$source": 0,
       "$named": true,
-      "_type": "str",
+      "_type": 43,
       "$other": [
         74
       ],
@@ -10908,7 +10908,7 @@
       "$type": 226,
       "$source": 0,
       "$named": true,
-      "_element": "u32",
+      "_element": 32,
       "_length": "2",
       "$other": [
         46,
@@ -14416,7 +14416,7 @@
                           "$source": 0,
                           "$named": true,
                           "_name": "Item",
-                          "_type": "usize",
+                          "_type": 39,
                           "$other": [
                             59
                           ],
@@ -14720,7 +14720,7 @@
                       "$source": 0,
                       "$named": true,
                       "_name": "Item",
-                      "_type": "usize",
+                      "_type": 39,
                       "$other": [
                         59
                       ],
@@ -15071,7 +15071,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "Item",
-                    "_type": "usize",
+                    "_type": 39,
                     "$other": [
                       59
                     ],
@@ -15230,7 +15230,7 @@
                   "$source": 0,
                   "$named": true,
                   "_name": "Item",
-                  "_type": "usize",
+                  "_type": 39,
                   "$other": [
                     59
                   ],
@@ -15326,7 +15326,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "Item",
-                "_type": "usize",
+                "_type": 39,
                 "$other": [
                   59
                 ],
@@ -15510,7 +15510,7 @@
                           "$source": 0,
                           "$named": true,
                           "_name": "Item",
-                          "_type": "usize",
+                          "_type": 39,
                           "$other": [
                             59
                           ],
@@ -15729,7 +15729,7 @@
                       "$source": 0,
                       "$named": true,
                       "_name": "Item",
-                      "_type": "usize",
+                      "_type": 39,
                       "$other": [
                         59
                       ],
@@ -15952,7 +15952,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "Item",
-                    "_type": "usize",
+                    "_type": 39,
                     "$other": [
                       59
                     ],
@@ -16076,7 +16076,7 @@
                   "$source": 0,
                   "$named": true,
                   "_name": "Item",
-                  "_type": "usize",
+                  "_type": 39,
                   "$other": [
                     59
                   ],
@@ -16172,7 +16172,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "Item",
-                "_type": "usize",
+                "_type": 39,
                 "$other": [
                   59
                 ],
@@ -16277,19 +16277,9 @@
               "start": 9,
               "end": 11
             },
-            "$nodeHandle": 64424509446
+            "$nodeHandle": 64424509445
           },
-          "_return_type": {
-            "$type": 240,
-            "$source": 0,
-            "$named": true,
-            "$text": "!",
-            "$span": {
-              "start": 15,
-              "end": 16
-            },
-            "$nodeHandle": 64424509447
-          },
+          "_return_type": 240,
           "_body": {
             "$type": 299,
             "$source": 0,
@@ -16298,7 +16288,7 @@
               "start": 17,
               "end": 19
             },
-            "$nodeHandle": 64424509448,
+            "$nodeHandle": 64424509446,
             "_statements": []
           },
           "$other": [
@@ -16309,7 +16299,7 @@
             "start": 0,
             "end": 19
           },
-          "$nodeHandle": 64424509445,
+          "$nodeHandle": 64424509444,
           "$slotOrder": [
             "name",
             "parameters",
@@ -16354,19 +16344,9 @@
           "start": 9,
           "end": 11
         },
-        "$nodeHandle": 64424509449
+        "$nodeHandle": 64424509447
       },
-      "_return_type": {
-        "$type": 240,
-        "$source": 0,
-        "$named": true,
-        "$text": "!",
-        "$span": {
-          "start": 15,
-          "end": 16
-        },
-        "$nodeHandle": 64424509450
-      },
+      "_return_type": 240,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -16375,7 +16355,7 @@
           "start": 17,
           "end": 19
         },
-        "$nodeHandle": 64424509451,
+        "$nodeHandle": 64424509448,
         "_statements": []
       },
       "$other": [
@@ -16445,7 +16425,7 @@
         "start": 17,
         "end": 19
       },
-      "$nodeHandle": 64424509444,
+      "$nodeHandle": 64424509443,
       "_statements": []
     },
     "expectedOutput": "{}"
@@ -16815,7 +16795,7 @@
                       "$type": 239,
                       "$source": 0,
                       "$named": true,
-                      "_type": "i8",
+                      "_type": 29,
                       "$other": [
                         11
                       ],
@@ -16895,7 +16875,7 @@
             },
             "$nodeHandle": 68719476799
           },
-          "_return_type": "i32",
+          "_return_type": 33,
           "_body": {
             "$type": 299,
             "$source": 0,
@@ -17476,7 +17456,7 @@
                   "$type": 239,
                   "$source": 0,
                   "$named": true,
-                  "_type": "i8",
+                  "_type": 29,
                   "$other": [
                     11
                   ],
@@ -17556,7 +17536,7 @@
         },
         "$nodeHandle": 68719476835
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -18014,7 +17994,7 @@
                 "$type": 239,
                 "$source": 0,
                 "$named": true,
-                "_type": "i8",
+                "_type": 29,
                 "$other": [
                   11
                 ],
@@ -18380,7 +18360,7 @@
       "$type": 239,
       "$source": 0,
       "$named": true,
-      "_type": "i8",
+      "_type": 29,
       "$other": [
         11
       ],
@@ -18457,7 +18437,7 @@
         "$type": 239,
         "$source": 0,
         "$named": true,
-        "_type": "i8",
+        "_type": 29,
         "$other": [
           11
         ],
@@ -18944,7 +18924,7 @@
           "$source": 0,
           "$named": true,
           "_pattern": "x",
-          "_type": "i32",
+          "_type": 33,
           "$other": [
             67,
             5,
@@ -18965,7 +18945,7 @@
           "$source": 0,
           "$named": true,
           "_pattern": "x",
-          "_type": "i8",
+          "_type": 29,
           "_value": "42",
           "$other": [
             67,
@@ -19012,7 +18992,7 @@
           "$source": 0,
           "$named": true,
           "_pattern": "y",
-          "_type": "bool",
+          "_type": 42,
           "_value": {
             "$type": 319,
             "$source": 0,
@@ -19046,7 +19026,7 @@
           "$source": 0,
           "$named": true,
           "_pattern": "bool",
-          "_type": "bool",
+          "_type": 42,
           "_value": {
             "$type": 319,
             "$source": 0,
@@ -19080,7 +19060,7 @@
           "$source": 0,
           "$named": true,
           "_pattern": "u32",
-          "_type": "str",
+          "_type": 43,
           "_value": {
             "$type": 317,
             "$source": 0,
@@ -19209,7 +19189,7 @@
       "$source": 0,
       "$named": true,
       "_pattern": "x",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         67,
         5,
@@ -19246,7 +19226,7 @@
       "$source": 0,
       "$named": true,
       "_pattern": "x",
-      "_type": "i8",
+      "_type": 29,
       "_value": "42",
       "$other": [
         67,
@@ -19325,7 +19305,7 @@
       "$source": 0,
       "$named": true,
       "_pattern": "y",
-      "_type": "bool",
+      "_type": 42,
       "_value": {
         "$type": 319,
         "$source": 0,
@@ -19375,7 +19355,7 @@
       "$source": 0,
       "$named": true,
       "_pattern": "bool",
-      "_type": "bool",
+      "_type": 42,
       "_value": {
         "$type": 319,
         "$source": 0,
@@ -19425,7 +19405,7 @@
       "$source": 0,
       "$named": true,
       "_pattern": "u32",
-      "_type": "str",
+      "_type": 43,
       "_value": {
         "$type": 317,
         "$source": 0,
@@ -22742,7 +22722,7 @@
                         }
                       },
                       "_name": "age",
-                      "_type": "u32",
+                      "_type": 32,
                       "$other": [
                         5
                       ],
@@ -22831,7 +22811,7 @@
                       "$source": 0,
                       "$named": true,
                       "_name": "x",
-                      "_type": "i32",
+                      "_type": 33,
                       "$other": [
                         5
                       ],
@@ -22889,7 +22869,7 @@
                       "$source": 0,
                       "$named": true,
                       "_name": "y",
-                      "_type": "i32",
+                      "_type": 33,
                       "$other": [
                         5
                       ],
@@ -22997,7 +22977,7 @@
                         "$nodeHandle": 90194313301
                       }
                     },
-                    "_type": "i32",
+                    "_type": 33,
                     "$span": {
                       "start": 148,
                       "end": 155
@@ -23013,7 +22993,7 @@
                     "$type": 413,
                     "$source": 0,
                     "$named": true,
-                    "_type": "i32",
+                    "_type": 33,
                     "$span": {
                       "start": 157,
                       "end": 160
@@ -23025,7 +23005,7 @@
                     "$type": 413,
                     "$source": 0,
                     "$named": true,
-                    "_type": "i32",
+                    "_type": 33,
                     "$span": {
                       "start": 162,
                       "end": 165
@@ -23099,7 +23079,7 @@
                     "$type": 413,
                     "$source": 0,
                     "$named": true,
-                    "_type": "i32",
+                    "_type": 33,
                     "$span": {
                       "start": 182,
                       "end": 185
@@ -23465,7 +23445,7 @@
                     }
                   },
                   "_name": "age",
-                  "_type": "u32",
+                  "_type": 32,
                   "$other": [
                     5
                   ],
@@ -23570,7 +23550,7 @@
                   "$source": 0,
                   "$named": true,
                   "_name": "x",
-                  "_type": "i32",
+                  "_type": 33,
                   "$other": [
                     5
                   ],
@@ -23628,7 +23608,7 @@
                   "$source": 0,
                   "$named": true,
                   "_name": "y",
-                  "_type": "i32",
+                  "_type": 33,
                   "$other": [
                     5
                   ],
@@ -23752,7 +23732,7 @@
                     "$nodeHandle": 90194313342
                   }
                 },
-                "_type": "i32",
+                "_type": 33,
                 "$span": {
                   "start": 148,
                   "end": 155
@@ -23768,7 +23748,7 @@
                 "$type": 413,
                 "$source": 0,
                 "$named": true,
-                "_type": "i32",
+                "_type": 33,
                 "$span": {
                   "start": 157,
                   "end": 160
@@ -23780,7 +23760,7 @@
                 "$type": 413,
                 "$source": 0,
                 "$named": true,
-                "_type": "i32",
+                "_type": 33,
                 "$span": {
                   "start": 162,
                   "end": 165
@@ -23870,7 +23850,7 @@
                 "$type": 413,
                 "$source": 0,
                 "$named": true,
-                "_type": "i32",
+                "_type": 33,
                 "$span": {
                   "start": 182,
                   "end": 185
@@ -24502,7 +24482,7 @@
                       "$type": 226,
                       "$source": 0,
                       "$named": true,
-                      "_element": "u32",
+                      "_element": 32,
                       "_length": "4usize",
                       "$other": [
                         46,
@@ -24864,7 +24844,7 @@
                   "$type": 226,
                   "$source": 0,
                   "$named": true,
-                  "_element": "u32",
+                  "_element": 32,
                   "_length": "4usize",
                   "$other": [
                     46,
@@ -25218,7 +25198,7 @@
       "$type": 226,
       "$source": 0,
       "$named": true,
-      "_element": "u32",
+      "_element": 32,
       "_length": "4usize",
       "$other": [
         46,
@@ -25619,7 +25599,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "SIZE",
-                    "_type": "usize",
+                    "_type": 39,
                     "$other": [
                       56,
                       5
@@ -26242,7 +26222,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "SIZE",
-                "_type": "usize",
+                "_type": 39,
                 "$other": [
                   56,
                   5
@@ -26749,7 +26729,7 @@
               "$source": 0,
               "$named": true,
               "_name": "SIZE",
-              "_type": "usize",
+              "_type": 39,
               "$other": [
                 56,
                 5
@@ -27469,7 +27449,7 @@
                               "$source": 0,
                               "$named": true,
                               "_name": "height",
-                              "_type": "u16",
+                              "_type": 30,
                               "$other": [
                                 5
                               ],
@@ -28217,7 +28197,7 @@
                           "$source": 0,
                           "$named": true,
                           "_name": "height",
-                          "_type": "u16",
+                          "_type": 30,
                           "$other": [
                             5
                           ],
@@ -29607,7 +29587,7 @@
                                 "end": 62
                               },
                               "$nodeHandle": 111669149755,
-                              "_content": "usize"
+                              "_content": 39
                             }
                           ],
                           "$span": {
@@ -29779,7 +29759,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "LEN",
-                    "_type": "usize",
+                    "_type": 39,
                     "$other": [
                       56,
                       5
@@ -30117,7 +30097,7 @@
                             "end": 62
                           },
                           "$nodeHandle": 111669149788,
-                          "_content": "usize"
+                          "_content": 39
                         }
                       ],
                       "$span": {
@@ -30305,7 +30285,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "LEN",
-                "_type": "usize",
+                "_type": 39,
                 "$other": [
                   56,
                   5
@@ -30651,7 +30631,7 @@
               "$source": 0,
               "$named": true,
               "_name": "LEN",
-              "_type": "usize",
+              "_type": 39,
               "$other": [
                 56,
                 5
@@ -30892,7 +30872,7 @@
                 "end": 62
               },
               "$nodeHandle": 111669149843,
-              "_content": "usize"
+              "_content": 39
             }
           ],
           "$span": {
@@ -31011,7 +30991,7 @@
                           "end": 62
                         },
                         "$nodeHandle": 111669149859,
-                        "_content": "usize"
+                        "_content": 39
                       }
                     ],
                     "$span": {
@@ -31177,7 +31157,7 @@
                   "end": 62
                 },
                 "$nodeHandle": 111669149881,
-                "_content": "usize"
+                "_content": 39
               }
             ],
             "$span": {
@@ -31396,7 +31376,7 @@
                     "$named": true,
                     "_mutable_specifier": true,
                     "_name": "x",
-                    "_type": "u32",
+                    "_type": 32,
                     "$other": [
                       5
                     ],
@@ -31507,7 +31487,7 @@
                 "$named": true,
                 "_mutable_specifier": true,
                 "_name": "x",
-                "_type": "u32",
+                "_type": 32,
                 "$other": [
                   5
                 ],
@@ -31606,7 +31586,7 @@
               "$named": true,
               "_mutable_specifier": true,
               "_name": "x",
-              "_type": "u32",
+              "_type": 32,
               "$other": [
                 5
               ],
@@ -31662,7 +31642,7 @@
       "$named": true,
       "_mutable_specifier": true,
       "_name": "x",
-      "_type": "u32",
+      "_type": 32,
       "$other": [
         5
       ],
@@ -31788,7 +31768,7 @@
                       "$type": 226,
                       "$source": 0,
                       "$named": true,
-                      "_element": "u32",
+                      "_element": 32,
                       "_length": "2",
                       "$other": [
                         46,
@@ -32208,7 +32188,7 @@
                   "$type": 226,
                   "$source": 0,
                   "$named": true,
-                  "_element": "u32",
+                  "_element": 32,
                   "_length": "2",
                   "$other": [
                     46,
@@ -32648,7 +32628,7 @@
                 "$type": 226,
                 "$source": 0,
                 "$named": true,
-                "_element": "u32",
+                "_element": 32,
                 "_length": "2",
                 "$other": [
                   46,
@@ -32985,7 +32965,7 @@
         "$type": 226,
         "$source": 0,
         "$named": true,
-        "_element": "u32",
+        "_element": 32,
         "_length": "2",
         "$other": [
           46,
@@ -33241,7 +33221,7 @@
       "$type": 226,
       "$source": 0,
       "$named": true,
-      "_element": "u32",
+      "_element": 32,
       "_length": "2",
       "$other": [
         46,
@@ -34310,7 +34290,7 @@
           "$source": 0,
           "$named": true,
           "_name": "N",
-          "_type": "i32",
+          "_type": 33,
           "_value": "5",
           "$other": [
             56,
@@ -34344,7 +34324,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "X",
-                "_type": "u8",
+                "_type": 28,
                 "$other": [
                   56,
                   5,
@@ -34412,7 +34392,7 @@
       "$source": 0,
       "$named": true,
       "_name": "N",
-      "_type": "i32",
+      "_type": 33,
       "_value": "5",
       "$other": [
         56,
@@ -34452,7 +34432,7 @@
       "$source": 0,
       "$named": true,
       "_name": "X",
-      "_type": "u8",
+      "_type": 28,
       "$other": [
         56,
         5,
@@ -34499,7 +34479,7 @@
             "$source": 0,
             "$named": true,
             "_name": "X",
-            "_type": "u8",
+            "_type": 28,
             "$other": [
               56,
               5,
@@ -34565,7 +34545,7 @@
           "$source": 0,
           "$named": true,
           "_name": "N",
-          "_type": "i32",
+          "_type": 33,
           "_value": "5",
           "$other": [
             57,
@@ -34666,7 +34646,7 @@
       "$source": 0,
       "$named": true,
       "_name": "N",
-      "_type": "i32",
+      "_type": 33,
       "_value": "5",
       "$other": [
         57,
@@ -34860,7 +34840,7 @@
           "$named": true,
           "_ref_marker": true,
           "_name": "ONE",
-          "_type": "usize",
+          "_type": 39,
           "_value": "0",
           "$other": [
             57,
@@ -34909,7 +34889,7 @@
       "$named": true,
       "_ref_marker": true,
       "_name": "ONE",
-      "_type": "usize",
+      "_type": 39,
       "_value": "0",
       "$other": [
         57,
@@ -34955,7 +34935,7 @@
           "$source": 0,
           "$named": true,
           "_name": "Inch",
-          "_type": "u64",
+          "_type": 34,
           "$other": [
             58,
             59,
@@ -35277,7 +35257,7 @@
       "$source": 0,
       "$named": true,
       "_name": "Inch",
-      "_type": "u64",
+      "_type": 34,
       "$other": [
         58,
         59,
@@ -37156,24 +37136,14 @@
               "start": 7,
               "end": 9
             },
-            "$nodeHandle": 150323855366
+            "$nodeHandle": 150323855365
           },
           "_body": {
             "$type": 299,
             "$source": 0,
             "$named": true,
             "_statements": [
-              {
-                "$type": 164,
-                "$source": 0,
-                "$named": true,
-                "$text": ";",
-                "$span": {
-                  "start": 16,
-                  "end": 17
-                },
-                "$nodeHandle": 150323855368
-              }
+              164
             ],
             "$other": [
               50,
@@ -37183,7 +37153,7 @@
               "start": 10,
               "end": 19
             },
-            "$nodeHandle": 150323855367
+            "$nodeHandle": 150323855366
           },
           "$other": [
             60
@@ -37192,7 +37162,7 @@
             "start": 0,
             "end": 19
           },
-          "$nodeHandle": 150323855365,
+          "$nodeHandle": 150323855364,
           "$slotOrder": [
             "name",
             "parameters",
@@ -37236,24 +37206,14 @@
           "start": 7,
           "end": 9
         },
-        "$nodeHandle": 150323855369
+        "$nodeHandle": 150323855367
       },
       "_body": {
         "$type": 299,
         "$source": 0,
         "$named": true,
         "_statements": [
-          {
-            "$type": 164,
-            "$source": 0,
-            "$named": true,
-            "$text": ";",
-            "$span": {
-              "start": 16,
-              "end": 17
-            },
-            "$nodeHandle": 150323855371
-          }
+          164
         ],
         "$other": [
           50,
@@ -37263,7 +37223,7 @@
           "start": 10,
           "end": 19
         },
-        "$nodeHandle": 150323855370
+        "$nodeHandle": 150323855368
       },
       "$other": [
         60
@@ -37327,17 +37287,7 @@
       "$source": 0,
       "$named": true,
       "_statements": [
-        {
-          "$type": 164,
-          "$source": 0,
-          "$named": true,
-          "$text": ";",
-          "$span": {
-            "start": 16,
-            "end": 17
-          },
-          "$nodeHandle": 150323855372
-        }
+        164
       ],
       "$other": [
         50,
@@ -39459,7 +39409,7 @@
                       "$type": 294,
                       "$source": 0,
                       "$named": true,
-                      "_value": "self",
+                      "_value": 132,
                       "_field": "visit_type",
                       "$other": [
                         111
@@ -40635,7 +40585,7 @@
                 "$type": 294,
                 "$source": 0,
                 "$named": true,
-                "_value": "self",
+                "_value": 132,
                 "_field": "visit_type",
                 "$other": [
                   111
@@ -40973,7 +40923,7 @@
         "$type": 294,
         "$source": 0,
         "$named": true,
-        "_value": "self",
+        "_value": 132,
         "_field": "visit_type",
         "$other": [
           111
@@ -41088,7 +41038,7 @@
       "$type": 294,
       "$source": 0,
       "$named": true,
-      "_value": "self",
+      "_value": 132,
       "_field": "visit_type",
       "$other": [
         111
@@ -44751,7 +44701,7 @@
                               "$source": 0,
                               "$named": true,
                               "_name": "idx",
-                              "_type": "usize",
+                              "_type": 39,
                               "$other": [
                                 5
                               ],
@@ -46208,7 +46158,7 @@
                           "$source": 0,
                           "$named": true,
                           "_name": "idx",
-                          "_type": "usize",
+                          "_type": 39,
                           "$other": [
                             5
                           ],
@@ -49055,7 +49005,7 @@
                   "$source": 0,
                   "$named": true,
                   "_name": "leg_count",
-                  "_type": "u32",
+                  "_type": 32,
                   "_value": "2",
                   "$other": [
                     56,
@@ -49611,7 +49561,7 @@
               "$source": 0,
               "$named": true,
               "_name": "leg_count",
-              "_type": "u32",
+              "_type": 32,
               "_value": "2",
               "$other": [
                 56,
@@ -50150,7 +50100,7 @@
       "$source": 0,
       "$named": true,
       "_name": "leg_count",
-      "_type": "u32",
+      "_type": 32,
       "_value": "2",
       "$other": [
         56,
@@ -51424,7 +51374,7 @@
                         "end": 66
                       },
                       "$nodeHandle": 184683593782,
-                      "_content": "i64"
+                      "_content": 35
                     }
                   ],
                   "$span": {
@@ -51463,7 +51413,7 @@
             },
             "$nodeHandle": 184683593778
           },
-          "_type": "i32",
+          "_type": 33,
           "$other": [
             62
           ],
@@ -51543,7 +51493,7 @@
                     },
                     "$nodeHandle": 184683593786
                   },
-                  "_return_type": "i64",
+                  "_return_type": 35,
                   "_body": {
                     "$type": 299,
                     "$source": 0,
@@ -51557,7 +51507,7 @@
                         "$source": 0,
                         "$named": true,
                         "_operator": 11,
-                        "_operand": "self",
+                        "_operand": 132,
                         "$span": {
                           "start": 109,
                           "end": 114
@@ -51568,7 +51518,7 @@
                           "operand"
                         ]
                       },
-                      "_type": "i64",
+                      "_type": 35,
                       "$other": [
                         70
                       ],
@@ -51915,7 +51865,7 @@
                     "end": 66
                   },
                   "$nodeHandle": 184683593812,
-                  "_content": "i64"
+                  "_content": 35
                 }
               ],
               "$span": {
@@ -51954,7 +51904,7 @@
         },
         "$nodeHandle": 184683593808
       },
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         62
       ],
@@ -52034,7 +51984,7 @@
                 },
                 "$nodeHandle": 184683593816
               },
-              "_return_type": "i64",
+              "_return_type": 35,
               "_body": {
                 "$type": 299,
                 "$source": 0,
@@ -52048,7 +51998,7 @@
                     "$source": 0,
                     "$named": true,
                     "_operator": 11,
-                    "_operand": "self",
+                    "_operand": 132,
                     "$span": {
                       "start": 109,
                       "end": 114
@@ -52059,7 +52009,7 @@
                       "operand"
                     ]
                   },
-                  "_type": "i64",
+                  "_type": 35,
                   "$other": [
                     70
                   ],
@@ -52405,7 +52355,7 @@
                 "end": 66
               },
               "$nodeHandle": 184683593845,
-              "_content": "i64"
+              "_content": 35
             }
           ],
           "$span": {
@@ -52508,7 +52458,7 @@
         },
         "$nodeHandle": 184683593873
       },
-      "_return_type": "i64",
+      "_return_type": 35,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -52522,7 +52472,7 @@
             "$source": 0,
             "$named": true,
             "_operator": 11,
-            "_operand": "self",
+            "_operand": 132,
             "$span": {
               "start": 109,
               "end": 114
@@ -52533,7 +52483,7 @@
               "operand"
             ]
           },
-          "_type": "i64",
+          "_type": 35,
           "$other": [
             70
           ],
@@ -52671,7 +52621,7 @@
           "$source": 0,
           "$named": true,
           "_operator": 11,
-          "_operand": "self",
+          "_operand": 132,
           "$span": {
             "start": 109,
             "end": 114
@@ -52682,7 +52632,7 @@
             "operand"
           ]
         },
-        "_type": "i64",
+        "_type": 35,
         "$other": [
           70
         ],
@@ -52732,7 +52682,7 @@
         "$source": 0,
         "$named": true,
         "_operator": 11,
-        "_operand": "self",
+        "_operand": 132,
         "$span": {
           "start": 109,
           "end": 114
@@ -52743,7 +52693,7 @@
           "operand"
         ]
       },
-      "_type": "i64",
+      "_type": 35,
       "$other": [
         70
       ],
@@ -52778,7 +52728,7 @@
       "$source": 0,
       "$named": true,
       "_operator": 11,
-      "_operand": "self",
+      "_operand": 132,
       "$span": {
         "start": 109,
         "end": 114
@@ -55244,7 +55194,7 @@
                     },
                     "$nodeHandle": 206158430226
                   },
-                  "_return_type": "i32",
+                  "_return_type": 33,
                   "_body": {
                     "$type": 299,
                     "$source": 0,
@@ -55460,7 +55410,7 @@
                 },
                 "$nodeHandle": 206158430237
               },
-              "_return_type": "i32",
+              "_return_type": 33,
               "_body": {
                 "$type": 299,
                 "$source": 0,
@@ -55643,7 +55593,7 @@
         },
         "$nodeHandle": 206158430264
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -66186,7 +66136,7 @@
                               },
                               "$nodeHandle": 244813135926
                             },
-                            "_type": "usize",
+                            "_type": 39,
                             "$other": [
                               74
                             ],
@@ -66459,7 +66409,7 @@
                               },
                               "$nodeHandle": 244813135947
                             },
-                            "_type": "isize",
+                            "_type": 38,
                             "$other": [
                               74
                             ],
@@ -66501,7 +66451,7 @@
                               },
                               "$nodeHandle": 244813135949
                             },
-                            "_type": "isize",
+                            "_type": 38,
                             "$other": [
                               74
                             ],
@@ -66752,7 +66702,7 @@
                           },
                           "$nodeHandle": 244813135963
                         },
-                        "_type": "usize",
+                        "_type": 39,
                         "$other": [
                           74
                         ],
@@ -67134,7 +67084,7 @@
                   },
                   "$nodeHandle": 244813136036
                 },
-                "_type": "usize",
+                "_type": 39,
                 "$other": [
                   74
                 ],
@@ -67234,7 +67184,7 @@
                   },
                   "$nodeHandle": 244813136042
                 },
-                "_type": "isize",
+                "_type": 38,
                 "$other": [
                   74
                 ],
@@ -67276,7 +67226,7 @@
                   },
                   "$nodeHandle": 244813136044
                 },
-                "_type": "isize",
+                "_type": 38,
                 "$other": [
                   74
                 ],
@@ -67356,7 +67306,7 @@
         },
         "$nodeHandle": 244813136071
       },
-      "_type": "usize",
+      "_type": 39,
       "$other": [
         74
       ],
@@ -67404,7 +67354,7 @@
         },
         "$nodeHandle": 244813136072
       },
-      "_type": "isize",
+      "_type": 38,
       "$other": [
         74
       ],
@@ -67452,7 +67402,7 @@
         },
         "$nodeHandle": 244813136073
       },
-      "_type": "isize",
+      "_type": 38,
       "$other": [
         74
       ],
@@ -67664,7 +67614,7 @@
                           },
                           "$nodeHandle": 244813136093
                         },
-                        "_type": "isize",
+                        "_type": 38,
                         "$other": [
                           74
                         ],
@@ -67706,7 +67656,7 @@
                           },
                           "$nodeHandle": 244813136095
                         },
-                        "_type": "isize",
+                        "_type": 38,
                         "$other": [
                           74
                         ],
@@ -67948,7 +67898,7 @@
                         },
                         "$nodeHandle": 244813136110
                       },
-                      "_type": "isize",
+                      "_type": 38,
                       "$other": [
                         74
                       ],
@@ -67990,7 +67940,7 @@
                         },
                         "$nodeHandle": 244813136112
                       },
-                      "_type": "isize",
+                      "_type": 38,
                       "$other": [
                         74
                       ],
@@ -68212,7 +68162,7 @@
                       },
                       "$nodeHandle": 244813136126
                     },
-                    "_type": "isize",
+                    "_type": 38,
                     "$other": [
                       74
                     ],
@@ -68254,7 +68204,7 @@
                       },
                       "$nodeHandle": 244813136128
                     },
-                    "_type": "isize",
+                    "_type": 38,
                     "$other": [
                       74
                     ],
@@ -70000,7 +69950,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "bool",
-                    "_type": "bool",
+                    "_type": 42,
                     "$other": [
                       5
                     ],
@@ -70229,7 +70179,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "bool",
-                "_type": "bool",
+                "_type": 42,
                 "$other": [
                   5
                 ],
@@ -70416,7 +70366,7 @@
               "$source": 0,
               "$named": true,
               "_name": "bool",
-              "_type": "bool",
+              "_type": 42,
               "$other": [
                 5
               ],
@@ -70523,7 +70473,7 @@
       "$source": 0,
       "$named": true,
       "_name": "bool",
-      "_type": "bool",
+      "_type": 42,
       "$other": [
         5
       ],
@@ -70803,7 +70753,7 @@
             },
             "$nodeHandle": 257698037965
           },
-          "_return_type": "bool",
+          "_return_type": 42,
           "_where_clause": {
             "$type": 197,
             "$source": 0,
@@ -70878,7 +70828,7 @@
                           },
                           "$nodeHandle": 257698037977
                         },
-                        "_return_type": "bool",
+                        "_return_type": 42,
                         "$other": [
                           138
                         ],
@@ -72849,7 +72799,7 @@
                                   "end": 439
                                 },
                                 "$nodeHandle": 257698038120,
-                                "_content": "f64"
+                                "_content": 41
                               }
                             ],
                             "$span": {
@@ -73443,7 +73393,7 @@
         },
         "$nodeHandle": 257698038147
       },
-      "_return_type": "bool",
+      "_return_type": 42,
       "_where_clause": {
         "$type": 197,
         "$source": 0,
@@ -73518,7 +73468,7 @@
                       },
                       "$nodeHandle": 257698038159
                     },
-                    "_return_type": "bool",
+                    "_return_type": 42,
                     "$other": [
                       138
                     ],
@@ -73762,7 +73712,7 @@
                               "end": 439
                             },
                             "$nodeHandle": 257698038180,
-                            "_content": "f64"
+                            "_content": 41
                           }
                         ],
                         "$span": {
@@ -75444,7 +75394,7 @@
         },
         "$nodeHandle": 257698038514
       },
-      "_return_type": "bool",
+      "_return_type": 42,
       "$other": [
         138
       ],
@@ -78065,7 +78015,7 @@
                 "end": 439
               },
               "$nodeHandle": 257698038678,
-              "_content": "f64"
+              "_content": 41
             }
           ],
           "$span": {
@@ -78769,7 +78719,7 @@
             "_content": 134
           },
           "_name": "X",
-          "_type": "u32",
+          "_type": 32,
           "_value": "0",
           "$other": [
             56,
@@ -79299,7 +79249,7 @@
         "_content": 134
       },
       "_name": "X",
-      "_type": "u32",
+      "_type": 32,
       "_value": "0",
       "$other": [
         56,
@@ -79891,7 +79841,7 @@
                     "$type": 226,
                     "$source": 0,
                     "$named": true,
-                    "_element": "u8",
+                    "_element": 28,
                     "_length": "32",
                     "$other": [
                       46,
@@ -80183,7 +80133,7 @@
                 "$type": 226,
                 "$source": 0,
                 "$named": true,
-                "_element": "u8",
+                "_element": 28,
                 "_length": "32",
                 "$other": [
                   46,
@@ -80544,7 +80494,7 @@
       "$type": 226,
       "$source": 0,
       "$named": true,
-      "_element": "u8",
+      "_element": 28,
       "_length": "32",
       "$other": [
         46,
@@ -80770,7 +80720,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "N",
-                    "_type": "usize",
+                    "_type": 39,
                     "_value": "1",
                     "$other": [
                       56,
@@ -81012,7 +80962,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "N",
-                "_type": "usize",
+                "_type": 39,
                 "_value": "1",
                 "$other": [
                   56,
@@ -81258,7 +81208,7 @@
               "$source": 0,
               "$named": true,
               "_name": "N",
-              "_type": "usize",
+              "_type": 39,
               "_value": "1",
               "$other": [
                 56,
@@ -82745,7 +82695,7 @@
                 "$type": 294,
                 "$source": 0,
                 "$named": true,
-                "_value": "self",
+                "_value": 132,
                 "_field": "name",
                 "$other": [
                   111
@@ -82847,7 +82797,7 @@
                 "$type": 294,
                 "$source": 0,
                 "$named": true,
-                "_value": "self",
+                "_value": 132,
                 "_field": "age",
                 "$other": [
                   111
@@ -82959,7 +82909,7 @@
         "$type": 294,
         "$source": 0,
         "$named": true,
-        "_value": "self",
+        "_value": 132,
         "_field": "name",
         "$other": [
           111
@@ -83047,7 +82997,7 @@
         "$type": 294,
         "$source": 0,
         "$named": true,
-        "_value": "self",
+        "_value": 132,
         "_field": "age",
         "$other": [
           111
@@ -83108,7 +83058,7 @@
       "$type": 294,
       "$source": 0,
       "$named": true,
-      "_value": "self",
+      "_value": 132,
       "_field": "name",
       "$other": [
         111
@@ -83143,7 +83093,7 @@
       "$type": 294,
       "$source": 0,
       "$named": true,
-      "_value": "self",
+      "_value": 132,
       "_field": "age",
       "$other": [
         111
@@ -86529,7 +86479,7 @@
               "$source": 0,
               "$named": true,
               "_value": "1000",
-              "_type": "u8",
+              "_type": 28,
               "$other": [
                 70
               ],
@@ -86563,7 +86513,7 @@
             "$source": 0,
             "$named": true,
             "_value": "integer",
-            "_type": "char",
+            "_type": 44,
             "$other": [
               70
             ],
@@ -86597,7 +86547,7 @@
           "$source": 0,
           "$named": true,
           "_pattern": "size",
-          "_type": "f64",
+          "_type": 41,
           "_value": {
             "$type": 256,
             "$source": 0,
@@ -86681,7 +86631,7 @@
                     "operand"
                   ]
                 },
-                "_type": "f64",
+                "_type": 41,
                 "$other": [
                   70
                 ],
@@ -86764,7 +86714,7 @@
       "$source": 0,
       "$named": true,
       "_value": "1000",
-      "_type": "u8",
+      "_type": 28,
       "$other": [
         70
       ],
@@ -86799,7 +86749,7 @@
       "$source": 0,
       "$named": true,
       "_value": "integer",
-      "_type": "char",
+      "_type": 44,
       "$other": [
         70
       ],
@@ -86902,7 +86852,7 @@
           "operand"
         ]
       },
-      "_type": "f64",
+      "_type": 41,
       "$other": [
         70
       ],
@@ -86942,7 +86892,7 @@
         "$source": 0,
         "$named": true,
         "_value": "integer",
-        "_type": "char",
+        "_type": 44,
         "$other": [
           70
         ],
@@ -86992,7 +86942,7 @@
       "$source": 0,
       "$named": true,
       "_pattern": "size",
-      "_type": "f64",
+      "_type": 41,
       "_value": {
         "$type": 256,
         "$source": 0,
@@ -87076,7 +87026,7 @@
                 "operand"
               ]
             },
-            "_type": "f64",
+            "_type": 41,
             "$other": [
               70
             ],
@@ -87230,7 +87180,7 @@
               "operand"
             ]
           },
-          "_type": "f64",
+          "_type": 41,
           "$other": [
             70
           ],
@@ -87363,7 +87313,7 @@
             "operand"
           ]
         },
-        "_type": "f64",
+        "_type": 41,
         "$other": [
           70
         ],
@@ -110865,7 +110815,7 @@
                           "end": 17
                         },
                         "$nodeHandle": 416611827738,
-                        "_content": "u32"
+                        "_content": 32
                       }
                     ],
                     "$span": {
@@ -111101,7 +111051,7 @@
                   "end": 17
                 },
                 "$nodeHandle": 416611827779,
-                "_content": "u32"
+                "_content": 32
               }
             ],
             "$span": {
@@ -111309,7 +111259,7 @@
                 "end": 17
               },
               "$nodeHandle": 416611827789,
-              "_content": "u32"
+              "_content": 32
             }
           ],
           "$span": {
@@ -114758,7 +114708,7 @@
                               "$source": 0,
                               "$named": true,
                               "_name": "b",
-                              "_type": "usize",
+                              "_type": 39,
                               "$other": [
                                 5
                               ],
@@ -114993,7 +114943,7 @@
                       "$source": 0,
                       "$named": true,
                       "_name": "b",
-                      "_type": "usize",
+                      "_type": 39,
                       "$other": [
                         5
                       ],
@@ -115346,7 +115296,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "b",
-                    "_type": "usize",
+                    "_type": 39,
                     "$other": [
                       5
                     ],
@@ -115567,7 +115517,7 @@
             "$source": 0,
             "$named": true,
             "_name": "b",
-            "_type": "usize",
+            "_type": 39,
             "$other": [
               5
             ],
@@ -115705,7 +115655,7 @@
       "$source": 0,
       "$named": true,
       "_name": "b",
-      "_type": "usize",
+      "_type": 39,
       "$other": [
         5
       ],
@@ -117246,7 +117196,7 @@
             "start": 0,
             "end": 15
           },
-          "$nodeHandle": 438086664225,
+          "$nodeHandle": 438086664224,
           "_content": {
             "$type": 286,
             "$source": 0,
@@ -117266,7 +117216,7 @@
                   "start": 8,
                   "end": 13
                 },
-                "$nodeHandle": 438086664231,
+                "$nodeHandle": 438086664229,
                 "$slotOrder": [
                   "left",
                   "operator",
@@ -117281,7 +117231,7 @@
                 "start": 6,
                 "end": 15
               },
-              "$nodeHandle": 438086664230,
+              "$nodeHandle": 438086664228,
               "_statements": []
             },
             "$other": [
@@ -117291,20 +117241,10 @@
               "start": 0,
               "end": 15
             },
-            "$nodeHandle": 438086664229
+            "$nodeHandle": 438086664227
           }
         },
-        {
-          "$type": 164,
-          "$source": 0,
-          "$named": true,
-          "$text": ";",
-          "$span": {
-            "start": 15,
-            "end": 16
-          },
-          "$nodeHandle": 438086664226
-        },
+        164,
         {
           "$type": 165,
           "$source": 0,
@@ -117313,7 +117253,7 @@
             "start": 17,
             "end": 64
           },
-          "$nodeHandle": 438086664227,
+          "$nodeHandle": 438086664225,
           "_content": {
             "$type": 273,
             "$source": 0,
@@ -117332,7 +117272,7 @@
                   "start": 20,
                   "end": 22
                 },
-                "$nodeHandle": 438086664234,
+                "$nodeHandle": 438086664232,
                 "$slotOrder": [
                   "operator",
                   "operand"
@@ -117344,7 +117284,7 @@
                 "start": 20,
                 "end": 26
               },
-              "$nodeHandle": 438086664233,
+              "$nodeHandle": 438086664231,
               "$slotOrder": [
                 "left",
                 "operator",
@@ -117364,7 +117304,7 @@
                     "start": 29,
                     "end": 51
                   },
-                  "$nodeHandle": 438086664236,
+                  "$nodeHandle": 438086664234,
                   "_content": {
                     "$type": 286,
                     "$source": 0,
@@ -117394,7 +117334,7 @@
                               "start": 38,
                               "end": 46
                             },
-                            "$nodeHandle": 438086664241,
+                            "$nodeHandle": 438086664239,
                             "$slotOrder": [
                               "value",
                               "field"
@@ -117417,7 +117357,7 @@
                                     "start": 47,
                                     "end": 48
                                   },
-                                  "$nodeHandle": 438086664244,
+                                  "$nodeHandle": 438086664242,
                                   "_attribute_item": [],
                                   "_expression": "4"
                                 }
@@ -117426,7 +117366,7 @@
                                 "start": 47,
                                 "end": 48
                               },
-                              "$nodeHandle": 438086664243,
+                              "$nodeHandle": 438086664241,
                               "_delimiter": 0
                             },
                             "$other": [
@@ -117437,13 +117377,13 @@
                               "start": 46,
                               "end": 49
                             },
-                            "$nodeHandle": 438086664242
+                            "$nodeHandle": 438086664240
                           },
                           "$span": {
                             "start": 38,
                             "end": 49
                           },
-                          "$nodeHandle": 438086664240,
+                          "$nodeHandle": 438086664238,
                           "$slotOrder": [
                             "function",
                             "arguments"
@@ -117456,7 +117396,7 @@
                           "start": 37,
                           "end": 49
                         },
-                        "$nodeHandle": 438086664239
+                        "$nodeHandle": 438086664237
                       },
                       "$other": [
                         50,
@@ -117466,7 +117406,7 @@
                         "start": 35,
                         "end": 51
                       },
-                      "$nodeHandle": 438086664238,
+                      "$nodeHandle": 438086664236,
                       "_statements": []
                     },
                     "$other": [
@@ -117476,7 +117416,7 @@
                       "start": 29,
                       "end": 51
                     },
-                    "$nodeHandle": 438086664237
+                    "$nodeHandle": 438086664235
                   }
                 }
               ],
@@ -117488,7 +117428,7 @@
                 "start": 27,
                 "end": 53
               },
-              "$nodeHandle": 438086664235
+              "$nodeHandle": 438086664233
             },
             "_alternative": {
               "$type": 277,
@@ -117501,7 +117441,7 @@
                 "start": 54,
                 "end": 64
               },
-              "$nodeHandle": 438086664245,
+              "$nodeHandle": 438086664243,
               "_content": {
                 "$type": 299,
                 "$source": 0,
@@ -117515,7 +117455,7 @@
                   "start": 59,
                   "end": 64
                 },
-                "$nodeHandle": 438086664246,
+                "$nodeHandle": 438086664244,
                 "_statements": []
               }
             },
@@ -117526,7 +117466,7 @@
               "start": 17,
               "end": 64
             },
-            "$nodeHandle": 438086664232,
+            "$nodeHandle": 438086664230,
             "$slotOrder": [
               "condition",
               "consequence",
@@ -117547,7 +117487,7 @@
               "start": 84,
               "end": 119
             },
-            "$nodeHandle": 438086664247,
+            "$nodeHandle": 438086664245,
             "_content": {
               "$type": 364,
               "$source": 0,
@@ -117580,7 +117520,7 @@
                             "start": 94,
                             "end": 99
                           },
-                          "$nodeHandle": 438086664254,
+                          "$nodeHandle": 438086664252,
                           "_content": {
                             "$type": 377,
                             "$source": 0,
@@ -117592,7 +117532,7 @@
                               "start": 94,
                               "end": 99
                             },
-                            "$nodeHandle": 438086664255,
+                            "$nodeHandle": 438086664253,
                             "$slotOrder": [
                               "start",
                               "operator",
@@ -117608,7 +117548,7 @@
                           "start": 93,
                           "end": 100
                         },
-                        "$nodeHandle": 438086664253
+                        "$nodeHandle": 438086664251
                       },
                       "_field": "into_inner",
                       "$other": [
@@ -117618,7 +117558,7 @@
                         "start": 93,
                         "end": 111
                       },
-                      "$nodeHandle": 438086664252,
+                      "$nodeHandle": 438086664250,
                       "$slotOrder": [
                         "value",
                         "field"
@@ -117633,13 +117573,13 @@
                         "start": 111,
                         "end": 113
                       },
-                      "$nodeHandle": 438086664256
+                      "$nodeHandle": 438086664254
                     },
                     "$span": {
                       "start": 93,
                       "end": 113
                     },
-                    "$nodeHandle": 438086664251,
+                    "$nodeHandle": 438086664249,
                     "$slotOrder": [
                       "function",
                       "arguments"
@@ -117653,7 +117593,7 @@
                     "start": 91,
                     "end": 115
                   },
-                  "$nodeHandle": 438086664250,
+                  "$nodeHandle": 438086664248,
                   "_statements": []
                 },
                 "$other": [
@@ -117663,7 +117603,7 @@
                   "start": 85,
                   "end": 115
                 },
-                "$nodeHandle": 438086664249
+                "$nodeHandle": 438086664247
               },
               "_length": "3",
               "$other": [
@@ -117675,7 +117615,7 @@
                 "start": 84,
                 "end": 119
               },
-              "$nodeHandle": 438086664248,
+              "$nodeHandle": 438086664246,
               "$slotOrder": [
                 "element",
                 "length"
@@ -117692,7 +117632,7 @@
             "start": 65,
             "end": 120
           },
-          "$nodeHandle": 438086664228,
+          "$nodeHandle": 438086664226,
           "$slotOrder": [
             "pattern",
             "value"
@@ -117740,7 +117680,7 @@
             "start": 8,
             "end": 13
           },
-          "$nodeHandle": 438086664284,
+          "$nodeHandle": 438086664282,
           "$slotOrder": [
             "left",
             "operator",
@@ -117755,7 +117695,7 @@
           "start": 6,
           "end": 15
         },
-        "$nodeHandle": 438086664283,
+        "$nodeHandle": 438086664281,
         "_statements": []
       },
       "$other": [
@@ -117765,7 +117705,7 @@
         "start": 0,
         "end": 15
       },
-      "$nodeHandle": 438086664197
+      "$nodeHandle": 438086664196
     },
     "expectedOutput": "const {\n    1 + 3\n}"
   },
@@ -117812,7 +117752,7 @@
                 "start": 38,
                 "end": 46
               },
-              "$nodeHandle": 438086664288,
+              "$nodeHandle": 438086664286,
               "$slotOrder": [
                 "value",
                 "field"
@@ -117835,7 +117775,7 @@
                       "start": 47,
                       "end": 48
                     },
-                    "$nodeHandle": 438086664291,
+                    "$nodeHandle": 438086664289,
                     "_attribute_item": [],
                     "_expression": "4"
                   }
@@ -117844,7 +117784,7 @@
                   "start": 47,
                   "end": 48
                 },
-                "$nodeHandle": 438086664290,
+                "$nodeHandle": 438086664288,
                 "_delimiter": 0
               },
               "$other": [
@@ -117855,13 +117795,13 @@
                 "start": 46,
                 "end": 49
               },
-              "$nodeHandle": 438086664289
+              "$nodeHandle": 438086664287
             },
             "$span": {
               "start": 38,
               "end": 49
             },
-            "$nodeHandle": 438086664287,
+            "$nodeHandle": 438086664285,
             "$slotOrder": [
               "function",
               "arguments"
@@ -117874,7 +117814,7 @@
             "start": 37,
             "end": 49
           },
-          "$nodeHandle": 438086664286
+          "$nodeHandle": 438086664284
         },
         "$other": [
           50,
@@ -117884,7 +117824,7 @@
           "start": 35,
           "end": 51
         },
-        "$nodeHandle": 438086664285,
+        "$nodeHandle": 438086664283,
         "_statements": []
       },
       "$other": [
@@ -117894,7 +117834,7 @@
         "start": 29,
         "end": 51
       },
-      "$nodeHandle": 438086664205
+      "$nodeHandle": 438086664204
     },
     "expectedOutput": "const {\n    &4i32.pow(4)\n}"
   },
@@ -117940,7 +117880,7 @@
                   "start": 94,
                   "end": 99
                 },
-                "$nodeHandle": 438086664296,
+                "$nodeHandle": 438086664294,
                 "_content": {
                   "$type": 377,
                   "$source": 0,
@@ -117952,7 +117892,7 @@
                     "start": 94,
                     "end": 99
                   },
-                  "$nodeHandle": 438086664297,
+                  "$nodeHandle": 438086664295,
                   "$slotOrder": [
                     "start",
                     "operator",
@@ -117968,7 +117908,7 @@
                 "start": 93,
                 "end": 100
               },
-              "$nodeHandle": 438086664295
+              "$nodeHandle": 438086664293
             },
             "_field": "into_inner",
             "$other": [
@@ -117978,7 +117918,7 @@
               "start": 93,
               "end": 111
             },
-            "$nodeHandle": 438086664294,
+            "$nodeHandle": 438086664292,
             "$slotOrder": [
               "value",
               "field"
@@ -117993,13 +117933,13 @@
               "start": 111,
               "end": 113
             },
-            "$nodeHandle": 438086664298
+            "$nodeHandle": 438086664296
           },
           "$span": {
             "start": 93,
             "end": 113
           },
-          "$nodeHandle": 438086664293,
+          "$nodeHandle": 438086664291,
           "$slotOrder": [
             "function",
             "arguments"
@@ -118013,7 +117953,7 @@
           "start": 91,
           "end": 115
         },
-        "$nodeHandle": 438086664292,
+        "$nodeHandle": 438086664290,
         "_statements": []
       },
       "$other": [
@@ -118023,7 +117963,7 @@
         "start": 85,
         "end": 115
       },
-      "$nodeHandle": 438086664217
+      "$nodeHandle": 438086664216
     },
     "expectedOutput": "const {\n    (0..=5).into_inner()\n}"
   },
@@ -118056,7 +117996,7 @@
           "start": 8,
           "end": 13
         },
-        "$nodeHandle": 438086664299,
+        "$nodeHandle": 438086664297,
         "$slotOrder": [
           "left",
           "operator",
@@ -118071,7 +118011,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeHandle": 438086664198,
+      "$nodeHandle": 438086664197,
       "_statements": []
     },
     "expectedOutput": "{\n    1 + 3\n}"
@@ -118103,7 +118043,7 @@
             "start": 29,
             "end": 51
           },
-          "$nodeHandle": 438086664300,
+          "$nodeHandle": 438086664298,
           "_content": {
             "$type": 286,
             "$source": 0,
@@ -118133,7 +118073,7 @@
                       "start": 38,
                       "end": 46
                     },
-                    "$nodeHandle": 438086664305,
+                    "$nodeHandle": 438086664303,
                     "$slotOrder": [
                       "value",
                       "field"
@@ -118156,7 +118096,7 @@
                             "start": 47,
                             "end": 48
                           },
-                          "$nodeHandle": 438086664308,
+                          "$nodeHandle": 438086664306,
                           "_attribute_item": [],
                           "_expression": "4"
                         }
@@ -118165,7 +118105,7 @@
                         "start": 47,
                         "end": 48
                       },
-                      "$nodeHandle": 438086664307,
+                      "$nodeHandle": 438086664305,
                       "_delimiter": 0
                     },
                     "$other": [
@@ -118176,13 +118116,13 @@
                       "start": 46,
                       "end": 49
                     },
-                    "$nodeHandle": 438086664306
+                    "$nodeHandle": 438086664304
                   },
                   "$span": {
                     "start": 38,
                     "end": 49
                   },
-                  "$nodeHandle": 438086664304,
+                  "$nodeHandle": 438086664302,
                   "$slotOrder": [
                     "function",
                     "arguments"
@@ -118195,7 +118135,7 @@
                   "start": 37,
                   "end": 49
                 },
-                "$nodeHandle": 438086664303
+                "$nodeHandle": 438086664301
               },
               "$other": [
                 50,
@@ -118205,7 +118145,7 @@
                 "start": 35,
                 "end": 51
               },
-              "$nodeHandle": 438086664302,
+              "$nodeHandle": 438086664300,
               "_statements": []
             },
             "$other": [
@@ -118215,7 +118155,7 @@
               "start": 29,
               "end": 51
             },
-            "$nodeHandle": 438086664301
+            "$nodeHandle": 438086664299
           }
         }
       ],
@@ -118227,7 +118167,7 @@
         "start": 27,
         "end": 53
       },
-      "$nodeHandle": 438086664203
+      "$nodeHandle": 438086664202
     },
     "expectedOutput": "{\n    const {\n        &4i32.pow(4)\n    }\n}"
   },
@@ -118270,7 +118210,7 @@
               "start": 38,
               "end": 46
             },
-            "$nodeHandle": 438086664311,
+            "$nodeHandle": 438086664309,
             "$slotOrder": [
               "value",
               "field"
@@ -118293,7 +118233,7 @@
                     "start": 47,
                     "end": 48
                   },
-                  "$nodeHandle": 438086664314,
+                  "$nodeHandle": 438086664312,
                   "_attribute_item": [],
                   "_expression": "4"
                 }
@@ -118302,7 +118242,7 @@
                 "start": 47,
                 "end": 48
               },
-              "$nodeHandle": 438086664313,
+              "$nodeHandle": 438086664311,
               "_delimiter": 0
             },
             "$other": [
@@ -118313,13 +118253,13 @@
               "start": 46,
               "end": 49
             },
-            "$nodeHandle": 438086664312
+            "$nodeHandle": 438086664310
           },
           "$span": {
             "start": 38,
             "end": 49
           },
-          "$nodeHandle": 438086664310,
+          "$nodeHandle": 438086664308,
           "$slotOrder": [
             "function",
             "arguments"
@@ -118332,7 +118272,7 @@
           "start": 37,
           "end": 49
         },
-        "$nodeHandle": 438086664309
+        "$nodeHandle": 438086664307
       },
       "$other": [
         50,
@@ -118342,7 +118282,7 @@
         "start": 35,
         "end": 51
       },
-      "$nodeHandle": 438086664206,
+      "$nodeHandle": 438086664205,
       "_statements": []
     },
     "expectedOutput": "{\n    &4i32.pow(4)\n}"
@@ -118374,7 +118314,7 @@
         "start": 59,
         "end": 64
       },
-      "$nodeHandle": 438086664214,
+      "$nodeHandle": 438086664213,
       "_statements": []
     },
     "expectedOutput": "{\n    x\n}"
@@ -118417,7 +118357,7 @@
                 "start": 94,
                 "end": 99
               },
-              "$nodeHandle": 438086664318,
+              "$nodeHandle": 438086664316,
               "_content": {
                 "$type": 377,
                 "$source": 0,
@@ -118429,7 +118369,7 @@
                   "start": 94,
                   "end": 99
                 },
-                "$nodeHandle": 438086664319,
+                "$nodeHandle": 438086664317,
                 "$slotOrder": [
                   "start",
                   "operator",
@@ -118445,7 +118385,7 @@
               "start": 93,
               "end": 100
             },
-            "$nodeHandle": 438086664317
+            "$nodeHandle": 438086664315
           },
           "_field": "into_inner",
           "$other": [
@@ -118455,7 +118395,7 @@
             "start": 93,
             "end": 111
           },
-          "$nodeHandle": 438086664316,
+          "$nodeHandle": 438086664314,
           "$slotOrder": [
             "value",
             "field"
@@ -118470,13 +118410,13 @@
             "start": 111,
             "end": 113
           },
-          "$nodeHandle": 438086664320
+          "$nodeHandle": 438086664318
         },
         "$span": {
           "start": 93,
           "end": 113
         },
-        "$nodeHandle": 438086664315,
+        "$nodeHandle": 438086664313,
         "$slotOrder": [
           "function",
           "arguments"
@@ -118490,7 +118430,7 @@
         "start": 91,
         "end": 115
       },
-      "$nodeHandle": 438086664218,
+      "$nodeHandle": 438086664217,
       "_statements": []
     },
     "expectedOutput": "{\n    (0..=5).into_inner()\n}"
@@ -118520,7 +118460,7 @@
         "start": 8,
         "end": 13
       },
-      "$nodeHandle": 438086664199,
+      "$nodeHandle": 438086664198,
       "$slotOrder": [
         "left",
         "operator",
@@ -118557,7 +118497,7 @@
           "start": 20,
           "end": 22
         },
-        "$nodeHandle": 438086664321,
+        "$nodeHandle": 438086664319,
         "$slotOrder": [
           "operator",
           "operand"
@@ -118569,7 +118509,7 @@
         "start": 20,
         "end": 26
       },
-      "$nodeHandle": 438086664201,
+      "$nodeHandle": 438086664200,
       "$slotOrder": [
         "left",
         "operator",
@@ -118610,7 +118550,7 @@
             "start": 20,
             "end": 22
           },
-          "$nodeHandle": 438086664323,
+          "$nodeHandle": 438086664321,
           "$slotOrder": [
             "operator",
             "operand"
@@ -118622,7 +118562,7 @@
           "start": 20,
           "end": 26
         },
-        "$nodeHandle": 438086664322,
+        "$nodeHandle": 438086664320,
         "$slotOrder": [
           "left",
           "operator",
@@ -118642,7 +118582,7 @@
               "start": 29,
               "end": 51
             },
-            "$nodeHandle": 438086664325,
+            "$nodeHandle": 438086664323,
             "_content": {
               "$type": 286,
               "$source": 0,
@@ -118672,7 +118612,7 @@
                         "start": 38,
                         "end": 46
                       },
-                      "$nodeHandle": 438086664330,
+                      "$nodeHandle": 438086664328,
                       "$slotOrder": [
                         "value",
                         "field"
@@ -118695,7 +118635,7 @@
                               "start": 47,
                               "end": 48
                             },
-                            "$nodeHandle": 438086664333,
+                            "$nodeHandle": 438086664331,
                             "_attribute_item": [],
                             "_expression": "4"
                           }
@@ -118704,7 +118644,7 @@
                           "start": 47,
                           "end": 48
                         },
-                        "$nodeHandle": 438086664332,
+                        "$nodeHandle": 438086664330,
                         "_delimiter": 0
                       },
                       "$other": [
@@ -118715,13 +118655,13 @@
                         "start": 46,
                         "end": 49
                       },
-                      "$nodeHandle": 438086664331
+                      "$nodeHandle": 438086664329
                     },
                     "$span": {
                       "start": 38,
                       "end": 49
                     },
-                    "$nodeHandle": 438086664329,
+                    "$nodeHandle": 438086664327,
                     "$slotOrder": [
                       "function",
                       "arguments"
@@ -118734,7 +118674,7 @@
                     "start": 37,
                     "end": 49
                   },
-                  "$nodeHandle": 438086664328
+                  "$nodeHandle": 438086664326
                 },
                 "$other": [
                   50,
@@ -118744,7 +118684,7 @@
                   "start": 35,
                   "end": 51
                 },
-                "$nodeHandle": 438086664327,
+                "$nodeHandle": 438086664325,
                 "_statements": []
               },
               "$other": [
@@ -118754,7 +118694,7 @@
                 "start": 29,
                 "end": 51
               },
-              "$nodeHandle": 438086664326
+              "$nodeHandle": 438086664324
             }
           }
         ],
@@ -118766,7 +118706,7 @@
           "start": 27,
           "end": 53
         },
-        "$nodeHandle": 438086664324
+        "$nodeHandle": 438086664322
       },
       "_alternative": {
         "$type": 277,
@@ -118779,7 +118719,7 @@
           "start": 54,
           "end": 64
         },
-        "$nodeHandle": 438086664334,
+        "$nodeHandle": 438086664332,
         "_content": {
           "$type": 299,
           "$source": 0,
@@ -118793,7 +118733,7 @@
             "start": 59,
             "end": 64
           },
-          "$nodeHandle": 438086664335,
+          "$nodeHandle": 438086664333,
           "_statements": []
         }
       },
@@ -118804,7 +118744,7 @@
         "start": 17,
         "end": 64
       },
-      "$nodeHandle": 438086664200,
+      "$nodeHandle": 438086664199,
       "$slotOrder": [
         "condition",
         "consequence",
@@ -118837,7 +118777,7 @@
         "start": 20,
         "end": 22
       },
-      "$nodeHandle": 438086664202,
+      "$nodeHandle": 438086664201,
       "$slotOrder": [
         "operator",
         "operand"
@@ -118880,7 +118820,7 @@
             "start": 38,
             "end": 46
           },
-          "$nodeHandle": 438086664337,
+          "$nodeHandle": 438086664335,
           "$slotOrder": [
             "value",
             "field"
@@ -118903,7 +118843,7 @@
                   "start": 47,
                   "end": 48
                 },
-                "$nodeHandle": 438086664340,
+                "$nodeHandle": 438086664338,
                 "_attribute_item": [],
                 "_expression": "4"
               }
@@ -118912,7 +118852,7 @@
               "start": 47,
               "end": 48
             },
-            "$nodeHandle": 438086664339,
+            "$nodeHandle": 438086664337,
             "_delimiter": 0
           },
           "$other": [
@@ -118923,13 +118863,13 @@
             "start": 46,
             "end": 49
           },
-          "$nodeHandle": 438086664338
+          "$nodeHandle": 438086664336
         },
         "$span": {
           "start": 38,
           "end": 49
         },
-        "$nodeHandle": 438086664336,
+        "$nodeHandle": 438086664334,
         "$slotOrder": [
           "function",
           "arguments"
@@ -118942,7 +118882,7 @@
         "start": 37,
         "end": 49
       },
-      "$nodeHandle": 438086664207
+      "$nodeHandle": 438086664206
     },
     "expectedOutput": "&4i32.pow(4)"
   },
@@ -118977,7 +118917,7 @@
           "start": 38,
           "end": 46
         },
-        "$nodeHandle": 438086664341,
+        "$nodeHandle": 438086664339,
         "$slotOrder": [
           "value",
           "field"
@@ -119000,7 +118940,7 @@
                 "start": 47,
                 "end": 48
               },
-              "$nodeHandle": 438086664344,
+              "$nodeHandle": 438086664342,
               "_attribute_item": [],
               "_expression": "4"
             }
@@ -119009,7 +118949,7 @@
             "start": 47,
             "end": 48
           },
-          "$nodeHandle": 438086664343,
+          "$nodeHandle": 438086664341,
           "_delimiter": 0
         },
         "$other": [
@@ -119020,13 +118960,13 @@
           "start": 46,
           "end": 49
         },
-        "$nodeHandle": 438086664342
+        "$nodeHandle": 438086664340
       },
       "$span": {
         "start": 38,
         "end": 49
       },
-      "$nodeHandle": 438086664208,
+      "$nodeHandle": 438086664207,
       "$slotOrder": [
         "function",
         "arguments"
@@ -119068,7 +119008,7 @@
               "start": 94,
               "end": 99
             },
-            "$nodeHandle": 438086664347,
+            "$nodeHandle": 438086664345,
             "_content": {
               "$type": 377,
               "$source": 0,
@@ -119080,7 +119020,7 @@
                 "start": 94,
                 "end": 99
               },
-              "$nodeHandle": 438086664348,
+              "$nodeHandle": 438086664346,
               "$slotOrder": [
                 "start",
                 "operator",
@@ -119096,7 +119036,7 @@
             "start": 93,
             "end": 100
           },
-          "$nodeHandle": 438086664346
+          "$nodeHandle": 438086664344
         },
         "_field": "into_inner",
         "$other": [
@@ -119106,7 +119046,7 @@
           "start": 93,
           "end": 111
         },
-        "$nodeHandle": 438086664345,
+        "$nodeHandle": 438086664343,
         "$slotOrder": [
           "value",
           "field"
@@ -119121,13 +119061,13 @@
           "start": 111,
           "end": 113
         },
-        "$nodeHandle": 438086664349
+        "$nodeHandle": 438086664347
       },
       "$span": {
         "start": 93,
         "end": 113
       },
-      "$nodeHandle": 438086664219,
+      "$nodeHandle": 438086664218,
       "$slotOrder": [
         "function",
         "arguments"
@@ -119162,7 +119102,7 @@
         "start": 38,
         "end": 46
       },
-      "$nodeHandle": 438086664209,
+      "$nodeHandle": 438086664208,
       "$slotOrder": [
         "value",
         "field"
@@ -119200,7 +119140,7 @@
             "start": 94,
             "end": 99
           },
-          "$nodeHandle": 438086664351,
+          "$nodeHandle": 438086664349,
           "_content": {
             "$type": 377,
             "$source": 0,
@@ -119212,7 +119152,7 @@
               "start": 94,
               "end": 99
             },
-            "$nodeHandle": 438086664352,
+            "$nodeHandle": 438086664350,
             "$slotOrder": [
               "start",
               "operator",
@@ -119228,7 +119168,7 @@
           "start": 93,
           "end": 100
         },
-        "$nodeHandle": 438086664350
+        "$nodeHandle": 438086664348
       },
       "_field": "into_inner",
       "$other": [
@@ -119238,7 +119178,7 @@
         "start": 93,
         "end": 111
       },
-      "$nodeHandle": 438086664220,
+      "$nodeHandle": 438086664219,
       "$slotOrder": [
         "value",
         "field"
@@ -119277,7 +119217,7 @@
               "start": 47,
               "end": 48
             },
-            "$nodeHandle": 438086664354,
+            "$nodeHandle": 438086664352,
             "_attribute_item": [],
             "_expression": "4"
           }
@@ -119286,7 +119226,7 @@
           "start": 47,
           "end": 48
         },
-        "$nodeHandle": 438086664353,
+        "$nodeHandle": 438086664351,
         "_delimiter": 0
       },
       "$other": [
@@ -119297,7 +119237,7 @@
         "start": 46,
         "end": 49
       },
-      "$nodeHandle": 438086664210
+      "$nodeHandle": 438086664209
     },
     "expectedOutput": "(4)"
   },
@@ -119324,7 +119264,7 @@
         "start": 111,
         "end": 113
       },
-      "$nodeHandle": 438086664224
+      "$nodeHandle": 438086664223
     },
     "expectedOutput": "()"
   },
@@ -119355,7 +119295,7 @@
           "start": 84,
           "end": 119
         },
-        "$nodeHandle": 438086664357,
+        "$nodeHandle": 438086664355,
         "_content": {
           "$type": 364,
           "$source": 0,
@@ -119388,7 +119328,7 @@
                         "start": 94,
                         "end": 99
                       },
-                      "$nodeHandle": 438086664364,
+                      "$nodeHandle": 438086664362,
                       "_content": {
                         "$type": 377,
                         "$source": 0,
@@ -119400,7 +119340,7 @@
                           "start": 94,
                           "end": 99
                         },
-                        "$nodeHandle": 438086664365,
+                        "$nodeHandle": 438086664363,
                         "$slotOrder": [
                           "start",
                           "operator",
@@ -119416,7 +119356,7 @@
                       "start": 93,
                       "end": 100
                     },
-                    "$nodeHandle": 438086664363
+                    "$nodeHandle": 438086664361
                   },
                   "_field": "into_inner",
                   "$other": [
@@ -119426,7 +119366,7 @@
                     "start": 93,
                     "end": 111
                   },
-                  "$nodeHandle": 438086664362,
+                  "$nodeHandle": 438086664360,
                   "$slotOrder": [
                     "value",
                     "field"
@@ -119441,13 +119381,13 @@
                     "start": 111,
                     "end": 113
                   },
-                  "$nodeHandle": 438086664366
+                  "$nodeHandle": 438086664364
                 },
                 "$span": {
                   "start": 93,
                   "end": 113
                 },
-                "$nodeHandle": 438086664361,
+                "$nodeHandle": 438086664359,
                 "$slotOrder": [
                   "function",
                   "arguments"
@@ -119461,7 +119401,7 @@
                 "start": 91,
                 "end": 115
               },
-              "$nodeHandle": 438086664360,
+              "$nodeHandle": 438086664358,
               "_statements": []
             },
             "$other": [
@@ -119471,7 +119411,7 @@
               "start": 85,
               "end": 115
             },
-            "$nodeHandle": 438086664359
+            "$nodeHandle": 438086664357
           },
           "_length": "3",
           "$other": [
@@ -119483,7 +119423,7 @@
             "start": 84,
             "end": 119
           },
-          "$nodeHandle": 438086664358,
+          "$nodeHandle": 438086664356,
           "$slotOrder": [
             "element",
             "length"
@@ -119500,7 +119440,7 @@
         "start": 65,
         "end": 120
       },
-      "$nodeHandle": 438086664196,
+      "$nodeHandle": 438086664195,
       "$slotOrder": [
         "pattern",
         "value"
@@ -119530,7 +119470,7 @@
         "start": 84,
         "end": 119
       },
-      "$nodeHandle": 438086664215,
+      "$nodeHandle": 438086664214,
       "_content": {
         "$type": 364,
         "$source": 0,
@@ -119563,7 +119503,7 @@
                       "start": 94,
                       "end": 99
                     },
-                    "$nodeHandle": 438086664373,
+                    "$nodeHandle": 438086664371,
                     "_content": {
                       "$type": 377,
                       "$source": 0,
@@ -119575,7 +119515,7 @@
                         "start": 94,
                         "end": 99
                       },
-                      "$nodeHandle": 438086664374,
+                      "$nodeHandle": 438086664372,
                       "$slotOrder": [
                         "start",
                         "operator",
@@ -119591,7 +119531,7 @@
                     "start": 93,
                     "end": 100
                   },
-                  "$nodeHandle": 438086664372
+                  "$nodeHandle": 438086664370
                 },
                 "_field": "into_inner",
                 "$other": [
@@ -119601,7 +119541,7 @@
                   "start": 93,
                   "end": 111
                 },
-                "$nodeHandle": 438086664371,
+                "$nodeHandle": 438086664369,
                 "$slotOrder": [
                   "value",
                   "field"
@@ -119616,13 +119556,13 @@
                   "start": 111,
                   "end": 113
                 },
-                "$nodeHandle": 438086664375
+                "$nodeHandle": 438086664373
               },
               "$span": {
                 "start": 93,
                 "end": 113
               },
-              "$nodeHandle": 438086664370,
+              "$nodeHandle": 438086664368,
               "$slotOrder": [
                 "function",
                 "arguments"
@@ -119636,7 +119576,7 @@
               "start": 91,
               "end": 115
             },
-            "$nodeHandle": 438086664369,
+            "$nodeHandle": 438086664367,
             "_statements": []
           },
           "$other": [
@@ -119646,7 +119586,7 @@
             "start": 85,
             "end": 115
           },
-          "$nodeHandle": 438086664368
+          "$nodeHandle": 438086664366
         },
         "_length": "3",
         "$other": [
@@ -119658,7 +119598,7 @@
           "start": 84,
           "end": 119
         },
-        "$nodeHandle": 438086664367,
+        "$nodeHandle": 438086664365,
         "$slotOrder": [
           "element",
           "length"
@@ -119694,7 +119634,7 @@
           "start": 94,
           "end": 99
         },
-        "$nodeHandle": 438086664384,
+        "$nodeHandle": 438086664382,
         "_content": {
           "$type": 377,
           "$source": 0,
@@ -119706,7 +119646,7 @@
             "start": 94,
             "end": 99
           },
-          "$nodeHandle": 438086664385,
+          "$nodeHandle": 438086664383,
           "$slotOrder": [
             "start",
             "operator",
@@ -119722,7 +119662,7 @@
         "start": 93,
         "end": 100
       },
-      "$nodeHandle": 438086664221
+      "$nodeHandle": 438086664220
     },
     "expectedOutput": "(0..=5)"
   },
@@ -119748,7 +119688,7 @@
         "start": 94,
         "end": 99
       },
-      "$nodeHandle": 438086664222,
+      "$nodeHandle": 438086664221,
       "_content": {
         "$type": 377,
         "$source": 0,
@@ -119760,7 +119700,7 @@
           "start": 94,
           "end": 99
         },
-        "$nodeHandle": 438086664386,
+        "$nodeHandle": 438086664384,
         "$slotOrder": [
           "start",
           "operator",
@@ -132569,7 +132509,7 @@
                                         "end": 162
                                       },
                                       "$nodeHandle": 502511173722,
-                                      "_content": "isize"
+                                      "_content": 38
                                     }
                                   ],
                                   "$span": {
@@ -133309,7 +133249,7 @@
                                   "end": 162
                                 },
                                 "$nodeHandle": 502511173812,
-                                "_content": "isize"
+                                "_content": 38
                               }
                             ],
                             "$span": {
@@ -134069,7 +134009,7 @@
                         "end": 162
                       },
                       "$nodeHandle": 502511173996,
-                      "_content": "isize"
+                      "_content": 38
                     }
                   ],
                   "$span": {
@@ -134198,7 +134138,7 @@
                   "end": 162
                 },
                 "$nodeHandle": 502511174001,
-                "_content": "isize"
+                "_content": 38
               }
             ],
             "$span": {
@@ -134333,7 +134273,7 @@
                 "end": 162
               },
               "$nodeHandle": 502511174012,
-              "_content": "isize"
+              "_content": 38
             }
           ],
           "$span": {
@@ -140982,7 +140922,7 @@
                       },
                       "$nodeHandle": 515396075740
                     },
-                    "_type": "u8",
+                    "_type": 28,
                     "$other": [
                       5
                     ],
@@ -146282,7 +146222,7 @@
                   },
                   "$nodeHandle": 515396076166
                 },
-                "_type": "u8",
+                "_type": 28,
                 "$other": [
                   5
                 ],
@@ -146462,7 +146402,7 @@
                 },
                 "$nodeHandle": 515396076176
               },
-              "_type": "u8",
+              "_type": 28,
               "$other": [
                 5
               ],
@@ -146599,7 +146539,7 @@
         },
         "$nodeHandle": 515396076197
       },
-      "_type": "u8",
+      "_type": 28,
       "$other": [
         5
       ],
@@ -146846,7 +146786,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "x",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -146889,7 +146829,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "CUBE",
-                "_type": "i32",
+                "_type": 33,
                 "_value": {
                   "$type": 262,
                   "$source": 0,
@@ -147247,7 +147187,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "x",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -147675,7 +147615,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "x",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -147718,7 +147658,7 @@
             "$source": 0,
             "$named": true,
             "_name": "CUBE",
-            "_type": "i32",
+            "_type": 33,
             "_value": {
               "$type": 262,
               "$source": 0,
@@ -148092,7 +148032,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "x",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -148508,7 +148448,7 @@
               "$source": 0,
               "$named": true,
               "_name": "x",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -148580,7 +148520,7 @@
               "$source": 0,
               "$named": true,
               "_name": "x",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -148634,7 +148574,7 @@
       "$source": 0,
       "$named": true,
       "_name": "x",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -148669,7 +148609,7 @@
       "$source": 0,
       "$named": true,
       "_name": "x",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -148709,7 +148649,7 @@
           "$source": 0,
           "$named": true,
           "_name": "CUBE",
-          "_type": "i32",
+          "_type": 33,
           "_value": {
             "$type": 262,
             "$source": 0,
@@ -149549,7 +149489,7 @@
       "$source": 0,
       "$named": true,
       "_name": "CUBE",
-      "_type": "i32",
+      "_type": 33,
       "_value": {
         "$type": 262,
         "$source": 0,
@@ -151896,7 +151836,7 @@
               },
               "$nodeHandle": 536870912014
             },
-            "_type": "str",
+            "_type": 43,
             "$other": [
               74
             ],
@@ -151949,7 +151889,7 @@
               "$nodeHandle": 536870912016
             },
             "_mutable_specifier": true,
-            "_type": "str",
+            "_type": 43,
             "$other": [
               74
             ],
@@ -152075,7 +152015,7 @@
           },
           "$nodeHandle": 536870912019
         },
-        "_type": "str",
+        "_type": 43,
         "$other": [
           74
         ],
@@ -152144,7 +152084,7 @@
           "$nodeHandle": 536870912021
         },
         "_mutable_specifier": true,
-        "_type": "str",
+        "_type": 43,
         "$other": [
           74
         ],
@@ -152238,7 +152178,7 @@
         },
         "$nodeHandle": 536870912022
       },
-      "_type": "str",
+      "_type": 43,
       "$other": [
         74
       ],
@@ -152287,7 +152227,7 @@
         "$nodeHandle": 536870912023
       },
       "_mutable_specifier": true,
-      "_type": "str",
+      "_type": 43,
       "$other": [
         74
       ],
@@ -152371,7 +152311,7 @@
             "$type": 239,
             "$source": 0,
             "$named": true,
-            "_type": "str",
+            "_type": 43,
             "$other": [
               11
             ],
@@ -152488,7 +152428,7 @@
         "$type": 239,
         "$source": 0,
         "$named": true,
-        "_type": "str",
+        "_type": 43,
         "$other": [
           11
         ],
@@ -152573,7 +152513,7 @@
       "$type": 239,
       "$source": 0,
       "$named": true,
-      "_type": "str",
+      "_type": 43,
       "$other": [
         11
       ],
@@ -152721,7 +152661,7 @@
                       "end": 32
                     },
                     "$nodeHandle": 545460846629,
-                    "_content": "str"
+                    "_content": 43
                   }
                 ],
                 "$other": [
@@ -153111,7 +153051,7 @@
                   "end": 32
                 },
                 "$nodeHandle": 545460846649,
-                "_content": "str"
+                "_content": 43
               }
             ],
             "$other": [
@@ -153501,7 +153441,7 @@
                 "end": 32
               },
               "$nodeHandle": 545460846667,
-              "_content": "str"
+              "_content": 43
             }
           ],
           "$other": [
@@ -155165,7 +155105,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "value",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -155216,7 +155156,7 @@
                                 "end": 36
                               },
                               "$nodeHandle": 558345748566,
-                              "_content": "i32"
+                              "_content": 33
                             }
                           ],
                           "$span": {
@@ -155292,7 +155232,7 @@
             },
             "$nodeHandle": 558345748557
           },
-          "_return_type": "i32",
+          "_return_type": 33,
           "_body": {
             "$type": 299,
             "$source": 0,
@@ -155348,7 +155288,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "value",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -155399,7 +155339,7 @@
                                 "end": 86
                               },
                               "$nodeHandle": 558345748578,
-                              "_content": "i32"
+                              "_content": 33
                             }
                           ],
                           "$span": {
@@ -155419,7 +155359,7 @@
                         },
                         "$nodeHandle": 558345748576
                       },
-                      "_return_type": "i32",
+                      "_return_type": 33,
                       "$other": [
                         138
                       ],
@@ -155480,7 +155420,7 @@
             },
             "$nodeHandle": 558345748569
           },
-          "_return_type": "i32",
+          "_return_type": 33,
           "_body": {
             "$type": 299,
             "$source": 0,
@@ -155594,7 +155534,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "value",
-                    "_type": "i32",
+                    "_type": 33,
                     "$other": [
                       5
                     ],
@@ -155649,7 +155589,7 @@
                                   "end": 162
                                 },
                                 "$nodeHandle": 558345748595,
-                                "_content": "i32"
+                                "_content": 33
                               }
                             ],
                             "$span": {
@@ -155669,7 +155609,7 @@
                           },
                           "$nodeHandle": 558345748593
                         },
-                        "_return_type": "i32",
+                        "_return_type": 33,
                         "$other": [
                           138
                         ],
@@ -155739,7 +155679,7 @@
             },
             "$nodeHandle": 558345748585
           },
-          "_return_type": "i32",
+          "_return_type": 33,
           "_body": {
             "$type": 299,
             "$source": 0,
@@ -156231,7 +156171,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "value",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -156282,7 +156222,7 @@
                             "end": 36
                           },
                           "$nodeHandle": 558345748634,
-                          "_content": "i32"
+                          "_content": 33
                         }
                       ],
                       "$span": {
@@ -156358,7 +156298,7 @@
         },
         "$nodeHandle": 558345748625
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -156430,7 +156370,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "value",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -156481,7 +156421,7 @@
                             "end": 86
                           },
                           "$nodeHandle": 558345748646,
-                          "_content": "i32"
+                          "_content": 33
                         }
                       ],
                       "$span": {
@@ -156501,7 +156441,7 @@
                     },
                     "$nodeHandle": 558345748644
                   },
-                  "_return_type": "i32",
+                  "_return_type": 33,
                   "$other": [
                     138
                   ],
@@ -156562,7 +156502,7 @@
         },
         "$nodeHandle": 558345748637
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -156692,7 +156632,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": "value",
-                "_type": "i32",
+                "_type": 33,
                 "$other": [
                   5
                 ],
@@ -156747,7 +156687,7 @@
                               "end": 162
                             },
                             "$nodeHandle": 558345748663,
-                            "_content": "i32"
+                            "_content": 33
                           }
                         ],
                         "$span": {
@@ -156767,7 +156707,7 @@
                       },
                       "$nodeHandle": 558345748661
                     },
-                    "_return_type": "i32",
+                    "_return_type": 33,
                     "$other": [
                       138
                     ],
@@ -156837,7 +156777,7 @@
         },
         "$nodeHandle": 558345748653
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "_body": {
         "$type": 299,
         "$source": 0,
@@ -156962,7 +156902,7 @@
               "$source": 0,
               "$named": true,
               "_name": "value",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -157013,7 +156953,7 @@
                           "end": 36
                         },
                         "$nodeHandle": 558345748678,
-                        "_content": "i32"
+                        "_content": 33
                       }
                     ],
                     "$span": {
@@ -157123,7 +157063,7 @@
               "end": 36
             },
             "$nodeHandle": 558345748681,
-            "_content": "i32"
+            "_content": 33
           }
         ],
         "$span": {
@@ -157182,7 +157122,7 @@
               "$source": 0,
               "$named": true,
               "_name": "value",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -157233,7 +157173,7 @@
                           "end": 86
                         },
                         "$nodeHandle": 558345748690,
-                        "_content": "i32"
+                        "_content": 33
                       }
                     ],
                     "$span": {
@@ -157253,7 +157193,7 @@
                   },
                   "$nodeHandle": 558345748688
                 },
-                "_return_type": "i32",
+                "_return_type": 33,
                 "$other": [
                   138
                 ],
@@ -157348,7 +157288,7 @@
               "end": 86
             },
             "$nodeHandle": 558345748693,
-            "_content": "i32"
+            "_content": 33
           }
         ],
         "$span": {
@@ -157407,7 +157347,7 @@
               "$source": 0,
               "$named": true,
               "_name": "value",
-              "_type": "i32",
+              "_type": 33,
               "$other": [
                 5
               ],
@@ -157462,7 +157402,7 @@
                             "end": 162
                           },
                           "$nodeHandle": 558345748703,
-                          "_content": "i32"
+                          "_content": 33
                         }
                       ],
                       "$span": {
@@ -157482,7 +157422,7 @@
                     },
                     "$nodeHandle": 558345748701
                   },
-                  "_return_type": "i32",
+                  "_return_type": 33,
                   "$other": [
                     138
                   ],
@@ -157586,7 +157526,7 @@
               "end": 162
             },
             "$nodeHandle": 558345748706,
-            "_content": "i32"
+            "_content": 33
           }
         ],
         "$span": {
@@ -157888,7 +157828,7 @@
       "$source": 0,
       "$named": true,
       "_name": "value",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -157945,7 +157885,7 @@
                   "end": 36
                 },
                 "$nodeHandle": 558345748807,
-                "_content": "i32"
+                "_content": 33
               }
             ],
             "$span": {
@@ -158020,7 +157960,7 @@
       "$source": 0,
       "$named": true,
       "_name": "value",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -158077,7 +158017,7 @@
                   "end": 86
                 },
                 "$nodeHandle": 558345748812,
-                "_content": "i32"
+                "_content": 33
               }
             ],
             "$span": {
@@ -158097,7 +158037,7 @@
           },
           "$nodeHandle": 558345748810
         },
-        "_return_type": "i32",
+        "_return_type": 33,
         "$other": [
           138
         ],
@@ -158157,7 +158097,7 @@
       "$source": 0,
       "$named": true,
       "_name": "value",
-      "_type": "i32",
+      "_type": 33,
       "$other": [
         5
       ],
@@ -158218,7 +158158,7 @@
                     "end": 162
                   },
                   "$nodeHandle": 558345748818,
-                  "_content": "i32"
+                  "_content": 33
                 }
               ],
               "$span": {
@@ -158238,7 +158178,7 @@
             },
             "$nodeHandle": 558345748816
           },
-          "_return_type": "i32",
+          "_return_type": 33,
           "$other": [
             138
           ],
@@ -158550,7 +158490,7 @@
                 "end": 36
               },
               "$nodeHandle": 558345748833,
-              "_content": "i32"
+              "_content": 33
             }
           ],
           "$span": {
@@ -158629,7 +158569,7 @@
                 "end": 86
               },
               "$nodeHandle": 558345748837,
-              "_content": "i32"
+              "_content": 33
             }
           ],
           "$span": {
@@ -158649,7 +158589,7 @@
         },
         "$nodeHandle": 558345748835
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "$other": [
         138
       ],
@@ -158713,7 +158653,7 @@
                 "end": 162
               },
               "$nodeHandle": 558345748841,
-              "_content": "i32"
+              "_content": 33
             }
           ],
           "$span": {
@@ -158733,7 +158673,7 @@
         },
         "$nodeHandle": 558345748839
       },
-      "_return_type": "i32",
+      "_return_type": 33,
       "$other": [
         138
       ],
@@ -159599,7 +159539,7 @@
                   "end": 162
                 },
                 "$nodeHandle": 558345748888,
-                "_content": "i32"
+                "_content": 33
               }
             ],
             "$span": {
@@ -159619,7 +159559,7 @@
           },
           "$nodeHandle": 558345748886
         },
-        "_return_type": "i32",
+        "_return_type": 33,
         "$other": [
           138
         ],
