@@ -12,6 +12,7 @@ import { corpusCoverageCensus } from './corpus-coverage-census.ts';
 import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
 import { dumpAstMismatches } from './dump-ast-mismatches.ts';
+import { emitFactorySource } from './emit-factory-source.ts';
 import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
 import { grammarDiagnostics } from './grammar-diagnostics.ts';
@@ -43,6 +44,7 @@ export const toolModules: readonly CommandModule[] = [
 	defectHistogram,
 	diffFailures,
 	dumpAstMismatches,
+	emitFactorySource,
 	exercise,
 	fieldProvenance,
 	grammarDiagnostics,
@@ -60,7 +62,7 @@ export const toolModules: readonly CommandModule[] = [
 	separatedLists,
 	testHistory,
 	variantDerivationProbe,
-	walk
+	walk,
 ];
 
 export function registerTools(program: Command): void {

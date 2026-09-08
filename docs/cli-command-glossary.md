@@ -270,6 +270,23 @@ Diagnostic for read-render-parse AST gaps
 pnpm exec tsx packages/cli/src/cli.ts tool dump-ast-mismatches [options]
 ```
 
+### `tool emit-factory-source`
+
+Print the strict factory source that rebuilds a source file
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-f, --file <path>` — Source file to rebuild
+- `-e, --export <name>` — Exported function name (default: rebuild<Basename>)
+- `-o, --out <path>` — Write the module here instead of stdout
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool emit-factory-source [options]
+```
+
 ### `tool exercise`
 
 Exercise factory round-trips with built-in or corpus cases

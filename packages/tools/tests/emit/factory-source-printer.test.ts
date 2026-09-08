@@ -57,7 +57,7 @@ describe('printValue', () => {
 	});
 	it('appends a node trivia call from the handle table', () => {
 		const withTrivia: PrintContext = { ...ctx, triviaByHandle: new Map([[7, { leading: ['// a'], trailing: [] }]]) };
-		expect(printValue(new Printed(2, 'ir.functionItem.strict({})', 7), withTrivia, 0)).toBe(
+		expect(printValue(new Printed(2, 'ir.functionItem.strict({})', 'function_item', 7), withTrivia, 0)).toBe(
 			'ir.functionItem.strict({}).$trivia({ leading: ["// a"] })'
 		);
 	});

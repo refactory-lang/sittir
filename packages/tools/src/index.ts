@@ -85,3 +85,4 @@ export {
 	resolveGrammars,
 	resolveBackends
 } from './commands.ts';
+export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';

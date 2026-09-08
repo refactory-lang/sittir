@@ -1117,6 +1117,9 @@ const NODE_MODEL_PATHS: Record<string, string> = {
  * validator-side re-derivation.
  */
 export interface LoadedNodeModel {
+	readonly irKeys: Record<string, string>;
+	readonly modelTypes: Record<string, string>;
+	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
@@ -1130,6 +1133,9 @@ export interface LoadedNodeModel {
 interface ParsedNodeModel {
 	nodes?: ReadonlyArray<{
 		kind: string;
+		irKey?: string;
+		modelType?: string;
+		slots?: ReadonlyArray<{ propertyName: string; kinds?: readonly string[] }>;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
 	}>;
@@ -1139,6 +1145,9 @@ interface ParsedNodeModel {
 }
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
+	irKeys: {},
+	modelTypes: {},
+	slotKinds: {},
 	factoryShapes: {},
 	factoryFields: {},
 	factorySlots: {},
@@ -1165,13 +1174,24 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		return EMPTY_NODE_MODEL;
 	}
 	const model = JSON.parse(raw) as ParsedNodeModel;
+	const irKeys: Record<string, string> = {};
+	const modelTypes: Record<string, string> = {};
+	const slotKinds: Record<string, Record<string, readonly string[]>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const node of model.nodes ?? []) {
+		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
+		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
+		if (node.slots !== undefined) {
+			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.kinds ?? []]));
+		}
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
 	}
 	return {
+		irKeys,
+		modelTypes,
+		slotKinds,
 		factoryShapes,
 		factoryFields,
 		factorySlots: model.factorySlots ?? {},
@@ -1325,7 +1345,7 @@ function isWrappedNodeData(v: unknown): v is WrappedNodeData {
 }
 
 /** Relative path from codegen/src/validate to language package types.ts */
-const TYPES_MODULE_PATHS: Record<string, string> = {
+export const TYPES_MODULE_PATHS: Record<string, string> = {
 	rust: '../../../rust/src/types.ts',
 	typescript: '../../../typescript/src/types.ts',
 	python: '../../../python/src/types.ts'
