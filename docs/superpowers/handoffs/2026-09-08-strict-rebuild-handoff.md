@@ -302,12 +302,37 @@ own signature). Ceiling unchanged at 3 / 0 / 0; the python
 seated spellings put its kinds on `ir`. A second arm seat in one projected
 config now throws instead of crashing on a redefined property.
 
-Open, unchanged and pre-existing: the three rust rebuild errors are one
-defect, a hoisted kind that is unseated and multiple printing its arguments
-bare inside an object literal (`fields: a, b,`), which is a syntax error and
-masks whatever follows it in that file. It needs the inline collapse to know
-the slot's arity (print `[a, b]` for a multiple slot) or, better, the kind
-seated so no collapse is needed.
+**The tuple seat** (user ruling): a hoisted child whose OWN surface takes rest
+parameters (`spread`, or a list's `elements`, which also carries an options
+bag) seats as a TUPLE on its parent's slot — `ir.structPattern.strict({ type,
+fields: [a, b] })`. All keys are named keys, so the tuple is only needed when
+the parent is a branch with named slots; a parent that takes its sole slot
+positionally already spreads the child's arguments into its own call, and its
+bundle overloads already declare them. That retires the `fields: a, b,` bare
+print, which was a syntax error.
+
+Three defects of the same class fell out of it, all fixed at the root:
+
+- **A seat or mount wired to a child's RAW builder collapses the child's own
+  seats.** `seatBearing` now routes a seat-bearing child through its overlay
+  entry (`argumentsElements.strict`), and the wire collector visits every
+  node-arm child so the entry is declared first. A child in a cycle with its
+  parent keeps the raw builder, because the seated form has no spelling that
+  would resolve there.
+- **A mount route dropped the parent's seats** (the old finding 2).
+  `composeSeats` folds a kind's seats onto its factory and names the result
+  `<key>$seated`; every mount builds on that name. A composed call expression
+  has no `typeof`, which is why it needs a name.
+  `ir.exceptClause.block.strict({ content, suite })` now keeps its `content`.
+- **A leaf has no `strict`**, because its strict and loose forms are one call,
+  so the `ir`-surface lookup falls back to the binding itself.
+
+**The rebuild ceiling of 3 / 0 / 0 was a masked measurement.** The three rust
+entries were TS1005 syntax errors, and a syntax error suppresses semantic
+checking for the whole program: restoring only the old rust file makes
+typescript and python report zero again while their files are byte-identical.
+The true numbers, now recorded, are 16 / 25 / 14. They are a floor to drive
+down, not new debt.
 
 Next: Task 9 closing gates, the two composition findings above, the
 typescript census residue, and the `fields: a, b,` print.

@@ -264,8 +264,9 @@ describe('a single hoisted group splices onto its parent', () => {
 			`ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
 		);
 		expect(out).toContain('export const clause: typeof B.clause & {');
-		expect(out).toContain('strict: clause$splice(F.buildClause, F.buildClauseGroup)');
-		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$splice('));
+		expect(out).toContain('= clause$splice(F.buildClause, F.buildClauseGroup);');
+		expect(out).toContain('strict: clause$seated,');
+		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$seated,'));
 	});
 });
 
@@ -300,7 +301,8 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 		const out = emitPolymorphsOverlay({ nodeMap });
 		expect(out).toContain('const comparison$comparators =');
 		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
-		expect(out).toContain('strict: comparison$comparators(F.buildComparison, F.buildComparisonComparator)');
+		expect(out).toContain('= comparison$comparators(F.buildComparison, F.buildComparisonComparator);');
+		expect(out).toContain('strict: comparison$seated,');
 		expect(out).toContain("{ comparators: ReadonlyArray<ArgsOf<typeof F.buildComparisonComparator>[0]");
 	});
 });
@@ -337,5 +339,40 @@ describe('a repeated hoisted group on a spread-shaped parent seats through the r
 		const out = emitPolymorphsOverlay({ nodeMap });
 		expect(out).toContain('const union$patterns =');
 		expect(out).toContain('_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)))');
+	});
+});
+
+describe('a mount route carries the seats of its own parent', () => {
+	it('builds the mount on the seated parent, not the raw factory', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'c' }, { type: SYMBOL, name: 'clause' }] },
+			clause: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'patterns', content: { type: SYMBOL, name: '_clause_patterns' } },
+					{
+						type: FIELD,
+						name: 'body',
+						content: { type: CHOICE, members: [{ type: SYMBOL, name: '_clause_block' }, { type: SYMBOL, name: 'literal' }] }
+					}
+				]
+			},
+			_clause_patterns: {
+				type: FIELD,
+				name: 'pattern',
+				content: { type: REPEAT1, content: { type: SYMBOL, name: 'literal' } },
+				annotations: { hoisted: true }
+			},
+			_clause_block: {
+				type: SEQ,
+				members: [{ type: STRING, value: '{' }, { type: FIELD, name: 'inner', content: { type: SYMBOL, name: 'literal' } }],
+				annotations: { hoisted: true }
+			},
+			literal: { type: PATTERN, value: '[0-9]+' }
+		});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const clause$seated');
+		expect(out).toContain('clause$block(clause$seated,');
+		expect(out).not.toContain('clause$block(F.buildClause,');
 	});
 });

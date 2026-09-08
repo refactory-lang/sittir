@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "7ba597db55d2da4e9b79565297eabb9f9c3aaf9cc9f57494b11f613cc621ca4a",
+  "source_hash": "33960eec09da206862900d053ed8263d7007289430453a0c5940917fcda0b242",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "39fda7db7c7871769fa6b227644df73d2cb69d286b3bf542681e56967f4a2931",
     "packages/rust/.sittir/grammar.js": "6724549bd69e7df98bbe289aed82759b3445dbb7bd9b7ac33935e44416a5907e",
@@ -23,7 +23,7 @@
     "packages/rust/src/factories/bundle.ts": "1bfd07cff9c49894c3ed9857735a5924c52660eabeff6710fdd1735cb25e4f22",
     "packages/rust/src/factories/coerce.ts": "764c7a736dd74bab0ba0552ed36d59d33412fd5ac01818d41696cea6b9b99e8e",
     "packages/rust/src/factories/index.ts": "1567ad6f6868519ff5fe2d5764239705e652e542f707a32f79b2bfd4758aa27f",
-    "packages/rust/src/factories/overlays/polymorphs.ts": "0dc652737e1976bb05ab0bfc988ffc977c50ae68548e91981db8e557bde1beb4",
+    "packages/rust/src/factories/overlays/polymorphs.ts": "ebc19e760a59b35c30792c457feb561501ec29a2b74f26eb32a7428a2b66d9f2",
     "packages/rust/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/rust/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/rust/src/factories/raw.ts": "1042083b298e6ba7e154a30b12cd10d3dcf9dde3a63f11fe5d6d040f5bc6c338",
@@ -32,7 +32,7 @@
     "packages/rust/src/index.ts": "d9191e0f17488612ea9b14f06fd250c186333748e53cd60129b4925e34714110",
     "packages/rust/src/ir.ts": "9b0ab3c7663075bc3fa867cbdbd22e87d85a8c6ea925aa674f0dd032ab4d7e4c",
     "packages/rust/src/is.ts": "1a5f71341db1f1de6d5bcc08fb51f2b0eb06dadcf255f5e5200a34f33970c369",
-    "packages/rust/src/node-model.json5": "fa913cb318b612e85916e138f7584f8e02b0f671515624e9edc00c2af2593b04",
+    "packages/rust/src/node-model.json5": "2a7cb4f24a657fd84be0728f74a35a407ab3fff0d14dac472c2cf91a1696485d",
     "packages/rust/src/options.ts": "4fae98ec39246f2cfc04c0163a560e923f1c80761c7b3657eb731e30ddf3e146",
     "packages/rust/src/render-engine.ts": "12ce561e3efabe0a8d224a37899f181a692c17ed8232a4d7bf6bae192de0321d",
     "packages/rust/src/types.ts": "dcb91abbdca505279a625e5fdc0ccd94a083b3d8f0634a600cb1b0c8cdb11996",

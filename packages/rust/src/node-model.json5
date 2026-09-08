@@ -4058,7 +4058,11 @@
               "multiplicity": "optional",
               "name": "_arguments_elements",
               "parseKind": "arguments_elements",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_arguments_elements",
+                "shape": "tuple"
+              }
             }
           ]
         }
@@ -18195,7 +18199,11 @@
               "multiplicity": "optional",
               "name": "_struct_pattern_elements",
               "parseKind": "struct_pattern_elements",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_struct_pattern_elements",
+                "shape": "tuple"
+              }
             }
           ]
         }
@@ -19163,7 +19171,11 @@
               "multiplicity": "optional",
               "name": "_patterns",
               "parseKind": "patterns",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_patterns",
+                "shape": "tuple"
+              }
             }
           ]
         }

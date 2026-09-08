@@ -5634,7 +5634,11 @@
               "multiplicity": "single",
               "name": "_case_patterns",
               "parseKind": "case_patterns",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_case_patterns",
+                "shape": "tuple"
+              }
             }
           ]
         },
@@ -6164,7 +6168,11 @@
               "multiplicity": "optional",
               "name": "_list_pattern_case_patterns",
               "parseKind": "list_pattern_case_patterns",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_list_pattern_case_patterns",
+                "shape": "tuple"
+              }
             }
           ]
         }
@@ -9786,7 +9794,11 @@
               "multiplicity": "single",
               "name": "_subjects",
               "parseKind": "subjects",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_subjects",
+                "shape": "tuple"
+              }
             }
           ]
         },
@@ -11501,7 +11513,11 @@
               "multiplicity": "single",
               "name": "_subscripts",
               "parseKind": "subscripts",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_subscripts",
+                "shape": "tuple"
+              }
             }
           ]
         }

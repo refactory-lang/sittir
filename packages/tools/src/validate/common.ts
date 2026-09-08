@@ -1120,7 +1120,7 @@ const NODE_MODEL_PATHS: Record<string, string> = {
  */
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'splice' | 'elements';
+	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
 	readonly mount?: string;
 }
 
@@ -1806,6 +1806,7 @@ function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 
 const ARM_ROUTE = Symbol('armRoute');
 const SPLICED = Symbol('spliced');
+const POSITIONAL = Symbol('positional');
 
 interface ArmRoute {
 	readonly mount: string;
@@ -1815,6 +1816,11 @@ interface ArmRoute {
 /** The mount route a projected config asks for, when one of its slots is an arm seat. */
 function armRouteOf(config: Record<string, unknown>): ArmRoute | undefined {
 	return (config as Record<symbol, unknown>)[ARM_ROUTE] as ArmRoute | undefined;
+}
+
+/** The exact arguments a positional parent takes, when a tuple seat filled its sole slot. */
+function positionalOf(config: Record<string, unknown>): readonly unknown[] | undefined {
+	return (config as Record<symbol, unknown>)[POSITIONAL] as readonly unknown[] | undefined;
 }
 
 /** Whether a projected config carries a spliced group's keys in place of the group. */
@@ -1960,6 +1966,17 @@ function projectSeatedSlot(
 		case 'elements':
 			out[key] = projectElements(childEntries(value), seat, parentKind, slot.name, opts);
 			return;
+		case 'tuple': {
+			const child = drillReadNode(value as ReadNodeLike, opts);
+			const inner = childOpts(opts);
+			const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
+			const args = factoryArgs(seat.kind, childShape, nodeToConfig(child, inner), child, inner);
+			out[key] = args;
+			if ((opts.factoryShapes?.[parentKind] ?? 'config') !== 'config') {
+				Object.defineProperty(out, POSITIONAL, { value: args, enumerable: false });
+			}
+			return;
+		}
 		case 'arm':
 			projectArmSlot(seat, parentKind, slot, value, opts, out);
 			return;
@@ -1984,6 +2001,8 @@ function factoryArgs(
 		return options !== undefined ? [config, options] : [config];
 	}
 	if (route !== undefined) return route.args ?? [];
+	const positional = positionalOf(config);
+	if (positional !== undefined) return positional;
 	if (shape === 'direct' || shape === 'forwarded') {
 		return [isSpliced(config) ? config : directFactoryValue(kind, config, opts.factorySlots, opts.factoryFields)];
 	}
@@ -1997,9 +2016,11 @@ function factoryArgs(
 
 /**
  * The callable the `ir` surface offers for `kind`: the entry's `strict`, or
- * the mount route's `strict` when the projected config asks for one. A
- * missing route is an error, not a fallback: the seat said the spelling
- * exists. `undefined` when the kind is not bound on `ir`.
+ * the mount route's `strict` when the projected config asks for one. A leaf
+ * binding IS the callable, with no `strict` of its own, because its strict
+ * and loose forms are the same call. A missing route is an error, not a
+ * fallback: the seat said the spelling exists. `undefined` when the kind is
+ * not bound on `ir`.
  */
 function irStrictFor(
 	kind: string,
@@ -2011,10 +2032,9 @@ function irStrictFor(
 	const route = config === undefined ? undefined : armRouteOf(config);
 	const target = route === undefined ? entry : (entry[route.mount] as IrEntry | undefined);
 	const strict = target?.strict;
-	if (typeof strict !== 'function') {
-		throw new Error(`ir surface: ${kind}${route === undefined ? '' : `.${route.mount}`}.strict is not a function`);
-	}
-	return strict;
+	if (typeof strict === 'function') return strict;
+	if (typeof target === 'function') return target as (...args: unknown[]) => unknown;
+	throw new Error(`ir surface: ${kind}${route === undefined ? '' : `.${route.mount}`}.strict is not a function`);
 }
 
 /**

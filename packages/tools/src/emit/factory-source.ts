@@ -16,7 +16,7 @@ export interface PrintContext {
 	readonly irPathOfKind: (kind: string) => string;
 	readonly delimiterArmOfId: (id: number) => string | undefined;
 	readonly seats?: SeatTable;
-	readonly unboundKinds?: ReadonlySet<string>;
+	readonly absorbedKinds?: ReadonlySet<string>;
 	readonly slotKinds?: Record<string, Record<string, readonly string[]>>;
 	readonly textLeafKinds?: ReadonlySet<string>;
 	readonly enumKinds?: ReadonlySet<string>;
@@ -97,11 +97,7 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
 		const trivia = value.handle === undefined ? undefined : ctx.triviaByHandle?.get(value.handle);
-		const inline =
-			value.kind !== undefined && value.argsSource !== undefined && ctx.unboundKinds?.has(value.kind)
-				? value.argsSource
-				: value.source;
-		return reindent(inline, depth) + triviaSuffix(trivia, ctx);
+		return reindent(value.source, depth) + triviaSuffix(trivia, ctx);
 	}
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);
@@ -255,7 +251,11 @@ export function printingFactoryMap(
 				case 'direct':
 				case 'forwarded': {
 					const value = wrapDirectArg(kind, args[0], ctx);
-					const argSource = value === undefined ? '' : printValue(value, ctx, 0);
+					const absorbed =
+						value instanceof Printed && value.kind !== undefined && ctx.absorbedKinds?.has(value.kind)
+							? value.argsSource
+							: undefined;
+					const argSource = absorbed ?? (value === undefined ? '' : printValue(value, ctx, 0));
 					return new Printed(id, `${path}.strict(${argSource})`, kind, handleOf(value), argSource);
 				}
 				case 'spread': {
@@ -379,19 +379,25 @@ function withPublicNames<T>(record: Record<string, T>): Record<string, T> {
 }
 
 /**
- * A hoisted kind the overlay wires privately has an `irKey` but no `ir`
- * binding, so its factory path would not resolve. Until a seat names it, its
- * printed call collapses to its arguments, spliced into the parent by hand.
- * The census tracks exactly this set.
+ * A hoisted child whose OWN surface is a rest-parameter one (`spread`, or a
+ * separated list's `elements`) and that its parent takes POSITIONALLY is
+ * absorbed: its arguments splice straight into the parent's call, because the
+ * parent's own factory already offers those rest parameters. A parent with
+ * named keys takes the same child as a tuple on its slot, which is the tuple
+ * seat. Every other hoisted child prints its own call, and so does one that
+ * seats children of its own: those arrive as the child's configs, which only
+ * the child's own builder knows how to take.
  */
-function unseatedHoistedKinds(model: { hoistedKinds: ReadonlySet<string>; seats: SeatTable }): ReadonlySet<string> {
-	const seated = new Set<string>();
-	for (const slots of Object.values(model.seats)) {
-		for (const table of Object.values(slots)) for (const seat of Object.values(table)) seated.add(seat.kind);
-	}
+function absorbedKindsOf(model: {
+	hoistedKinds: ReadonlySet<string>;
+	factoryShapes: Record<string, FactoryShape>;
+	seats: SeatTable;
+}): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const kind of model.hoistedKinds) {
-		if (seated.has(kind)) continue;
+		const shape = model.factoryShapes[kind];
+		if (shape !== 'spread' && shape !== 'elements') continue;
+		if (model.seats[kind] !== undefined) continue;
 		out.add(kind);
 		out.add(kind.replace(/^_+/, ''));
 	}
@@ -520,7 +526,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		slotKinds: withPublicNames(model.slotKinds),
 		textLeafKinds,
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
-		unboundKinds: unseatedHoistedKinds(model),
+		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id ?? idOfName.get(text),

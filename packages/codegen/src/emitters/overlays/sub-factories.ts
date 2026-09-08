@@ -405,9 +405,38 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 	return seats;
 }
 
+/**
+ * The shape-4 seat: a singular slot whose one value is a hoisted kind whose
+ * OWN factory surface is a rest-parameter one (`spread`, or a separated
+ * list's `elements`, which also carries an options bag). Such a child has no
+ * config object to splice and no choice to name, so the parent's slot takes
+ * the child's whole argument list as a tuple and the parent builds it.
+ *
+ * Only a config-shaped parent needs one: a parent that takes its sole slot
+ * positionally already spreads the child's arguments into its own call.
+ */
+export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly SpliceSeat[] {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
+	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
+	if (classifyFactoryShape(node, nodeMap) !== 'config') return [];
+	const seats: SpliceSeat[] = [];
+	for (const slot of node.slots) {
+		if (isMultiple(slot) || slot.values.length !== 1) continue;
+		const value = slot.values[0]!;
+		if (!isNodeRef(value)) continue;
+		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
+		if (group === undefined || group.annotations?.hoisted !== true) continue;
+		if (group.rawFactoryName === undefined) continue;
+		const shape = classifyFactoryShape(group, nodeMap);
+		if (shape !== 'spread' && shape !== 'elements') continue;
+		seats.push({ slot, group });
+	}
+	return seats;
+}
+
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'splice' | 'elements';
+	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
 	readonly mount?: string;
 }
 
@@ -415,6 +444,7 @@ export interface SeatSource {
 	readonly subs: readonly SubFactory[];
 	readonly splice?: SpliceSeat;
 	readonly elements?: readonly SpliceSeat[];
+	readonly tuples?: readonly SpliceSeat[];
 }
 
 export function seatOf(
@@ -441,6 +471,9 @@ export function seatOf(
 	}
 	if ((source.elements ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'elements' };
+	}
+	if ((source.tuples ?? []).some((e) => e.slot === slot && e.group === child)) {
+		return { kind: child.kind, shape: 'tuple' };
 	}
 	return undefined;
 }

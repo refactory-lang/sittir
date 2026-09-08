@@ -14331,6 +14331,45 @@ passes the leaf's value through the parent's builder; the leaf keeps its
 shape and builder.
 
 
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::tupleSeatOf`
+
+The shape-4 seat. A singular slot whose one value is a hoisted kind whose OWN
+factory surface takes rest parameters (`spread`, or a separated list's
+`elements`, which also carries an options bag) has nothing to splice and no
+choice to name, so the slot takes the child's whole argument list as a tuple
+and the parent builds it: `ir.structPattern.strict({ type, fields: [a, b] })`.
+Only a config-shaped parent needs one. A parent that takes its sole slot
+positionally already spreads the child's arguments into its own call, and its
+bundle overloads already declare them.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::tupleShape`
+
+The method behind a tuple seat: destructure the slot, spread it into the
+child, hand the rest to the parent. An array in that slot is the seated form
+and anything else is the parent's own input, which is what keeps the nested
+call (`fields: ir.structPatternElements.strict(a, b)`) working alongside it.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::composeSeats`
+
+Folds a kind's seats onto its own factory and names the result
+`<key>$seated`. Every mount route builds on that name instead of the raw
+factory, so a mount carries the parent's seats rather than dropping them:
+python `case_clause` seats its patterns as a tuple AND mounts its suite, and
+`ir.exceptClause.block.strict({ content, suite })` keeps its spliced
+`content`. Without the name there is nothing a mount could reference, because
+a composed call expression has no `typeof`.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatBearing`
+
+Whether a child must be reached through its own overlay entry rather than its
+raw builder. A seat-bearing child takes the seated shape (a group's config, a
+tuple), which the raw builder cannot read, so a mount or seat wired to the raw
+builder silently collapses it. A seat is also what puts a `strict` on the
+entry: a wire set of arms alone is a bare mount namespace with none, and a
+leaf has no `strict` at all because its strict and loose forms are one call. A
+child in a cycle with its parent cannot be declared first, so it keeps the raw
+builder.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::spliceSeatOf`
 
 The shape-2 seat: the parent's one non-multiple slot whose value set is
