@@ -85,10 +85,11 @@ The read stores text for aliased leaves (`shorthand_property_identifier_pattern`
 Generated: typescript `TSKindId.AutomaticSemicolon` for a statement terminator slot.
 Error: `TS2322: Type 'TSKindId.AutomaticSemicolon' is not assignable to type 'BooleanKeyword<"\n"> | undefined'`.
 
-### S9 — A hidden group kind the read data reaches is not on `ir`
+### S9 — A config-shaped parent does not build its hoisted group from a config
 
-Generated: typescript `ir.forHeaderLetConstKind.strict(…)`, python `ir.comparisonOperatorComparator.strict(…)`; at render: `Cannot read properties of undefined (reading 'strict')`. Rust: a list slot handed one node — `Spread syntax requires ...iterable[Symbol.iterator] to be a function`.
-A group minted for a slot (`for_header` + `let_const_kind`, `comparison_operator` + `comparator`) has an `irKey` but no `ir` entry; the strict surface spells its contents through the parent, which the emitter does only for hoisted kinds.
+Generated (the intended spelling): typescript `ir.forInStatement.strict({ content: { kind: TSKindId.Const, left: ir.identifier("item") }, … })`, python `ir.comparisonOperator.strict({ left, comparators: [{ operators: TSKindId.EqEq, primaryExpression: … }] })`.
+Error: `TS2322: Type 'TSKindId' is not assignable to type '() => number'` (the slot's type is the group's Built shape, accessor methods included); at render: `Missing field \`_operators\` on ComparisonOperatorTransport._comparators`, `$type property missing in ExportStatementContentTransportSlot`.
+A group has a visible alias and its builder exists in the generated factories (`buildForHeaderLetConstKind`, `buildComparisonOperatorComparator`), but it is not on `ir`, and only a forwarded parent builds it from a config (`buildMatchBlock` accepts `MatchBlockArms.Config`). A config-shaped parent passes the slot value through untouched (`const _content = config.content;`) and its Config demands the group's Built. The parent's Config should accept the group's Config in that slot and the factory should call the group's builder, as the forwarded case already does. Rust's render still throws `seated is not iterable` on a list slot handed one node.
 
 ### S8 — Form names the read data reaches are not on `ir`
 

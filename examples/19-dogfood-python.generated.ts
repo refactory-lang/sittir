@@ -71,10 +71,10 @@ export function rebuildPython4spaceGenerated() {
 						object: ir.identifier("user"),
 						attribute: ir.identifier("user_id"),
 					}),
-					comparators: [ir.comparisonOperatorComparator.strict({
+					comparators: [{
 						operators: TSKindId.EqEq,
 						primaryExpression: ir.identifier("user_id"),
-					})],
+					}],
 				}),
 				consequence: ir.suiteBlock.strict(ir.block.strict(ir.simpleStatements.strict(ir.simpleStatementsElements.strict(ir.returnStatement.strict(ir.identifier("user")))))),
 			}))),

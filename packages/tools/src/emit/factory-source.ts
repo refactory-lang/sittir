@@ -98,7 +98,14 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
 		const trivia = value.handle === undefined ? undefined : ctx.triviaByHandle?.get(value.handle);
-		return reindent(value.source, depth) + triviaSuffix(trivia, ctx);
+		const inline =
+			value.kind !== undefined &&
+			value.argsSource !== undefined &&
+			ctx.hoistedKinds?.has(value.kind) &&
+			formOf(ctx.formOfKind, value.kind) === undefined
+				? value.argsSource
+				: value.source;
+		return reindent(inline, depth) + triviaSuffix(trivia, ctx);
 	}
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);

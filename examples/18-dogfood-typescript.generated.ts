@@ -211,10 +211,10 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
-					content: ir.forHeaderLetConstKind.strict({
+					content: {
 						kind: TSKindId.Const,
 						left: ir.identifier("item"),
-					}),
+					},
 					operator: TSKindId.Of,
 					right: ir.identifier("sorted"),
 					body: ir.statementBlock.strict({
@@ -507,10 +507,10 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
-					content: ir.forHeaderLetConstKind.strict({
+					content: {
 						kind: TSKindId.Const,
 						left: ir.arrayPattern.strict(ir.identifier("key"), TSKindId.Comma, ir.identifier("sub")),
-					}),
+					},
 					operator: TSKindId.Of,
 					right: ir.callExpression.call.strict({
 						function: ir.memberExpression.strict({
