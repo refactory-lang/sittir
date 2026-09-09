@@ -144,25 +144,30 @@ options: {
   'body/after':        preference('dedent'),
   'assignment/before': preference('space'),
 
+  keyword_argument: { '"="/before': preference('tight') },
+
   _bindings: {
     'block/"{"/after':                  'body/before',
     'block/"}"/before':                 'body/after',
     'object_type/opening:/after':       'body/before',
     'field_declaration_list/"{"/after': 'body/before',
-
-    'lexical_declaration/"="/before': 'assignment/before',
-    'keyword_argument/"="/before':   ['assignment/before', 'tight'],
+    'lexical_declaration/"="/before':   'assignment/before',
+    'keyword_argument/"="/before':      'assignment/before',
   }
 }
 ```
 
-A bare key declares a **label** and its default arm, once. A `_bindings` entry
-binds an **address** to that label.
+**The top level reads like `patches:`.** A bare identifier is a kind, and its
+value is a map of paths relative to that kind — the same shape `patches:`
+already has, so one block's structure teaches the other's. A key containing `/`
+is a **label**: a path in its own right, declared with the arm it carries.
 
 **Labels are paths too.** A label is written in the same path syntax as an
 address, so it nests in the generated surface exactly as an address does and no
 flat identifier survives anywhere in the design. `body/before` replaces
-`block_body_before`, which was a path encoded as an underscore string.
+`block_body_before`, which was a path encoded as an underscore string. The two
+are told apart by shape: a kind is one bare identifier, a label has a path in
+it.
 
 A label path names a concept, not a kind, so its root shares a namespace with
 the grammar's kinds. **Declared labels win**: a label whose root collides with a
@@ -170,12 +175,19 @@ kind name is rejected at load time. Kinds are derived and labels are written, so
 the collision is always the author's to resolve and the error can say which
 kind was shadowed.
 
-Membership and default are separate. `['assignment/before', 'tight']` binds the
-address to `assignment/before` — so a consumer setting that label still moves it
-— while declaring a different default there. That is exactly today's behaviour:
-python's `keyword_argument` override keeps the `eq_before` label and changes
-only its default id. A binding may also name a bare arm, for a position that
-belongs to no group and therefore moves only by its own address.
+**Membership and default are declared separately, in the two halves.**
+`_bindings` says an address belongs to a label; a declaration under the
+address's kind says what its arm is. `keyword_argument`'s assignment gap is
+bound to `assignment/before` and declared `tight`, so a consumer setting
+`assignment/before` still moves it while its own default differs — which is
+exactly today's behaviour, where that override keeps the `eq_before` label and
+changes only its default id. Today the two facts are welded into one
+`preference(label, arm)` call repeated at every site; here each is written
+once, in the half that owns it.
+
+An address that belongs to no label needs no binding: it is a declaration under
+its kind and nothing else, and subset specificity already ranks it above any
+broader path that also reaches it.
 
 ### The generated surface
 
@@ -338,15 +350,9 @@ date, not a permanent namespace.
 - **Implementing roles.** Role-scoped addresses are named as the destination
   for bound preferences; nothing here depends on `roles.scm` existing.
 
-## Open decision
+## Resolved: the binding value
 
-A `_bindings` value is a **label path**, a **label with a local default**
-(`['assignment/before', 'tight']`), or a **bare arm** for a position in no
-group.
-
-The alternative — every binding naming only an arm — keeps the block
-self-contained but restates `indent` at all ten body sites, which is the
-duplication the block exists to remove, and it loses group membership: a
-consumer setting the label would no longer reach an address that had declared
-its own default. The three-form value preserves both, at the cost of a value
-union rather than a plain string.
+A `_bindings` value is a label path. Nothing else: an address with a differing
+default declares it under its kind, and an address in no group is only a
+declaration. The union of value shapes an earlier draft carried was the
+membership and the default fighting for one slot.

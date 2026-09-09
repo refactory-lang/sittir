@@ -452,24 +452,35 @@ git commit -F <msgfile> -- \
 **Files:**
 - Create: `packages/codegen/src/dsl/wire/options-block.ts`
 - Create: `packages/codegen/src/dsl/wire/__tests__/options-block.test.ts`
-- Modify: `packages/codegen/src/compiler/types.ts` — add `options?: OptionsConfig` to the grammar config type beside `patches`.
+- Modify: `packages/codegen/src/compiler/types.ts` — add `options?: OptionsConfig` beside `patches`.
 - Docs: `docs/glossary/dsl-wire.md`
 
 **Interfaces:**
-- Consumes: `preference()` from `packages/codegen/src/dsl/primitives/preference.ts` (`{ __sittirPlaceholder, label, default }`); `parsePreferencePath` from Task 2.
+- Consumes: `preference()` from `dsl/primitives/preference.ts`; `parsePreferencePath` from Task 2.
 - Produces:
 
 ```ts
-export interface LabelDeclaration { readonly path: string; readonly arm: string; }
-export interface AddressBinding { readonly address: string; readonly label?: string; readonly arm?: string; }
+export interface PathDeclaration { readonly path: string; readonly arm: string; }
+export interface AddressBinding { readonly address: string; readonly label: string; }
 export interface OptionsDeclarations {
-	readonly labels: readonly LabelDeclaration[];
+	readonly declarations: readonly PathDeclaration[];
 	readonly bindings: readonly AddressBinding[];
 }
+export type OptionsConfig = Record<string, unknown>;
 export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<string>): OptionsDeclarations;
 ```
 
-`preference()` keeps its two-argument form for now; a label declaration is `'body/before': preference('body/before', 'indent')` and `readOptionsBlock` rejects a label whose `preference()` label disagrees with its key, matching how `renderDefaultsOf` already guards seam and separator keys.
+**Shape.** The top level reads like `patches:`. A bare identifier is a kind and
+its value is a map of paths relative to that kind; a key containing `/` is a
+label declared with its arm. `_bindings` maps a full address path to a label
+path, and nothing else — an address with a differing default declares it under
+its kind, and an address in no group is only a declaration.
+
+`preference()` keeps its two-argument form for now so nothing else changes;
+`readOptionsBlock` rejects a declaration whose `preference()` label disagrees
+with the path its key names, matching how `renderDefaultsOf` already guards
+seam and separator keys. Collapsing it to one argument is a follow-up, not
+part of this plan.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -481,52 +492,68 @@ import { preference } from '../../primitives/preference.ts';
 const KINDS = new Set(['block', 'keyword_argument', 'object_type']);
 
 describe('readOptionsBlock', () => {
-	it('reads a label declaration and its bindings', () => {
+	it('reads a label declaration', () => {
+		const out = readOptionsBlock({ 'body/before': preference('body/before', 'indent') }, KINDS);
+		expect(out.declarations).toEqual([{ path: 'body/before', arm: 'indent' }]);
+		expect(out.bindings).toEqual([]);
+	});
+
+	it('reads a kind-relative declaration as a full address', () => {
+		const out = readOptionsBlock(
+			{ keyword_argument: { '"="/before': preference('"="/before', 'tight') } },
+			KINDS
+		);
+		expect(out.declarations).toEqual([{ path: 'keyword_argument/"="/before', arm: 'tight' }]);
+	});
+
+	it('reads a binding from an address to a label', () => {
 		const out = readOptionsBlock(
 			{
 				'body/before': preference('body/before', 'indent'),
-				_bindings: { '(block)/"{"/after': 'body/before' }
+				_bindings: { 'block/"{"/after': 'body/before' }
 			},
 			KINDS
 		);
-		expect(out.labels).toEqual([{ path: 'body/before', arm: 'indent' }]);
-		expect(out.bindings).toEqual([{ address: '(block)/"{"/after', label: 'body/before' }]);
+		expect(out.bindings).toEqual([{ address: 'block/"{"/after', label: 'body/before' }]);
 	});
 
-	it('reads a binding with a local default', () => {
+	it('keeps membership and default separate', () => {
 		const out = readOptionsBlock(
 			{
 				'assignment/before': preference('assignment/before', 'space'),
-				_bindings: { '(keyword_argument)/"="/before': ['assignment/before', 'tight'] }
+				keyword_argument: { '"="/before': preference('"="/before', 'tight') },
+				_bindings: { 'keyword_argument/"="/before': 'assignment/before' }
 			},
 			KINDS
 		);
+		expect(out.declarations).toContainEqual({ path: 'keyword_argument/"="/before', arm: 'tight' });
 		expect(out.bindings).toEqual([
-			{ address: '(keyword_argument)/"="/before', label: 'assignment/before', arm: 'tight' }
+			{ address: 'keyword_argument/"="/before', label: 'assignment/before' }
 		]);
 	});
 
-	it('reads a bare-arm binding', () => {
-		const out = readOptionsBlock({ _bindings: { '(block)/"{"/after': 'tight' } }, KINDS);
-		expect(out.bindings).toEqual([{ address: '(block)/"{"/after', arm: 'tight' }]);
-	});
-
 	it('rejects a label whose root shadows a kind', () => {
-		expect(() =>
-			readOptionsBlock({ 'block/before': preference('block/before', 'space'), _bindings: {} }, KINDS)
-		).toThrow(/label 'block\/before' shadows the kind 'block'/);
+		expect(() => readOptionsBlock({ 'block/before': preference('block/before', 'space') }, KINDS)).toThrow(
+			/shadows the kind 'block'/
+		);
 	});
 
-	it('rejects a binding naming an unknown label', () => {
-		expect(() => readOptionsBlock({ _bindings: { '(block)/"{"/after': 'body/before' } }, KINDS)).toThrow(
+	it('rejects a binding naming no declared label', () => {
+		expect(() => readOptionsBlock({ _bindings: { 'block/"{"/after': 'body/before' } }, KINDS)).toThrow(
 			/names no label/
 		);
 	});
 
-	it('rejects a label whose preference() disagrees with its key', () => {
-		expect(() =>
-			readOptionsBlock({ 'body/before': preference('body/after', 'indent'), _bindings: {} }, KINDS)
-		).toThrow(/does not rename it/);
+	it('rejects an unknown top-level bare key', () => {
+		expect(() => readOptionsBlock({ nowhere: { '"="/before': preference('"="/before', 'tight') } }, KINDS)).toThrow(
+			/names no kind/
+		);
+	});
+
+	it('rejects a declaration whose preference renames its key', () => {
+		expect(() => readOptionsBlock({ 'body/before': preference('body/after', 'indent') }, KINDS)).toThrow(
+			/does not rename it/
+		);
 	});
 });
 ```
@@ -544,99 +571,95 @@ Expected: FAIL — module not found.
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
 import { parsePreferencePath } from '../primitives/preference-path.ts';
 
-export interface LabelDeclaration {
+export interface PathDeclaration {
 	readonly path: string;
 	readonly arm: string;
 }
 
 export interface AddressBinding {
 	readonly address: string;
-	readonly label?: string;
-	readonly arm?: string;
+	readonly label: string;
 }
 
 export interface OptionsDeclarations {
-	readonly labels: readonly LabelDeclaration[];
+	readonly declarations: readonly PathDeclaration[];
 	readonly bindings: readonly AddressBinding[];
 }
 
-export type BindingValue = string | readonly [string, string];
-export type OptionsConfig = Record<string, PreferencePlaceholder | Record<string, BindingValue>>;
+export type OptionsConfig = Record<string, unknown>;
 
 const BINDINGS_KEY = '_bindings';
 
 export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<string>): OptionsDeclarations {
-	const labels: LabelDeclaration[] = [];
-	const byPath = new Map<string, LabelDeclaration>();
+	const declarations: PathDeclaration[] = [];
+	const declared = new Set<string>();
+	const add = (path: string, value: unknown): void => {
+		if (!isPreference(value)) throw new Error(`options: '${path}' takes preference(path, arm)`);
+		const placeholder = value as PreferencePlaceholder;
+		if (placeholder.label !== relativeKeyOf(path)) {
+			throw new Error(`options: '${path}' is named by its path; preference('${placeholder.label}', …) does not rename it`);
+		}
+		parsePreferencePath(path);
+		if (declared.has(path)) throw new Error(`options: '${path}' declared twice`);
+		declared.add(path);
+		declarations.push({ path, arm: placeholder.default });
+	};
+
 	for (const [key, value] of Object.entries(options)) {
 		if (key === BINDINGS_KEY) continue;
-		if (!isPreference(value)) throw new Error(`options: '${key}' is a label and takes preference(label, default)`);
-		if (value.label !== key) {
-			throw new Error(`options: '${key}' is named by its path; preference('${value.label}', …) does not rename it`);
+		if (key.includes('/')) {
+			const root = parsePreferencePath(key)[0];
+			if (root !== undefined && root.kind === 'name' && kinds.has(root.name)) {
+				throw new Error(`options: label '${key}' shadows the kind '${root.name}'`);
+			}
+			add(key, value);
+			continue;
 		}
-		const root = parsePreferencePath(key)[0];
-		if (root !== undefined && root.kind === 'kind-match' && kinds.has(root.name)) {
-			throw new Error(`options: label '${key}' shadows the kind '${root.name}'`);
+		if (!kinds.has(key)) throw new Error(`options: '${key}' names no kind`);
+		for (const [relative, entry] of Object.entries(value as Record<string, unknown>)) {
+			add(`${key}/${relative}`, entry);
 		}
-		if (byPath.has(key)) throw new Error(`options: label '${key}' declared twice`);
-		const declaration = { path: key, arm: value.default };
-		byPath.set(key, declaration);
-		labels.push(declaration);
 	}
 
 	const bindings: AddressBinding[] = [];
-	const raw = options[BINDINGS_KEY];
-	const entries = raw === undefined ? {} : (raw as Record<string, BindingValue>);
 	const seen = new Set<string>();
-	for (const [address, value] of Object.entries(entries)) {
+	for (const [address, label] of Object.entries((options[BINDINGS_KEY] ?? {}) as Record<string, string>)) {
 		parsePreferencePath(address);
 		if (seen.has(address)) throw new Error(`options: _bindings declares '${address}' twice`);
 		seen.add(address);
-		if (Array.isArray(value)) {
-			const [label, arm] = value as readonly [string, string];
-			if (!byPath.has(label)) throw new Error(`options: _bindings '${address}' names no label '${label}'`);
-			bindings.push({ address, label, arm });
-			continue;
-		}
-		const name = value as string;
-		if (byPath.has(name)) {
-			bindings.push({ address, label: name });
-			continue;
-		}
-		if (name.includes('/')) throw new Error(`options: _bindings '${address}' names no label '${name}'`);
-		bindings.push({ address, arm: name });
+		if (!declared.has(label)) throw new Error(`options: _bindings '${address}' names no label '${label}'`);
+		bindings.push({ address, label });
 	}
-	return { labels, bindings };
+	return { declarations, bindings };
+}
+
+function relativeKeyOf(path: string): string {
+	return path;
 }
 ```
 
-A bare arm is distinguished from a label by shape: an arm is a single
-identifier, a label path contains `/`. A value containing `/` that names no
-declared label is an error rather than an arm.
+`relativeKeyOf` is the seam where the `preference()` label is compared against
+the key. A kind-relative declaration is stored as a full address, so the
+comparison is against the relative key the author wrote; keep the two apart
+rather than comparing a joined path against a relative label.
 
 - [ ] **Step 4: Run to verify passing**
 
 ```bash
 pnpm exec vitest run packages/codegen/src/dsl/wire/__tests__/options-block.test.ts
 ```
-Expected: PASS, six cases.
+Expected: PASS, eight cases.
 
 - [ ] **Step 5: Wire the config type**
 
-In `packages/codegen/src/compiler/types.ts`, beside the existing `patches` member of the grammar config interface, add:
-
-```ts
-	readonly options?: OptionsConfig;
-```
-
-and import `OptionsConfig` from `../dsl/wire/options-block.ts`.
+In `packages/codegen/src/compiler/types.ts`, beside the grammar config's
+`patches` member, add `readonly options?: OptionsConfig;` and import the type.
 
 - [ ] **Step 6: Type-check**
 
 ```bash
 pnpm exec tsc --noEmit -p packages/codegen
 ```
-Expected: no output.
 
 - [ ] **Step 7: Glossary**
 
@@ -645,17 +668,18 @@ In `docs/glossary/dsl-wire.md`:
 ```markdown
 ### `packages/codegen/src/dsl/wire/options-block.ts::readOptionsBlock`
 
-The `options:` block read into label declarations and address bindings. A bare
-key declares a label and its arm once; `_bindings` binds addresses to it. A
-label is a path so it nests in the generated surface exactly as an address
-does, which means its root shares a namespace with the grammar's kinds — a
-label whose root names a kind is rejected, because kinds are derived and
-labels are written, so the collision is always the author's to resolve.
+The `options:` block read into path declarations and address bindings. The top
+level reads like `patches:` — a bare identifier is a kind whose value is a map
+of paths relative to it — and a key containing `/` is a label, a path declared
+with the arm it carries. The two are told apart by shape, and a label whose
+root names a kind is rejected: kinds are derived and labels are written, so the
+collision is always the author's to resolve.
 
-A binding value is a label, a label with a local default, or a bare arm. The
-first two keep the address in the label's group, so setting the label at
-runtime still reaches it; a bare arm belongs to no group and moves only by its
-own address.
+`_bindings` maps an address to a label and carries nothing else. Membership and
+default live in the two halves: the binding says which label an address belongs
+to, the declaration under its kind says what its arm is. Welded together, as
+`preference(label, arm)` repeated at every site does today, neither can be
+stated once.
 ```
 
 - [ ] **Step 8: Commit**
@@ -665,7 +689,8 @@ git commit -F <msgfile> -- \
   packages/codegen/src/dsl/wire/options-block.ts \
   packages/codegen/src/dsl/wire/__tests__/options-block.test.ts \
   packages/codegen/src/compiler/types.ts \
-  docs/glossary/dsl-wire.md
+  docs/glossary/dsl-wire.md \
+  packages/{rust,typescript,python}/.sittir
 ```
 
 ---
