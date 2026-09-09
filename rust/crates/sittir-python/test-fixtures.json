@@ -130171,7 +130171,7 @@
       },
       "$nodeHandle": 476741369856
     },
-    "expectedOutput": "len(\"a\")or\\\n\nlen(\"aa\")\n"
+    "expectedOutput": "len(\"a\")or\\\nlen(\"aa\")\n"
   },
   {
     "kind": "roundtrip",
@@ -130179,9 +130179,9 @@
     "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "len(\"a\")or\\\n\nlen(\"aa\")\n",
+    "expectedSourceOut": "len(\"a\")or\\\nlen(\"aa\")\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) (line_continuation) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) (newline)))",
-    "wrappedText": "len(\"a\")or\\\n\nlen(\"aa\")\n",
+    "wrappedText": "len(\"a\")or\\\nlen(\"aa\")\n",
     "wrappedOffset": 0
   },
   {
@@ -130375,7 +130375,7 @@
         ]
       }
     },
-    "expectedOutput": "len(\"a\")or\\\n\nlen(\"aa\")"
+    "expectedOutput": "len(\"a\")or\\\nlen(\"aa\")"
   },
   {
     "kind": "roundtrip",
@@ -130383,9 +130383,9 @@
     "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "len(\"a\")or\\\n\nlen(\"aa\")",
+    "expectedSourceOut": "len(\"a\")or\\\nlen(\"aa\")",
     "expectedReparseTree": "(expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) (line_continuation) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))",
-    "wrappedText": "len(\"a\")or\\\n\nlen(\"aa\")",
+    "wrappedText": "len(\"a\")or\\\nlen(\"aa\")",
     "wrappedOffset": 0
   },
   {
@@ -130569,7 +130569,7 @@
         "right"
       ]
     },
-    "expectedOutput": "len(\"a\")or\\\n\nlen(\"aa\")"
+    "expectedOutput": "len(\"a\")or\\\nlen(\"aa\")"
   },
   {
     "kind": "roundtrip",
@@ -130577,9 +130577,9 @@
     "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
     "pattern": "boolean_operator",
     "edits": [],
-    "expectedSourceOut": "len(\"a\")or\\\n\nlen(\"aa\")",
+    "expectedSourceOut": "len(\"a\")or\\\nlen(\"aa\")",
     "expectedReparseTree": "(boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) (line_continuation) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))",
-    "wrappedText": "_ = len(\"a\")or\\\n\nlen(\"aa\")",
+    "wrappedText": "_ = len(\"a\")or\\\nlen(\"aa\")",
     "wrappedOffset": 4
   },
   {
@@ -130763,7 +130763,7 @@
         "arguments"
       ]
     },
-    "expectedOutput": "\\\n\nlen(\"aa\")"
+    "expectedOutput": "\\\nlen(\"aa\")"
   },
   {
     "kind": "roundtrip",
@@ -130771,9 +130771,9 @@
     "sourceIn": "len(\"aa\")",
     "pattern": "call",
     "edits": [],
-    "expectedSourceOut": "\\\n\nlen(\"aa\")",
+    "expectedSourceOut": "\\\nlen(\"aa\")",
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))",
-    "wrappedText": "_ = \\\n\nlen(\"aa\")",
+    "wrappedText": "_ = \\\nlen(\"aa\")",
     "wrappedOffset": 4
   },
   {

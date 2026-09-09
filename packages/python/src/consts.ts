@@ -139,8 +139,6 @@ const NODE_KINDS = [
 
 /** All leaf/terminal node kind strings. */
 const LEAF_KINDS = [
-	')',
-	']',
 	'_',
 	'__future__',
 	'_augmented_assignment_operator',
@@ -209,8 +207,7 @@ const LEAF_KINDS = [
 	'type_conversion',
 	'while',
 	'wildcard_import',
-	'with',
-	'}'
+	'with'
 ] as const;
 
 /** All node kind strings (branch + leaf). */

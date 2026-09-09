@@ -115,10 +115,15 @@ export function findEntryForKindName<T extends KindEntryLike>(entries: readonly 
 	);
 }
 
+export function findAnonEntryForLiteralText<T extends KindEntryLike>(
+	entries: readonly T[],
+	text: string
+): T | undefined {
+	return entries.find((entry) => entry.anon === true && entry.symbolName === text);
+}
+
 export function findEntryForLiteralText<T extends KindEntryLike>(entries: readonly T[], text: string): T | undefined {
-	return (
-		entries.find((entry) => entry.anon === true && entry.symbolName === text) ?? findEntryForKindName(entries, text)
-	);
+	return findAnonEntryForLiteralText(entries, text) ?? findEntryForKindName(entries, text);
 }
 
 function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {

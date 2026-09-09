@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 281,
+  "nodeCount": 278,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -2641,24 +2641,6 @@
     }
   },
   "nodes": [
-    {
-      "kind": ")",
-      "modelType": "pattern",
-      "typeName": "CloseParen",
-      "factoryName": "closeParen",
-      "irKey": ")",
-      "hidden": false,
-      "factoryShape": "text"
-    },
-    {
-      "kind": "]",
-      "modelType": "pattern",
-      "typeName": "CloseBracket",
-      "factoryName": "closeBracket",
-      "irKey": "]",
-      "hidden": false,
-      "factoryShape": "text"
-    },
     {
       "kind": "_",
       "modelType": "token",
@@ -12741,15 +12723,6 @@
       "factoryFields": [
         "content"
       ]
-    },
-    {
-      "kind": "}",
-      "modelType": "pattern",
-      "typeName": "CloseBrace",
-      "factoryName": "closeBrace",
-      "irKey": "}",
-      "hidden": false,
-      "factoryShape": "text"
     }
   ]
 }

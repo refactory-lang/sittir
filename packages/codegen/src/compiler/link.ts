@@ -46,6 +46,7 @@ import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts'
 import {
 	collectGeneratedKindEntries,
 	findEntryForKindName,
+	findAnonEntryForLiteralText,
 	findEntryForLiteralText,
 	type GeneratedIdTables,
 	type GeneratedKindEntry
@@ -171,7 +172,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	}
 
 	stripResolvedRoleRules(rules);
-	createSyntheticExternalRules(rules, raw.externals);
+	createSyntheticExternalRules(rules, raw.externals, kindEntries);
 	if (raw.visibleInlineNames !== undefined && raw.visibleInlineNames.length > 0) {
 		linkCtx.diagnostics.warn({
 			code: 'inline-array-visible-name',
@@ -295,11 +296,15 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 	}
 }
 
-function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
+function createSyntheticExternalRules(
+	rules: Record<string, Rule<'link'>>,
+	externals: readonly string[],
+	kindEntries: readonly GeneratedKindEntry[]
+): void {
 	for (const ext of externals) {
-		if (!rules[ext]) {
-			rules[ext] = { type: TOKEN, content: { type: PATTERN, value: '' }, immediate: false };
-		}
+		if (rules[ext]) continue;
+		if (findAnonEntryForLiteralText(kindEntries, ext)) continue;
+		rules[ext] = { type: TOKEN, content: { type: PATTERN, value: '' }, immediate: false };
 	}
 }
 

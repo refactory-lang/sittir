@@ -9339,9 +9339,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.StringEnd]: (d) => ({ ...d, $type: TSKindId.StringEnd as const }),
 	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
 	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
-	[TSKindId.Rbrack]: (d) => ({ ...d, $type: TSKindId.Rbrack as const }),
-	[TSKindId.Rparen]: (d) => ({ ...d, $type: TSKindId.Rparen as const }),
-	[TSKindId.Rbrace]: (d) => ({ ...d, $type: TSKindId.Rbrace as const }),
 	[TSKindId.Except]: (d) => ({ ...d, $type: TSKindId.Except as const }),
 	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
 	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const })
@@ -9529,9 +9526,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.StringEnd]: _NodeData & { readonly $type: TSKindId.StringEnd };
 	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
 	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
-	[TSKindId.Rbrack]: _NodeData & { readonly $type: TSKindId.Rbrack };
-	[TSKindId.Rparen]: _NodeData & { readonly $type: TSKindId.Rparen };
-	[TSKindId.Rbrace]: _NodeData & { readonly $type: TSKindId.Rbrace };
 	[TSKindId.Except]: _NodeData & { readonly $type: TSKindId.Except };
 	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
 	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };

@@ -7358,20 +7358,6 @@ export function buildHtmlComment(text: string): T.HtmlComment.Built {
 	);
 }
 
-export function buildOror(text: string): T.Oror.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`||: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.PipePipe as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildJsxText(text: string): T.JsxText.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`jsx_text: text must be non-empty`);
@@ -7701,7 +7687,6 @@ export type FluentKindMap = {
 	_template_chars: T.TemplateChars;
 	_ternary_qmark: T.TernaryQmark;
 	html_comment: T.HtmlComment;
-	'||': T.Oror;
 	jsx_text: T.JsxText;
 	__error_recovery: T.ErrorRecovery;
 	_tight: T.Tight;
@@ -7942,7 +7927,6 @@ export const _factoryMap = {
 	_template_chars: buildTemplateChars,
 	_ternary_qmark: buildTernaryQmark,
 	html_comment: buildHtmlComment,
-	'||': buildOror,
 	jsx_text: buildJsxText,
 	__error_recovery: buildErrorRecovery,
 	_tight: buildTight,

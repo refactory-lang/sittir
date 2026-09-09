@@ -176,9 +176,6 @@ export const _fromMap = {
 	_string_content: coerceTo_StringContent,
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
-	']': coerceToCloseBracket,
-	')': coerceToCloseParen,
-	'}': coerceToCloseBrace,
 	except: coerceToExcept
 } as const;
 export type _FromMap = typeof _fromMap;
@@ -211,9 +208,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	string_start: { factory: F.buildStringStart },
 	escape_interpolation: { factory: F.buildEscapeInterpolation },
 	string_end: { factory: F.buildStringEnd },
-	']': { factory: F.buildCloseBracket },
-	')': { factory: F.buildCloseParen },
-	'}': { factory: F.buildCloseBrace },
 	except: { factory: F.buildExcept }
 };
 
@@ -5197,21 +5191,6 @@ export function coerceToEscapeInterpolation(
 export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F.buildStringEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
-}
-
-export function coerceToCloseBracket(input: T.CloseBracket.Loose): ReturnType<typeof F.buildCloseBracket> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseBracket>;
-	return F.buildCloseBracket(input as Parameters<typeof F.buildCloseBracket>[0]);
-}
-
-export function coerceToCloseParen(input: T.CloseParen.Loose): ReturnType<typeof F.buildCloseParen> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseParen>;
-	return F.buildCloseParen(input as Parameters<typeof F.buildCloseParen>[0]);
-}
-
-export function coerceToCloseBrace(input: T.CloseBrace.Loose): ReturnType<typeof F.buildCloseBrace> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseBrace>;
-	return F.buildCloseBrace(input as Parameters<typeof F.buildCloseBrace>[0]);
 }
 
 export function coerceToExcept(input: T.Except.Loose): ReturnType<typeof F.buildExcept> {

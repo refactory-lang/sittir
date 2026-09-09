@@ -4946,48 +4946,6 @@ export function buildDedent(text: string): T.Dedent.Built {
 	);
 }
 
-export function buildCloseBracket(text: string): T.CloseBracket.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`]: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rbrack as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCloseParen(text: string): T.CloseParen.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`): text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rparen as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCloseBrace(text: string): T.CloseBrace.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`}: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rbrace as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildExcept(text: string): T.Except.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`except: text must be non-empty`);
@@ -5199,9 +5157,6 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
-	']': T.CloseBracket;
-	')': T.CloseParen;
-	'}': T.CloseBrace;
 	except: T.Except;
 	_tight: T.Tight;
 	_space: T.Space;
@@ -5376,9 +5331,6 @@ export const _factoryMap = {
 	string_end: buildStringEnd,
 	_indent: buildIndent,
 	_dedent: buildDedent,
-	']': buildCloseBracket,
-	')': buildCloseParen,
-	'}': buildCloseBrace,
 	except: buildExcept,
 	_tight: buildTight,
 	_space: buildSpace

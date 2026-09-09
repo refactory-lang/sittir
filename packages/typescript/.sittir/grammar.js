@@ -131,10 +131,10 @@ function parsePath(pathStr) {
     } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
       segments.push({ kind: "fieldName", name: part.slice(0, -1) });
     } else if (part === "*") {
-      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`);
+      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard`);
     } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
       throw new Error(
-        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`
+        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead`
       );
     } else {
       throw new Error(
@@ -5262,6 +5262,9 @@ var grammar_sittir_default = grammar(
         from_after: preference("from_after", "space"),
         if_after: preference("if_after", "space"),
         while_after: preference("while_after", "space"),
+        for_after: preference("for_after", "space"),
+        return_before: preference("return_before", "space"),
+        return_after: preference("return_after", "space"),
         switch_after: preference("switch_after", "space"),
         catch_after: preference("catch_after", "space"),
         class_body_before: preference("class_body_before", "space"),

@@ -212,7 +212,6 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "coerceToOptionalParameter": "function",
   "coerceToOptionalTupleParameter": "function",
   "coerceToOptionalType": "function",
-  "coerceToOror": "function",
   "coerceToOverrideModifier": "function",
   "coerceToPair": "function",
   "coerceToPairPattern": "function",

@@ -300,8 +300,7 @@ const LEAF_KINDS = [
 	'void',
 	'while',
 	'with',
-	'yield',
-	'||'
+	'yield'
 ] as const;
 
 /** All node kind strings (branch + leaf). */

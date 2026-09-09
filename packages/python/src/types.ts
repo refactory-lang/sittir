@@ -3753,9 +3753,6 @@ export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
-export type CloseBracket = Terminal<']', string>;
-export type CloseParen = Terminal<')', string>;
-export type CloseBrace = Terminal<'}', string>;
 export type Except = Terminal<TSKindId.Except, string>;
 export type Tight = Terminal<TSKindId.Tight, string>;
 export type Space = Terminal<TSKindId.Space, string>;
@@ -4043,15 +4040,6 @@ export interface IndentTree extends AnyTreeNode {
 }
 export interface DedentTree extends AnyTreeNode {
 	readonly type: '_dedent';
-}
-export interface CloseBracketTree extends AnyTreeNode {
-	readonly type: ']';
-}
-export interface CloseParenTree extends AnyTreeNode {
-	readonly type: ')';
-}
-export interface CloseBraceTree extends AnyTreeNode {
-	readonly type: '}';
 }
 export interface ExceptTree extends AnyTreeNode {
 	readonly type: 'except';
@@ -4764,9 +4752,6 @@ export interface KindMap {
 	string_end: StringEnd;
 	_indent: Indent;
 	_dedent: Dedent;
-	']': CloseBracket;
-	')': CloseParen;
-	'}': CloseBrace;
 	except: Except;
 	_tight: Tight;
 	_space: Space;
@@ -6465,9 +6450,6 @@ export interface EscapeInterpolationNs extends LeafNs<
 export interface StringEndNs extends LeafNs<StringEnd, string, StringEnd.Built, StringEndTree, 'string_end'> {}
 export interface IndentNs extends LeafNs<Indent, string, Indent.Built, IndentTree, '_indent'> {}
 export interface DedentNs extends LeafNs<Dedent, string, Dedent.Built, DedentTree, '_dedent'> {}
-export interface CloseBracketNs extends LeafNs<CloseBracket, string, CloseBracket.Built, CloseBracketTree, ']'> {}
-export interface CloseParenNs extends LeafNs<CloseParen, string, CloseParen.Built, CloseParenTree, ')'> {}
-export interface CloseBraceNs extends LeafNs<CloseBrace, string, CloseBrace.Built, CloseBraceTree, '}'> {}
 export interface ExceptNs extends LeafNs<Except, string, Except.Built, ExceptTree, 'except'> {}
 export interface TightNs extends LeafNs<Tight, string, Tight.Built, TightTree, '_tight'> {}
 export interface SpaceNs extends LeafNs<Space, string, Space.Built, SpaceTree, '_space'> {}
@@ -9921,51 +9903,6 @@ export namespace Dedent {
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Tree = DedentNs['Tree'];
 	export type Kind = '_dedent';
-}
-export namespace CloseBracket {
-	export type Config = CloseBracketNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Rbrack;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = CloseBracketNs['Loose'];
-	export type LooseConfig = CloseBracketNs['LooseConfig'];
-	export type BuildArgs = CloseBracketNs['BuildArgs'];
-	export type LooseArgs = CloseBracketNs['LooseArgs'];
-	export type Tree = CloseBracketNs['Tree'];
-	export type Kind = ']';
-}
-export namespace CloseParen {
-	export type Config = CloseParenNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Rparen;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = CloseParenNs['Loose'];
-	export type LooseConfig = CloseParenNs['LooseConfig'];
-	export type BuildArgs = CloseParenNs['BuildArgs'];
-	export type LooseArgs = CloseParenNs['LooseArgs'];
-	export type Tree = CloseParenNs['Tree'];
-	export type Kind = ')';
-}
-export namespace CloseBrace {
-	export type Config = CloseBraceNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Rbrace;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = CloseBraceNs['Loose'];
-	export type LooseConfig = CloseBraceNs['LooseConfig'];
-	export type BuildArgs = CloseBraceNs['BuildArgs'];
-	export type LooseArgs = CloseBraceNs['LooseArgs'];
-	export type Tree = CloseBraceNs['Tree'];
-	export type Kind = '}';
 }
 export namespace Except {
 	export type Config = ExceptNs['Config'];

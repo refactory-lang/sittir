@@ -271,7 +271,6 @@ pub enum AnyTransport {
     TemplateChars(TemplateCharsTransport),
     TernaryQmark(TernaryQmarkTransport),
     HtmlComment(HtmlCommentTransport),
-    Oror(OrorTransport),
     JsxText(JsxTextTransport),
     ErrorRecovery(ErrorRecoveryTransport),
     Tight(TightTransport),
@@ -784,7 +783,6 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::TemplateChars(t) => t.fill_options(table),
             AnyTransport::TernaryQmark(t) => t.fill_options(table),
             AnyTransport::HtmlComment(t) => t.fill_options(table),
-            AnyTransport::Oror(t) => t.fill_options(table),
             AnyTransport::JsxText(t) => t.fill_options(table),
             AnyTransport::ErrorRecovery(t) => t.fill_options(table),
             AnyTransport::Tight(t) => t.fill_options(table),
@@ -2048,10 +2046,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 163 => Ok(AnyTransport::HtmlComment(
                     HtmlCommentTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: || (OROR)
-                63 => Ok(AnyTransport::Oror(
-                    OrorTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: jsx_text (JSX_TEXT)
                 164 => Ok(AnyTransport::JsxText(
                     JsxTextTransport::from_napi_value(env, napi_val)?
@@ -2255,6 +2249,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: amp_amp (AMP_AMP)
                 62 => Ok(AnyTransport::AmpAmp(
                     AmpAmpTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: pipe_pipe (PIPE_PIPE)
+                63 => Ok(AnyTransport::PipePipe(
+                    PipePipeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: gt_gt (GT_GT)
                 64 => Ok(AnyTransport::GtGt(
@@ -63905,111 +63903,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<HtmlCommentTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct OrorTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::std::fmt::Display for OrorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for OrorTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OrorTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OrorTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OrorTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OrorTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        OrorTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OrorTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        OrorTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct JsxTextTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -82900,10 +82793,6 @@ fn render_html_comment(t: &HtmlCommentTransport, f: &mut ::std::fmt::Formatter<'
     f.write_str(&t.text)
 }
 
-fn render_oror(t: &OrorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
-}
-
 fn render_jsx_text(t: &JsxTextTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     f.write_str(&t.text)
 }
@@ -83929,7 +83818,6 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::TemplateChars(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::TernaryQmark(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::HtmlComment(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Oror(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::JsxText(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::ErrorRecovery(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Tight(t) => ::std::fmt::Display::fmt(t, f),

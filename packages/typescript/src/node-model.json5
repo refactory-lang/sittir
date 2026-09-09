@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 423,
+  "nodeCount": 422,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -22161,15 +22161,6 @@
       "factoryFields": [
         "expression"
       ]
-    },
-    {
-      "kind": "||",
-      "modelType": "pattern",
-      "typeName": "Oror",
-      "factoryName": "oror",
-      "irKey": "||",
-      "hidden": false,
-      "factoryShape": "text"
     }
   ]
 }

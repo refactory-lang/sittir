@@ -238,7 +238,6 @@ export const _fromMap = {
 	_for_header_let_const_kind: coerceToForHeaderLetConstKind,
 	_template_chars: coerceToTemplateChars,
 	html_comment: coerceToHtmlComment,
-	'||': coerceToOror,
 	jsx_text: coerceToJsxText
 } as const;
 export type _FromMap = typeof _fromMap;
@@ -272,7 +271,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	override_modifier: { values: ['override'], factory: () => F.buildOverrideModifier() },
 	existential_type: { values: ['*'], factory: () => F.buildExistentialType() },
 	html_comment: { factory: F.buildHtmlComment },
-	'||': { factory: F.buildOror },
 	jsx_text: { factory: F.buildJsxText }
 };
 
@@ -8956,11 +8954,6 @@ export function coerceToTemplateChars(input: T.TemplateChars.Loose): ReturnType<
 export function coerceToHtmlComment(input: T.HtmlComment.Loose): ReturnType<typeof F.buildHtmlComment> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildHtmlComment>;
 	return F.buildHtmlComment(input as Parameters<typeof F.buildHtmlComment>[0]);
-}
-
-export function coerceToOror(input: T.Oror.Loose): ReturnType<typeof F.buildOror> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildOror>;
-	return F.buildOror(input as Parameters<typeof F.buildOror>[0]);
 }
 
 export function coerceToJsxText(input: T.JsxText.Loose): ReturnType<typeof F.buildJsxText> {

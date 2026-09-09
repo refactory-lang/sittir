@@ -11458,7 +11458,6 @@ export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
 export type TemplateChars = Terminal<TSKindId.TemplateChars, string>;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
-export type Oror = Terminal<'||', string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 export type Tight = Terminal<TSKindId.Tight, string>;
@@ -11890,9 +11889,6 @@ export interface TernaryQmarkTree extends AnyTreeNode {
 	readonly type: '_ternary_qmark';
 }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
-export interface OrorTree extends AnyTreeNode {
-	readonly type: '||';
-}
 export interface JsxTextTree extends AnyTreeNode {
 	readonly type: 'jsx_text';
 }
@@ -12943,7 +12939,6 @@ export interface KindMap {
 	_template_chars: TemplateChars;
 	_ternary_qmark: TernaryQmark;
 	html_comment: HtmlComment;
-	'||': Oror;
 	jsx_text: JsxText;
 	__error_recovery: ErrorRecovery;
 	_tight: Tight;
@@ -15359,7 +15354,6 @@ export interface HtmlCommentNs extends LeafNs<
 	HtmlCommentTree,
 	'html_comment'
 > {}
-export interface OrorNs extends LeafNs<Oror, string, Oror.Built, OrorTree, '||'> {}
 export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, JsxTextTree, 'jsx_text'> {}
 export interface ErrorRecoveryNs extends LeafNs<
 	ErrorRecovery,
@@ -20721,21 +20715,6 @@ export namespace HtmlComment {
 	export type LooseArgs = HtmlCommentNs['LooseArgs'];
 	export type Tree = HtmlCommentNs['Tree'];
 	export type Kind = 'html_comment';
-}
-export namespace Oror {
-	export type Config = OrorNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.PipePipe;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = OrorNs['Loose'];
-	export type LooseConfig = OrorNs['LooseConfig'];
-	export type BuildArgs = OrorNs['BuildArgs'];
-	export type LooseArgs = OrorNs['LooseArgs'];
-	export type Tree = OrorNs['Tree'];
-	export type Kind = '||';
 }
 export namespace JsxText {
 	export type Config = JsxTextNs['Config'];

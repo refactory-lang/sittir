@@ -195,9 +195,6 @@ pub enum AnyTransport {
     Newline(NewlineTransport),
     Indent(IndentTransport),
     Dedent(DedentTransport),
-    CloseBracket(CloseBracketTransport),
-    CloseParen(CloseParenTransport),
-    CloseBrace(CloseBraceTransport),
     Except(ExceptTransport),
     Tight(TightTransport),
     Space(SpaceTransport),
@@ -519,9 +516,6 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Newline(t) => t.fill_options(table),
             AnyTransport::Indent(t) => t.fill_options(table),
             AnyTransport::Dedent(t) => t.fill_options(table),
-            AnyTransport::CloseBracket(t) => t.fill_options(table),
-            AnyTransport::CloseParen(t) => t.fill_options(table),
-            AnyTransport::CloseBrace(t) => t.fill_options(table),
             AnyTransport::Except(t) => t.fill_options(table),
             AnyTransport::Tight(t) => t.fill_options(table),
             AnyTransport::Space(t) => t.fill_options(table),
@@ -1374,18 +1368,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 103 => Ok(AnyTransport::Dedent(
                     DedentTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ] (CLOSE_BRACKET)
-                43 => Ok(AnyTransport::CloseBracket(
-                    CloseBracketTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: ) (CLOSE_PAREN)
-                34 => Ok(AnyTransport::CloseParen(
-                    CloseParenTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: } (CLOSE_BRACE)
-                47 => Ok(AnyTransport::CloseBrace(
-                    CloseBraceTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: except (EXCEPT)
                 28 => Ok(AnyTransport::Except(
                     ExceptTransport::from_napi_value(env, napi_val)?
@@ -1518,6 +1500,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 33 => Ok(AnyTransport::Lparen(
                     LparenTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: rparen (RPAREN)
+                34 => Ok(AnyTransport::Rparen(
+                    RparenTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: star_star (STAR_STAR)
                 35 => Ok(AnyTransport::StarStar(
                     StarStarTransport::from_napi_value(env, napi_val)?
@@ -1550,6 +1536,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 42 => Ok(AnyTransport::Lbrack(
                     LbrackTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: rbrack (RBRACK)
+                43 => Ok(AnyTransport::Rbrack(
+                    RbrackTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: at (AT)
                 44 => Ok(AnyTransport::At(
                     AtTransport::from_napi_value(env, napi_val)?
@@ -1561,6 +1551,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: lbrace (LBRACE)
                 46 => Ok(AnyTransport::Lbrace(
                     LbraceTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: rbrace (RBRACE)
+                47 => Ok(AnyTransport::Rbrace(
+                    RbraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _ (_ANONYMOUS)
                 48 => Ok(AnyTransport::Anonymous(
@@ -33152,321 +33146,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct CloseBracketTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::std::fmt::Display for CloseBracketTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for CloseBracketTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CloseBracketTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CloseBracketTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CloseBracketTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CloseBracketTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CloseBracketTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct CloseParenTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::std::fmt::Display for CloseParenTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for CloseParenTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CloseParenTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CloseParenTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CloseParenTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CloseParenTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CloseParenTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct CloseBraceTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::std::fmt::Display for CloseBraceTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for CloseBraceTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CloseBraceTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CloseBraceTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CloseBraceTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CloseBraceTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CloseBraceTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct ExceptTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -45136,18 +44815,6 @@ fn render_dedent(t: &DedentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::st
     f.write_str(&t.text)
 }
 
-fn render_close_bracket(t: &CloseBracketTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
-}
-
-fn render_close_paren(t: &CloseParenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
-}
-
-fn render_close_brace(t: &CloseBraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
-}
-
 fn render_except(t: &ExceptTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     f.write_str(&t.text)
 }
@@ -45790,9 +45457,6 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::Newline(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Indent(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Dedent(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CloseBracket(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CloseParen(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CloseBrace(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Except(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Tight(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Space(t) => ::std::fmt::Display::fmt(t, f),

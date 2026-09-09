@@ -3345,6 +3345,22 @@ parents.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::findAnonEntryForLiteralText`
+
+```text
+/**
+ * The ANONYMOUS token whose display text is exactly this string, or
+ * `undefined`. The strict half of the literal-text chain: it answers "does
+ * the grammar already lex this text as an anonymous token?" and never falls
+ * back to the kind-name chain.
+ *
+ * Callers deciding whether a literal-text spelling already HAS an identity
+ * must use this rather than {@link findEntryForLiteralText} — the fallback
+ * there matches named symbols too, so a scanner symbol whose name happens to
+ * read as text (`_template_chars`) would answer yes and lose its own rule.
+ */
+```
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForLiteralText`
 
 ```text
@@ -3480,11 +3496,19 @@ parents.
  * Create synthetic pattern rules for external tokens that have no grammar rule.
  *
  * @param rules - Mutable resolved rules map; missing entries are added in place.
- * @param externals - External token names declared in `grammar.externals`.
+ * @param externals - External token entries declared in `grammar.externals`,
+ *   which hold SYMBOL names and literal token texts in one list.
+ * @param kindEntries - Generated kind catalog, consulted for anon-token identity.
  * @remarks
- *   External tokens are declared at the grammar level but have no rule body.
- *   Per design: Link creates empty pattern leaf rules for them so downstream
- *   phases (Assemble, codegen) see them as known leaf kinds.
+ *   A scanner SYMBOL is declared at the grammar level with no rule body, so
+ *   Link creates an empty pattern leaf rule for it and downstream phases
+ *   (Assemble, codegen) see it as a known leaf kind.
+ *
+ *   A literal-text external (`externals: $ => [..., '||']`) is NOT that: the
+ *   grammar already lexes it as an anonymous token under the catalog's own
+ *   spelling (`||` is `pipe_pipe`). Minting a rule keyed by the raw text
+ *   would give one parser symbol a second kind competing for its id, so a
+ *   text the catalog already knows anonymously is skipped and defers to it.
  */
 ```
 

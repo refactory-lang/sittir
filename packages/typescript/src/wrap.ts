@@ -15809,7 +15809,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TemplateChars]: (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
 	[TSKindId.TernaryQmark]: (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
 	[TSKindId.HtmlComment]: (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
-	[TSKindId.PipePipe]: (d) => ({ ...d, $type: TSKindId.PipePipe as const }),
 	[TSKindId.JsxText]: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
 	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
 	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
@@ -16088,7 +16087,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.TemplateChars]: _NodeData & { readonly $type: TSKindId.TemplateChars };
 	[TSKindId.TernaryQmark]: _NodeData & { readonly $type: TSKindId.TernaryQmark };
 	[TSKindId.HtmlComment]: _NodeData & { readonly $type: TSKindId.HtmlComment };
-	[TSKindId.PipePipe]: _NodeData & { readonly $type: TSKindId.PipePipe };
 	[TSKindId.JsxText]: _NodeData & { readonly $type: TSKindId.JsxText };
 	[TSKindId.ErrorRecovery]: _NodeData & { readonly $type: TSKindId.ErrorRecovery };
 	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
