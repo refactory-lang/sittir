@@ -56,7 +56,7 @@ export class ApplyPathSkip extends Error {
 	}
 }
 
-function splitSegments(pathStr: string): string[] {
+export function splitSegments(pathStr: string): string[] {
 	const parts: string[] = [];
 	let current = '';
 	let inLiteral = false;

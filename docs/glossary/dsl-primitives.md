@@ -414,6 +414,29 @@ It carries no data; it is a placeholder like `arm.default`, recognised by
 // renders nothing; each is a never-scanned external so it has a kind id.
 ```
 
+### `packages/codegen/src/dsl/primitives/preference-path.ts::parsePreferencePath`
+
+A preference address's segments. It shares the path splitter and the segment
+forms with `parsePath` but not its rules: a bare identifier is a segment here,
+naming a side or a part of a label, where a rule path rejects one and demands
+`(name)`. So `(kind)` stays a kind, `field:` a field, `"text"` a literal, and
+everything bare is a name.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::comparePreferencePaths`
+
+The canonical order over preference addresses: segment by segment, then by
+length, so a prefix precedes its descendants and every descendant is
+contiguous. Site indices are assigned in this order, which is what makes a
+prefix-scoped declaration a range rather than a scan. Sides sort after any
+sibling that is not one, and among themselves in render order — `before`,
+`after`, `separator` — so a kind's own gaps do not interleave with its
+children's.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::formatPreferencePath`
+
+An address back in its written spelling, so a diagnostic names what an author
+typed rather than a segment dump.
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::spacingLabel`
 
 ```text
