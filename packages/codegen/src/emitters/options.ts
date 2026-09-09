@@ -10,8 +10,9 @@ import {
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { SPACING_ARMS, WHITESPACE_ARMS, type RenderDefaults } from '../dsl/primitives/spacing.ts';
-import { addressSites } from '../compiler/model/site-addresses.ts';
-import type { PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { addressSegments, addressSites, matchAddress } from '../compiler/model/site-addresses.ts';
+import { parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
 
 export { publicKindName } from '../compiler/model/site-preferences.ts';
 
@@ -179,7 +180,8 @@ function nestedKey(segment: PreferenceSegment): string {
 export function deriveAddressTables(
 	sites: readonly SitePreference[],
 	kindEntries: readonly KindEntryLike[],
-	armType: ArmTypeResolver
+	armType: ArmTypeResolver,
+	declared?: OptionsDeclarations
 ): AddressTables {
 	const branches = new Map<string, Set<string>>();
 	const leaves = new Map<string, string>();
@@ -201,6 +203,30 @@ export function deriveAddressTables(
 		if (prior !== undefined && prior !== type) throw new Error(`options: address '${path}' resolves to two types`);
 		leaves.set(path, type);
 	}
+	if (declared !== undefined) {
+		const addressed = addressSites(sites, kindEntries);
+		const reached = new Map<string, SitePreference[]>();
+		for (const binding of declared.bindings) {
+			const hits = matchAddress(addressSegments(binding.address), addressed);
+			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...(hits as unknown as SitePreference[])]);
+		}
+		for (const declaration of declared.declarations) {
+			if (matchAddress(addressSegments(declaration.path), addressed).length > 0) continue;
+			const bound = reached.get(declaration.path) ?? [];
+			if (bound.length === 0) continue;
+			const keys = parsePreferencePath(declaration.path).map(nestedKey);
+			depth = Math.max(depth, keys.length);
+			roots.add(keys[0]!);
+			for (let i = 0; i < keys.length - 1; i++) {
+				const at = keys.slice(0, i + 1).join('/');
+				const children = branches.get(at) ?? new Set<string>();
+				children.add(keys[i + 1]!);
+				branches.set(at, children);
+			}
+			leaves.set(keys.join('/'), unionOf(bound.map((site) => site.arms.map(armType).join(' | '))));
+		}
+	}
+
 	for (const path of leaves.keys()) {
 		if (branches.has(path)) throw new Error(`options: address '${path}' is both a site and a path`);
 	}
@@ -342,6 +368,7 @@ export interface EmitOptionsConfig {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly renderRules: RenderRules;
 	readonly renderDefaults?: RenderDefaults;
+	readonly options?: OptionsConfig;
 }
 
 export function emitOptions(config: EmitOptionsConfig): string {
@@ -357,6 +384,10 @@ export function emitOptions(config: EmitOptionsConfig): string {
 	const typeOf = (arms: readonly string[]): string => arms.map((arm) => armType({ value: arm, kind: arm })).join(' | ');
 	const spacingType = typeOf(SPACING_ARMS);
 	const whitespaceType = sites.some((s) => admitsDepth({ arms: s.arms.map((arm) => arm.value) })) ? typeOf(WHITESPACE_ARMS) : undefined;
-	const addresses = deriveAddressTables(sites, config.kindEntries, armType);
+	const declared =
+		config.options === undefined
+			? undefined
+			: readOptionsBlock(config.options, new Set([...config.nodeMap.nodes.keys()].map(publicKindName)));
+	const addresses = deriveAddressTables(sites, config.kindEntries, armType, declared);
 	return renderOptionsModule(shape, { spacingType, whitespaceType, supertypeMembers, addresses });
 }

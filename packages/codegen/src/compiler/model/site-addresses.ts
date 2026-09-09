@@ -153,7 +153,7 @@ export function resolveBindings(
 	return out;
 }
 
-function addressSegments(text: string): readonly PreferenceSegment[] {
+export function addressSegments(text: string): readonly PreferenceSegment[] {
 	const segments = parsePreferencePath(text);
 	const head = segments[0];
 	return head !== undefined && head.kind === 'name'

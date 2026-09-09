@@ -14979,3 +14979,16 @@ checker never has to bound a recursion it cannot see the end of.
 It is intersected into `Options` beside the flat surface rather than replacing
 it. An excess-property check against an intersection admits a key known in any
 constituent, so a caller may write either face while both exist.
+
+### `packages/codegen/src/emitters/options.ts::deriveAddressTables` — declared labels
+
+A label is a declaration that names no site. It reaches the surface through the
+bindings that name it: the sites those addresses match give it its type, and its
+path is nested like any other address, so `body/before` is emitted as `body`
+carrying `before`.
+
+Without this a migrated label would vanish. It leaves the flat surface when it
+stops being written at every site, and a table built from sites alone cannot put
+it back — a virtual kind has no site of its own. A consumer would lose the one
+key that moves every address bound to it, which is the only reason the label
+exists.

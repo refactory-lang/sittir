@@ -255,8 +255,6 @@ export type WhitespaceLabel =
 	| 'bang_before'
 	| 'bang_eq_after'
 	| 'bang_eq_before'
-	| 'block_body_after'
-	| 'block_body_before'
 	| 'block_end'
 	| 'block_start'
 	| 'break_after'
@@ -1013,6 +1011,7 @@ export type AddressRoot =
 	| 'block_comment'
 	| 'block_comment_doc_inner'
 	| 'block_comment_doc_outer'
+	| 'body'
 	| 'bounded_type'
 	| 'bracketed_type'
 	| 'break_expression'
@@ -1260,6 +1259,7 @@ export interface AddressBranch {
 	readonly 'block_comment//*': 'after' | 'before';
 	readonly block_comment_doc_inner: 'after' | 'before';
 	readonly block_comment_doc_outer: 'after' | 'before';
+	readonly body: 'after' | 'before';
 	readonly bounded_type: '+' | 'after' | 'before';
 	readonly 'bounded_type/+': 'after' | 'before';
 	readonly bracketed_type: '<' | '>' | 'after' | 'before';
@@ -1998,6 +1998,8 @@ export interface AddressLeaf {
 	readonly 'block_comment_doc_inner/before': Whitespace;
 	readonly 'block_comment_doc_outer/after': Whitespace;
 	readonly 'block_comment_doc_outer/before': Whitespace;
+	readonly 'body/after': Whitespace;
+	readonly 'body/before': Whitespace;
 	readonly 'bounded_type/+/after': Whitespace;
 	readonly 'bounded_type/+/before': Whitespace;
 	readonly 'bounded_type/after': Whitespace;

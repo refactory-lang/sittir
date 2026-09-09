@@ -5178,21 +5178,56 @@ var grammar_sittir_default = grammar(
         type_argument: ($) => seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
         match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
+      options: {
+        body: { before: preference("indent"), after: preference("dedent") },
+        _: {
+          '_/separator/","/before': preference("tight"),
+          '_/separator/";"/before': preference("tight"),
+          '_/separator/"+"/before': preference("space"),
+          '_/separator/"+"/after': preference("space"),
+          '":"/after': preference("space"),
+          '"->"/before': preference("space"),
+          '"->"/after': preference("space"),
+          '"="/before': preference("space"),
+          '"="/after': preference("space"),
+          '"=>"/before': preference("space"),
+          '"=>"/after': preference("space"),
+          "operator:/before": preference("space"),
+          "operator:/after": preference("space"),
+          "if:/after": preference("space"),
+          "in:/after": preference("space")
+        },
+        block: { before: preference("space"), "statements:/end": preference("newline") },
+        match_block: { before: preference("space") },
+        declaration_list: { before: preference("space") },
+        field_declaration_list: { before: preference("space") },
+        enum_variant_list: { before: preference("space") },
+        field_initializer_list: {
+          before: preference("space"),
+          '"{"/after': preference("space"),
+          '"}"/before': preference("space")
+        },
+        last_match_arm: { before: preference("newline") },
+        range_expression_binary: { "operator:/before": preference("tight"), "operator:/after": preference("tight") },
+        range_expression_prefix: { "operator:/after": preference("tight") },
+        unary_expression: { "operator:/after": preference("tight") },
+        token_tree_punctuation: { '","/after': preference("space") },
+        _bindings: {
+          'block/"{"/after': "body/before",
+          'block/"}"/before': "body/after",
+          'match_block/"{"/after': "body/before",
+          'match_block/"}"/before': "body/after",
+          'declaration_list/"{"/after': "body/before",
+          'declaration_list/"}"/before': "body/after",
+          'field_declaration_list/"{"/after': "body/before",
+          'field_declaration_list/"}"/before': "body/after",
+          'enum_variant_list/"{"/after': "body/before",
+          'enum_variant_list/"}"/before': "body/after"
+        }
+      },
       patches: {
-        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
-        semi_separator_space_before: preference("semi_separator_space_before", "tight"),
         empty_separator_space: preference("empty_separator_space", "newline"),
-        block_before: preference("block_before", "space"),
-        match_block_before: preference("match_block_before", "space"),
-        declaration_list_before: preference("declaration_list_before", "space"),
-        field_declaration_list_before: preference("field_declaration_list_before", "space"),
-        enum_variant_list_before: preference("enum_variant_list_before", "space"),
-        field_initializer_list_before: preference("field_initializer_list_before", "space"),
-        last_match_arm_before: preference("last_match_arm_before", "newline"),
-        block_end: preference("block_end", "newline"),
         source_file: { statements: preference("empty_separator_space", "blankline") },
-        field_declaration_list: { lbrace_after: preference("block_body_before", "indent"), rbrace_before: preference("block_body_after", "dedent") },
-        enum_variant_list: { lbrace_after: preference("block_body_before", "indent"), rbrace_before: preference("block_body_after", "dedent") },
         field_declaration_list_elements: [
           { element: preference("comma_separator_space_after", "newline") },
           { element: preference("delimiter", "Delimiter.Trailing") }
@@ -5201,22 +5236,6 @@ var grammar_sittir_default = grammar(
           { element: preference("comma_separator_space_after", "newline") },
           { element: preference("delimiter", "Delimiter.Trailing") }
         ],
-        colon_after: preference("colon_after", "space"),
-        dash_gt_before: preference("dash_gt_before", "space"),
-        dash_gt_after: preference("dash_gt_after", "space"),
-        eq_before: preference("eq_before", "space"),
-        eq_after: preference("eq_after", "space"),
-        eq_gt_before: preference("eq_gt_before", "space"),
-        eq_gt_after: preference("eq_gt_after", "space"),
-        operator_before: preference("operator_before", "space"),
-        operator_after: preference("operator_after", "space"),
-        if_after: preference("if_after", "space"),
-        in_after: preference("in_after", "space"),
-        plus_separator_space_before: preference("plus_separator_space_before", "space"),
-        plus_separator_space_after: preference("plus_separator_space_after", "space"),
-        range_expression_binary: { operator_before: preference("operator_before", "tight"), operator_after: preference("operator_after", "tight") },
-        range_expression_prefix: { operator_after: preference("operator_after", "tight") },
-        _token_tree_punctuation: { comma_after: preference("comma_after", "space") },
         _token_tree_paren: { tokens: preference("empty_separator_space", "tight") },
         _token_tree_bracket: { tokens: preference("empty_separator_space", "tight") },
         _token_tree_brace: { tokens: preference("empty_separator_space", "tight") },
@@ -5240,8 +5259,6 @@ var grammar_sittir_default = grammar(
           5: field2("operator")
         },
         field_initializer_list: {
-          lbrace_after: preference("lbrace_after", "space"),
-          rbrace_before: preference("rbrace_before", "space"),
           1: field2("initializers")
         },
         tuple_pattern: {
@@ -5264,8 +5281,6 @@ var grammar_sittir_default = grammar(
           "4/0": field2("comma")
         },
         match_block: {
-          lbrace_after: preference("block_body_before", "indent"),
-          rbrace_before: preference("block_body_after", "dedent"),
           "1/0/1": field2("last_arm")
         },
         async_block: {
@@ -5277,8 +5292,6 @@ var grammar_sittir_default = grammar(
         ],
         attribute: [{ 0: field2("path") }, { "1/0": variant("input") }, { 1: field2("input") }],
         block: {
-          lbrace_after: preference("block_body_before", "indent"),
-          rbrace_before: preference("block_body_after", "dedent"),
           3: field2("trailing_expression")
         },
         bounded_type: {
@@ -5393,7 +5406,6 @@ var grammar_sittir_default = grammar(
           7: field2("trailing_where_clause")
         },
         unary_expression: {
-          operator_after: preference("operator_after", "tight"),
           0: field2("operator"),
           1: field2("operand")
         },
@@ -5405,8 +5417,6 @@ var grammar_sittir_default = grammar(
         unsafe_block: { 1: field2("body") },
         try_block: { 1: field2("body") },
         declaration_list: {
-          lbrace_after: preference("block_body_before", "indent"),
-          rbrace_before: preference("block_body_after", "dedent"),
           1: field2("declarations")
         },
         expression_statement: {

@@ -169,7 +169,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults }) : renderOptionsModule(EMPTY_OPTIONS);
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults, options: optionsBlock }) : renderOptionsModule(EMPTY_OPTIONS);
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

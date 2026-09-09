@@ -251,8 +251,10 @@ class DefaultResolver {
 	}
 
 	resolveFlank(kind: string, side: FlankSide): { readonly label: string; readonly arm: WhitespaceArm } {
-		const site = this.#site(kind, side);
 		const address = flankAddress(publicKindName(kind), side);
+		const declared = this.#declared.get(declaredKey(kind, address));
+		if (declared !== undefined) return { label: address, arm: declared as WhitespaceArm };
+		const site = this.#site(kind, side);
 		return { label: site?.label ?? address, arm: (site?.arm as WhitespaceArm | undefined) ?? FLANK_DEFAULT };
 	}
 }
