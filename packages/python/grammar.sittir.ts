@@ -21,7 +21,7 @@ export default grammar(
 				role($._indent, 'indent');
 				role($._dedent, 'dedent');
 				role($._newline, 'newline');
-				return [...(prev ?? []), $._tight, $._space];
+				return [...(prev ?? []), $._tight, $._space, $._blankline];
 			},
 			expectTestFailures: {
 				'parenthesized_list_splat.parenthesizedListSplat':
@@ -37,6 +37,7 @@ export default grammar(
 			inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
 			visibleExternals: (_$) => ({
 				_newline: string('\n'),
+				_blankline: string('\n\n'),
 				_tight: string(''),
 				_space: string(' ')
 			}),

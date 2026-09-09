@@ -515,8 +515,8 @@ function preference(label, defaultArm) {
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
-var SPACING_ARMS = ["tight", "space", "newline"];
-var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
+var SPACING_ARMS = ["tight", "space", "newline", "blankline"];
+var WHITESPACE_ARMS = ["tight", "space", "newline", "blankline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var DELIMITER_LABEL = "delimiter";
 var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
@@ -5615,13 +5615,14 @@ var grammar_sittir_default = grammar(
           "1/2": variant("let_const_kind")
         }
       },
-      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._indent, $._dedent],
+      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
       visibleExternals: (_$) => ({
         _automatic_semicolon: string("\n"),
         _function_signature_automatic_semicolon: string("\n"),
         _tight: string(""),
         _space: string(" "),
         _newline: string("\n"),
+        _blankline: string("\n\n"),
         _indent: indent(),
         _dedent: dedent()
       }),

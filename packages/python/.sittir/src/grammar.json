@@ -7843,6 +7843,10 @@
     {
       "type": "SYMBOL",
       "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
     }
   ],
   "inline": [

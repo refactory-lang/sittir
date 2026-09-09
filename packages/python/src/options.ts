@@ -2,9 +2,9 @@
 
 import type { Delimiter, TSKindId } from './types.js';
 
-export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Blankline;
 
-export type Whitespace = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+export type Whitespace = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Blankline;
 
 export type EdgeKind =
 	| 'aliased_import'

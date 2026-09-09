@@ -12918,6 +12918,10 @@
     },
     {
       "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
       "name": "_indent"
     },
     {

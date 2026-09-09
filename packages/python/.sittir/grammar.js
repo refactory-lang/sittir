@@ -521,8 +521,8 @@ function preference(label, defaultArm) {
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
-var SPACING_ARMS = ["tight", "space", "newline"];
-var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
+var SPACING_ARMS = ["tight", "space", "newline", "blankline"];
+var WHITESPACE_ARMS = ["tight", "space", "newline", "blankline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var DELIMITER_LABEL = "delimiter";
 var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
@@ -5102,7 +5102,7 @@ var grammar_sittir_default = grammar(
         role($._indent, "indent");
         role($._dedent, "dedent");
         role($._newline, "newline");
-        return [...prev ?? [], $._tight, $._space];
+        return [...prev ?? [], $._tight, $._space, $._blankline];
       },
       expectTestFailures: {
         "parenthesized_list_splat.parenthesizedListSplat": "dummy stub \u2014 the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects"
@@ -5117,6 +5117,7 @@ var grammar_sittir_default = grammar(
       inline: ($, previous) => [...previous ?? [], $._except_clause_exception_as_optional1],
       visibleExternals: (_$) => ({
         _newline: string("\n"),
+        _blankline: string("\n\n"),
         _tight: string(""),
         _space: string(" ")
       }),

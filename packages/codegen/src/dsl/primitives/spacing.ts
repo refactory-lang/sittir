@@ -1,7 +1,7 @@
-export const SPACING_ARMS = ['tight', 'space', 'newline'] as const;
+export const SPACING_ARMS = ['tight', 'space', 'newline', 'blankline'] as const;
 export type SpacingArm = (typeof SPACING_ARMS)[number];
 export const SPACING_DEFAULT: SpacingArm = 'space';
-export const WHITESPACE_ARMS = ['tight', 'space', 'newline', 'indent', 'dedent'] as const;
+export const WHITESPACE_ARMS = ['tight', 'space', 'newline', 'blankline', 'indent', 'dedent'] as const;
 export type WhitespaceArm = (typeof WHITESPACE_ARMS)[number];
 export const FLANK_DEFAULT: WhitespaceArm = 'tight';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';

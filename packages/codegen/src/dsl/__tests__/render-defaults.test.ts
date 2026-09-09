@@ -94,7 +94,7 @@ describe('render defaults declared in patches', () => {
 		});
 		expect(Object.keys(wired.rules).sort()).toEqual(['a', 'block', 'string_start']);
 		expect(() => wire({ rules, patches: { block_start: preference('x', 'wide') } } as never)).toThrow(
-			/not one of tight, space, newline, indent, dedent/
+			/not one of tight, space, newline, blankline, indent, dedent/
 		);
 	});
 
@@ -156,7 +156,7 @@ describe('seam defaults declared in patches', () => {
 			/'lparen_before' is named by its token and side/
 		);
 		expect(() => wire({ rules, patches: { lparen_before: preference('lparen_before', 'wide') } } as never)).toThrow(
-			/'lparen_before' defaults to 'wide', not one of tight, space, newline, indent, dedent/
+			/'lparen_before' defaults to 'wide', not one of tight, space, newline, blankline, indent, dedent/
 		);
 		expect(() => wire({ rules, patches: { call: { lparen_before: preference('paren_gap', 'space') } } } as never)).toThrow(
 			/call\.lparen_before labels a token seam 'paren_gap', which is not spelled <token>_before \/ <token>_after/

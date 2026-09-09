@@ -4308,8 +4308,8 @@ function extractNonEmpty(rule) {
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
-var SPACING_ARMS = ["tight", "space", "newline"];
-var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
+var SPACING_ARMS = ["tight", "space", "newline", "blankline"];
+var WHITESPACE_ARMS = ["tight", "space", "newline", "blankline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var DELIMITER_LABEL = "delimiter";
 var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
@@ -5099,11 +5099,12 @@ var grammar_sittir_default = grammar(
         [$._attributed_type_parameter, $._type],
         [$._attributed_argument]
       ],
-      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._indent, $._dedent],
+      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
       visibleExternals: (_$) => ({
         _tight: string(""),
         _space: string(" "),
         _newline: string("\n"),
+        _blankline: string("\n\n"),
         _indent: indent(),
         _dedent: dedent()
       }),
@@ -5136,6 +5137,7 @@ var grammar_sittir_default = grammar(
         field_initializer_list_before: preference("field_initializer_list_before", "space"),
         last_match_arm_before: preference("last_match_arm_before", "newline"),
         block_end: preference("block_end", "newline"),
+        source_file: { statements: preference("empty_separator_space", "blankline") },
         field_declaration_list: { lbrace_after: preference("block_body_before", "indent"), rbrace_before: preference("block_body_after", "dedent") },
         enum_variant_list: { lbrace_after: preference("block_body_before", "indent"), rbrace_before: preference("block_body_after", "dedent") },
         field_declaration_list_elements: [

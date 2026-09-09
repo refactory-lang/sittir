@@ -135,22 +135,24 @@ pub const SEAM_STR: &str = "\u{FDD2}";
 pub const DEFAULT_INDENT: &str = "    ";
 
 /// A seam mark's payload, ranked by width so two consecutive payloads
-/// coalesce to the wider: no whitespace, then a run of spaces, then any run
-/// containing a newline.
+/// coalesce to the wider: no whitespace, then a run of spaces, then a run
+/// breaking the line once, then a run leaving a blank line behind it.
+/// A blank line outranks a plain newline so a separator asking for one
+/// survives meeting a kind edge that asks only to break the line.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum SeamRank {
     Tight,
     Space,
     Newline,
+    BlankLine,
 }
 
 fn seam_rank(text: &str) -> SeamRank {
-    if text.is_empty() {
-        SeamRank::Tight
-    } else if text.contains('\n') {
-        SeamRank::Newline
-    } else {
-        SeamRank::Space
+    match text.matches('\n').count() {
+        0 if text.is_empty() => SeamRank::Tight,
+        0 => SeamRank::Space,
+        1 => SeamRank::Newline,
+        _ => SeamRank::BlankLine,
     }
 }
 
@@ -602,6 +604,13 @@ mod seam_tests {
         assert_eq!(run(&["a", "\u{FDD2}\n", "\u{FDD2} ", "b"]), "a\nb");
         assert_eq!(run(&["a", "\u{FDD2}", "\u{FDD2} ", "b"]), "a b");
         assert_eq!(run(&["a", "\u{FDD2} ", "\u{FDD2} ", "b"]), "a b");
+    }
+
+    #[test]
+    fn a_blank_line_seam_outranks_a_newline_in_either_order() {
+        assert_eq!(run(&["a", "\u{FDD2}\n", "\u{FDD2}\n\n", "b"]), "a\n\nb");
+        assert_eq!(run(&["a", "\u{FDD2}\n\n", "\u{FDD2}\n", "b"]), "a\n\nb");
+        assert_eq!(run(&["a", "\u{FDD2}\n\n", "\u{FDD2} ", "b"]), "a\n\nb");
     }
 
     #[test]

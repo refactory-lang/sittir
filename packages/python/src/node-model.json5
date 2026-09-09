@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 278,
+  "nodeCount": 279,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -22,6 +22,7 @@
   "externals": [
     ")",
     "]",
+    "_blankline",
     "_dedent",
     "_indent",
     "_newline",
@@ -2932,6 +2933,14 @@
         "|="
       ],
       "factoryShape": "text"
+    },
+    {
+      "kind": "_blankline",
+      "modelType": "pattern",
+      "typeName": "Blankline",
+      "factoryName": "blankline",
+      "irKey": "blankline",
+      "hidden": false
     },
     {
       "kind": "_case_patterns",

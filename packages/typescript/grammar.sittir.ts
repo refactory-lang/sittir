@@ -592,13 +592,14 @@ export default grammar(
 					'1/2': variant('let_const_kind')
 				}
 			},
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._indent, $._dedent],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),
 				_tight: string(''),
 				_space: string(' '),
 				_newline: string('\n'),
+				_blankline: string('\n\n'),
 				_indent: indent(),
 				_dedent: dedent()
 			}),

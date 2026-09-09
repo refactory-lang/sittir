@@ -2,9 +2,15 @@
 
 import type { Delimiter, TSKindId } from './types.js';
 
-export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline;
+export type Spacing = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Blankline;
 
-export type Whitespace = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Indent | TSKindId.Dedent;
+export type Whitespace =
+	| TSKindId.Tight
+	| TSKindId.Space
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.Indent
+	| TSKindId.Dedent;
 
 export type EdgeKind =
 	| 'abstract_class_declaration'

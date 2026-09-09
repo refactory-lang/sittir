@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 422,
+  "nodeCount": 423,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -30,6 +30,7 @@
   "externals": [
     "__error_recovery",
     "_automatic_semicolon",
+    "_blankline",
     "_dedent",
     "_function_signature_automatic_semicolon",
     "_indent",
@@ -4716,6 +4717,14 @@
         "left",
         "right"
       ]
+    },
+    {
+      "kind": "_blankline",
+      "modelType": "pattern",
+      "typeName": "Blankline",
+      "factoryName": "blankline",
+      "irKey": "blankline",
+      "hidden": false
     },
     {
       "kind": "_call_expression_call",

@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 418,
+  "nodeCount": 419,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -23,6 +23,7 @@
     "non_special_token"
   ],
   "externals": [
+    "_blankline",
     "_block_comment_content",
     "_dedent",
     "_error_sentinel",
@@ -4666,6 +4667,14 @@
         "attribute_item",
         "content"
       ]
+    },
+    {
+      "kind": "_blankline",
+      "modelType": "pattern",
+      "typeName": "Blankline",
+      "factoryName": "blankline",
+      "irKey": "blankline",
+      "hidden": false
     },
     {
       "kind": "_block_comment_content",
