@@ -46,7 +46,7 @@ from a kind to a position:
 block/body:/before
 token_tree_punctuation/","/after
 token_repetition_pattern/(token_tree_punctuation)/":"/after
-source_file/statements:/separator
+source_file/statements:/(_)/after
 ```
 
 Segments are the existing `parsePath` vocabulary — index (`0`, `-1`),
@@ -83,17 +83,34 @@ Named positions on a slot:
 
 | segment | position |
 | --- | --- |
-| `separator` | the gap between elements, or the separator token where the grammar offers a choice |
+| `separator` | the separator token, where the grammar offers a choice of them |
 | `separator/before`, `separator/after` | the gaps flanking a separator token |
 | `before`, `after` | on a kind, its own leading and trailing edges |
 
-`separator` is the exception that proves the rule: it is not a position but the
-thing between positions, which is why it cannot be spelled `_/after` — that
-would include the last element, where the gap belongs to the list's edge rather
-than to a separator. It names a position in the addressing sense, and what it
-admits is whatever that position varies: whitespace arms where the separator is fixed or empty, token kinds
-where the grammar offers a choice. A slot never has both, and the site's
-declared arm set rejects a value from the wrong family.
+**A sibling gap belongs to the child before it.** The gap between two elements
+is the preceding child's `after` edge, scoped to where that child sits:
+`(source_file)/statements:/(_)/after` is the slot's default gap and
+`(source_file)/statements:/(attribute_item)/after` is an exception to it,
+matching a strict subset. `(_)` matches any kind and `_` any segment, as in
+scm.
+
+That retires the empty separator. A repeat with no separator token has nothing
+between its elements but that gap, so `<slot>_separator_space` was naming an
+absence — and naming it as a property of the list meant every element got the
+same gap, which is what made a blank line between an attribute item and the
+item it decorates undeclarable. Nothing it could say is lost, and the
+child-scoped form says more.
+
+`separator` therefore names only the token, where a grammar offers a choice of
+them, with `separator/before` and `separator/after` for the gaps flanking it.
+Those two cannot become child edges: a kind edge is part of a child's own
+render body and fires on every occurrence, so a child's `before` cannot tell
+the head of a list from the position after a separator. Only the separator
+knows which gaps sit beside a token.
+
+A trailing gap needs no special case. The writer drops a seam payload with
+nothing after it, so the last element's `after` at the end of a render
+disappears rather than trailing whitespace onto the output.
 
 **Addresses are model-addressed, not tree-addressed.** A literal segment names
 an arm of the model's enum, which is well defined even where the parse tree
@@ -287,7 +304,8 @@ never exposes them, so no caller can set one and none does.
 | retired | replaced by |
 | --- | --- |
 | `<tok>_<side>` seam labels | a literal or structural segment in the path |
-| `<slot>_separator_space[_<side>]` | `<slot>:/separator[/<side>]` |
+| `<slot>_separator_space` (empty separator) | `<slot>:/(_)/after` — the gap belongs to the child |
+| `<slot>_<tok>_separator_space_<side>` | `<slot>:/separator/<side>` |
 | `<kind>_start` / `_end` flanks | retired — the delimiter's seams reach the same gap |
 | `<kind>_before` / `_after` kind edges | `<kind>/before` / `/after` |
 | flank-supertype fan-out, `SUPERTYPE_MEMBERS` | a `(supertype)` segment expanding to its members |

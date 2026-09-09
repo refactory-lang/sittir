@@ -1216,7 +1216,7 @@ Each declaration maps by its current shape:
 | --- | --- |
 | `eq_before: preference('eq_before','space')` | label `'assignment/before': preference('assignment/before','space')` + a binding per owning kind |
 | `named_imports: { lbrace_after: … }` | `'(named_imports)/"{"/after'` |
-| `empty_separator_space: 'newline'` | `'_/_:/separator'` |
+| `empty_separator_space: 'newline'` | `'_/_:/(_)/after'` — the gap is the child's |
 | `block: { lbrace_after: preference('block_body_before','indent') }` | binding `'(block)/"{"/after': 'body/before'` |
 
 - [ ] **Step 2: Regenerate rust and diff the fixtures**
@@ -1384,14 +1384,18 @@ In `packages/rust/grammar.sittir.ts`, replace the `source_file` separator
 declaration with:
 
 ```ts
-'(source_file)/statements:/separator':              'tight',
 '(source_file)/statements:/(_)/after':              'blankline',
 '(source_file)/statements:/(attribute_item)/after': 'newline',
 ```
 
-`(_)` matches any kind, as in scm, where `_` matches any node at all. The
-second line is the slot's default gap; the third matches a strict subset of it
-and wins.
+The slot's `empty_separator_space` declaration goes; a repeat with no separator
+token has nothing between its elements but this gap. `(_)` matches any kind, as
+in scm, where `_` matches any node at all. The first line is the slot's default
+gap; the second matches a strict subset of it and wins.
+
+The last element's `after` needs no special case: the writer drops a seam
+payload with nothing following it, so a trailing gap at end-of-render
+disappears rather than trailing whitespace onto the output.
 
 - [ ] **Step 7: Verify the rebuild**
 
