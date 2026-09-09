@@ -451,8 +451,8 @@ git commit -F <msgfile> -- \
 
 **Files:**
 - Create: `packages/codegen/src/dsl/wire/options-block.ts`
-- Create: `packages/codegen/src/dsl/wire/__tests__/options-block.test.ts`
-- Modify: `packages/codegen/src/compiler/types.ts` — add `options?: OptionsConfig` beside `patches`.
+- Create: `packages/codegen/src/dsl/__tests__/options-block.test.ts`
+- Modify: `packages/codegen/src/dsl/wire/wire.ts` — add `options?: OptionsConfig` to `WireConfig`, beside `patches`. **AS BUILT** (`ccf89f10f`): `compiler/types.ts` carries no `patches` member; `WireConfig` is where the grammar config lives.
 - Docs: `docs/glossary/dsl-wire.md`
 
 **Interfaces:**
@@ -572,7 +572,7 @@ describe('readOptionsBlock', () => {
 - [ ] **Step 2: Run to verify failure**
 
 ```bash
-pnpm exec vitest run packages/codegen/src/dsl/wire/__tests__/options-block.test.ts
+pnpm exec vitest run packages/codegen/src/dsl/__tests__/options-block.test.ts
 ```
 Expected: FAIL — module not found.
 
@@ -645,7 +645,7 @@ path form.
 - [ ] **Step 4: Run to verify passing**
 
 ```bash
-pnpm exec vitest run packages/codegen/src/dsl/wire/__tests__/options-block.test.ts
+pnpm exec vitest run packages/codegen/src/dsl/__tests__/options-block.test.ts
 ```
 Expected: PASS, eight cases.
 
@@ -689,7 +689,7 @@ stated once.
 ```bash
 git commit -F <msgfile> -- \
   packages/codegen/src/dsl/wire/options-block.ts \
-  packages/codegen/src/dsl/wire/__tests__/options-block.test.ts \
+  packages/codegen/src/dsl/__tests__/options-block.test.ts \
   packages/codegen/src/compiler/types.ts \
   docs/glossary/dsl-wire.md \
   packages/{rust,typescript,python}/.sittir
@@ -705,14 +705,25 @@ git commit -F <msgfile> -- \
 - Docs: `docs/glossary/compiler-model.md`
 
 **Interfaces:**
-- Consumes: `RuleSpacingSite` from `render-rules.ts` (`{ kind, slot, address, label, side, defaultArm, arms }`), `PathSegment`, `comparePreferencePaths`.
+- Consumes: `RuleSpacingSite` from `render-rules.ts` (`{ kind, slot, address, label, side, defaultArm, arms }`), `PreferenceSegment`, `comparePreferencePaths`, `findEntryForKindName` and `KindEntryLike` from `generated-metadata.ts`.
 - Produces:
 
 ```ts
-export interface AddressedSite extends RuleSpacingSite { readonly path: readonly PathSegment[]; }
-export function addressSites(sites: readonly RuleSpacingSite[]): AddressedSite[];
-export function matchAddress(address: readonly PathSegment[], sites: readonly AddressedSite[]): AddressedSite[];
+export interface AddressedSite extends RuleSpacingSite { readonly path: readonly PreferenceSegment[]; }
+export function addressSites(sites: readonly RuleSpacingSite[], kindEntries: readonly KindEntryLike[]): AddressedSite[];
+export function matchAddress(address: readonly PreferenceSegment[], sites: readonly AddressedSite[]): AddressedSite[];
 ```
+
+**A path is spelled the way an address is written.** A token seam takes a
+literal segment carrying the token's TEXT (`"{"`), not its catalog name
+(`lbrace`); the two are joined through the anonymous-token catalog, which the
+only caller already holds. A side is a bare `name` segment, which is the form
+the canonical order recognises — as a kind-match it would compare as ordinary
+text and the side ordering would never fire. A seam whose token is the rule's
+own kind is that kind's edge and takes no token segment at all.
+
+**AS BUILT** (`8232fb90f`). The implementation sketch that stood here spelled
+tokens and sides as kind-matches and failed its own tests.
 
 `addressSites` gives every site its canonical path and returns them sorted by `comparePreferencePaths`, so the returned index of a site is its site number. `matchAddress` returns the contiguous run a prefix names, or a filtered scan when the address contains a wildcard in a non-final position.
 
@@ -892,8 +903,28 @@ git commit -F <msgfile> -- \
 - Docs: `docs/glossary/compiler-model.md`
 
 **Interfaces:**
-- Consumes: `AddressedSite`, `matchAddress` from Task 4; `AddressBinding` from Task 3.
-- Produces: `resolveBindings(bindings: readonly AddressBinding[], sites: readonly AddressedSite[], labelArms: ReadonlyMap<string, string>): Map<number, string>` — site index to resolved arm, most specific binding winning.
+- Consumes: `AddressedSite`, `matchAddress` from Task 4; `AddressBinding` and `PathDeclaration` from Task 3.
+- Produces: `resolveBindings(declarations: readonly PathDeclaration[], bindings: readonly AddressBinding[], sites: readonly AddressedSite[]): Map<number, string>` — site index to resolved arm, the narrowest address winning.
+
+**Declarations and bindings resolve together**, because both are an address with
+an arm: a binding takes its arm from the label it names, a declaration carries
+its own. A binding value is a label path and nothing else, so an address in no
+label group reaches a site only as a declaration. `labelArms` is derived from
+the declarations rather than passed in.
+
+**Where the two reach the identical site set the declaration wins.** Ranking is
+site-set size descending, then bindings before declarations. That is the
+`keyword_argument` case: bound to `assignment/before` but declared `tight`, so
+the binding decides which key moves the site and the declaration what it starts
+as.
+
+**An address naming no site is an error**, except a declaration some binding
+names as its label — a label is a virtual kind and matches no site by
+construction.
+
+**AS BUILT** (`e1b3691b8`). The sketch that stood here gave bindings an `arm`
+field, which is the welded union the spec removed, and never saw declarations
+at all.
 
 - [ ] **Step 1: Write the failing tests**
 
