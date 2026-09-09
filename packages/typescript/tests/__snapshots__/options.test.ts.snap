@@ -264,8 +264,6 @@ export type WhitespaceLabel =
 	| 'caret_eq_before'
 	| 'case_after'
 	| 'case_before'
-	| 'case_body_end'
-	| 'case_body_start'
 	| 'catch_after'
 	| 'catch_before'
 	| 'class_body_end'
@@ -277,6 +275,7 @@ export type WhitespaceLabel =
 	| 'class_end'
 	| 'class_start'
 	| 'closing_after'
+	| 'closing_before'
 	| 'colon_after'
 	| 'colon_before'
 	| 'comma_after'
@@ -402,6 +401,7 @@ export type WhitespaceLabel =
 	| 'object_start'
 	| 'object_type_content_end'
 	| 'object_type_content_start'
+	| 'opening_after'
 	| 'opening_before'
 	| 'operator_after'
 	| 'operator_before'
@@ -965,11 +965,13 @@ export type AddressRoot =
 	| 'await_expression'
 	| 'binary_expression'
 	| 'binary_expression_in'
+	| 'body'
 	| 'break_statement'
 	| 'call_expression_call'
 	| 'call_expression_member'
 	| 'call_expression_template_call'
 	| 'call_signature'
+	| 'case_body'
 	| 'catch_clause'
 	| 'catch_clause_group'
 	| 'class'
@@ -1251,6 +1253,7 @@ export interface AddressBranch {
 	readonly binary_expression: 'operator';
 	readonly 'binary_expression/operator': 'after' | 'before';
 	readonly binary_expression_in: 'after' | 'before';
+	readonly body: 'after' | 'before';
 	readonly break_statement: 'after' | 'before' | 'break' | 'terminator_statement_terminator';
 	readonly 'break_statement/break': 'after' | 'before';
 	readonly call_expression_call: 'after' | 'before';
@@ -1258,6 +1261,7 @@ export interface AddressBranch {
 	readonly 'call_expression_member/?.': 'after' | 'before';
 	readonly call_expression_template_call: 'after' | 'before';
 	readonly call_signature: 'after' | 'before';
+	readonly case_body: 'end' | 'start';
 	readonly catch_clause: 'after' | 'before' | 'catch';
 	readonly 'catch_clause/catch': 'after' | 'before';
 	readonly catch_clause_group: '(' | ')' | 'after' | 'before';
@@ -1885,6 +1889,8 @@ export interface AddressLeaf {
 	readonly 'binary_expression/operator/before': Whitespace;
 	readonly 'binary_expression_in/after': Whitespace;
 	readonly 'binary_expression_in/before': Whitespace;
+	readonly 'body/after': Whitespace;
+	readonly 'body/before': Whitespace;
 	readonly 'break_statement/after': Whitespace;
 	readonly 'break_statement/before': Whitespace;
 	readonly 'break_statement/break/after': Whitespace;
@@ -1900,6 +1906,8 @@ export interface AddressLeaf {
 	readonly 'call_expression_template_call/before': Whitespace;
 	readonly 'call_signature/after': Whitespace;
 	readonly 'call_signature/before': Whitespace;
+	readonly 'case_body/end': Whitespace;
+	readonly 'case_body/start': Whitespace;
 	readonly 'catch_clause/after': Whitespace;
 	readonly 'catch_clause/before': Whitespace;
 	readonly 'catch_clause/catch/after': Whitespace;

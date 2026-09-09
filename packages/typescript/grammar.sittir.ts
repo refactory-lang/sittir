@@ -175,43 +175,78 @@ export default grammar(
 						repeat(field('attribute', $._jsx_attribute))
 					)
 			},
+			options: {
+				body: { before: preference('indent'), after: preference('dedent') },
+				case_body: { start: preference('indent'), end: preference('dedent') },
+
+				_: {
+					'_/separator/","/before': preference('tight'),
+					'":"/after': preference('space'),
+					'"="/before': preference('space'),
+					'"="/after': preference('space'),
+					'"=>"/before': preference('space'),
+					'"=>"/after': preference('space'),
+					'"|"/before': preference('space'),
+					'"|"/after': preference('space'),
+					'"&"/before': preference('space'),
+					'"&"/after': preference('space'),
+					'operator:/before': preference('space'),
+					'operator:/after': preference('space'),
+					'from:/after': preference('space'),
+					'if:/after': preference('space'),
+					'while:/after': preference('space'),
+					'for:/after': preference('space'),
+					'return:/before': preference('space'),
+					'return:/after': preference('space'),
+					'switch:/after': preference('space'),
+					'catch:/after': preference('space'),
+					'var:/after': preference('space'),
+					'kind:/after': preference('space')
+				},
+
+				object_type_content: {
+					'content:/separator/before': preference('tight'),
+					'content:/separator/after': preference('newline')
+				},
+
+				statement_block: { before: preference('space') },
+				class_body: { before: preference('space') },
+				switch_body: { before: preference('space') },
+				named_imports: {
+					before: preference('space'),
+					after: preference('space'),
+					'"{"/after': preference('space'),
+					'"}"/before': preference('space')
+				},
+				export_clause: {
+					before: preference('space'),
+					after: preference('space'),
+					'"{"/after': preference('space'),
+					'"}"/before': preference('space')
+				},
+				object: { '"{"/after': preference('space'), '"}"/before': preference('space') },
+				object_pattern: { '"{"/after': preference('space'), '"}"/before': preference('space') },
+				ternary_expression: { '":"/before': preference('space') },
+				for_statement: { '"("/before': preference('space') },
+
+				_bindings: {
+					'statement_block/"{"/after': 'body/before',
+					'statement_block/"}"/before': 'body/after',
+					'switch_body/"{"/after': 'body/before',
+					'switch_body/"}"/before': 'body/after',
+					'enum_body/"{"/after': 'body/before',
+					'enum_body/"}"/before': 'body/after',
+					'object_type/opening:/after': 'body/before',
+					'object_type/closing:/before': 'body/after',
+					'switch_case/body:/start': 'case_body/start',
+					'switch_case/body:/end': 'case_body/end',
+					'switch_default/body:/start': 'case_body/start',
+					'switch_default/body:/end': 'case_body/end'
+				}
+			},
+
 			patches: {
-				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
 				empty_separator_space: preference('empty_separator_space', 'newline'),
-				object_type_content_separator_space_before: preference('object_type_content_separator_space_before', 'tight'),
-				object_type_content_separator_space_after: preference('object_type_content_separator_space_after', 'newline'),
-				statement_block_before: preference('statement_block_before', 'space'),
-				from_after: preference('from_after', 'space'),
-				if_after: preference('if_after', 'space'),
-				while_after: preference('while_after', 'space'),
-				for_after: preference('for_after', 'space'),
-				return_before: preference('return_before', 'space'),
-				return_after: preference('return_after', 'space'),
-				switch_after: preference('switch_after', 'space'),
-				catch_after: preference('catch_after', 'space'),
-				class_body_before: preference('class_body_before', 'space'),
-				switch_body_before: preference('switch_body_before', 'space'),
-				named_imports_before: preference('named_imports_before', 'space'),
-				named_imports_after: preference('named_imports_after', 'space'),
-				export_clause_before: preference('export_clause_before', 'space'),
-				export_clause_after: preference('export_clause_after', 'space'),
-				colon_after: preference('colon_after', 'space'),
-				eq_before: preference('eq_before', 'space'),
-				eq_after: preference('eq_after', 'space'),
-				eq_gt_before: preference('eq_gt_before', 'space'),
-				eq_gt_after: preference('eq_gt_after', 'space'),
-				operator_before: preference('operator_before', 'space'),
-				operator_after: preference('operator_after', 'space'),
-				pipe_before: preference('pipe_before', 'space'),
-				pipe_after: preference('pipe_after', 'space'),
-				var_after: preference('var_after', 'space'),
-				kind_after: preference('kind_after', 'space'),
-				amp_before: preference('amp_before', 'space'),
-				amp_after: preference('amp_after', 'space'),
-				named_imports: { lbrace_after: preference('lbrace_after', 'space'), rbrace_before: preference('rbrace_before', 'space') },
-				export_clause: { lbrace_after: preference('lbrace_after', 'space'), rbrace_before: preference('rbrace_before', 'space') },
-				ternary_expression: { colon_before: preference('colon_before', 'space') },
-				for_statement: { lparen_before: preference('lparen_before', 'space') },
 				binary_expression: {
 					24: variant('in')
 				},
@@ -225,27 +260,17 @@ export default grammar(
 					1: field('elements')
 				},
 				object: {
-					lbrace_after: preference('lbrace_after', 'space'),
-					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('properties')
 				},
 				object_pattern: {
-					lbrace_after: preference('lbrace_after', 'space'),
-					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('properties')
 				},
 				switch_body: {
-					lbrace_after: preference('block_body_before', 'indent'),
-					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('cases')
 				},
 				object_type: {
-					opening_after: preference('block_body_before', 'indent'),
-					closing_before: preference('block_body_after', 'dedent')
 				},
 				enum_body: {
-					lbrace_after: preference('block_body_before', 'indent'),
-					rbrace_before: preference('block_body_after', 'dedent')
 				},
 				enum_body_elements: [
 					{ content: preference('comma_separator_space_after', 'newline') },
@@ -255,10 +280,6 @@ export default grammar(
 					{ content: preference('separator', 'semi') },
 					{ content: preference('delimiter', 'Delimiter.Trailing') }
 				],
-				switch_case_start: preference('case_body_start', 'indent'),
-				switch_case_end: preference('case_body_end', 'dedent'),
-				switch_default_start: preference('case_body_start', 'indent'),
-				switch_default_end: preference('case_body_end', 'dedent'),
 				jsx_expression: {
 					1: field('expression')
 				},
@@ -394,8 +415,6 @@ export default grammar(
 				},
 
 				statement_block: {
-					lbrace_after: preference('block_body_before', 'indent'),
-					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('statements'),
 					3: field('automatic_semicolon')
 				},
