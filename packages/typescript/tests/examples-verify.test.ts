@@ -74,7 +74,7 @@ describe('examples/18 generated rebuild (format.ts)', () => {
 	it('renders', async () => {
 		expect((await rebuildFormatGenerated()).$render()).toContain('function applyFormat');
 	});
-	it.fails('re-parses to the same tree as the real file — open rows S3–S9', async () => {
+	it('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), await rebuildFormatGenerated(), target).reparsesEqual).toBe(true);
 	});
 });
