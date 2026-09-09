@@ -456,7 +456,10 @@ git commit -F <msgfile> -- \
 - Docs: `docs/glossary/dsl-wire.md`
 
 **Interfaces:**
-- Consumes: `preference()` from `dsl/primitives/preference.ts`; `parsePreferencePath` from Task 2.
+- Consumes: `preference()` from `dsl/primitives/preference.ts`, widened so a
+  one-argument call sets only the arm; `parsePreferencePath` from Task 2.
+- Also modifies: `packages/codegen/src/dsl/primitives/preference.ts` — `label`
+  becomes optional.
 - Produces:
 
 ```ts
@@ -480,11 +483,12 @@ virtual, and a virtual kind taking a real kind's name is rejected.
 address with a differing default declares it under its kind; an address in no
 group is only a declaration.
 
-`preference()` keeps its two-argument form for now so nothing else changes;
-`readOptionsBlock` rejects a declaration whose `preference()` label disagrees
-with the path its key names, matching how `renderDefaultsOf` already guards
-seam and separator keys. Collapsing it to one argument is a follow-up, not
-part of this plan.
+**`preference()` takes the arm only.** The key is the path, so the old `label`
+argument only repeated it back — which is why `renderDefaultsOf` has to check
+it is not a rename. `preference(arm)` retires both the argument and the check.
+
+The two-argument form stays callable while `patches:` still holds declarations,
+and Task 10 deletes it with the rest of the old surface.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -497,14 +501,14 @@ const KINDS = new Set(['block', 'keyword_argument', 'object_type']);
 
 describe('readOptionsBlock', () => {
 	it('reads a virtual kind as a label', () => {
-		const out = readOptionsBlock({ body: { before: preference('before', 'indent') } }, KINDS);
+		const out = readOptionsBlock({ body: { before: preference('indent') } }, KINDS);
 		expect(out.declarations).toEqual([{ path: 'body/before', arm: 'indent' }]);
 		expect(out.bindings).toEqual([]);
 	});
 
 	it('reads a kind-relative declaration as a full address', () => {
 		const out = readOptionsBlock(
-			{ keyword_argument: { '"="/before': preference('"="/before', 'tight') } },
+			{ keyword_argument: { '"="/before': preference('tight') } },
 			KINDS
 		);
 		expect(out.declarations).toEqual([{ path: 'keyword_argument/"="/before', arm: 'tight' }]);
@@ -513,7 +517,7 @@ describe('readOptionsBlock', () => {
 	it('reads a binding from an address to a label', () => {
 		const out = readOptionsBlock(
 			{
-				body: { before: preference('before', 'indent') },
+				body: { before: preference('indent') },
 				_bindings: { 'block/"{"/after': 'body/before' }
 			},
 			KINDS
@@ -524,8 +528,8 @@ describe('readOptionsBlock', () => {
 	it('keeps membership and default separate', () => {
 		const out = readOptionsBlock(
 			{
-				assignment: { before: preference('before', 'space') },
-				keyword_argument: { '"="/before': preference('"="/before', 'tight') },
+				assignment: { before: preference('space') },
+				keyword_argument: { '"="/before': preference('tight') },
 				_bindings: { 'keyword_argument/"="/before': 'assignment/before' }
 			},
 			KINDS
@@ -540,7 +544,7 @@ describe('readOptionsBlock', () => {
 		expect(() =>
 			readOptionsBlock(
 				{
-					block: { before: preference('before', 'space') },
+					block: { before: preference('space') },
 					_bindings: { 'object_type/opening:/after': 'block/before' }
 				},
 				KINDS
@@ -555,14 +559,12 @@ describe('readOptionsBlock', () => {
 	});
 
 	it('treats an unknown top-level key as a virtual kind', () => {
-		const out = readOptionsBlock({ nowhere: { before: preference('before', 'tight') } }, KINDS);
+		const out = readOptionsBlock({ nowhere: { before: preference('tight') } }, KINDS);
 		expect(out.declarations).toEqual([{ path: 'nowhere/before', arm: 'tight' }]);
 	});
 
-	it('rejects a declaration whose preference renames its key', () => {
-		expect(() => readOptionsBlock({ 'body/before': preference('body/after', 'indent') }, KINDS)).toThrow(
-			/does not rename it/
-		);
+	it('rejects a value that is not a preference', () => {
+		expect(() => readOptionsBlock({ body: { before: 'indent' } }, KINDS)).toThrow(/takes preference\(arm\)/);
 	});
 });
 ```
@@ -603,11 +605,8 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 	const declarations: PathDeclaration[] = [];
 	const declared = new Set<string>();
 	const add = (path: string, value: unknown): void => {
-		if (!isPreference(value)) throw new Error(`options: '${path}' takes preference(path, arm)`);
+		if (!isPreference(value)) throw new Error(`options: '${path}' takes preference(arm)`);
 		const placeholder = value as PreferencePlaceholder;
-		if (placeholder.label !== relativeKeyOf(path)) {
-			throw new Error(`options: '${path}' is named by its path; preference('${placeholder.label}', …) does not rename it`);
-		}
 		parsePreferencePath(path);
 		if (declared.has(path)) throw new Error(`options: '${path}' declared twice`);
 		declared.add(path);
@@ -637,15 +636,11 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 	return { declarations, bindings };
 }
 
-function relativeKeyOf(path: string): string {
-	return path;
-}
 ```
 
-`relativeKeyOf` is the seam where the `preference()` label is compared against
-the key. A kind-relative declaration is stored as a full address, so the
-comparison is against the relative key the author wrote; keep the two apart
-rather than comparing a joined path against a relative label.
+A kind-relative declaration is stored as a full address — the top-level key
+joined to the relative one — so `_bindings` and the site table speak the same
+path form.
 
 - [ ] **Step 4: Run to verify passing**
 
