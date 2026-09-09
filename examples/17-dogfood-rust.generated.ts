@@ -46,7 +46,7 @@ export function rebuildSpliceGenerated() {
 							type: TSKindId.Usize,
 						}),
 					})),
-				}),
+				}).$trivia({ leading: ["/// `end_pos > source.len()` — edit reaches past end of source.\n"] }),
 			}, {
 				enumVariant: ir.enumVariant.strict({
 					name: ir.identifier("NonCharBoundary"),
@@ -61,7 +61,7 @@ export function rebuildSpliceGenerated() {
 							type: TSKindId.U32,
 						}),
 					})),
-				}),
+				}).$trivia({ leading: ["/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"] }),
 			}).$trivia({ leading: ["/// `end_pos < start_pos` — the edit range is reversed.\n"] })),
 		}), ir.implItem.strict({
 			traitClause: ir.implItemPositiveClause.strict(ir.scopedTypeIdentifier.strict({

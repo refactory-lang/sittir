@@ -1925,11 +1925,28 @@ function projectElements(
 	slotName: string | undefined,
 	opts: NodeToConfigOpts
 ): unknown[] {
-	return items.map((item) =>
-		readValueKind(item, opts) === seat.kind
-			? nodeToConfig(drillReadNode(item as ReadNodeLike, opts), childOpts(opts))
-			: resolveChild(item, memberValueOpts(opts, parentKind, slotName))
-	);
+	return items.map((item) => {
+		if (readValueKind(item, opts) !== seat.kind) {
+			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
+		}
+		const element = drillReadNode(item as ReadNodeLike, opts);
+		return carryElementTrivia(element, nodeToConfig(element, childOpts(opts)));
+	});
+}
+
+/**
+ * A seated element projects to the group's config, and a config cannot carry
+ * trivia — the transport rejects the key. The group's own built value can, and
+ * it renders in the element's position, so a comment the read attached to the
+ * group rides that value instead. Only a group with exactly one built value
+ * has an unambiguous carrier; anything else keeps the group's trivia
+ * unattached rather than guessing which child owns it.
+ */
+function carryElementTrivia(element: ReadNodeLike, config: Record<string, unknown>): Record<string, unknown> {
+	if (element.$_trivia === undefined) return config;
+	const built = Object.values(config).filter((v) => v !== null && typeof v === 'object' && !Array.isArray(v));
+	if (built.length === 1) carryTrivia(element, built[0]);
+	return config;
 }
 
 /**
