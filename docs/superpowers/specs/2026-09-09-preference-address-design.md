@@ -59,14 +59,25 @@ ordinary terminal segments. There is no `+`/`-` suffix vocabulary, so a path and
 the nested TypeScript object are the same address in two layouts rather than two
 conventions needing a projection rule.
 
-`start` and `end` are a list's own edges and stay distinct from indices,
-because they address different spaces. An index names a **static** member of a
-rule — a seq's second member, a choice's last — resolved against the grammar
-shape at compile time. `start` and `end` name **dynamic** positions in a
-rendered list: the gap before its first actual element and after its last,
-whose count is unknown until render. No index can express those, which is why
-`ListView` carries `head` and `tail` separately from anything the path grammar
-reaches.
+There are three terminals — `before`, `after`, `separator` — and no separate
+flank vocabulary. A list's inside edges are the seams of whatever delimits it.
+
+That works because the writer, not a conditional address, keeps an empty body
+bare: an indent immediately followed by a dedent cancels, so `lbrace_after:
+indent` with `rbrace_before: dedent` renders `{}` for an empty block and an
+indented body for a full one, from the same unconditional pair. Flanks were a
+second address for a gap the seams already reach, and `block` declares both
+today.
+
+Where a non-indent arm would otherwise emit whitespace into an empty list —
+`space` after an opening paren rendering `f( )` — that is a property of the
+arm, not a second address: whitespace that should not survive having nothing
+beside it. It belongs as a writer rule, the same shape as the indent/dedent
+cancel.
+
+An index stays what it is today: a **static** member of a rule, a seq's second
+or a choice's last, resolved against the grammar shape at compile time. It
+never names a rendered element, whose count is unknown until render.
 
 Named positions on a slot:
 
@@ -74,7 +85,6 @@ Named positions on a slot:
 | --- | --- |
 | `separator` | the gap between elements, or the separator token where the grammar offers a choice |
 | `separator/before`, `separator/after` | the gaps flanking a separator token |
-| `start`, `end` | the gaps inside the list's first and last rendered elements |
 | `before`, `after` | on a kind, its own leading and trailing edges |
 
 `separator` is the exception that proves the rule: it is not a position but the
@@ -95,10 +105,12 @@ of the boundary the role-interfaces design draws: scm addresses visible nodes,
 sub-visible facts stay in `grammar.sittir.ts`, and whitespace is sub-visible —
 a seam has no node.
 
-**Structural beats token.** Where a position can be named either by the
-delimiter beside it or by the slot it opens, the slot wins:
-`block/body:/start`, not `block/"{"/after`. The delimiter is not the invariant — `object_type`
-opens with `opening`, and a python body opens with nothing.
+**A body's edges are its delimiter's seams.** With flanks retired there is one
+address for the gap inside an opening delimiter, and it names the delimiter.
+That the delimiter differs per grammar — `"{"` in rust, `opening:` in
+typescript's `object_type`, nothing at all in python — is what the binding
+layer is for: unlike addresses bind to one named preference, so
+`block_body_before` is declared once and reaches all three.
 
 ## Declaring: `options:`
 
@@ -116,10 +128,10 @@ options: {
   eq_before:         preference('space'),
 
   _bindings: {
-    'block/body:/start':                      'block_body_before',
-    'block/body:/end':                        'block_body_after',
-    'object_type/content:/start':             'block_body_before',
-    'field_declaration_list/elements:/start': 'block_body_before',
+    'block/"{"/after':                  'block_body_before',
+    'block/"}"/before':                 'block_body_after',
+    'object_type/opening:/after':       'block_body_before',
+    'field_declaration_list/"{"/after': 'block_body_before',
 
     'lexical_declaration/"="/before':      'eq_before',
     'keyword_argument/"="/before':        ['eq_before', 'tight'],
@@ -137,10 +149,31 @@ declaring a different default there. That is exactly today's behaviour: python's
 default id. A binding may also name a bare arm, for a position that belongs to
 no group and therefore moves only by its own address.
 
-The generated TypeScript `Options` type is `options` minus `_bindings`: the
-named keys a consumer sets, with the addresses each reaches resolved at
-codegen. `LABELS` stops being a table derived by scanning repeated label
-strings and becomes what was written.
+### The generated surface
+
+`_bindings` is the single source for both faces of the TypeScript `Options`
+type. A binding's value becomes a flat named key; its key becomes a nested
+path:
+
+```ts
+export type Options = {
+  block_body_before?: Spacing;
+  eq_before?: Spacing;
+} & {
+  block?:                  { '{': { after?: Spacing } };
+  keyword_argument?:       { '=': { before?: Spacing } };
+  token_tree_punctuation?: { ',': { after?: Spacing } };
+};
+```
+
+A consumer sets the name to move every bound address, or the nested address to
+move one site. The site-set rule adjudicates without a second mechanism: an
+address matches a subset of what its name matches, so the address wins. This is
+today's `eq_before` versus `keyword_argument: { eq_before }`, with the nesting
+mirroring the path rather than flattening it into a `<slot>_<label>` string.
+
+`LABELS` stops being a table derived by scanning repeated label strings and
+becomes what was written.
 
 `_bindings` keys are full paths, so the block is flat and its keys are distinct
 by construction. Both blocks reject a duplicate key at load time rather than
@@ -163,8 +196,8 @@ ordering.
 
 Specificity is defined on the site set rather than on path length, because two
 paths can reach one site from different roots — `token_tree_punctuation/","/after`
-and `delim_token_tree_paren/delim_tokens:/end` both name the gap after a
-trailing comma — and neither is a prefix of the other. Two declarations whose
+and `delim_token_tree_paren/delim_tokens:/separator/after` can both reach one
+gap — and neither is a prefix of the other. Two declarations whose
 site sets overlap without either containing the other are a conflict, reported
 at load time. Within a single root the rule degenerates to the longer path
 winning.
@@ -243,7 +276,7 @@ never exposes them, so no caller can set one and none does.
 | --- | --- |
 | `<tok>_<side>` seam labels | a literal or structural segment in the path |
 | `<slot>_separator_space[_<side>]` | `<slot>:/separator[/<side>]` |
-| `<kind>_start` / `_end` flanks | `<slot>:/start` / `/end` |
+| `<kind>_start` / `_end` flanks | retired — the delimiter's seams reach the same gap |
 | `<kind>_before` / `_after` kind edges | `<kind>/before` / `/after` |
 | flank-supertype fan-out, `SUPERTYPE_MEMBERS` | a `(supertype)` segment expanding to its members |
 | `LABELS` as a derived scan | `options._bindings` as written |
