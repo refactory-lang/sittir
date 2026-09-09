@@ -74,9 +74,10 @@ impl From<KindId> for u16 {
     }
 }
 
-/// Leading / trailing trivia (comments) for a `NodeData`. Attached by
-/// `$trivia()` on the TS side; carried across the wire for native
-/// render support. Mirrors `NodeTrivia` in `@sittir/types`.
+/// Leading / trailing trivia (comments) for a `NodeData`. A read computes
+/// it from the node's siblings; `$trivia()` attaches it on the TS side.
+/// Carried across the wire for native render support. Mirrors
+/// `NodeTrivia` in `@sittir/types`.
 ///
 /// Each entry is a fully-formed `NodeData` (e.g. a `line_comment` or
 /// `block_comment` factory node) that renders independently via its own
@@ -139,13 +140,17 @@ pub struct NodeData {
     /// `None` on root nodes and factory-constructed nodes.
     pub child_index: Option<u16>,
 
-    /// Leading / trailing trivia (comments) attached via `$trivia()`.
-    /// Present only on factory-constructed nodes that have had trivia
-    /// attached — `readNode` never sets this. Each trivia item is a
-    /// fully-formed `NodeData` (e.g. a `line_comment` or `block_comment`
-    /// factory node) that renders independently via its own template.
+    /// Leading / trailing trivia: comments and the other tree-sitter extras
+    /// `read_children` skips because they carry no field name. A read fills
+    /// this from the node's siblings — see `read_node::compute_trivia` for
+    /// which run of extras attaches to which side, and for the one shape
+    /// that has nowhere to attach. A factory-constructed node gets it from
+    /// `$trivia()`, and both a `$with` rebuild and construction from a read
+    /// carry it onto the node they return, since trivia is not config.
     ///
-    /// Mirrors `NodeTrivia` in `@sittir/types` (spec 023 T016).
+    /// Each entry is a fully-formed `NodeData` (e.g. a `line_comment`) that
+    /// renders independently via its own template. Mirrors `NodeTrivia` in
+    /// `@sittir/types`.
     pub trivia_data: Option<NodeTrivia>,
 
     /// Document-order route names (field or kind) of this node's named
