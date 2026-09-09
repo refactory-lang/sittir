@@ -12,6 +12,7 @@ export interface SiteAddressInput {
 	readonly kind: string;
 	readonly slot: string;
 	readonly address: string;
+	readonly label: string;
 }
 
 export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
@@ -43,9 +44,12 @@ export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLi
 
 	const spacing = parseSpacingLabel(site.address);
 	if (spacing !== undefined) {
+		const declared = parseSpacingLabel(site.label);
+		const text = declared === undefined ? undefined : anonTokenText(kindEntries, declared.token);
 		const separator: readonly PreferenceSegment[] = [
 			{ kind: 'fieldName', name: site.slot },
-			{ kind: 'name', name: 'separator' }
+			{ kind: 'name', name: 'separator' },
+			...(text === undefined ? [] : [{ kind: 'literal', text } as PreferenceSegment])
 		];
 		return spacing.side === undefined ? [kind, ...separator] : [kind, ...separator, { kind: 'name', name: spacing.side }];
 	}

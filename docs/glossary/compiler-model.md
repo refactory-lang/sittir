@@ -3798,3 +3798,16 @@ The block is carried unread from `wire()` through `RawGrammar` to here rather
 than being read where it is written. Reading it needs the real kind set, to
 reject a virtual label that shadows a kind the grammar has, and wire has only
 rule names.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf` — the separator's token
+
+A separator gap names the token it flanks:
+`(arguments_elements)/element:/separator/","/before`. The token is read from the
+site's label, which is the only place it is recorded — the address says which
+slot and which side, and the label says which token.
+
+Without it a grammar-wide fact has nowhere to live. A comma's leading gap is one
+rule across every comma-separated list in a grammar, and every list has a
+different kind and slot, so the token is the only thing they share. With the
+token in the path, `_/_/separator/","/before` is that rule and a longer path
+under one kind is an exception to it, ranked by the ordinary subset test.

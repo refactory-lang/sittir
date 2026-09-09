@@ -15,11 +15,11 @@ const ENTRIES: readonly KindEntryLike[] = [
 	{ kind: 'block', symbolName: 'block' }
 ];
 
-const site = (kind: string, address: string, slot = 'x'): RuleSpacingSite => ({
+const site = (kind: string, address: string, slot = 'x', label = address): RuleSpacingSite => ({
 	kind,
 	slot,
 	address,
-	label: address,
+	label,
 	side: 'before',
 	defaultArm: 'tight',
 	arms: ['tight', 'space']
@@ -188,5 +188,55 @@ describe('resolveBindings', () => {
 			sites
 		);
 		expect(out.size).toBe(2);
+	});
+});
+
+describe('a separator gap names its token', () => {
+	it('puts the separator token between the position and the side', () => {
+		const [addressed] = addressSites(
+			[site('arguments', 'elements_separator_space_before', 'elements', 'comma_separator_space_before')],
+			ENTRIES
+		);
+		expect(addressed!.path).toEqual([
+			{ kind: 'kind-match', name: 'arguments' },
+			{ kind: 'fieldName', name: 'elements' },
+			{ kind: 'name', name: 'separator' },
+			{ kind: 'literal', text: ',' },
+			{ kind: 'name', name: 'before' }
+		]);
+	});
+
+	it('lets one address reach every comma separator, whatever kind holds it', () => {
+		const sites = addressSites(
+			[
+				site('arguments', 'elements_separator_space_before', 'elements', 'comma_separator_space_before'),
+				site('tuple_type', 'types_separator_space_before', 'types', 'comma_separator_space_before'),
+				site('object_type', 'content_separator_space_before', 'content', 'colon_separator_space_before')
+			],
+			ENTRIES
+		);
+		const matched = matchAddress(parsePreferencePath('_/_/separator/","/before'), sites);
+		expect(matched.map((s) => s.kind)).toEqual(['arguments', 'tuple_type']);
+	});
+
+	it('lets one kind take an exception to that rule', () => {
+		const sites = addressSites(
+			[
+				site('arguments', 'elements_separator_space_before', 'elements', 'comma_separator_space_before'),
+				site('tuple_type', 'types_separator_space_before', 'types', 'comma_separator_space_before')
+			],
+			ENTRIES
+		);
+		const arms = resolveBindings(
+			[
+				{ path: 'comma/before', arm: 'tight' },
+				{ path: 'tuple_type/types:/separator/","/before', arm: 'space' }
+			],
+			[{ address: '_/_/separator/","/before', label: 'comma/before' }],
+			sites
+		);
+		const bySite = new Map([...arms].map(([i, arm]) => [sites[i]!.kind, arm]));
+		expect(bySite.get('arguments')).toBe('tight');
+		expect(bySite.get('tuple_type')).toBe('space');
 	});
 });

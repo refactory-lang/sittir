@@ -1206,7 +1206,8 @@ export interface AddressBranch {
 	readonly 'arguments/)': 'after' | 'before';
 	readonly arguments_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'arguments_elements/element': 'end' | 'separator' | 'start';
-	readonly 'arguments_elements/element/separator': 'after' | 'before';
+	readonly 'arguments_elements/element/separator': ',';
+	readonly 'arguments_elements/element/separator/,': 'after' | 'before';
 	readonly array_expression_list: '[' | ']' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
 	readonly 'array_expression_list/[': 'after' | 'before';
 	readonly 'array_expression_list/]': 'after' | 'before';
@@ -1279,7 +1280,8 @@ export interface AddressBranch {
 	readonly 'closure_expression_block/->': 'after' | 'before';
 	readonly closure_parameters: 'after' | 'before' | 'parameters' | '|';
 	readonly 'closure_parameters/parameters': 'end' | 'separator' | 'start';
-	readonly 'closure_parameters/parameters/separator': 'after' | 'before';
+	readonly 'closure_parameters/parameters/separator': ',';
+	readonly 'closure_parameters/parameters/separator/,': 'after' | 'before';
 	readonly 'closure_parameters/|': 'after' | 'before';
 	readonly compound_assignment_expr: 'after' | 'before';
 	readonly compound_assignment_expr_operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
@@ -1335,7 +1337,8 @@ export interface AddressBranch {
 	readonly 'enum_variant_list/}': 'after' | 'before';
 	readonly enum_variant_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'enum_variant_list_elements/element': 'end' | 'separator' | 'start';
-	readonly 'enum_variant_list_elements/element/separator': 'after' | 'before';
+	readonly 'enum_variant_list_elements/element/separator': ',';
+	readonly 'enum_variant_list_elements/element/separator/,': 'after' | 'before';
 	readonly expression_statement_with_semi: ';' | 'after' | 'before';
 	readonly 'expression_statement_with_semi/;': 'after' | 'before';
 	readonly extern_crate_declaration: ';' | 'after' | 'as' | 'before' | 'extern';
@@ -1351,7 +1354,8 @@ export interface AddressBranch {
 	readonly 'field_declaration_list/}': 'after' | 'before';
 	readonly field_declaration_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'field_declaration_list_elements/element': 'end' | 'separator' | 'start';
-	readonly 'field_declaration_list_elements/element/separator': 'after' | 'before';
+	readonly 'field_declaration_list_elements/element/separator': ',';
+	readonly 'field_declaration_list_elements/element/separator/,': 'after' | 'before';
 	readonly field_expression: '.' | 'after' | 'before';
 	readonly 'field_expression/.': 'after' | 'before';
 	readonly field_initializer: ':' | 'after' | 'attribute_item' | 'attribute_item_separator_space' | 'before';
@@ -1362,7 +1366,8 @@ export interface AddressBranch {
 	readonly 'field_initializer_list/}': 'after' | 'before';
 	readonly field_initializer_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'field_initializer_list_elements/element': 'end' | 'separator' | 'start';
-	readonly 'field_initializer_list_elements/element/separator': 'after' | 'before';
+	readonly 'field_initializer_list_elements/element/separator': ',';
+	readonly 'field_initializer_list_elements/element/separator/,': 'after' | 'before';
 	readonly field_pattern: 'after' | 'before';
 	readonly field_pattern_named: ':' | 'after' | 'before';
 	readonly 'field_pattern_named/:': 'after' | 'before';
@@ -1425,7 +1430,8 @@ export interface AddressBranch {
 	readonly let_chain: '&&' | 'right';
 	readonly 'let_chain/&&': 'after' | 'before';
 	readonly 'let_chain/right': 'separator';
-	readonly 'let_chain/right/separator': 'after' | 'before';
+	readonly 'let_chain/right/separator': '&&';
+	readonly 'let_chain/right/separator/&&': 'after' | 'before';
 	readonly let_condition: '=' | 'after' | 'before' | 'let';
 	readonly 'let_condition/=': 'after' | 'before';
 	readonly 'let_condition/let': 'after' | 'before';
@@ -1440,7 +1446,8 @@ export interface AddressBranch {
 	readonly lifetime_parameter: 'after' | 'before';
 	readonly lifetimes: 'after' | 'before' | 'lifetime' | 'lifetime_delimiter';
 	readonly 'lifetimes/lifetime': 'end' | 'separator' | 'start';
-	readonly 'lifetimes/lifetime/separator': 'after' | 'before';
+	readonly 'lifetimes/lifetime/separator': ',';
+	readonly 'lifetimes/lifetime/separator/,': 'after' | 'before';
 	readonly line_comment: '//' | 'after' | 'before';
 	readonly 'line_comment///': 'after' | 'before';
 	readonly line_comment_doc_inner: 'after' | 'before';
@@ -1467,7 +1474,8 @@ export interface AddressBranch {
 	readonly 'macro_rule/=>': 'after' | 'before';
 	readonly macro_rules: 'after' | 'before' | 'macro_rule' | 'macro_rule_delimiter';
 	readonly 'macro_rules/macro_rule': 'end' | 'separator' | 'start';
-	readonly 'macro_rules/macro_rule/separator': 'after' | 'before';
+	readonly 'macro_rules/macro_rule/separator': ';';
+	readonly 'macro_rules/macro_rule/separator/;': 'after' | 'before';
 	readonly match_arm: '=>' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
 	readonly 'match_arm/=>': 'after' | 'before';
 	readonly 'match_arm/attributes': 'end' | 'start';
@@ -1496,7 +1504,8 @@ export interface AddressBranch {
 	readonly 'ordered_field_declaration_list/)': 'after' | 'before';
 	readonly ordered_field_declaration_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'ordered_field_declaration_list_elements/element': 'end' | 'separator' | 'start';
-	readonly 'ordered_field_declaration_list_elements/element/separator': 'after' | 'before';
+	readonly 'ordered_field_declaration_list_elements/element/separator': ',';
+	readonly 'ordered_field_declaration_list_elements/element/separator/,': 'after' | 'before';
 	readonly parameter: ':' | 'after' | 'before';
 	readonly 'parameter/:': 'after' | 'before';
 	readonly parameters: '(' | ')' | 'after' | 'before';
@@ -1504,13 +1513,15 @@ export interface AddressBranch {
 	readonly 'parameters/)': 'after' | 'before';
 	readonly parameters_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'parameters_elements/element': 'end' | 'separator' | 'start';
-	readonly 'parameters_elements/element/separator': 'after' | 'before';
+	readonly 'parameters_elements/element/separator': ',';
+	readonly 'parameters_elements/element/separator/,': 'after' | 'before';
 	readonly parenthesized_expression: '(' | ')' | 'after' | 'before';
 	readonly 'parenthesized_expression/(': 'after' | 'before';
 	readonly 'parenthesized_expression/)': 'after' | 'before';
 	readonly patterns: 'after' | 'before' | 'pattern' | 'pattern_delimiter';
 	readonly 'patterns/pattern': 'end' | 'separator' | 'start';
-	readonly 'patterns/pattern/separator': 'after' | 'before';
+	readonly 'patterns/pattern/separator': ',';
+	readonly 'patterns/pattern/separator/,': 'after' | 'before';
 	readonly pointer_type: '*' | 'after' | 'before';
 	readonly 'pointer_type/*': 'after' | 'before';
 	readonly qualified_type: 'after' | 'as' | 'before';
@@ -1577,7 +1588,8 @@ export interface AddressBranch {
 	readonly 'struct_pattern/}': 'after' | 'before';
 	readonly struct_pattern_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'struct_pattern_elements/element': 'end' | 'separator' | 'start';
-	readonly 'struct_pattern_elements/element/separator': 'after' | 'before';
+	readonly 'struct_pattern_elements/element/separator': ',';
+	readonly 'struct_pattern_elements/element/separator/,': 'after' | 'before';
 	readonly token_binding_pattern: ':' | 'after' | 'before' | 'type';
 	readonly 'token_binding_pattern/:': 'after' | 'before';
 	readonly 'token_binding_pattern/type': 'after' | 'before';
@@ -1737,7 +1749,8 @@ export interface AddressBranch {
 	readonly trait_bounds: ':' | 'after' | 'before' | 'bounds';
 	readonly 'trait_bounds/:': 'after' | 'before';
 	readonly 'trait_bounds/bounds': 'end' | 'separator' | 'start';
-	readonly 'trait_bounds/bounds/separator': 'after' | 'before';
+	readonly 'trait_bounds/bounds/separator': '+';
+	readonly 'trait_bounds/bounds/separator/+': 'after' | 'before';
 	readonly trait_item: 'after' | 'before' | 'trait';
 	readonly 'trait_item/trait': 'after' | 'before';
 	readonly try_block: 'after' | 'before' | 'try';
@@ -1750,13 +1763,15 @@ export interface AddressBranch {
 	readonly 'tuple_expression/attributes': 'end' | 'start';
 	readonly tuple_expression_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'tuple_expression_elements/element': 'end' | 'separator' | 'start';
-	readonly 'tuple_expression_elements/element/separator': 'after' | 'before';
+	readonly 'tuple_expression_elements/element/separator': ',';
+	readonly 'tuple_expression_elements/element/separator/,': 'after' | 'before';
 	readonly tuple_pattern: '(' | ')' | 'after' | 'before';
 	readonly 'tuple_pattern/(': 'after' | 'before';
 	readonly 'tuple_pattern/)': 'after' | 'before';
 	readonly tuple_pattern_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'tuple_pattern_elements/element': 'end' | 'separator' | 'start';
-	readonly 'tuple_pattern_elements/element/separator': 'after' | 'before';
+	readonly 'tuple_pattern_elements/element/separator': ',';
+	readonly 'tuple_pattern_elements/element/separator/,': 'after' | 'before';
 	readonly tuple_struct_pattern: '(' | ')' | 'after' | 'before';
 	readonly 'tuple_struct_pattern/(': 'after' | 'before';
 	readonly 'tuple_struct_pattern/)': 'after' | 'before';
@@ -1765,14 +1780,16 @@ export interface AddressBranch {
 	readonly 'tuple_type/)': 'after' | 'before';
 	readonly tuple_type_elements: 'after' | 'before' | 'type' | 'type_delimiter';
 	readonly 'tuple_type_elements/type': 'end' | 'separator' | 'start';
-	readonly 'tuple_type_elements/type/separator': 'after' | 'before';
+	readonly 'tuple_type_elements/type/separator': ',';
+	readonly 'tuple_type_elements/type/separator/,': 'after' | 'before';
 	readonly type_argument: 'after' | 'before';
 	readonly type_arguments: '<' | '>' | 'after' | 'before';
 	readonly 'type_arguments/<': 'after' | 'before';
 	readonly 'type_arguments/>': 'after' | 'before';
 	readonly type_arguments_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'type_arguments_elements/element': 'end' | 'separator' | 'start';
-	readonly 'type_arguments_elements/element/separator': 'after' | 'before';
+	readonly 'type_arguments_elements/element/separator': ',';
+	readonly 'type_arguments_elements/element/separator/,': 'after' | 'before';
 	readonly type_binding: '=' | 'after' | 'before';
 	readonly 'type_binding/=': 'after' | 'before';
 	readonly type_cast_expression: 'after' | 'as' | 'before';
@@ -1788,7 +1805,8 @@ export interface AddressBranch {
 	readonly 'type_parameters/>': 'after' | 'before';
 	readonly type_parameters_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'type_parameters_elements/element': 'end' | 'separator' | 'start';
-	readonly 'type_parameters_elements/element/separator': 'after' | 'before';
+	readonly 'type_parameters_elements/element/separator': ',';
+	readonly 'type_parameters_elements/element/separator/,': 'after' | 'before';
 	readonly unary_expression: 'after' | 'before' | 'operator';
 	readonly 'unary_expression/operator': 'after' | 'before';
 	readonly union_item: 'after' | 'before' | 'union';
@@ -1809,10 +1827,12 @@ export interface AddressBranch {
 	readonly 'use_bounds/use': 'after' | 'before';
 	readonly use_bounds_elements: 'after' | 'before' | 'element' | 'element_delimiter';
 	readonly 'use_bounds_elements/element': 'end' | 'separator' | 'start';
-	readonly 'use_bounds_elements/element/separator': 'after' | 'before';
+	readonly 'use_bounds_elements/element/separator': ',';
+	readonly 'use_bounds_elements/element/separator/,': 'after' | 'before';
 	readonly use_clauses: 'after' | 'before' | 'use_clause' | 'use_clause_delimiter';
 	readonly 'use_clauses/use_clause': 'end' | 'separator' | 'start';
-	readonly 'use_clauses/use_clause/separator': 'after' | 'before';
+	readonly 'use_clauses/use_clause/separator': ',';
+	readonly 'use_clauses/use_clause/separator/,': 'after' | 'before';
 	readonly use_declaration: ';' | 'after' | 'before' | 'use';
 	readonly 'use_declaration/;': 'after' | 'before';
 	readonly 'use_declaration/use': 'after' | 'before';
@@ -1836,7 +1856,8 @@ export interface AddressBranch {
 	readonly where_predicate: 'after' | 'before';
 	readonly where_predicates: 'after' | 'before' | 'where_predicate' | 'where_predicate_delimiter';
 	readonly 'where_predicates/where_predicate': 'end' | 'separator' | 'start';
-	readonly 'where_predicates/where_predicate/separator': 'after' | 'before';
+	readonly 'where_predicates/where_predicate/separator': ',';
+	readonly 'where_predicates/where_predicate/separator/,': 'after' | 'before';
 	readonly while_expression: ':' | 'after' | 'before' | 'while';
 	readonly 'while_expression/:': 'after' | 'before';
 	readonly 'while_expression/while': 'after' | 'before';
@@ -1861,8 +1882,8 @@ export interface AddressLeaf {
 	readonly 'arguments_elements/after': Whitespace;
 	readonly 'arguments_elements/before': Whitespace;
 	readonly 'arguments_elements/element/end': Whitespace;
-	readonly 'arguments_elements/element/separator/after': Spacing;
-	readonly 'arguments_elements/element/separator/before': Spacing;
+	readonly 'arguments_elements/element/separator/,/after': Spacing;
+	readonly 'arguments_elements/element/separator/,/before': Spacing;
 	readonly 'arguments_elements/element/start': Whitespace;
 	readonly 'arguments_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'array_expression_list/[/after': Whitespace;
@@ -2011,8 +2032,8 @@ export interface AddressLeaf {
 	readonly 'closure_parameters/after': Whitespace;
 	readonly 'closure_parameters/before': Whitespace;
 	readonly 'closure_parameters/parameters/end': Whitespace;
-	readonly 'closure_parameters/parameters/separator/after': Spacing;
-	readonly 'closure_parameters/parameters/separator/before': Spacing;
+	readonly 'closure_parameters/parameters/separator/,/after': Spacing;
+	readonly 'closure_parameters/parameters/separator/,/before': Spacing;
 	readonly 'closure_parameters/parameters/start': Whitespace;
 	readonly 'closure_parameters/|/after': Whitespace;
 	readonly 'closure_parameters/|/before': Whitespace;
@@ -2125,8 +2146,8 @@ export interface AddressLeaf {
 	readonly 'enum_variant_list_elements/after': Whitespace;
 	readonly 'enum_variant_list_elements/before': Whitespace;
 	readonly 'enum_variant_list_elements/element/end': Whitespace;
-	readonly 'enum_variant_list_elements/element/separator/after': Spacing;
-	readonly 'enum_variant_list_elements/element/separator/before': Spacing;
+	readonly 'enum_variant_list_elements/element/separator/,/after': Spacing;
+	readonly 'enum_variant_list_elements/element/separator/,/before': Spacing;
 	readonly 'enum_variant_list_elements/element/start': Whitespace;
 	readonly 'enum_variant_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'expression_statement_with_semi/;/after': Whitespace;
@@ -2158,8 +2179,8 @@ export interface AddressLeaf {
 	readonly 'field_declaration_list_elements/after': Whitespace;
 	readonly 'field_declaration_list_elements/before': Whitespace;
 	readonly 'field_declaration_list_elements/element/end': Whitespace;
-	readonly 'field_declaration_list_elements/element/separator/after': Spacing;
-	readonly 'field_declaration_list_elements/element/separator/before': Spacing;
+	readonly 'field_declaration_list_elements/element/separator/,/after': Spacing;
+	readonly 'field_declaration_list_elements/element/separator/,/before': Spacing;
 	readonly 'field_declaration_list_elements/element/start': Whitespace;
 	readonly 'field_declaration_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'field_expression/./after': Whitespace;
@@ -2182,8 +2203,8 @@ export interface AddressLeaf {
 	readonly 'field_initializer_list_elements/after': Whitespace;
 	readonly 'field_initializer_list_elements/before': Whitespace;
 	readonly 'field_initializer_list_elements/element/end': Whitespace;
-	readonly 'field_initializer_list_elements/element/separator/after': Spacing;
-	readonly 'field_initializer_list_elements/element/separator/before': Spacing;
+	readonly 'field_initializer_list_elements/element/separator/,/after': Spacing;
+	readonly 'field_initializer_list_elements/element/separator/,/before': Spacing;
 	readonly 'field_initializer_list_elements/element/start': Whitespace;
 	readonly 'field_initializer_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'field_pattern/after': Whitespace;
@@ -2308,8 +2329,8 @@ export interface AddressLeaf {
 	readonly 'last_match_arm/before': Whitespace;
 	readonly 'let_chain/&&/after': Whitespace;
 	readonly 'let_chain/&&/before': Whitespace;
-	readonly 'let_chain/right/separator/after': Spacing;
-	readonly 'let_chain/right/separator/before': Spacing;
+	readonly 'let_chain/right/separator/&&/after': Spacing;
+	readonly 'let_chain/right/separator/&&/before': Spacing;
 	readonly 'let_condition/=/after': Whitespace;
 	readonly 'let_condition/=/before': Whitespace;
 	readonly 'let_condition/after': Whitespace;
@@ -2337,8 +2358,8 @@ export interface AddressLeaf {
 	readonly 'lifetimes/after': Whitespace;
 	readonly 'lifetimes/before': Whitespace;
 	readonly 'lifetimes/lifetime/end': Whitespace;
-	readonly 'lifetimes/lifetime/separator/after': Spacing;
-	readonly 'lifetimes/lifetime/separator/before': Spacing;
+	readonly 'lifetimes/lifetime/separator/,/after': Spacing;
+	readonly 'lifetimes/lifetime/separator/,/before': Spacing;
 	readonly 'lifetimes/lifetime/start': Whitespace;
 	readonly 'lifetimes/lifetime_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'line_comment////after': Whitespace;
@@ -2392,8 +2413,8 @@ export interface AddressLeaf {
 	readonly 'macro_rules/after': Whitespace;
 	readonly 'macro_rules/before': Whitespace;
 	readonly 'macro_rules/macro_rule/end': Whitespace;
-	readonly 'macro_rules/macro_rule/separator/after': Spacing;
-	readonly 'macro_rules/macro_rule/separator/before': Spacing;
+	readonly 'macro_rules/macro_rule/separator/;/after': Spacing;
+	readonly 'macro_rules/macro_rule/separator/;/before': Spacing;
 	readonly 'macro_rules/macro_rule/start': Whitespace;
 	readonly 'macro_rules/macro_rule_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'match_arm/=>/after': Whitespace;
@@ -2453,8 +2474,8 @@ export interface AddressLeaf {
 	readonly 'ordered_field_declaration_list_elements/after': Whitespace;
 	readonly 'ordered_field_declaration_list_elements/before': Whitespace;
 	readonly 'ordered_field_declaration_list_elements/element/end': Whitespace;
-	readonly 'ordered_field_declaration_list_elements/element/separator/after': Spacing;
-	readonly 'ordered_field_declaration_list_elements/element/separator/before': Spacing;
+	readonly 'ordered_field_declaration_list_elements/element/separator/,/after': Spacing;
+	readonly 'ordered_field_declaration_list_elements/element/separator/,/before': Spacing;
 	readonly 'ordered_field_declaration_list_elements/element/start': Whitespace;
 	readonly 'ordered_field_declaration_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'parameter/:/after': Whitespace;
@@ -2470,8 +2491,8 @@ export interface AddressLeaf {
 	readonly 'parameters_elements/after': Whitespace;
 	readonly 'parameters_elements/before': Whitespace;
 	readonly 'parameters_elements/element/end': Whitespace;
-	readonly 'parameters_elements/element/separator/after': Spacing;
-	readonly 'parameters_elements/element/separator/before': Spacing;
+	readonly 'parameters_elements/element/separator/,/after': Spacing;
+	readonly 'parameters_elements/element/separator/,/before': Spacing;
 	readonly 'parameters_elements/element/start': Whitespace;
 	readonly 'parameters_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'parenthesized_expression/(/after': Whitespace;
@@ -2483,8 +2504,8 @@ export interface AddressLeaf {
 	readonly 'patterns/after': Whitespace;
 	readonly 'patterns/before': Whitespace;
 	readonly 'patterns/pattern/end': Whitespace;
-	readonly 'patterns/pattern/separator/after': Spacing;
-	readonly 'patterns/pattern/separator/before': Spacing;
+	readonly 'patterns/pattern/separator/,/after': Spacing;
+	readonly 'patterns/pattern/separator/,/before': Spacing;
 	readonly 'patterns/pattern/start': Whitespace;
 	readonly 'patterns/pattern_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'pointer_type/*/after': Whitespace;
@@ -2616,8 +2637,8 @@ export interface AddressLeaf {
 	readonly 'struct_pattern_elements/after': Whitespace;
 	readonly 'struct_pattern_elements/before': Whitespace;
 	readonly 'struct_pattern_elements/element/end': Whitespace;
-	readonly 'struct_pattern_elements/element/separator/after': Spacing;
-	readonly 'struct_pattern_elements/element/separator/before': Spacing;
+	readonly 'struct_pattern_elements/element/separator/,/after': Spacing;
+	readonly 'struct_pattern_elements/element/separator/,/before': Spacing;
 	readonly 'struct_pattern_elements/element/start': Whitespace;
 	readonly 'struct_pattern_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'token_binding_pattern/:/after': Whitespace;
@@ -2801,8 +2822,8 @@ export interface AddressLeaf {
 	readonly 'trait_bounds/after': Whitespace;
 	readonly 'trait_bounds/before': Whitespace;
 	readonly 'trait_bounds/bounds/end': Whitespace;
-	readonly 'trait_bounds/bounds/separator/after': Spacing;
-	readonly 'trait_bounds/bounds/separator/before': Spacing;
+	readonly 'trait_bounds/bounds/separator/+/after': Spacing;
+	readonly 'trait_bounds/bounds/separator/+/before': Spacing;
 	readonly 'trait_bounds/bounds/start': Whitespace;
 	readonly 'trait_item/after': Whitespace;
 	readonly 'trait_item/before': Whitespace;
@@ -2828,8 +2849,8 @@ export interface AddressLeaf {
 	readonly 'tuple_expression_elements/after': Whitespace;
 	readonly 'tuple_expression_elements/before': Whitespace;
 	readonly 'tuple_expression_elements/element/end': Whitespace;
-	readonly 'tuple_expression_elements/element/separator/after': Spacing;
-	readonly 'tuple_expression_elements/element/separator/before': Spacing;
+	readonly 'tuple_expression_elements/element/separator/,/after': Spacing;
+	readonly 'tuple_expression_elements/element/separator/,/before': Spacing;
 	readonly 'tuple_expression_elements/element/start': Whitespace;
 	readonly 'tuple_expression_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'tuple_pattern/(/after': Whitespace;
@@ -2841,8 +2862,8 @@ export interface AddressLeaf {
 	readonly 'tuple_pattern_elements/after': Whitespace;
 	readonly 'tuple_pattern_elements/before': Whitespace;
 	readonly 'tuple_pattern_elements/element/end': Whitespace;
-	readonly 'tuple_pattern_elements/element/separator/after': Spacing;
-	readonly 'tuple_pattern_elements/element/separator/before': Spacing;
+	readonly 'tuple_pattern_elements/element/separator/,/after': Spacing;
+	readonly 'tuple_pattern_elements/element/separator/,/before': Spacing;
 	readonly 'tuple_pattern_elements/element/start': Whitespace;
 	readonly 'tuple_pattern_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'tuple_struct_pattern/(/after': Whitespace;
@@ -2860,8 +2881,8 @@ export interface AddressLeaf {
 	readonly 'tuple_type_elements/after': Whitespace;
 	readonly 'tuple_type_elements/before': Whitespace;
 	readonly 'tuple_type_elements/type/end': Whitespace;
-	readonly 'tuple_type_elements/type/separator/after': Spacing;
-	readonly 'tuple_type_elements/type/separator/before': Spacing;
+	readonly 'tuple_type_elements/type/separator/,/after': Spacing;
+	readonly 'tuple_type_elements/type/separator/,/before': Spacing;
 	readonly 'tuple_type_elements/type/start': Whitespace;
 	readonly 'tuple_type_elements/type_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'type_argument/after': Whitespace;
@@ -2875,8 +2896,8 @@ export interface AddressLeaf {
 	readonly 'type_arguments_elements/after': Whitespace;
 	readonly 'type_arguments_elements/before': Whitespace;
 	readonly 'type_arguments_elements/element/end': Whitespace;
-	readonly 'type_arguments_elements/element/separator/after': Spacing;
-	readonly 'type_arguments_elements/element/separator/before': Spacing;
+	readonly 'type_arguments_elements/element/separator/,/after': Spacing;
+	readonly 'type_arguments_elements/element/separator/,/before': Spacing;
 	readonly 'type_arguments_elements/element/start': Whitespace;
 	readonly 'type_arguments_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'type_binding/=/after': Whitespace;
@@ -2908,8 +2929,8 @@ export interface AddressLeaf {
 	readonly 'type_parameters_elements/after': Whitespace;
 	readonly 'type_parameters_elements/before': Whitespace;
 	readonly 'type_parameters_elements/element/end': Whitespace;
-	readonly 'type_parameters_elements/element/separator/after': Spacing;
-	readonly 'type_parameters_elements/element/separator/before': Spacing;
+	readonly 'type_parameters_elements/element/separator/,/after': Spacing;
+	readonly 'type_parameters_elements/element/separator/,/before': Spacing;
 	readonly 'type_parameters_elements/element/start': Whitespace;
 	readonly 'type_parameters_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'unary_expression/after': Whitespace;
@@ -2943,15 +2964,15 @@ export interface AddressLeaf {
 	readonly 'use_bounds_elements/after': Whitespace;
 	readonly 'use_bounds_elements/before': Whitespace;
 	readonly 'use_bounds_elements/element/end': Whitespace;
-	readonly 'use_bounds_elements/element/separator/after': Spacing;
-	readonly 'use_bounds_elements/element/separator/before': Spacing;
+	readonly 'use_bounds_elements/element/separator/,/after': Spacing;
+	readonly 'use_bounds_elements/element/separator/,/before': Spacing;
 	readonly 'use_bounds_elements/element/start': Whitespace;
 	readonly 'use_bounds_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'use_clauses/after': Whitespace;
 	readonly 'use_clauses/before': Whitespace;
 	readonly 'use_clauses/use_clause/end': Whitespace;
-	readonly 'use_clauses/use_clause/separator/after': Spacing;
-	readonly 'use_clauses/use_clause/separator/before': Spacing;
+	readonly 'use_clauses/use_clause/separator/,/after': Spacing;
+	readonly 'use_clauses/use_clause/separator/,/before': Spacing;
 	readonly 'use_clauses/use_clause/start': Whitespace;
 	readonly 'use_clauses/use_clause_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'use_declaration/;/after': Whitespace;
@@ -2999,8 +3020,8 @@ export interface AddressLeaf {
 	readonly 'where_predicates/after': Whitespace;
 	readonly 'where_predicates/before': Whitespace;
 	readonly 'where_predicates/where_predicate/end': Whitespace;
-	readonly 'where_predicates/where_predicate/separator/after': Spacing;
-	readonly 'where_predicates/where_predicate/separator/before': Spacing;
+	readonly 'where_predicates/where_predicate/separator/,/after': Spacing;
+	readonly 'where_predicates/where_predicate/separator/,/before': Spacing;
 	readonly 'where_predicates/where_predicate/start': Whitespace;
 	readonly 'where_predicates/where_predicate_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'while_expression/:/after': Whitespace;
@@ -3016,8 +3037,11 @@ export interface AddressLeaf {
 }
 
 type AddressLeafOf<P extends string> = P extends keyof AddressLeaf ? AddressLeaf[P] : never;
-type AddressNode3<P extends string> = P extends keyof AddressBranch
+type AddressNode4<P extends string> = P extends keyof AddressBranch
 	? { readonly [K in AddressBranch[P]]?: AddressLeafOf<\`\${P}/\${K}\`> }
+	: AddressLeafOf<P>;
+type AddressNode3<P extends string> = P extends keyof AddressBranch
+	? { readonly [K in AddressBranch[P]]?: AddressNode4<\`\${P}/\${K}\`> }
 	: AddressLeafOf<P>;
 type AddressNode2<P extends string> = P extends keyof AddressBranch
 	? { readonly [K in AddressBranch[P]]?: AddressNode3<\`\${P}/\${K}\`> }
