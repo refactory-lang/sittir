@@ -55,6 +55,16 @@ describe('Evaluate — real tree-sitter grammars', () => {
 		expect(literals.filter((t) => linked.rules[t] !== undefined)).toEqual([]);
 	});
 
+	it.each([
+		['python', (): string => pythonGrammar],
+		['rust', (): string => rustGrammar],
+		['typescript', (): string => tsGrammar]
+	])('%s mints no rule keyed by literal token text', async (_name, grammar) => {
+		const raw = await evaluate(grammar());
+		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });
+		expect(Object.keys(linked.rules).filter((k) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(k))).toEqual([]);
+	});
+
 	it('has rules for key Python constructs', async () => {
 		const raw = await evaluate(pythonGrammar);
 		const ruleNames = Object.keys(raw.rules);
