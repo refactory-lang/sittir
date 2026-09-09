@@ -3717,3 +3717,37 @@ labels tell them apart, since a flank label never parses as a seam label.
 // separator spacing, `<kind>_start` / `<kind>_end` at the top level for an
 // array flank.
 ```
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::addressSites`
+
+Every site with its canonical path, sorted. A site's index in the result is its
+site number, which is what makes a prefix-scoped declaration a contiguous range
+rather than a scan.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf`
+
+A site's address decomposed into path segments. It is the only place the flat
+spellings — seam, separator, flank — are read, so retiring them is a deletion
+here rather than a search.
+
+A token seam becomes a literal segment carrying the token's text, not its
+catalog name: an address names a token the way an author writes it. The two are
+joined through the anonymous-token catalog, which the only caller already
+holds. A seam whose token is the rule's own kind is that kind's edge and takes
+no token segment at all.
+
+The catalog is always in hand where it is needed, because a seam token name is
+minted from it — a site can carry one only if the catalog existed when the site
+was created. The branch that consults no catalog is the kind edge, named from
+the rule's own kind. So a failed lookup means an absent token, never a phase
+that ran too early.
+
+A side is a bare name segment. That is what the canonical order recognises, so
+a kind's own edges sort after everything nested beneath them and each subtree
+stays contiguous.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::matchAddress`
+
+The sites an address names: itself and everything beneath it. A wildcard
+matches any segment and `(_)` any kind, so an address with an interior wildcard
+is a scan while a concrete prefix is a range.
