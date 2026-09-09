@@ -1287,47 +1287,57 @@ Rust's spacing site count is 1149 at the start of this plan. Tasks 1-10 must not
 
 ---
 
-### Task 11: A separator that varies by the element before it
+### Task 11: A sibling gap belongs to the child before it
 
-The separator gap of a slot is one site today, so a list cannot say "blank line
-between items, but not after an attribute". rust's rebuild renders a spurious
-blank line between `#[derive(Debug, Clone, PartialEq, Eq)]` and the `pub enum`
-it decorates, because both are `source_file` statements and the slot's
-separator is `blankline` for all of them.
+The gap between two siblings has three owners today — the preceding child's
+trailing edge, the slot's separator, the following child's leading edge — and
+the writer picks the widest. So a list cannot say "blank line between items,
+but not after an attribute": rust's rebuild renders a spurious blank line
+between `#[derive(Debug, Clone, PartialEq, Eq)]` and the `pub enum` it
+decorates, because both are `source_file` statements and the slot's separator
+is `blankline` for all of them.
 
-This task mints a separator site per admitted element kind, which the address
-grammar can then reach. It is the one task in this plan that adds sites.
+The fix is not a new kind of site. A child's trailing edge already is one —
+`("attribute_item", "attribute_item_after", …)` — it is merely global to the
+kind, and global is wrong: an attribute wants a newline after it among
+statements and a space after it among parameters. This task gives kind edges
+(parent kind, slot, child kind) granularity so the two can differ, and lets a
+slot hand its gaps to its children by declaring its separator `tight`.
+
+No writer change. Once the separator contributes nothing, the preceding
+child's edge is the only mark in the gap, so coalescing has nothing left to
+arbitrate and specificity decides alone.
 
 **Files:**
-- Modify: `packages/codegen/src/compiler/model/render-rules.ts` — `withSpacedSeparator`, `spacingSitesOf`
+- Modify: `packages/codegen/src/compiler/model/render-rules.ts` — `withKindEdges`, `spacingSitesOf`
 - Modify: `packages/codegen/src/compiler/model/__tests__/render-rules.test.ts`
 - Modify: `packages/rust/grammar.sittir.ts`
 - Docs: `docs/glossary/compiler-model.md`
 
 **Interfaces:**
 - Consumes: `AddressedSite`, `resolveBindings` from Tasks 4-5.
-- Produces: a separator site per (kind, slot, element kind), addressed
-  `(<kind>)/<slot>:/(<element kind>)/after`. A slot whose elements are all one
-  kind keeps exactly one site, so the count moves only where a slot is
-  heterogeneous.
+- Produces: a kind-edge site per (parent kind, slot, child kind), addressed
+  `(<parent>)/<slot>:/(<child>)/after`. The existing global `(<child>)/after`
+  stays as the broad address those narrow ones override — subset specificity,
+  no new resolution rule. A slot admitting one child kind keeps one site.
 
 - [ ] **Step 1: Write the failing test**
 
 In `render-rules.test.ts`:
 
 ```ts
-it('mints a separator site per element kind of a heterogeneous slot', () => {
+it('gives a child edge per (slot, child kind) where a slot is heterogeneous', () => {
 	const sites = spacingSitesOf(renderRules, nodeMap).filter(
 		(s) => s.kind === 'source_file' && s.slot === 'statements'
 	);
-	const addresses = sites.map((s) => s.address).sort();
-	expect(addresses).toContain('statements_attribute_item_separator_space');
-	expect(addresses).toContain('statements_enum_item_separator_space');
+	const addresses = sites.map((s) => s.address);
+	expect(addresses).toContain('statements_attribute_item_after');
+	expect(addresses).toContain('statements_enum_item_after');
 });
 
-it('keeps one separator site for a homogeneous slot', () => {
+it('keeps one child edge where a slot admits one kind', () => {
 	const sites = spacingSitesOf(renderRules, nodeMap).filter(
-		(s) => s.kind === 'enum_variant_list_elements' && s.label.endsWith('separator_space_after')
+		(s) => s.kind === 'enum_variant_list_elements' && s.address.endsWith('_after')
 	);
 	expect(sites).toHaveLength(1);
 });
@@ -1336,21 +1346,21 @@ it('keeps one separator site for a homogeneous slot', () => {
 - [ ] **Step 2: Run to verify failure**
 
 ```bash
-pnpm exec vitest run packages/codegen/src/compiler/model/__tests__/render-rules.test.ts -t separator
+pnpm exec vitest run packages/codegen/src/compiler/model/__tests__/render-rules.test.ts -t 'child edge'
 ```
-Expected: FAIL — one site per slot.
+Expected: FAIL — one global edge per child kind.
 
-- [ ] **Step 3: Mint per element kind**
+- [ ] **Step 3: Mint child edges per slot**
 
-In `withSpacedSeparator`, where the gap's parts are built, iterate the slot's
-admitted element kinds (`nodeMap` slot values) instead of emitting one part, and
-give each part a `fieldName` of `siteKey(`${slot}_${elementKind}`, label)`. A
-slot with a single admitted kind emits the current single part unchanged, so
-homogeneous slots keep their site and their address.
+In `withKindEdges`, where `part('before')` and `part('after')` are built for a
+kind, a kind reached as a repeat element also takes a pair addressed by its
+seating: `siteKey(`${slot}_${publicKindName(childKind)}`, seamLabel(...))`.
+A slot whose values resolve to a single kind emits the current single pair
+unchanged, so homogeneous slots keep their site and their address.
 
 The render side selects among them by the element's kind, which `ListView`
-already knows per item — the same shape as the punctuation arm seams: a
-`base + ordinal` lookup rather than a named field per element kind.
+already knows per item — the same `base + ordinal` shape as the punctuation
+arm seams, not a named field per child kind.
 
 - [ ] **Step 4: Run to verify passing**
 
@@ -1363,18 +1373,25 @@ Expected: PASS.
 
 ```bash
 for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts gen --grammar $g --all --output packages/$g/src; done
-git diff --stat -- rust/crates/sittir-*/test-fixtures.json
+git diff --stat -- rust/crates/sittir-rust/test-fixtures.json
 ```
-Expected: **no movement.** Minting alone changes nothing — every new site inherits the arm the single site had.
+Expected: **no movement.** Minting alone changes nothing — every new site
+inherits the arm the single site had.
 
-- [ ] **Step 6: Declare the attribute case**
+- [ ] **Step 6: Delegate the slot and declare the exception**
 
-In `packages/rust/grammar.sittir.ts`:
+In `packages/rust/grammar.sittir.ts`, replace the `source_file` separator
+declaration with:
 
 ```ts
-'(source_file)/statements:/_/after':                'blankline',
+'(source_file)/statements:/separator':              'tight',
+'(source_file)/statements:/(_)/after':              'blankline',
 '(source_file)/statements:/(attribute_item)/after': 'newline',
 ```
+
+`(_)` matches any kind, as in scm, where `_` matches any node at all. The
+second line is the slot's default gap; the third matches a strict subset of it
+and wins.
 
 - [ ] **Step 7: Verify the rebuild**
 
@@ -1383,15 +1400,16 @@ cd rust/crates/sittir-rust && pnpm run build && cd ../../..
 pnpm exec vitest run packages/rust/tests/examples-verify.test.ts
 ```
 Expected: the generated rebuild of `splice.rs` no longer carries a blank line
-between the derive attribute and `pub enum SpliceError`. Blank-line count moves
-from 4 correct / 1 spurious / 3 missing to 4 correct / 0 spurious / 3 missing.
+between the derive attribute and `pub enum SpliceError`, and still carries one
+between every other pair of top-level items. Blank lines move from 4 correct /
+1 spurious / 3 missing to 4 correct / 0 spurious / 3 missing.
 
 - [ ] **Step 8: Record the ratchet move**
 
-The site count rises by the number of heterogeneous slots across the three
-grammars. Record the new ceiling with its reason: sites now distinguish the
-element a separator follows, which is what makes a per-element separator
-declarable at all.
+The site count rises by the number of heterogeneous repeat slots across the
+three grammars. Record the new ceiling with its reason: an edge now
+distinguishes the child it belongs to, which is what makes a per-child gap
+declarable.
 
 - [ ] **Step 9: Full gate and commit**
 
@@ -1399,11 +1417,12 @@ declarable at all.
 pnpm run validate:native && pnpm exec vitest run && cd rust && cargo test -p sittir-core
 ```
 
+
 ## Self-Review
 
 **Spec coverage.** Path segments including literals — Task 1. Sides as segments, three terminals — Tasks 2, 9. Model-addressed — Task 4 (`pathOf` builds from the model's sites, never from a tree query). `options:`/`patches:` split — Task 3. Labels as paths, declared labels win — Task 3. `_bindings` three-form value — Tasks 3, 5. Site-set specificity and conflicts — Task 5. Sorted-path numbering — Task 6. Runs and ranges — Task 7. Both nested TS faces — Task 8. Migration — Task 9. Retirement of the six tables — Task 10.
 
-**Not covered, deliberately:** the render context, `FillOptions` deletion and the per-node option fields are plan 2. Task 11 goes beyond the spec's address grammar into site granularity, because the spec's own worked example — a separator that varies by the element before it — has no site to address until it does. Interior wildcards fall back to a scan (Task 4's `matchAddress` filters rather than ranges) — correct but not optimised, which the spec permits.
+**Not covered, deliberately:** the render context, `FillOptions` deletion and the per-node option fields are plan 2. Task 11 goes beyond the spec's address grammar into site granularity: a child's trailing edge exists but is global to the kind, and a per-slot gap needs it scoped to where the child sits. It needs no writer change, so the spec's non-goal on coalescing holds. Interior wildcards fall back to a scan (Task 4's `matchAddress` filters rather than ranges) — correct but not optimised, which the spec permits.
 
 **Gap found and closed:** the spec's `separator` admitting either whitespace or token kinds needs the arm-family check to survive the rewrite. `resolveBindings` (Task 5) resolves an arm but does not validate it against the site's `arms`. Add to Task 5 Step 3, after `const arm = …`:
 
