@@ -6,6 +6,7 @@ import {
 } from '../../dsl/primitives/preference-path.ts';
 import { findEntryForKindName, type KindEntryLike } from '../generated-metadata.ts';
 import { publicKindName, type RuleSpacingSite } from './render-rules.ts';
+import type { AddressBinding, PathDeclaration } from '../../dsl/wire/options-block.ts';
 
 export interface AddressedSite extends RuleSpacingSite {
 	readonly path: readonly PreferenceSegment[];
@@ -88,4 +89,65 @@ function segmentMatches(a: PreferenceSegment, b: PreferenceSegment): boolean {
 		default:
 			return true;
 	}
+}
+
+export function resolveBindings(
+	declarations: readonly PathDeclaration[],
+	bindings: readonly AddressBinding[],
+	sites: readonly AddressedSite[]
+): Map<number, string> {
+	const indexOf = new Map(sites.map((site, i) => [site, i]));
+	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
+	const labelled = new Set(bindings.map((binding) => binding.label));
+
+	const hitsOf = (address: string): Set<number> =>
+		new Set(matchAddress(addressSegments(address), sites).map((site) => indexOf.get(site)!));
+
+	const entries: { address: string; arm: string; declared: boolean; hits: Set<number> }[] = [];
+
+	for (const binding of bindings) {
+		const arm = armOfLabel.get(binding.label);
+		if (arm === undefined) throw new Error(`options: '${binding.address}' resolves to no arm`);
+		const hits = hitsOf(binding.address);
+		if (hits.size === 0) throw new Error(`options: '${binding.address}' names no site`);
+		entries.push({ address: binding.address, arm, declared: false, hits });
+	}
+
+	for (const declaration of declarations) {
+		const hits = hitsOf(declaration.path);
+		if (hits.size === 0) {
+			if (labelled.has(declaration.path)) continue;
+			throw new Error(`options: '${declaration.path}' names no site`);
+		}
+		entries.push({ address: declaration.path, arm: declaration.arm, declared: true, hits });
+	}
+
+	for (let i = 0; i < entries.length; i++) {
+		for (let j = i + 1; j < entries.length; j++) {
+			const a = entries[i]!.hits;
+			const b = entries[j]!.hits;
+			if (![...a].some((site) => b.has(site))) continue;
+			const nests = [...a].every((site) => b.has(site)) || [...b].every((site) => a.has(site));
+			if (!nests) {
+				throw new Error(
+					`options: '${entries[i]!.address}' and '${entries[j]!.address}' overlap without one containing the other`
+				);
+			}
+		}
+	}
+
+	const out = new Map<number, string>();
+	const order = [...entries].sort((a, b) => b.hits.size - a.hits.size || Number(a.declared) - Number(b.declared));
+	for (const { arm, hits } of order) {
+		for (const site of hits) out.set(site, arm);
+	}
+	return out;
+}
+
+function addressSegments(text: string): readonly PreferenceSegment[] {
+	const segments = parsePreferencePath(text);
+	const head = segments[0];
+	return head !== undefined && head.kind === 'name'
+		? [{ kind: 'kind-match', name: head.name }, ...segments.slice(1)]
+		: segments;
 }

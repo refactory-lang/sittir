@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addressSites, matchAddress } from '../site-addresses.ts';
+import { addressSites, matchAddress, resolveBindings } from '../site-addresses.ts';
 import { parsePreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { RuleSpacingSite } from '../render-rules.ts';
@@ -8,6 +8,10 @@ const ENTRIES: readonly KindEntryLike[] = [
 	{ kind: 'lbrace', symbolName: '{', anon: true },
 	{ kind: 'rbrace', symbolName: '}', anon: true },
 	{ kind: 'lparen', symbolName: '(', anon: true },
+	{ kind: 'comma', symbolName: ',', anon: true },
+	{ kind: 'colon', symbolName: ':', anon: true },
+	{ kind: 'x', symbolName: 'x', anon: true },
+	{ kind: 'y', symbolName: 'y', anon: true },
 	{ kind: 'block', symbolName: 'block' }
 ];
 
@@ -92,5 +96,92 @@ describe('matchAddress', () => {
 	it('returns nothing for an address naming no site', () => {
 		const sites = addressSites([site('block', 'lbrace_after')], ENTRIES);
 		expect(matchAddress(parsePreferencePath('(nowhere)/"{"/after'), sites)).toEqual([]);
+	});
+});
+
+describe('resolveBindings', () => {
+	const punctuation = (): ReturnType<typeof addressSites> =>
+		addressSites(
+			[site('token_tree_punctuation', 'comma_after'), site('token_tree_punctuation', 'colon_after')],
+			ENTRIES
+		);
+	const armsOf = (out: Map<number, string>, sites: ReturnType<typeof addressSites>): Map<string, string> =>
+		new Map([...out].map(([i, arm]) => [sites[i]!.address, arm]));
+
+	it('applies a broad binding to every site it matches', () => {
+		const sites = punctuation();
+		const out = resolveBindings(
+			[{ path: 'punctuation/after', arm: 'space' }],
+			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
+			sites
+		);
+		expect([...out.values()]).toEqual(['space', 'space']);
+	});
+
+	it('lets a narrower declaration win over a broader binding', () => {
+		const sites = punctuation();
+		const out = resolveBindings(
+			[
+				{ path: 'punctuation/after', arm: 'space' },
+				{ path: 'token_tree_punctuation/":"/after', arm: 'tight' }
+			],
+			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
+			sites
+		);
+		const arms = armsOf(out, sites);
+		expect(arms.get('comma_after')).toBe('space');
+		expect(arms.get('colon_after')).toBe('tight');
+	});
+
+	it('lets a declaration win over a binding at the identical address', () => {
+		const sites = addressSites([site('keyword_argument', 'eq_before')], [...ENTRIES, { kind: 'eq', symbolName: '=', anon: true }]);
+		const out = resolveBindings(
+			[
+				{ path: 'assignment/before', arm: 'space' },
+				{ path: 'keyword_argument/"="/before', arm: 'tight' }
+			],
+			[{ address: 'keyword_argument/"="/before', label: 'assignment/before' }],
+			sites
+		);
+		expect([...out.values()]).toEqual(['tight']);
+	});
+
+	it('rejects two addresses whose site sets overlap without nesting', () => {
+		const wide = addressSites([site('a', 'x_after'), site('a', 'y_after'), site('b', 'x_after')], ENTRIES);
+		expect(() =>
+			resolveBindings(
+				[
+					{ path: 'a/after', arm: 'space' },
+					{ path: 'wildcard/after', arm: 'tight' }
+				],
+				[
+					{ address: 'a', label: 'a/after' },
+					{ address: '_/"x"/after', label: 'wildcard/after' }
+				],
+				wide
+			)
+		).toThrow(/overlap/);
+	});
+
+	it('rejects a binding naming no site', () => {
+		expect(() =>
+			resolveBindings([{ path: 'l/after', arm: 'space' }], [{ address: 'nowhere', label: 'l/after' }], punctuation())
+		).toThrow(/names no site/);
+	});
+
+	it('rejects a declaration naming no site and bound to nothing', () => {
+		expect(() => resolveBindings([{ path: 'nowhere/after', arm: 'space' }], [], punctuation())).toThrow(
+			/names no site/
+		);
+	});
+
+	it('allows a label declaration to name no site', () => {
+		const sites = punctuation();
+		const out = resolveBindings(
+			[{ path: 'punctuation/after', arm: 'space' }],
+			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
+			sites
+		);
+		expect(out.size).toBe(2);
 	});
 });

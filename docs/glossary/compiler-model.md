@@ -3751,3 +3751,30 @@ stays contiguous.
 The sites an address names: itself and everything beneath it. A wildcard
 matches any segment and `(_)` any kind, so an address with an interior wildcard
 is a scan while a concrete prefix is a range.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
+
+Each site's arm, with the narrowest address that reaches it winning.
+Specificity is the site set rather than the path length, because two addresses
+can reach one site from different roots with neither a prefix of the other. Two
+addresses whose sets overlap without one containing the other are a conflict,
+reported before anything is written, so an ambiguous pair fails rather than
+resolving by declaration order.
+
+Declarations and bindings are resolved together, because both are an address
+with an arm: a binding takes its arm from the label it names, a declaration
+carries its own. Where the two reach the identical set the declaration wins, so
+a site bound to a label may still default to something else — the binding then
+decides only which key moves it, not what it starts as.
+
+An address naming no site is an error, so a typo cannot resolve to a silent
+no-op. The exception is a declaration that some binding names as its label: a
+label is a virtual kind and matches no site by construction.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::addressSegments`
+
+A written path read as an address. The first segment is the kind, so a bare
+name at the head is the kind it names — that is how a declaration keyed by its
+kind in the `options:` block and an address written `(kind)/…` reach the same
+site. Parsing stays literal, because a label's head is virtual and must not be
+resolved against the grammar.
