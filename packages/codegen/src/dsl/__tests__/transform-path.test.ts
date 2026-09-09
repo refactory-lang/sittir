@@ -89,13 +89,13 @@ describe('parsePath()', () => {
 	});
 
 	it('rejects * with migration error — use _ instead', () => {
-		expect(() => parsePath('*')).toThrow(/path segment '\*' is no longer valid — use '_' for wildcard; see ADR-0010/);
+		expect(() => parsePath('*')).toThrow(/path segment '\*' is no longer valid — use '_' for wildcard/);
 		expect(() => parsePath('0/*/1')).toThrow(/path segment '\*' is no longer valid/);
 	});
 
 	it('rejects bare kind name with migration error — use (name) instead', () => {
 		expect(() => parsePath('foo')).toThrow(
-			/bare kind name 'foo' is no longer valid as a path segment — use '\(foo\)' instead; see ADR-0010/
+			/bare kind name 'foo' is no longer valid as a path segment — use '\(foo\)' instead/
 		);
 		expect(() => parsePath('0/_expression/1')).toThrow(/bare kind name '_expression' is no longer valid/);
 	});

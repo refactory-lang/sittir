@@ -404,7 +404,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					const shape = factoryShapes[readKind] ?? 'config';
 					const factory = factoryMap[readKind]!;
 					if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-						// ADR-0018: readNode emits `_<name>` top-level keys, not
+						// ReadNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
 						const config = nodeToConfig(readData, {

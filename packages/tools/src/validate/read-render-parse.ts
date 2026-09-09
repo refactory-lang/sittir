@@ -90,7 +90,7 @@ export async function loadVariantAdoptedKinds(grammar: string): Promise<Readonly
  */
 
 /**
- * ADR-0017: find a tree-sitter node by its exact byte span (start + end).
+ * Find a tree-sitter node by its exact byte span (start + end).
  * Using both start and end eliminates the collision that arises from
  * start-only lookup: when a parent node and its first child share the same
  * startIndex (e.g. `parameter` and its child `identifier` both start at

@@ -1,6 +1,6 @@
-//! tree-sitter `Tree` → primitive `NodeData` traversal. Spec 012 T022.
+//! tree-sitter `Tree` → primitive `NodeData` traversal.
 //!
-//! Produces the exact one-level-deep read shape defined by ADR-0018:
+//! Produces the exact one-level-deep read shape that crosses the boundary:
 //! de-hoisted `_<slot>` storage at the boundary, child stubs carrying
 //! parent handle + child index, and no recursive `$fields` payload.
 //! **NO enrichment or anonymous-token promotion** happens here. Named
@@ -148,7 +148,7 @@ fn read_ts_node(
     let text = source.get(byte_range.clone()).map(|s| s.to_string());
 
     // On leaves, drop the (possibly empty) `$other` entirely — the
-    // shape gate in T025 enforces that leaves don't carry `$other`
+    // shape gate in `tests/read_node.rs` enforces that leaves don't carry `$other`
     // even when empty, and purely-anonymous token structure is still
     // represented by `$text` for the native read surface.
     let children = if is_leaf { None } else { children };

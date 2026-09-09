@@ -4772,7 +4772,7 @@ export interface KindMap {
 	_space: Space;
 }
 
-// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
+// Per-kind namespace interfaces — one computed base per kind
 export interface ModuleNs extends NodeNs<
 	Module,
 	LeafScalarMap,

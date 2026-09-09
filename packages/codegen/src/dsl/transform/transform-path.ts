@@ -75,10 +75,10 @@ export function parsePath(pathStr: string): PathSegment[] {
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
 			segments.push({ kind: 'fieldName', name: part.slice(0, -1) });
 		} else if (part === '*') {
-			throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard; see ADR-0010`);
+			throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard`);
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
 			throw new Error(
-				`parsePath: bare kind name '${part}' is no longer valid as a path segment — use '(${part})' instead; see ADR-0010`
+				`parsePath: bare kind name '${part}' is no longer valid as a path segment — use '(${part})' instead`
 			);
 		} else {
 			throw new Error(

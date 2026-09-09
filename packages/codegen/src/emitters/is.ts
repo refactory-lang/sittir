@@ -124,7 +124,7 @@ export function emitIs(config: EmitIsConfig): string {
 		if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(camel)) {
 			throw new Error(
 				`is emitter: camelCase kind '${camel}' collides with reserved guard key ` +
-					`or another kind. Rename '${kind}' before proceeding (spec 008 FR-017).`
+					`or another kind. Rename '${kind}' before proceeding.`
 			);
 		}
 		usedCamelKeys.add(guardKey);

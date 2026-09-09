@@ -1,4 +1,4 @@
-//! Byte-level `apply_edits` on a source string. Spec 012 T024.
+//! Byte-level `apply_edits` on a source string.
 //!
 //! Sorts edits by `start_pos` descending, applies each as a raw byte
 //! splice on a `String`. Descending order guarantees earlier edits

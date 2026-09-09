@@ -30,7 +30,7 @@ export interface NodeTrivia {
 // ---------------------------------------------------------------------------
 
 /**
- * Unified named-member value type (ADR-0018 Phase 2).
+ * Unified named-member value type.
  *
  * A named slot's `_<name>` storage and its accessor return type both
  * resolve to `NodeMemberValue`.

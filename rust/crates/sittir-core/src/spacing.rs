@@ -1,7 +1,6 @@
 //! SpacingWriter — render-time word-boundary spacing.
 //!
-//! Implements docs/superpowers/specs/2026-07-24-spacing-writer-design.md:
-//! insert a space at any write seam where a word-class character would
+//! Insert a space at any write seam where a word-class character would
 //! collide with a word-class character. If two word-class characters from
 //! different tokens were ever legally adjacent in output, the lexer would
 //! have merged them into one token — so the insert is the definition of

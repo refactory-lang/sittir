@@ -12954,7 +12954,7 @@ export interface KindMap {
 	anon_type: AnonType;
 }
 
-// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
+// Per-kind namespace interfaces — one computed base per kind
 export interface ProgramNs extends NodeNs<
 	Program,
 	LeafScalarMap,

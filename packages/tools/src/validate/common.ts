@@ -214,7 +214,7 @@ export function treeHandle(
 	source?: string,
 	kindIdFromName?: (kind: string) => number | undefined
 ): TreeHandle {
-	// ADR-0017: nodeById removed. JS-side readNode now navigates via
+	// NodeById removed. JS-side readNode now navigates via
 	// nodes[handle].children()[childIndex]. The nodes[] array is populated
 	// lazily by pushNode() inside readNode as it walks the tree.
 	// Phase D: kindIdFromName is required for JS-side reads (readNode emits
@@ -406,7 +406,7 @@ export function buildReadHandle(
 /**
  * Read a specific tree-sitter node via its adapted AnyTreeNode reference.
  *
- * ADR-0017: readNode no longer accepts a nodeId. For the WASM/JS path,
+ * ReadNode no longer accepts a nodeId. For the WASM/JS path,
  * validators use this helper to push the target node into the handle's
  * nodes[] array and call readNode with the resulting handle + childIndex=0.
  * For native handles (handle.read present), uses the native coords from
@@ -434,7 +434,7 @@ export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: 
 }
 
 /**
- * ADR-0017: navigation coordinates for a native drill-in.
+ * Navigation coordinates for a native drill-in.
  * `handle` is the parent's index in the tree's nodes[], `childIndex` is
  * the position in parent's child array.
  */
@@ -525,7 +525,7 @@ function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
  * Returns null when `handle` is a WASM handle (no `handle.read`) —
  * callers fall back to the JS tree's `node.id` in that case.
  *
- * ADR-0017: returns { handle, childIndex } instead of NodeId.
+ * Returns { handle, childIndex } instead of NodeId.
  */
 export function findNativeNodeId(
 	handle: TreeHandle,
@@ -722,11 +722,11 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// scoped_type_identifier like `Bar::<X>::Item`. Bare type position
 		// (`type _X = ${r};`) rejects it. Wrap as a scoped path element.
 		generic_type_with_turbofish: (r) => `type _X = ${r}::Item;`,
-		// `scoped_type_identifier_in_expression_position` (ADR-0006):
+		// `scoped_type_identifier_in_expression_position`:
 		// aliased to `scoped_type_identifier` only inside struct_expression's
 		// name field. Needs struct-literal context to round-trip.
 		scoped_type_identifier_in_expression_position: (r) => `fn _f() { let _ = ${r} { val: 1 }; }`,
-		// `delim_token_tree` (ADR-0006): aliased to `token_tree` at
+		// `delim_token_tree`: aliased to `token_tree` at
 		// attribute.arguments and macro_invocation positions. Both kinds
 		// use structural rendering (macro token content is
 		// author-declared-verbatim, mixes named and anon tokens).
@@ -2578,7 +2578,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 				? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
 				: data.$type
 			: undefined;
-	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys
+	// Named slots are stored as `_<name>` top-level keys
 	// directly on the NodeData object (de-hoisted storage). Fall back to the
 	// legacy `$fields` wrapper for backward compatibility with old fixtures.
 	const rec = data as unknown as Record<string, unknown>;
@@ -2650,7 +2650,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 
 
 // ---------------------------------------------------------------------------
-// Metrics emission helper — spec 054 FR-003
+// Metrics emission helper
 // ---------------------------------------------------------------------------
 
 /**

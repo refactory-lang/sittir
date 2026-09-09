@@ -11573,7 +11573,7 @@ export interface KindMap {
 	_dedent: Dedent;
 }
 
-// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
+// Per-kind namespace interfaces — one computed base per kind
 export interface SourceFileNs extends NodeNs<
 	SourceFile,
 	LeafScalarMap,

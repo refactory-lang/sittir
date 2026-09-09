@@ -247,7 +247,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	assertNoCamelCaseCollisions(nodeKinds);
 
-	lines.push('// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)');
+	lines.push('// Per-kind namespace interfaces — one computed base per kind');
 	const namespaceKinds = nodeKinds.filter(
 		(kind) => generatedTypes.has(nodeMap.nodes.get(kind)!.typeName) && hasKindId(kind, kindEntries)
 	);
@@ -697,7 +697,7 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 		if (prev !== undefined && prev !== kind) {
 			throw new Error(
 				`types emitter: camelCase collision — kinds '${prev}' and '${kind}' both camelCase to '${camel}'. ` +
-					`Rename one before proceeding (spec 008 FR-017).`
+					`Rename one before proceeding.`
 			);
 		}
 		camelNames.set(camel, kind);

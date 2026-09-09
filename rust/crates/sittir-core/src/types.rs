@@ -3,8 +3,8 @@
 //! the numeric kind discriminant for the KindID runtime migration. See
 //! data-model.md §1 for the authoritative contract.
 //!
-//! Spec 012 tasks T009 + T010. Serde rename + skip-if-none invariants
-//! tested in `tests/boundary_roundtrip.rs` (T011).
+//! Serde rename + skip-if-none invariants are tested in
+//! `tests/boundary_roundtrip.rs`.
 //! `KindId` serde/conversion tests in `tests/kind_id.rs`.
 //!
 //! Invariants (enforced by struct + serde helpers):
@@ -93,7 +93,7 @@ pub struct NodeTrivia {
 
 /// Primitive NodeData — the wire shape. Fixed `$`-metadata plus dynamic
 /// `_<slot>` storage keys (and optional `$other`) matching the
-/// ADR-0018 de-hoisted JS read/factory surface. Enrichment (`$variant`,
+/// de-hoisted JS read/factory surface. Enrichment (`$variant`,
 /// etc.) is TS-side only.
 ///
 /// `type_` is a numeric `KindId` (parser.c-derived symbol ID) rather than
@@ -111,7 +111,7 @@ pub struct NodeData {
 
     /// Stored named slots keyed by the raw tree-sitter field / promoted
     /// keyword name. On the wire these serialize as top-level `_<name>`
-    /// properties (ADR-0018 de-hoisted storage).
+    /// properties (de-hoisted storage).
     pub fields: Option<IndexMap<String, FieldValue>>,
 
     pub children: Option<Vec<NodeData>>,
@@ -738,7 +738,7 @@ pub struct Edit {
 }
 
 /// Leading / trailing delimiters for a format region. Mirrors
-/// `FormatBoundary` in `@sittir/types` (FR-008).
+/// `FormatBoundary` in `@sittir/types`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FormatBoundary {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -749,7 +749,7 @@ pub struct FormatBoundary {
 }
 
 /// Per-slot separator / trailing-comma / absence hints. Mirrors
-/// `FormatSlot` in `@sittir/types` (FR-008). `rename_all = "camelCase"`
+/// `FormatSlot` in `@sittir/types`. `rename_all = "camelCase"`
 /// maps `trailing_present` → `trailingPresent` on the wire.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -765,14 +765,14 @@ pub struct FormatSlot {
 }
 
 /// A fixed literal token value override. Mirrors `FormatLiteral` in
-/// `@sittir/types` (FR-008).
+/// `@sittir/types`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FormatLiteral {
     pub raw: String,
 }
 
 /// A trivia (whitespace / comment) insertion at a byte offset. Mirrors
-/// `FormatTrivia` in `@sittir/types` (FR-008).
+/// `FormatTrivia` in `@sittir/types`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FormatTrivia {
     pub offset: u32,
@@ -781,7 +781,7 @@ pub struct FormatTrivia {
 
 /// Complete format record for a node kind. `kinds` enables per-kind
 /// overrides nested inside a parent record. Mirrors `FormatRecord` in
-/// `@sittir/types` (FR-008).
+/// `@sittir/types`.
 ///
 /// The recursive `kinds` field is fine in Rust because `HashMap` is
 /// heap-allocated, so the struct size is statically bounded.
