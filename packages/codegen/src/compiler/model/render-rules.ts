@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
+import { findAnonEntryForLiteralText, findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
 import type { RenderRule, Rule, RuleAnnotations, RuleId } from '../../types/rule.ts';
 import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
@@ -592,6 +592,27 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 	return changed ? ({ ...(rule as object), members } as unknown as RenderRule) : rule;
 }
 
+function armSeamName(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	const text = literalTextOf(rule);
+	if (text === undefined || text.trim() === '' || matchesWordShape(text, config.nodeMap.wordMatcher)) return undefined;
+	const entry = findAnonEntryForLiteralText(config.kindEntries, text);
+	return entry === undefined ? undefined : publicKindName(entry.kind);
+}
+
+function withArmSeams(rule: RenderRule, kind: string, config: RenderRulesConfig, resolver: DefaultResolver, seams: SeamArms): RenderRule {
+	const r = bag(rule);
+	if (r.type !== CHOICE || r.members === undefined || r.members.length === 0) return rule;
+	const names = r.members.map((m) => armSeamName(m, config));
+	if (names.every((name) => name === undefined)) return rule;
+	const members = r.members.map((member, i) => {
+		const name = names[i];
+		if (name === undefined) return member;
+		const seam = (side: SeparatorSide): RenderRule => seamChoice(kind, seamLabel(name, side), 'tight', resolver, seams);
+		return { type: SEQ, nonterminal: true, members: [seam('before'), member, seam('after')] } as unknown as RenderRule;
+	});
+	return { ...(rule as object), members } as unknown as RenderRule;
+}
+
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound)) return false;
 	return kind === publicKindName(kind) || !nodeMap.nodes.has(publicKindName(kind));
@@ -653,6 +674,10 @@ export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig):
 	for (const [kind, rule] of Object.entries(spaced.rules)) {
 		if (inlined.has(kind)) {
 			out[kind] = rule;
+			continue;
+		}
+		if (config.nodeMap.nodes.get(kind) instanceof AssembledEnum) {
+			out[kind] = withArmSeams(rule, kind, config, resolver, seams);
 			continue;
 		}
 		const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, config, resolver, seams);

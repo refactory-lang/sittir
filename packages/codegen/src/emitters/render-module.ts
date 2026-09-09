@@ -1,4 +1,4 @@
-import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { parseSeamLabel, type RenderDefaults } from '../dsl/primitives/spacing.ts';
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -1081,6 +1081,7 @@ export function emitRenderModule(
 			'use ::sittir_core::render_with_trivia;',
 			'use super::options;',
 			'',
+			armSeamSupport(),
 			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan);
@@ -1204,6 +1205,55 @@ function pruneUnreferencedBridges(rendered: string): string {
 		i++;
 	}
 	return out.join('\n');
+}
+
+function armSeamSupport(): string {
+	return [
+		'pub trait ArmSeams {',
+		'    fn arm_seam_sites(&self) -> Option<(usize, usize)>;',
+		'}',
+		'',
+		'#[derive(Debug, Clone)]',
+		'pub struct Seamed<T> {',
+		'    pub value: T,',
+		'    pub seam_before: Option<u16>,',
+		'    pub seam_after: Option<u16>,',
+		'}',
+		'',
+		'impl<T> Seamed<T> {',
+		'    pub fn new(value: T) -> Self {',
+		'        Self { value, seam_before: None, seam_after: None }',
+		'    }',
+		'}',
+		'',
+		`impl<T: ArmSeams> ${OPTIONS_MOD}::FillOptions for Seamed<T> {`,
+		`    fn fill_options(&mut self, table: &${OPTIONS_MOD}::ResolvedOptions) {`,
+		'        if let Some((before, after)) = self.value.arm_seam_sites() {',
+		'            self.seam_before.get_or_insert(table.spacing[before]);',
+		'            self.seam_after.get_or_insert(table.spacing[after]);',
+		'        }',
+		'    }',
+		'}',
+		'',
+		'impl<T: ::std::fmt::Display> ::std::fmt::Display for Seamed<T> {',
+		"    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {",
+		'        f.write_str(options::spacing_text(self.seam_before.unwrap_or(0)))?;',
+		'        ::std::fmt::Display::fmt(&self.value, f)?;',
+		'        f.write_str(options::spacing_text(self.seam_after.unwrap_or(0)))',
+		'    }',
+		'}',
+		'',
+		'#[cfg(feature = "napi-bindings")]',
+		'impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {',
+		'    unsafe fn from_napi_value(',
+		'        env: ::napi::sys::napi_env,',
+		'        napi_val: ::napi::sys::napi_value,',
+		'    ) -> ::napi::Result<Self> {',
+		'        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))',
+		'    }',
+		'}',
+		''
+	].join('\n');
 }
 
 function commonRustUseImports(hasNumericDispatch: boolean): string {
@@ -2576,7 +2626,7 @@ function renderTransportStruct(
 	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	if (node instanceof AssembledEnum) {
-		return renderEnumType(node, hasNapi, kindEntries);
+		return renderEnumType(node, hasNapi, kindEntries, plan);
 	}
 	const slotModel = renderSlotModelOf(node);
 	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, plan);
@@ -3301,8 +3351,52 @@ function enumTypeName(node: AssembledEnum): string {
 	return `${rustTypeIdent(node.typeName)}Enum`;
 }
 
-function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: readonly KindEnumEntry[]): string[] {
-	const enumName = enumTypeName(node);
+function armSeamPairsOf(plan: RenderPlan, node: AssembledEnum): Map<string, { before: string; after: string }> {
+	const kind = publicKindName(node.kind);
+	const bySlot = new Map<string, { before?: string; after?: string }>();
+	for (const site of plan.spacingSites) {
+		if (site.kind !== kind || site.side !== 'seam') continue;
+		const seam = parseSeamLabel(site.address);
+		if (seam === undefined) continue;
+		const entry = bySlot.get(site.slot) ?? {};
+		bySlot.set(site.slot, { ...entry, [seam.side]: site.constName });
+	}
+	const out = new Map<string, { before: string; after: string }>();
+	for (const text of node.values) {
+		const armKind = node.resolvedByText.get(text)?.kind;
+		if (armKind === undefined) continue;
+		const pair = bySlot.get(publicKindName(armKind));
+		if (pair?.before === undefined || pair.after === undefined) continue;
+		out.set(text, { before: pair.before, after: pair.after });
+	}
+	return out;
+}
+
+function armSeamsImpl(valueName: string, values: readonly string[], pairs: ReadonlyMap<string, { before: string; after: string }>): string[] {
+	const lines = [
+		`impl ArmSeams for ${valueName} {`,
+		`    fn arm_seam_sites(&self) -> Option<(usize, usize)> {`,
+		`        match self {`
+	];
+	for (const v of values) {
+		const pair = pairs.get(v);
+		if (pair === undefined) continue;
+		lines.push(`            Self::${literalToVariantName(v)} => Some((options::${pair.before}, options::${pair.after})),`);
+	}
+	if (pairs.size < values.length) lines.push(`            _ => None,`);
+	lines.push(`        }`, `    }`, `}`, '');
+	return lines;
+}
+
+function renderEnumType(
+	node: AssembledEnum,
+	hasNapi: boolean,
+	kindEntries?: readonly KindEnumEntry[],
+	plan: RenderPlan = EMPTY_PLAN
+): string[] {
+	const publicName = enumTypeName(node);
+	const seamPairs = armSeamPairsOf(plan, node);
+	const enumName = seamPairs.size === 0 ? publicName : `${publicName.replace(/Enum$/, '')}Arm`;
 	const values = node.values;
 	const lines: string[] = [];
 
@@ -3422,6 +3516,12 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
+
+	if (seamPairs.size > 0) {
+		lines.push(...armSeamsImpl(enumName, values, seamPairs));
+		lines.push(`pub type ${publicName} = Seamed<${enumName}>;`);
+		lines.push('');
+	}
 
 	return lines;
 }

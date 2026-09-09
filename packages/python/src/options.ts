@@ -118,6 +118,8 @@ export type EdgeKind =
 	| 'yield_from_clause';
 
 export type SpacingLabel =
+	| 'amp_eq_after'
+	| 'amp_eq_before'
 	| 'anon_await_after'
 	| 'anon_await_before'
 	| 'anon_lambda_after'
@@ -132,7 +134,11 @@ export type SpacingLabel =
 	| 'assert_before'
 	| 'at_after'
 	| 'at_before'
+	| 'at_eq_after'
+	| 'at_eq_before'
 	| 'bslash_after'
+	| 'caret_eq_after'
+	| 'caret_eq_before'
 	| 'case_after'
 	| 'case_before'
 	| 'class_after'
@@ -145,6 +151,10 @@ export type SpacingLabel =
 	| 'comma_before'
 	| 'comma_separator_space_after'
 	| 'comma_separator_space_before'
+	| 'dash_after'
+	| 'dash_before'
+	| 'dash_eq_after'
+	| 'dash_eq_before'
 	| 'dash_gt_after'
 	| 'dash_gt_before'
 	| 'def_after'
@@ -180,6 +190,8 @@ export type SpacingLabel =
 	| 'global_before'
 	| 'gt_gt_after'
 	| 'gt_gt_before'
+	| 'gt_gt_eq_after'
+	| 'gt_gt_eq_before'
 	| 'if_after'
 	| 'if_before'
 	| 'import_after'
@@ -192,6 +204,8 @@ export type SpacingLabel =
 	| 'lbrack_before'
 	| 'lparen_after'
 	| 'lparen_before'
+	| 'lt_lt_eq_after'
+	| 'lt_lt_eq_before'
 	| 'match_after'
 	| 'match_before'
 	| 'nonlocal_after'
@@ -202,10 +216,18 @@ export type SpacingLabel =
 	| 'operator_before'
 	| 'operators_after'
 	| 'operators_before'
+	| 'percent_eq_after'
+	| 'percent_eq_before'
 	| 'pipe_after'
 	| 'pipe_before'
+	| 'pipe_eq_after'
+	| 'pipe_eq_before'
 	| 'pipe_separator_space_after'
 	| 'pipe_separator_space_before'
+	| 'plus_after'
+	| 'plus_before'
+	| 'plus_eq_after'
+	| 'plus_eq_before'
 	| 'print_after'
 	| 'print_before'
 	| 'raise_after'
@@ -224,12 +246,22 @@ export type SpacingLabel =
 	| 'semi_separator_space_before'
 	| 'sign_after'
 	| 'sign_before'
+	| 'slash_eq_after'
+	| 'slash_eq_before'
+	| 'slash_slash_eq_after'
+	| 'slash_slash_eq_before'
 	| 'star_after'
 	| 'star_before'
+	| 'star_eq_after'
+	| 'star_eq_before'
 	| 'star_marker_after'
 	| 'star_marker_before'
 	| 'star_star_after'
 	| 'star_star_before'
+	| 'star_star_eq_after'
+	| 'star_star_eq_before'
+	| 'tilde_after'
+	| 'tilde_before'
 	| 'try_after'
 	| 'try_before'
 	| 'while_after'
@@ -255,6 +287,33 @@ export interface KindSpacing {
 	readonly assignment_type: 'colon_after' | 'colon_before';
 	readonly assignment_typed: 'colon_after' | 'colon_before' | 'eq_after' | 'eq_before';
 	readonly attribute: 'dot_after' | 'dot_before';
+	readonly augmented_assignment_operator:
+		| 'amp_eq_after'
+		| 'amp_eq_before'
+		| 'at_eq_after'
+		| 'at_eq_before'
+		| 'caret_eq_after'
+		| 'caret_eq_before'
+		| 'dash_eq_after'
+		| 'dash_eq_before'
+		| 'gt_gt_eq_after'
+		| 'gt_gt_eq_before'
+		| 'lt_lt_eq_after'
+		| 'lt_lt_eq_before'
+		| 'percent_eq_after'
+		| 'percent_eq_before'
+		| 'pipe_eq_after'
+		| 'pipe_eq_before'
+		| 'plus_eq_after'
+		| 'plus_eq_before'
+		| 'slash_eq_after'
+		| 'slash_eq_before'
+		| 'slash_slash_eq_after'
+		| 'slash_slash_eq_before'
+		| 'star_eq_after'
+		| 'star_eq_before'
+		| 'star_star_eq_after'
+		| 'star_star_eq_before';
 	readonly await: 'anon_await_after' | 'anon_await_before';
 	readonly binary_operator: 'operator_after' | 'operator_before';
 	readonly block: 'statements_separator_space';
@@ -420,6 +479,13 @@ export interface KindSpacing {
 	readonly typed_default_parameter: 'colon_after' | 'colon_before' | 'eq_after' | 'eq_before';
 	readonly typed_parameter: 'colon_after' | 'colon_before';
 	readonly types: 'type_separator_space_after' | 'type_separator_space_before';
+	readonly unary_operator_operator:
+		| 'dash_after'
+		| 'dash_before'
+		| 'plus_after'
+		| 'plus_before'
+		| 'tilde_after'
+		| 'tilde_before';
 	readonly union_pattern: 'patterns_separator_space_after' | 'patterns_separator_space_before';
 	readonly union_type: 'pipe_after' | 'pipe_before';
 	readonly while_statement: 'colon_after' | 'colon_before' | 'while_after' | 'while_before';

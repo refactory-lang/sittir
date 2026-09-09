@@ -5163,6 +5163,7 @@ var grammar_sittir_default = grammar(
         plus_separator_space_after: preference("plus_separator_space_after", "space"),
         range_expression_binary: { operator_before: preference("operator_before", "tight"), operator_after: preference("operator_after", "tight") },
         range_expression_prefix: { operator_after: preference("operator_after", "tight") },
+        _token_tree_punctuation: { comma_after: preference("comma_after", "space") },
         _token_tree_paren: { tokens: preference("empty_separator_space", "tight") },
         _token_tree_bracket: { tokens: preference("empty_separator_space", "tight") },
         _token_tree_brace: { tokens: preference("empty_separator_space", "tight") },

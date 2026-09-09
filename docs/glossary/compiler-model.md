@@ -3512,6 +3512,22 @@ token, not a slot, and keeps its token seam.
 The fixed text of a literal leaf whatever its field: a non-optional string
 or a symbol carrying `literal`.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::armSeamName`
+
+The seam name a single literal arm of an enum contributes: its own anonymous
+token's catalog kind. Word-shaped arms name nothing — two words cannot abut,
+so the lexical rule already separates them and a site there would never be
+declared. The resolver is the anon-only one, because this asks which token
+identity a text already has, not which rule answers to that name.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::withArmSeams`
+
+An enum's choice with each punctuation arm wrapped in its own seam pair, so
+one enum spaces `,` and `::` differently in the same position — a single
+site on the enum could only say one thing for all its arms. An arm that
+names nothing is left bare rather than vetoing its siblings; a choice where
+no arm names anything is returned as is.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamNameOf`
 
 The name a member contributes to a seam beside it: its punctuation token's

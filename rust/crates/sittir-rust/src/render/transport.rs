@@ -18,6 +18,50 @@ use ::napi_derive::napi;
 use ::sittir_core::render_with_trivia;
 use super::options;
 
+pub trait ArmSeams {
+    fn arm_seam_sites(&self) -> Option<(usize, usize)>;
+}
+
+#[derive(Debug, Clone)]
+pub struct Seamed<T> {
+    pub value: T,
+    pub seam_before: Option<u16>,
+    pub seam_after: Option<u16>,
+}
+
+impl<T> Seamed<T> {
+    pub fn new(value: T) -> Self {
+        Self { value, seam_before: None, seam_after: None }
+    }
+}
+
+impl<T: ArmSeams> ::sittir_core::options::FillOptions for Seamed<T> {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        if let Some((before, after)) = self.value.arm_seam_sites() {
+            self.seam_before.get_or_insert(table.spacing[before]);
+            self.seam_after.get_or_insert(table.spacing[after]);
+        }
+    }
+}
+
+impl<T: ::std::fmt::Display> ::std::fmt::Display for Seamed<T> {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(options::spacing_text(self.seam_before.unwrap_or(0)))?;
+        ::std::fmt::Display::fmt(&self.value, f)?;
+        f.write_str(options::spacing_text(self.seam_after.unwrap_or(0)))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
     SourceFile(SourceFileTransport),
@@ -54554,7 +54598,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KwUnsafeTransport> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CompoundAssignmentExprOperatorEnum {
+pub enum CompoundAssignmentExprOperatorArm {
     PlusEq,
     MinusEq,
     StarEq,
@@ -54567,12 +54611,12 @@ pub enum CompoundAssignmentExprOperatorEnum {
     GtGtEq,
 }
 
-impl ::sittir_core::options::FillOptions for CompoundAssignmentExprOperatorEnum {
+impl ::sittir_core::options::FillOptions for CompoundAssignmentExprOperatorArm {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {}
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CompoundAssignmentExprOperatorEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for CompoundAssignmentExprOperatorArm {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -54655,21 +54699,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for CompoundAssignmentExprOperatorEn
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for CompoundAssignmentExprOperatorEnum"))
+        Err(::napi::Error::from_reason("unknown enum payload for CompoundAssignmentExprOperatorArm"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CompoundAssignmentExprOperatorEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for CompoundAssignmentExprOperatorArm {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CompoundAssignmentExprOperatorEnum is receive-only"))
+        Err(::napi::Error::from_reason("CompoundAssignmentExprOperatorArm is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for CompoundAssignmentExprOperatorEnum {
+impl ::std::fmt::Display for CompoundAssignmentExprOperatorArm {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::PlusEq => "+=",
@@ -54685,6 +54729,25 @@ impl ::std::fmt::Display for CompoundAssignmentExprOperatorEnum {
         })
     }
 }
+
+impl ArmSeams for CompoundAssignmentExprOperatorArm {
+    fn arm_seam_sites(&self) -> Option<(usize, usize)> {
+        match self {
+            Self::PlusEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PLUS_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PLUS_EQ_AFTER)),
+            Self::MinusEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_DASH_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_DASH_EQ_AFTER)),
+            Self::StarEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_STAR_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_STAR_EQ_AFTER)),
+            Self::SlashEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_SLASH_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_SLASH_EQ_AFTER)),
+            Self::PercentEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PERCENT_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PERCENT_EQ_AFTER)),
+            Self::AmpEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_AMP_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_AMP_EQ_AFTER)),
+            Self::PipeEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PIPE_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PIPE_EQ_AFTER)),
+            Self::CaretEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_CARET_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_CARET_EQ_AFTER)),
+            Self::LtLtEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_LT_LT_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_LT_LT_EQ_AFTER)),
+            Self::GtGtEq => Some((options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_GT_GT_EQ_BEFORE, options::SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_GT_GT_EQ_AFTER)),
+        }
+    }
+}
+
+pub type CompoundAssignmentExprOperatorEnum = Seamed<CompoundAssignmentExprOperatorArm>;
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
@@ -54835,7 +54898,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TupleExpressionElementsTranspo
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TokenTreePunctuationEnum {
+pub enum TokenTreePunctuationArm {
     Plus,
     Minus,
     Star,
@@ -54883,12 +54946,12 @@ pub enum TokenTreePunctuationEnum {
     Dollar,
 }
 
-impl ::sittir_core::options::FillOptions for TokenTreePunctuationEnum {
+impl ::sittir_core::options::FillOptions for TokenTreePunctuationArm {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {}
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationArm {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -55146,21 +55209,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePunctuationEnum {
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for TokenTreePunctuationEnum"))
+        Err(::napi::Error::from_reason("unknown enum payload for TokenTreePunctuationArm"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokenTreePunctuationEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for TokenTreePunctuationArm {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TokenTreePunctuationEnum is receive-only"))
+        Err(::napi::Error::from_reason("TokenTreePunctuationArm is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for TokenTreePunctuationEnum {
+impl ::std::fmt::Display for TokenTreePunctuationArm {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::Plus => "+",
@@ -55212,8 +55275,62 @@ impl ::std::fmt::Display for TokenTreePunctuationEnum {
     }
 }
 
+impl ArmSeams for TokenTreePunctuationArm {
+    fn arm_seam_sites(&self) -> Option<(usize, usize)> {
+        match self {
+            Self::Plus => Some((options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_AFTER)),
+            Self::Minus => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DASH_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DASH_AFTER)),
+            Self::Star => Some((options::SITE_TOKEN_TREE_PUNCTUATION_STAR_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_STAR_AFTER)),
+            Self::Slash => Some((options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_AFTER)),
+            Self::Percent => Some((options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_AFTER)),
+            Self::Caret => Some((options::SITE_TOKEN_TREE_PUNCTUATION_CARET_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_CARET_AFTER)),
+            Self::Bang => Some((options::SITE_TOKEN_TREE_PUNCTUATION_BANG_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_BANG_AFTER)),
+            Self::Amp => Some((options::SITE_TOKEN_TREE_PUNCTUATION_AMP_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_AMP_AFTER)),
+            Self::Pipe => Some((options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_AFTER)),
+            Self::AmpAmp => Some((options::SITE_TOKEN_TREE_PUNCTUATION_AMP_AMP_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_AMP_AMP_AFTER)),
+            Self::PipePipe => Some((options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_PIPE_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_PIPE_AFTER)),
+            Self::LtLt => Some((options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_AFTER)),
+            Self::GtGt => Some((options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_AFTER)),
+            Self::PlusEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_PLUS_EQ_AFTER)),
+            Self::MinusEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DASH_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DASH_EQ_AFTER)),
+            Self::StarEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_STAR_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_STAR_EQ_AFTER)),
+            Self::SlashEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_SLASH_EQ_AFTER)),
+            Self::PercentEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_PERCENT_EQ_AFTER)),
+            Self::CaretEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_CARET_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_CARET_EQ_AFTER)),
+            Self::AmpEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_AMP_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_AMP_EQ_AFTER)),
+            Self::PipeEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_PIPE_EQ_AFTER)),
+            Self::LtLtEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_LT_LT_EQ_AFTER)),
+            Self::GtGtEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_GT_GT_EQ_AFTER)),
+            Self::Eq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_EQ_AFTER)),
+            Self::EqEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_EQ_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_EQ_EQ_AFTER)),
+            Self::BangEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_BANG_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_BANG_EQ_AFTER)),
+            Self::Gt => Some((options::SITE_TOKEN_TREE_PUNCTUATION_GT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_GT_AFTER)),
+            Self::Lt => Some((options::SITE_TOKEN_TREE_PUNCTUATION_LT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_LT_AFTER)),
+            Self::GtEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_GT_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_GT_EQ_AFTER)),
+            Self::LtEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_LT_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_LT_EQ_AFTER)),
+            Self::At => Some((options::SITE_TOKEN_TREE_PUNCTUATION_AT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_AT_AFTER)),
+            Self::Dot => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DOT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DOT_AFTER)),
+            Self::DotDot => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_AFTER)),
+            Self::DotDotDot => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_DOT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_DOT_AFTER)),
+            Self::DotDotEq => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_EQ_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_EQ_AFTER)),
+            Self::Comma => Some((options::SITE_TOKEN_TREE_PUNCTUATION_COMMA_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_COMMA_AFTER)),
+            Self::Semi => Some((options::SITE_TOKEN_TREE_PUNCTUATION_SEMI_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_SEMI_AFTER)),
+            Self::Colon => Some((options::SITE_TOKEN_TREE_PUNCTUATION_COLON_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_COLON_AFTER)),
+            Self::ColonColon => Some((options::SITE_TOKEN_TREE_PUNCTUATION_COLON_COLON_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_COLON_COLON_AFTER)),
+            Self::ThinArrow => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DASH_GT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DASH_GT_AFTER)),
+            Self::FatArrow => Some((options::SITE_TOKEN_TREE_PUNCTUATION_EQ_GT_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_EQ_GT_AFTER)),
+            Self::Hash => Some((options::SITE_TOKEN_TREE_PUNCTUATION_POUND_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_POUND_AFTER)),
+            Self::Question => Some((options::SITE_TOKEN_TREE_PUNCTUATION_QMARK_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_QMARK_AFTER)),
+            Self::Dollar => Some((options::SITE_TOKEN_TREE_PUNCTUATION_DOLLAR_BEFORE, options::SITE_TOKEN_TREE_PUNCTUATION_DOLLAR_AFTER)),
+            _ => None,
+        }
+    }
+}
+
+pub type TokenTreePunctuationEnum = Seamed<TokenTreePunctuationArm>;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TokenKeywordsEnum {
+pub enum TokenKeywordsArm {
     V27,
     AsKw,
     AsyncKw,
@@ -55245,12 +55362,12 @@ pub enum TokenKeywordsEnum {
     WhileKw,
 }
 
-impl ::sittir_core::options::FillOptions for TokenKeywordsEnum {
+impl ::sittir_core::options::FillOptions for TokenKeywordsArm {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {}
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TokenKeywordsEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for TokenKeywordsArm {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -55428,21 +55545,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenKeywordsEnum {
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for TokenKeywordsEnum"))
+        Err(::napi::Error::from_reason("unknown enum payload for TokenKeywordsArm"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokenKeywordsEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for TokenKeywordsArm {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TokenKeywordsEnum is receive-only"))
+        Err(::napi::Error::from_reason("TokenKeywordsArm is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for TokenKeywordsEnum {
+impl ::std::fmt::Display for TokenKeywordsArm {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::V27 => "'",
@@ -55477,6 +55594,17 @@ impl ::std::fmt::Display for TokenKeywordsEnum {
         })
     }
 }
+
+impl ArmSeams for TokenKeywordsArm {
+    fn arm_seam_sites(&self) -> Option<(usize, usize)> {
+        match self {
+            Self::V27 => Some((options::SITE_TOKEN_KEYWORDS_SQUOTE_BEFORE, options::SITE_TOKEN_KEYWORDS_SQUOTE_AFTER)),
+            _ => None,
+        }
+    }
+}
+
+pub type TokenKeywordsEnum = Seamed<TokenKeywordsArm>;
 
 #[derive(Debug, Clone)]
 pub struct WildcardPatternTransport {

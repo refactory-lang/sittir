@@ -18,6 +18,50 @@ use ::napi_derive::napi;
 use ::sittir_core::render_with_trivia;
 use super::options;
 
+pub trait ArmSeams {
+    fn arm_seam_sites(&self) -> Option<(usize, usize)>;
+}
+
+#[derive(Debug, Clone)]
+pub struct Seamed<T> {
+    pub value: T,
+    pub seam_before: Option<u16>,
+    pub seam_after: Option<u16>,
+}
+
+impl<T> Seamed<T> {
+    pub fn new(value: T) -> Self {
+        Self { value, seam_before: None, seam_after: None }
+    }
+}
+
+impl<T: ArmSeams> ::sittir_core::options::FillOptions for Seamed<T> {
+    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        if let Some((before, after)) = self.value.arm_seam_sites() {
+            self.seam_before.get_or_insert(table.spacing[before]);
+            self.seam_after.get_or_insert(table.spacing[after]);
+        }
+    }
+}
+
+impl<T: ::std::fmt::Display> ::std::fmt::Display for Seamed<T> {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(options::spacing_text(self.seam_before.unwrap_or(0)))?;
+        ::std::fmt::Display::fmt(&self.value, f)?;
+        f.write_str(options::spacing_text(self.seam_after.unwrap_or(0)))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
     Module(ModuleTransport),
@@ -30575,18 +30619,18 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceGroupTransport> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UnaryOperatorOperatorEnum {
+pub enum UnaryOperatorOperatorArm {
     Plus,
     Minus,
     Tilde,
 }
 
-impl ::sittir_core::options::FillOptions for UnaryOperatorOperatorEnum {
+impl ::sittir_core::options::FillOptions for UnaryOperatorOperatorArm {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {}
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorArm {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -30634,21 +30678,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for UnaryOperatorOperatorEnum"))
+        Err(::napi::Error::from_reason("unknown enum payload for UnaryOperatorOperatorArm"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorArm {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UnaryOperatorOperatorEnum is receive-only"))
+        Err(::napi::Error::from_reason("UnaryOperatorOperatorArm is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for UnaryOperatorOperatorEnum {
+impl ::std::fmt::Display for UnaryOperatorOperatorArm {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::Plus => "+",
@@ -30658,8 +30702,20 @@ impl ::std::fmt::Display for UnaryOperatorOperatorEnum {
     }
 }
 
+impl ArmSeams for UnaryOperatorOperatorArm {
+    fn arm_seam_sites(&self) -> Option<(usize, usize)> {
+        match self {
+            Self::Plus => Some((options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE, options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER)),
+            Self::Minus => Some((options::SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE, options::SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER)),
+            Self::Tilde => Some((options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE, options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER)),
+        }
+    }
+}
+
+pub type UnaryOperatorOperatorEnum = Seamed<UnaryOperatorOperatorArm>;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AugmentedAssignmentOperatorEnum {
+pub enum AugmentedAssignmentOperatorArm {
     PlusEq,
     MinusEq,
     StarEq,
@@ -30675,12 +30731,12 @@ pub enum AugmentedAssignmentOperatorEnum {
     PipeEq,
 }
 
-impl ::sittir_core::options::FillOptions for AugmentedAssignmentOperatorEnum {
+impl ::sittir_core::options::FillOptions for AugmentedAssignmentOperatorArm {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {}
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorArm {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -30778,21 +30834,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorEnum 
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for AugmentedAssignmentOperatorEnum"))
+        Err(::napi::Error::from_reason("unknown enum payload for AugmentedAssignmentOperatorArm"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorArm {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorEnum is receive-only"))
+        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorArm is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
+impl ::std::fmt::Display for AugmentedAssignmentOperatorArm {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::PlusEq => "+=",
@@ -30811,6 +30867,28 @@ impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
         })
     }
 }
+
+impl ArmSeams for AugmentedAssignmentOperatorArm {
+    fn arm_seam_sites(&self) -> Option<(usize, usize)> {
+        match self {
+            Self::PlusEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PLUS_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PLUS_EQ_AFTER)),
+            Self::MinusEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_DASH_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_DASH_EQ_AFTER)),
+            Self::StarEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_EQ_AFTER)),
+            Self::SlashEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_EQ_AFTER)),
+            Self::V40_3d => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AT_EQ_AFTER)),
+            Self::V2f_2f_3d => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_SLASH_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_SLASH_EQ_AFTER)),
+            Self::PercentEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PERCENT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PERCENT_EQ_AFTER)),
+            Self::V2a_2a_3d => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_STAR_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_STAR_EQ_AFTER)),
+            Self::GtGtEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_GT_GT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_GT_GT_EQ_AFTER)),
+            Self::LtLtEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_LT_LT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_LT_LT_EQ_AFTER)),
+            Self::AmpEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AMP_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AMP_EQ_AFTER)),
+            Self::CaretEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_CARET_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_CARET_EQ_AFTER)),
+            Self::PipeEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PIPE_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PIPE_EQ_AFTER)),
+        }
+    }
+}
+
+pub type AugmentedAssignmentOperatorEnum = Seamed<AugmentedAssignmentOperatorArm>;
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]

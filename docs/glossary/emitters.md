@@ -4202,6 +4202,29 @@ is bounded by the supertype's subtype count, not the grammar.
  */
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::armSeamSupport`
+
+The per-grammar `Seamed<T>` carrier and the `ArmSeams` trait it fills
+through. It is generated beside the transports rather than living in
+`sittir-core` because its `Display` writes the grammar's own
+`options::spacing_text`, which core cannot name. `Seamed` holds the value
+and the two resolved whitespace kinds; every position that already accepted
+the enum accepts it unchanged, because the enum's public name becomes an
+alias for it.
+
+### `packages/codegen/src/emitters/render-module.ts::armSeamPairsOf`
+
+The seam pair each literal arm of an enum owns, keyed by the arm's text. A
+site records the arm's token kind as its slot and `resolvedByText` records
+the same kind for the text, so the two meet without re-deriving the
+identity here. An arm missing either side is left out.
+
+### `packages/codegen/src/emitters/render-module.ts::armSeamsImpl`
+
+The `ArmSeams` impl mapping each arm to its site pair. Arms with no pair
+answer `None`, which leaves both fields unset and writes nothing, so the
+wildcard arm appears only when some arm needs it.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderEnumType`
 
 ```text
