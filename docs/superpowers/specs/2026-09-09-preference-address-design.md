@@ -140,9 +140,8 @@ the public surface, `_`-prefixed keys are storage.
 
 ```ts
 options: {
-  'body/before':       preference('indent'),
-  'body/after':        preference('dedent'),
-  'assignment/before': preference('space'),
+  body:       { before: preference('indent'), after: preference('dedent') },
+  assignment: { before: preference('space') },
 
   keyword_argument: { '"="/before': preference('tight') },
 
@@ -157,23 +156,25 @@ options: {
 }
 ```
 
-**The top level reads like `patches:`.** A bare identifier is a kind, and its
-value is a map of paths relative to that kind — the same shape `patches:`
-already has, so one block's structure teaches the other's. A key containing `/`
-is a **label**: a path in its own right, declared with the arm it carries.
+**The top level is kind-keyed, as `patches:` is** — a bare identifier, whose
+value is a map of paths relative to it. One block's structure teaches the
+other's.
 
-**Labels are paths too.** A label is written in the same path syntax as an
-address, so it nests in the generated surface exactly as an address does and no
-flat identifier survives anywhere in the design. `body/before` replaces
-`block_body_before`, which was a path encoded as an underscore string. The two
-are told apart by shape: a kind is one bare identifier, a label has a path in
-it.
+**A label's first segment is a virtual kind.** `body/before` is `before` under
+`body`, and `body` is a kind the grammar does not have. So the top level needs
+no discrimination by shape: every key is a kind, some real and some virtual,
+and every value is a map of relative paths. `block_body_before` — a path
+encoded as an underscore string — becomes a path under a kind that names the
+concept.
 
-A label path names a concept, not a kind, so its root shares a namespace with
-the grammar's kinds. **Declared labels win**: a label whose root collides with a
-kind name is rejected at load time. Kinds are derived and labels are written, so
-the collision is always the author's to resolve and the error can say which
-kind was shadowed.
+Virtual kinds share the namespace with real ones, which is what makes the
+collision rule necessary and also what makes it easy to state: a virtual kind
+may not take a real kind's name.
+
+**Declared labels win**: a virtual kind taking a real kind's name is rejected at
+load time. Real kinds are derived from the grammar and virtual ones are
+written, so the collision is always the author's to resolve and the error can
+name the kind that was shadowed.
 
 **Membership and default are declared separately, in the two halves.**
 `_bindings` says an address belongs to a label; a declaration under the
@@ -197,19 +198,19 @@ path:
 
 ```ts
 export type Options = {
-  body?:       { before?: Spacing; after?: Spacing };   // labels
-  assignment?: { before?: Spacing };
-} & {
-  block?:                  { '{': { after?: Spacing } };   // addresses
+  body?:                   { before?: Spacing; after?: Spacing };   // virtual
+  assignment?:             { before?: Spacing };
+  block?:                  { '{': { after?: Spacing } };            // real
   keyword_argument?:       { '=': { before?: Spacing } };
   token_tree_punctuation?: { ',': { after?: Spacing } };
 };
 ```
 
-Both faces nest, because both are paths. A consumer sets the label to move
-every address bound to it, or the address to move one site. The site-set rule
-adjudicates without a second mechanism: an address matches a subset of what its
-label matches, so the address wins. This is today's `eq_before` versus
+One map, not two intersected halves, because a label is a path under a virtual
+kind and needs no separate face. A consumer sets a virtual kind's path to move
+every address bound to it, or a real kind's path to move one site. The site-set
+rule adjudicates without a second mechanism: an address matches a subset of
+what its label matches, so the address wins. This is today's `eq_before` versus
 `keyword_argument: { eq_before }`, with nesting mirroring the path rather than
 flattening it into a `<slot>_<label>` string.
 

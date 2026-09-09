@@ -470,11 +470,15 @@ export type OptionsConfig = Record<string, unknown>;
 export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<string>): OptionsDeclarations;
 ```
 
-**Shape.** The top level reads like `patches:`. A bare identifier is a kind and
-its value is a map of paths relative to that kind; a key containing `/` is a
-label declared with its arm. `_bindings` maps a full address path to a label
-path, and nothing else — an address with a differing default declares it under
-its kind, and an address in no group is only a declaration.
+**Shape.** The top level is kind-keyed, as `patches:` is: a bare identifier
+whose value is a map of paths relative to it. A label's first segment is a
+**virtual kind** — `body/before` is `before` under `body` — so there is no
+discrimination by key shape; every top-level key is a kind, some real and some
+virtual, and a virtual kind taking a real kind's name is rejected.
+
+`_bindings` maps a full address path to a label path and nothing else. An
+address with a differing default declares it under its kind; an address in no
+group is only a declaration.
 
 `preference()` keeps its two-argument form for now so nothing else changes;
 `readOptionsBlock` rejects a declaration whose `preference()` label disagrees
@@ -492,8 +496,8 @@ import { preference } from '../../primitives/preference.ts';
 const KINDS = new Set(['block', 'keyword_argument', 'object_type']);
 
 describe('readOptionsBlock', () => {
-	it('reads a label declaration', () => {
-		const out = readOptionsBlock({ 'body/before': preference('body/before', 'indent') }, KINDS);
+	it('reads a virtual kind as a label', () => {
+		const out = readOptionsBlock({ body: { before: preference('before', 'indent') } }, KINDS);
 		expect(out.declarations).toEqual([{ path: 'body/before', arm: 'indent' }]);
 		expect(out.bindings).toEqual([]);
 	});
@@ -509,7 +513,7 @@ describe('readOptionsBlock', () => {
 	it('reads a binding from an address to a label', () => {
 		const out = readOptionsBlock(
 			{
-				'body/before': preference('body/before', 'indent'),
+				body: { before: preference('before', 'indent') },
 				_bindings: { 'block/"{"/after': 'body/before' }
 			},
 			KINDS
@@ -520,7 +524,7 @@ describe('readOptionsBlock', () => {
 	it('keeps membership and default separate', () => {
 		const out = readOptionsBlock(
 			{
-				'assignment/before': preference('assignment/before', 'space'),
+				assignment: { before: preference('before', 'space') },
 				keyword_argument: { '"="/before': preference('"="/before', 'tight') },
 				_bindings: { 'keyword_argument/"="/before': 'assignment/before' }
 			},
@@ -532,10 +536,16 @@ describe('readOptionsBlock', () => {
 		]);
 	});
 
-	it('rejects a label whose root shadows a kind', () => {
-		expect(() => readOptionsBlock({ 'block/before': preference('block/before', 'space') }, KINDS)).toThrow(
-			/shadows the kind 'block'/
-		);
+	it('rejects a label whose root is a real kind', () => {
+		expect(() =>
+			readOptionsBlock(
+				{
+					block: { before: preference('before', 'space') },
+					_bindings: { 'object_type/opening:/after': 'block/before' }
+				},
+				KINDS
+			)
+		).toThrow(/label 'block\/before' names the kind 'block'/);
 	});
 
 	it('rejects a binding naming no declared label', () => {
@@ -544,10 +554,9 @@ describe('readOptionsBlock', () => {
 		);
 	});
 
-	it('rejects an unknown top-level bare key', () => {
-		expect(() => readOptionsBlock({ nowhere: { '"="/before': preference('"="/before', 'tight') } }, KINDS)).toThrow(
-			/names no kind/
-		);
+	it('treats an unknown top-level key as a virtual kind', () => {
+		const out = readOptionsBlock({ nowhere: { before: preference('before', 'tight') } }, KINDS);
+		expect(out.declarations).toEqual([{ path: 'nowhere/before', arm: 'tight' }]);
 	});
 
 	it('rejects a declaration whose preference renames its key', () => {
@@ -607,15 +616,6 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 
 	for (const [key, value] of Object.entries(options)) {
 		if (key === BINDINGS_KEY) continue;
-		if (key.includes('/')) {
-			const root = parsePreferencePath(key)[0];
-			if (root !== undefined && root.kind === 'name' && kinds.has(root.name)) {
-				throw new Error(`options: label '${key}' shadows the kind '${root.name}'`);
-			}
-			add(key, value);
-			continue;
-		}
-		if (!kinds.has(key)) throw new Error(`options: '${key}' names no kind`);
 		for (const [relative, entry] of Object.entries(value as Record<string, unknown>)) {
 			add(`${key}/${relative}`, entry);
 		}
@@ -628,6 +628,10 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 		if (seen.has(address)) throw new Error(`options: _bindings declares '${address}' twice`);
 		seen.add(address);
 		if (!declared.has(label)) throw new Error(`options: _bindings '${address}' names no label '${label}'`);
+		const root = parsePreferencePath(label)[0];
+		if (root !== undefined && root.kind === 'name' && kinds.has(root.name)) {
+			throw new Error(`options: label '${label}' names the kind '${root.name}' — a label's kind is virtual`);
+		}
 		bindings.push({ address, label });
 	}
 	return { declarations, bindings };
@@ -669,10 +673,13 @@ In `docs/glossary/dsl-wire.md`:
 ### `packages/codegen/src/dsl/wire/options-block.ts::readOptionsBlock`
 
 The `options:` block read into path declarations and address bindings. The top
-level reads like `patches:` — a bare identifier is a kind whose value is a map
-of paths relative to it — and a key containing `/` is a label, a path declared
-with the arm it carries. The two are told apart by shape, and a label whose
-root names a kind is rejected: kinds are derived and labels are written, so the
+level is kind-keyed, as `patches:` is — a bare identifier whose value is a map
+of paths relative to it. A label's first segment is a virtual kind, so a label
+needs no separate form: `body/before` is `before` under `body`, and every
+top-level key is a kind, some real and some virtual.
+
+A label naming a real kind as its root is rejected where the binding names it.
+Real kinds are derived from the grammar and virtual ones are written, so the
 collision is always the author's to resolve.
 
 `_bindings` maps an address to a label and carries nothing else. Membership and
