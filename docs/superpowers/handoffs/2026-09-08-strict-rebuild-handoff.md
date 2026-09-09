@@ -518,6 +518,11 @@ Next, in order: trivia (rust renders 1848 of 4389 characters, python 409 of
 421, both from missing comments and blank lines), then the remaining rust and
 python ceiling rows.
 
+**Continued in [2026-09-09-seams-and-trivia-handoff.md](2026-09-09-seams-and-trivia-handoff.md)**,
+which carries the seam and trivia work: comments now render (rust 4140 of
+4374), python re-parses to the same tree as its source, and `$triviaData` is
+`$_trivia`.
+
 ## Gotchas
 
 - Text searches are hook-blocked unless `.infigraph/.search-fallback-allowed`
