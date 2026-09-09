@@ -59,11 +59,14 @@ ordinary terminal segments. There is no `+`/`-` suffix vocabulary, so a path and
 the nested TypeScript object are the same address in two layouts rather than two
 conventions needing a projection rule.
 
-There are two sides, not four. A list's flanks are `before` and `after` at
-positions the path grammar already expresses — `body:/0/before`,
-`body:/-1/after` — so `start` and `end` are not separate vocabulary. Indices
-also address positions no flank could name, including the one a list's last
-element occupies against its closing delimiter.
+`start` and `end` are a list's own edges and stay distinct from indices,
+because they address different spaces. An index names a **static** member of a
+rule — a seq's second member, a choice's last — resolved against the grammar
+shape at compile time. `start` and `end` name **dynamic** positions in a
+rendered list: the gap before its first actual element and after its last,
+whose count is unknown until render. No index can express those, which is why
+`ListView` carries `head` and `tail` separately from anything the path grammar
+reaches.
 
 Named positions on a slot:
 
@@ -71,7 +74,7 @@ Named positions on a slot:
 | --- | --- |
 | `separator` | the gap between elements, or the separator token where the grammar offers a choice |
 | `separator/before`, `separator/after` | the gaps flanking a separator token |
-| `0/before`, `-1/after` | the gaps inside the list's first and last elements |
+| `start`, `end` | the gaps inside the list's first and last rendered elements |
 | `before`, `after` | on a kind, its own leading and trailing edges |
 
 `separator` is the exception that proves the rule: it is not a position but the
@@ -94,7 +97,7 @@ a seam has no node.
 
 **Structural beats token.** Where a position can be named either by the
 delimiter beside it or by the slot it opens, the slot wins:
-`block/body:/0/before`, not `block/"{"/after`. The delimiter is not the invariant — `object_type`
+`block/body:/start`, not `block/"{"/after`. The delimiter is not the invariant — `object_type`
 opens with `opening`, and a python body opens with nothing.
 
 ## Declaring: `options:`
@@ -113,10 +116,10 @@ options: {
   eq_before:         preference('space'),
 
   _bindings: {
-    'block/body:/0/before':                   'block_body_before',
-    'block/body:/-1/after':                   'block_body_after',
-    'object_type/content:/0/before':           'block_body_before',
-    'field_declaration_list/elements:/0/before': 'block_body_before',
+    'block/body:/start':                      'block_body_before',
+    'block/body:/end':                        'block_body_after',
+    'object_type/content:/start':             'block_body_before',
+    'field_declaration_list/elements:/start': 'block_body_before',
 
     'lexical_declaration/"="/before':      'eq_before',
     'keyword_argument/"="/before':        ['eq_before', 'tight'],
@@ -160,7 +163,7 @@ ordering.
 
 Specificity is defined on the site set rather than on path length, because two
 paths can reach one site from different roots — `token_tree_punctuation/","/after`
-and `delim_token_tree_paren/delim_tokens:/-1/after` both name the gap after a
+and `delim_token_tree_paren/delim_tokens:/end` both name the gap after a
 trailing comma — and neither is a prefix of the other. Two declarations whose
 site sets overlap without either containing the other are a conflict, reported
 at load time. Within a single root the rule degenerates to the longer path
@@ -240,7 +243,7 @@ never exposes them, so no caller can set one and none does.
 | --- | --- |
 | `<tok>_<side>` seam labels | a literal or structural segment in the path |
 | `<slot>_separator_space[_<side>]` | `<slot>:/separator[/<side>]` |
-| `<kind>_start` / `_end` flanks | `<slot>:/0/before` / `/-1/after` |
+| `<kind>_start` / `_end` flanks | `<slot>:/start` / `/end` |
 | `<kind>_before` / `_after` kind edges | `<kind>/before` / `/after` |
 | flank-supertype fan-out, `SUPERTYPE_MEMBERS` | a `(supertype)` segment expanding to its members |
 | `LABELS` as a derived scan | `options._bindings` as written |
