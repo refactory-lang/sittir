@@ -5,8 +5,9 @@
 //! struct-based `Display` impl in grammar crates.
 
 /// Wraps a transport render call with trivia (leading/trailing comments).
-/// Streams directly to `dest` — no intermediate buffer for trivia. Each
-/// trivia entry renders via its OWN `Display` impl (the same per-kind
+/// Each entry is rendered to a short scratch string so the newline that
+/// separates it from what follows can be skipped when the entry already
+/// ends the line. Each trivia entry renders via its OWN `Display` impl (the same per-kind
 /// dispatch every other transport uses), not as a pre-rendered string —
 /// the concrete trivia entry type is grammar-specific (`TriviaTransport`,
 /// generated per grammar) and only needs to implement `Display`.
@@ -44,8 +45,12 @@ macro_rules! render_with_trivia {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __leading) = __trivia.leading {
                     for __entry in __leading {
-                        write!($dest, "{__entry}")?;
-                        $dest.write_str("\n")?;
+                        let mut __text = ::std::string::String::new();
+                        ::std::fmt::Write::write_fmt(&mut __text, ::std::format_args!("{__entry}"))?;
+                        $dest.write_str(&__text)?;
+                        if !__text.ends_with('\n') {
+                            $dest.write_str("\n")?;
+                        }
                     }
                 }
             }
@@ -53,18 +58,26 @@ macro_rules! render_with_trivia {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __trailing) = __trivia.trailing {
                     if !__trailing.is_empty() {
+                        let mut __ends_line = false;
                         for __entry in __trailing {
+                            let mut __text = ::std::string::String::new();
+                            ::std::fmt::Write::write_fmt(&mut __text, ::std::format_args!("{__entry}"))?;
                             $dest.write_str("\n")?;
-                            write!($dest, "{__entry}")?;
+                            $dest.write_str(&__text)?;
+                            __ends_line = __text.ends_with('\n');
                         }
-                        // Unconditional trailing newline (symmetric with the
-                        // leading-trivia guarantee above): a line comment
-                        // silently swallows whatever text follows it on the
-                        // same physical line, so the boundary after the LAST
-                        // trailing entry must be a hard newline, not left to
-                        // the caller (SpacingWriter only guarantees a space,
-                        // not a line break).
-                        $dest.write_str("\n")?;
+                        // The boundary after the LAST trailing entry must be a
+                        // line break: a line comment silently swallows whatever
+                        // follows it on the same physical line, and
+                        // SpacingWriter only guarantees a space. An entry whose
+                        // own text ends the line already satisfies that — a
+                        // grammar may include the terminator in the comment
+                        // node's span (rust's `line_comment` does, its
+                        // `block_comment` does not), so writing one
+                        // unconditionally would open a blank line.
+                        if !__ends_line {
+                            $dest.write_str("\n")?;
+                        }
                     }
                 }
             }
