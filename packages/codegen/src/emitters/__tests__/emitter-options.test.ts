@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { deriveOptionsShape, kindIdArmType, publicKindName, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
-import type { SitePreference } from '../../compiler/model/site-preferences.ts';
+import { deriveAddressTables, deriveOptionsShape, kindIdArmType, publicKindName, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
+import type { PreferenceArm, SitePreference } from '../../compiler/model/site-preferences.ts';
 import { siteKey } from '../../dsl/primitives/spacing.ts';
 
 const armType: ArmTypeResolver = (arm) => (arm.kind === undefined ? arm.value : `TSKindId.${arm.kind}`);
@@ -191,7 +191,7 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain('export type WhitespaceLabel = never;');
 		expect(src).toContain('export interface KindWhitespace {\n}');
 		expect(src).toContain('export type Options = { readonly [L in SpacingLabel]?: Spacing } & { readonly [L in WhitespaceLabel]?: Whitespace } & {');
-		expect(src).toContain('} & { readonly indent?: string };');
+		expect(src).toContain('} & AddressedOptions & { readonly indent?: string };');
 		expect(src).not.toMatch(/OPTION_CATALOG|OptionEntry|export const/);
 	});
 
@@ -221,5 +221,50 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain("export interface KindSpacing {\n\treadonly block: 'statements_separator_space';\n}");
 		expect(src).toContain("export interface KindWhitespace {\n\treadonly block: 'lbrace_after';\n}");
 		expect(src).toContain('export interface OtherLabels {\n}');
+	});
+});
+
+describe('deriveAddressTables', () => {
+	const addressArm = (arm: PreferenceArm): string => `TSKindId.${arm.kind ?? arm.value}`;
+	const kindEntries = [
+		{ kind: 'lbrace', member: 'Lbrace', symbolName: '{', anon: true },
+		{ kind: 'tight', member: 'Tight' },
+		{ kind: 'space', member: 'Space' }
+	];
+	const arms = ['tight', 'space'].map((k) => ({ value: k, kind: k }));
+	const site = (kind: string, slot: string, address: string): SitePreference => ({
+		kind,
+		slot,
+		address,
+		label: address,
+		arms,
+		defaultArm: 'tight',
+		source: 'spacing',
+		side: 'seam'
+	});
+
+	it('splits an address into the branches above a site and the site itself', () => {
+		const tables = deriveAddressTables([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')], kindEntries, addressArm);
+		expect(tables.roots).toEqual(['block']);
+		expect(tables.branches).toEqual([
+			{ path: 'block', keys: ['before', '{'] },
+			{ path: 'block/{', keys: ['after'] }
+		]);
+		expect(tables.leaves.map((l) => l.path)).toEqual(['block/before', 'block/{/after']);
+		expect(tables.depth).toBe(3);
+	});
+
+	it('emits the tables and a mapped type unrolled to the depth the grammar needs', () => {
+		const sites = [site('block', 'lbrace', 'lbrace_after')];
+		const src = renderOptionsModule(deriveOptionsShape(sites, new Map(), addressArm), {
+			spacingType: 'TSKindId.tight | TSKindId.space',
+			addresses: deriveAddressTables(sites, kindEntries, addressArm)
+		});
+		expect(src).toContain("export type AddressRoot = 'block';");
+		expect(src).toContain("export interface AddressBranch {\n\treadonly block: '{';\n\treadonly 'block/{': 'after';\n}");
+		expect(src).toContain("export interface AddressLeaf {\n\treadonly 'block/{/after': Spacing;\n}");
+		expect(src).toContain('export type AddressedOptions = { readonly [K in AddressRoot]?: AddressNode1<K> };');
+		expect(src).toContain('type AddressNode2<P extends string> = P extends keyof AddressBranch');
+		expect(src).not.toContain('AddressNode3<');
 	});
 });

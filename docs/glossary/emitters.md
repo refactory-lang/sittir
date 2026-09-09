@@ -14951,3 +14951,31 @@ It is all or nothing. A key that resolves to no site, or an object with any leaf
 that does not, leaves the table untouched and reports nothing applied, so the
 flat surface reads the key instead. Applying the half it understood would drop
 the rest in silence.
+
+### `packages/codegen/src/emitters/options.ts::deriveAddressTables`
+
+Every site's address split into the two tables the generated surface needs: the
+branches, each an address with what sits beneath it, and the leaves, each an
+address that names a site with what that site admits. Roots and the deepest path
+come out with them, so the emitted type is unrolled to the depth the grammar
+actually has rather than a guess.
+
+The tables are data, not structure. A key is joined with `/`, which survives a
+token whose own text is a separator — rust's `/` and `/=` arms give
+`token_tree_punctuation//` and `token_tree_punctuation//=`, distinct from each
+other and from every other address, because the path is built by concatenation
+rather than parsed back.
+
+A key that is both a branch and a leaf, or an address resolving to two types, is
+rejected: an address names one site or a set of them, never both.
+
+### `render options: AddressedOptions` (emitted into `options.ts`)
+
+The nested face of the address tables, as a mapped type over `AddressRoot` that
+descends through `AddressBranch` and bottoms out in `AddressLeaf`. It is
+unrolled rather than recursive, one level per depth the grammar has, so the
+checker never has to bound a recursion it cannot see the end of.
+
+It is intersected into `Options` beside the flat surface rather than replacing
+it. An excess-property check against an intersection admits a key known in any
+constituent, so a caller may write either face while both exist.

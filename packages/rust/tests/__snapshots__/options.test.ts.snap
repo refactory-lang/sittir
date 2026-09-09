@@ -989,6 +989,2046 @@ export interface KindOther {
 	};
 }
 
+/// The kinds an address can start at.
+export type AddressRoot =
+	| 'abstract_type'
+	| 'arguments'
+	| 'arguments_elements'
+	| 'array_expression_list'
+	| 'array_expression_semi'
+	| 'array_type'
+	| 'assignment_expression'
+	| 'associated_type'
+	| 'async_block'
+	| 'attribute'
+	| 'attribute_input'
+	| 'attribute_item'
+	| 'attributed_argument'
+	| 'attributed_enum_variant'
+	| 'attributed_field_declaration'
+	| 'attributed_ordered_field'
+	| 'attributed_parameter'
+	| 'attributed_type_parameter'
+	| 'await_expression'
+	| 'base_field_initializer'
+	| 'binary_expression'
+	| 'block'
+	| 'block_comment'
+	| 'block_comment_doc_inner'
+	| 'block_comment_doc_outer'
+	| 'bounded_type'
+	| 'bracketed_type'
+	| 'break_expression'
+	| 'call_expression'
+	| 'captured_pattern'
+	| 'char_literal'
+	| 'closure_expression'
+	| 'closure_expression_block'
+	| 'closure_parameters'
+	| 'compound_assignment_expr'
+	| 'compound_assignment_expr_operator'
+	| 'const_block'
+	| 'const_item'
+	| 'const_parameter'
+	| 'continue_expression'
+	| 'declaration_list'
+	| 'delim_token_tree_brace'
+	| 'delim_token_tree_bracket'
+	| 'delim_token_tree_paren'
+	| 'dynamic_type'
+	| 'else_clause'
+	| 'enum_item'
+	| 'enum_variant'
+	| 'enum_variant_list'
+	| 'enum_variant_list_elements'
+	| 'expression_statement_with_semi'
+	| 'extern_crate_declaration'
+	| 'extern_modifier'
+	| 'field_declaration'
+	| 'field_declaration_list'
+	| 'field_declaration_list_elements'
+	| 'field_expression'
+	| 'field_initializer'
+	| 'field_initializer_list'
+	| 'field_initializer_list_elements'
+	| 'field_pattern'
+	| 'field_pattern_named'
+	| 'for_expression'
+	| 'for_lifetimes'
+	| 'foreign_mod_item'
+	| 'function_item'
+	| 'function_modifiers'
+	| 'function_signature_item'
+	| 'function_type'
+	| 'function_type_fn_form'
+	| 'gen_block'
+	| 'generic_function'
+	| 'generic_pattern'
+	| 'generic_type'
+	| 'generic_type_with_turbofish'
+	| 'higher_ranked_trait_bound'
+	| 'if_expression'
+	| 'impl_item'
+	| 'impl_item_negative_clause'
+	| 'impl_item_positive_clause'
+	| 'index_expression'
+	| 'inner_attribute_item'
+	| 'label'
+	| 'last_match_arm'
+	| 'let_chain'
+	| 'let_condition'
+	| 'let_declaration'
+	| 'lifetime'
+	| 'lifetime_parameter'
+	| 'lifetimes'
+	| 'line_comment'
+	| 'line_comment_doc_inner'
+	| 'line_comment_doc_outer'
+	| 'loop_expression'
+	| 'macro_definition'
+	| 'macro_definition_brace'
+	| 'macro_definition_bracket'
+	| 'macro_definition_paren'
+	| 'macro_invocation'
+	| 'macro_rule'
+	| 'macro_rules'
+	| 'match_arm'
+	| 'match_arm_with_comma'
+	| 'match_block'
+	| 'match_block_arms'
+	| 'match_expression'
+	| 'match_pattern'
+	| 'mod_item'
+	| 'mut_pattern'
+	| 'negative_literal'
+	| 'or_pattern_binary'
+	| 'or_pattern_prefix'
+	| 'ordered_field_declaration_list'
+	| 'ordered_field_declaration_list_elements'
+	| 'parameter'
+	| 'parameters'
+	| 'parameters_elements'
+	| 'parenthesized_expression'
+	| 'patterns'
+	| 'pointer_type'
+	| 'qualified_type'
+	| 'range_expression_binary'
+	| 'range_expression_postfix'
+	| 'range_expression_prefix'
+	| 'range_pattern_prefix'
+	| 'range_pattern_with_left'
+	| 'range_pattern_with_left_with_right'
+	| 'raw_string_literal'
+	| 'ref_pattern'
+	| 'reference_expression'
+	| 'reference_expression_raw_const'
+	| 'reference_expression_raw_mut'
+	| 'reference_pattern'
+	| 'reference_type'
+	| 'removed_trait_bound'
+	| 'return_expression'
+	| 'scoped_identifier'
+	| 'scoped_type_identifier'
+	| 'scoped_type_identifier_in_expression_position'
+	| 'scoped_use_list'
+	| 'self_parameter'
+	| 'shorthand_field_initializer'
+	| 'slice_pattern'
+	| 'source_file'
+	| 'static_item'
+	| 'string_literal'
+	| 'struct_expression'
+	| 'struct_item'
+	| 'struct_item_brace'
+	| 'struct_item_tuple'
+	| 'struct_pattern'
+	| 'struct_pattern_elements'
+	| 'token_binding_pattern'
+	| 'token_keywords'
+	| 'token_repetition'
+	| 'token_repetition_pattern'
+	| 'token_tree_brace'
+	| 'token_tree_bracket'
+	| 'token_tree_paren'
+	| 'token_tree_pattern_brace'
+	| 'token_tree_pattern_bracket'
+	| 'token_tree_pattern_paren'
+	| 'token_tree_punctuation'
+	| 'trait_bounds'
+	| 'trait_item'
+	| 'try_block'
+	| 'try_expression'
+	| 'tuple_expression'
+	| 'tuple_expression_elements'
+	| 'tuple_pattern'
+	| 'tuple_pattern_elements'
+	| 'tuple_struct_pattern'
+	| 'tuple_type'
+	| 'tuple_type_elements'
+	| 'type_argument'
+	| 'type_arguments'
+	| 'type_arguments_elements'
+	| 'type_binding'
+	| 'type_cast_expression'
+	| 'type_item'
+	| 'type_parameter'
+	| 'type_parameters'
+	| 'type_parameters_elements'
+	| 'unary_expression'
+	| 'union_item'
+	| 'unit_expression'
+	| 'unit_type'
+	| 'unsafe_block'
+	| 'use_as_clause'
+	| 'use_bounds'
+	| 'use_bounds_elements'
+	| 'use_clauses'
+	| 'use_declaration'
+	| 'use_list'
+	| 'use_wildcard'
+	| 'variadic_parameter'
+	| 'visibility_modifier_group'
+	| 'visibility_modifier_pub'
+	| 'visibility_modifier_pub_in_path'
+	| 'where_clause'
+	| 'where_predicate'
+	| 'where_predicates'
+	| 'while_expression'
+	| 'yield_expression';
+
+/// Every address that has something beneath it, and what that is.
+export interface AddressBranch {
+	readonly abstract_type: 'after' | 'before' | 'for' | 'impl';
+	readonly 'abstract_type/for': 'after' | 'before';
+	readonly 'abstract_type/impl': 'after' | 'before';
+	readonly arguments: '(' | ')' | 'after' | 'before';
+	readonly 'arguments/(': 'after' | 'before';
+	readonly 'arguments/)': 'after' | 'before';
+	readonly arguments_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'arguments_elements/element': 'end' | 'separator' | 'start';
+	readonly 'arguments_elements/element/separator': 'after' | 'before';
+	readonly array_expression_list: '[' | ']' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
+	readonly 'array_expression_list/[': 'after' | 'before';
+	readonly 'array_expression_list/]': 'after' | 'before';
+	readonly 'array_expression_list/attributes': 'end' | 'start';
+	readonly array_expression_semi: ';' | '[' | ']' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
+	readonly 'array_expression_semi/;': 'after' | 'before';
+	readonly 'array_expression_semi/[': 'after' | 'before';
+	readonly 'array_expression_semi/]': 'after' | 'before';
+	readonly 'array_expression_semi/attributes': 'end' | 'start';
+	readonly array_type: ';' | '[' | ']' | 'after' | 'before';
+	readonly 'array_type/;': 'after' | 'before';
+	readonly 'array_type/[': 'after' | 'before';
+	readonly 'array_type/]': 'after' | 'before';
+	readonly assignment_expression: '=' | 'after' | 'before';
+	readonly 'assignment_expression/=': 'after' | 'before';
+	readonly associated_type: ';' | 'after' | 'before' | 'type';
+	readonly 'associated_type/;': 'after' | 'before';
+	readonly 'associated_type/type': 'after' | 'before';
+	readonly async_block: 'after' | 'async' | 'before';
+	readonly 'async_block/async': 'after' | 'before';
+	readonly attribute: 'after' | 'before';
+	readonly attribute_input: '=';
+	readonly 'attribute_input/=': 'after';
+	readonly attribute_item: '#' | '[' | ']' | 'after' | 'before';
+	readonly 'attribute_item/#': 'after' | 'before';
+	readonly 'attribute_item/[': 'after' | 'before';
+	readonly 'attribute_item/]': 'after' | 'before';
+	readonly attributed_argument: 'after' | 'attribute_item' | 'attribute_item_separator_space' | 'before';
+	readonly 'attributed_argument/attribute_item': 'end' | 'start';
+	readonly attributed_enum_variant: 'after' | 'attribute_item' | 'attribute_item_separator_space' | 'before';
+	readonly 'attributed_enum_variant/attribute_item': 'end' | 'start';
+	readonly attributed_field_declaration: 'after' | 'attribute_item' | 'attribute_item_separator_space' | 'before';
+	readonly 'attributed_field_declaration/attribute_item': 'end' | 'start';
+	readonly attributed_ordered_field: 'after' | 'attribute_item' | 'attribute_item_separator_space' | 'before';
+	readonly 'attributed_ordered_field/attribute_item': 'end' | 'start';
+	readonly attributed_parameter: 'after' | 'before';
+	readonly attributed_type_parameter: 'after' | 'attribute_item' | 'attribute_item_separator_space' | 'before';
+	readonly 'attributed_type_parameter/attribute_item': 'end' | 'start';
+	readonly await_expression: '.' | 'after' | 'await' | 'before';
+	readonly 'await_expression/.': 'after' | 'before';
+	readonly 'await_expression/await': 'after' | 'before';
+	readonly base_field_initializer: '..' | 'after' | 'before';
+	readonly 'base_field_initializer/..': 'after' | 'before';
+	readonly binary_expression: 'after' | 'before' | 'operator';
+	readonly 'binary_expression/operator': 'after' | 'before';
+	readonly block: ':' | 'after' | 'before' | 'statements' | 'statements_separator_space' | '{' | '}';
+	readonly 'block/:': 'after' | 'before';
+	readonly 'block/statements': 'end' | 'start';
+	readonly 'block/{': 'after' | 'before';
+	readonly 'block/}': 'after' | 'before';
+	readonly block_comment: '*/' | '/*' | 'after' | 'before';
+	readonly 'block_comment/*/': 'after' | 'before';
+	readonly 'block_comment//*': 'after' | 'before';
+	readonly block_comment_doc_inner: 'after' | 'before';
+	readonly block_comment_doc_outer: 'after' | 'before';
+	readonly bounded_type: '+' | 'after' | 'before';
+	readonly 'bounded_type/+': 'after' | 'before';
+	readonly bracketed_type: '<' | '>' | 'after' | 'before';
+	readonly 'bracketed_type/<': 'after' | 'before';
+	readonly 'bracketed_type/>': 'after' | 'before';
+	readonly break_expression: 'after' | 'before' | 'break';
+	readonly 'break_expression/break': 'after' | 'before';
+	readonly call_expression: 'after' | 'before';
+	readonly captured_pattern: '@' | 'after' | 'before';
+	readonly 'captured_pattern/@': 'after' | 'before';
+	readonly char_literal: "'";
+	readonly "char_literal/'": 'after' | 'before';
+	readonly closure_expression: 'after' | 'before';
+	readonly closure_expression_block: '->' | 'after' | 'before';
+	readonly 'closure_expression_block/->': 'after' | 'before';
+	readonly closure_parameters: 'after' | 'before' | 'parameters' | '|';
+	readonly 'closure_parameters/parameters': 'end' | 'separator' | 'start';
+	readonly 'closure_parameters/parameters/separator': 'after' | 'before';
+	readonly 'closure_parameters/|': 'after' | 'before';
+	readonly compound_assignment_expr: 'after' | 'before';
+	readonly compound_assignment_expr_operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
+	readonly 'compound_assignment_expr_operator/%=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/&=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/*=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/+=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/-=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator//=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/<<=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/>>=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/^=': 'after' | 'before';
+	readonly 'compound_assignment_expr_operator/|=': 'after' | 'before';
+	readonly const_block: 'after' | 'before' | 'const';
+	readonly 'const_block/const': 'after' | 'before';
+	readonly const_item: ':' | ';' | '=' | 'after' | 'before' | 'const';
+	readonly 'const_item/:': 'after' | 'before';
+	readonly 'const_item/;': 'after' | 'before';
+	readonly 'const_item/=': 'after' | 'before';
+	readonly 'const_item/const': 'after' | 'before';
+	readonly const_parameter: ':' | '=' | 'after' | 'before' | 'const';
+	readonly 'const_parameter/:': 'after' | 'before';
+	readonly 'const_parameter/=': 'after' | 'before';
+	readonly 'const_parameter/const': 'after' | 'before';
+	readonly continue_expression: 'after' | 'before' | 'continue';
+	readonly 'continue_expression/continue': 'after' | 'before';
+	readonly declaration_list: 'after' | 'before' | 'declarations' | 'declarations_separator_space' | '{' | '}';
+	readonly 'declaration_list/declarations': 'end' | 'start';
+	readonly 'declaration_list/{': 'after' | 'before';
+	readonly 'declaration_list/}': 'after' | 'before';
+	readonly delim_token_tree_brace: 'after' | 'before' | 'delim_tokens' | 'delim_tokens_separator_space' | '{' | '}';
+	readonly 'delim_token_tree_brace/delim_tokens': 'end' | 'start';
+	readonly 'delim_token_tree_brace/{': 'after' | 'before';
+	readonly 'delim_token_tree_brace/}': 'after' | 'before';
+	readonly delim_token_tree_bracket: '[' | ']' | 'after' | 'before' | 'delim_tokens' | 'delim_tokens_separator_space';
+	readonly 'delim_token_tree_bracket/[': 'after' | 'before';
+	readonly 'delim_token_tree_bracket/]': 'after' | 'before';
+	readonly 'delim_token_tree_bracket/delim_tokens': 'end' | 'start';
+	readonly delim_token_tree_paren: '(' | ')' | 'after' | 'before' | 'delim_tokens' | 'delim_tokens_separator_space';
+	readonly 'delim_token_tree_paren/(': 'after' | 'before';
+	readonly 'delim_token_tree_paren/)': 'after' | 'before';
+	readonly 'delim_token_tree_paren/delim_tokens': 'end' | 'start';
+	readonly dynamic_type: 'after' | 'before' | 'dyn';
+	readonly 'dynamic_type/dyn': 'after' | 'before';
+	readonly else_clause: 'after' | 'before' | 'else';
+	readonly 'else_clause/else': 'after' | 'before';
+	readonly enum_item: 'after' | 'before' | 'enum';
+	readonly 'enum_item/enum': 'after' | 'before';
+	readonly enum_variant: '=' | 'after' | 'before';
+	readonly 'enum_variant/=': 'after' | 'before';
+	readonly enum_variant_list: 'after' | 'before' | '{' | '}';
+	readonly 'enum_variant_list/{': 'after' | 'before';
+	readonly 'enum_variant_list/}': 'after' | 'before';
+	readonly enum_variant_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'enum_variant_list_elements/element': 'end' | 'separator' | 'start';
+	readonly 'enum_variant_list_elements/element/separator': 'after' | 'before';
+	readonly expression_statement_with_semi: ';' | 'after' | 'before';
+	readonly 'expression_statement_with_semi/;': 'after' | 'before';
+	readonly extern_crate_declaration: ';' | 'after' | 'as' | 'before' | 'extern';
+	readonly 'extern_crate_declaration/;': 'after' | 'before';
+	readonly 'extern_crate_declaration/as': 'after' | 'before';
+	readonly 'extern_crate_declaration/extern': 'after' | 'before';
+	readonly extern_modifier: 'after' | 'before' | 'extern';
+	readonly 'extern_modifier/extern': 'after' | 'before';
+	readonly field_declaration: ':' | 'after' | 'before';
+	readonly 'field_declaration/:': 'after' | 'before';
+	readonly field_declaration_list: 'after' | 'before' | '{' | '}';
+	readonly 'field_declaration_list/{': 'after' | 'before';
+	readonly 'field_declaration_list/}': 'after' | 'before';
+	readonly field_declaration_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'field_declaration_list_elements/element': 'end' | 'separator' | 'start';
+	readonly 'field_declaration_list_elements/element/separator': 'after' | 'before';
+	readonly field_expression: '.' | 'after' | 'before';
+	readonly 'field_expression/.': 'after' | 'before';
+	readonly field_initializer: ':' | 'after' | 'attribute_item' | 'attribute_item_separator_space' | 'before';
+	readonly 'field_initializer/:': 'after' | 'before';
+	readonly 'field_initializer/attribute_item': 'end' | 'start';
+	readonly field_initializer_list: 'after' | 'before' | '{' | '}';
+	readonly 'field_initializer_list/{': 'after' | 'before';
+	readonly 'field_initializer_list/}': 'after' | 'before';
+	readonly field_initializer_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'field_initializer_list_elements/element': 'end' | 'separator' | 'start';
+	readonly 'field_initializer_list_elements/element/separator': 'after' | 'before';
+	readonly field_pattern: 'after' | 'before';
+	readonly field_pattern_named: ':' | 'after' | 'before';
+	readonly 'field_pattern_named/:': 'after' | 'before';
+	readonly for_expression: ':' | 'after' | 'before' | 'for' | 'in';
+	readonly 'for_expression/:': 'after' | 'before';
+	readonly 'for_expression/for': 'after' | 'before';
+	readonly 'for_expression/in': 'after' | 'before';
+	readonly for_lifetimes: '<' | '>' | 'after' | 'before' | 'for';
+	readonly 'for_lifetimes/<': 'after' | 'before';
+	readonly 'for_lifetimes/>': 'after' | 'before';
+	readonly 'for_lifetimes/for': 'after' | 'before';
+	readonly foreign_mod_item: 'after' | 'before';
+	readonly function_item: '->' | 'after' | 'before' | 'fn';
+	readonly 'function_item/->': 'after' | 'before';
+	readonly 'function_item/fn': 'after' | 'before';
+	readonly function_modifiers: 'after' | 'before' | 'modifier' | 'modifier_separator_space';
+	readonly 'function_modifiers/modifier': 'end' | 'start';
+	readonly function_signature_item: '->' | ';' | 'after' | 'before' | 'fn';
+	readonly 'function_signature_item/->': 'after' | 'before';
+	readonly 'function_signature_item/;': 'after' | 'before';
+	readonly 'function_signature_item/fn': 'after' | 'before';
+	readonly function_type: '->' | 'after' | 'before';
+	readonly 'function_type/->': 'after' | 'before';
+	readonly function_type_fn_form: 'after' | 'before' | 'fn';
+	readonly 'function_type_fn_form/fn': 'after' | 'before';
+	readonly gen_block: 'after' | 'before' | 'gen';
+	readonly 'gen_block/gen': 'after' | 'before';
+	readonly generic_function: '::' | 'after' | 'before';
+	readonly 'generic_function/::': 'after' | 'before';
+	readonly generic_pattern: '::' | 'after' | 'before';
+	readonly 'generic_pattern/::': 'after' | 'before';
+	readonly generic_type: 'after' | 'before';
+	readonly generic_type_with_turbofish: '::' | 'after' | 'before';
+	readonly 'generic_type_with_turbofish/::': 'after' | 'before';
+	readonly higher_ranked_trait_bound: 'after' | 'before' | 'for';
+	readonly 'higher_ranked_trait_bound/for': 'after' | 'before';
+	readonly if_expression: 'after' | 'before' | 'if';
+	readonly 'if_expression/if': 'after' | 'before';
+	readonly impl_item: 'after' | 'before' | 'impl';
+	readonly 'impl_item/impl': 'after' | 'before';
+	readonly impl_item_negative_clause: '!' | 'after' | 'before' | 'for';
+	readonly 'impl_item_negative_clause/!': 'after' | 'before';
+	readonly 'impl_item_negative_clause/for': 'after' | 'before';
+	readonly impl_item_positive_clause: 'after' | 'before' | 'for';
+	readonly 'impl_item_positive_clause/for': 'after' | 'before';
+	readonly index_expression: '[' | ']' | 'after' | 'before';
+	readonly 'index_expression/[': 'after' | 'before';
+	readonly 'index_expression/]': 'after' | 'before';
+	readonly inner_attribute_item: '!' | '#' | '[' | ']' | 'after' | 'before';
+	readonly 'inner_attribute_item/!': 'after' | 'before';
+	readonly 'inner_attribute_item/#': 'after' | 'before';
+	readonly 'inner_attribute_item/[': 'after' | 'before';
+	readonly 'inner_attribute_item/]': 'after' | 'before';
+	readonly label: "'" | 'after' | 'before';
+	readonly "label/'": 'after' | 'before';
+	readonly last_match_arm: ',' | '=>' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
+	readonly 'last_match_arm/,': 'after' | 'before';
+	readonly 'last_match_arm/=>': 'after' | 'before';
+	readonly 'last_match_arm/attributes': 'end' | 'start';
+	readonly let_chain: '&&' | 'right';
+	readonly 'let_chain/&&': 'after' | 'before';
+	readonly 'let_chain/right': 'separator';
+	readonly 'let_chain/right/separator': 'after' | 'before';
+	readonly let_condition: '=' | 'after' | 'before' | 'let';
+	readonly 'let_condition/=': 'after' | 'before';
+	readonly 'let_condition/let': 'after' | 'before';
+	readonly let_declaration: ':' | ';' | '=' | 'after' | 'before' | 'else' | 'let';
+	readonly 'let_declaration/:': 'after' | 'before';
+	readonly 'let_declaration/;': 'after' | 'before';
+	readonly 'let_declaration/=': 'after' | 'before';
+	readonly 'let_declaration/else': 'after' | 'before';
+	readonly 'let_declaration/let': 'after' | 'before';
+	readonly lifetime: "'" | 'after' | 'before';
+	readonly "lifetime/'": 'after' | 'before';
+	readonly lifetime_parameter: 'after' | 'before';
+	readonly lifetimes: 'after' | 'before' | 'lifetime' | 'lifetime_delimiter';
+	readonly 'lifetimes/lifetime': 'end' | 'separator' | 'start';
+	readonly 'lifetimes/lifetime/separator': 'after' | 'before';
+	readonly line_comment: '//' | 'after' | 'before';
+	readonly 'line_comment///': 'after' | 'before';
+	readonly line_comment_doc_inner: 'after' | 'before';
+	readonly line_comment_doc_outer: 'after' | 'before';
+	readonly loop_expression: ':' | 'after' | 'before' | 'loop';
+	readonly 'loop_expression/:': 'after' | 'before';
+	readonly 'loop_expression/loop': 'after' | 'before';
+	readonly macro_definition: 'after' | 'before' | 'macro_rules!';
+	readonly 'macro_definition/macro_rules!': 'after' | 'before';
+	readonly macro_definition_brace: 'after' | 'before' | '{' | '}';
+	readonly 'macro_definition_brace/{': 'after' | 'before';
+	readonly 'macro_definition_brace/}': 'after' | 'before';
+	readonly macro_definition_bracket: ';' | '[' | ']' | 'after' | 'before';
+	readonly 'macro_definition_bracket/;': 'after' | 'before';
+	readonly 'macro_definition_bracket/[': 'after' | 'before';
+	readonly 'macro_definition_bracket/]': 'after' | 'before';
+	readonly macro_definition_paren: '(' | ')' | ';' | 'after' | 'before';
+	readonly 'macro_definition_paren/(': 'after' | 'before';
+	readonly 'macro_definition_paren/)': 'after' | 'before';
+	readonly 'macro_definition_paren/;': 'after' | 'before';
+	readonly macro_invocation: '!' | 'after' | 'before';
+	readonly 'macro_invocation/!': 'after' | 'before';
+	readonly macro_rule: '=>' | 'after' | 'before';
+	readonly 'macro_rule/=>': 'after' | 'before';
+	readonly macro_rules: 'after' | 'before' | 'macro_rule' | 'macro_rule_delimiter';
+	readonly 'macro_rules/macro_rule': 'end' | 'separator' | 'start';
+	readonly 'macro_rules/macro_rule/separator': 'after' | 'before';
+	readonly match_arm: '=>' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
+	readonly 'match_arm/=>': 'after' | 'before';
+	readonly 'match_arm/attributes': 'end' | 'start';
+	readonly match_arm_with_comma: ',' | 'after' | 'before';
+	readonly 'match_arm_with_comma/,': 'after' | 'before';
+	readonly match_block: 'after' | 'before' | '{' | '}';
+	readonly 'match_block/{': 'after' | 'before';
+	readonly 'match_block/}': 'after' | 'before';
+	readonly match_block_arms: 'after' | 'before' | 'match_arm' | 'match_arm_separator_space';
+	readonly 'match_block_arms/match_arm': 'end' | 'start';
+	readonly match_expression: 'after' | 'before' | 'match';
+	readonly 'match_expression/match': 'after' | 'before';
+	readonly match_pattern: 'after' | 'before' | 'if';
+	readonly 'match_pattern/if': 'after' | 'before';
+	readonly mod_item: 'after' | 'before' | 'mod';
+	readonly 'mod_item/mod': 'after' | 'before';
+	readonly mut_pattern: 'after' | 'before';
+	readonly negative_literal: '-' | 'after' | 'before';
+	readonly 'negative_literal/-': 'after' | 'before';
+	readonly or_pattern_binary: 'after' | 'before' | '|';
+	readonly 'or_pattern_binary/|': 'after' | 'before';
+	readonly or_pattern_prefix: 'after' | 'before' | '|';
+	readonly 'or_pattern_prefix/|': 'after' | 'before';
+	readonly ordered_field_declaration_list: '(' | ')' | 'after' | 'before';
+	readonly 'ordered_field_declaration_list/(': 'after' | 'before';
+	readonly 'ordered_field_declaration_list/)': 'after' | 'before';
+	readonly ordered_field_declaration_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'ordered_field_declaration_list_elements/element': 'end' | 'separator' | 'start';
+	readonly 'ordered_field_declaration_list_elements/element/separator': 'after' | 'before';
+	readonly parameter: ':' | 'after' | 'before';
+	readonly 'parameter/:': 'after' | 'before';
+	readonly parameters: '(' | ')' | 'after' | 'before';
+	readonly 'parameters/(': 'after' | 'before';
+	readonly 'parameters/)': 'after' | 'before';
+	readonly parameters_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'parameters_elements/element': 'end' | 'separator' | 'start';
+	readonly 'parameters_elements/element/separator': 'after' | 'before';
+	readonly parenthesized_expression: '(' | ')' | 'after' | 'before';
+	readonly 'parenthesized_expression/(': 'after' | 'before';
+	readonly 'parenthesized_expression/)': 'after' | 'before';
+	readonly patterns: 'after' | 'before' | 'pattern' | 'pattern_delimiter';
+	readonly 'patterns/pattern': 'end' | 'separator' | 'start';
+	readonly 'patterns/pattern/separator': 'after' | 'before';
+	readonly pointer_type: '*' | 'after' | 'before';
+	readonly 'pointer_type/*': 'after' | 'before';
+	readonly qualified_type: 'after' | 'as' | 'before';
+	readonly 'qualified_type/as': 'after' | 'before';
+	readonly range_expression_binary: 'after' | 'before' | 'operator';
+	readonly 'range_expression_binary/operator': 'after' | 'before';
+	readonly range_expression_postfix: 'after' | 'before' | 'operator';
+	readonly 'range_expression_postfix/operator': 'after' | 'before';
+	readonly range_expression_prefix: 'after' | 'before' | 'operator';
+	readonly 'range_expression_prefix/operator': 'after' | 'before';
+	readonly range_pattern_prefix: 'after' | 'before';
+	readonly range_pattern_with_left: 'after' | 'before';
+	readonly range_pattern_with_left_with_right: 'after' | 'before';
+	readonly raw_string_literal: 'after' | 'before';
+	readonly ref_pattern: 'after' | 'before' | 'ref';
+	readonly 'ref_pattern/ref': 'after' | 'before';
+	readonly reference_expression: '&' | 'after' | 'before';
+	readonly 'reference_expression/&': 'after' | 'before';
+	readonly reference_expression_raw_const: 'const' | 'raw';
+	readonly 'reference_expression_raw_const/const': 'before';
+	readonly 'reference_expression_raw_const/raw': 'after';
+	readonly reference_expression_raw_mut: 'after' | 'before' | 'raw';
+	readonly 'reference_expression_raw_mut/raw': 'after' | 'before';
+	readonly reference_pattern: '&' | 'after' | 'before';
+	readonly 'reference_pattern/&': 'after' | 'before';
+	readonly reference_type: '&' | 'after' | 'before';
+	readonly 'reference_type/&': 'after' | 'before';
+	readonly removed_trait_bound: '?' | 'after' | 'before';
+	readonly 'removed_trait_bound/?': 'after' | 'before';
+	readonly return_expression: 'after' | 'before' | 'return';
+	readonly 'return_expression/return': 'after' | 'before';
+	readonly scoped_identifier: '::' | 'after' | 'before';
+	readonly 'scoped_identifier/::': 'after' | 'before';
+	readonly scoped_type_identifier: '::' | 'after' | 'before';
+	readonly 'scoped_type_identifier/::': 'after' | 'before';
+	readonly scoped_type_identifier_in_expression_position: '::' | 'after' | 'before';
+	readonly 'scoped_type_identifier_in_expression_position/::': 'after' | 'before';
+	readonly scoped_use_list: '::' | 'after' | 'before';
+	readonly 'scoped_use_list/::': 'after' | 'before';
+	readonly self_parameter: 'after' | 'before' | 'reference';
+	readonly 'self_parameter/reference': 'after' | 'before';
+	readonly shorthand_field_initializer: 'after' | 'attributes' | 'attributes_separator_space' | 'before';
+	readonly 'shorthand_field_initializer/attributes': 'end' | 'start';
+	readonly slice_pattern: '[' | ']' | 'after' | 'before';
+	readonly 'slice_pattern/[': 'after' | 'before';
+	readonly 'slice_pattern/]': 'after' | 'before';
+	readonly source_file: 'after' | 'before' | 'statements' | 'statements_separator_space';
+	readonly 'source_file/statements': 'end' | 'start';
+	readonly static_item: ':' | ';' | '=' | 'after' | 'before' | 'static';
+	readonly 'static_item/:': 'after' | 'before';
+	readonly 'static_item/;': 'after' | 'before';
+	readonly 'static_item/=': 'after' | 'before';
+	readonly 'static_item/static': 'after' | 'before';
+	readonly string_literal: '"' | 'after' | 'before';
+	readonly 'string_literal/"': 'after' | 'before';
+	readonly struct_expression: 'after' | 'before';
+	readonly struct_item: 'after' | 'before' | 'struct';
+	readonly 'struct_item/struct': 'after' | 'before';
+	readonly struct_item_brace: 'after' | 'before';
+	readonly struct_item_tuple: ';' | 'after' | 'before';
+	readonly 'struct_item_tuple/;': 'after' | 'before';
+	readonly struct_pattern: 'after' | 'before' | '{' | '}';
+	readonly 'struct_pattern/{': 'after' | 'before';
+	readonly 'struct_pattern/}': 'after' | 'before';
+	readonly struct_pattern_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'struct_pattern_elements/element': 'end' | 'separator' | 'start';
+	readonly 'struct_pattern_elements/element/separator': 'after' | 'before';
+	readonly token_binding_pattern: ':' | 'after' | 'before' | 'type';
+	readonly 'token_binding_pattern/:': 'after' | 'before';
+	readonly 'token_binding_pattern/type': 'after' | 'before';
+	readonly token_keywords: "'";
+	readonly "token_keywords/'": 'after' | 'before';
+	readonly token_repetition: '$' | '(' | ')' | 'after' | 'before' | 'operator' | 'tokens' | 'tokens_separator_space';
+	readonly 'token_repetition/$': 'after' | 'before';
+	readonly 'token_repetition/(': 'after' | 'before';
+	readonly 'token_repetition/)': 'after' | 'before';
+	readonly 'token_repetition/operator': 'after' | 'before';
+	readonly 'token_repetition/tokens': 'end' | 'start';
+	readonly token_repetition_pattern:
+		| '$'
+		| '('
+		| ')'
+		| 'after'
+		| 'before'
+		| 'operator'
+		| 'token_patterns'
+		| 'token_patterns_separator_space';
+	readonly 'token_repetition_pattern/$': 'after' | 'before';
+	readonly 'token_repetition_pattern/(': 'after' | 'before';
+	readonly 'token_repetition_pattern/)': 'after' | 'before';
+	readonly 'token_repetition_pattern/operator': 'after' | 'before';
+	readonly 'token_repetition_pattern/token_patterns': 'end' | 'start';
+	readonly token_tree_brace: 'after' | 'before' | 'tokens' | 'tokens_separator_space' | '{' | '}';
+	readonly 'token_tree_brace/tokens': 'end' | 'start';
+	readonly 'token_tree_brace/{': 'after' | 'before';
+	readonly 'token_tree_brace/}': 'after' | 'before';
+	readonly token_tree_bracket: '[' | ']' | 'after' | 'before' | 'tokens' | 'tokens_separator_space';
+	readonly 'token_tree_bracket/[': 'after' | 'before';
+	readonly 'token_tree_bracket/]': 'after' | 'before';
+	readonly 'token_tree_bracket/tokens': 'end' | 'start';
+	readonly token_tree_paren: '(' | ')' | 'after' | 'before' | 'tokens' | 'tokens_separator_space';
+	readonly 'token_tree_paren/(': 'after' | 'before';
+	readonly 'token_tree_paren/)': 'after' | 'before';
+	readonly 'token_tree_paren/tokens': 'end' | 'start';
+	readonly token_tree_pattern_brace:
+		| 'after'
+		| 'before'
+		| 'token_patterns'
+		| 'token_patterns_separator_space'
+		| '{'
+		| '}';
+	readonly 'token_tree_pattern_brace/token_patterns': 'end' | 'start';
+	readonly 'token_tree_pattern_brace/{': 'after' | 'before';
+	readonly 'token_tree_pattern_brace/}': 'after' | 'before';
+	readonly token_tree_pattern_bracket:
+		| '['
+		| ']'
+		| 'after'
+		| 'before'
+		| 'token_patterns'
+		| 'token_patterns_separator_space';
+	readonly 'token_tree_pattern_bracket/[': 'after' | 'before';
+	readonly 'token_tree_pattern_bracket/]': 'after' | 'before';
+	readonly 'token_tree_pattern_bracket/token_patterns': 'end' | 'start';
+	readonly token_tree_pattern_paren:
+		| '('
+		| ')'
+		| 'after'
+		| 'before'
+		| 'token_patterns'
+		| 'token_patterns_separator_space';
+	readonly 'token_tree_pattern_paren/(': 'after' | 'before';
+	readonly 'token_tree_pattern_paren/)': 'after' | 'before';
+	readonly 'token_tree_pattern_paren/token_patterns': 'end' | 'start';
+	readonly token_tree_punctuation:
+		| '!'
+		| '!='
+		| '#'
+		| '$'
+		| '%'
+		| '%='
+		| '&'
+		| '&&'
+		| '&='
+		| '*'
+		| '*='
+		| '+'
+		| '+='
+		| ','
+		| '-'
+		| '-='
+		| '->'
+		| '.'
+		| '..'
+		| '...'
+		| '..='
+		| '/'
+		| '/='
+		| ':'
+		| '::'
+		| ';'
+		| '<'
+		| '<<'
+		| '<<='
+		| '<='
+		| '='
+		| '=='
+		| '=>'
+		| '>'
+		| '>='
+		| '>>'
+		| '>>='
+		| '?'
+		| '@'
+		| '^'
+		| '^='
+		| '|'
+		| '|='
+		| '||';
+	readonly 'token_tree_punctuation/!': 'after' | 'before';
+	readonly 'token_tree_punctuation/!=': 'after' | 'before';
+	readonly 'token_tree_punctuation/#': 'after' | 'before';
+	readonly 'token_tree_punctuation/$': 'after' | 'before';
+	readonly 'token_tree_punctuation/%': 'after' | 'before';
+	readonly 'token_tree_punctuation/%=': 'after' | 'before';
+	readonly 'token_tree_punctuation/&': 'after' | 'before';
+	readonly 'token_tree_punctuation/&&': 'after' | 'before';
+	readonly 'token_tree_punctuation/&=': 'after' | 'before';
+	readonly 'token_tree_punctuation/*': 'after' | 'before';
+	readonly 'token_tree_punctuation/*=': 'after' | 'before';
+	readonly 'token_tree_punctuation/+': 'after' | 'before';
+	readonly 'token_tree_punctuation/+=': 'after' | 'before';
+	readonly 'token_tree_punctuation/,': 'after' | 'before';
+	readonly 'token_tree_punctuation/-': 'after' | 'before';
+	readonly 'token_tree_punctuation/-=': 'after' | 'before';
+	readonly 'token_tree_punctuation/->': 'after' | 'before';
+	readonly 'token_tree_punctuation/.': 'after' | 'before';
+	readonly 'token_tree_punctuation/..': 'after' | 'before';
+	readonly 'token_tree_punctuation/...': 'after' | 'before';
+	readonly 'token_tree_punctuation/..=': 'after' | 'before';
+	readonly 'token_tree_punctuation//': 'after' | 'before';
+	readonly 'token_tree_punctuation//=': 'after' | 'before';
+	readonly 'token_tree_punctuation/:': 'after' | 'before';
+	readonly 'token_tree_punctuation/::': 'after' | 'before';
+	readonly 'token_tree_punctuation/;': 'after' | 'before';
+	readonly 'token_tree_punctuation/<': 'after' | 'before';
+	readonly 'token_tree_punctuation/<<': 'after' | 'before';
+	readonly 'token_tree_punctuation/<<=': 'after' | 'before';
+	readonly 'token_tree_punctuation/<=': 'after' | 'before';
+	readonly 'token_tree_punctuation/=': 'after' | 'before';
+	readonly 'token_tree_punctuation/==': 'after' | 'before';
+	readonly 'token_tree_punctuation/=>': 'after' | 'before';
+	readonly 'token_tree_punctuation/>': 'after' | 'before';
+	readonly 'token_tree_punctuation/>=': 'after' | 'before';
+	readonly 'token_tree_punctuation/>>': 'after' | 'before';
+	readonly 'token_tree_punctuation/>>=': 'after' | 'before';
+	readonly 'token_tree_punctuation/?': 'after' | 'before';
+	readonly 'token_tree_punctuation/@': 'after' | 'before';
+	readonly 'token_tree_punctuation/^': 'after' | 'before';
+	readonly 'token_tree_punctuation/^=': 'after' | 'before';
+	readonly 'token_tree_punctuation/|': 'after' | 'before';
+	readonly 'token_tree_punctuation/|=': 'after' | 'before';
+	readonly 'token_tree_punctuation/||': 'after' | 'before';
+	readonly trait_bounds: ':' | 'after' | 'before' | 'bounds';
+	readonly 'trait_bounds/:': 'after' | 'before';
+	readonly 'trait_bounds/bounds': 'end' | 'separator' | 'start';
+	readonly 'trait_bounds/bounds/separator': 'after' | 'before';
+	readonly trait_item: 'after' | 'before' | 'trait';
+	readonly 'trait_item/trait': 'after' | 'before';
+	readonly try_block: 'after' | 'before' | 'try';
+	readonly 'try_block/try': 'after' | 'before';
+	readonly try_expression: '?' | 'after' | 'before';
+	readonly 'try_expression/?': 'after' | 'before';
+	readonly tuple_expression: '(' | ')' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
+	readonly 'tuple_expression/(': 'after' | 'before';
+	readonly 'tuple_expression/)': 'after' | 'before';
+	readonly 'tuple_expression/attributes': 'end' | 'start';
+	readonly tuple_expression_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'tuple_expression_elements/element': 'end' | 'separator' | 'start';
+	readonly 'tuple_expression_elements/element/separator': 'after' | 'before';
+	readonly tuple_pattern: '(' | ')' | 'after' | 'before';
+	readonly 'tuple_pattern/(': 'after' | 'before';
+	readonly 'tuple_pattern/)': 'after' | 'before';
+	readonly tuple_pattern_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'tuple_pattern_elements/element': 'end' | 'separator' | 'start';
+	readonly 'tuple_pattern_elements/element/separator': 'after' | 'before';
+	readonly tuple_struct_pattern: '(' | ')' | 'after' | 'before';
+	readonly 'tuple_struct_pattern/(': 'after' | 'before';
+	readonly 'tuple_struct_pattern/)': 'after' | 'before';
+	readonly tuple_type: '(' | ')' | 'after' | 'before';
+	readonly 'tuple_type/(': 'after' | 'before';
+	readonly 'tuple_type/)': 'after' | 'before';
+	readonly tuple_type_elements: 'after' | 'before' | 'type' | 'type_delimiter';
+	readonly 'tuple_type_elements/type': 'end' | 'separator' | 'start';
+	readonly 'tuple_type_elements/type/separator': 'after' | 'before';
+	readonly type_argument: 'after' | 'before';
+	readonly type_arguments: '<' | '>' | 'after' | 'before';
+	readonly 'type_arguments/<': 'after' | 'before';
+	readonly 'type_arguments/>': 'after' | 'before';
+	readonly type_arguments_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'type_arguments_elements/element': 'end' | 'separator' | 'start';
+	readonly 'type_arguments_elements/element/separator': 'after' | 'before';
+	readonly type_binding: '=' | 'after' | 'before';
+	readonly 'type_binding/=': 'after' | 'before';
+	readonly type_cast_expression: 'after' | 'as' | 'before';
+	readonly 'type_cast_expression/as': 'after' | 'before';
+	readonly type_item: ';' | '=' | 'after' | 'before' | 'type';
+	readonly 'type_item/;': 'after' | 'before';
+	readonly 'type_item/=': 'after' | 'before';
+	readonly 'type_item/type': 'after' | 'before';
+	readonly type_parameter: '=' | 'after' | 'before';
+	readonly 'type_parameter/=': 'after' | 'before';
+	readonly type_parameters: '<' | '>' | 'after' | 'before';
+	readonly 'type_parameters/<': 'after' | 'before';
+	readonly 'type_parameters/>': 'after' | 'before';
+	readonly type_parameters_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'type_parameters_elements/element': 'end' | 'separator' | 'start';
+	readonly 'type_parameters_elements/element/separator': 'after' | 'before';
+	readonly unary_expression: 'after' | 'before' | 'operator';
+	readonly 'unary_expression/operator': 'after' | 'before';
+	readonly union_item: 'after' | 'before' | 'union';
+	readonly 'union_item/union': 'after' | 'before';
+	readonly unit_expression: '(' | ')';
+	readonly 'unit_expression/(': 'after';
+	readonly 'unit_expression/)': 'before';
+	readonly unit_type: '(' | ')';
+	readonly 'unit_type/(': 'after';
+	readonly 'unit_type/)': 'before';
+	readonly unsafe_block: 'after' | 'before' | 'unsafe';
+	readonly 'unsafe_block/unsafe': 'after' | 'before';
+	readonly use_as_clause: 'after' | 'as' | 'before';
+	readonly 'use_as_clause/as': 'after' | 'before';
+	readonly use_bounds: '<' | '>' | 'after' | 'before' | 'use';
+	readonly 'use_bounds/<': 'after' | 'before';
+	readonly 'use_bounds/>': 'after' | 'before';
+	readonly 'use_bounds/use': 'after' | 'before';
+	readonly use_bounds_elements: 'after' | 'before' | 'element' | 'element_delimiter';
+	readonly 'use_bounds_elements/element': 'end' | 'separator' | 'start';
+	readonly 'use_bounds_elements/element/separator': 'after' | 'before';
+	readonly use_clauses: 'after' | 'before' | 'use_clause' | 'use_clause_delimiter';
+	readonly 'use_clauses/use_clause': 'end' | 'separator' | 'start';
+	readonly 'use_clauses/use_clause/separator': 'after' | 'before';
+	readonly use_declaration: ';' | 'after' | 'before' | 'use';
+	readonly 'use_declaration/;': 'after' | 'before';
+	readonly 'use_declaration/use': 'after' | 'before';
+	readonly use_list: 'after' | 'before' | '{' | '}';
+	readonly 'use_list/{': 'after' | 'before';
+	readonly 'use_list/}': 'after' | 'before';
+	readonly use_wildcard: '*' | '::' | 'after' | 'before';
+	readonly 'use_wildcard/*': 'after' | 'before';
+	readonly 'use_wildcard/::': 'after' | 'before';
+	readonly variadic_parameter: '...' | ':' | 'after' | 'before';
+	readonly 'variadic_parameter/...': 'after' | 'before';
+	readonly 'variadic_parameter/:': 'after' | 'before';
+	readonly visibility_modifier_group: '(' | ')' | 'after' | 'before';
+	readonly 'visibility_modifier_group/(': 'after' | 'before';
+	readonly 'visibility_modifier_group/)': 'after' | 'before';
+	readonly visibility_modifier_pub: 'after' | 'before' | 'pub';
+	readonly 'visibility_modifier_pub/pub': 'after' | 'before';
+	readonly visibility_modifier_pub_in_path: 'after' | 'before';
+	readonly where_clause: 'after' | 'before' | 'where';
+	readonly 'where_clause/where': 'after' | 'before';
+	readonly where_predicate: 'after' | 'before';
+	readonly where_predicates: 'after' | 'before' | 'where_predicate' | 'where_predicate_delimiter';
+	readonly 'where_predicates/where_predicate': 'end' | 'separator' | 'start';
+	readonly 'where_predicates/where_predicate/separator': 'after' | 'before';
+	readonly while_expression: ':' | 'after' | 'before' | 'while';
+	readonly 'while_expression/:': 'after' | 'before';
+	readonly 'while_expression/while': 'after' | 'before';
+	readonly yield_expression: 'after' | 'before' | 'yield';
+	readonly 'yield_expression/yield': 'after' | 'before';
+}
+
+/// Every address that names a site, and what that site admits.
+export interface AddressLeaf {
+	readonly 'abstract_type/after': Whitespace;
+	readonly 'abstract_type/before': Whitespace;
+	readonly 'abstract_type/for/after': Whitespace;
+	readonly 'abstract_type/for/before': Whitespace;
+	readonly 'abstract_type/impl/after': Whitespace;
+	readonly 'abstract_type/impl/before': Whitespace;
+	readonly 'arguments/(/after': Whitespace;
+	readonly 'arguments/(/before': Whitespace;
+	readonly 'arguments/)/after': Whitespace;
+	readonly 'arguments/)/before': Whitespace;
+	readonly 'arguments/after': Whitespace;
+	readonly 'arguments/before': Whitespace;
+	readonly 'arguments_elements/after': Whitespace;
+	readonly 'arguments_elements/before': Whitespace;
+	readonly 'arguments_elements/element/end': Whitespace;
+	readonly 'arguments_elements/element/separator/after': Spacing;
+	readonly 'arguments_elements/element/separator/before': Spacing;
+	readonly 'arguments_elements/element/start': Whitespace;
+	readonly 'arguments_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'array_expression_list/[/after': Whitespace;
+	readonly 'array_expression_list/[/before': Whitespace;
+	readonly 'array_expression_list/]/after': Whitespace;
+	readonly 'array_expression_list/]/before': Whitespace;
+	readonly 'array_expression_list/after': Whitespace;
+	readonly 'array_expression_list/attributes/end': Whitespace;
+	readonly 'array_expression_list/attributes/start': Whitespace;
+	readonly 'array_expression_list/attributes_separator_space': Spacing;
+	readonly 'array_expression_list/before': Whitespace;
+	readonly 'array_expression_semi/;/after': Whitespace;
+	readonly 'array_expression_semi/;/before': Whitespace;
+	readonly 'array_expression_semi/[/after': Whitespace;
+	readonly 'array_expression_semi/[/before': Whitespace;
+	readonly 'array_expression_semi/]/after': Whitespace;
+	readonly 'array_expression_semi/]/before': Whitespace;
+	readonly 'array_expression_semi/after': Whitespace;
+	readonly 'array_expression_semi/attributes/end': Whitespace;
+	readonly 'array_expression_semi/attributes/start': Whitespace;
+	readonly 'array_expression_semi/attributes_separator_space': Spacing;
+	readonly 'array_expression_semi/before': Whitespace;
+	readonly 'array_type/;/after': Whitespace;
+	readonly 'array_type/;/before': Whitespace;
+	readonly 'array_type/[/after': Whitespace;
+	readonly 'array_type/[/before': Whitespace;
+	readonly 'array_type/]/after': Whitespace;
+	readonly 'array_type/]/before': Whitespace;
+	readonly 'array_type/after': Whitespace;
+	readonly 'array_type/before': Whitespace;
+	readonly 'assignment_expression/=/after': Whitespace;
+	readonly 'assignment_expression/=/before': Whitespace;
+	readonly 'assignment_expression/after': Whitespace;
+	readonly 'assignment_expression/before': Whitespace;
+	readonly 'associated_type/;/after': Whitespace;
+	readonly 'associated_type/;/before': Whitespace;
+	readonly 'associated_type/after': Whitespace;
+	readonly 'associated_type/before': Whitespace;
+	readonly 'associated_type/type/after': Whitespace;
+	readonly 'associated_type/type/before': Whitespace;
+	readonly 'async_block/after': Whitespace;
+	readonly 'async_block/async/after': Whitespace;
+	readonly 'async_block/async/before': Whitespace;
+	readonly 'async_block/before': Whitespace;
+	readonly 'attribute/after': Whitespace;
+	readonly 'attribute/before': Whitespace;
+	readonly 'attribute_input/=/after': Whitespace;
+	readonly 'attribute_item/#/after': Whitespace;
+	readonly 'attribute_item/#/before': Whitespace;
+	readonly 'attribute_item/[/after': Whitespace;
+	readonly 'attribute_item/[/before': Whitespace;
+	readonly 'attribute_item/]/after': Whitespace;
+	readonly 'attribute_item/]/before': Whitespace;
+	readonly 'attribute_item/after': Whitespace;
+	readonly 'attribute_item/before': Whitespace;
+	readonly 'attributed_argument/after': Whitespace;
+	readonly 'attributed_argument/attribute_item/end': Whitespace;
+	readonly 'attributed_argument/attribute_item/start': Whitespace;
+	readonly 'attributed_argument/attribute_item_separator_space': Spacing;
+	readonly 'attributed_argument/before': Whitespace;
+	readonly 'attributed_enum_variant/after': Whitespace;
+	readonly 'attributed_enum_variant/attribute_item/end': Whitespace;
+	readonly 'attributed_enum_variant/attribute_item/start': Whitespace;
+	readonly 'attributed_enum_variant/attribute_item_separator_space': Spacing;
+	readonly 'attributed_enum_variant/before': Whitespace;
+	readonly 'attributed_field_declaration/after': Whitespace;
+	readonly 'attributed_field_declaration/attribute_item/end': Whitespace;
+	readonly 'attributed_field_declaration/attribute_item/start': Whitespace;
+	readonly 'attributed_field_declaration/attribute_item_separator_space': Spacing;
+	readonly 'attributed_field_declaration/before': Whitespace;
+	readonly 'attributed_ordered_field/after': Whitespace;
+	readonly 'attributed_ordered_field/attribute_item/end': Whitespace;
+	readonly 'attributed_ordered_field/attribute_item/start': Whitespace;
+	readonly 'attributed_ordered_field/attribute_item_separator_space': Spacing;
+	readonly 'attributed_ordered_field/before': Whitespace;
+	readonly 'attributed_parameter/after': Whitespace;
+	readonly 'attributed_parameter/before': Whitespace;
+	readonly 'attributed_type_parameter/after': Whitespace;
+	readonly 'attributed_type_parameter/attribute_item/end': Whitespace;
+	readonly 'attributed_type_parameter/attribute_item/start': Whitespace;
+	readonly 'attributed_type_parameter/attribute_item_separator_space': Spacing;
+	readonly 'attributed_type_parameter/before': Whitespace;
+	readonly 'await_expression/./after': Whitespace;
+	readonly 'await_expression/./before': Whitespace;
+	readonly 'await_expression/after': Whitespace;
+	readonly 'await_expression/await/after': Whitespace;
+	readonly 'await_expression/await/before': Whitespace;
+	readonly 'await_expression/before': Whitespace;
+	readonly 'base_field_initializer/../after': Whitespace;
+	readonly 'base_field_initializer/../before': Whitespace;
+	readonly 'base_field_initializer/after': Whitespace;
+	readonly 'base_field_initializer/before': Whitespace;
+	readonly 'binary_expression/after': Whitespace;
+	readonly 'binary_expression/before': Whitespace;
+	readonly 'binary_expression/operator/after': Whitespace;
+	readonly 'binary_expression/operator/before': Whitespace;
+	readonly 'block/:/after': Whitespace;
+	readonly 'block/:/before': Whitespace;
+	readonly 'block/after': Whitespace;
+	readonly 'block/before': Whitespace;
+	readonly 'block/statements/end': Whitespace;
+	readonly 'block/statements/start': Whitespace;
+	readonly 'block/statements_separator_space': Spacing;
+	readonly 'block/{/after': Whitespace;
+	readonly 'block/{/before': Whitespace;
+	readonly 'block/}/after': Whitespace;
+	readonly 'block/}/before': Whitespace;
+	readonly 'block_comment/*//after': Whitespace;
+	readonly 'block_comment/*//before': Whitespace;
+	readonly 'block_comment//*/after': Whitespace;
+	readonly 'block_comment//*/before': Whitespace;
+	readonly 'block_comment/after': Whitespace;
+	readonly 'block_comment/before': Whitespace;
+	readonly 'block_comment_doc_inner/after': Whitespace;
+	readonly 'block_comment_doc_inner/before': Whitespace;
+	readonly 'block_comment_doc_outer/after': Whitespace;
+	readonly 'block_comment_doc_outer/before': Whitespace;
+	readonly 'bounded_type/+/after': Whitespace;
+	readonly 'bounded_type/+/before': Whitespace;
+	readonly 'bounded_type/after': Whitespace;
+	readonly 'bounded_type/before': Whitespace;
+	readonly 'bracketed_type/</after': Whitespace;
+	readonly 'bracketed_type/</before': Whitespace;
+	readonly 'bracketed_type/>/after': Whitespace;
+	readonly 'bracketed_type/>/before': Whitespace;
+	readonly 'bracketed_type/after': Whitespace;
+	readonly 'bracketed_type/before': Whitespace;
+	readonly 'break_expression/after': Whitespace;
+	readonly 'break_expression/before': Whitespace;
+	readonly 'break_expression/break/after': Whitespace;
+	readonly 'break_expression/break/before': Whitespace;
+	readonly 'call_expression/after': Whitespace;
+	readonly 'call_expression/before': Whitespace;
+	readonly 'captured_pattern/@/after': Whitespace;
+	readonly 'captured_pattern/@/before': Whitespace;
+	readonly 'captured_pattern/after': Whitespace;
+	readonly 'captured_pattern/before': Whitespace;
+	readonly "char_literal/'/after": Whitespace;
+	readonly "char_literal/'/before": Whitespace;
+	readonly 'closure_expression/after': Whitespace;
+	readonly 'closure_expression/before': Whitespace;
+	readonly 'closure_expression_block/->/after': Whitespace;
+	readonly 'closure_expression_block/->/before': Whitespace;
+	readonly 'closure_expression_block/after': Whitespace;
+	readonly 'closure_expression_block/before': Whitespace;
+	readonly 'closure_parameters/after': Whitespace;
+	readonly 'closure_parameters/before': Whitespace;
+	readonly 'closure_parameters/parameters/end': Whitespace;
+	readonly 'closure_parameters/parameters/separator/after': Spacing;
+	readonly 'closure_parameters/parameters/separator/before': Spacing;
+	readonly 'closure_parameters/parameters/start': Whitespace;
+	readonly 'closure_parameters/|/after': Whitespace;
+	readonly 'closure_parameters/|/before': Whitespace;
+	readonly 'compound_assignment_expr/after': Whitespace;
+	readonly 'compound_assignment_expr/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/%=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/%=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/&=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/&=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/*=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/*=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/+=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/+=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/-=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/-=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator//=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator//=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/<<=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/<<=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/>>=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/>>=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/^=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/^=/before': Whitespace;
+	readonly 'compound_assignment_expr_operator/|=/after': Whitespace;
+	readonly 'compound_assignment_expr_operator/|=/before': Whitespace;
+	readonly 'const_block/after': Whitespace;
+	readonly 'const_block/before': Whitespace;
+	readonly 'const_block/const/after': Whitespace;
+	readonly 'const_block/const/before': Whitespace;
+	readonly 'const_item/:/after': Whitespace;
+	readonly 'const_item/:/before': Whitespace;
+	readonly 'const_item/;/after': Whitespace;
+	readonly 'const_item/;/before': Whitespace;
+	readonly 'const_item/=/after': Whitespace;
+	readonly 'const_item/=/before': Whitespace;
+	readonly 'const_item/after': Whitespace;
+	readonly 'const_item/before': Whitespace;
+	readonly 'const_item/const/after': Whitespace;
+	readonly 'const_item/const/before': Whitespace;
+	readonly 'const_parameter/:/after': Whitespace;
+	readonly 'const_parameter/:/before': Whitespace;
+	readonly 'const_parameter/=/after': Whitespace;
+	readonly 'const_parameter/=/before': Whitespace;
+	readonly 'const_parameter/after': Whitespace;
+	readonly 'const_parameter/before': Whitespace;
+	readonly 'const_parameter/const/after': Whitespace;
+	readonly 'const_parameter/const/before': Whitespace;
+	readonly 'continue_expression/after': Whitespace;
+	readonly 'continue_expression/before': Whitespace;
+	readonly 'continue_expression/continue/after': Whitespace;
+	readonly 'continue_expression/continue/before': Whitespace;
+	readonly 'declaration_list/after': Whitespace;
+	readonly 'declaration_list/before': Whitespace;
+	readonly 'declaration_list/declarations/end': Whitespace;
+	readonly 'declaration_list/declarations/start': Whitespace;
+	readonly 'declaration_list/declarations_separator_space': Spacing;
+	readonly 'declaration_list/{/after': Whitespace;
+	readonly 'declaration_list/{/before': Whitespace;
+	readonly 'declaration_list/}/after': Whitespace;
+	readonly 'declaration_list/}/before': Whitespace;
+	readonly 'delim_token_tree_brace/after': Whitespace;
+	readonly 'delim_token_tree_brace/before': Whitespace;
+	readonly 'delim_token_tree_brace/delim_tokens/end': Whitespace;
+	readonly 'delim_token_tree_brace/delim_tokens/start': Whitespace;
+	readonly 'delim_token_tree_brace/delim_tokens_separator_space': Spacing;
+	readonly 'delim_token_tree_brace/{/after': Whitespace;
+	readonly 'delim_token_tree_brace/{/before': Whitespace;
+	readonly 'delim_token_tree_brace/}/after': Whitespace;
+	readonly 'delim_token_tree_brace/}/before': Whitespace;
+	readonly 'delim_token_tree_bracket/[/after': Whitespace;
+	readonly 'delim_token_tree_bracket/[/before': Whitespace;
+	readonly 'delim_token_tree_bracket/]/after': Whitespace;
+	readonly 'delim_token_tree_bracket/]/before': Whitespace;
+	readonly 'delim_token_tree_bracket/after': Whitespace;
+	readonly 'delim_token_tree_bracket/before': Whitespace;
+	readonly 'delim_token_tree_bracket/delim_tokens/end': Whitespace;
+	readonly 'delim_token_tree_bracket/delim_tokens/start': Whitespace;
+	readonly 'delim_token_tree_bracket/delim_tokens_separator_space': Spacing;
+	readonly 'delim_token_tree_paren/(/after': Whitespace;
+	readonly 'delim_token_tree_paren/(/before': Whitespace;
+	readonly 'delim_token_tree_paren/)/after': Whitespace;
+	readonly 'delim_token_tree_paren/)/before': Whitespace;
+	readonly 'delim_token_tree_paren/after': Whitespace;
+	readonly 'delim_token_tree_paren/before': Whitespace;
+	readonly 'delim_token_tree_paren/delim_tokens/end': Whitespace;
+	readonly 'delim_token_tree_paren/delim_tokens/start': Whitespace;
+	readonly 'delim_token_tree_paren/delim_tokens_separator_space': Spacing;
+	readonly 'dynamic_type/after': Whitespace;
+	readonly 'dynamic_type/before': Whitespace;
+	readonly 'dynamic_type/dyn/after': Whitespace;
+	readonly 'dynamic_type/dyn/before': Whitespace;
+	readonly 'else_clause/after': Whitespace;
+	readonly 'else_clause/before': Whitespace;
+	readonly 'else_clause/else/after': Whitespace;
+	readonly 'else_clause/else/before': Whitespace;
+	readonly 'enum_item/after': Whitespace;
+	readonly 'enum_item/before': Whitespace;
+	readonly 'enum_item/enum/after': Whitespace;
+	readonly 'enum_item/enum/before': Whitespace;
+	readonly 'enum_variant/=/after': Whitespace;
+	readonly 'enum_variant/=/before': Whitespace;
+	readonly 'enum_variant/after': Whitespace;
+	readonly 'enum_variant/before': Whitespace;
+	readonly 'enum_variant_list/after': Whitespace;
+	readonly 'enum_variant_list/before': Whitespace;
+	readonly 'enum_variant_list/{/after': Whitespace;
+	readonly 'enum_variant_list/{/before': Whitespace;
+	readonly 'enum_variant_list/}/after': Whitespace;
+	readonly 'enum_variant_list/}/before': Whitespace;
+	readonly 'enum_variant_list_elements/after': Whitespace;
+	readonly 'enum_variant_list_elements/before': Whitespace;
+	readonly 'enum_variant_list_elements/element/end': Whitespace;
+	readonly 'enum_variant_list_elements/element/separator/after': Spacing;
+	readonly 'enum_variant_list_elements/element/separator/before': Spacing;
+	readonly 'enum_variant_list_elements/element/start': Whitespace;
+	readonly 'enum_variant_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'expression_statement_with_semi/;/after': Whitespace;
+	readonly 'expression_statement_with_semi/;/before': Whitespace;
+	readonly 'expression_statement_with_semi/after': Whitespace;
+	readonly 'expression_statement_with_semi/before': Whitespace;
+	readonly 'extern_crate_declaration/;/after': Whitespace;
+	readonly 'extern_crate_declaration/;/before': Whitespace;
+	readonly 'extern_crate_declaration/after': Whitespace;
+	readonly 'extern_crate_declaration/as/after': Whitespace;
+	readonly 'extern_crate_declaration/as/before': Whitespace;
+	readonly 'extern_crate_declaration/before': Whitespace;
+	readonly 'extern_crate_declaration/extern/after': Whitespace;
+	readonly 'extern_crate_declaration/extern/before': Whitespace;
+	readonly 'extern_modifier/after': Whitespace;
+	readonly 'extern_modifier/before': Whitespace;
+	readonly 'extern_modifier/extern/after': Whitespace;
+	readonly 'extern_modifier/extern/before': Whitespace;
+	readonly 'field_declaration/:/after': Whitespace;
+	readonly 'field_declaration/:/before': Whitespace;
+	readonly 'field_declaration/after': Whitespace;
+	readonly 'field_declaration/before': Whitespace;
+	readonly 'field_declaration_list/after': Whitespace;
+	readonly 'field_declaration_list/before': Whitespace;
+	readonly 'field_declaration_list/{/after': Whitespace;
+	readonly 'field_declaration_list/{/before': Whitespace;
+	readonly 'field_declaration_list/}/after': Whitespace;
+	readonly 'field_declaration_list/}/before': Whitespace;
+	readonly 'field_declaration_list_elements/after': Whitespace;
+	readonly 'field_declaration_list_elements/before': Whitespace;
+	readonly 'field_declaration_list_elements/element/end': Whitespace;
+	readonly 'field_declaration_list_elements/element/separator/after': Spacing;
+	readonly 'field_declaration_list_elements/element/separator/before': Spacing;
+	readonly 'field_declaration_list_elements/element/start': Whitespace;
+	readonly 'field_declaration_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'field_expression/./after': Whitespace;
+	readonly 'field_expression/./before': Whitespace;
+	readonly 'field_expression/after': Whitespace;
+	readonly 'field_expression/before': Whitespace;
+	readonly 'field_initializer/:/after': Whitespace;
+	readonly 'field_initializer/:/before': Whitespace;
+	readonly 'field_initializer/after': Whitespace;
+	readonly 'field_initializer/attribute_item/end': Whitespace;
+	readonly 'field_initializer/attribute_item/start': Whitespace;
+	readonly 'field_initializer/attribute_item_separator_space': Spacing;
+	readonly 'field_initializer/before': Whitespace;
+	readonly 'field_initializer_list/after': Whitespace;
+	readonly 'field_initializer_list/before': Whitespace;
+	readonly 'field_initializer_list/{/after': Whitespace;
+	readonly 'field_initializer_list/{/before': Whitespace;
+	readonly 'field_initializer_list/}/after': Whitespace;
+	readonly 'field_initializer_list/}/before': Whitespace;
+	readonly 'field_initializer_list_elements/after': Whitespace;
+	readonly 'field_initializer_list_elements/before': Whitespace;
+	readonly 'field_initializer_list_elements/element/end': Whitespace;
+	readonly 'field_initializer_list_elements/element/separator/after': Spacing;
+	readonly 'field_initializer_list_elements/element/separator/before': Spacing;
+	readonly 'field_initializer_list_elements/element/start': Whitespace;
+	readonly 'field_initializer_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'field_pattern/after': Whitespace;
+	readonly 'field_pattern/before': Whitespace;
+	readonly 'field_pattern_named/:/after': Whitespace;
+	readonly 'field_pattern_named/:/before': Whitespace;
+	readonly 'field_pattern_named/after': Whitespace;
+	readonly 'field_pattern_named/before': Whitespace;
+	readonly 'for_expression/:/after': Whitespace;
+	readonly 'for_expression/:/before': Whitespace;
+	readonly 'for_expression/after': Whitespace;
+	readonly 'for_expression/before': Whitespace;
+	readonly 'for_expression/for/after': Whitespace;
+	readonly 'for_expression/for/before': Whitespace;
+	readonly 'for_expression/in/after': Whitespace;
+	readonly 'for_expression/in/before': Whitespace;
+	readonly 'for_lifetimes/</after': Whitespace;
+	readonly 'for_lifetimes/</before': Whitespace;
+	readonly 'for_lifetimes/>/after': Whitespace;
+	readonly 'for_lifetimes/>/before': Whitespace;
+	readonly 'for_lifetimes/after': Whitespace;
+	readonly 'for_lifetimes/before': Whitespace;
+	readonly 'for_lifetimes/for/after': Whitespace;
+	readonly 'for_lifetimes/for/before': Whitespace;
+	readonly 'foreign_mod_item/after': Whitespace;
+	readonly 'foreign_mod_item/before': Whitespace;
+	readonly 'function_item/->/after': Whitespace;
+	readonly 'function_item/->/before': Whitespace;
+	readonly 'function_item/after': Whitespace;
+	readonly 'function_item/before': Whitespace;
+	readonly 'function_item/fn/after': Whitespace;
+	readonly 'function_item/fn/before': Whitespace;
+	readonly 'function_modifiers/after': Whitespace;
+	readonly 'function_modifiers/before': Whitespace;
+	readonly 'function_modifiers/modifier/end': Whitespace;
+	readonly 'function_modifiers/modifier/start': Whitespace;
+	readonly 'function_modifiers/modifier_separator_space': Spacing;
+	readonly 'function_signature_item/->/after': Whitespace;
+	readonly 'function_signature_item/->/before': Whitespace;
+	readonly 'function_signature_item/;/after': Whitespace;
+	readonly 'function_signature_item/;/before': Whitespace;
+	readonly 'function_signature_item/after': Whitespace;
+	readonly 'function_signature_item/before': Whitespace;
+	readonly 'function_signature_item/fn/after': Whitespace;
+	readonly 'function_signature_item/fn/before': Whitespace;
+	readonly 'function_type/->/after': Whitespace;
+	readonly 'function_type/->/before': Whitespace;
+	readonly 'function_type/after': Whitespace;
+	readonly 'function_type/before': Whitespace;
+	readonly 'function_type_fn_form/after': Whitespace;
+	readonly 'function_type_fn_form/before': Whitespace;
+	readonly 'function_type_fn_form/fn/after': Whitespace;
+	readonly 'function_type_fn_form/fn/before': Whitespace;
+	readonly 'gen_block/after': Whitespace;
+	readonly 'gen_block/before': Whitespace;
+	readonly 'gen_block/gen/after': Whitespace;
+	readonly 'gen_block/gen/before': Whitespace;
+	readonly 'generic_function/::/after': Whitespace;
+	readonly 'generic_function/::/before': Whitespace;
+	readonly 'generic_function/after': Whitespace;
+	readonly 'generic_function/before': Whitespace;
+	readonly 'generic_pattern/::/after': Whitespace;
+	readonly 'generic_pattern/::/before': Whitespace;
+	readonly 'generic_pattern/after': Whitespace;
+	readonly 'generic_pattern/before': Whitespace;
+	readonly 'generic_type/after': Whitespace;
+	readonly 'generic_type/before': Whitespace;
+	readonly 'generic_type_with_turbofish/::/after': Whitespace;
+	readonly 'generic_type_with_turbofish/::/before': Whitespace;
+	readonly 'generic_type_with_turbofish/after': Whitespace;
+	readonly 'generic_type_with_turbofish/before': Whitespace;
+	readonly 'higher_ranked_trait_bound/after': Whitespace;
+	readonly 'higher_ranked_trait_bound/before': Whitespace;
+	readonly 'higher_ranked_trait_bound/for/after': Whitespace;
+	readonly 'higher_ranked_trait_bound/for/before': Whitespace;
+	readonly 'if_expression/after': Whitespace;
+	readonly 'if_expression/before': Whitespace;
+	readonly 'if_expression/if/after': Whitespace;
+	readonly 'if_expression/if/before': Whitespace;
+	readonly 'impl_item/after': Whitespace;
+	readonly 'impl_item/before': Whitespace;
+	readonly 'impl_item/impl/after': Whitespace;
+	readonly 'impl_item/impl/before': Whitespace;
+	readonly 'impl_item_negative_clause/!/after': Whitespace;
+	readonly 'impl_item_negative_clause/!/before': Whitespace;
+	readonly 'impl_item_negative_clause/after': Whitespace;
+	readonly 'impl_item_negative_clause/before': Whitespace;
+	readonly 'impl_item_negative_clause/for/after': Whitespace;
+	readonly 'impl_item_negative_clause/for/before': Whitespace;
+	readonly 'impl_item_positive_clause/after': Whitespace;
+	readonly 'impl_item_positive_clause/before': Whitespace;
+	readonly 'impl_item_positive_clause/for/after': Whitespace;
+	readonly 'impl_item_positive_clause/for/before': Whitespace;
+	readonly 'index_expression/[/after': Whitespace;
+	readonly 'index_expression/[/before': Whitespace;
+	readonly 'index_expression/]/after': Whitespace;
+	readonly 'index_expression/]/before': Whitespace;
+	readonly 'index_expression/after': Whitespace;
+	readonly 'index_expression/before': Whitespace;
+	readonly 'inner_attribute_item/!/after': Whitespace;
+	readonly 'inner_attribute_item/!/before': Whitespace;
+	readonly 'inner_attribute_item/#/after': Whitespace;
+	readonly 'inner_attribute_item/#/before': Whitespace;
+	readonly 'inner_attribute_item/[/after': Whitespace;
+	readonly 'inner_attribute_item/[/before': Whitespace;
+	readonly 'inner_attribute_item/]/after': Whitespace;
+	readonly 'inner_attribute_item/]/before': Whitespace;
+	readonly 'inner_attribute_item/after': Whitespace;
+	readonly 'inner_attribute_item/before': Whitespace;
+	readonly "label/'/after": Whitespace;
+	readonly "label/'/before": Whitespace;
+	readonly 'label/after': Whitespace;
+	readonly 'label/before': Whitespace;
+	readonly 'last_match_arm/,/after': Whitespace;
+	readonly 'last_match_arm/,/before': Whitespace;
+	readonly 'last_match_arm/=>/after': Whitespace;
+	readonly 'last_match_arm/=>/before': Whitespace;
+	readonly 'last_match_arm/after': Whitespace;
+	readonly 'last_match_arm/attributes/end': Whitespace;
+	readonly 'last_match_arm/attributes/start': Whitespace;
+	readonly 'last_match_arm/attributes_separator_space': Spacing;
+	readonly 'last_match_arm/before': Whitespace;
+	readonly 'let_chain/&&/after': Whitespace;
+	readonly 'let_chain/&&/before': Whitespace;
+	readonly 'let_chain/right/separator/after': Spacing;
+	readonly 'let_chain/right/separator/before': Spacing;
+	readonly 'let_condition/=/after': Whitespace;
+	readonly 'let_condition/=/before': Whitespace;
+	readonly 'let_condition/after': Whitespace;
+	readonly 'let_condition/before': Whitespace;
+	readonly 'let_condition/let/after': Whitespace;
+	readonly 'let_condition/let/before': Whitespace;
+	readonly 'let_declaration/:/after': Whitespace;
+	readonly 'let_declaration/:/before': Whitespace;
+	readonly 'let_declaration/;/after': Whitespace;
+	readonly 'let_declaration/;/before': Whitespace;
+	readonly 'let_declaration/=/after': Whitespace;
+	readonly 'let_declaration/=/before': Whitespace;
+	readonly 'let_declaration/after': Whitespace;
+	readonly 'let_declaration/before': Whitespace;
+	readonly 'let_declaration/else/after': Whitespace;
+	readonly 'let_declaration/else/before': Whitespace;
+	readonly 'let_declaration/let/after': Whitespace;
+	readonly 'let_declaration/let/before': Whitespace;
+	readonly "lifetime/'/after": Whitespace;
+	readonly "lifetime/'/before": Whitespace;
+	readonly 'lifetime/after': Whitespace;
+	readonly 'lifetime/before': Whitespace;
+	readonly 'lifetime_parameter/after': Whitespace;
+	readonly 'lifetime_parameter/before': Whitespace;
+	readonly 'lifetimes/after': Whitespace;
+	readonly 'lifetimes/before': Whitespace;
+	readonly 'lifetimes/lifetime/end': Whitespace;
+	readonly 'lifetimes/lifetime/separator/after': Spacing;
+	readonly 'lifetimes/lifetime/separator/before': Spacing;
+	readonly 'lifetimes/lifetime/start': Whitespace;
+	readonly 'lifetimes/lifetime_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'line_comment////after': Whitespace;
+	readonly 'line_comment////before': Whitespace;
+	readonly 'line_comment/after': Whitespace;
+	readonly 'line_comment/before': Whitespace;
+	readonly 'line_comment_doc_inner/after': Whitespace;
+	readonly 'line_comment_doc_inner/before': Whitespace;
+	readonly 'line_comment_doc_outer/after': Whitespace;
+	readonly 'line_comment_doc_outer/before': Whitespace;
+	readonly 'loop_expression/:/after': Whitespace;
+	readonly 'loop_expression/:/before': Whitespace;
+	readonly 'loop_expression/after': Whitespace;
+	readonly 'loop_expression/before': Whitespace;
+	readonly 'loop_expression/loop/after': Whitespace;
+	readonly 'loop_expression/loop/before': Whitespace;
+	readonly 'macro_definition/after': Whitespace;
+	readonly 'macro_definition/before': Whitespace;
+	readonly 'macro_definition/macro_rules!/after': Whitespace;
+	readonly 'macro_definition/macro_rules!/before': Whitespace;
+	readonly 'macro_definition_brace/after': Whitespace;
+	readonly 'macro_definition_brace/before': Whitespace;
+	readonly 'macro_definition_brace/{/after': Whitespace;
+	readonly 'macro_definition_brace/{/before': Whitespace;
+	readonly 'macro_definition_brace/}/after': Whitespace;
+	readonly 'macro_definition_brace/}/before': Whitespace;
+	readonly 'macro_definition_bracket/;/after': Whitespace;
+	readonly 'macro_definition_bracket/;/before': Whitespace;
+	readonly 'macro_definition_bracket/[/after': Whitespace;
+	readonly 'macro_definition_bracket/[/before': Whitespace;
+	readonly 'macro_definition_bracket/]/after': Whitespace;
+	readonly 'macro_definition_bracket/]/before': Whitespace;
+	readonly 'macro_definition_bracket/after': Whitespace;
+	readonly 'macro_definition_bracket/before': Whitespace;
+	readonly 'macro_definition_paren/(/after': Whitespace;
+	readonly 'macro_definition_paren/(/before': Whitespace;
+	readonly 'macro_definition_paren/)/after': Whitespace;
+	readonly 'macro_definition_paren/)/before': Whitespace;
+	readonly 'macro_definition_paren/;/after': Whitespace;
+	readonly 'macro_definition_paren/;/before': Whitespace;
+	readonly 'macro_definition_paren/after': Whitespace;
+	readonly 'macro_definition_paren/before': Whitespace;
+	readonly 'macro_invocation/!/after': Whitespace;
+	readonly 'macro_invocation/!/before': Whitespace;
+	readonly 'macro_invocation/after': Whitespace;
+	readonly 'macro_invocation/before': Whitespace;
+	readonly 'macro_rule/=>/after': Whitespace;
+	readonly 'macro_rule/=>/before': Whitespace;
+	readonly 'macro_rule/after': Whitespace;
+	readonly 'macro_rule/before': Whitespace;
+	readonly 'macro_rules/after': Whitespace;
+	readonly 'macro_rules/before': Whitespace;
+	readonly 'macro_rules/macro_rule/end': Whitespace;
+	readonly 'macro_rules/macro_rule/separator/after': Spacing;
+	readonly 'macro_rules/macro_rule/separator/before': Spacing;
+	readonly 'macro_rules/macro_rule/start': Whitespace;
+	readonly 'macro_rules/macro_rule_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'match_arm/=>/after': Whitespace;
+	readonly 'match_arm/=>/before': Whitespace;
+	readonly 'match_arm/after': Whitespace;
+	readonly 'match_arm/attributes/end': Whitespace;
+	readonly 'match_arm/attributes/start': Whitespace;
+	readonly 'match_arm/attributes_separator_space': Spacing;
+	readonly 'match_arm/before': Whitespace;
+	readonly 'match_arm_with_comma/,/after': Whitespace;
+	readonly 'match_arm_with_comma/,/before': Whitespace;
+	readonly 'match_arm_with_comma/after': Whitespace;
+	readonly 'match_arm_with_comma/before': Whitespace;
+	readonly 'match_block/after': Whitespace;
+	readonly 'match_block/before': Whitespace;
+	readonly 'match_block/{/after': Whitespace;
+	readonly 'match_block/{/before': Whitespace;
+	readonly 'match_block/}/after': Whitespace;
+	readonly 'match_block/}/before': Whitespace;
+	readonly 'match_block_arms/after': Whitespace;
+	readonly 'match_block_arms/before': Whitespace;
+	readonly 'match_block_arms/match_arm/end': Whitespace;
+	readonly 'match_block_arms/match_arm/start': Whitespace;
+	readonly 'match_block_arms/match_arm_separator_space': Spacing;
+	readonly 'match_expression/after': Whitespace;
+	readonly 'match_expression/before': Whitespace;
+	readonly 'match_expression/match/after': Whitespace;
+	readonly 'match_expression/match/before': Whitespace;
+	readonly 'match_pattern/after': Whitespace;
+	readonly 'match_pattern/before': Whitespace;
+	readonly 'match_pattern/if/after': Whitespace;
+	readonly 'match_pattern/if/before': Whitespace;
+	readonly 'mod_item/after': Whitespace;
+	readonly 'mod_item/before': Whitespace;
+	readonly 'mod_item/mod/after': Whitespace;
+	readonly 'mod_item/mod/before': Whitespace;
+	readonly 'mut_pattern/after': Whitespace;
+	readonly 'mut_pattern/before': Whitespace;
+	readonly 'negative_literal/-/after': Whitespace;
+	readonly 'negative_literal/-/before': Whitespace;
+	readonly 'negative_literal/after': Whitespace;
+	readonly 'negative_literal/before': Whitespace;
+	readonly 'or_pattern_binary/after': Whitespace;
+	readonly 'or_pattern_binary/before': Whitespace;
+	readonly 'or_pattern_binary/|/after': Whitespace;
+	readonly 'or_pattern_binary/|/before': Whitespace;
+	readonly 'or_pattern_prefix/after': Whitespace;
+	readonly 'or_pattern_prefix/before': Whitespace;
+	readonly 'or_pattern_prefix/|/after': Whitespace;
+	readonly 'or_pattern_prefix/|/before': Whitespace;
+	readonly 'ordered_field_declaration_list/(/after': Whitespace;
+	readonly 'ordered_field_declaration_list/(/before': Whitespace;
+	readonly 'ordered_field_declaration_list/)/after': Whitespace;
+	readonly 'ordered_field_declaration_list/)/before': Whitespace;
+	readonly 'ordered_field_declaration_list/after': Whitespace;
+	readonly 'ordered_field_declaration_list/before': Whitespace;
+	readonly 'ordered_field_declaration_list_elements/after': Whitespace;
+	readonly 'ordered_field_declaration_list_elements/before': Whitespace;
+	readonly 'ordered_field_declaration_list_elements/element/end': Whitespace;
+	readonly 'ordered_field_declaration_list_elements/element/separator/after': Spacing;
+	readonly 'ordered_field_declaration_list_elements/element/separator/before': Spacing;
+	readonly 'ordered_field_declaration_list_elements/element/start': Whitespace;
+	readonly 'ordered_field_declaration_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'parameter/:/after': Whitespace;
+	readonly 'parameter/:/before': Whitespace;
+	readonly 'parameter/after': Whitespace;
+	readonly 'parameter/before': Whitespace;
+	readonly 'parameters/(/after': Whitespace;
+	readonly 'parameters/(/before': Whitespace;
+	readonly 'parameters/)/after': Whitespace;
+	readonly 'parameters/)/before': Whitespace;
+	readonly 'parameters/after': Whitespace;
+	readonly 'parameters/before': Whitespace;
+	readonly 'parameters_elements/after': Whitespace;
+	readonly 'parameters_elements/before': Whitespace;
+	readonly 'parameters_elements/element/end': Whitespace;
+	readonly 'parameters_elements/element/separator/after': Spacing;
+	readonly 'parameters_elements/element/separator/before': Spacing;
+	readonly 'parameters_elements/element/start': Whitespace;
+	readonly 'parameters_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'parenthesized_expression/(/after': Whitespace;
+	readonly 'parenthesized_expression/(/before': Whitespace;
+	readonly 'parenthesized_expression/)/after': Whitespace;
+	readonly 'parenthesized_expression/)/before': Whitespace;
+	readonly 'parenthesized_expression/after': Whitespace;
+	readonly 'parenthesized_expression/before': Whitespace;
+	readonly 'patterns/after': Whitespace;
+	readonly 'patterns/before': Whitespace;
+	readonly 'patterns/pattern/end': Whitespace;
+	readonly 'patterns/pattern/separator/after': Spacing;
+	readonly 'patterns/pattern/separator/before': Spacing;
+	readonly 'patterns/pattern/start': Whitespace;
+	readonly 'patterns/pattern_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'pointer_type/*/after': Whitespace;
+	readonly 'pointer_type/*/before': Whitespace;
+	readonly 'pointer_type/after': Whitespace;
+	readonly 'pointer_type/before': Whitespace;
+	readonly 'qualified_type/after': Whitespace;
+	readonly 'qualified_type/as/after': Whitespace;
+	readonly 'qualified_type/as/before': Whitespace;
+	readonly 'qualified_type/before': Whitespace;
+	readonly 'range_expression_binary/after': Whitespace;
+	readonly 'range_expression_binary/before': Whitespace;
+	readonly 'range_expression_binary/operator/after': Whitespace;
+	readonly 'range_expression_binary/operator/before': Whitespace;
+	readonly 'range_expression_postfix/after': Whitespace;
+	readonly 'range_expression_postfix/before': Whitespace;
+	readonly 'range_expression_postfix/operator/after': Whitespace;
+	readonly 'range_expression_postfix/operator/before': Whitespace;
+	readonly 'range_expression_prefix/after': Whitespace;
+	readonly 'range_expression_prefix/before': Whitespace;
+	readonly 'range_expression_prefix/operator/after': Whitespace;
+	readonly 'range_expression_prefix/operator/before': Whitespace;
+	readonly 'range_pattern_prefix/after': Whitespace;
+	readonly 'range_pattern_prefix/before': Whitespace;
+	readonly 'range_pattern_with_left/after': Whitespace;
+	readonly 'range_pattern_with_left/before': Whitespace;
+	readonly 'range_pattern_with_left_with_right/after': Whitespace;
+	readonly 'range_pattern_with_left_with_right/before': Whitespace;
+	readonly 'raw_string_literal/after': Whitespace;
+	readonly 'raw_string_literal/before': Whitespace;
+	readonly 'ref_pattern/after': Whitespace;
+	readonly 'ref_pattern/before': Whitespace;
+	readonly 'ref_pattern/ref/after': Whitespace;
+	readonly 'ref_pattern/ref/before': Whitespace;
+	readonly 'reference_expression/&/after': Whitespace;
+	readonly 'reference_expression/&/before': Whitespace;
+	readonly 'reference_expression/after': Whitespace;
+	readonly 'reference_expression/before': Whitespace;
+	readonly 'reference_expression_raw_const/const/before': Whitespace;
+	readonly 'reference_expression_raw_const/raw/after': Whitespace;
+	readonly 'reference_expression_raw_mut/after': Whitespace;
+	readonly 'reference_expression_raw_mut/before': Whitespace;
+	readonly 'reference_expression_raw_mut/raw/after': Whitespace;
+	readonly 'reference_expression_raw_mut/raw/before': Whitespace;
+	readonly 'reference_pattern/&/after': Whitespace;
+	readonly 'reference_pattern/&/before': Whitespace;
+	readonly 'reference_pattern/after': Whitespace;
+	readonly 'reference_pattern/before': Whitespace;
+	readonly 'reference_type/&/after': Whitespace;
+	readonly 'reference_type/&/before': Whitespace;
+	readonly 'reference_type/after': Whitespace;
+	readonly 'reference_type/before': Whitespace;
+	readonly 'removed_trait_bound/?/after': Whitespace;
+	readonly 'removed_trait_bound/?/before': Whitespace;
+	readonly 'removed_trait_bound/after': Whitespace;
+	readonly 'removed_trait_bound/before': Whitespace;
+	readonly 'return_expression/after': Whitespace;
+	readonly 'return_expression/before': Whitespace;
+	readonly 'return_expression/return/after': Whitespace;
+	readonly 'return_expression/return/before': Whitespace;
+	readonly 'scoped_identifier/::/after': Whitespace;
+	readonly 'scoped_identifier/::/before': Whitespace;
+	readonly 'scoped_identifier/after': Whitespace;
+	readonly 'scoped_identifier/before': Whitespace;
+	readonly 'scoped_type_identifier/::/after': Whitespace;
+	readonly 'scoped_type_identifier/::/before': Whitespace;
+	readonly 'scoped_type_identifier/after': Whitespace;
+	readonly 'scoped_type_identifier/before': Whitespace;
+	readonly 'scoped_type_identifier_in_expression_position/::/after': Whitespace;
+	readonly 'scoped_type_identifier_in_expression_position/::/before': Whitespace;
+	readonly 'scoped_type_identifier_in_expression_position/after': Whitespace;
+	readonly 'scoped_type_identifier_in_expression_position/before': Whitespace;
+	readonly 'scoped_use_list/::/after': Whitespace;
+	readonly 'scoped_use_list/::/before': Whitespace;
+	readonly 'scoped_use_list/after': Whitespace;
+	readonly 'scoped_use_list/before': Whitespace;
+	readonly 'self_parameter/after': Whitespace;
+	readonly 'self_parameter/before': Whitespace;
+	readonly 'self_parameter/reference/after': Whitespace;
+	readonly 'self_parameter/reference/before': Whitespace;
+	readonly 'shorthand_field_initializer/after': Whitespace;
+	readonly 'shorthand_field_initializer/attributes/end': Whitespace;
+	readonly 'shorthand_field_initializer/attributes/start': Whitespace;
+	readonly 'shorthand_field_initializer/attributes_separator_space': Spacing;
+	readonly 'shorthand_field_initializer/before': Whitespace;
+	readonly 'slice_pattern/[/after': Whitespace;
+	readonly 'slice_pattern/[/before': Whitespace;
+	readonly 'slice_pattern/]/after': Whitespace;
+	readonly 'slice_pattern/]/before': Whitespace;
+	readonly 'slice_pattern/after': Whitespace;
+	readonly 'slice_pattern/before': Whitespace;
+	readonly 'source_file/after': Whitespace;
+	readonly 'source_file/before': Whitespace;
+	readonly 'source_file/statements/end': Whitespace;
+	readonly 'source_file/statements/start': Whitespace;
+	readonly 'source_file/statements_separator_space': Spacing;
+	readonly 'static_item/:/after': Whitespace;
+	readonly 'static_item/:/before': Whitespace;
+	readonly 'static_item/;/after': Whitespace;
+	readonly 'static_item/;/before': Whitespace;
+	readonly 'static_item/=/after': Whitespace;
+	readonly 'static_item/=/before': Whitespace;
+	readonly 'static_item/after': Whitespace;
+	readonly 'static_item/before': Whitespace;
+	readonly 'static_item/static/after': Whitespace;
+	readonly 'static_item/static/before': Whitespace;
+	readonly 'string_literal/"/after': Whitespace;
+	readonly 'string_literal/"/before': Whitespace;
+	readonly 'string_literal/after': Whitespace;
+	readonly 'string_literal/before': Whitespace;
+	readonly 'struct_expression/after': Whitespace;
+	readonly 'struct_expression/before': Whitespace;
+	readonly 'struct_item/after': Whitespace;
+	readonly 'struct_item/before': Whitespace;
+	readonly 'struct_item/struct/after': Whitespace;
+	readonly 'struct_item/struct/before': Whitespace;
+	readonly 'struct_item_brace/after': Whitespace;
+	readonly 'struct_item_brace/before': Whitespace;
+	readonly 'struct_item_tuple/;/after': Whitespace;
+	readonly 'struct_item_tuple/;/before': Whitespace;
+	readonly 'struct_item_tuple/after': Whitespace;
+	readonly 'struct_item_tuple/before': Whitespace;
+	readonly 'struct_pattern/after': Whitespace;
+	readonly 'struct_pattern/before': Whitespace;
+	readonly 'struct_pattern/{/after': Whitespace;
+	readonly 'struct_pattern/{/before': Whitespace;
+	readonly 'struct_pattern/}/after': Whitespace;
+	readonly 'struct_pattern/}/before': Whitespace;
+	readonly 'struct_pattern_elements/after': Whitespace;
+	readonly 'struct_pattern_elements/before': Whitespace;
+	readonly 'struct_pattern_elements/element/end': Whitespace;
+	readonly 'struct_pattern_elements/element/separator/after': Spacing;
+	readonly 'struct_pattern_elements/element/separator/before': Spacing;
+	readonly 'struct_pattern_elements/element/start': Whitespace;
+	readonly 'struct_pattern_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'token_binding_pattern/:/after': Whitespace;
+	readonly 'token_binding_pattern/:/before': Whitespace;
+	readonly 'token_binding_pattern/after': Whitespace;
+	readonly 'token_binding_pattern/before': Whitespace;
+	readonly 'token_binding_pattern/type/after': Whitespace;
+	readonly 'token_binding_pattern/type/before': Whitespace;
+	readonly "token_keywords/'/after": Whitespace;
+	readonly "token_keywords/'/before": Whitespace;
+	readonly 'token_repetition/$/after': Whitespace;
+	readonly 'token_repetition/$/before': Whitespace;
+	readonly 'token_repetition/(/after': Whitespace;
+	readonly 'token_repetition/(/before': Whitespace;
+	readonly 'token_repetition/)/after': Whitespace;
+	readonly 'token_repetition/)/before': Whitespace;
+	readonly 'token_repetition/after': Whitespace;
+	readonly 'token_repetition/before': Whitespace;
+	readonly 'token_repetition/operator/after': Whitespace;
+	readonly 'token_repetition/operator/before': Whitespace;
+	readonly 'token_repetition/tokens/end': Whitespace;
+	readonly 'token_repetition/tokens/start': Whitespace;
+	readonly 'token_repetition/tokens_separator_space': Spacing;
+	readonly 'token_repetition_pattern/$/after': Whitespace;
+	readonly 'token_repetition_pattern/$/before': Whitespace;
+	readonly 'token_repetition_pattern/(/after': Whitespace;
+	readonly 'token_repetition_pattern/(/before': Whitespace;
+	readonly 'token_repetition_pattern/)/after': Whitespace;
+	readonly 'token_repetition_pattern/)/before': Whitespace;
+	readonly 'token_repetition_pattern/after': Whitespace;
+	readonly 'token_repetition_pattern/before': Whitespace;
+	readonly 'token_repetition_pattern/operator/after': Whitespace;
+	readonly 'token_repetition_pattern/operator/before': Whitespace;
+	readonly 'token_repetition_pattern/token_patterns/end': Whitespace;
+	readonly 'token_repetition_pattern/token_patterns/start': Whitespace;
+	readonly 'token_repetition_pattern/token_patterns_separator_space': Spacing;
+	readonly 'token_tree_brace/after': Whitespace;
+	readonly 'token_tree_brace/before': Whitespace;
+	readonly 'token_tree_brace/tokens/end': Whitespace;
+	readonly 'token_tree_brace/tokens/start': Whitespace;
+	readonly 'token_tree_brace/tokens_separator_space': Spacing;
+	readonly 'token_tree_brace/{/after': Whitespace;
+	readonly 'token_tree_brace/{/before': Whitespace;
+	readonly 'token_tree_brace/}/after': Whitespace;
+	readonly 'token_tree_brace/}/before': Whitespace;
+	readonly 'token_tree_bracket/[/after': Whitespace;
+	readonly 'token_tree_bracket/[/before': Whitespace;
+	readonly 'token_tree_bracket/]/after': Whitespace;
+	readonly 'token_tree_bracket/]/before': Whitespace;
+	readonly 'token_tree_bracket/after': Whitespace;
+	readonly 'token_tree_bracket/before': Whitespace;
+	readonly 'token_tree_bracket/tokens/end': Whitespace;
+	readonly 'token_tree_bracket/tokens/start': Whitespace;
+	readonly 'token_tree_bracket/tokens_separator_space': Spacing;
+	readonly 'token_tree_paren/(/after': Whitespace;
+	readonly 'token_tree_paren/(/before': Whitespace;
+	readonly 'token_tree_paren/)/after': Whitespace;
+	readonly 'token_tree_paren/)/before': Whitespace;
+	readonly 'token_tree_paren/after': Whitespace;
+	readonly 'token_tree_paren/before': Whitespace;
+	readonly 'token_tree_paren/tokens/end': Whitespace;
+	readonly 'token_tree_paren/tokens/start': Whitespace;
+	readonly 'token_tree_paren/tokens_separator_space': Spacing;
+	readonly 'token_tree_pattern_brace/after': Whitespace;
+	readonly 'token_tree_pattern_brace/before': Whitespace;
+	readonly 'token_tree_pattern_brace/token_patterns/end': Whitespace;
+	readonly 'token_tree_pattern_brace/token_patterns/start': Whitespace;
+	readonly 'token_tree_pattern_brace/token_patterns_separator_space': Spacing;
+	readonly 'token_tree_pattern_brace/{/after': Whitespace;
+	readonly 'token_tree_pattern_brace/{/before': Whitespace;
+	readonly 'token_tree_pattern_brace/}/after': Whitespace;
+	readonly 'token_tree_pattern_brace/}/before': Whitespace;
+	readonly 'token_tree_pattern_bracket/[/after': Whitespace;
+	readonly 'token_tree_pattern_bracket/[/before': Whitespace;
+	readonly 'token_tree_pattern_bracket/]/after': Whitespace;
+	readonly 'token_tree_pattern_bracket/]/before': Whitespace;
+	readonly 'token_tree_pattern_bracket/after': Whitespace;
+	readonly 'token_tree_pattern_bracket/before': Whitespace;
+	readonly 'token_tree_pattern_bracket/token_patterns/end': Whitespace;
+	readonly 'token_tree_pattern_bracket/token_patterns/start': Whitespace;
+	readonly 'token_tree_pattern_bracket/token_patterns_separator_space': Spacing;
+	readonly 'token_tree_pattern_paren/(/after': Whitespace;
+	readonly 'token_tree_pattern_paren/(/before': Whitespace;
+	readonly 'token_tree_pattern_paren/)/after': Whitespace;
+	readonly 'token_tree_pattern_paren/)/before': Whitespace;
+	readonly 'token_tree_pattern_paren/after': Whitespace;
+	readonly 'token_tree_pattern_paren/before': Whitespace;
+	readonly 'token_tree_pattern_paren/token_patterns/end': Whitespace;
+	readonly 'token_tree_pattern_paren/token_patterns/start': Whitespace;
+	readonly 'token_tree_pattern_paren/token_patterns_separator_space': Spacing;
+	readonly 'token_tree_punctuation/!/after': Whitespace;
+	readonly 'token_tree_punctuation/!/before': Whitespace;
+	readonly 'token_tree_punctuation/!=/after': Whitespace;
+	readonly 'token_tree_punctuation/!=/before': Whitespace;
+	readonly 'token_tree_punctuation/#/after': Whitespace;
+	readonly 'token_tree_punctuation/#/before': Whitespace;
+	readonly 'token_tree_punctuation/$/after': Whitespace;
+	readonly 'token_tree_punctuation/$/before': Whitespace;
+	readonly 'token_tree_punctuation/%/after': Whitespace;
+	readonly 'token_tree_punctuation/%/before': Whitespace;
+	readonly 'token_tree_punctuation/%=/after': Whitespace;
+	readonly 'token_tree_punctuation/%=/before': Whitespace;
+	readonly 'token_tree_punctuation/&&/after': Whitespace;
+	readonly 'token_tree_punctuation/&&/before': Whitespace;
+	readonly 'token_tree_punctuation/&/after': Whitespace;
+	readonly 'token_tree_punctuation/&/before': Whitespace;
+	readonly 'token_tree_punctuation/&=/after': Whitespace;
+	readonly 'token_tree_punctuation/&=/before': Whitespace;
+	readonly 'token_tree_punctuation/*/after': Whitespace;
+	readonly 'token_tree_punctuation/*/before': Whitespace;
+	readonly 'token_tree_punctuation/*=/after': Whitespace;
+	readonly 'token_tree_punctuation/*=/before': Whitespace;
+	readonly 'token_tree_punctuation/+/after': Whitespace;
+	readonly 'token_tree_punctuation/+/before': Whitespace;
+	readonly 'token_tree_punctuation/+=/after': Whitespace;
+	readonly 'token_tree_punctuation/+=/before': Whitespace;
+	readonly 'token_tree_punctuation/,/after': Whitespace;
+	readonly 'token_tree_punctuation/,/before': Whitespace;
+	readonly 'token_tree_punctuation/-/after': Whitespace;
+	readonly 'token_tree_punctuation/-/before': Whitespace;
+	readonly 'token_tree_punctuation/-=/after': Whitespace;
+	readonly 'token_tree_punctuation/-=/before': Whitespace;
+	readonly 'token_tree_punctuation/->/after': Whitespace;
+	readonly 'token_tree_punctuation/->/before': Whitespace;
+	readonly 'token_tree_punctuation/.../after': Whitespace;
+	readonly 'token_tree_punctuation/.../before': Whitespace;
+	readonly 'token_tree_punctuation/../after': Whitespace;
+	readonly 'token_tree_punctuation/../before': Whitespace;
+	readonly 'token_tree_punctuation/..=/after': Whitespace;
+	readonly 'token_tree_punctuation/..=/before': Whitespace;
+	readonly 'token_tree_punctuation/./after': Whitespace;
+	readonly 'token_tree_punctuation/./before': Whitespace;
+	readonly 'token_tree_punctuation///after': Whitespace;
+	readonly 'token_tree_punctuation///before': Whitespace;
+	readonly 'token_tree_punctuation//=/after': Whitespace;
+	readonly 'token_tree_punctuation//=/before': Whitespace;
+	readonly 'token_tree_punctuation/:/after': Whitespace;
+	readonly 'token_tree_punctuation/:/before': Whitespace;
+	readonly 'token_tree_punctuation/::/after': Whitespace;
+	readonly 'token_tree_punctuation/::/before': Whitespace;
+	readonly 'token_tree_punctuation/;/after': Whitespace;
+	readonly 'token_tree_punctuation/;/before': Whitespace;
+	readonly 'token_tree_punctuation/</after': Whitespace;
+	readonly 'token_tree_punctuation/</before': Whitespace;
+	readonly 'token_tree_punctuation/<</after': Whitespace;
+	readonly 'token_tree_punctuation/<</before': Whitespace;
+	readonly 'token_tree_punctuation/<<=/after': Whitespace;
+	readonly 'token_tree_punctuation/<<=/before': Whitespace;
+	readonly 'token_tree_punctuation/<=/after': Whitespace;
+	readonly 'token_tree_punctuation/<=/before': Whitespace;
+	readonly 'token_tree_punctuation/=/after': Whitespace;
+	readonly 'token_tree_punctuation/=/before': Whitespace;
+	readonly 'token_tree_punctuation/==/after': Whitespace;
+	readonly 'token_tree_punctuation/==/before': Whitespace;
+	readonly 'token_tree_punctuation/=>/after': Whitespace;
+	readonly 'token_tree_punctuation/=>/before': Whitespace;
+	readonly 'token_tree_punctuation/>/after': Whitespace;
+	readonly 'token_tree_punctuation/>/before': Whitespace;
+	readonly 'token_tree_punctuation/>=/after': Whitespace;
+	readonly 'token_tree_punctuation/>=/before': Whitespace;
+	readonly 'token_tree_punctuation/>>/after': Whitespace;
+	readonly 'token_tree_punctuation/>>/before': Whitespace;
+	readonly 'token_tree_punctuation/>>=/after': Whitespace;
+	readonly 'token_tree_punctuation/>>=/before': Whitespace;
+	readonly 'token_tree_punctuation/?/after': Whitespace;
+	readonly 'token_tree_punctuation/?/before': Whitespace;
+	readonly 'token_tree_punctuation/@/after': Whitespace;
+	readonly 'token_tree_punctuation/@/before': Whitespace;
+	readonly 'token_tree_punctuation/^/after': Whitespace;
+	readonly 'token_tree_punctuation/^/before': Whitespace;
+	readonly 'token_tree_punctuation/^=/after': Whitespace;
+	readonly 'token_tree_punctuation/^=/before': Whitespace;
+	readonly 'token_tree_punctuation/|/after': Whitespace;
+	readonly 'token_tree_punctuation/|/before': Whitespace;
+	readonly 'token_tree_punctuation/|=/after': Whitespace;
+	readonly 'token_tree_punctuation/|=/before': Whitespace;
+	readonly 'token_tree_punctuation/||/after': Whitespace;
+	readonly 'token_tree_punctuation/||/before': Whitespace;
+	readonly 'trait_bounds/:/after': Whitespace;
+	readonly 'trait_bounds/:/before': Whitespace;
+	readonly 'trait_bounds/after': Whitespace;
+	readonly 'trait_bounds/before': Whitespace;
+	readonly 'trait_bounds/bounds/end': Whitespace;
+	readonly 'trait_bounds/bounds/separator/after': Spacing;
+	readonly 'trait_bounds/bounds/separator/before': Spacing;
+	readonly 'trait_bounds/bounds/start': Whitespace;
+	readonly 'trait_item/after': Whitespace;
+	readonly 'trait_item/before': Whitespace;
+	readonly 'trait_item/trait/after': Whitespace;
+	readonly 'trait_item/trait/before': Whitespace;
+	readonly 'try_block/after': Whitespace;
+	readonly 'try_block/before': Whitespace;
+	readonly 'try_block/try/after': Whitespace;
+	readonly 'try_block/try/before': Whitespace;
+	readonly 'try_expression/?/after': Whitespace;
+	readonly 'try_expression/?/before': Whitespace;
+	readonly 'try_expression/after': Whitespace;
+	readonly 'try_expression/before': Whitespace;
+	readonly 'tuple_expression/(/after': Whitespace;
+	readonly 'tuple_expression/(/before': Whitespace;
+	readonly 'tuple_expression/)/after': Whitespace;
+	readonly 'tuple_expression/)/before': Whitespace;
+	readonly 'tuple_expression/after': Whitespace;
+	readonly 'tuple_expression/attributes/end': Whitespace;
+	readonly 'tuple_expression/attributes/start': Whitespace;
+	readonly 'tuple_expression/attributes_separator_space': Spacing;
+	readonly 'tuple_expression/before': Whitespace;
+	readonly 'tuple_expression_elements/after': Whitespace;
+	readonly 'tuple_expression_elements/before': Whitespace;
+	readonly 'tuple_expression_elements/element/end': Whitespace;
+	readonly 'tuple_expression_elements/element/separator/after': Spacing;
+	readonly 'tuple_expression_elements/element/separator/before': Spacing;
+	readonly 'tuple_expression_elements/element/start': Whitespace;
+	readonly 'tuple_expression_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'tuple_pattern/(/after': Whitespace;
+	readonly 'tuple_pattern/(/before': Whitespace;
+	readonly 'tuple_pattern/)/after': Whitespace;
+	readonly 'tuple_pattern/)/before': Whitespace;
+	readonly 'tuple_pattern/after': Whitespace;
+	readonly 'tuple_pattern/before': Whitespace;
+	readonly 'tuple_pattern_elements/after': Whitespace;
+	readonly 'tuple_pattern_elements/before': Whitespace;
+	readonly 'tuple_pattern_elements/element/end': Whitespace;
+	readonly 'tuple_pattern_elements/element/separator/after': Spacing;
+	readonly 'tuple_pattern_elements/element/separator/before': Spacing;
+	readonly 'tuple_pattern_elements/element/start': Whitespace;
+	readonly 'tuple_pattern_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'tuple_struct_pattern/(/after': Whitespace;
+	readonly 'tuple_struct_pattern/(/before': Whitespace;
+	readonly 'tuple_struct_pattern/)/after': Whitespace;
+	readonly 'tuple_struct_pattern/)/before': Whitespace;
+	readonly 'tuple_struct_pattern/after': Whitespace;
+	readonly 'tuple_struct_pattern/before': Whitespace;
+	readonly 'tuple_type/(/after': Whitespace;
+	readonly 'tuple_type/(/before': Whitespace;
+	readonly 'tuple_type/)/after': Whitespace;
+	readonly 'tuple_type/)/before': Whitespace;
+	readonly 'tuple_type/after': Whitespace;
+	readonly 'tuple_type/before': Whitespace;
+	readonly 'tuple_type_elements/after': Whitespace;
+	readonly 'tuple_type_elements/before': Whitespace;
+	readonly 'tuple_type_elements/type/end': Whitespace;
+	readonly 'tuple_type_elements/type/separator/after': Spacing;
+	readonly 'tuple_type_elements/type/separator/before': Spacing;
+	readonly 'tuple_type_elements/type/start': Whitespace;
+	readonly 'tuple_type_elements/type_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'type_argument/after': Whitespace;
+	readonly 'type_argument/before': Whitespace;
+	readonly 'type_arguments/</after': Whitespace;
+	readonly 'type_arguments/</before': Whitespace;
+	readonly 'type_arguments/>/after': Whitespace;
+	readonly 'type_arguments/>/before': Whitespace;
+	readonly 'type_arguments/after': Whitespace;
+	readonly 'type_arguments/before': Whitespace;
+	readonly 'type_arguments_elements/after': Whitespace;
+	readonly 'type_arguments_elements/before': Whitespace;
+	readonly 'type_arguments_elements/element/end': Whitespace;
+	readonly 'type_arguments_elements/element/separator/after': Spacing;
+	readonly 'type_arguments_elements/element/separator/before': Spacing;
+	readonly 'type_arguments_elements/element/start': Whitespace;
+	readonly 'type_arguments_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'type_binding/=/after': Whitespace;
+	readonly 'type_binding/=/before': Whitespace;
+	readonly 'type_binding/after': Whitespace;
+	readonly 'type_binding/before': Whitespace;
+	readonly 'type_cast_expression/after': Whitespace;
+	readonly 'type_cast_expression/as/after': Whitespace;
+	readonly 'type_cast_expression/as/before': Whitespace;
+	readonly 'type_cast_expression/before': Whitespace;
+	readonly 'type_item/;/after': Whitespace;
+	readonly 'type_item/;/before': Whitespace;
+	readonly 'type_item/=/after': Whitespace;
+	readonly 'type_item/=/before': Whitespace;
+	readonly 'type_item/after': Whitespace;
+	readonly 'type_item/before': Whitespace;
+	readonly 'type_item/type/after': Whitespace;
+	readonly 'type_item/type/before': Whitespace;
+	readonly 'type_parameter/=/after': Whitespace;
+	readonly 'type_parameter/=/before': Whitespace;
+	readonly 'type_parameter/after': Whitespace;
+	readonly 'type_parameter/before': Whitespace;
+	readonly 'type_parameters/</after': Whitespace;
+	readonly 'type_parameters/</before': Whitespace;
+	readonly 'type_parameters/>/after': Whitespace;
+	readonly 'type_parameters/>/before': Whitespace;
+	readonly 'type_parameters/after': Whitespace;
+	readonly 'type_parameters/before': Whitespace;
+	readonly 'type_parameters_elements/after': Whitespace;
+	readonly 'type_parameters_elements/before': Whitespace;
+	readonly 'type_parameters_elements/element/end': Whitespace;
+	readonly 'type_parameters_elements/element/separator/after': Spacing;
+	readonly 'type_parameters_elements/element/separator/before': Spacing;
+	readonly 'type_parameters_elements/element/start': Whitespace;
+	readonly 'type_parameters_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'unary_expression/after': Whitespace;
+	readonly 'unary_expression/before': Whitespace;
+	readonly 'unary_expression/operator/after': Whitespace;
+	readonly 'unary_expression/operator/before': Whitespace;
+	readonly 'union_item/after': Whitespace;
+	readonly 'union_item/before': Whitespace;
+	readonly 'union_item/union/after': Whitespace;
+	readonly 'union_item/union/before': Whitespace;
+	readonly 'unit_expression/(/after': Whitespace;
+	readonly 'unit_expression/)/before': Whitespace;
+	readonly 'unit_type/(/after': Whitespace;
+	readonly 'unit_type/)/before': Whitespace;
+	readonly 'unsafe_block/after': Whitespace;
+	readonly 'unsafe_block/before': Whitespace;
+	readonly 'unsafe_block/unsafe/after': Whitespace;
+	readonly 'unsafe_block/unsafe/before': Whitespace;
+	readonly 'use_as_clause/after': Whitespace;
+	readonly 'use_as_clause/as/after': Whitespace;
+	readonly 'use_as_clause/as/before': Whitespace;
+	readonly 'use_as_clause/before': Whitespace;
+	readonly 'use_bounds/</after': Whitespace;
+	readonly 'use_bounds/</before': Whitespace;
+	readonly 'use_bounds/>/after': Whitespace;
+	readonly 'use_bounds/>/before': Whitespace;
+	readonly 'use_bounds/after': Whitespace;
+	readonly 'use_bounds/before': Whitespace;
+	readonly 'use_bounds/use/after': Whitespace;
+	readonly 'use_bounds/use/before': Whitespace;
+	readonly 'use_bounds_elements/after': Whitespace;
+	readonly 'use_bounds_elements/before': Whitespace;
+	readonly 'use_bounds_elements/element/end': Whitespace;
+	readonly 'use_bounds_elements/element/separator/after': Spacing;
+	readonly 'use_bounds_elements/element/separator/before': Spacing;
+	readonly 'use_bounds_elements/element/start': Whitespace;
+	readonly 'use_bounds_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'use_clauses/after': Whitespace;
+	readonly 'use_clauses/before': Whitespace;
+	readonly 'use_clauses/use_clause/end': Whitespace;
+	readonly 'use_clauses/use_clause/separator/after': Spacing;
+	readonly 'use_clauses/use_clause/separator/before': Spacing;
+	readonly 'use_clauses/use_clause/start': Whitespace;
+	readonly 'use_clauses/use_clause_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'use_declaration/;/after': Whitespace;
+	readonly 'use_declaration/;/before': Whitespace;
+	readonly 'use_declaration/after': Whitespace;
+	readonly 'use_declaration/before': Whitespace;
+	readonly 'use_declaration/use/after': Whitespace;
+	readonly 'use_declaration/use/before': Whitespace;
+	readonly 'use_list/after': Whitespace;
+	readonly 'use_list/before': Whitespace;
+	readonly 'use_list/{/after': Whitespace;
+	readonly 'use_list/{/before': Whitespace;
+	readonly 'use_list/}/after': Whitespace;
+	readonly 'use_list/}/before': Whitespace;
+	readonly 'use_wildcard/*/after': Whitespace;
+	readonly 'use_wildcard/*/before': Whitespace;
+	readonly 'use_wildcard/::/after': Whitespace;
+	readonly 'use_wildcard/::/before': Whitespace;
+	readonly 'use_wildcard/after': Whitespace;
+	readonly 'use_wildcard/before': Whitespace;
+	readonly 'variadic_parameter/.../after': Whitespace;
+	readonly 'variadic_parameter/.../before': Whitespace;
+	readonly 'variadic_parameter/:/after': Whitespace;
+	readonly 'variadic_parameter/:/before': Whitespace;
+	readonly 'variadic_parameter/after': Whitespace;
+	readonly 'variadic_parameter/before': Whitespace;
+	readonly 'visibility_modifier_group/(/after': Whitespace;
+	readonly 'visibility_modifier_group/(/before': Whitespace;
+	readonly 'visibility_modifier_group/)/after': Whitespace;
+	readonly 'visibility_modifier_group/)/before': Whitespace;
+	readonly 'visibility_modifier_group/after': Whitespace;
+	readonly 'visibility_modifier_group/before': Whitespace;
+	readonly 'visibility_modifier_pub/after': Whitespace;
+	readonly 'visibility_modifier_pub/before': Whitespace;
+	readonly 'visibility_modifier_pub/pub/after': Whitespace;
+	readonly 'visibility_modifier_pub/pub/before': Whitespace;
+	readonly 'visibility_modifier_pub_in_path/after': Whitespace;
+	readonly 'visibility_modifier_pub_in_path/before': Whitespace;
+	readonly 'where_clause/after': Whitespace;
+	readonly 'where_clause/before': Whitespace;
+	readonly 'where_clause/where/after': Whitespace;
+	readonly 'where_clause/where/before': Whitespace;
+	readonly 'where_predicate/after': Whitespace;
+	readonly 'where_predicate/before': Whitespace;
+	readonly 'where_predicates/after': Whitespace;
+	readonly 'where_predicates/before': Whitespace;
+	readonly 'where_predicates/where_predicate/end': Whitespace;
+	readonly 'where_predicates/where_predicate/separator/after': Spacing;
+	readonly 'where_predicates/where_predicate/separator/before': Spacing;
+	readonly 'where_predicates/where_predicate/start': Whitespace;
+	readonly 'where_predicates/where_predicate_delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'while_expression/:/after': Whitespace;
+	readonly 'while_expression/:/before': Whitespace;
+	readonly 'while_expression/after': Whitespace;
+	readonly 'while_expression/before': Whitespace;
+	readonly 'while_expression/while/after': Whitespace;
+	readonly 'while_expression/while/before': Whitespace;
+	readonly 'yield_expression/after': Whitespace;
+	readonly 'yield_expression/before': Whitespace;
+	readonly 'yield_expression/yield/after': Whitespace;
+	readonly 'yield_expression/yield/before': Whitespace;
+}
+
+type AddressLeafOf<P extends string> = P extends keyof AddressLeaf ? AddressLeaf[P] : never;
+type AddressNode3<P extends string> = P extends keyof AddressBranch
+	? { readonly [K in AddressBranch[P]]?: AddressLeafOf<\`\${P}/\${K}\`> }
+	: AddressLeafOf<P>;
+type AddressNode2<P extends string> = P extends keyof AddressBranch
+	? { readonly [K in AddressBranch[P]]?: AddressNode3<\`\${P}/\${K}\`> }
+	: AddressLeafOf<P>;
+type AddressNode1<P extends string> = P extends keyof AddressBranch
+	? { readonly [K in AddressBranch[P]]?: AddressNode2<\`\${P}/\${K}\`> }
+	: AddressLeafOf<P>;
+
+/// Every site by its address, nested as the path is written.
+export type AddressedOptions = { readonly [K in AddressRoot]?: AddressNode1<K> };
+
 export interface Members {
 	readonly condition:
 		| 'assignment_expression'
@@ -1250,6 +3290,6 @@ export type Options = { readonly [L in SpacingLabel]?: Spacing } & { readonly [L
 		readonly [K in keyof KindSpacing | keyof KindWhitespace | keyof KindOther | EdgeKind]?: SitesOf<K>;
 	} & {
 		readonly [S in keyof Members]?: SitesOf<Members[S]>;
-	} & { readonly indent?: string };
+	} & AddressedOptions & { readonly indent?: string };
 "
 `;

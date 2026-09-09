@@ -41,3 +41,23 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();
 });
+
+it('addresses a site by its path, nested as the address is written', () => {
+	const nested: Options = {
+		block: { '{': { after: TSKindId.Indent }, '}': { before: TSKindId.Dedent } },
+		abstract_type: { for: { before: TSKindId.Space } },
+		token_tree_punctuation: { '/': { after: TSKindId.Tight }, '::': { after: TSKindId.Tight } }
+	};
+	expect(nested.block?.['{']?.after).toBe(TSKindId.Indent);
+	expect(nested.token_tree_punctuation?.['::']?.after).toBe(TSKindId.Tight);
+});
+
+it('rejects an address that names no site, and an arm the site does not admit', () => {
+	const bad: Options = {
+		// @ts-expect-error a brace has no 'sideways' edge
+		block: { '{': { sideways: TSKindId.Space } },
+		// @ts-expect-error a comma is not a whitespace kind
+		abstract_type: { for: { before: TSKindId.Comma } }
+	};
+	expect(bad).toBeDefined();
+});
