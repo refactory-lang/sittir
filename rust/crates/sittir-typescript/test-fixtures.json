@@ -1956,7 +1956,7 @@
       },
       "$nodeHandle": 0
     },
-    "expectedOutput": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -1964,9 +1964,9 @@
     "sourceIn": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "declare class Error {\n    constructor: Function\n\n}\n\ndeclare var foo: number;\ndeclare const bar = \"baz\";\ndeclare function greet(greeting: string): void;\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n;\ndeclare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -4025,7 +4025,7 @@
         ]
       }
     },
-    "expectedOutput": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -4033,9 +4033,9 @@
     "sourceIn": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -8338,7 +8338,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -8346,9 +8346,9 @@
     "sourceIn": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "{\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -10161,7 +10161,7 @@
         "body"
       ]
     },
-    "expectedOutput": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
+    "expectedOutput": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -10169,9 +10169,9 @@
     "sourceIn": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "expectedSourceOut": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for(x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
+    "wrappedText": "module Foo {\n    break;\n    continue;\n    debugger;\n    do{ }while (true);\n    for (x in null) {}\n\n    for (;;) {}\n\n    if (true){ }else {}\n\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -10663,7 +10663,7 @@
         "$nodeHandle": 792
       }
     },
-    "expectedOutput": "for(x in null) {}\n"
+    "expectedOutput": "for (x in null) {}\n"
   },
   {
     "kind": "roundtrip",
@@ -10671,9 +10671,9 @@
     "sourceIn": "for (x in null) { }",
     "pattern": "for_in_statement",
     "edits": [],
-    "expectedSourceOut": "for(x in null) {}\n",
+    "expectedSourceOut": "for (x in null) {}\n",
     "expectedReparseTree": "(for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "for(x in null) {}\n",
+    "wrappedText": "for (x in null) {}\n",
     "wrappedOffset": 0
   },
   {
@@ -10878,7 +10878,7 @@
       },
       "$nodeHandle": 105
     },
-    "expectedOutput": "return;"
+    "expectedOutput": "return ;"
   },
   {
     "kind": "roundtrip",
@@ -10886,9 +10886,9 @@
     "sourceIn": "return;",
     "pattern": "return_statement",
     "edits": [],
-    "expectedSourceOut": "return;",
+    "expectedSourceOut": "return ;",
     "expectedReparseTree": "(return_statement)",
-    "wrappedText": "return;",
+    "wrappedText": "return ;",
     "wrappedOffset": 0
   },
   {
@@ -14244,7 +14244,7 @@
       },
       "$nodeHandle": 17179869184
     },
-    "expectedOutput": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n"
+    "expectedOutput": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n"
   },
   {
     "kind": "roundtrip",
@@ -14252,9 +14252,9 @@
     "sourceIn": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n// a comment\n\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
+    "expectedSourceOut": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))))) (comment) statements: (export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))))) statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))) terminator: (automatic_semicolon))))))",
-    "wrappedText": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
+    "wrappedText": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n\n// a comment\nexport default class A{}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
     "wrappedOffset": 0
   },
   {
@@ -14495,7 +14495,7 @@
         }
       }
     },
-    "expectedOutput": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n"
+    "expectedOutput": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n"
   },
   {
     "kind": "roundtrip",
@@ -14503,9 +14503,9 @@
     "sourceIn": "export default function point(x: number, y: number) {\n    return { x, y };\n}",
     "pattern": "export_statement",
     "edits": [],
-    "expectedSourceOut": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n",
+    "expectedSourceOut": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n",
     "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))))))",
-    "wrappedText": "export default function point(x: number, y: number) {\n    return{ x, y };\n}\n\n",
+    "wrappedText": "export default function point(x: number, y: number) {\n    return { x, y };\n}\n\n",
     "wrappedOffset": 0
   },
   {
@@ -15004,7 +15004,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "function point(x: number, y: number) {\n    return{ x, y };\n}\n\n"
+    "expectedOutput": "function point(x: number, y: number) {\n    return { x, y };\n}\n\n"
   },
   {
     "kind": "roundtrip",
@@ -15012,9 +15012,9 @@
     "sourceIn": "function point(x: number, y: number) {\n    return { x, y };\n}",
     "pattern": "function_declaration",
     "edits": [],
-    "expectedSourceOut": "function point(x: number, y: number) {\n    return{ x, y };\n}\n\n",
+    "expectedSourceOut": "function point(x: number, y: number) {\n    return { x, y };\n}\n\n",
     "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
-    "wrappedText": "function point(x: number, y: number) {\n    return{ x, y };\n}\n\n",
+    "wrappedText": "function point(x: number, y: number) {\n    return { x, y };\n}\n\n",
     "wrappedOffset": 0
   },
   {
@@ -15646,7 +15646,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    return{ x, y };\n}\n"
+    "expectedOutput": "{\n    return { x, y };\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -15654,9 +15654,9 @@
     "sourceIn": "{\n    return { x, y };\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    return{ x, y };\n}\n",
+    "expectedSourceOut": "{\n    return { x, y };\n}\n",
     "expectedReparseTree": "(statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    return{ x, y };\n}\n",
+    "wrappedText": "{\n    return { x, y };\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -15698,7 +15698,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "return{ x, y };"
+    "expectedOutput": "return { x, y };"
   },
   {
     "kind": "roundtrip",
@@ -15706,9 +15706,9 @@
     "sourceIn": "return { x, y };",
     "pattern": "return_statement",
     "edits": [],
-    "expectedSourceOut": "return{ x, y };",
+    "expectedSourceOut": "return { x, y };",
     "expectedReparseTree": "(return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier)))",
-    "wrappedText": "return{ x, y };",
+    "wrappedText": "return { x, y };",
     "wrappedOffset": 0
   },
   {
@@ -72806,7 +72806,7 @@
       },
       "$nodeHandle": 227633266688
     },
-    "expectedOutput": "function greeter(person: string) {\n    return\"Hello, \" + person;\n}\n\n\nfunction foo<T>(x: T): T {}\n\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {}\n\n\nfunction foo<T, U>(this: T[]): U[] {\n    return[]\n\n}\n\n\nfunction foo<const T, const U extends string>(x: T, y: U) {}\n\n"
+    "expectedOutput": "function greeter(person: string) {\n    return \"Hello, \" + person;\n}\n\n\nfunction foo<T>(x: T): T {}\n\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {}\n\n\nfunction foo<T, U>(this: T[]): U[] {\n    return []\n\n}\n\n\nfunction foo<const T, const U extends string>(x: T, y: U) {}\n\n"
   },
   {
     "kind": "roundtrip",
@@ -72814,9 +72814,9 @@
     "sourceIn": "function greeter(person: string) {\n  return \"Hello, \" + person;\n}\n\nfunction foo<T>(x: T): T {\n\n}\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {\n\n}\n\nfunction foo<T, U>(this: T[]): U[] {\n  return []\n}\n\nfunction foo<const T, const U extends string>(x: T, y: U) {\n\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "function greeter(person: string) {\n    return\"Hello, \" + person;\n}\n\n\nfunction foo<T>(x: T): T {}\n\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {}\n\n\nfunction foo<T, U>(this: T[]): U[] {\n    return[]\n\n}\n\n\nfunction foo<const T, const U extends string>(x: T, y: U) {}\n\n",
+    "expectedSourceOut": "function greeter(person: string) {\n    return \"Hello, \" + person;\n}\n\n\nfunction foo<T>(x: T): T {}\n\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {}\n\n\nfunction foo<T, U>(this: T[]): U[] {\n    return []\n\n}\n\n\nfunction foo<const T, const U extends string>(x: T, y: U) {}\n\n",
     "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (binary_expression left: (string (string_double elements: (unescaped_double_string_fragment))) right: (identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_annotation type: (type_identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (array_type type: (type_identifier)))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (function_type parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_identifier)))))) return_type: (type_annotation type: (array_type type: (type_identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (array_type type: (type_identifier)))))) return_type: (type_annotation type: (array_type type: (type_identifier))) body: (statement_block statements: (return_statement expression: (array) terminator: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)) statements: (function_declaration name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) body: (statement_block automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))",
-    "wrappedText": "function greeter(person: string) {\n    return\"Hello, \" + person;\n}\n\n\nfunction foo<T>(x: T): T {}\n\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {}\n\n\nfunction foo<T, U>(this: T[]): U[] {\n    return[]\n\n}\n\n\nfunction foo<const T, const U extends string>(x: T, y: U) {}\n\n",
+    "wrappedText": "function greeter(person: string) {\n    return \"Hello, \" + person;\n}\n\n\nfunction foo<T>(x: T): T {}\n\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {}\n\n\nfunction foo<T, U>(this: T[]): U[] {\n    return []\n\n}\n\n\nfunction foo<const T, const U extends string>(x: T, y: U) {}\n\n",
     "wrappedOffset": 0
   },
   {
@@ -72993,7 +72993,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "function greeter(person: string) {\n    return\"Hello, \" + person;\n}\n\n"
+    "expectedOutput": "function greeter(person: string) {\n    return \"Hello, \" + person;\n}\n\n"
   },
   {
     "kind": "roundtrip",
@@ -73001,9 +73001,9 @@
     "sourceIn": "function greeter(person: string) {\n  return \"Hello, \" + person;\n}",
     "pattern": "function_declaration",
     "edits": [],
-    "expectedSourceOut": "function greeter(person: string) {\n    return\"Hello, \" + person;\n}\n\n",
+    "expectedSourceOut": "function greeter(person: string) {\n    return \"Hello, \" + person;\n}\n\n",
     "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (binary_expression left: (string (string_double elements: (unescaped_double_string_fragment))) right: (identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
-    "wrappedText": "function greeter(person: string) {\n    return\"Hello, \" + person;\n}\n\n",
+    "wrappedText": "function greeter(person: string) {\n    return \"Hello, \" + person;\n}\n\n",
     "wrappedOffset": 0
   },
   {
@@ -73710,7 +73710,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "function foo<T, U>(this: T[]): U[] {\n    return[]\n\n}\n\n"
+    "expectedOutput": "function foo<T, U>(this: T[]): U[] {\n    return []\n\n}\n\n"
   },
   {
     "kind": "roundtrip",
@@ -73718,9 +73718,9 @@
     "sourceIn": "function foo<T, U>(this: T[]): U[] {\n  return []\n}",
     "pattern": "function_declaration",
     "edits": [],
-    "expectedSourceOut": "function foo<T, U>(this: T[]): U[] {\n    return[]\n\n}\n\n",
+    "expectedSourceOut": "function foo<T, U>(this: T[]): U[] {\n    return []\n\n}\n\n",
     "expectedReparseTree": "(function_declaration name: (identifier) type_parameters: (type_parameters (type_parameters_elements type_parameter: (type_parameter name: (type_identifier)) type_parameter: (type_parameter name: (type_identifier)))) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (this) type: (type_annotation type: (array_type type: (type_identifier)))))) return_type: (type_annotation type: (array_type type: (type_identifier))) body: (statement_block statements: (return_statement expression: (array) terminator: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
-    "wrappedText": "function foo<T, U>(this: T[]): U[] {\n    return[]\n\n}\n\n",
+    "wrappedText": "function foo<T, U>(this: T[]): U[] {\n    return []\n\n}\n\n",
     "wrappedOffset": 0
   },
   {
@@ -75607,7 +75607,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    return\"Hello, \" + person;\n}\n"
+    "expectedOutput": "{\n    return \"Hello, \" + person;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -75615,9 +75615,9 @@
     "sourceIn": "{\n  return \"Hello, \" + person;\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    return\"Hello, \" + person;\n}\n",
+    "expectedSourceOut": "{\n    return \"Hello, \" + person;\n}\n",
     "expectedReparseTree": "(statement_block statements: (return_statement expression: (binary_expression left: (string (string_double elements: (unescaped_double_string_fragment))) right: (identifier))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    return\"Hello, \" + person;\n}\n",
+    "wrappedText": "{\n    return \"Hello, \" + person;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -75737,7 +75737,7 @@
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    return[]\n\n}\n"
+    "expectedOutput": "{\n    return []\n\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -75745,9 +75745,9 @@
     "sourceIn": "{\n  return []\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    return[]\n\n}\n",
+    "expectedSourceOut": "{\n    return []\n\n}\n",
     "expectedReparseTree": "(statement_block statements: (return_statement expression: (array) terminator: (automatic_semicolon)) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    return[]\n\n}\n",
+    "wrappedText": "{\n    return []\n\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -75847,7 +75847,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "return\"Hello, \" + person;"
+    "expectedOutput": "return \"Hello, \" + person;"
   },
   {
     "kind": "roundtrip",
@@ -75855,9 +75855,9 @@
     "sourceIn": "return \"Hello, \" + person;",
     "pattern": "return_statement",
     "edits": [],
-    "expectedSourceOut": "return\"Hello, \" + person;",
+    "expectedSourceOut": "return \"Hello, \" + person;",
     "expectedReparseTree": "(return_statement expression: (binary_expression left: (string (string_double elements: (unescaped_double_string_fragment))) right: (identifier)))",
-    "wrappedText": "return\"Hello, \" + person;",
+    "wrappedText": "return \"Hello, \" + person;",
     "wrappedOffset": 0
   },
   {
@@ -75892,7 +75892,7 @@
         "terminator"
       ]
     },
-    "expectedOutput": "return[]\n"
+    "expectedOutput": "return []\n"
   },
   {
     "kind": "roundtrip",
@@ -75900,9 +75900,9 @@
     "sourceIn": "return []",
     "pattern": "return_statement",
     "edits": [],
-    "expectedSourceOut": "return[]\n",
+    "expectedSourceOut": "return []\n",
     "expectedReparseTree": "(return_statement expression: (array) terminator: (automatic_semicolon))",
-    "wrappedText": "return[]\n",
+    "wrappedText": "return []\n",
     "wrappedOffset": 0
   },
   {
