@@ -84,6 +84,9 @@ That makes Task 11 a Task-6-sized job — body IR, the list's template emission,
 and the native `ListView` — not the site-minting plus one declaration its Step 3
 implies. Steps 6–8 stand as written once the sites exist.
 
+Mint them stamped with their path rather than with a flat address to decompose:
+the address exists to be read, and these are born knowing what they are.
+
 ## Why 11 before 10
 
 Task 10 cannot finish while the empty separator is declared: 15 of the 27
@@ -93,9 +96,18 @@ unnecessary — a slot hands its gaps to its children by declaring its separator
 tight. Doing 11 first lets Task 10 be one complete deletion instead of two
 passes.
 
-The cost of flipping is one transitional branch in `pathOf`, because Task 11
-mints `<slot>_<child>_after` and Task 10 is where a site's path starts coming
-from its own address. About five lines, deleted with the other four.
+Task 10 needs both of `renderDefaultsOf`'s surviving paths for it: the
+`parseSpacingLabel` branch reads the top-level `empty_separator_space`, and the
+site-preference loop reads rust's twelve kind-scoped ones.
+
+Flipping does not cost a transitional branch in `pathOf`, because the new sites
+should not be decomposed at all. They are `(parent)/slot:/(child)/after`, and no
+existing branch produces a kind-match in the middle — spelling them flat only to
+parse them back would invent a form for the sake of undoing it. Task 11 takes
+the one piece of Task 10 that fits it, a site's path coming from its own
+address, and stamps the new sites with their path where `spacingSitesOf` mints
+them. `pathOf` keeps decomposing the legacy ones until Task 10 deletes it
+whole.
 
 ## Gotchas
 
