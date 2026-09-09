@@ -18,7 +18,7 @@
 - **No explanatory comments in `packages/codegen/src/`.** Documentation goes in `docs/glossary/<dir>.md`, one `###` section per declaration, keyed by qualified name (`packages/codegen/src/path/file.ts::symbolName`).
 - **Comments state live constraints, never provenance.** No spec, plan, PR, ADR or task numbers in any comment or doc-comment.
 - **Generated outputs are never hand-edited.** `packages/{rust,typescript,python}/src/*`, `packages/*/.sittir/*` and `rust/crates/sittir-*/src/*` are derived. Fix the generator and regenerate.
-- **Any edit under `packages/codegen/src/` changes the manifest `source_hash`.** Regenerate all three grammars before running the suite, or ~41 native and validator tests fail with "SOURCE INPUTS CHANGED":
+- **Any edit under `packages/codegen/src/` changes the manifest `source_hash`** and rebundles `packages/*/.sittir/grammar.js`. Regenerate all three grammars before running the suite, and stage `packages/*/.sittir/` in the commit — a pre-commit hook rejects a stale manifest, and leaving `grammar.js` behind is enough to trip it:
   ```bash
   for g in rust typescript python; do
     pnpm exec tsx packages/cli/src/cli.ts gen --grammar $g --all --output packages/$g/src
@@ -258,13 +258,21 @@ An address needs a canonical form so sites can be sorted by it, and a subset tes
 - Docs: `docs/glossary/dsl-primitives.md`
 
 **Interfaces:**
-- Consumes: `PathSegment`, `parsePath` from Task 1.
+- Consumes: `splitSegments` (exported from Task 1), `PathSegment`.
 - Produces:
-  - `parsePreferencePath(text: string): PathSegment[]`
-  - `formatPreferencePath(segments: readonly PathSegment[]): string`
-  - `comparePreferencePaths(a: readonly PathSegment[], b: readonly PathSegment[]): number`
+  - `PreferenceSegment = PathSegment | { kind: 'name'; name: string }`
+  - `parsePreferencePath(text: string): PreferenceSegment[]`
+  - `formatPreferencePath(segments: readonly PreferenceSegment[]): string`
+  - `comparePreferencePaths(a: readonly PreferenceSegment[], b: readonly PreferenceSegment[]): number`
   - `SIDE_SEGMENTS: readonly ['before', 'after', 'separator']`
-  - `isSideSegment(segment: PathSegment): boolean`
+  - `isSideSegment(segment: PreferenceSegment): boolean`
+
+A preference path does **not** delegate to `parsePath`. It shares the splitter
+and the segment forms but not the rules: `parsePath` rejects a bare identifier
+and demands `(name)`, while every side in a preference address is bare
+(`(block)/"{"/after`). Bare is a `name` segment here. `(_)` is a kind-match
+named `_` — any kind — and must be tested before the general `(name)` case,
+since `_` is not an identifier.
 
 - [ ] **Step 1: Write the failing tests**
 
