@@ -1712,3 +1712,21 @@ inside that variant's rule, so its name composes through it:
 `_except_clause_as` that reads as a sibling of the group it lives in. Only the
 minted rule name composes; the arm keeps its own short name, so the spelling
 nests rather than lengthening.
+
+### `packages/codegen/src/dsl/wire/options-block.ts::readOptionsBlock`
+
+The `options:` block read into path declarations and address bindings. The top
+level is kind-keyed, as `patches:` is — a bare identifier whose value is a map
+of paths relative to it. A label's first segment is a virtual kind, so a label
+needs no separate form: `body/before` is `before` under `body`, and every
+top-level key is a kind, some real and some virtual.
+
+A label naming a real kind as its root is rejected where the binding names it.
+Real kinds are derived from the grammar and virtual ones are written, so the
+collision is always the author's to resolve.
+
+`_bindings` maps an address to a label and carries nothing else. Membership and
+default live in the two halves: the binding says which label an address belongs
+to, the declaration under its kind says what its arm is. Welded together, as
+`preference(label, arm)` repeated at every site does today, neither can be
+stated once.

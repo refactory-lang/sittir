@@ -414,6 +414,13 @@ It carries no data; it is a placeholder like `arm.default`, recognised by
 // renders nothing; each is a never-scanned external so it has a kind id.
 ```
 
+### `packages/codegen/src/dsl/primitives/preference.ts::preference`
+
+A preference's arm, and — for as long as `patches:` still holds declarations —
+the label it belongs to. Under `options:` the key is the address, so the label
+argument would only repeat it back and the one-argument form takes the arm
+alone. Membership is declared once in `_bindings` instead of at every site.
+
 ### `packages/codegen/src/dsl/primitives/preference-path.ts::parsePreferencePath`
 
 A preference address's segments. It shares the path splitter and the segment

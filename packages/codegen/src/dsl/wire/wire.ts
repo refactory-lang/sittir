@@ -3,6 +3,7 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn, applyPreference } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
+import type { OptionsConfig } from './options-block.ts';
 import {
 	isSpacingArm,
 	isWhitespaceArm,
@@ -191,6 +192,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	>;
 	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly patches?: PatchesConfig<B>;
+	readonly options?: OptionsConfig;
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
@@ -342,12 +344,13 @@ function checkWhitespaceArm(at: string, arm: string): string {
 	return arm;
 }
 
-function onePreference(kind: string, entry: PatchEntry, what: string): PreferencePlaceholder {
+function onePreference(kind: string, entry: PatchEntry, what: string): { label: string; arm: string } {
 	const preferences = kindPreferencesOf(entry);
-	if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+	const only = preferences.length === 1 ? preferences[0]! : undefined;
+	if (patchSetsOf(entry).length > 0 || only === undefined || only.label === undefined) {
 		throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
 	}
-	return preferences[0]!;
+	return { label: only.label, arm: only.default };
 }
 
 function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): RenderDefaults | undefined {
@@ -362,20 +365,20 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 	for (const [key, entry] of Object.entries(patches)) {
 		if (!entry) continue;
 		if (parseSpacingLabel(key) !== undefined) {
-			const { label, default: arm } = onePreference(key, entry, 'a separator spacing preference');
+			const { label, arm } = onePreference(key, entry, 'a separator spacing preference');
 			if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', …) does not rename it`);
 			labels[key] = checkSpacingArm(`'${key}'`, arm);
 			continue;
 		}
 		if (isSeamDefaultKey(key, rules)) {
-			const { label, default: arm } = onePreference(key, entry, 'a token seam preference');
+			const { label, arm } = onePreference(key, entry, 'a token seam preference');
 			if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', …) does not rename it`);
 			labels[key] = checkWhitespaceArm(`'${key}'`, arm);
 			continue;
 		}
 		const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : undefined;
 		if (flank !== undefined) {
-			const { label, default: arm } = onePreference(key, entry, 'an array flank');
+			const { label, arm } = onePreference(key, entry, 'an array flank');
 			site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm) });
 			continue;
 		}
@@ -383,6 +386,7 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 			for (const [slot, value] of Object.entries(patchMap)) {
 				if (!isSitePreferenceEntry(slot, value)) continue;
 				const { label, default: arm } = value as PreferencePlaceholder;
+				if (label === undefined) throw new Error(`patches: ${key}.${slot} takes preference(label, default)`);
 				const seam = parseSeamLabel(slot);
 				if (seam !== undefined && parseSeamLabel(label) === undefined) {
 					throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);

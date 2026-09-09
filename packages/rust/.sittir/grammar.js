@@ -609,8 +609,8 @@ var arm = {
 function isPreference(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
 }
-function preference(label, defaultArm) {
-  return { __sittirPlaceholder: "preference", label, default: defaultArm };
+function preference(first, second) {
+  return second === void 0 ? { __sittirPlaceholder: "preference", default: first } : { __sittirPlaceholder: "preference", label: first, default: second };
 }
 
 // packages/codegen/src/dsl/primitives/group.ts
@@ -4542,10 +4542,11 @@ function checkWhitespaceArm(at, arm2) {
 }
 function onePreference(kind, entry, what) {
   const preferences = kindPreferencesOf(entry);
-  if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
+  const only = preferences.length === 1 ? preferences[0] : void 0;
+  if (patchSetsOf(entry).length > 0 || only === void 0 || only.label === void 0) {
     throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
   }
-  return preferences[0];
+  return { label: only.label, arm: only.default };
 }
 function renderDefaultsOf(patches, rules) {
   const labels = {};
@@ -4559,20 +4560,20 @@ function renderDefaultsOf(patches, rules) {
   for (const [key, entry] of Object.entries(patches)) {
     if (!entry) continue;
     if (parseSpacingLabel(key) !== void 0) {
-      const { label, default: arm2 } = onePreference(key, entry, "a separator spacing preference");
+      const { label, arm: arm2 } = onePreference(key, entry, "a separator spacing preference");
       if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', \u2026) does not rename it`);
       labels[key] = checkSpacingArm(`'${key}'`, arm2);
       continue;
     }
     if (isSeamDefaultKey(key, rules)) {
-      const { label, default: arm2 } = onePreference(key, entry, "a token seam preference");
+      const { label, arm: arm2 } = onePreference(key, entry, "a token seam preference");
       if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
       labels[key] = checkWhitespaceArm(`'${key}'`, arm2);
       continue;
     }
     const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
     if (flank !== void 0) {
-      const { label, default: arm2 } = onePreference(key, entry, "an array flank");
+      const { label, arm: arm2 } = onePreference(key, entry, "an array flank");
       site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm2) });
       continue;
     }
@@ -4580,6 +4581,7 @@ function renderDefaultsOf(patches, rules) {
       for (const [slot, value] of Object.entries(patchMap)) {
         if (!isSitePreferenceEntry(slot, value)) continue;
         const { label, default: arm2 } = value;
+        if (label === void 0) throw new Error(`patches: ${key}.${slot} takes preference(label, default)`);
         const seam = parseSeamLabel(slot);
         if (seam !== void 0 && parseSeamLabel(label) === void 0) {
           throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
