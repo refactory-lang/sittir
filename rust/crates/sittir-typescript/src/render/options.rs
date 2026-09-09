@@ -1929,7 +1929,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("variable_declaration", "variable_declaration_end", "variable_declaration_end", 167, &[167, 168, 169, 170, 171]),
     ("variable_declaration", "variable_declaration_start", "variable_declaration_start", 167, &[167, 168, 169, 170, 171]),
     ("variable_declaration", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
-    ("variable_declaration", "var_after", "var_after", 167, &[167, 168, 169, 170, 171]),
+    ("variable_declaration", "var_after", "var_after", 168, &[167, 168, 169, 170, 171]),
     ("variable_declaration", "var_before", "var_before", 167, &[167, 168, 169, 170, 171]),
     ("variable_declaration", "variable_declaration_after", "variable_declaration_after", 167, &[167, 168, 169, 170, 171]),
     ("variable_declaration", "variable_declaration_before", "variable_declaration_before", 167, &[167, 168, 169, 170, 171]),

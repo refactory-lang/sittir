@@ -5282,6 +5282,7 @@ var grammar_sittir_default = grammar(
         operator_after: preference("operator_after", "space"),
         pipe_before: preference("pipe_before", "space"),
         pipe_after: preference("pipe_after", "space"),
+        var_after: preference("var_after", "space"),
         amp_before: preference("amp_before", "space"),
         amp_after: preference("amp_after", "space"),
         named_imports: { lbrace_after: preference("lbrace_after", "space"), rbrace_before: preference("rbrace_before", "space") },
