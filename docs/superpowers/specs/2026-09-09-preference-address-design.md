@@ -109,8 +109,8 @@ a seam has no node.
 address for the gap inside an opening delimiter, and it names the delimiter.
 That the delimiter differs per grammar — `"{"` in rust, `opening:` in
 typescript's `object_type`, nothing at all in python — is what the binding
-layer is for: unlike addresses bind to one named preference, so
-`block_body_before` is declared once and reaches all three.
+layer is for: unlike addresses bind to one label, so `body/before` is declared
+once and reaches all three.
 
 ## Declaring: `options:`
 
@@ -123,31 +123,42 @@ the public surface, `_`-prefixed keys are storage.
 
 ```ts
 options: {
-  block_body_before: preference('indent'),
-  block_body_after:  preference('dedent'),
-  eq_before:         preference('space'),
+  'body/before':       preference('indent'),
+  'body/after':        preference('dedent'),
+  'assignment/before': preference('space'),
 
   _bindings: {
-    'block/"{"/after':                  'block_body_before',
-    'block/"}"/before':                 'block_body_after',
-    'object_type/opening:/after':       'block_body_before',
-    'field_declaration_list/"{"/after': 'block_body_before',
+    'block/"{"/after':                  'body/before',
+    'block/"}"/before':                 'body/after',
+    'object_type/opening:/after':       'body/before',
+    'field_declaration_list/"{"/after': 'body/before',
 
-    'lexical_declaration/"="/before':      'eq_before',
-    'keyword_argument/"="/before':        ['eq_before', 'tight'],
+    'lexical_declaration/"="/before': 'assignment/before',
+    'keyword_argument/"="/before':   ['assignment/before', 'tight'],
   }
 }
 ```
 
-A bare key declares a **named preference** and its default arm, once. A
-`_bindings` entry binds an **address** to that name.
+A bare key declares a **label** and its default arm, once. A `_bindings` entry
+binds an **address** to that label.
 
-Membership and default are separate. `['eq_before', 'tight']` binds the address
-to `eq_before` — so a consumer setting `eq_before` still moves it — while
-declaring a different default there. That is exactly today's behaviour: python's
-`keyword_argument` override keeps the `eq_before` label and changes only its
-default id. A binding may also name a bare arm, for a position that belongs to
-no group and therefore moves only by its own address.
+**Labels are paths too.** A label is written in the same path syntax as an
+address, so it nests in the generated surface exactly as an address does and no
+flat identifier survives anywhere in the design. `body/before` replaces
+`block_body_before`, which was a path encoded as an underscore string.
+
+A label path names a concept, not a kind, so its root shares a namespace with
+the grammar's kinds. **Declared labels win**: a label whose root collides with a
+kind name is rejected at load time. Kinds are derived and labels are written, so
+the collision is always the author's to resolve and the error can say which
+kind was shadowed.
+
+Membership and default are separate. `['assignment/before', 'tight']` binds the
+address to `assignment/before` — so a consumer setting that label still moves it
+— while declaring a different default there. That is exactly today's behaviour:
+python's `keyword_argument` override keeps the `eq_before` label and changes
+only its default id. A binding may also name a bare arm, for a position that
+belongs to no group and therefore moves only by its own address.
 
 ### The generated surface
 
@@ -157,20 +168,21 @@ path:
 
 ```ts
 export type Options = {
-  block_body_before?: Spacing;
-  eq_before?: Spacing;
+  body?:       { before?: Spacing; after?: Spacing };   // labels
+  assignment?: { before?: Spacing };
 } & {
-  block?:                  { '{': { after?: Spacing } };
+  block?:                  { '{': { after?: Spacing } };   // addresses
   keyword_argument?:       { '=': { before?: Spacing } };
   token_tree_punctuation?: { ',': { after?: Spacing } };
 };
 ```
 
-A consumer sets the name to move every bound address, or the nested address to
-move one site. The site-set rule adjudicates without a second mechanism: an
-address matches a subset of what its name matches, so the address wins. This is
-today's `eq_before` versus `keyword_argument: { eq_before }`, with the nesting
-mirroring the path rather than flattening it into a `<slot>_<label>` string.
+Both faces nest, because both are paths. A consumer sets the label to move
+every address bound to it, or the address to move one site. The site-set rule
+adjudicates without a second mechanism: an address matches a subset of what its
+label matches, so the address wins. This is today's `eq_before` versus
+`keyword_argument: { eq_before }`, with nesting mirroring the path rather than
+flattening it into a `<slot>_<label>` string.
 
 `LABELS` stops being a table derived by scanning repeated label strings and
 becomes what was written.
@@ -285,13 +297,17 @@ never exposes them, so no caller can set one and none does.
 `DEPTH_SITES` validation is unchanged: indent/dedent balance is checked against
 the resolved vector and does not care how addresses are spelled.
 
-Labels survive, renamed and made explicit. A preference has two independent
-questions and paths answer only the first; collapsing them would force
-`block_body_before` to be restated at every braced kind, which is the
-duplication this design exists to remove. The grouping is role-shaped — the
-role-interfaces design already captures `@body` — so when roles land, a bound
-preference becomes a role-scoped path and the binding retires into the role
-spec.
+Labels survive, written as paths and declared rather than inferred. A
+preference has two independent questions and an address answers only the first;
+collapsing them would force `body/before` to be restated at every braced kind,
+which is the duplication this design exists to remove.
+
+Writing labels as paths also dates the binding block. `body/before` is already
+shaped like a role-scoped address and simply cannot be resolved as one yet, so
+`_bindings` enumerates its members by hand. The role-interfaces design already
+captures `@body`; when roles land, the same label path becomes a query and the
+enumeration deletes itself. `_bindings` is scaffolding with a known removal
+date, not a permanent namespace.
 
 ## Non-goals
 
@@ -306,12 +322,13 @@ spec.
 
 ## Open decision
 
-A `_bindings` value is a **preference name**, a **name with a local default**
-(`['eq_before', 'tight']`), or a **bare arm** for a position in no group.
+A `_bindings` value is a **label path**, a **label with a local default**
+(`['assignment/before', 'tight']`), or a **bare arm** for a position in no
+group.
 
 The alternative — every binding naming only an arm — keeps the block
 self-contained but restates `indent` at all ten body sites, which is the
 duplication the block exists to remove, and it loses group membership: a
-consumer setting `eq_before` would no longer reach an address that had declared
+consumer setting the label would no longer reach an address that had declared
 its own default. The three-form value preserves both, at the cost of a value
 union rather than a plain string.
