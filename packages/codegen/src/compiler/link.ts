@@ -2296,6 +2296,10 @@ function stepPath(
 			throw new Error(
 				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`
 			);
+		case 'literal':
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' uses literal '"${seg.text}"' — refine paths only support positional indices and 'name:' field traversal`
+			);
 	}
 }
 function unwrapToChoice(

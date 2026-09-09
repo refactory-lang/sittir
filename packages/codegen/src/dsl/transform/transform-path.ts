@@ -39,6 +39,7 @@ function nativeRequired<K extends keyof RuntimeDsl>(name: K): NonNullable<Runtim
 export type PathSegment =
 	| { kind: 'index'; value: number }
 	| { kind: 'wildcard' }
+	| { kind: 'literal'; text: string }
 	| {
 			kind: 'kind-match';
 			name: string;
@@ -55,6 +56,26 @@ export class ApplyPathSkip extends Error {
 	}
 }
 
+function splitSegments(pathStr: string): string[] {
+	const parts: string[] = [];
+	let current = '';
+	let inLiteral = false;
+	for (const c of pathStr) {
+		if (c === '"') {
+			inLiteral = !inLiteral;
+			current += c;
+		} else if (c === '/' && !inLiteral) {
+			parts.push(current);
+			current = '';
+		} else {
+			current += c;
+		}
+	}
+	if (inLiteral) throw new Error(`parsePath: unterminated literal in path '${pathStr}'`);
+	parts.push(current);
+	return parts;
+}
+
 export function parsePath(pathStr: string): PathSegment[] {
 	if (pathStr === '.') return [];
 	if (typeof pathStr !== 'string' || pathStr.length === 0) {
@@ -63,10 +84,12 @@ export function parsePath(pathStr: string): PathSegment[] {
 	if (pathStr.startsWith('/') || pathStr.endsWith('/')) {
 		throw new Error(`parsePath: leading/trailing slash not allowed in path '${pathStr}'`);
 	}
-	const parts = pathStr.split('/');
+	const parts = splitSegments(pathStr);
 	const segments: PathSegment[] = [];
 	for (const part of parts) {
-		if (part === '_') {
+		if (part.length >= 2 && part.startsWith('"') && part.endsWith('"')) {
+			segments.push({ kind: 'literal', text: part.slice(1, -1) });
+		} else if (part === '_') {
 			segments.push({ kind: 'wildcard' });
 		} else if (/^-?\d+$/.test(part)) {
 			segments.push({ kind: 'index', value: Number(part) });
@@ -125,6 +148,7 @@ export function applyPath(
 			return descendThroughNamedField(rule, head!.name, rest, patch, precStack);
 
 		case 'index':
+		case 'literal':
 		case 'wildcard': {
 			if (isContainerType(t)) {
 				return applyToMembers(rule, head!, rest, patch, precStack);
@@ -248,6 +272,15 @@ function descendThroughSingleWrapper(
 				`applyPath: index ${head.value} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
 			);
 		}
+		case 'literal': {
+			if (literalTextOfMember(contentOf(rule)) !== head.text) {
+				throw new ApplyPathSkip(
+					`applyPath: '${rule.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+				);
+			}
+			const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+			return reconstructWrapper(rule, newContent);
+		}
 		case 'kind-match':
 		case 'fieldName': {
 			throw new Error(
@@ -283,6 +316,15 @@ function descendThroughAlias(
 			throw new ApplyPathSkip(
 				`applyPath: index ${head.value} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
 			);
+		}
+		case 'literal': {
+			if (literalTextOfMember(contentOf(rule)) !== head.text) {
+				throw new ApplyPathSkip(
+					`applyPath: '${rule.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+				);
+			}
+			const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+			return reconstructWrapper(rule, newContent);
 		}
 		case 'kind-match':
 		case 'fieldName': {
@@ -526,6 +568,13 @@ function applyToMembers(
 		case 'index':
 			return applyToIndexedMember(rule, members, head.value, rest, patch, precStack);
 
+		case 'literal': {
+			const at = members.findIndex((m) => literalTextOfMember(m) === head.text);
+			if (at < 0) throw new ApplyPathSkip(`applyPath: no literal ${JSON.stringify(head.text)} in ${rule.type}`);
+			members[at] = applyPath(members[at]!, rest, patch, precStack);
+			return reconstructContainer(rule, members);
+		}
+
 		case 'wildcard':
 			return applyWildcardToMembers(rule, members, rest, patch, precStack);
 
@@ -540,6 +589,11 @@ function applyToMembers(
 			);
 		}
 	}
+}
+
+function literalTextOfMember(rule: RuntimeRule): string | undefined {
+	const r = rule as { type?: string; value?: unknown };
+	return r.type === 'STRING' && typeof r.value === 'string' ? r.value : undefined;
 }
 
 function applyToIndexedMember(

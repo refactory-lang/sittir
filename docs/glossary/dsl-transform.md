@@ -25,6 +25,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *                 Parentheses are required.
  *   - `name:`   — field traversal: descend through field('name', ...)
  *                 at the current position. Hard-errors on mismatch.
+ *   - `"text"`  — literal: the member whose fixed text is `text`.
+ *                 Quotes are required, and a literal may contain the
+ *                 path separator.
  *   - `.`       — the rule itself (an empty segment list), for a patch
  *                 that annotates the whole rule (`group()`).
  *
@@ -57,6 +60,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
 ```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::splitSegments`
+
+A path's segments, splitting on `/` outside a quoted literal only. A literal
+may carry the separator — rust's token-tree punctuation has `/` and `/=` among
+its arms — so a bare split would leave those arms unaddressable.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::literalTextOfMember`
+
+The fixed text a member prints, or undefined when it prints anything decided
+elsewhere. It is what a literal segment matches against.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughPrecWrapper`
 

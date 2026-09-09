@@ -42,6 +42,32 @@ describe('parsePath()', () => {
 		]);
 	});
 
+	it('parses a quoted literal segment', () => {
+		expect(parsePath('","')).toEqual([{ kind: 'literal', text: ',' }]);
+		expect(parsePath('"::"')).toEqual([{ kind: 'literal', text: '::' }]);
+	});
+
+	it('parses a literal that contains the separator', () => {
+		expect(parsePath('"/"')).toEqual([{ kind: 'literal', text: '/' }]);
+		expect(parsePath('(token_tree_punctuation)/"/="')).toEqual([
+			{ kind: 'kind-match', name: 'token_tree_punctuation' },
+			{ kind: 'literal', text: '/=' }
+		]);
+	});
+
+	it('parses a literal alongside the other segment kinds', () => {
+		expect(parsePath('(block)/"{"/0')).toEqual([
+			{ kind: 'kind-match', name: 'block' },
+			{ kind: 'literal', text: '{' },
+			{ kind: 'index', value: 0 }
+		]);
+	});
+
+	it('rejects an unterminated literal', () => {
+		expect(() => parsePath('(block)/","')).not.toThrow();
+		expect(() => parsePath('(block)/",')).toThrow(/unterminated literal/);
+	});
+
 	it('parses wildcard _ segments', () => {
 		expect(parsePath('_')).toEqual([{ kind: 'wildcard' }]);
 		expect(parsePath('0/_/1')).toEqual([
@@ -106,6 +132,17 @@ describe('parsePath()', () => {
 });
 
 describe('applyPath()', () => {
+	it('applies a patch at a literal segment', () => {
+		const rule = seq(str('{'), sym('body'), str('}'));
+		const out = applyPath(rule, parsePath('"}"'), str('END'));
+		expect((out as any).members[2]).toEqual(str('END'));
+	});
+
+	it('skips a literal that no member carries', () => {
+		const rule = seq(str('{'), sym('body'));
+		expect(() => applyPath(rule, parsePath('"}"'), str('END'))).toThrow(/no literal/);
+	});
+
 	it('replaces at a single top-level index', () => {
 		const rule = seq(str('('), sym('expr'), str(')'));
 		const result = applyPath(rule, [{ kind: 'index', value: 1 }], fld('content', sym('expr')));
