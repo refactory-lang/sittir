@@ -1,4 +1,5 @@
 import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -51,6 +52,7 @@ export interface EmitAllConfig {
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
 	renderDefaults?: RenderDefaults;
+	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 }
 
@@ -94,6 +96,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		emitRenderModule,
 		expectTestFailures,
 		renderDefaults,
+		options: optionsBlock,
 		visibleExternals
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
@@ -101,7 +104,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 	const rulesConfig = kindEntries
-		? { nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) }
+		? { nodeMap, kindEntries, defaults: renderDefaults, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals) }
 		: undefined;
 	const spacedRules = rulesConfig ? spaceRenderRules(rulesConfig) : undefined;
 

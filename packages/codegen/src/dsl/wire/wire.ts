@@ -50,6 +50,7 @@ export interface WireContext {
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 	readonly defaults?: RenderDefaults;
+	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
 }
@@ -123,6 +124,7 @@ export function withWireContext<T>(
 		refineForms: new Map(),
 		groups: undefined,
 		renderAs: undefined,
+		options: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
 	};
@@ -238,6 +240,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
 		defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
+		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};

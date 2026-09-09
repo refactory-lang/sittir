@@ -150,6 +150,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		emitRenderModule: cfg.emitRenderModule,
 		expectTestFailures: raw.expectTestFailures,
 		renderDefaults: raw.renderDefaults,
+		options: raw.options,
 		visibleExternals: raw.visibleExternals
 	});
 

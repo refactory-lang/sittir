@@ -6,6 +6,8 @@ import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { AbstractAssembledCompound, AssembledEnum } from './node-map.ts';
 import { buildSupertypeMembersMap } from './supertype-members.ts';
+import { addressSites, resolveBindings } from './site-addresses.ts';
+import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
 	FLANK_DEFAULT,
@@ -76,6 +78,7 @@ export interface RenderRulesConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEntryLike[];
 	readonly defaults?: RenderDefaults;
+	readonly options?: OptionsConfig;
 	readonly whitespaceText?: ReadonlyMap<string, WhitespaceText>;
 }
 
@@ -193,9 +196,11 @@ function flankedSlots(gaps: ReadonlyMap<RuleId, Gap>): Map<string, Gap> {
 
 class DefaultResolver {
 	readonly #defaults: RenderDefaults;
+	readonly #declared: ReadonlyMap<string, string>;
 	readonly #supertypesOf = new Map<string, string[]>();
 
-	constructor(defaults: RenderDefaults | undefined, nodeMap: NodeMap) {
+	constructor(defaults: RenderDefaults | undefined, nodeMap: NodeMap, declared?: ReadonlyMap<string, string>) {
+		this.#declared = declared ?? new Map();
 		const given = defaults ?? { labels: {}, sites: {} };
 		checkDefaultArms(given);
 		this.#defaults = {
@@ -226,6 +231,8 @@ class DefaultResolver {
 	}
 
 	#resolve(kind: string, address: string, label: string, fallback: WhitespaceArm): WhitespaceArm {
+		const declared = this.#declared.get(declaredKey(kind, address));
+		if (declared !== undefined) return declared as WhitespaceArm;
 		const site = this.#site(kind, address);
 		if (site !== undefined) return site.arm as WhitespaceArm;
 		const top = this.#defaults.labels[label];
@@ -666,29 +673,56 @@ function tokenEdgeSeams(
 export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig): RenderRules {
 	const symbols = whitespaceSymbols(config.nodeMap, SPACING_ARMS);
 	if (symbols === undefined) return spaced;
-	const resolver = new DefaultResolver(config.defaults, config.nodeMap);
 	const inlined = inlinedRuleNames(spaced.rules);
 	const flankSyms = flankSymbols(config);
 	const seams: SeamArms = flankSyms === undefined ? { arms: SPACING_ARMS, symbols } : { arms: WHITESPACE_ARMS, symbols: flankSyms };
-	const out: Record<string, RenderRule> = {};
-	for (const [kind, rule] of Object.entries(spaced.rules)) {
-		if (inlined.has(kind)) {
-			out[kind] = rule;
-			continue;
+	const build = (declared?: ReadonlyMap<string, string>): RenderRules => {
+		const resolver = new DefaultResolver(config.defaults, config.nodeMap, declared);
+		const out: Record<string, RenderRule> = {};
+		for (const [kind, rule] of Object.entries(spaced.rules)) {
+			if (inlined.has(kind)) {
+				out[kind] = rule;
+				continue;
+			}
+			if (config.nodeMap.nodes.get(kind) instanceof AssembledEnum) {
+				out[kind] = withArmSeams(rule, kind, config, resolver, seams);
+				continue;
+			}
+			const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, config, resolver, seams);
+			const seamed = visit(walker.map(rule, visit));
+			out[kind] = ownsKindEdges(kind, config.nodeMap) ? withKindEdges(seamed, kind, config, resolver, seams) : seamed;
 		}
-		if (config.nodeMap.nodes.get(kind) instanceof AssembledEnum) {
-			out[kind] = withArmSeams(rule, kind, config, resolver, seams);
-			continue;
-		}
-		const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, config, resolver, seams);
-		const seamed = visit(walker.map(rule, visit));
-		out[kind] = ownsKindEdges(kind, config.nodeMap) ? withKindEdges(seamed, kind, config, resolver, seams) : seamed;
-	}
-	const result: RenderRules = { rules: out };
+		return { rules: out };
+	};
+	const first = build();
+	const declared = config.options === undefined ? undefined : declaredOptionArms(config, spacingSitesOf(first, config.nodeMap));
+	const result = declared === undefined ? first : build(declared);
 	const sites = spacingSitesOf(result, config.nodeMap);
 	validateRenderDefaults(config.defaults, sites, config.nodeMap);
 	validateIndentDepth(sites);
 	return result;
+}
+
+function declaredKey(kind: string, address: string): string {
+	return `${publicKindName(kind)}\u0000${address}`;
+}
+
+export function declaredOptionArms(
+	config: RenderRulesConfig,
+	sites: readonly RuleSpacingSite[]
+): ReadonlyMap<string, string> | undefined {
+	const block: OptionsConfig | undefined = config.options;
+	if (block === undefined) return undefined;
+	const kinds = new Set([...config.nodeMap.nodes.keys()].map(publicKindName));
+	const { declarations, bindings } = readOptionsBlock(block, kinds);
+	if (declarations.length === 0) return undefined;
+	const addressed = addressSites(sites, config.kindEntries);
+	const arms = new Map<string, string>();
+	for (const [index, arm] of resolveBindings(declarations, bindings, addressed)) {
+		const site = addressed[index]!;
+		arms.set(declaredKey(site.kind, site.address), arm);
+	}
+	return arms;
 }
 
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {

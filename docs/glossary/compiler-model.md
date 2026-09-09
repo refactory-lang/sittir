@@ -3779,3 +3779,22 @@ name at the head is the kind it names — that is how a declaration keyed by its
 kind in the `options:` block and an address written `(kind)/…` reach the same
 site. Parsing stays literal, because a label's head is virtual and must not be
 resolved against the grammar.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::declaredOptionArms`
+
+Each site's arm as the `options:` block declares it, keyed by kind and address —
+the form the default resolver already looks sites up by.
+
+It runs inside `seamRenderRules` because that is the first point where the sites
+an address names exist: they are read off the built rules, not off the model. So
+the rules are built once to enumerate the sites, the block is resolved against
+them, and the rules are built again with the resolved arms in hand. The second
+build is safe because seam structure comes from the grammar's shape and never
+from a default's value — only the arm a seam carries differs between the two.
+
+A grammar declaring nothing skips both the resolution and the second build.
+
+The block is carried unread from `wire()` through `RawGrammar` to here rather
+than being read where it is written. Reading it needs the real kind set, to
+reject a virtual label that shadows a kind the grammar has, and wire has only
+rule names.

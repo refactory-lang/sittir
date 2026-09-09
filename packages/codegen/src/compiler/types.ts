@@ -6,6 +6,8 @@ import type { VariantChild } from './variant-structural.ts';
 
 import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
+export type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 
 export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
 
@@ -96,6 +98,7 @@ export interface RawGrammar {
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
 	readonly renderDefaults?: RenderDefaults;
+	readonly options?: OptionsConfig;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly orphanedSyntheticGroups?: readonly string[];

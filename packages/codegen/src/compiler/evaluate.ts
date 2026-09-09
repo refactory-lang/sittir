@@ -1,4 +1,5 @@
 import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -368,6 +369,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const renderAs = drainRenderAsMetadata(opts, ctx);
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const renderDefaults = drainRenderDefaultsMetadata(opts);
+	const optionsBlock = drainOptionsMetadata(opts);
 
 	synthesizeInlineAliasSources(rules, ctx);
 	const identified = buildRuleCatalog(rules, { provenanceByKind });
@@ -391,6 +393,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		renderAs,
 		visibleExternals,
 		renderDefaults,
+		options: optionsBlock,
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
@@ -533,6 +536,11 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	}
 	if (Object.keys(e).length === 0) return undefined;
 	return e;
+}
+
+function drainOptionsMetadata(opts: GrammarOptions): OptionsConfig | undefined {
+	const declared = getWireContext(opts)?.options;
+	return declared === undefined || Object.keys(declared).length === 0 ? undefined : declared;
 }
 
 function drainRenderDefaultsMetadata(opts: GrammarOptions): RenderDefaults | undefined {
