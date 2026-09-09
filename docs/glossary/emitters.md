@@ -14928,3 +14928,26 @@ site, and is the table a prefix is looked up in.
 
 Delimiter sites keep their own kind-and-slot order: they are addressed by name,
 not by range.
+
+### `render options: site_range` (emitted into `options.rs`)
+
+The sites an address names — itself and everything beneath it — as a contiguous
+range, because sites are numbered in canonical path order.
+
+The scan is deliberate. That order compares parsed segments, not the bytes of
+the formatted path, so the table is not in byte order and a binary search over
+it would land in the wrong place: within a kind, `for:/before` precedes
+`before`, where bytes would put `after` first. Resolution runs once per options
+change rather than once per render, so a pass over a few hundred short strings
+costs nothing, and correctness here is not negotiable.
+
+### `render options: apply_nested` (emitted into `options.rs`)
+
+A kind-keyed nested object applied by address. The nested object and the path
+are the same address in two layouts, so each nested key is matched against every
+spelling a segment has — a bare name, a quoted literal, or a field.
+
+It is all or nothing. A key that resolves to no site, or an object with any leaf
+that does not, leaves the table untouched and reports nothing applied, so the
+flat surface reads the key instead. Applying the half it understood would drop
+the rest in silence.
