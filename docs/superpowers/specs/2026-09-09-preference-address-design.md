@@ -54,10 +54,16 @@ wildcard (`_`), kind match (`(name)`), field traversal (`name:`) — plus one
 addition, the **literal segment** `"text"`, which names an anonymous token or
 an enum arm by its text. The first segment is the kind. `/` separates.
 
-**Sides are segments, not sigils.** `before`, `after`, `start`, `end` and
-`separator` are ordinary terminal segments. There is no `+`/`-` suffix
-vocabulary, so a path and the nested TypeScript object are the same address in
-two layouts rather than two conventions needing a projection rule.
+**Sides are segments, not sigils.** `before`, `after` and `separator` are
+ordinary terminal segments. There is no `+`/`-` suffix vocabulary, so a path and
+the nested TypeScript object are the same address in two layouts rather than two
+conventions needing a projection rule.
+
+There are two sides, not four. A list's flanks are `before` and `after` at
+positions the path grammar already expresses — `body:/0/before`,
+`body:/-1/after` — so `start` and `end` are not separate vocabulary. Indices
+also address positions no flank could name, including the one a list's last
+element occupies against its closing delimiter.
 
 Named positions on a slot:
 
@@ -65,11 +71,14 @@ Named positions on a slot:
 | --- | --- |
 | `separator` | the gap between elements, or the separator token where the grammar offers a choice |
 | `separator/before`, `separator/after` | the gaps flanking a separator token |
-| `start`, `end` | the gaps inside the list's first and last elements |
+| `0/before`, `-1/after` | the gaps inside the list's first and last elements |
 | `before`, `after` | on a kind, its own leading and trailing edges |
 
-`separator` names a position, and what it admits is whatever that position
-varies: whitespace arms where the separator is fixed or empty, token kinds
+`separator` is the exception that proves the rule: it is not a position but the
+thing between positions, which is why it cannot be spelled `_/after` — that
+would include the last element, where the gap belongs to the list's edge rather
+than to a separator. It names a position in the addressing sense, and what it
+admits is whatever that position varies: whitespace arms where the separator is fixed or empty, token kinds
 where the grammar offers a choice. A slot never has both, and the site's
 declared arm set rejects a value from the wrong family.
 
@@ -84,8 +93,8 @@ sub-visible facts stay in `grammar.sittir.ts`, and whitespace is sub-visible —
 a seam has no node.
 
 **Structural beats token.** Where a position can be named either by the
-delimiter beside it or by the slot it opens, the slot wins: `block/body:/start`,
-not `block/"{"/after`. The delimiter is not the invariant — `object_type`
+delimiter beside it or by the slot it opens, the slot wins:
+`block/body:/0/before`, not `block/"{"/after`. The delimiter is not the invariant — `object_type`
 opens with `opening`, and a python body opens with nothing.
 
 ## Declaring: `options:`
@@ -104,10 +113,10 @@ options: {
   eq_before:         preference('space'),
 
   _bindings: {
-    'block/body:/start':                   'block_body_before',
-    'block/body:/end':                     'block_body_after',
-    'object_type/content:/start':          'block_body_before',
-    'field_declaration_list/elements:/start': 'block_body_before',
+    'block/body:/0/before':                   'block_body_before',
+    'block/body:/-1/after':                   'block_body_after',
+    'object_type/content:/0/before':           'block_body_before',
+    'field_declaration_list/elements:/0/before': 'block_body_before',
 
     'lexical_declaration/"="/before':      'eq_before',
     'keyword_argument/"="/before':        ['eq_before', 'tight'],
@@ -134,19 +143,28 @@ strings and becomes what was written.
 by construction. Both blocks reject a duplicate key at load time rather than
 letting the object literal silently keep the last one.
 
-## Resolving: prefix scope, deepest wins
+## Resolving: scope by site set
 
-A declaration applies to its address and everything beneath it. A longer path
-overrides a shorter one. That single rule replaces the site → label → fallback
-ladder:
+A declaration applies to its address and everything beneath it. Where two
+declarations reach the same site, **the one matching a strict subset of the
+other's sites wins**:
 
 ```
 token_tree_punctuation/","/after                                → space
 token_repetition_pattern/(token_tree_punctuation)/":"/after      → tight
 ```
 
-Specificity is path length. A grammar-wide fact is a short path; an exception
-is a longer one; nothing sits outside the ordering.
+That single rule replaces the site → label → fallback ladder. A grammar-wide
+fact matches many sites; an exception matches few; nothing sits outside the
+ordering.
+
+Specificity is defined on the site set rather than on path length, because two
+paths can reach one site from different roots — `token_tree_punctuation/","/after`
+and `delim_token_tree_paren/delim_tokens:/-1/after` both name the gap after a
+trailing comma — and neither is a prefix of the other. Two declarations whose
+site sets overlap without either containing the other are a conflict, reported
+at load time. Within a single root the rule degenerates to the longer path
+winning.
 
 Runtime options are the same addresses in nested form, and resolve the same
 way — shallow paths applied before deep ones, last write wins.
@@ -222,7 +240,7 @@ never exposes them, so no caller can set one and none does.
 | --- | --- |
 | `<tok>_<side>` seam labels | a literal or structural segment in the path |
 | `<slot>_separator_space[_<side>]` | `<slot>:/separator[/<side>]` |
-| `<kind>_start` / `_end` flanks | `<slot>:/start` / `/end` |
+| `<kind>_start` / `_end` flanks | `<slot>:/0/before` / `/-1/after` |
 | `<kind>_before` / `_after` kind edges | `<kind>/before` / `/after` |
 | flank-supertype fan-out, `SUPERTYPE_MEMBERS` | a `(supertype)` segment expanding to its members |
 | `LABELS` as a derived scan | `options._bindings` as written |
