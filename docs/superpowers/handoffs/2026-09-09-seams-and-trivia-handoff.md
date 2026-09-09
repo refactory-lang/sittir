@@ -224,6 +224,10 @@ deliberate marker convention awaiting a ruling.
 - Commit with explicit pathspecs (`git commit -- <paths>`); a `git add -A`
   swept in an untracked `.vitest-report.json` once.
 
+**Continued in [2026-09-09-anon-token-identity-and-blank-lines-handoff.md](2026-09-09-anon-token-identity-and-blank-lines-handoff.md)**, which closes the
+dropped `||` — one parser symbol had grown two kinds competing for its id — and
+brings all three rebuilds to equal-modulo-whitespace with their source.
+
 ## Commands
 
 ```bash
