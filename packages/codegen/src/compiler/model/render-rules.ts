@@ -368,14 +368,14 @@ function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolv
 	return { ...(rule as object), separator: { ...separator, value } } as unknown as RenderRule;
 }
 
-export function spaceRenderRules(config: RenderRulesConfig): RenderRules {
+export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyMap<string, string>): RenderRules {
 	const rules = config.nodeMap.normalizedRules ?? {};
 	const symbols = whitespaceSymbols(config.nodeMap, SPACING_ARMS);
 	if (symbols === undefined) return { rules };
 	const gaps = collectGaps(config, rules);
 	const flankSyms = flankSymbols(config);
 	const flanked = flankSyms === undefined ? new Map<string, Gap>() : flankedSlots(gaps);
-	const resolver = new DefaultResolver(config.defaults, config.nodeMap);
+	const resolver = new DefaultResolver(config.defaults, config.nodeMap, declared);
 	const visit = (r: RenderRule): RenderRule => {
 		const id = bag(r).id;
 		const gap = id === undefined ? undefined : gaps.get(id);
@@ -670,13 +670,17 @@ function tokenEdgeSeams(
 	return { before: seamFor('before'), after: seamFor('after') };
 }
 
-export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig): RenderRules {
+export function seamRenderRules(
+	spaced: RenderRules,
+	config: RenderRulesConfig,
+	declared?: ReadonlyMap<string, string>
+): RenderRules {
 	const symbols = whitespaceSymbols(config.nodeMap, SPACING_ARMS);
 	if (symbols === undefined) return spaced;
 	const inlined = inlinedRuleNames(spaced.rules);
 	const flankSyms = flankSymbols(config);
 	const seams: SeamArms = flankSyms === undefined ? { arms: SPACING_ARMS, symbols } : { arms: WHITESPACE_ARMS, symbols: flankSyms };
-	const build = (declared?: ReadonlyMap<string, string>): RenderRules => {
+	const build = (): RenderRules => {
 		const resolver = new DefaultResolver(config.defaults, config.nodeMap, declared);
 		const out: Record<string, RenderRule> = {};
 		for (const [kind, rule] of Object.entries(spaced.rules)) {
@@ -694,13 +698,29 @@ export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig):
 		}
 		return { rules: out };
 	};
-	const first = build();
-	const declared = config.options === undefined ? undefined : declaredOptionArms(config, spacingSitesOf(first, config.nodeMap));
-	const result = declared === undefined ? first : build(declared);
+	const result = build();
 	const sites = spacingSitesOf(result, config.nodeMap);
 	validateRenderDefaults(config.defaults, sites, config.nodeMap);
 	validateIndentDepth(sites);
 	return result;
+}
+
+/// Both render-rule passes, with the `options:` block resolved between them.
+/// `stamp` runs on the spaced rules before each seam pass: seam fallbacks read
+/// the static-spacing stamp, and a declared separator arm can move it.
+export function resolveRenderRules(
+	config: RenderRulesConfig,
+	stamp: (spaced: RenderRules) => void
+): { spaced: RenderRules; seamed: RenderRules } {
+	const spaced = spaceRenderRules(config);
+	stamp(spaced);
+	const seamed = seamRenderRules(spaced, config);
+	if (config.options === undefined) return { spaced, seamed };
+	const declared = declaredOptionArms(config, spacingSitesOf(seamed, config.nodeMap));
+	if (declared === undefined) return { spaced, seamed };
+	const respaced = spaceRenderRules(config, declared);
+	stamp(respaced);
+	return { spaced: respaced, seamed: seamRenderRules(respaced, config, declared) };
 }
 
 function declaredKey(kind: string, address: string): string {

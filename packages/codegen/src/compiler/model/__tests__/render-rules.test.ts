@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
-import { flanksOf, isSeamChoice, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
+import { flanksOf, isSeamChoice, resolveRenderRules, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
 import { AssembledBranch, AssembledSupertype } from '../node-map.ts';
 import type { RenderDefaults } from '../../../dsl/primitives/spacing.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
@@ -432,19 +432,23 @@ describe('the options block reaches a site', () => {
 	const braced = { block: seq(str('{'), sym('body')), body: seq(sym('x')) };
 	const armOf = (out: { rules: Record<string, RenderRule> }, address: string): string | undefined =>
 		spacingSitesOf(out as never, nodeMapOf(braced, {})).find((s) => s.address === address)?.defaultArm;
+	const resolved = (extra: object = {}) => {
+		const config = { nodeMap: nodeMapOf(braced, {}), kindEntries, ...extra } as never;
+		return resolveRenderRules(config, () => {}).seamed;
+	};
 
 	it('leaves a site on its fallback when nothing declares it', () => {
-		const { out } = seamed(braced);
+		const out = resolved();
 		expect(armOf(out, 'lbrace_after')).toBe('tight');
 	});
 
 	it('a declaration under a kind sets that site', () => {
-		const { out } = seamed(braced, {}, { options: { block: { '"{"/after': preference('newline') } } });
+		const out = resolved({ options: { block: { '"{"/after': preference('newline') } } });
 		expect(armOf(out, 'lbrace_after')).toBe('newline');
 	});
 
 	it('a binding to a virtual label sets every address bound to it', () => {
-		const { out } = seamed(braced, {}, {
+		const out = resolved({
 			options: {
 				indented: { before: preference('newline') },
 				_bindings: { 'block/"{"/after': 'indented/before' }
@@ -455,7 +459,7 @@ describe('the options block reaches a site', () => {
 
 	it('rejects a virtual label that shadows a kind the grammar has', () => {
 		expect(() =>
-			seamed(braced, {}, {
+			resolved({
 				options: {
 					body: { before: preference('newline') },
 					_bindings: { 'block/"{"/after': 'body/before' }
@@ -465,14 +469,14 @@ describe('the options block reaches a site', () => {
 	});
 
 	it('agrees with the patches spelling it replaces', () => {
-		const viaPatches = seamed(braced, {}, {
+		const viaPatches = resolved({
 			defaults: { labels: {}, sites: { block: { lbrace_after: { label: 'lbrace_after', arm: 'newline' } } } } as RenderDefaults
 		});
-		const viaOptions = seamed(braced, {}, { options: { block: { '"{"/after': preference('newline') } } });
-		expect(armOf(viaOptions.out, 'lbrace_after')).toBe(armOf(viaPatches.out, 'lbrace_after'));
+		const viaOptions = resolved({ options: { block: { '"{"/after': preference('newline') } } });
+		expect(armOf(viaOptions, 'lbrace_after')).toBe(armOf(viaPatches, 'lbrace_after'));
 	});
 
 	it('rejects an address that names no site', () => {
-		expect(() => seamed(braced, {}, { options: { block: { '"("/after': preference('newline') } } })).toThrow(/names no site/);
+		expect(() => resolved({ options: { block: { '"("/after': preference('newline') } } })).toThrow(/names no site/);
 	});
 });

@@ -3785,14 +3785,20 @@ resolved against the grammar.
 Each site's arm as the `options:` block declares it, keyed by kind and address —
 the form the default resolver already looks sites up by.
 
-It runs inside `seamRenderRules` because that is the first point where the sites
-an address names exist: they are read off the built rules, not off the model. So
-the rules are built once to enumerate the sites, the block is resolved against
-them, and the rules are built again with the resolved arms in hand. The second
-build is safe because seam structure comes from the grammar's shape and never
-from a default's value — only the arm a seam carries differs between the two.
+It runs between the two render-rule passes, because that is the first point
+where the sites an address names exist: they are read off the built rules, not
+off the model. `resolveRenderRules` builds both phases once to enumerate the
+sites, resolves the block against them, and builds both again with the arms in
+hand. Both phases, not just the seam one — a separator's arm is resolved while
+spacing, so a pass that reseamed alone would leave every separator on its
+fallback.
 
-A grammar declaring nothing skips both the resolution and the second build.
+The second build is safe because rule structure comes from the grammar's shape
+and never from a default's value; only the arm a site carries differs. Static
+spacing is stamped before each seam pass rather than once, since a declared
+separator arm can move the stamp and seam fallbacks read it.
+
+A grammar declaring nothing skips the resolution and the second build.
 
 The block is carried unread from `wire()` through `RawGrammar` to here rather
 than being read where it is written. Reading it needs the real kind set, to

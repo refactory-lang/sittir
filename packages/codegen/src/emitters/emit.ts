@@ -1,6 +1,6 @@
 import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
-import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
+import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -106,7 +106,10 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const rulesConfig = kindEntries
 		? { nodeMap, kindEntries, defaults: renderDefaults, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals) }
 		: undefined;
-	const spacedRules = rulesConfig ? spaceRenderRules(rulesConfig) : undefined;
+	const resolvedRules = rulesConfig
+		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
+		: undefined;
+	const spacedRules = resolvedRules?.spaced;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
@@ -138,8 +141,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		renderDefaults
 	});
 
-	stampStaticSpacing(nodeMap, grammar, spacedRules);
-	const renderRules = rulesConfig && spacedRules ? seamRenderRules(spacedRules, rulesConfig) : undefined;
+	const renderRules = resolvedRules?.seamed;
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
 
 	const renderModuleEmitterInst =
