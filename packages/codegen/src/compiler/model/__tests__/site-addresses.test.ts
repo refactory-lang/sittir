@@ -56,8 +56,13 @@ describe('addressSites', () => {
 		expect(sorted.map((s) => s.address)).toEqual(['lbrace_after', 'block_before']);
 	});
 
-	it('refuses a seam token that names no anonymous token', () => {
-		expect(() => addressSites([site('block', 'nosuch_after')], ENTRIES)).toThrow(/names no anonymous token/);
+	it('gives a seam named for a field a field segment, not a literal', () => {
+		const [addressed] = addressSites([site('token_binding_pattern', 'type_before', 'type')], ENTRIES);
+		expect(addressed!.path).toEqual([
+			{ kind: 'kind-match', name: 'token_binding_pattern' },
+			{ kind: 'fieldName', name: 'type' },
+			{ kind: 'name', name: 'before' }
+		]);
 	});
 });
 

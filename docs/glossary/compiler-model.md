@@ -3730,17 +3730,18 @@ A site's address decomposed into path segments. It is the only place the flat
 spellings — seam, separator, flank — are read, so retiring them is a deletion
 here rather than a search.
 
-A token seam becomes a literal segment carrying the token's text, not its
-catalog name: an address names a token the way an author writes it. The two are
-joined through the anonymous-token catalog, which the only caller already
-holds. A seam whose token is the rule's own kind is that kind's edge and takes
-no token segment at all.
+A seam is named after one of three things, and each takes its own segment. A
+seam whose name is the rule's own kind is that kind's edge, and takes no
+segment beyond the side. A seam named after an anonymous token becomes a
+literal segment carrying the token's TEXT rather than its catalog name, because
+an address names a token the way an author writes it — `"{"`, not `lbrace`; the
+two are joined through the catalog, which the only caller already holds. Every
+other seam is named after a field, and takes a field segment.
 
-The catalog is always in hand where it is needed, because a seam token name is
+The catalog is in hand wherever it is consulted, because a seam's token name is
 minted from it — a site can carry one only if the catalog existed when the site
-was created. The branch that consults no catalog is the kind edge, named from
-the rule's own kind. So a failed lookup means an absent token, never a phase
-that ran too early.
+was made. So the absence of an entry is not a phase that ran too early; it means
+the seam names a field, which is the remaining case.
 
 A side is a bare name segment. That is what the canonical order recognises, so
 a kind's own edges sort after everything nested beneath them and each subtree

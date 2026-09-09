@@ -44170,16 +44170,16 @@ pub struct ProgramTransport {
     pub hash_bang_line: Option<::sittir_core::SlotValue<HashBangLineTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_program_after"))]
-    pub program_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_program_before"))]
-    pub program_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
-    pub statements_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_end"))]
     pub statements_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_start"))]
     pub statements_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
+    pub statements_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_program_before"))]
+    pub program_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_program_after"))]
+    pub program_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ProgramTransport {
@@ -44190,11 +44190,11 @@ impl ::std::fmt::Display for ProgramTransport {
 
 impl ::sittir_core::options::FillOptions for ProgramTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.program_after.get_or_insert(table.spacing[options::SITE_PROGRAM_PROGRAM_AFTER]);
-        self.program_before.get_or_insert(table.spacing[options::SITE_PROGRAM_PROGRAM_BEFORE]);
-        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE]);
         self.statements_end.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_END]);
         self.statements_start.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_START]);
+        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE]);
+        self.program_before.get_or_insert(table.spacing[options::SITE_PROGRAM_PROGRAM_BEFORE]);
+        self.program_after.get_or_insert(table.spacing[options::SITE_PROGRAM_PROGRAM_AFTER]);
         self.hash_bang_line.fill_options(table);
         self.statements.fill_options(table);
     }
@@ -44397,18 +44397,18 @@ pub struct NamespaceExportTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_export_name"))]
     pub module_export_name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export_after"))]
-    pub namespace_export_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export_before"))]
-    pub namespace_export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
+    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
     pub star_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
+    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export_before"))]
+    pub namespace_export_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export_after"))]
+    pub namespace_export_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for NamespaceExportTransport {
@@ -44419,12 +44419,12 @@ impl ::std::fmt::Display for NamespaceExportTransport {
 
 impl ::sittir_core::options::FillOptions for NamespaceExportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_AS_AFTER]);
         self.as_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_AS_BEFORE]);
-        self.namespace_export_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_NAMESPACE_EXPORT_AFTER]);
-        self.namespace_export_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_NAMESPACE_EXPORT_BEFORE]);
-        self.star_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_STAR_AFTER]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_AS_AFTER]);
         self.star_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_STAR_BEFORE]);
+        self.star_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_STAR_AFTER]);
+        self.namespace_export_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_NAMESPACE_EXPORT_BEFORE]);
+        self.namespace_export_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_EXPORT_NAMESPACE_EXPORT_AFTER]);
         self.module_export_name.fill_options(table);
     }
 }
@@ -44468,18 +44468,18 @@ pub struct ExportClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifiers"))]
     pub export_specifiers: Option<::sittir_core::SlotValue<ExportSpecifiersTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause_after"))]
-    pub export_clause_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause_before"))]
-    pub export_clause_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause_before"))]
+    pub export_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause_after"))]
+    pub export_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportClauseTransport {
@@ -44490,12 +44490,12 @@ impl ::std::fmt::Display for ExportClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ExportClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_clause_after.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_EXPORT_CLAUSE_AFTER]);
-        self.export_clause_before.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_EXPORT_CLAUSE_BEFORE]);
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_LBRACE_AFTER]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_LBRACE_BEFORE]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_RBRACE_AFTER]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_RBRACE_BEFORE]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_RBRACE_AFTER]);
+        self.export_clause_before.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_EXPORT_CLAUSE_BEFORE]);
+        self.export_clause_after.get_or_insert(table.spacing[options::SITE_EXPORT_CLAUSE_EXPORT_CLAUSE_AFTER]);
         self.export_specifiers.fill_options(table);
     }
 }
@@ -44543,14 +44543,14 @@ pub struct ExportSpecifierTransport {
     pub name: ::sittir_core::SlotValue<ExportSpecifierNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: Option<::sittir_core::SlotValue<ExportSpecifierAliasTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_after"))]
-    pub export_specifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
+    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_before"))]
     pub export_specifier_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_after"))]
+    pub export_specifier_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportSpecifierTransport {
@@ -44561,10 +44561,10 @@ impl ::std::fmt::Display for ExportSpecifierTransport {
 
 impl ::sittir_core::options::FillOptions for ExportSpecifierTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIER_AS_AFTER]);
         self.as_before.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIER_AS_BEFORE]);
-        self.export_specifier_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIER_EXPORT_SPECIFIER_AFTER]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIER_AS_AFTER]);
         self.export_specifier_before.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIER_EXPORT_SPECIFIER_BEFORE]);
+        self.export_specifier_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIER_EXPORT_SPECIFIER_AFTER]);
         self.export_kind.fill_options(table);
         self.name.fill_options(table);
         self.alias.fill_options(table);
@@ -44723,14 +44723,14 @@ pub struct ImportStatementTransport {
     pub import_attribute: Option<::sittir_core::SlotValue<ImportAttributeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ImportStatementTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_import_after"))]
-    pub anon_import_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_import_before"))]
     pub anon_import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_after"))]
-    pub import_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_import_after"))]
+    pub anon_import_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_before"))]
     pub import_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_after"))]
+    pub import_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportStatementTransport {
@@ -44741,10 +44741,10 @@ impl ::std::fmt::Display for ImportStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ImportStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_ANON_IMPORT_AFTER]);
         self.anon_import_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_ANON_IMPORT_BEFORE]);
-        self.import_statement_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_AFTER]);
+        self.anon_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_ANON_IMPORT_AFTER]);
         self.import_statement_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_BEFORE]);
+        self.import_statement_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_AFTER]);
         self.import_clause.fill_options(table);
         self.from_clause.fill_options(table);
         self.import_attribute.fill_options(table);
@@ -44844,18 +44844,18 @@ pub struct NamespaceImportTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_import_after"))]
-    pub namespace_import_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_import_before"))]
-    pub namespace_import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
+    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
     pub star_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
+    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_import_before"))]
+    pub namespace_import_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_import_after"))]
+    pub namespace_import_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for NamespaceImportTransport {
@@ -44866,12 +44866,12 @@ impl ::std::fmt::Display for NamespaceImportTransport {
 
 impl ::sittir_core::options::FillOptions for NamespaceImportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_AS_AFTER]);
         self.as_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_AS_BEFORE]);
-        self.namespace_import_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_NAMESPACE_IMPORT_AFTER]);
-        self.namespace_import_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_NAMESPACE_IMPORT_BEFORE]);
-        self.star_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_STAR_AFTER]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_AS_AFTER]);
         self.star_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_STAR_BEFORE]);
+        self.star_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_STAR_AFTER]);
+        self.namespace_import_before.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_NAMESPACE_IMPORT_BEFORE]);
+        self.namespace_import_after.get_or_insert(table.spacing[options::SITE_NAMESPACE_IMPORT_NAMESPACE_IMPORT_AFTER]);
         self.name.fill_options(table);
     }
 }
@@ -44915,18 +44915,18 @@ pub struct NamedImportsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifiers"))]
     pub import_specifiers: Option<::sittir_core::SlotValue<ImportSpecifiersTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_imports_after"))]
-    pub named_imports_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_imports_before"))]
-    pub named_imports_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_imports_before"))]
+    pub named_imports_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_imports_after"))]
+    pub named_imports_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for NamedImportsTransport {
@@ -44937,12 +44937,12 @@ impl ::std::fmt::Display for NamedImportsTransport {
 
 impl ::sittir_core::options::FillOptions for NamedImportsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_LBRACE_AFTER]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_LBRACE_BEFORE]);
-        self.named_imports_after.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_NAMED_IMPORTS_AFTER]);
-        self.named_imports_before.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_NAMED_IMPORTS_BEFORE]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_RBRACE_AFTER]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_RBRACE_BEFORE]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_RBRACE_AFTER]);
+        self.named_imports_before.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_NAMED_IMPORTS_BEFORE]);
+        self.named_imports_after.get_or_insert(table.spacing[options::SITE_NAMED_IMPORTS_NAMED_IMPORTS_AFTER]);
         self.import_specifiers.fill_options(table);
     }
 }
@@ -44988,10 +44988,10 @@ pub struct ImportSpecifierTransport {
     pub import_kind: Option<::sittir_core::SlotValue<Box<AnyTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportSpecifierContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_after"))]
-    pub import_specifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_before"))]
     pub import_specifier_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_after"))]
+    pub import_specifier_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportSpecifierTransport {
@@ -45002,8 +45002,8 @@ impl ::std::fmt::Display for ImportSpecifierTransport {
 
 impl ::sittir_core::options::FillOptions for ImportSpecifierTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.import_specifier_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_IMPORT_SPECIFIER_AFTER]);
         self.import_specifier_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_IMPORT_SPECIFIER_BEFORE]);
+        self.import_specifier_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_IMPORT_SPECIFIER_AFTER]);
         self.import_kind.fill_options(table);
         self.content.fill_options(table);
     }
@@ -45050,10 +45050,10 @@ pub struct ImportAttributeTransport {
     pub attribute_kind: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<ObjectTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute_after"))]
-    pub import_attribute_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute_before"))]
     pub import_attribute_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute_after"))]
+    pub import_attribute_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportAttributeTransport {
@@ -45064,8 +45064,8 @@ impl ::std::fmt::Display for ImportAttributeTransport {
 
 impl ::sittir_core::options::FillOptions for ImportAttributeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.import_attribute_after.get_or_insert(table.spacing[options::SITE_IMPORT_ATTRIBUTE_IMPORT_ATTRIBUTE_AFTER]);
         self.import_attribute_before.get_or_insert(table.spacing[options::SITE_IMPORT_ATTRIBUTE_IMPORT_ATTRIBUTE_BEFORE]);
+        self.import_attribute_after.get_or_insert(table.spacing[options::SITE_IMPORT_ATTRIBUTE_IMPORT_ATTRIBUTE_AFTER]);
         self.attribute_kind.fill_options(table);
         self.object.fill_options(table);
     }
@@ -45112,10 +45112,10 @@ pub struct ExpressionStatementTransport {
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ExpressionStatementTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_statement_after"))]
-    pub expression_statement_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_statement_before"))]
     pub expression_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_statement_after"))]
+    pub expression_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExpressionStatementTransport {
@@ -45126,8 +45126,8 @@ impl ::std::fmt::Display for ExpressionStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ExpressionStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.expression_statement_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_AFTER]);
         self.expression_statement_before.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_BEFORE]);
+        self.expression_statement_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_AFTER]);
         self.expression.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -45174,22 +45174,22 @@ pub struct VariableDeclarationTransport {
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<VariableDeclarationTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
-    pub declarators_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
-    pub declarators_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_end"))]
     pub declarators_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_start"))]
     pub declarators_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_var_after"))]
-    pub var_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
+    pub declarators_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
+    pub declarators_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_var_before"))]
     pub var_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declaration_after"))]
-    pub variable_declaration_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_var_after"))]
+    pub var_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declaration_before"))]
     pub variable_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declaration_after"))]
+    pub variable_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for VariableDeclarationTransport {
@@ -45200,14 +45200,14 @@ impl ::std::fmt::Display for VariableDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for VariableDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.declarators_separator_space_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER]);
-        self.declarators_separator_space_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE]);
         self.declarators_end.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_END]);
         self.declarators_start.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_START]);
-        self.var_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_VAR_AFTER]);
+        self.declarators_separator_space_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE]);
+        self.declarators_separator_space_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER]);
         self.var_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_VAR_BEFORE]);
-        self.variable_declaration_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_VARIABLE_DECLARATION_AFTER]);
+        self.var_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_VAR_AFTER]);
         self.variable_declaration_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_VARIABLE_DECLARATION_BEFORE]);
+        self.variable_declaration_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATION_VARIABLE_DECLARATION_AFTER]);
         self.declarators.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -45256,22 +45256,22 @@ pub struct LexicalDeclarationTransport {
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<LexicalDeclarationTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
-    pub declarators_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
-    pub declarators_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_end"))]
     pub declarators_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_start"))]
     pub declarators_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_after"))]
-    pub kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
+    pub declarators_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
+    pub declarators_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_before"))]
     pub kind_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lexical_declaration_after"))]
-    pub lexical_declaration_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_after"))]
+    pub kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lexical_declaration_before"))]
     pub lexical_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lexical_declaration_after"))]
+    pub lexical_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for LexicalDeclarationTransport {
@@ -45282,14 +45282,14 @@ impl ::std::fmt::Display for LexicalDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for LexicalDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.declarators_separator_space_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER]);
-        self.declarators_separator_space_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE]);
         self.declarators_end.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_END]);
         self.declarators_start.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_START]);
-        self.kind_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_KIND_AFTER]);
+        self.declarators_separator_space_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE]);
+        self.declarators_separator_space_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER]);
         self.kind_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_KIND_BEFORE]);
-        self.lexical_declaration_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_LEXICAL_DECLARATION_AFTER]);
+        self.kind_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_KIND_AFTER]);
         self.lexical_declaration_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_LEXICAL_DECLARATION_BEFORE]);
+        self.lexical_declaration_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_LEXICAL_DECLARATION_AFTER]);
         self.kind.fill_options(table);
         self.declarators.fill_options(table);
         self.terminator.fill_options(table);
@@ -45390,24 +45390,24 @@ pub struct StatementBlockTransport {
     pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
-    pub lbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
-    pub rbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_after"))]
-    pub statement_block_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_before"))]
-    pub statement_block_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
-    pub statements_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_end"))]
     pub statements_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_start"))]
     pub statements_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
+    pub lbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
+    pub rbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
+    pub statements_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_before"))]
+    pub statement_block_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_after"))]
+    pub statement_block_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for StatementBlockTransport {
@@ -45418,15 +45418,15 @@ impl ::std::fmt::Display for StatementBlockTransport {
 
 impl ::sittir_core::options::FillOptions for StatementBlockTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_LBRACE_AFTER]);
-        self.lbrace_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_LBRACE_BEFORE]);
-        self.rbrace_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_BEFORE]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_AFTER]);
-        self.statement_block_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_AFTER]);
-        self.statement_block_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_BEFORE]);
-        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.statements_end.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_END]);
         self.statements_start.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_START]);
+        self.lbrace_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_LBRACE_BEFORE]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_LBRACE_AFTER]);
+        self.rbrace_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_BEFORE]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_AFTER]);
+        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
+        self.statement_block_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_BEFORE]);
+        self.statement_block_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_AFTER]);
         self.statements.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
@@ -45471,14 +45471,14 @@ pub struct ElseClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_after"))]
-    pub else_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_before"))]
     pub else_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_after"))]
-    pub else_clause_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_after"))]
+    pub else_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_before"))]
     pub else_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_after"))]
+    pub else_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ElseClauseTransport {
@@ -45489,10 +45489,10 @@ impl ::std::fmt::Display for ElseClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ElseClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.else_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_AFTER]);
         self.else_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_BEFORE]);
-        self.else_clause_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_CLAUSE_AFTER]);
+        self.else_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_AFTER]);
         self.else_clause_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_CLAUSE_BEFORE]);
+        self.else_clause_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_CLAUSE_AFTER]);
         self.body.fill_options(table);
     }
 }
@@ -45540,14 +45540,14 @@ pub struct IfStatementTransport {
     pub consequence: ::sittir_core::SlotValue<Box<StatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<Box<ElseClauseTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
-    pub if_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_before"))]
     pub if_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_statement_after"))]
-    pub if_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
+    pub if_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_statement_before"))]
     pub if_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_statement_after"))]
+    pub if_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for IfStatementTransport {
@@ -45558,10 +45558,10 @@ impl ::std::fmt::Display for IfStatementTransport {
 
 impl ::sittir_core::options::FillOptions for IfStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.if_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_AFTER]);
         self.if_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_BEFORE]);
-        self.if_statement_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_AFTER]);
+        self.if_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_AFTER]);
         self.if_statement_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_BEFORE]);
+        self.if_statement_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_AFTER]);
         self.condition.fill_options(table);
         self.consequence.fill_options(table);
         self.alternative.fill_options(table);
@@ -45609,14 +45609,14 @@ pub struct SwitchStatementTransport {
     pub value: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SwitchBodyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_after"))]
-    pub switch_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_before"))]
     pub switch_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_statement_after"))]
-    pub switch_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_after"))]
+    pub switch_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_statement_before"))]
     pub switch_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_statement_after"))]
+    pub switch_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SwitchStatementTransport {
@@ -45627,10 +45627,10 @@ impl ::std::fmt::Display for SwitchStatementTransport {
 
 impl ::sittir_core::options::FillOptions for SwitchStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.switch_after.get_or_insert(table.spacing[options::SITE_SWITCH_STATEMENT_SWITCH_AFTER]);
         self.switch_before.get_or_insert(table.spacing[options::SITE_SWITCH_STATEMENT_SWITCH_BEFORE]);
-        self.switch_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_STATEMENT_SWITCH_STATEMENT_AFTER]);
+        self.switch_after.get_or_insert(table.spacing[options::SITE_SWITCH_STATEMENT_SWITCH_AFTER]);
         self.switch_statement_before.get_or_insert(table.spacing[options::SITE_SWITCH_STATEMENT_SWITCH_STATEMENT_BEFORE]);
+        self.switch_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_STATEMENT_SWITCH_STATEMENT_AFTER]);
         self.value.fill_options(table);
         self.body.fill_options(table);
     }
@@ -45681,24 +45681,24 @@ pub struct ForStatementTransport {
     pub increment: Option<::sittir_core::SlotValue<ForStatementIncrementTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
-    pub for_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_before"))]
     pub for_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_after"))]
-    pub for_statement_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_before"))]
-    pub for_statement_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
+    pub for_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semi_before"))]
     pub semi_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_before"))]
+    pub for_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_after"))]
+    pub for_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ForStatementTransport {
@@ -45709,15 +45709,15 @@ impl ::std::fmt::Display for ForStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ForStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_AFTER]);
         self.for_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_BEFORE]);
-        self.for_statement_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_AFTER]);
-        self.for_statement_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_BEFORE]);
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_LPAREN_AFTER]);
+        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_LPAREN_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_RPAREN_AFTER]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_RPAREN_AFTER]);
         self.semi_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_SEMI_BEFORE]);
+        self.for_statement_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_BEFORE]);
+        self.for_statement_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_AFTER]);
         self.initializer.fill_options(table);
         self.condition.fill_options(table);
         self.increment.fill_options(table);
@@ -45772,26 +45772,26 @@ pub struct ForInStatementTransport {
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ForInStatementContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
-    pub for_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_before"))]
     pub for_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_statement_after"))]
-    pub for_in_statement_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_statement_before"))]
-    pub for_in_statement_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
-    pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
-    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
+    pub for_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
     pub operator_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
+    pub lparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_statement_before"))]
+    pub for_in_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_statement_after"))]
+    pub for_in_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ForInStatementTransport {
@@ -45802,16 +45802,16 @@ impl ::std::fmt::Display for ForInStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ForInStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_AFTER]);
         self.for_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_BEFORE]);
-        self.for_in_statement_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_AFTER]);
-        self.for_in_statement_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_BEFORE]);
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_AFTER]);
-        self.lparen_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_BEFORE]);
-        self.operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_OPERATOR_AFTER]);
+        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_AFTER]);
         self.operator_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_OPERATOR_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_RPAREN_AFTER]);
+        self.operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_OPERATOR_AFTER]);
+        self.lparen_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_BEFORE]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_RPAREN_AFTER]);
+        self.for_in_statement_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_BEFORE]);
+        self.for_in_statement_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_AFTER]);
         self.await_marker.fill_options(table);
         self.operator.fill_options(table);
         self.right.fill_options(table);
@@ -45861,14 +45861,14 @@ pub struct WhileStatementTransport {
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_after"))]
-    pub while_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_before"))]
     pub while_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_statement_after"))]
-    pub while_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_after"))]
+    pub while_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_statement_before"))]
     pub while_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_statement_after"))]
+    pub while_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for WhileStatementTransport {
@@ -45879,10 +45879,10 @@ impl ::std::fmt::Display for WhileStatementTransport {
 
 impl ::sittir_core::options::FillOptions for WhileStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.while_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_AFTER]);
         self.while_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_BEFORE]);
-        self.while_statement_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER]);
+        self.while_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_AFTER]);
         self.while_statement_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE]);
+        self.while_statement_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER]);
         self.condition.fill_options(table);
         self.body.fill_options(table);
     }
@@ -45931,18 +45931,18 @@ pub struct DoStatementTransport {
     pub condition: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: Option<::sittir_core::SlotValue<DoStatementTerminatorTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_do_after"))]
-    pub do_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_do_before"))]
     pub do_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_do_statement_after"))]
-    pub do_statement_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_do_statement_before"))]
-    pub do_statement_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_after"))]
-    pub while_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_do_after"))]
+    pub do_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_before"))]
     pub while_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_after"))]
+    pub while_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_do_statement_before"))]
+    pub do_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_do_statement_after"))]
+    pub do_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for DoStatementTransport {
@@ -45953,12 +45953,12 @@ impl ::std::fmt::Display for DoStatementTransport {
 
 impl ::sittir_core::options::FillOptions for DoStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.do_after.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_DO_AFTER]);
         self.do_before.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_DO_BEFORE]);
-        self.do_statement_after.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_DO_STATEMENT_AFTER]);
-        self.do_statement_before.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_DO_STATEMENT_BEFORE]);
-        self.while_after.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_WHILE_AFTER]);
+        self.do_after.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_DO_AFTER]);
         self.while_before.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_WHILE_BEFORE]);
+        self.while_after.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_WHILE_AFTER]);
+        self.do_statement_before.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_DO_STATEMENT_BEFORE]);
+        self.do_statement_after.get_or_insert(table.spacing[options::SITE_DO_STATEMENT_DO_STATEMENT_AFTER]);
         self.body.fill_options(table);
         self.condition.fill_options(table);
         self.terminator.fill_options(table);
@@ -46008,14 +46008,14 @@ pub struct TryStatementTransport {
     pub handler: Option<::sittir_core::SlotValue<CatchClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finalizer"))]
     pub finalizer: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_after"))]
-    pub try_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_before"))]
     pub try_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_after"))]
-    pub try_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_after"))]
+    pub try_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_before"))]
     pub try_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_after"))]
+    pub try_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TryStatementTransport {
@@ -46026,10 +46026,10 @@ impl ::std::fmt::Display for TryStatementTransport {
 
 impl ::sittir_core::options::FillOptions for TryStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.try_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_AFTER]);
         self.try_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_BEFORE]);
-        self.try_statement_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER]);
+        self.try_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_AFTER]);
         self.try_statement_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_BEFORE]);
+        self.try_statement_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER]);
         self.body.fill_options(table);
         self.handler.fill_options(table);
         self.finalizer.fill_options(table);
@@ -46077,14 +46077,14 @@ pub struct WithStatementTransport {
     pub object: ::sittir_core::SlotValue<ParenthesizedExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_after"))]
-    pub with_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_before"))]
     pub with_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_statement_after"))]
-    pub with_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_after"))]
+    pub with_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_statement_before"))]
     pub with_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_statement_after"))]
+    pub with_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for WithStatementTransport {
@@ -46095,10 +46095,10 @@ impl ::std::fmt::Display for WithStatementTransport {
 
 impl ::sittir_core::options::FillOptions for WithStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.with_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_AFTER]);
         self.with_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_BEFORE]);
-        self.with_statement_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER]);
+        self.with_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_AFTER]);
         self.with_statement_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE]);
+        self.with_statement_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER]);
         self.object.fill_options(table);
         self.body.fill_options(table);
     }
@@ -46145,14 +46145,14 @@ pub struct BreakStatementTransport {
     pub label: Option<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<BreakStatementTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_break_after"))]
-    pub break_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_break_before"))]
     pub break_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_break_statement_after"))]
-    pub break_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_break_after"))]
+    pub break_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_break_statement_before"))]
     pub break_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_break_statement_after"))]
+    pub break_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for BreakStatementTransport {
@@ -46163,10 +46163,10 @@ impl ::std::fmt::Display for BreakStatementTransport {
 
 impl ::sittir_core::options::FillOptions for BreakStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.break_after.get_or_insert(table.spacing[options::SITE_BREAK_STATEMENT_BREAK_AFTER]);
         self.break_before.get_or_insert(table.spacing[options::SITE_BREAK_STATEMENT_BREAK_BEFORE]);
-        self.break_statement_after.get_or_insert(table.spacing[options::SITE_BREAK_STATEMENT_BREAK_STATEMENT_AFTER]);
+        self.break_after.get_or_insert(table.spacing[options::SITE_BREAK_STATEMENT_BREAK_AFTER]);
         self.break_statement_before.get_or_insert(table.spacing[options::SITE_BREAK_STATEMENT_BREAK_STATEMENT_BEFORE]);
+        self.break_statement_after.get_or_insert(table.spacing[options::SITE_BREAK_STATEMENT_BREAK_STATEMENT_AFTER]);
         self.label.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -46213,14 +46213,14 @@ pub struct ContinueStatementTransport {
     pub label: Option<::sittir_core::SlotValue<IdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ContinueStatementTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_continue_after"))]
-    pub continue_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_continue_before"))]
     pub continue_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_continue_statement_after"))]
-    pub continue_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_continue_after"))]
+    pub continue_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_continue_statement_before"))]
     pub continue_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_continue_statement_after"))]
+    pub continue_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ContinueStatementTransport {
@@ -46231,10 +46231,10 @@ impl ::std::fmt::Display for ContinueStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ContinueStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.continue_after.get_or_insert(table.spacing[options::SITE_CONTINUE_STATEMENT_CONTINUE_AFTER]);
         self.continue_before.get_or_insert(table.spacing[options::SITE_CONTINUE_STATEMENT_CONTINUE_BEFORE]);
-        self.continue_statement_after.get_or_insert(table.spacing[options::SITE_CONTINUE_STATEMENT_CONTINUE_STATEMENT_AFTER]);
+        self.continue_after.get_or_insert(table.spacing[options::SITE_CONTINUE_STATEMENT_CONTINUE_AFTER]);
         self.continue_statement_before.get_or_insert(table.spacing[options::SITE_CONTINUE_STATEMENT_CONTINUE_STATEMENT_BEFORE]);
+        self.continue_statement_after.get_or_insert(table.spacing[options::SITE_CONTINUE_STATEMENT_CONTINUE_STATEMENT_AFTER]);
         self.label.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -46279,14 +46279,14 @@ pub struct DebuggerStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<DebuggerStatementTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debugger_after"))]
-    pub debugger_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debugger_before"))]
     pub debugger_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debugger_statement_after"))]
-    pub debugger_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debugger_after"))]
+    pub debugger_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debugger_statement_before"))]
     pub debugger_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debugger_statement_after"))]
+    pub debugger_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for DebuggerStatementTransport {
@@ -46297,10 +46297,10 @@ impl ::std::fmt::Display for DebuggerStatementTransport {
 
 impl ::sittir_core::options::FillOptions for DebuggerStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.debugger_after.get_or_insert(table.spacing[options::SITE_DEBUGGER_STATEMENT_DEBUGGER_AFTER]);
         self.debugger_before.get_or_insert(table.spacing[options::SITE_DEBUGGER_STATEMENT_DEBUGGER_BEFORE]);
-        self.debugger_statement_after.get_or_insert(table.spacing[options::SITE_DEBUGGER_STATEMENT_DEBUGGER_STATEMENT_AFTER]);
+        self.debugger_after.get_or_insert(table.spacing[options::SITE_DEBUGGER_STATEMENT_DEBUGGER_AFTER]);
         self.debugger_statement_before.get_or_insert(table.spacing[options::SITE_DEBUGGER_STATEMENT_DEBUGGER_STATEMENT_BEFORE]);
+        self.debugger_statement_after.get_or_insert(table.spacing[options::SITE_DEBUGGER_STATEMENT_DEBUGGER_STATEMENT_AFTER]);
         self.terminator.fill_options(table);
     }
 }
@@ -46346,14 +46346,14 @@ pub struct ReturnStatementTransport {
     pub expression: Option<::sittir_core::SlotValue<ReturnStatementExpressionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ReturnStatementTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_after"))]
-    pub return_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_before"))]
     pub return_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_statement_after"))]
-    pub return_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_after"))]
+    pub return_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_statement_before"))]
     pub return_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_statement_after"))]
+    pub return_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ReturnStatementTransport {
@@ -46364,10 +46364,10 @@ impl ::std::fmt::Display for ReturnStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ReturnStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.return_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_AFTER]);
         self.return_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_BEFORE]);
-        self.return_statement_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_STATEMENT_AFTER]);
+        self.return_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_AFTER]);
         self.return_statement_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_STATEMENT_BEFORE]);
+        self.return_statement_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_STATEMENT_AFTER]);
         self.expression.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -46414,14 +46414,14 @@ pub struct ThrowStatementTransport {
     pub expression: ::sittir_core::SlotValue<ThrowStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ThrowStatementTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_throw_after"))]
-    pub throw_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_throw_before"))]
     pub throw_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_throw_statement_after"))]
-    pub throw_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_throw_after"))]
+    pub throw_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_throw_statement_before"))]
     pub throw_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_throw_statement_after"))]
+    pub throw_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ThrowStatementTransport {
@@ -46432,10 +46432,10 @@ impl ::std::fmt::Display for ThrowStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ThrowStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.throw_after.get_or_insert(table.spacing[options::SITE_THROW_STATEMENT_THROW_AFTER]);
         self.throw_before.get_or_insert(table.spacing[options::SITE_THROW_STATEMENT_THROW_BEFORE]);
-        self.throw_statement_after.get_or_insert(table.spacing[options::SITE_THROW_STATEMENT_THROW_STATEMENT_AFTER]);
+        self.throw_after.get_or_insert(table.spacing[options::SITE_THROW_STATEMENT_THROW_AFTER]);
         self.throw_statement_before.get_or_insert(table.spacing[options::SITE_THROW_STATEMENT_THROW_STATEMENT_BEFORE]);
+        self.throw_statement_after.get_or_insert(table.spacing[options::SITE_THROW_STATEMENT_THROW_STATEMENT_AFTER]);
         self.expression.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -46589,14 +46589,14 @@ pub struct LabeledStatementTransport {
     pub label: ::sittir_core::SlotValue<StatementIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_labeled_statement_after"))]
-    pub labeled_statement_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_labeled_statement_before"))]
     pub labeled_statement_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_labeled_statement_after"))]
+    pub labeled_statement_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for LabeledStatementTransport {
@@ -46607,10 +46607,10 @@ impl ::std::fmt::Display for LabeledStatementTransport {
 
 impl ::sittir_core::options::FillOptions for LabeledStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_LABELED_STATEMENT_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_LABELED_STATEMENT_COLON_BEFORE]);
-        self.labeled_statement_after.get_or_insert(table.spacing[options::SITE_LABELED_STATEMENT_LABELED_STATEMENT_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_LABELED_STATEMENT_COLON_AFTER]);
         self.labeled_statement_before.get_or_insert(table.spacing[options::SITE_LABELED_STATEMENT_LABELED_STATEMENT_BEFORE]);
+        self.labeled_statement_after.get_or_insert(table.spacing[options::SITE_LABELED_STATEMENT_LABELED_STATEMENT_AFTER]);
         self.label.fill_options(table);
         self.body.fill_options(table);
     }
@@ -46655,24 +46655,24 @@ pub struct SwitchBodyTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases"))]
     pub cases: Option<Vec<::sittir_core::SlotValue<SwitchBodyCasesTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_separator_space"))]
-    pub cases_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_end"))]
     pub cases_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_start"))]
     pub cases_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_body_after"))]
-    pub switch_body_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_separator_space"))]
+    pub cases_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_body_before"))]
     pub switch_body_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_body_after"))]
+    pub switch_body_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SwitchBodyTransport {
@@ -46683,15 +46683,15 @@ impl ::std::fmt::Display for SwitchBodyTransport {
 
 impl ::sittir_core::options::FillOptions for SwitchBodyTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.cases_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE]);
         self.cases_end.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_END]);
         self.cases_start.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_START]);
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_LBRACE_AFTER]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_LBRACE_BEFORE]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_RBRACE_AFTER]);
-        self.switch_body_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_SWITCH_BODY_AFTER]);
+        self.cases_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE]);
         self.switch_body_before.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_SWITCH_BODY_BEFORE]);
+        self.switch_body_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_SWITCH_BODY_AFTER]);
         self.cases.fill_options(table);
     }
 }
@@ -46741,20 +46741,20 @@ pub struct SwitchCaseTransport {
     pub body_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_start"))]
     pub body_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
-    pub body_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_after"))]
-    pub case_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_before"))]
     pub case_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_after"))]
+    pub case_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_case_after"))]
-    pub switch_case_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_case_before"))]
     pub switch_case_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_case_after"))]
+    pub switch_case_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SwitchCaseTransport {
@@ -46767,13 +46767,13 @@ impl ::sittir_core::options::FillOptions for SwitchCaseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.body_end.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_END]);
         self.body_start.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_START]);
-        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
-        self.case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_CASE_AFTER]);
         self.case_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_CASE_BEFORE]);
-        self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_COLON_AFTER]);
+        self.case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_CASE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_COLON_BEFORE]);
-        self.switch_case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_SWITCH_CASE_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_COLON_AFTER]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
         self.switch_case_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_SWITCH_CASE_BEFORE]);
+        self.switch_case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_SWITCH_CASE_AFTER]);
         self.value.fill_options(table);
         self.body.fill_options(table);
     }
@@ -46822,20 +46822,20 @@ pub struct SwitchDefaultTransport {
     pub body_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_start"))]
     pub body_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
-    pub body_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_after"))]
-    pub default_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_before"))]
     pub default_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_default_after"))]
-    pub switch_default_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_after"))]
+    pub default_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
+    pub colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_default_before"))]
     pub switch_default_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_default_after"))]
+    pub switch_default_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SwitchDefaultTransport {
@@ -46848,13 +46848,13 @@ impl ::sittir_core::options::FillOptions for SwitchDefaultTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.body_end.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_END]);
         self.body_start.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_START]);
-        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
-        self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_AFTER]);
-        self.colon_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_BEFORE]);
-        self.default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_DEFAULT_AFTER]);
         self.default_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_DEFAULT_BEFORE]);
-        self.switch_default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_AFTER]);
+        self.default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_DEFAULT_AFTER]);
+        self.colon_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_BEFORE]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_AFTER]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
         self.switch_default_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_BEFORE]);
+        self.switch_default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_AFTER]);
         self.body.fill_options(table);
     }
 }
@@ -46900,14 +46900,14 @@ pub struct CatchClauseTransport {
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_group"))]
     pub catch_clause_group: Option<::sittir_core::SlotValue<CatchClauseGroupTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_after"))]
-    pub catch_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_before"))]
     pub catch_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_after"))]
-    pub catch_clause_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_after"))]
+    pub catch_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_before"))]
     pub catch_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_after"))]
+    pub catch_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for CatchClauseTransport {
@@ -46918,10 +46918,10 @@ impl ::std::fmt::Display for CatchClauseTransport {
 
 impl ::sittir_core::options::FillOptions for CatchClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.catch_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_CATCH_AFTER]);
         self.catch_before.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_CATCH_BEFORE]);
-        self.catch_clause_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_CATCH_CLAUSE_AFTER]);
+        self.catch_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_CATCH_AFTER]);
         self.catch_clause_before.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_CATCH_CLAUSE_BEFORE]);
+        self.catch_clause_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_CATCH_CLAUSE_AFTER]);
         self.body.fill_options(table);
         self.catch_clause_group.fill_options(table);
     }
@@ -46966,14 +46966,14 @@ pub struct FinallyClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_after"))]
-    pub finally_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_before"))]
     pub finally_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_after"))]
-    pub finally_clause_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_after"))]
+    pub finally_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_before"))]
     pub finally_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_after"))]
+    pub finally_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FinallyClauseTransport {
@@ -46984,10 +46984,10 @@ impl ::std::fmt::Display for FinallyClauseTransport {
 
 impl ::sittir_core::options::FillOptions for FinallyClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.finally_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_AFTER]);
         self.finally_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_BEFORE]);
-        self.finally_clause_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_AFTER]);
+        self.finally_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_AFTER]);
         self.finally_clause_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_BEFORE]);
+        self.finally_clause_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_AFTER]);
         self.body.fill_options(table);
     }
 }
@@ -47031,18 +47031,18 @@ pub struct ParenthesizedExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedExpressionContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_after"))]
-    pub parenthesized_expression_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_before"))]
-    pub parenthesized_expression_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_before"))]
+    pub parenthesized_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_after"))]
+    pub parenthesized_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ParenthesizedExpressionTransport {
@@ -47053,12 +47053,12 @@ impl ::std::fmt::Display for ParenthesizedExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for ParenthesizedExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_BEFORE]);
-        self.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_PARENTHESIZED_EXPRESSION_AFTER]);
-        self.parenthesized_expression_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_PARENTHESIZED_EXPRESSION_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_AFTER]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_AFTER]);
+        self.parenthesized_expression_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_PARENTHESIZED_EXPRESSION_BEFORE]);
+        self.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_PARENTHESIZED_EXPRESSION_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -47102,16 +47102,16 @@ pub struct YieldExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_after"))]
-    pub yield_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_before"))]
     pub yield_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_expression_after"))]
-    pub yield_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_after"))]
+    pub yield_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
+    pub star_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_expression_before"))]
     pub yield_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_expression_after"))]
+    pub yield_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for YieldExpressionTransport {
@@ -47122,11 +47122,11 @@ impl ::std::fmt::Display for YieldExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for YieldExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.star_after.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_STAR_AFTER]);
-        self.yield_after.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_YIELD_AFTER]);
         self.yield_before.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_YIELD_BEFORE]);
-        self.yield_expression_after.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER]);
+        self.yield_after.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_YIELD_AFTER]);
+        self.star_after.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_STAR_AFTER]);
         self.yield_expression_before.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_BEFORE]);
+        self.yield_expression_after.get_or_insert(table.spacing[options::SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER]);
         self.expression.fill_options(table);
     }
 }
@@ -47170,26 +47170,26 @@ pub struct ObjectTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPropertiesTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
-    pub lbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_after"))]
-    pub object_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_before"))]
-    pub object_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_after"))]
-    pub properties_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
-    pub properties_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_end"))]
     pub properties_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_start"))]
     pub properties_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
+    pub properties_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_after"))]
+    pub properties_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
+    pub lbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_before"))]
+    pub object_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_after"))]
+    pub object_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ObjectTransport {
@@ -47200,16 +47200,16 @@ impl ::std::fmt::Display for ObjectTransport {
 
 impl ::sittir_core::options::FillOptions for ObjectTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_LBRACE_AFTER]);
-        self.lbrace_before.get_or_insert(table.spacing[options::SITE_OBJECT_LBRACE_BEFORE]);
-        self.object_after.get_or_insert(table.spacing[options::SITE_OBJECT_OBJECT_AFTER]);
-        self.object_before.get_or_insert(table.spacing[options::SITE_OBJECT_OBJECT_BEFORE]);
-        self.properties_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER]);
-        self.properties_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE]);
         self.properties_end.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_END]);
         self.properties_start.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_START]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_RBRACE_AFTER]);
+        self.properties_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE]);
+        self.properties_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER]);
+        self.lbrace_before.get_or_insert(table.spacing[options::SITE_OBJECT_LBRACE_BEFORE]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_OBJECT_RBRACE_BEFORE]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_RBRACE_AFTER]);
+        self.object_before.get_or_insert(table.spacing[options::SITE_OBJECT_OBJECT_BEFORE]);
+        self.object_after.get_or_insert(table.spacing[options::SITE_OBJECT_OBJECT_AFTER]);
         self.properties.fill_options(table);
     }
 }
@@ -47253,26 +47253,26 @@ pub struct ObjectPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
     pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPatternPropertiesTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
-    pub lbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_pattern_after"))]
-    pub object_pattern_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_pattern_before"))]
-    pub object_pattern_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_after"))]
-    pub properties_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
-    pub properties_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_end"))]
     pub properties_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_start"))]
     pub properties_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
+    pub properties_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_after"))]
+    pub properties_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
+    pub lbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_pattern_before"))]
+    pub object_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_pattern_after"))]
+    pub object_pattern_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ObjectPatternTransport {
@@ -47283,16 +47283,16 @@ impl ::std::fmt::Display for ObjectPatternTransport {
 
 impl ::sittir_core::options::FillOptions for ObjectPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_LBRACE_AFTER]);
-        self.lbrace_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_LBRACE_BEFORE]);
-        self.object_pattern_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_OBJECT_PATTERN_AFTER]);
-        self.object_pattern_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_OBJECT_PATTERN_BEFORE]);
-        self.properties_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_AFTER]);
-        self.properties_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_BEFORE]);
         self.properties_end.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_END]);
         self.properties_start.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_START]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_RBRACE_AFTER]);
+        self.properties_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_BEFORE]);
+        self.properties_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_SEPARATOR_SPACE_AFTER]);
+        self.lbrace_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_LBRACE_BEFORE]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_RBRACE_BEFORE]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_RBRACE_AFTER]);
+        self.object_pattern_before.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_OBJECT_PATTERN_BEFORE]);
+        self.object_pattern_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_OBJECT_PATTERN_AFTER]);
         self.properties.fill_options(table);
     }
 }
@@ -47338,14 +47338,14 @@ pub struct AssignmentPatternTransport {
     pub left: ::sittir_core::SlotValue<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_pattern_after"))]
-    pub assignment_pattern_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_pattern_before"))]
-    pub assignment_pattern_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_pattern_before"))]
+    pub assignment_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_pattern_after"))]
+    pub assignment_pattern_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AssignmentPatternTransport {
@@ -47356,10 +47356,10 @@ impl ::std::fmt::Display for AssignmentPatternTransport {
 
 impl ::sittir_core::options::FillOptions for AssignmentPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.assignment_pattern_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_PATTERN_ASSIGNMENT_PATTERN_AFTER]);
-        self.assignment_pattern_before.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_PATTERN_ASSIGNMENT_PATTERN_BEFORE]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_PATTERN_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_PATTERN_EQ_BEFORE]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_PATTERN_EQ_AFTER]);
+        self.assignment_pattern_before.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_PATTERN_ASSIGNMENT_PATTERN_BEFORE]);
+        self.assignment_pattern_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_PATTERN_ASSIGNMENT_PATTERN_AFTER]);
         self.left.fill_options(table);
         self.right.fill_options(table);
     }
@@ -47406,14 +47406,14 @@ pub struct ObjectAssignmentPatternTransport {
     pub left: ::sittir_core::SlotValue<ObjectAssignmentPatternLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_assignment_pattern_after"))]
-    pub object_assignment_pattern_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_assignment_pattern_before"))]
     pub object_assignment_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_assignment_pattern_after"))]
+    pub object_assignment_pattern_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ObjectAssignmentPatternTransport {
@@ -47424,10 +47424,10 @@ impl ::std::fmt::Display for ObjectAssignmentPatternTransport {
 
 impl ::sittir_core::options::FillOptions for ObjectAssignmentPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.eq_after.get_or_insert(table.spacing[options::SITE_OBJECT_ASSIGNMENT_PATTERN_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_OBJECT_ASSIGNMENT_PATTERN_EQ_BEFORE]);
-        self.object_assignment_pattern_after.get_or_insert(table.spacing[options::SITE_OBJECT_ASSIGNMENT_PATTERN_OBJECT_ASSIGNMENT_PATTERN_AFTER]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_OBJECT_ASSIGNMENT_PATTERN_EQ_AFTER]);
         self.object_assignment_pattern_before.get_or_insert(table.spacing[options::SITE_OBJECT_ASSIGNMENT_PATTERN_OBJECT_ASSIGNMENT_PATTERN_BEFORE]);
+        self.object_assignment_pattern_after.get_or_insert(table.spacing[options::SITE_OBJECT_ASSIGNMENT_PATTERN_OBJECT_ASSIGNMENT_PATTERN_AFTER]);
         self.left.fill_options(table);
         self.right.fill_options(table);
     }
@@ -47472,26 +47472,26 @@ pub struct ArrayTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayElementsTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_after"))]
-    pub array_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_before"))]
-    pub array_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_end"))]
     pub elements_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_start"))]
     pub elements_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
-    pub elements_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
     pub elements_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
+    pub elements_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_before"))]
+    pub array_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_after"))]
+    pub array_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ArrayTransport {
@@ -47502,16 +47502,16 @@ impl ::std::fmt::Display for ArrayTransport {
 
 impl ::sittir_core::options::FillOptions for ArrayTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.array_after.get_or_insert(table.spacing[options::SITE_ARRAY_ARRAY_AFTER]);
-        self.array_before.get_or_insert(table.spacing[options::SITE_ARRAY_ARRAY_BEFORE]);
         self.elements_end.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_END]);
         self.elements_start.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_START]);
-        self.elements_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SEPARATOR_SPACE_AFTER]);
         self.elements_separator_space_before.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SEPARATOR_SPACE_BEFORE]);
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_LBRACK_AFTER]);
+        self.elements_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SEPARATOR_SPACE_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_RBRACK_BEFORE]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_RBRACK_AFTER]);
+        self.array_before.get_or_insert(table.spacing[options::SITE_ARRAY_ARRAY_BEFORE]);
+        self.array_after.get_or_insert(table.spacing[options::SITE_ARRAY_ARRAY_AFTER]);
         self.elements.fill_options(table);
     }
 }
@@ -47555,26 +47555,26 @@ pub struct ArrayPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArrayPatternElementsTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_pattern_after"))]
-    pub array_pattern_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_pattern_before"))]
-    pub array_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_end"))]
     pub elements_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_start"))]
     pub elements_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
-    pub elements_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
     pub elements_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
+    pub elements_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_pattern_before"))]
+    pub array_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_pattern_after"))]
+    pub array_pattern_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ArrayPatternTransport {
@@ -47585,16 +47585,16 @@ impl ::std::fmt::Display for ArrayPatternTransport {
 
 impl ::sittir_core::options::FillOptions for ArrayPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.array_pattern_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ARRAY_PATTERN_AFTER]);
-        self.array_pattern_before.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ARRAY_PATTERN_BEFORE]);
         self.elements_end.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_END]);
         self.elements_start.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_START]);
-        self.elements_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_SEPARATOR_SPACE_AFTER]);
         self.elements_separator_space_before.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_SEPARATOR_SPACE_BEFORE]);
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_LBRACK_AFTER]);
+        self.elements_separator_space_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_SEPARATOR_SPACE_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_RBRACK_BEFORE]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_RBRACK_AFTER]);
+        self.array_pattern_before.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ARRAY_PATTERN_BEFORE]);
+        self.array_pattern_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ARRAY_PATTERN_AFTER]);
         self.elements.fill_options(table);
     }
 }
@@ -47640,14 +47640,14 @@ pub struct NestedIdentifierTransport {
     pub object: ::sittir_core::SlotValue<Box<NestedIdentifierObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
     pub dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nested_identifier_after"))]
-    pub nested_identifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
+    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nested_identifier_before"))]
     pub nested_identifier_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nested_identifier_after"))]
+    pub nested_identifier_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for NestedIdentifierTransport {
@@ -47658,10 +47658,10 @@ impl ::std::fmt::Display for NestedIdentifierTransport {
 
 impl ::sittir_core::options::FillOptions for NestedIdentifierTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dot_after.get_or_insert(table.spacing[options::SITE_NESTED_IDENTIFIER_DOT_AFTER]);
         self.dot_before.get_or_insert(table.spacing[options::SITE_NESTED_IDENTIFIER_DOT_BEFORE]);
-        self.nested_identifier_after.get_or_insert(table.spacing[options::SITE_NESTED_IDENTIFIER_NESTED_IDENTIFIER_AFTER]);
+        self.dot_after.get_or_insert(table.spacing[options::SITE_NESTED_IDENTIFIER_DOT_AFTER]);
         self.nested_identifier_before.get_or_insert(table.spacing[options::SITE_NESTED_IDENTIFIER_NESTED_IDENTIFIER_BEFORE]);
+        self.nested_identifier_after.get_or_insert(table.spacing[options::SITE_NESTED_IDENTIFIER_NESTED_IDENTIFIER_AFTER]);
         self.object.fill_options(table);
         self.property.fill_options(table);
     }
@@ -47714,20 +47714,20 @@ pub struct ClassTransport {
     pub heritage: Option<::sittir_core::SlotValue<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
-    pub anon_class_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
-    pub anon_class_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_after"))]
-    pub class_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_before"))]
-    pub class_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
+    pub anon_class_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
+    pub anon_class_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_before"))]
+    pub class_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_after"))]
+    pub class_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassTransport {
@@ -47738,13 +47738,13 @@ impl ::std::fmt::Display for ClassTransport {
 
 impl ::sittir_core::options::FillOptions for ClassTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_class_after.get_or_insert(table.spacing[options::SITE_CLASS_ANON_CLASS_AFTER]);
-        self.anon_class_before.get_or_insert(table.spacing[options::SITE_CLASS_ANON_CLASS_BEFORE]);
-        self.class_after.get_or_insert(table.spacing[options::SITE_CLASS_CLASS_AFTER]);
-        self.class_before.get_or_insert(table.spacing[options::SITE_CLASS_CLASS_BEFORE]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_START]);
+        self.anon_class_before.get_or_insert(table.spacing[options::SITE_CLASS_ANON_CLASS_BEFORE]);
+        self.anon_class_after.get_or_insert(table.spacing[options::SITE_CLASS_ANON_CLASS_AFTER]);
         self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_SEPARATOR_SPACE]);
+        self.class_before.get_or_insert(table.spacing[options::SITE_CLASS_CLASS_BEFORE]);
+        self.class_after.get_or_insert(table.spacing[options::SITE_CLASS_CLASS_AFTER]);
         self.decorator.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -47802,20 +47802,20 @@ pub struct ClassDeclarationTransport {
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
-    pub anon_class_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
-    pub anon_class_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_declaration_after"))]
-    pub class_declaration_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_declaration_before"))]
-    pub class_declaration_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
+    pub anon_class_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
+    pub anon_class_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_declaration_before"))]
+    pub class_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_declaration_after"))]
+    pub class_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassDeclarationTransport {
@@ -47826,13 +47826,13 @@ impl ::std::fmt::Display for ClassDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for ClassDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_class_after.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_ANON_CLASS_AFTER]);
-        self.anon_class_before.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_ANON_CLASS_BEFORE]);
-        self.class_declaration_after.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_CLASS_DECLARATION_AFTER]);
-        self.class_declaration_before.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_CLASS_DECLARATION_BEFORE]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_START]);
+        self.anon_class_before.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_ANON_CLASS_BEFORE]);
+        self.anon_class_after.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_ANON_CLASS_AFTER]);
         self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
+        self.class_declaration_before.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_CLASS_DECLARATION_BEFORE]);
+        self.class_declaration_after.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_CLASS_DECLARATION_AFTER]);
         self.decorator.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -47944,14 +47944,14 @@ pub struct FunctionExpressionTransport {
     pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
-    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_before"))]
     pub function_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_expression_after"))]
-    pub function_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
+    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_expression_before"))]
     pub function_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_expression_after"))]
+    pub function_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FunctionExpressionTransport {
@@ -47962,10 +47962,10 @@ impl ::std::fmt::Display for FunctionExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for FunctionExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.function_after.get_or_insert(table.spacing[options::SITE_FUNCTION_EXPRESSION_FUNCTION_AFTER]);
         self.function_before.get_or_insert(table.spacing[options::SITE_FUNCTION_EXPRESSION_FUNCTION_BEFORE]);
-        self.function_expression_after.get_or_insert(table.spacing[options::SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_AFTER]);
+        self.function_after.get_or_insert(table.spacing[options::SITE_FUNCTION_EXPRESSION_FUNCTION_AFTER]);
         self.function_expression_before.get_or_insert(table.spacing[options::SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_BEFORE]);
+        self.function_expression_after.get_or_insert(table.spacing[options::SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_AFTER]);
         self.async_marker.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -48026,14 +48026,14 @@ pub struct FunctionDeclarationTransport {
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
-    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_before"))]
     pub function_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_declaration_after"))]
-    pub function_declaration_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
+    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_declaration_before"))]
     pub function_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_declaration_after"))]
+    pub function_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FunctionDeclarationTransport {
@@ -48044,10 +48044,10 @@ impl ::std::fmt::Display for FunctionDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for FunctionDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.function_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DECLARATION_FUNCTION_AFTER]);
         self.function_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DECLARATION_FUNCTION_BEFORE]);
-        self.function_declaration_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DECLARATION_FUNCTION_DECLARATION_AFTER]);
+        self.function_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DECLARATION_FUNCTION_AFTER]);
         self.function_declaration_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DECLARATION_FUNCTION_DECLARATION_BEFORE]);
+        self.function_declaration_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DECLARATION_FUNCTION_DECLARATION_AFTER]);
         self.async_marker.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -48107,18 +48107,18 @@ pub struct GeneratorFunctionTransport {
     pub return_type: Option<::sittir_core::SlotValue<GeneratorFunctionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
-    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_before"))]
     pub function_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_after"))]
-    pub generator_function_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_before"))]
-    pub generator_function_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
+    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
     pub star_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
+    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_before"))]
+    pub generator_function_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_after"))]
+    pub generator_function_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for GeneratorFunctionTransport {
@@ -48129,12 +48129,12 @@ impl ::std::fmt::Display for GeneratorFunctionTransport {
 
 impl ::sittir_core::options::FillOptions for GeneratorFunctionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.function_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_FUNCTION_AFTER]);
         self.function_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_FUNCTION_BEFORE]);
-        self.generator_function_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_AFTER]);
-        self.generator_function_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_BEFORE]);
-        self.star_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_STAR_AFTER]);
+        self.function_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_FUNCTION_AFTER]);
         self.star_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_STAR_BEFORE]);
+        self.star_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_STAR_AFTER]);
+        self.generator_function_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_BEFORE]);
+        self.generator_function_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_AFTER]);
         self.async_marker.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -48195,18 +48195,18 @@ pub struct GeneratorFunctionDeclarationTransport {
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
-    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_before"))]
     pub function_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_declaration_after"))]
-    pub generator_function_declaration_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_declaration_before"))]
-    pub generator_function_declaration_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
+    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
     pub star_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
+    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_declaration_before"))]
+    pub generator_function_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generator_function_declaration_after"))]
+    pub generator_function_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for GeneratorFunctionDeclarationTransport {
@@ -48217,12 +48217,12 @@ impl ::std::fmt::Display for GeneratorFunctionDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for GeneratorFunctionDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.function_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_FUNCTION_AFTER]);
         self.function_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_FUNCTION_BEFORE]);
-        self.generator_function_declaration_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_FUNCTION_DECLARATION_AFTER]);
-        self.generator_function_declaration_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_FUNCTION_DECLARATION_BEFORE]);
-        self.star_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_STAR_AFTER]);
+        self.function_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_FUNCTION_AFTER]);
         self.star_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_STAR_BEFORE]);
+        self.star_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_STAR_AFTER]);
+        self.generator_function_declaration_before.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_FUNCTION_DECLARATION_BEFORE]);
+        self.generator_function_declaration_after.get_or_insert(table.spacing[options::SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_FUNCTION_DECLARATION_AFTER]);
         self.async_marker.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -48276,14 +48276,14 @@ pub struct ArrowFunctionTransport {
     pub body: ::sittir_core::SlotValue<Box<ArrowFunctionBodyTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ArrowFunctionContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arrow_function_after"))]
-    pub arrow_function_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arrow_function_before"))]
-    pub arrow_function_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
-    pub eq_gt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_before"))]
     pub eq_gt_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
+    pub eq_gt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arrow_function_before"))]
+    pub arrow_function_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arrow_function_after"))]
+    pub arrow_function_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ArrowFunctionTransport {
@@ -48294,10 +48294,10 @@ impl ::std::fmt::Display for ArrowFunctionTransport {
 
 impl ::sittir_core::options::FillOptions for ArrowFunctionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.arrow_function_after.get_or_insert(table.spacing[options::SITE_ARROW_FUNCTION_ARROW_FUNCTION_AFTER]);
-        self.arrow_function_before.get_or_insert(table.spacing[options::SITE_ARROW_FUNCTION_ARROW_FUNCTION_BEFORE]);
-        self.eq_gt_after.get_or_insert(table.spacing[options::SITE_ARROW_FUNCTION_EQ_GT_AFTER]);
         self.eq_gt_before.get_or_insert(table.spacing[options::SITE_ARROW_FUNCTION_EQ_GT_BEFORE]);
+        self.eq_gt_after.get_or_insert(table.spacing[options::SITE_ARROW_FUNCTION_EQ_GT_AFTER]);
+        self.arrow_function_before.get_or_insert(table.spacing[options::SITE_ARROW_FUNCTION_ARROW_FUNCTION_BEFORE]);
+        self.arrow_function_after.get_or_insert(table.spacing[options::SITE_ARROW_FUNCTION_ARROW_FUNCTION_AFTER]);
         self.async_marker.fill_options(table);
         self.body.fill_options(table);
         self.content.fill_options(table);
@@ -48542,14 +48542,14 @@ pub struct NewExpressionTransport {
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<::sittir_core::SlotValue<ArgumentsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_after"))]
-    pub new_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_before"))]
     pub new_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_expression_after"))]
-    pub new_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_after"))]
+    pub new_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_expression_before"))]
     pub new_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_expression_after"))]
+    pub new_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for NewExpressionTransport {
@@ -48560,10 +48560,10 @@ impl ::std::fmt::Display for NewExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for NewExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.new_after.get_or_insert(table.spacing[options::SITE_NEW_EXPRESSION_NEW_AFTER]);
         self.new_before.get_or_insert(table.spacing[options::SITE_NEW_EXPRESSION_NEW_BEFORE]);
-        self.new_expression_after.get_or_insert(table.spacing[options::SITE_NEW_EXPRESSION_NEW_EXPRESSION_AFTER]);
+        self.new_after.get_or_insert(table.spacing[options::SITE_NEW_EXPRESSION_NEW_AFTER]);
         self.new_expression_before.get_or_insert(table.spacing[options::SITE_NEW_EXPRESSION_NEW_EXPRESSION_BEFORE]);
+        self.new_expression_after.get_or_insert(table.spacing[options::SITE_NEW_EXPRESSION_NEW_EXPRESSION_AFTER]);
         self.constructor.fill_options(table);
         self.type_arguments.fill_options(table);
         self.arguments.fill_options(table);
@@ -48609,14 +48609,14 @@ pub struct AwaitExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_after"))]
-    pub await_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_before"))]
     pub await_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_expression_after"))]
-    pub await_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_after"))]
+    pub await_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_expression_before"))]
     pub await_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_expression_after"))]
+    pub await_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AwaitExpressionTransport {
@@ -48627,10 +48627,10 @@ impl ::std::fmt::Display for AwaitExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for AwaitExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.await_after.get_or_insert(table.spacing[options::SITE_AWAIT_EXPRESSION_AWAIT_AFTER]);
         self.await_before.get_or_insert(table.spacing[options::SITE_AWAIT_EXPRESSION_AWAIT_BEFORE]);
-        self.await_expression_after.get_or_insert(table.spacing[options::SITE_AWAIT_EXPRESSION_AWAIT_EXPRESSION_AFTER]);
+        self.await_after.get_or_insert(table.spacing[options::SITE_AWAIT_EXPRESSION_AWAIT_AFTER]);
         self.await_expression_before.get_or_insert(table.spacing[options::SITE_AWAIT_EXPRESSION_AWAIT_EXPRESSION_BEFORE]);
+        self.await_expression_after.get_or_insert(table.spacing[options::SITE_AWAIT_EXPRESSION_AWAIT_EXPRESSION_AFTER]);
         self.expression.fill_options(table);
     }
 }
@@ -48678,10 +48678,10 @@ pub struct MemberExpressionTransport {
     pub separator: ::sittir_core::SlotValue<MemberExpressionSeparatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_member_expression_after"))]
-    pub member_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_member_expression_before"))]
     pub member_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_member_expression_after"))]
+    pub member_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for MemberExpressionTransport {
@@ -48692,8 +48692,8 @@ impl ::std::fmt::Display for MemberExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for MemberExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.member_expression_after.get_or_insert(table.spacing[options::SITE_MEMBER_EXPRESSION_MEMBER_EXPRESSION_AFTER]);
         self.member_expression_before.get_or_insert(table.spacing[options::SITE_MEMBER_EXPRESSION_MEMBER_EXPRESSION_BEFORE]);
+        self.member_expression_after.get_or_insert(table.spacing[options::SITE_MEMBER_EXPRESSION_MEMBER_EXPRESSION_AFTER]);
         self.object.fill_options(table);
         self.separator.fill_options(table);
         self.property.fill_options(table);
@@ -48743,18 +48743,18 @@ pub struct SubscriptExpressionTransport {
     pub optional_chain: Option<::sittir_core::SlotValue<OptionalChainTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
     pub index: ::sittir_core::SlotValue<Box<SubscriptExpressionIndexTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript_expression_after"))]
-    pub subscript_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript_expression_before"))]
     pub subscript_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript_expression_after"))]
+    pub subscript_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SubscriptExpressionTransport {
@@ -48765,12 +48765,12 @@ impl ::std::fmt::Display for SubscriptExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for SubscriptExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_LBRACK_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_RBRACK_BEFORE]);
-        self.subscript_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_SUBSCRIPT_EXPRESSION_AFTER]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_RBRACK_AFTER]);
         self.subscript_expression_before.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_SUBSCRIPT_EXPRESSION_BEFORE]);
+        self.subscript_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPT_EXPRESSION_SUBSCRIPT_EXPRESSION_AFTER]);
         self.object.fill_options(table);
         self.optional_chain.fill_options(table);
         self.index.fill_options(table);
@@ -48820,14 +48820,14 @@ pub struct AssignmentExpressionTransport {
     pub left: ::sittir_core::SlotValue<Box<AssignmentExpressionLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_expression_after"))]
-    pub assignment_expression_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_expression_before"))]
-    pub assignment_expression_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_expression_before"))]
+    pub assignment_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_expression_after"))]
+    pub assignment_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AssignmentExpressionTransport {
@@ -48838,10 +48838,10 @@ impl ::std::fmt::Display for AssignmentExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for AssignmentExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.assignment_expression_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_AFTER]);
-        self.assignment_expression_before.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_BEFORE]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_EXPRESSION_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_EXPRESSION_EQ_BEFORE]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_EXPRESSION_EQ_AFTER]);
+        self.assignment_expression_before.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_BEFORE]);
+        self.assignment_expression_after.get_or_insert(table.spacing[options::SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_AFTER]);
         self.using_marker.fill_options(table);
         self.left.fill_options(table);
         self.right.fill_options(table);
@@ -48891,10 +48891,10 @@ pub struct AugmentedAssignmentExpressionTransport {
     pub operator: ::sittir_core::SlotValue<AugmentedAssignmentExpressionOperatorEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_augmented_assignment_expression_after"))]
-    pub augmented_assignment_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_augmented_assignment_expression_before"))]
     pub augmented_assignment_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_augmented_assignment_expression_after"))]
+    pub augmented_assignment_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AugmentedAssignmentExpressionTransport {
@@ -48905,8 +48905,8 @@ impl ::std::fmt::Display for AugmentedAssignmentExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for AugmentedAssignmentExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.augmented_assignment_expression_after.get_or_insert(table.spacing[options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER]);
         self.augmented_assignment_expression_before.get_or_insert(table.spacing[options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_AUGMENTED_ASSIGNMENT_EXPRESSION_BEFORE]);
+        self.augmented_assignment_expression_after.get_or_insert(table.spacing[options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER]);
         self.left.fill_options(table);
         self.operator.fill_options(table);
         self.right.fill_options(table);
@@ -48952,14 +48952,14 @@ pub struct SpreadElementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_after"))]
-    pub dot_dot_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_before"))]
     pub dot_dot_dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_spread_element_after"))]
-    pub spread_element_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_after"))]
+    pub dot_dot_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_spread_element_before"))]
     pub spread_element_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_spread_element_after"))]
+    pub spread_element_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SpreadElementTransport {
@@ -48970,10 +48970,10 @@ impl ::std::fmt::Display for SpreadElementTransport {
 
 impl ::sittir_core::options::FillOptions for SpreadElementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dot_dot_dot_after.get_or_insert(table.spacing[options::SITE_SPREAD_ELEMENT_DOT_DOT_DOT_AFTER]);
         self.dot_dot_dot_before.get_or_insert(table.spacing[options::SITE_SPREAD_ELEMENT_DOT_DOT_DOT_BEFORE]);
-        self.spread_element_after.get_or_insert(table.spacing[options::SITE_SPREAD_ELEMENT_SPREAD_ELEMENT_AFTER]);
+        self.dot_dot_dot_after.get_or_insert(table.spacing[options::SITE_SPREAD_ELEMENT_DOT_DOT_DOT_AFTER]);
         self.spread_element_before.get_or_insert(table.spacing[options::SITE_SPREAD_ELEMENT_SPREAD_ELEMENT_BEFORE]);
+        self.spread_element_after.get_or_insert(table.spacing[options::SITE_SPREAD_ELEMENT_SPREAD_ELEMENT_AFTER]);
         self.expression.fill_options(table);
     }
 }
@@ -49021,18 +49021,18 @@ pub struct TernaryExpressionTransport {
     pub consequence: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
-    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_before"))]
     pub qmark_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ternary_expression_after"))]
-    pub ternary_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
+    pub qmark_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ternary_expression_before"))]
     pub ternary_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ternary_expression_after"))]
+    pub ternary_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TernaryExpressionTransport {
@@ -49043,12 +49043,12 @@ impl ::std::fmt::Display for TernaryExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for TernaryExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_COLON_BEFORE]);
-        self.qmark_after.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_QMARK_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_COLON_AFTER]);
         self.qmark_before.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_QMARK_BEFORE]);
-        self.ternary_expression_after.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_TERNARY_EXPRESSION_AFTER]);
+        self.qmark_after.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_QMARK_AFTER]);
         self.ternary_expression_before.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_TERNARY_EXPRESSION_BEFORE]);
+        self.ternary_expression_after.get_or_insert(table.spacing[options::SITE_TERNARY_EXPRESSION_TERNARY_EXPRESSION_AFTER]);
         self.condition.fill_options(table);
         self.consequence.fill_options(table);
         self.alternative.fill_options(table);
@@ -49100,10 +49100,10 @@ pub struct BinaryExpressionTransport {
     pub right: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_in"))]
     pub binary_expression_in: Option<::sittir_core::SlotValue<Box<BinaryExpressionInTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
-    pub operator_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
     pub operator_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for BinaryExpressionTransport {
@@ -49114,8 +49114,8 @@ impl ::std::fmt::Display for BinaryExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for BinaryExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.operator_after.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_OPERATOR_AFTER]);
         self.operator_before.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_OPERATOR_BEFORE]);
+        self.operator_after.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_OPERATOR_AFTER]);
         self.left.fill_options(table);
         self.operator.fill_options(table);
         self.right.fill_options(table);
@@ -49164,10 +49164,10 @@ pub struct UnaryExpressionTransport {
     pub operator: ::sittir_core::SlotValue<UnaryExpressionOperatorEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unary_expression_after"))]
-    pub unary_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unary_expression_before"))]
     pub unary_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unary_expression_after"))]
+    pub unary_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for UnaryExpressionTransport {
@@ -49178,8 +49178,8 @@ impl ::std::fmt::Display for UnaryExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for UnaryExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.unary_expression_after.get_or_insert(table.spacing[options::SITE_UNARY_EXPRESSION_UNARY_EXPRESSION_AFTER]);
         self.unary_expression_before.get_or_insert(table.spacing[options::SITE_UNARY_EXPRESSION_UNARY_EXPRESSION_BEFORE]);
+        self.unary_expression_after.get_or_insert(table.spacing[options::SITE_UNARY_EXPRESSION_UNARY_EXPRESSION_AFTER]);
         self.operator.fill_options(table);
         self.argument.fill_options(table);
     }
@@ -49277,18 +49277,18 @@ pub struct SequenceExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
-    pub expression_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
-    pub expression_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_end"))]
     pub expression_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_start"))]
     pub expression_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sequence_expression_after"))]
-    pub sequence_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
+    pub expression_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
+    pub expression_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sequence_expression_before"))]
     pub sequence_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sequence_expression_after"))]
+    pub sequence_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SequenceExpressionTransport {
@@ -49299,12 +49299,12 @@ impl ::std::fmt::Display for SequenceExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for SequenceExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_AFTER]);
-        self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
         self.expression_end.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_END]);
         self.expression_start.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_START]);
-        self.sequence_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_SEQUENCE_EXPRESSION_AFTER]);
+        self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
+        self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_AFTER]);
         self.sequence_expression_before.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_SEQUENCE_EXPRESSION_BEFORE]);
+        self.sequence_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_SEQUENCE_EXPRESSION_AFTER]);
         self.expression.fill_options(table);
     }
 }
@@ -49821,14 +49821,14 @@ pub struct TemplateStringTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<TemplateStringElementsTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bquote_after"))]
-    pub bquote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bquote_before"))]
     pub bquote_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_string_after"))]
-    pub template_string_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bquote_after"))]
+    pub bquote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_string_before"))]
     pub template_string_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_string_after"))]
+    pub template_string_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TemplateStringTransport {
@@ -49839,10 +49839,10 @@ impl ::std::fmt::Display for TemplateStringTransport {
 
 impl ::sittir_core::options::FillOptions for TemplateStringTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.bquote_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_STRING_BQUOTE_AFTER]);
         self.bquote_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_STRING_BQUOTE_BEFORE]);
-        self.template_string_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_STRING_TEMPLATE_STRING_AFTER]);
+        self.bquote_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_STRING_BQUOTE_AFTER]);
         self.template_string_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_STRING_TEMPLATE_STRING_BEFORE]);
+        self.template_string_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_STRING_TEMPLATE_STRING_AFTER]);
         self.elements.fill_options(table);
     }
 }
@@ -49886,18 +49886,18 @@ pub struct TemplateSubstitutionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<TemplateSubstitutionExpressionTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_lbrace_after"))]
-    pub dollar_lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_lbrace_before"))]
     pub dollar_lbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_lbrace_after"))]
+    pub dollar_lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_substitution_after"))]
-    pub template_substitution_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_substitution_before"))]
     pub template_substitution_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_substitution_after"))]
+    pub template_substitution_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TemplateSubstitutionTransport {
@@ -49908,12 +49908,12 @@ impl ::std::fmt::Display for TemplateSubstitutionTransport {
 
 impl ::sittir_core::options::FillOptions for TemplateSubstitutionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dollar_lbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_DOLLAR_LBRACE_AFTER]);
         self.dollar_lbrace_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_DOLLAR_LBRACE_BEFORE]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_RBRACE_AFTER]);
+        self.dollar_lbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_DOLLAR_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_RBRACE_BEFORE]);
-        self.template_substitution_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_TEMPLATE_SUBSTITUTION_AFTER]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_RBRACE_AFTER]);
         self.template_substitution_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_TEMPLATE_SUBSTITUTION_BEFORE]);
+        self.template_substitution_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_SUBSTITUTION_TEMPLATE_SUBSTITUTION_AFTER]);
         self.expression.fill_options(table);
     }
 }
@@ -49959,14 +49959,14 @@ pub struct RegexTransport {
     pub pattern: ::sittir_core::SlotValue<RegexPatternTransport, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_flags"))]
     pub flags: Option<::sittir_core::SlotValue<RegexFlagsTransport, true>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_regex_after"))]
-    pub regex_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_regex_before"))]
-    pub regex_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_slash_after"))]
-    pub slash_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_slash_before"))]
     pub slash_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_slash_after"))]
+    pub slash_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_regex_before"))]
+    pub regex_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_regex_after"))]
+    pub regex_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for RegexTransport {
@@ -49977,10 +49977,10 @@ impl ::std::fmt::Display for RegexTransport {
 
 impl ::sittir_core::options::FillOptions for RegexTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.regex_after.get_or_insert(table.spacing[options::SITE_REGEX_REGEX_AFTER]);
-        self.regex_before.get_or_insert(table.spacing[options::SITE_REGEX_REGEX_BEFORE]);
-        self.slash_after.get_or_insert(table.spacing[options::SITE_REGEX_SLASH_AFTER]);
         self.slash_before.get_or_insert(table.spacing[options::SITE_REGEX_SLASH_BEFORE]);
+        self.slash_after.get_or_insert(table.spacing[options::SITE_REGEX_SLASH_AFTER]);
+        self.regex_before.get_or_insert(table.spacing[options::SITE_REGEX_REGEX_BEFORE]);
+        self.regex_after.get_or_insert(table.spacing[options::SITE_REGEX_REGEX_AFTER]);
         self.pattern.fill_options(table);
         self.flags.fill_options(table);
     }
@@ -51245,26 +51245,26 @@ pub struct ArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<Vec<Option<::sittir_core::SlotValue<ArgumentsArgumentsTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_after"))]
-    pub arguments_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_before"))]
-    pub arguments_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_end"))]
     pub arguments_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_start"))]
     pub arguments_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_separator_space_after"))]
-    pub arguments_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_separator_space_before"))]
     pub arguments_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_separator_space_after"))]
+    pub arguments_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_before"))]
+    pub arguments_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_after"))]
+    pub arguments_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ArgumentsTransport {
@@ -51275,16 +51275,16 @@ impl ::std::fmt::Display for ArgumentsTransport {
 
 impl ::sittir_core::options::FillOptions for ArgumentsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.arguments_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AFTER]);
-        self.arguments_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_BEFORE]);
         self.arguments_end.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_END]);
         self.arguments_start.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_START]);
-        self.arguments_separator_space_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER]);
         self.arguments_separator_space_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE]);
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);
+        self.arguments_separator_space_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_LPAREN_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_RPAREN_AFTER]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_RPAREN_AFTER]);
+        self.arguments_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_BEFORE]);
+        self.arguments_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AFTER]);
         self.arguments.fill_options(table);
     }
 }
@@ -51328,14 +51328,14 @@ pub struct DecoratorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<DecoratorContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_at_after"))]
-    pub at_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_at_before"))]
     pub at_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_after"))]
-    pub decorator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_at_after"))]
+    pub at_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_before"))]
     pub decorator_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_after"))]
+    pub decorator_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for DecoratorTransport {
@@ -51346,10 +51346,10 @@ impl ::std::fmt::Display for DecoratorTransport {
 
 impl ::sittir_core::options::FillOptions for DecoratorTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.at_after.get_or_insert(table.spacing[options::SITE_DECORATOR_AT_AFTER]);
         self.at_before.get_or_insert(table.spacing[options::SITE_DECORATOR_AT_BEFORE]);
-        self.decorator_after.get_or_insert(table.spacing[options::SITE_DECORATOR_DECORATOR_AFTER]);
+        self.at_after.get_or_insert(table.spacing[options::SITE_DECORATOR_AT_AFTER]);
         self.decorator_before.get_or_insert(table.spacing[options::SITE_DECORATOR_DECORATOR_BEFORE]);
+        self.decorator_after.get_or_insert(table.spacing[options::SITE_DECORATOR_DECORATOR_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -51395,14 +51395,14 @@ pub struct DecoratorMemberExpressionTransport {
     pub object: ::sittir_core::SlotValue<Box<DecoratorMemberExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_member_expression_after"))]
-    pub decorator_member_expression_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_member_expression_before"))]
-    pub decorator_member_expression_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
     pub dot_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
+    pub dot_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_member_expression_before"))]
+    pub decorator_member_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_member_expression_after"))]
+    pub decorator_member_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for DecoratorMemberExpressionTransport {
@@ -51413,10 +51413,10 @@ impl ::std::fmt::Display for DecoratorMemberExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for DecoratorMemberExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_member_expression_after.get_or_insert(table.spacing[options::SITE_DECORATOR_MEMBER_EXPRESSION_DECORATOR_MEMBER_EXPRESSION_AFTER]);
-        self.decorator_member_expression_before.get_or_insert(table.spacing[options::SITE_DECORATOR_MEMBER_EXPRESSION_DECORATOR_MEMBER_EXPRESSION_BEFORE]);
-        self.dot_after.get_or_insert(table.spacing[options::SITE_DECORATOR_MEMBER_EXPRESSION_DOT_AFTER]);
         self.dot_before.get_or_insert(table.spacing[options::SITE_DECORATOR_MEMBER_EXPRESSION_DOT_BEFORE]);
+        self.dot_after.get_or_insert(table.spacing[options::SITE_DECORATOR_MEMBER_EXPRESSION_DOT_AFTER]);
+        self.decorator_member_expression_before.get_or_insert(table.spacing[options::SITE_DECORATOR_MEMBER_EXPRESSION_DECORATOR_MEMBER_EXPRESSION_BEFORE]);
+        self.decorator_member_expression_after.get_or_insert(table.spacing[options::SITE_DECORATOR_MEMBER_EXPRESSION_DECORATOR_MEMBER_EXPRESSION_AFTER]);
         self.object.fill_options(table);
         self.property.fill_options(table);
     }
@@ -51465,10 +51465,10 @@ pub struct DecoratorCallExpressionTransport {
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_call_expression_after"))]
-    pub decorator_call_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_call_expression_before"))]
     pub decorator_call_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_call_expression_after"))]
+    pub decorator_call_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for DecoratorCallExpressionTransport {
@@ -51479,8 +51479,8 @@ impl ::std::fmt::Display for DecoratorCallExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for DecoratorCallExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_call_expression_after.get_or_insert(table.spacing[options::SITE_DECORATOR_CALL_EXPRESSION_DECORATOR_CALL_EXPRESSION_AFTER]);
         self.decorator_call_expression_before.get_or_insert(table.spacing[options::SITE_DECORATOR_CALL_EXPRESSION_DECORATOR_CALL_EXPRESSION_BEFORE]);
+        self.decorator_call_expression_after.get_or_insert(table.spacing[options::SITE_DECORATOR_CALL_EXPRESSION_DECORATOR_CALL_EXPRESSION_AFTER]);
         self.function.fill_options(table);
         self.type_arguments.fill_options(table);
         self.arguments.fill_options(table);
@@ -51526,24 +51526,24 @@ pub struct ClassBodyTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<ClassBodyContentTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_after"))]
-    pub class_body_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_before"))]
-    pub class_body_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_end"))]
     pub content_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_start"))]
     pub content_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
-    pub content_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
+    pub content_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_before"))]
+    pub class_body_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_after"))]
+    pub class_body_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassBodyTransport {
@@ -51554,15 +51554,15 @@ impl ::std::fmt::Display for ClassBodyTransport {
 
 impl ::sittir_core::options::FillOptions for ClassBodyTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_body_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CLASS_BODY_AFTER]);
-        self.class_body_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CLASS_BODY_BEFORE]);
         self.content_end.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_END]);
         self.content_start.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_START]);
-        self.content_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE]);
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_LBRACE_AFTER]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_LBRACE_BEFORE]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_RBRACE_AFTER]);
+        self.content_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE]);
+        self.class_body_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CLASS_BODY_BEFORE]);
+        self.class_body_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CLASS_BODY_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -51606,18 +51606,18 @@ pub struct FormalParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_elements"))]
     pub formal_parameters_elements: Option<::sittir_core::SlotValue<FormalParametersElementsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_after"))]
-    pub formal_parameters_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_before"))]
-    pub formal_parameters_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_before"))]
+    pub formal_parameters_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_after"))]
+    pub formal_parameters_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FormalParametersTransport {
@@ -51628,12 +51628,12 @@ impl ::std::fmt::Display for FormalParametersTransport {
 
 impl ::sittir_core::options::FillOptions for FormalParametersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.formal_parameters_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_AFTER]);
-        self.formal_parameters_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_BEFORE]);
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_RPAREN_AFTER]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_RPAREN_AFTER]);
+        self.formal_parameters_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_BEFORE]);
+        self.formal_parameters_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_AFTER]);
         self.formal_parameters_elements.fill_options(table);
     }
 }
@@ -51679,14 +51679,14 @@ pub struct ClassStaticBlockTransport {
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_static_block_after"))]
-    pub class_static_block_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_static_block_before"))]
-    pub class_static_block_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_after"))]
-    pub static_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_before"))]
     pub static_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_after"))]
+    pub static_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_static_block_before"))]
+    pub class_static_block_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_static_block_after"))]
+    pub class_static_block_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassStaticBlockTransport {
@@ -51697,10 +51697,10 @@ impl ::std::fmt::Display for ClassStaticBlockTransport {
 
 impl ::sittir_core::options::FillOptions for ClassStaticBlockTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_static_block_after.get_or_insert(table.spacing[options::SITE_CLASS_STATIC_BLOCK_CLASS_STATIC_BLOCK_AFTER]);
-        self.class_static_block_before.get_or_insert(table.spacing[options::SITE_CLASS_STATIC_BLOCK_CLASS_STATIC_BLOCK_BEFORE]);
-        self.static_after.get_or_insert(table.spacing[options::SITE_CLASS_STATIC_BLOCK_STATIC_AFTER]);
         self.static_before.get_or_insert(table.spacing[options::SITE_CLASS_STATIC_BLOCK_STATIC_BEFORE]);
+        self.static_after.get_or_insert(table.spacing[options::SITE_CLASS_STATIC_BLOCK_STATIC_AFTER]);
+        self.class_static_block_before.get_or_insert(table.spacing[options::SITE_CLASS_STATIC_BLOCK_CLASS_STATIC_BLOCK_BEFORE]);
+        self.class_static_block_after.get_or_insert(table.spacing[options::SITE_CLASS_STATIC_BLOCK_CLASS_STATIC_BLOCK_AFTER]);
         self.body.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
@@ -51745,14 +51745,14 @@ pub struct RestPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lhs_expression"))]
     pub lhs_expression: ::sittir_core::SlotValue<RestPatternLhsExpressionTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_after"))]
-    pub dot_dot_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_before"))]
     pub dot_dot_dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rest_pattern_after"))]
-    pub rest_pattern_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_after"))]
+    pub dot_dot_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rest_pattern_before"))]
     pub rest_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rest_pattern_after"))]
+    pub rest_pattern_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for RestPatternTransport {
@@ -51763,10 +51763,10 @@ impl ::std::fmt::Display for RestPatternTransport {
 
 impl ::sittir_core::options::FillOptions for RestPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dot_dot_dot_after.get_or_insert(table.spacing[options::SITE_REST_PATTERN_DOT_DOT_DOT_AFTER]);
         self.dot_dot_dot_before.get_or_insert(table.spacing[options::SITE_REST_PATTERN_DOT_DOT_DOT_BEFORE]);
-        self.rest_pattern_after.get_or_insert(table.spacing[options::SITE_REST_PATTERN_REST_PATTERN_AFTER]);
+        self.dot_dot_dot_after.get_or_insert(table.spacing[options::SITE_REST_PATTERN_DOT_DOT_DOT_AFTER]);
         self.rest_pattern_before.get_or_insert(table.spacing[options::SITE_REST_PATTERN_REST_PATTERN_BEFORE]);
+        self.rest_pattern_after.get_or_insert(table.spacing[options::SITE_REST_PATTERN_REST_PATTERN_AFTER]);
         self.lhs_expression.fill_options(table);
     }
 }
@@ -51832,22 +51832,22 @@ pub struct MethodDefinitionTransport {
     pub return_type: Option<::sittir_core::SlotValue<MethodDefinitionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
-    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
     pub accessibility_modifier_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
-    pub accessor_kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
     pub accessor_kind_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition_after"))]
-    pub method_definition_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition_before"))]
-    pub method_definition_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
-    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
+    pub accessor_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
     pub optional_marker_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition_before"))]
+    pub method_definition_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition_after"))]
+    pub method_definition_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for MethodDefinitionTransport {
@@ -51858,14 +51858,14 @@ impl ::std::fmt::Display for MethodDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for MethodDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER]);
         self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSIBILITY_MODIFIER_BEFORE]);
-        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER]);
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER]);
         self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE]);
-        self.method_definition_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_METHOD_DEFINITION_AFTER]);
-        self.method_definition_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_METHOD_DEFINITION_BEFORE]);
-        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_OPTIONAL_MARKER_AFTER]);
+        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER]);
         self.optional_marker_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_OPTIONAL_MARKER_BEFORE]);
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_OPTIONAL_MARKER_AFTER]);
+        self.method_definition_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_METHOD_DEFINITION_BEFORE]);
+        self.method_definition_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_METHOD_DEFINITION_AFTER]);
         self.accessibility_modifier.fill_options(table);
         self.static_marker.fill_options(table);
         self.override_modifier.fill_options(table);
@@ -51922,14 +51922,14 @@ pub struct PairTransport {
     pub key: ::sittir_core::SlotValue<PairKeyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pair_after"))]
-    pub pair_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pair_before"))]
     pub pair_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pair_after"))]
+    pub pair_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for PairTransport {
@@ -51940,10 +51940,10 @@ impl ::std::fmt::Display for PairTransport {
 
 impl ::sittir_core::options::FillOptions for PairTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_PAIR_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_PAIR_COLON_BEFORE]);
-        self.pair_after.get_or_insert(table.spacing[options::SITE_PAIR_PAIR_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_PAIR_COLON_AFTER]);
         self.pair_before.get_or_insert(table.spacing[options::SITE_PAIR_PAIR_BEFORE]);
+        self.pair_after.get_or_insert(table.spacing[options::SITE_PAIR_PAIR_AFTER]);
         self.key.fill_options(table);
         self.value.fill_options(table);
     }
@@ -51990,14 +51990,14 @@ pub struct PairPatternTransport {
     pub key: ::sittir_core::SlotValue<PairPatternKeyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<PairPatternValueTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pair_pattern_after"))]
-    pub pair_pattern_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pair_pattern_before"))]
     pub pair_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pair_pattern_after"))]
+    pub pair_pattern_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for PairPatternTransport {
@@ -52008,10 +52008,10 @@ impl ::std::fmt::Display for PairPatternTransport {
 
 impl ::sittir_core::options::FillOptions for PairPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_PAIR_PATTERN_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_PAIR_PATTERN_COLON_BEFORE]);
-        self.pair_pattern_after.get_or_insert(table.spacing[options::SITE_PAIR_PATTERN_PAIR_PATTERN_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_PAIR_PATTERN_COLON_AFTER]);
         self.pair_pattern_before.get_or_insert(table.spacing[options::SITE_PAIR_PATTERN_PAIR_PATTERN_BEFORE]);
+        self.pair_pattern_after.get_or_insert(table.spacing[options::SITE_PAIR_PATTERN_PAIR_PATTERN_AFTER]);
         self.key.fill_options(table);
         self.value.fill_options(table);
     }
@@ -52056,18 +52056,18 @@ pub struct ComputedPropertyNameTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_computed_property_name_after"))]
-    pub computed_property_name_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_computed_property_name_before"))]
-    pub computed_property_name_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_computed_property_name_before"))]
+    pub computed_property_name_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_computed_property_name_after"))]
+    pub computed_property_name_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ComputedPropertyNameTransport {
@@ -52078,12 +52078,12 @@ impl ::std::fmt::Display for ComputedPropertyNameTransport {
 
 impl ::sittir_core::options::FillOptions for ComputedPropertyNameTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.computed_property_name_after.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_COMPUTED_PROPERTY_NAME_AFTER]);
-        self.computed_property_name_before.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_COMPUTED_PROPERTY_NAME_BEFORE]);
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_LBRACK_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_RBRACK_BEFORE]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_RBRACK_AFTER]);
+        self.computed_property_name_before.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_COMPUTED_PROPERTY_NAME_BEFORE]);
+        self.computed_property_name_after.get_or_insert(table.spacing[options::SITE_COMPUTED_PROPERTY_NAME_COMPUTED_PROPERTY_NAME_AFTER]);
         self.expression.fill_options(table);
     }
 }
@@ -52366,28 +52366,28 @@ pub struct PublicFieldDefinitionTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<::sittir_core::SlotValue<OverrideModifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
-    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
     pub accessibility_modifier_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_after"))]
-    pub optionality_marker_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_before"))]
     pub optionality_marker_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_after"))]
-    pub public_field_definition_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_after"))]
+    pub optionality_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_before"))]
     pub public_field_definition_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_after"))]
+    pub public_field_definition_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for PublicFieldDefinitionTransport {
@@ -52398,17 +52398,17 @@ impl ::std::fmt::Display for PublicFieldDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for PublicFieldDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER]);
         self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_BEFORE]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE]);
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER]);
-        self.eq_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE]);
-        self.optionality_marker_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER]);
         self.optionality_marker_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE]);
-        self.public_field_definition_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER]);
+        self.optionality_marker_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE]);
         self.public_field_definition_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_BEFORE]);
+        self.public_field_definition_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER]);
         self.decorator.fill_options(table);
         self.declare_marker.fill_options(table);
         self.accessibility_modifier.fill_options(table);
@@ -52463,14 +52463,14 @@ pub struct NonNullExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bang_after"))]
-    pub bang_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bang_before"))]
     pub bang_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_non_null_expression_after"))]
-    pub non_null_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bang_after"))]
+    pub bang_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_non_null_expression_before"))]
     pub non_null_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_non_null_expression_after"))]
+    pub non_null_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for NonNullExpressionTransport {
@@ -52481,10 +52481,10 @@ impl ::std::fmt::Display for NonNullExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for NonNullExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.bang_after.get_or_insert(table.spacing[options::SITE_NON_NULL_EXPRESSION_BANG_AFTER]);
         self.bang_before.get_or_insert(table.spacing[options::SITE_NON_NULL_EXPRESSION_BANG_BEFORE]);
-        self.non_null_expression_after.get_or_insert(table.spacing[options::SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_AFTER]);
+        self.bang_after.get_or_insert(table.spacing[options::SITE_NON_NULL_EXPRESSION_BANG_AFTER]);
         self.non_null_expression_before.get_or_insert(table.spacing[options::SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_BEFORE]);
+        self.non_null_expression_after.get_or_insert(table.spacing[options::SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_AFTER]);
         self.expression.fill_options(table);
     }
 }
@@ -52548,22 +52548,22 @@ pub struct MethodSignatureTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<MethodSignatureReturnTypeTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
-    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
     pub accessibility_modifier_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
-    pub accessor_kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
     pub accessor_kind_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature_after"))]
-    pub method_signature_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature_before"))]
-    pub method_signature_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
-    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
+    pub accessor_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
     pub optional_marker_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature_before"))]
+    pub method_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature_after"))]
+    pub method_signature_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for MethodSignatureTransport {
@@ -52574,14 +52574,14 @@ impl ::std::fmt::Display for MethodSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for MethodSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
         self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_BEFORE]);
-        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
         self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE]);
-        self.method_signature_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_AFTER]);
-        self.method_signature_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_BEFORE]);
-        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
         self.optional_marker_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE]);
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.method_signature_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_BEFORE]);
+        self.method_signature_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_AFTER]);
         self.accessibility_modifier.fill_options(table);
         self.static_marker.fill_options(table);
         self.override_modifier.fill_options(table);
@@ -52649,26 +52649,26 @@ pub struct AbstractMethodSignatureTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<AbstractMethodSignatureReturnTypeTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_after"))]
-    pub abstract_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_before"))]
     pub abstract_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_method_signature_after"))]
-    pub abstract_method_signature_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_method_signature_before"))]
-    pub abstract_method_signature_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
-    pub accessibility_modifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_after"))]
+    pub abstract_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
     pub accessibility_modifier_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
-    pub accessor_kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
     pub accessor_kind_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
-    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
+    pub accessor_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
     pub optional_marker_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_method_signature_before"))]
+    pub abstract_method_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_method_signature_after"))]
+    pub abstract_method_signature_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AbstractMethodSignatureTransport {
@@ -52679,16 +52679,16 @@ impl ::std::fmt::Display for AbstractMethodSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for AbstractMethodSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.abstract_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_AFTER]);
         self.abstract_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_BEFORE]);
-        self.abstract_method_signature_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_AFTER]);
-        self.abstract_method_signature_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_BEFORE]);
-        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
+        self.abstract_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_AFTER]);
         self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_BEFORE]);
-        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
         self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE]);
-        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
         self.optional_marker_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_BEFORE]);
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.abstract_method_signature_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_BEFORE]);
+        self.abstract_method_signature_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_AFTER]);
         self.accessibility_modifier.fill_options(table);
         self.override_modifier.fill_options(table);
         self.accessor_kind.fill_options(table);
@@ -52749,14 +52749,14 @@ pub struct FunctionSignatureTransport {
     pub return_type: Option<::sittir_core::SlotValue<FunctionSignatureReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<FunctionSignatureTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
-    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_before"))]
     pub function_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_after"))]
-    pub function_signature_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_after"))]
+    pub function_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_before"))]
     pub function_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_after"))]
+    pub function_signature_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FunctionSignatureTransport {
@@ -52767,10 +52767,10 @@ impl ::std::fmt::Display for FunctionSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for FunctionSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.function_after.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_FUNCTION_AFTER]);
         self.function_before.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_FUNCTION_BEFORE]);
-        self.function_signature_after.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_AFTER]);
+        self.function_after.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_FUNCTION_AFTER]);
         self.function_signature_before.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_BEFORE]);
+        self.function_signature_after.get_or_insert(table.spacing[options::SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_AFTER]);
         self.async_marker.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -52819,18 +52819,18 @@ pub struct DecoratorParenthesizedExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<DecoratorParenthesizedExpressionContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_parenthesized_expression_after"))]
-    pub decorator_parenthesized_expression_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_parenthesized_expression_before"))]
-    pub decorator_parenthesized_expression_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_parenthesized_expression_before"))]
+    pub decorator_parenthesized_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_parenthesized_expression_after"))]
+    pub decorator_parenthesized_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for DecoratorParenthesizedExpressionTransport {
@@ -52841,12 +52841,12 @@ impl ::std::fmt::Display for DecoratorParenthesizedExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for DecoratorParenthesizedExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_DECORATOR_PARENTHESIZED_EXPRESSION_AFTER]);
-        self.decorator_parenthesized_expression_before.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_DECORATOR_PARENTHESIZED_EXPRESSION_BEFORE]);
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_LPAREN_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_RPAREN_AFTER]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_RPAREN_AFTER]);
+        self.decorator_parenthesized_expression_before.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_DECORATOR_PARENTHESIZED_EXPRESSION_BEFORE]);
+        self.decorator_parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_DECORATOR_PARENTHESIZED_EXPRESSION_DECORATOR_PARENTHESIZED_EXPRESSION_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -52892,10 +52892,10 @@ pub struct TypeAssertionTransport {
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_assertion_after"))]
-    pub type_assertion_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_assertion_before"))]
     pub type_assertion_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_assertion_after"))]
+    pub type_assertion_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeAssertionTransport {
@@ -52906,8 +52906,8 @@ impl ::std::fmt::Display for TypeAssertionTransport {
 
 impl ::sittir_core::options::FillOptions for TypeAssertionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_assertion_after.get_or_insert(table.spacing[options::SITE_TYPE_ASSERTION_TYPE_ASSERTION_AFTER]);
         self.type_assertion_before.get_or_insert(table.spacing[options::SITE_TYPE_ASSERTION_TYPE_ASSERTION_BEFORE]);
+        self.type_assertion_after.get_or_insert(table.spacing[options::SITE_TYPE_ASSERTION_TYPE_ASSERTION_AFTER]);
         self.type_arguments.fill_options(table);
         self.expression.fill_options(table);
     }
@@ -52954,14 +52954,14 @@ pub struct AsExpressionTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation"))]
     pub type_annotation: ::sittir_core::SlotValue<AsExpressionTypeAnnotationTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_expression_after"))]
-    pub as_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
+    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_expression_before"))]
     pub as_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_expression_after"))]
+    pub as_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AsExpressionTransport {
@@ -52972,10 +52972,10 @@ impl ::std::fmt::Display for AsExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for AsExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_AS_EXPRESSION_AS_AFTER]);
         self.as_before.get_or_insert(table.spacing[options::SITE_AS_EXPRESSION_AS_BEFORE]);
-        self.as_expression_after.get_or_insert(table.spacing[options::SITE_AS_EXPRESSION_AS_EXPRESSION_AFTER]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_AS_EXPRESSION_AS_AFTER]);
         self.as_expression_before.get_or_insert(table.spacing[options::SITE_AS_EXPRESSION_AS_EXPRESSION_BEFORE]);
+        self.as_expression_after.get_or_insert(table.spacing[options::SITE_AS_EXPRESSION_AS_EXPRESSION_AFTER]);
         self.expression.fill_options(table);
         self.type_annotation.fill_options(table);
     }
@@ -53022,14 +53022,14 @@ pub struct SatisfiesExpressionTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation"))]
     pub type_annotation: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_satisfies_after"))]
-    pub satisfies_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_satisfies_before"))]
     pub satisfies_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_satisfies_expression_after"))]
-    pub satisfies_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_satisfies_after"))]
+    pub satisfies_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_satisfies_expression_before"))]
     pub satisfies_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_satisfies_expression_after"))]
+    pub satisfies_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for SatisfiesExpressionTransport {
@@ -53040,10 +53040,10 @@ impl ::std::fmt::Display for SatisfiesExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for SatisfiesExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.satisfies_after.get_or_insert(table.spacing[options::SITE_SATISFIES_EXPRESSION_SATISFIES_AFTER]);
         self.satisfies_before.get_or_insert(table.spacing[options::SITE_SATISFIES_EXPRESSION_SATISFIES_BEFORE]);
-        self.satisfies_expression_after.get_or_insert(table.spacing[options::SITE_SATISFIES_EXPRESSION_SATISFIES_EXPRESSION_AFTER]);
+        self.satisfies_after.get_or_insert(table.spacing[options::SITE_SATISFIES_EXPRESSION_SATISFIES_AFTER]);
         self.satisfies_expression_before.get_or_insert(table.spacing[options::SITE_SATISFIES_EXPRESSION_SATISFIES_EXPRESSION_BEFORE]);
+        self.satisfies_expression_after.get_or_insert(table.spacing[options::SITE_SATISFIES_EXPRESSION_SATISFIES_EXPRESSION_AFTER]);
         self.expression.fill_options(table);
         self.type_annotation.fill_options(table);
     }
@@ -53090,10 +53090,10 @@ pub struct InstantiationExpressionTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_instantiation_expression_after"))]
-    pub instantiation_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_instantiation_expression_before"))]
     pub instantiation_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_instantiation_expression_after"))]
+    pub instantiation_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for InstantiationExpressionTransport {
@@ -53104,8 +53104,8 @@ impl ::std::fmt::Display for InstantiationExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for InstantiationExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.instantiation_expression_after.get_or_insert(table.spacing[options::SITE_INSTANTIATION_EXPRESSION_INSTANTIATION_EXPRESSION_AFTER]);
         self.instantiation_expression_before.get_or_insert(table.spacing[options::SITE_INSTANTIATION_EXPRESSION_INSTANTIATION_EXPRESSION_BEFORE]);
+        self.instantiation_expression_after.get_or_insert(table.spacing[options::SITE_INSTANTIATION_EXPRESSION_INSTANTIATION_EXPRESSION_AFTER]);
         self.expression.fill_options(table);
         self.type_arguments.fill_options(table);
     }
@@ -53152,26 +53152,26 @@ pub struct ImportRequireClauseTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: ::sittir_core::SlotValue<StringTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_require_clause_after"))]
-    pub import_require_clause_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_require_clause_before"))]
-    pub import_require_clause_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
-    pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_require_after"))]
-    pub require_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_require_before"))]
     pub require_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_require_after"))]
+    pub require_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
+    pub lparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_require_clause_before"))]
+    pub import_require_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_require_clause_after"))]
+    pub import_require_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportRequireClauseTransport {
@@ -53182,16 +53182,16 @@ impl ::std::fmt::Display for ImportRequireClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ImportRequireClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.eq_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_EQ_AFTER]);
-        self.eq_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_EQ_BEFORE]);
-        self.import_require_clause_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_IMPORT_REQUIRE_CLAUSE_AFTER]);
-        self.import_require_clause_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_IMPORT_REQUIRE_CLAUSE_BEFORE]);
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_LPAREN_AFTER]);
-        self.lparen_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_LPAREN_BEFORE]);
-        self.require_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_REQUIRE_AFTER]);
         self.require_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_REQUIRE_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_RPAREN_AFTER]);
+        self.require_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_REQUIRE_AFTER]);
+        self.lparen_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_LPAREN_BEFORE]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_RPAREN_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_EQ_BEFORE]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_EQ_AFTER]);
+        self.import_require_clause_before.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_IMPORT_REQUIRE_CLAUSE_BEFORE]);
+        self.import_require_clause_after.get_or_insert(table.spacing[options::SITE_IMPORT_REQUIRE_CLAUSE_IMPORT_REQUIRE_CLAUSE_AFTER]);
         self.name.fill_options(table);
         self.source.fill_options(table);
     }
@@ -53236,22 +53236,22 @@ pub struct ExtendsClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single"))]
     pub extends_clause_single: Vec<::sittir_core::SlotValue<ExtendsClauseSingleTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
-    pub extends_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_before"))]
     pub extends_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_after"))]
-    pub extends_clause_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_before"))]
-    pub extends_clause_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_separator_space_after"))]
-    pub extends_clause_single_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_separator_space_before"))]
-    pub extends_clause_single_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
+    pub extends_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_end"))]
     pub extends_clause_single_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_start"))]
     pub extends_clause_single_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_separator_space_before"))]
+    pub extends_clause_single_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_separator_space_after"))]
+    pub extends_clause_single_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_before"))]
+    pub extends_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_after"))]
+    pub extends_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExtendsClauseTransport {
@@ -53262,14 +53262,14 @@ impl ::std::fmt::Display for ExtendsClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ExtendsClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.extends_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_AFTER]);
         self.extends_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_BEFORE]);
-        self.extends_clause_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_AFTER]);
-        self.extends_clause_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_BEFORE]);
-        self.extends_clause_single_separator_space_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_AFTER]);
-        self.extends_clause_single_separator_space_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_BEFORE]);
+        self.extends_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_AFTER]);
         self.extends_clause_single_end.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_END]);
         self.extends_clause_single_start.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_START]);
+        self.extends_clause_single_separator_space_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_BEFORE]);
+        self.extends_clause_single_separator_space_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_AFTER]);
+        self.extends_clause_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_BEFORE]);
+        self.extends_clause_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_AFTER]);
         self.extends_clause_single.fill_options(table);
     }
 }
@@ -53315,10 +53315,10 @@ pub struct ExtendsClauseSingleTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_after"))]
-    pub extends_clause_single_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_before"))]
     pub extends_clause_single_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause_single_after"))]
+    pub extends_clause_single_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExtendsClauseSingleTransport {
@@ -53329,8 +53329,8 @@ impl ::std::fmt::Display for ExtendsClauseSingleTransport {
 
 impl ::sittir_core::options::FillOptions for ExtendsClauseSingleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.extends_clause_single_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_SINGLE_EXTENDS_CLAUSE_SINGLE_AFTER]);
         self.extends_clause_single_before.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_SINGLE_EXTENDS_CLAUSE_SINGLE_BEFORE]);
+        self.extends_clause_single_after.get_or_insert(table.spacing[options::SITE_EXTENDS_CLAUSE_SINGLE_EXTENDS_CLAUSE_SINGLE_AFTER]);
         self.value.fill_options(table);
         self.type_arguments.fill_options(table);
     }
@@ -53375,22 +53375,22 @@ pub struct ImplementsClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_after"))]
-    pub implements_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_before"))]
     pub implements_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause_after"))]
-    pub implements_clause_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause_before"))]
-    pub implements_clause_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
-    pub type_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
-    pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_after"))]
+    pub implements_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_end"))]
     pub type_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_start"))]
     pub type_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
+    pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
+    pub type_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause_before"))]
+    pub implements_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause_after"))]
+    pub implements_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImplementsClauseTransport {
@@ -53401,14 +53401,14 @@ impl ::std::fmt::Display for ImplementsClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ImplementsClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.implements_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_AFTER]);
         self.implements_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_BEFORE]);
-        self.implements_clause_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_AFTER]);
-        self.implements_clause_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_BEFORE]);
-        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER]);
-        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE]);
+        self.implements_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_AFTER]);
         self.type_end.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_END]);
         self.type_start.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_START]);
+        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE]);
+        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER]);
+        self.implements_clause_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_BEFORE]);
+        self.implements_clause_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -53452,14 +53452,14 @@ pub struct AmbientDeclarationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AmbientDeclarationContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_after"))]
-    pub ambient_declaration_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_before"))]
-    pub ambient_declaration_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declare_after"))]
-    pub declare_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declare_before"))]
     pub declare_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declare_after"))]
+    pub declare_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_before"))]
+    pub ambient_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_after"))]
+    pub ambient_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AmbientDeclarationTransport {
@@ -53470,10 +53470,10 @@ impl ::std::fmt::Display for AmbientDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for AmbientDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.ambient_declaration_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_AMBIENT_DECLARATION_AFTER]);
-        self.ambient_declaration_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_AMBIENT_DECLARATION_BEFORE]);
-        self.declare_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_DECLARE_AFTER]);
         self.declare_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_DECLARE_BEFORE]);
+        self.declare_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_DECLARE_AFTER]);
+        self.ambient_declaration_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_AMBIENT_DECLARATION_BEFORE]);
+        self.ambient_declaration_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_AMBIENT_DECLARATION_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -53525,24 +53525,24 @@ pub struct AbstractClassDeclarationTransport {
     pub heritage: Option<::sittir_core::SlotValue<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_after"))]
-    pub abstract_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_before"))]
     pub abstract_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_class_declaration_after"))]
-    pub abstract_class_declaration_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_class_declaration_before"))]
-    pub abstract_class_declaration_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
-    pub anon_class_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
-    pub anon_class_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_after"))]
+    pub abstract_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
+    pub anon_class_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
+    pub anon_class_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_class_declaration_before"))]
+    pub abstract_class_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_class_declaration_after"))]
+    pub abstract_class_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AbstractClassDeclarationTransport {
@@ -53553,15 +53553,15 @@ impl ::std::fmt::Display for AbstractClassDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for AbstractClassDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.abstract_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_AFTER]);
         self.abstract_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_BEFORE]);
-        self.abstract_class_declaration_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_AFTER]);
-        self.abstract_class_declaration_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_BEFORE]);
-        self.anon_class_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_AFTER]);
-        self.anon_class_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_BEFORE]);
+        self.abstract_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_AFTER]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_START]);
+        self.anon_class_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_BEFORE]);
+        self.anon_class_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_AFTER]);
         self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
+        self.abstract_class_declaration_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_BEFORE]);
+        self.abstract_class_declaration_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_AFTER]);
         self.decorator.fill_options(table);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
@@ -53611,14 +53611,14 @@ pub struct ModuleTransport {
     pub name: ::sittir_core::SlotValue<ModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<::sittir_core::SlotValue<StatementBlockTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_module_after"))]
-    pub anon_module_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_module_before"))]
     pub anon_module_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_after"))]
-    pub module_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_module_after"))]
+    pub anon_module_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_before"))]
     pub module_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_after"))]
+    pub module_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ModuleTransport {
@@ -53629,10 +53629,10 @@ impl ::std::fmt::Display for ModuleTransport {
 
 impl ::sittir_core::options::FillOptions for ModuleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_module_after.get_or_insert(table.spacing[options::SITE_MODULE_ANON_MODULE_AFTER]);
         self.anon_module_before.get_or_insert(table.spacing[options::SITE_MODULE_ANON_MODULE_BEFORE]);
-        self.module_after.get_or_insert(table.spacing[options::SITE_MODULE_MODULE_AFTER]);
+        self.anon_module_after.get_or_insert(table.spacing[options::SITE_MODULE_ANON_MODULE_AFTER]);
         self.module_before.get_or_insert(table.spacing[options::SITE_MODULE_MODULE_BEFORE]);
+        self.module_after.get_or_insert(table.spacing[options::SITE_MODULE_MODULE_AFTER]);
         self.name.fill_options(table);
         self.body.fill_options(table);
     }
@@ -53679,14 +53679,14 @@ pub struct InternalModuleTransport {
     pub name: ::sittir_core::SlotValue<InternalModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Option<::sittir_core::SlotValue<StatementBlockTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_internal_module_after"))]
-    pub internal_module_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_internal_module_before"))]
-    pub internal_module_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_after"))]
-    pub namespace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_before"))]
     pub namespace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_after"))]
+    pub namespace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_internal_module_before"))]
+    pub internal_module_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_internal_module_after"))]
+    pub internal_module_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for InternalModuleTransport {
@@ -53697,10 +53697,10 @@ impl ::std::fmt::Display for InternalModuleTransport {
 
 impl ::sittir_core::options::FillOptions for InternalModuleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.internal_module_after.get_or_insert(table.spacing[options::SITE_INTERNAL_MODULE_INTERNAL_MODULE_AFTER]);
-        self.internal_module_before.get_or_insert(table.spacing[options::SITE_INTERNAL_MODULE_INTERNAL_MODULE_BEFORE]);
-        self.namespace_after.get_or_insert(table.spacing[options::SITE_INTERNAL_MODULE_NAMESPACE_AFTER]);
         self.namespace_before.get_or_insert(table.spacing[options::SITE_INTERNAL_MODULE_NAMESPACE_BEFORE]);
+        self.namespace_after.get_or_insert(table.spacing[options::SITE_INTERNAL_MODULE_NAMESPACE_AFTER]);
+        self.internal_module_before.get_or_insert(table.spacing[options::SITE_INTERNAL_MODULE_INTERNAL_MODULE_BEFORE]);
+        self.internal_module_after.get_or_insert(table.spacing[options::SITE_INTERNAL_MODULE_INTERNAL_MODULE_AFTER]);
         self.name.fill_options(table);
         self.body.fill_options(table);
     }
@@ -53749,18 +53749,18 @@ pub struct ImportAliasTransport {
     pub value: ::sittir_core::SlotValue<ImportAliasValueTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ImportAliasTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_import_after"))]
-    pub anon_import_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_import_before"))]
-    pub anon_import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_alias_after"))]
-    pub import_alias_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_import_before"))]
+    pub anon_import_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_import_after"))]
+    pub anon_import_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_alias_before"))]
     pub import_alias_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_alias_after"))]
+    pub import_alias_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportAliasTransport {
@@ -53771,12 +53771,12 @@ impl ::std::fmt::Display for ImportAliasTransport {
 
 impl ::sittir_core::options::FillOptions for ImportAliasTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_ANON_IMPORT_AFTER]);
-        self.anon_import_before.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_ANON_IMPORT_BEFORE]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_EQ_BEFORE]);
-        self.import_alias_after.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_IMPORT_ALIAS_AFTER]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_EQ_AFTER]);
+        self.anon_import_before.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_ANON_IMPORT_BEFORE]);
+        self.anon_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_ANON_IMPORT_AFTER]);
         self.import_alias_before.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_IMPORT_ALIAS_BEFORE]);
+        self.import_alias_after.get_or_insert(table.spacing[options::SITE_IMPORT_ALIAS_IMPORT_ALIAS_AFTER]);
         self.name.fill_options(table);
         self.value.fill_options(table);
         self.terminator.fill_options(table);
@@ -53824,14 +53824,14 @@ pub struct NestedTypeIdentifierTransport {
     pub module: ::sittir_core::SlotValue<NestedTypeIdentifierModuleTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
     pub dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nested_type_identifier_after"))]
-    pub nested_type_identifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
+    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nested_type_identifier_before"))]
     pub nested_type_identifier_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nested_type_identifier_after"))]
+    pub nested_type_identifier_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for NestedTypeIdentifierTransport {
@@ -53842,10 +53842,10 @@ impl ::std::fmt::Display for NestedTypeIdentifierTransport {
 
 impl ::sittir_core::options::FillOptions for NestedTypeIdentifierTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dot_after.get_or_insert(table.spacing[options::SITE_NESTED_TYPE_IDENTIFIER_DOT_AFTER]);
         self.dot_before.get_or_insert(table.spacing[options::SITE_NESTED_TYPE_IDENTIFIER_DOT_BEFORE]);
-        self.nested_type_identifier_after.get_or_insert(table.spacing[options::SITE_NESTED_TYPE_IDENTIFIER_NESTED_TYPE_IDENTIFIER_AFTER]);
+        self.dot_after.get_or_insert(table.spacing[options::SITE_NESTED_TYPE_IDENTIFIER_DOT_AFTER]);
         self.nested_type_identifier_before.get_or_insert(table.spacing[options::SITE_NESTED_TYPE_IDENTIFIER_NESTED_TYPE_IDENTIFIER_BEFORE]);
+        self.nested_type_identifier_after.get_or_insert(table.spacing[options::SITE_NESTED_TYPE_IDENTIFIER_NESTED_TYPE_IDENTIFIER_AFTER]);
         self.module.fill_options(table);
         self.name.fill_options(table);
     }
@@ -53896,14 +53896,14 @@ pub struct InterfaceDeclarationTransport {
     pub extends_type_clause: Option<::sittir_core::SlotValue<ExtendsTypeClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ObjectTypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interface_after"))]
-    pub interface_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interface_before"))]
     pub interface_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interface_declaration_after"))]
-    pub interface_declaration_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interface_after"))]
+    pub interface_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interface_declaration_before"))]
     pub interface_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_interface_declaration_after"))]
+    pub interface_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for InterfaceDeclarationTransport {
@@ -53914,10 +53914,10 @@ impl ::std::fmt::Display for InterfaceDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for InterfaceDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.interface_after.get_or_insert(table.spacing[options::SITE_INTERFACE_DECLARATION_INTERFACE_AFTER]);
         self.interface_before.get_or_insert(table.spacing[options::SITE_INTERFACE_DECLARATION_INTERFACE_BEFORE]);
-        self.interface_declaration_after.get_or_insert(table.spacing[options::SITE_INTERFACE_DECLARATION_INTERFACE_DECLARATION_AFTER]);
+        self.interface_after.get_or_insert(table.spacing[options::SITE_INTERFACE_DECLARATION_INTERFACE_AFTER]);
         self.interface_declaration_before.get_or_insert(table.spacing[options::SITE_INTERFACE_DECLARATION_INTERFACE_DECLARATION_BEFORE]);
+        self.interface_declaration_after.get_or_insert(table.spacing[options::SITE_INTERFACE_DECLARATION_INTERFACE_DECLARATION_AFTER]);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
         self.extends_type_clause.fill_options(table);
@@ -53964,22 +53964,22 @@ pub struct ExtendsTypeClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Vec<::sittir_core::SlotValue<ExtendsTypeClauseTypeTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
-    pub extends_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_before"))]
     pub extends_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_type_clause_after"))]
-    pub extends_type_clause_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_type_clause_before"))]
-    pub extends_type_clause_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
-    pub type_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
-    pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
+    pub extends_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_end"))]
     pub type_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_start"))]
     pub type_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
+    pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
+    pub type_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_type_clause_before"))]
+    pub extends_type_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_type_clause_after"))]
+    pub extends_type_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExtendsTypeClauseTransport {
@@ -53990,14 +53990,14 @@ impl ::std::fmt::Display for ExtendsTypeClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ExtendsTypeClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.extends_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_AFTER]);
         self.extends_before.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_BEFORE]);
-        self.extends_type_clause_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_TYPE_CLAUSE_AFTER]);
-        self.extends_type_clause_before.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_TYPE_CLAUSE_BEFORE]);
-        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER]);
-        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE]);
+        self.extends_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_AFTER]);
         self.type_end.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_END]);
         self.type_start.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_START]);
+        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE]);
+        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER]);
+        self.extends_type_clause_before.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_TYPE_CLAUSE_BEFORE]);
+        self.extends_type_clause_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_EXTENDS_TYPE_CLAUSE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -54045,14 +54045,14 @@ pub struct EnumDeclarationTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<EnumBodyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_after"))]
-    pub enum_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_before"))]
     pub enum_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_declaration_after"))]
-    pub enum_declaration_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_after"))]
+    pub enum_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_declaration_before"))]
     pub enum_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_declaration_after"))]
+    pub enum_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for EnumDeclarationTransport {
@@ -54063,10 +54063,10 @@ impl ::std::fmt::Display for EnumDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for EnumDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.enum_after.get_or_insert(table.spacing[options::SITE_ENUM_DECLARATION_ENUM_AFTER]);
         self.enum_before.get_or_insert(table.spacing[options::SITE_ENUM_DECLARATION_ENUM_BEFORE]);
-        self.enum_declaration_after.get_or_insert(table.spacing[options::SITE_ENUM_DECLARATION_ENUM_DECLARATION_AFTER]);
+        self.enum_after.get_or_insert(table.spacing[options::SITE_ENUM_DECLARATION_ENUM_AFTER]);
         self.enum_declaration_before.get_or_insert(table.spacing[options::SITE_ENUM_DECLARATION_ENUM_DECLARATION_BEFORE]);
+        self.enum_declaration_after.get_or_insert(table.spacing[options::SITE_ENUM_DECLARATION_ENUM_DECLARATION_AFTER]);
         self.const_marker.fill_options(table);
         self.name.fill_options(table);
         self.body.fill_options(table);
@@ -54112,18 +54112,18 @@ pub struct EnumBodyTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements"))]
     pub enum_body_elements: Option<::sittir_core::SlotValue<EnumBodyElementsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_after"))]
-    pub enum_body_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_before"))]
-    pub enum_body_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
+    pub lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_before"))]
+    pub enum_body_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_after"))]
+    pub enum_body_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for EnumBodyTransport {
@@ -54134,12 +54134,12 @@ impl ::std::fmt::Display for EnumBodyTransport {
 
 impl ::sittir_core::options::FillOptions for EnumBodyTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.enum_body_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ENUM_BODY_AFTER]);
-        self.enum_body_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ENUM_BODY_BEFORE]);
-        self.lbrace_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_LBRACE_AFTER]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_LBRACE_BEFORE]);
+        self.lbrace_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_RBRACE_AFTER]);
+        self.enum_body_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ENUM_BODY_BEFORE]);
+        self.enum_body_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ENUM_BODY_AFTER]);
         self.enum_body_elements.fill_options(table);
     }
 }
@@ -54185,14 +54185,14 @@ pub struct EnumAssignmentTransport {
     pub name: ::sittir_core::SlotValue<EnumAssignmentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_assignment_after"))]
-    pub enum_assignment_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_assignment_before"))]
-    pub enum_assignment_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_assignment_before"))]
+    pub enum_assignment_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_assignment_after"))]
+    pub enum_assignment_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for EnumAssignmentTransport {
@@ -54203,10 +54203,10 @@ impl ::std::fmt::Display for EnumAssignmentTransport {
 
 impl ::sittir_core::options::FillOptions for EnumAssignmentTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.enum_assignment_after.get_or_insert(table.spacing[options::SITE_ENUM_ASSIGNMENT_ENUM_ASSIGNMENT_AFTER]);
-        self.enum_assignment_before.get_or_insert(table.spacing[options::SITE_ENUM_ASSIGNMENT_ENUM_ASSIGNMENT_BEFORE]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_ENUM_ASSIGNMENT_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_ENUM_ASSIGNMENT_EQ_BEFORE]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_ENUM_ASSIGNMENT_EQ_AFTER]);
+        self.enum_assignment_before.get_or_insert(table.spacing[options::SITE_ENUM_ASSIGNMENT_ENUM_ASSIGNMENT_BEFORE]);
+        self.enum_assignment_after.get_or_insert(table.spacing[options::SITE_ENUM_ASSIGNMENT_ENUM_ASSIGNMENT_AFTER]);
         self.name.fill_options(table);
         self.value.fill_options(table);
     }
@@ -54257,18 +54257,18 @@ pub struct TypeAliasDeclarationTransport {
     pub value: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<TypeAliasDeclarationTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_after"))]
-    pub anon_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_before"))]
-    pub anon_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_alias_declaration_after"))]
-    pub type_alias_declaration_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_before"))]
+    pub anon_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_after"))]
+    pub anon_type_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_alias_declaration_before"))]
     pub type_alias_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_alias_declaration_after"))]
+    pub type_alias_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeAliasDeclarationTransport {
@@ -54279,12 +54279,12 @@ impl ::std::fmt::Display for TypeAliasDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for TypeAliasDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_type_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_AFTER]);
-        self.anon_type_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_BEFORE]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_EQ_BEFORE]);
-        self.type_alias_declaration_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_TYPE_ALIAS_DECLARATION_AFTER]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_EQ_AFTER]);
+        self.anon_type_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_BEFORE]);
+        self.anon_type_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_AFTER]);
         self.type_alias_declaration_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_TYPE_ALIAS_DECLARATION_BEFORE]);
+        self.type_alias_declaration_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_DECLARATION_TYPE_ALIAS_DECLARATION_AFTER]);
         self.name.fill_options(table);
         self.type_parameters.fill_options(table);
         self.value.fill_options(table);
@@ -54569,20 +54569,20 @@ pub struct RequiredParameterTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<::sittir_core::SlotValue<OverrideModifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_required_parameter_after"))]
-    pub required_parameter_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_required_parameter_before"))]
     pub required_parameter_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_required_parameter_after"))]
+    pub required_parameter_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for RequiredParameterTransport {
@@ -54593,13 +54593,13 @@ impl ::std::fmt::Display for RequiredParameterTransport {
 
 impl ::sittir_core::options::FillOptions for RequiredParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_START]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_EQ_BEFORE]);
-        self.required_parameter_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_AFTER]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_EQ_AFTER]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.required_parameter_before.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_BEFORE]);
+        self.required_parameter_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_AFTER]);
         self.decorator.fill_options(table);
         self.readonly_marker.fill_options(table);
         self.pattern.fill_options(table);
@@ -54661,24 +54661,24 @@ pub struct OptionalParameterTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<::sittir_core::SlotValue<OverrideModifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_after"))]
-    pub optional_parameter_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_before"))]
-    pub optional_parameter_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
-    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_before"))]
     pub qmark_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
+    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_before"))]
+    pub optional_parameter_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_after"))]
+    pub optional_parameter_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for OptionalParameterTransport {
@@ -54689,15 +54689,15 @@ impl ::std::fmt::Display for OptionalParameterTransport {
 
 impl ::sittir_core::options::FillOptions for OptionalParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_START]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_EQ_BEFORE]);
-        self.optional_parameter_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_AFTER]);
-        self.optional_parameter_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_BEFORE]);
-        self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_QMARK_AFTER]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_EQ_AFTER]);
         self.qmark_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_QMARK_BEFORE]);
+        self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_QMARK_AFTER]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
+        self.optional_parameter_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_BEFORE]);
+        self.optional_parameter_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_AFTER]);
         self.decorator.fill_options(table);
         self.readonly_marker.fill_options(table);
         self.pattern.fill_options(table);
@@ -54747,14 +54747,14 @@ pub struct OmittingTypeAnnotationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_qmark_colon_after"))]
-    pub dash_qmark_colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_qmark_colon_before"))]
     pub dash_qmark_colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_omitting_type_annotation_after"))]
-    pub omitting_type_annotation_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_qmark_colon_after"))]
+    pub dash_qmark_colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_omitting_type_annotation_before"))]
     pub omitting_type_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_omitting_type_annotation_after"))]
+    pub omitting_type_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for OmittingTypeAnnotationTransport {
@@ -54765,10 +54765,10 @@ impl ::std::fmt::Display for OmittingTypeAnnotationTransport {
 
 impl ::sittir_core::options::FillOptions for OmittingTypeAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dash_qmark_colon_after.get_or_insert(table.spacing[options::SITE_OMITTING_TYPE_ANNOTATION_DASH_QMARK_COLON_AFTER]);
         self.dash_qmark_colon_before.get_or_insert(table.spacing[options::SITE_OMITTING_TYPE_ANNOTATION_DASH_QMARK_COLON_BEFORE]);
-        self.omitting_type_annotation_after.get_or_insert(table.spacing[options::SITE_OMITTING_TYPE_ANNOTATION_OMITTING_TYPE_ANNOTATION_AFTER]);
+        self.dash_qmark_colon_after.get_or_insert(table.spacing[options::SITE_OMITTING_TYPE_ANNOTATION_DASH_QMARK_COLON_AFTER]);
         self.omitting_type_annotation_before.get_or_insert(table.spacing[options::SITE_OMITTING_TYPE_ANNOTATION_OMITTING_TYPE_ANNOTATION_BEFORE]);
+        self.omitting_type_annotation_after.get_or_insert(table.spacing[options::SITE_OMITTING_TYPE_ANNOTATION_OMITTING_TYPE_ANNOTATION_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -54812,14 +54812,14 @@ pub struct AddingTypeAnnotationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_adding_type_annotation_after"))]
-    pub adding_type_annotation_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_adding_type_annotation_before"))]
-    pub adding_type_annotation_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_plus_qmark_colon_after"))]
-    pub plus_qmark_colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_plus_qmark_colon_before"))]
     pub plus_qmark_colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_plus_qmark_colon_after"))]
+    pub plus_qmark_colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_adding_type_annotation_before"))]
+    pub adding_type_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_adding_type_annotation_after"))]
+    pub adding_type_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AddingTypeAnnotationTransport {
@@ -54830,10 +54830,10 @@ impl ::std::fmt::Display for AddingTypeAnnotationTransport {
 
 impl ::sittir_core::options::FillOptions for AddingTypeAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.adding_type_annotation_after.get_or_insert(table.spacing[options::SITE_ADDING_TYPE_ANNOTATION_ADDING_TYPE_ANNOTATION_AFTER]);
-        self.adding_type_annotation_before.get_or_insert(table.spacing[options::SITE_ADDING_TYPE_ANNOTATION_ADDING_TYPE_ANNOTATION_BEFORE]);
-        self.plus_qmark_colon_after.get_or_insert(table.spacing[options::SITE_ADDING_TYPE_ANNOTATION_PLUS_QMARK_COLON_AFTER]);
         self.plus_qmark_colon_before.get_or_insert(table.spacing[options::SITE_ADDING_TYPE_ANNOTATION_PLUS_QMARK_COLON_BEFORE]);
+        self.plus_qmark_colon_after.get_or_insert(table.spacing[options::SITE_ADDING_TYPE_ANNOTATION_PLUS_QMARK_COLON_AFTER]);
+        self.adding_type_annotation_before.get_or_insert(table.spacing[options::SITE_ADDING_TYPE_ANNOTATION_ADDING_TYPE_ANNOTATION_BEFORE]);
+        self.adding_type_annotation_after.get_or_insert(table.spacing[options::SITE_ADDING_TYPE_ANNOTATION_ADDING_TYPE_ANNOTATION_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -54877,14 +54877,14 @@ pub struct OptingTypeAnnotationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opting_type_annotation_after"))]
-    pub opting_type_annotation_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opting_type_annotation_before"))]
-    pub opting_type_annotation_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_colon_after"))]
-    pub qmark_colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_colon_before"))]
     pub qmark_colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_colon_after"))]
+    pub qmark_colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opting_type_annotation_before"))]
+    pub opting_type_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opting_type_annotation_after"))]
+    pub opting_type_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for OptingTypeAnnotationTransport {
@@ -54895,10 +54895,10 @@ impl ::std::fmt::Display for OptingTypeAnnotationTransport {
 
 impl ::sittir_core::options::FillOptions for OptingTypeAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.opting_type_annotation_after.get_or_insert(table.spacing[options::SITE_OPTING_TYPE_ANNOTATION_OPTING_TYPE_ANNOTATION_AFTER]);
-        self.opting_type_annotation_before.get_or_insert(table.spacing[options::SITE_OPTING_TYPE_ANNOTATION_OPTING_TYPE_ANNOTATION_BEFORE]);
-        self.qmark_colon_after.get_or_insert(table.spacing[options::SITE_OPTING_TYPE_ANNOTATION_QMARK_COLON_AFTER]);
         self.qmark_colon_before.get_or_insert(table.spacing[options::SITE_OPTING_TYPE_ANNOTATION_QMARK_COLON_BEFORE]);
+        self.qmark_colon_after.get_or_insert(table.spacing[options::SITE_OPTING_TYPE_ANNOTATION_QMARK_COLON_AFTER]);
+        self.opting_type_annotation_before.get_or_insert(table.spacing[options::SITE_OPTING_TYPE_ANNOTATION_OPTING_TYPE_ANNOTATION_BEFORE]);
+        self.opting_type_annotation_after.get_or_insert(table.spacing[options::SITE_OPTING_TYPE_ANNOTATION_OPTING_TYPE_ANNOTATION_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -54942,14 +54942,14 @@ pub struct TypeAnnotationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation_after"))]
-    pub type_annotation_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation_before"))]
     pub type_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_annotation_after"))]
+    pub type_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeAnnotationTransport {
@@ -54960,10 +54960,10 @@ impl ::std::fmt::Display for TypeAnnotationTransport {
 
 impl ::sittir_core::options::FillOptions for TypeAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_TYPE_ANNOTATION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_TYPE_ANNOTATION_COLON_BEFORE]);
-        self.type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_ANNOTATION_TYPE_ANNOTATION_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_TYPE_ANNOTATION_COLON_AFTER]);
         self.type_annotation_before.get_or_insert(table.spacing[options::SITE_TYPE_ANNOTATION_TYPE_ANNOTATION_BEFORE]);
+        self.type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_ANNOTATION_TYPE_ANNOTATION_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -55009,14 +55009,14 @@ pub struct TypeQueryMemberExpressionInTypeAnnotationTransport {
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: ::sittir_core::SlotValue<TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
     pub dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_member_expression_in_type_annotation_after"))]
-    pub type_query_member_expression_in_type_annotation_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
+    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_member_expression_in_type_annotation_before"))]
     pub type_query_member_expression_in_type_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_member_expression_in_type_annotation_after"))]
+    pub type_query_member_expression_in_type_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeQueryMemberExpressionInTypeAnnotationTransport {
@@ -55027,10 +55027,10 @@ impl ::std::fmt::Display for TypeQueryMemberExpressionInTypeAnnotationTransport 
 
 impl ::sittir_core::options::FillOptions for TypeQueryMemberExpressionInTypeAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dot_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_DOT_AFTER]);
         self.dot_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_DOT_BEFORE]);
-        self.type_query_member_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]);
+        self.dot_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_DOT_AFTER]);
         self.type_query_member_expression_in_type_annotation_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_BEFORE]);
+        self.type_query_member_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]);
         self.object.fill_options(table);
         self.property.fill_options(table);
     }
@@ -55077,10 +55077,10 @@ pub struct TypeQueryCallExpressionInTypeAnnotationTransport {
     pub function: ::sittir_core::SlotValue<Box<TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_call_expression_in_type_annotation_after"))]
-    pub type_query_call_expression_in_type_annotation_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_call_expression_in_type_annotation_before"))]
     pub type_query_call_expression_in_type_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_call_expression_in_type_annotation_after"))]
+    pub type_query_call_expression_in_type_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeQueryCallExpressionInTypeAnnotationTransport {
@@ -55091,8 +55091,8 @@ impl ::std::fmt::Display for TypeQueryCallExpressionInTypeAnnotationTransport {
 
 impl ::sittir_core::options::FillOptions for TypeQueryCallExpressionInTypeAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_query_call_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]);
         self.type_query_call_expression_in_type_annotation_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_BEFORE]);
+        self.type_query_call_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]);
         self.function.fill_options(table);
         self.arguments.fill_options(table);
     }
@@ -55137,14 +55137,14 @@ pub struct AssertsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AssertsContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_asserts_after"))]
-    pub anon_asserts_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_asserts_before"))]
     pub anon_asserts_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts_after"))]
-    pub asserts_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_asserts_after"))]
+    pub anon_asserts_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts_before"))]
     pub asserts_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts_after"))]
+    pub asserts_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AssertsTransport {
@@ -55155,10 +55155,10 @@ impl ::std::fmt::Display for AssertsTransport {
 
 impl ::sittir_core::options::FillOptions for AssertsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_asserts_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ANON_ASSERTS_AFTER]);
         self.anon_asserts_before.get_or_insert(table.spacing[options::SITE_ASSERTS_ANON_ASSERTS_BEFORE]);
-        self.asserts_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ASSERTS_AFTER]);
+        self.anon_asserts_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ANON_ASSERTS_AFTER]);
         self.asserts_before.get_or_insert(table.spacing[options::SITE_ASSERTS_ASSERTS_BEFORE]);
+        self.asserts_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ASSERTS_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -55202,14 +55202,14 @@ pub struct AssertsAnnotationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts"))]
     pub asserts: ::sittir_core::SlotValue<AssertsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts_annotation_after"))]
-    pub asserts_annotation_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts_annotation_before"))]
-    pub asserts_annotation_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts_annotation_before"))]
+    pub asserts_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_asserts_annotation_after"))]
+    pub asserts_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AssertsAnnotationTransport {
@@ -55220,10 +55220,10 @@ impl ::std::fmt::Display for AssertsAnnotationTransport {
 
 impl ::sittir_core::options::FillOptions for AssertsAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.asserts_annotation_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ANNOTATION_ASSERTS_ANNOTATION_AFTER]);
-        self.asserts_annotation_before.get_or_insert(table.spacing[options::SITE_ASSERTS_ANNOTATION_ASSERTS_ANNOTATION_BEFORE]);
-        self.colon_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ANNOTATION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_ASSERTS_ANNOTATION_COLON_BEFORE]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ANNOTATION_COLON_AFTER]);
+        self.asserts_annotation_before.get_or_insert(table.spacing[options::SITE_ASSERTS_ANNOTATION_ASSERTS_ANNOTATION_BEFORE]);
+        self.asserts_annotation_after.get_or_insert(table.spacing[options::SITE_ASSERTS_ANNOTATION_ASSERTS_ANNOTATION_AFTER]);
         self.asserts.fill_options(table);
     }
 }
@@ -55269,10 +55269,10 @@ pub struct TupleParameterTransport {
     pub name: ::sittir_core::SlotValue<TupleParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeAnnotationTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_parameter_after"))]
-    pub tuple_parameter_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_parameter_before"))]
     pub tuple_parameter_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_parameter_after"))]
+    pub tuple_parameter_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TupleParameterTransport {
@@ -55283,8 +55283,8 @@ impl ::std::fmt::Display for TupleParameterTransport {
 
 impl ::sittir_core::options::FillOptions for TupleParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.tuple_parameter_after.get_or_insert(table.spacing[options::SITE_TUPLE_PARAMETER_TUPLE_PARAMETER_AFTER]);
         self.tuple_parameter_before.get_or_insert(table.spacing[options::SITE_TUPLE_PARAMETER_TUPLE_PARAMETER_BEFORE]);
+        self.tuple_parameter_after.get_or_insert(table.spacing[options::SITE_TUPLE_PARAMETER_TUPLE_PARAMETER_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
     }
@@ -55331,14 +55331,14 @@ pub struct OptionalTupleParameterTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeAnnotationTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_tuple_parameter_after"))]
-    pub optional_tuple_parameter_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_tuple_parameter_before"))]
-    pub optional_tuple_parameter_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
-    pub qmark_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_before"))]
     pub qmark_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
+    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_tuple_parameter_before"))]
+    pub optional_tuple_parameter_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_tuple_parameter_after"))]
+    pub optional_tuple_parameter_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for OptionalTupleParameterTransport {
@@ -55349,10 +55349,10 @@ impl ::std::fmt::Display for OptionalTupleParameterTransport {
 
 impl ::sittir_core::options::FillOptions for OptionalTupleParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.optional_tuple_parameter_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TUPLE_PARAMETER_OPTIONAL_TUPLE_PARAMETER_AFTER]);
-        self.optional_tuple_parameter_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_TUPLE_PARAMETER_OPTIONAL_TUPLE_PARAMETER_BEFORE]);
-        self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TUPLE_PARAMETER_QMARK_AFTER]);
         self.qmark_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_TUPLE_PARAMETER_QMARK_BEFORE]);
+        self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TUPLE_PARAMETER_QMARK_AFTER]);
+        self.optional_tuple_parameter_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_TUPLE_PARAMETER_OPTIONAL_TUPLE_PARAMETER_BEFORE]);
+        self.optional_tuple_parameter_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TUPLE_PARAMETER_OPTIONAL_TUPLE_PARAMETER_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
     }
@@ -55397,14 +55397,14 @@ pub struct OptionalTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_type_after"))]
-    pub optional_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_type_before"))]
-    pub optional_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
-    pub qmark_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_before"))]
     pub qmark_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
+    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_type_before"))]
+    pub optional_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_type_after"))]
+    pub optional_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for OptionalTypeTransport {
@@ -55415,10 +55415,10 @@ impl ::std::fmt::Display for OptionalTypeTransport {
 
 impl ::sittir_core::options::FillOptions for OptionalTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.optional_type_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TYPE_OPTIONAL_TYPE_AFTER]);
-        self.optional_type_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_TYPE_OPTIONAL_TYPE_BEFORE]);
-        self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TYPE_QMARK_AFTER]);
         self.qmark_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_TYPE_QMARK_BEFORE]);
+        self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TYPE_QMARK_AFTER]);
+        self.optional_type_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_TYPE_OPTIONAL_TYPE_BEFORE]);
+        self.optional_type_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_TYPE_OPTIONAL_TYPE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -55462,14 +55462,14 @@ pub struct RestTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_after"))]
-    pub dot_dot_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_before"))]
     pub dot_dot_dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rest_type_after"))]
-    pub rest_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_dot_after"))]
+    pub dot_dot_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rest_type_before"))]
     pub rest_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rest_type_after"))]
+    pub rest_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for RestTypeTransport {
@@ -55480,10 +55480,10 @@ impl ::std::fmt::Display for RestTypeTransport {
 
 impl ::sittir_core::options::FillOptions for RestTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dot_dot_dot_after.get_or_insert(table.spacing[options::SITE_REST_TYPE_DOT_DOT_DOT_AFTER]);
         self.dot_dot_dot_before.get_or_insert(table.spacing[options::SITE_REST_TYPE_DOT_DOT_DOT_BEFORE]);
-        self.rest_type_after.get_or_insert(table.spacing[options::SITE_REST_TYPE_REST_TYPE_AFTER]);
+        self.dot_dot_dot_after.get_or_insert(table.spacing[options::SITE_REST_TYPE_DOT_DOT_DOT_AFTER]);
         self.rest_type_before.get_or_insert(table.spacing[options::SITE_REST_TYPE_REST_TYPE_BEFORE]);
+        self.rest_type_after.get_or_insert(table.spacing[options::SITE_REST_TYPE_REST_TYPE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -55533,18 +55533,18 @@ pub struct ConstructorTypeTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constructor_type_after"))]
-    pub constructor_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constructor_type_before"))]
-    pub constructor_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
-    pub eq_gt_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_before"))]
-    pub eq_gt_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_after"))]
-    pub new_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_before"))]
     pub new_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_after"))]
+    pub new_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_before"))]
+    pub eq_gt_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
+    pub eq_gt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constructor_type_before"))]
+    pub constructor_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constructor_type_after"))]
+    pub constructor_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ConstructorTypeTransport {
@@ -55555,12 +55555,12 @@ impl ::std::fmt::Display for ConstructorTypeTransport {
 
 impl ::sittir_core::options::FillOptions for ConstructorTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.constructor_type_after.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_AFTER]);
-        self.constructor_type_before.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_BEFORE]);
-        self.eq_gt_after.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_EQ_GT_AFTER]);
-        self.eq_gt_before.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_EQ_GT_BEFORE]);
-        self.new_after.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_NEW_AFTER]);
         self.new_before.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_NEW_BEFORE]);
+        self.new_after.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_NEW_AFTER]);
+        self.eq_gt_before.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_EQ_GT_BEFORE]);
+        self.eq_gt_after.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_EQ_GT_AFTER]);
+        self.constructor_type_before.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_BEFORE]);
+        self.constructor_type_after.get_or_insert(table.spacing[options::SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_AFTER]);
         self.abstract_marker.fill_options(table);
         self.type_parameters.fill_options(table);
         self.parameters.fill_options(table);
@@ -55607,18 +55607,18 @@ pub struct TemplateTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<TemplateTypeContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_lbrace_after"))]
-    pub dollar_lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_lbrace_before"))]
     pub dollar_lbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
-    pub rbrace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_lbrace_after"))]
+    pub dollar_lbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
     pub rbrace_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_type_after"))]
-    pub template_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
+    pub rbrace_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_type_before"))]
     pub template_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_type_after"))]
+    pub template_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TemplateTypeTransport {
@@ -55629,12 +55629,12 @@ impl ::std::fmt::Display for TemplateTypeTransport {
 
 impl ::sittir_core::options::FillOptions for TemplateTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dollar_lbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_DOLLAR_LBRACE_AFTER]);
         self.dollar_lbrace_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_DOLLAR_LBRACE_BEFORE]);
-        self.rbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_RBRACE_AFTER]);
+        self.dollar_lbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_DOLLAR_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_RBRACE_BEFORE]);
-        self.template_type_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_TEMPLATE_TYPE_AFTER]);
+        self.rbrace_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_RBRACE_AFTER]);
         self.template_type_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_TEMPLATE_TYPE_BEFORE]);
+        self.template_type_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_TYPE_TEMPLATE_TYPE_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -55678,14 +55678,14 @@ pub struct TemplateLiteralTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<TemplateLiteralTypeElementsTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bquote_after"))]
-    pub bquote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bquote_before"))]
     pub bquote_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_literal_type_after"))]
-    pub template_literal_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bquote_after"))]
+    pub bquote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_literal_type_before"))]
     pub template_literal_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_template_literal_type_after"))]
+    pub template_literal_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TemplateLiteralTypeTransport {
@@ -55696,10 +55696,10 @@ impl ::std::fmt::Display for TemplateLiteralTypeTransport {
 
 impl ::sittir_core::options::FillOptions for TemplateLiteralTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.bquote_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_LITERAL_TYPE_BQUOTE_AFTER]);
         self.bquote_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_LITERAL_TYPE_BQUOTE_BEFORE]);
-        self.template_literal_type_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_LITERAL_TYPE_TEMPLATE_LITERAL_TYPE_AFTER]);
+        self.bquote_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_LITERAL_TYPE_BQUOTE_AFTER]);
         self.template_literal_type_before.get_or_insert(table.spacing[options::SITE_TEMPLATE_LITERAL_TYPE_TEMPLATE_LITERAL_TYPE_BEFORE]);
+        self.template_literal_type_after.get_or_insert(table.spacing[options::SITE_TEMPLATE_LITERAL_TYPE_TEMPLATE_LITERAL_TYPE_AFTER]);
         self.elements.fill_options(table);
     }
 }
@@ -55745,18 +55745,18 @@ pub struct InferTypeTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
-    pub extends_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_before"))]
     pub extends_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_infer_after"))]
-    pub infer_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
+    pub extends_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_infer_before"))]
     pub infer_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_infer_type_after"))]
-    pub infer_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_infer_after"))]
+    pub infer_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_infer_type_before"))]
     pub infer_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_infer_type_after"))]
+    pub infer_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for InferTypeTransport {
@@ -55767,12 +55767,12 @@ impl ::std::fmt::Display for InferTypeTransport {
 
 impl ::sittir_core::options::FillOptions for InferTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.extends_after.get_or_insert(table.spacing[options::SITE_INFER_TYPE_EXTENDS_AFTER]);
         self.extends_before.get_or_insert(table.spacing[options::SITE_INFER_TYPE_EXTENDS_BEFORE]);
-        self.infer_after.get_or_insert(table.spacing[options::SITE_INFER_TYPE_INFER_AFTER]);
+        self.extends_after.get_or_insert(table.spacing[options::SITE_INFER_TYPE_EXTENDS_AFTER]);
         self.infer_before.get_or_insert(table.spacing[options::SITE_INFER_TYPE_INFER_BEFORE]);
-        self.infer_type_after.get_or_insert(table.spacing[options::SITE_INFER_TYPE_INFER_TYPE_AFTER]);
+        self.infer_after.get_or_insert(table.spacing[options::SITE_INFER_TYPE_INFER_AFTER]);
         self.infer_type_before.get_or_insert(table.spacing[options::SITE_INFER_TYPE_INFER_TYPE_BEFORE]);
+        self.infer_type_after.get_or_insert(table.spacing[options::SITE_INFER_TYPE_INFER_TYPE_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
     }
@@ -55823,22 +55823,22 @@ pub struct ConditionalTypeTransport {
     pub consequence: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_type_after"))]
-    pub conditional_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_type_before"))]
-    pub conditional_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
-    pub extends_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_before"))]
     pub extends_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
-    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_after"))]
+    pub extends_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
+    pub colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_before"))]
     pub qmark_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
+    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_type_before"))]
+    pub conditional_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_type_after"))]
+    pub conditional_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ConditionalTypeTransport {
@@ -55849,14 +55849,14 @@ impl ::std::fmt::Display for ConditionalTypeTransport {
 
 impl ::sittir_core::options::FillOptions for ConditionalTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_COLON_AFTER]);
-        self.colon_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_COLON_BEFORE]);
-        self.conditional_type_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_CONDITIONAL_TYPE_AFTER]);
-        self.conditional_type_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_CONDITIONAL_TYPE_BEFORE]);
-        self.extends_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_EXTENDS_AFTER]);
         self.extends_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_EXTENDS_BEFORE]);
-        self.qmark_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_QMARK_AFTER]);
+        self.extends_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_EXTENDS_AFTER]);
+        self.colon_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_COLON_BEFORE]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_COLON_AFTER]);
         self.qmark_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_QMARK_BEFORE]);
+        self.qmark_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_QMARK_AFTER]);
+        self.conditional_type_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_CONDITIONAL_TYPE_BEFORE]);
+        self.conditional_type_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_TYPE_CONDITIONAL_TYPE_AFTER]);
         self.left.fill_options(table);
         self.right.fill_options(table);
         self.consequence.fill_options(table);
@@ -55905,10 +55905,10 @@ pub struct GenericTypeTransport {
     pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generic_type_after"))]
-    pub generic_type_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generic_type_before"))]
     pub generic_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generic_type_after"))]
+    pub generic_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for GenericTypeTransport {
@@ -55919,8 +55919,8 @@ impl ::std::fmt::Display for GenericTypeTransport {
 
 impl ::sittir_core::options::FillOptions for GenericTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.generic_type_after.get_or_insert(table.spacing[options::SITE_GENERIC_TYPE_GENERIC_TYPE_AFTER]);
         self.generic_type_before.get_or_insert(table.spacing[options::SITE_GENERIC_TYPE_GENERIC_TYPE_BEFORE]);
+        self.generic_type_after.get_or_insert(table.spacing[options::SITE_GENERIC_TYPE_GENERIC_TYPE_AFTER]);
         self.name.fill_options(table);
         self.type_arguments.fill_options(table);
     }
@@ -55967,14 +55967,14 @@ pub struct TypePredicateTransport {
     pub name: ::sittir_core::SlotValue<TypePredicateNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_is_after"))]
-    pub is_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_is_before"))]
     pub is_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate_after"))]
-    pub type_predicate_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_is_after"))]
+    pub is_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate_before"))]
     pub type_predicate_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate_after"))]
+    pub type_predicate_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypePredicateTransport {
@@ -55985,10 +55985,10 @@ impl ::std::fmt::Display for TypePredicateTransport {
 
 impl ::sittir_core::options::FillOptions for TypePredicateTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.is_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_IS_AFTER]);
         self.is_before.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_IS_BEFORE]);
-        self.type_predicate_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_TYPE_PREDICATE_AFTER]);
+        self.is_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_IS_AFTER]);
         self.type_predicate_before.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_TYPE_PREDICATE_BEFORE]);
+        self.type_predicate_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_TYPE_PREDICATE_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
     }
@@ -56033,14 +56033,14 @@ pub struct TypePredicateAnnotationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate"))]
     pub type_predicate: ::sittir_core::SlotValue<TypePredicateTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate_annotation_after"))]
-    pub type_predicate_annotation_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate_annotation_before"))]
     pub type_predicate_annotation_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_predicate_annotation_after"))]
+    pub type_predicate_annotation_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypePredicateAnnotationTransport {
@@ -56051,10 +56051,10 @@ impl ::std::fmt::Display for TypePredicateAnnotationTransport {
 
 impl ::sittir_core::options::FillOptions for TypePredicateAnnotationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_ANNOTATION_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_ANNOTATION_COLON_BEFORE]);
-        self.type_predicate_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_ANNOTATION_TYPE_PREDICATE_ANNOTATION_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_ANNOTATION_COLON_AFTER]);
         self.type_predicate_annotation_before.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_ANNOTATION_TYPE_PREDICATE_ANNOTATION_BEFORE]);
+        self.type_predicate_annotation_after.get_or_insert(table.spacing[options::SITE_TYPE_PREDICATE_ANNOTATION_TYPE_PREDICATE_ANNOTATION_AFTER]);
         self.type_predicate.fill_options(table);
     }
 }
@@ -56102,10 +56102,10 @@ pub struct TypeQueryMemberExpressionTransport {
     pub property: ::sittir_core::SlotValue<TypeQueryMemberExpressionPropertyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_member_expression_after"))]
-    pub type_query_member_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_member_expression_before"))]
     pub type_query_member_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_member_expression_after"))]
+    pub type_query_member_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeQueryMemberExpressionTransport {
@@ -56116,8 +56116,8 @@ impl ::std::fmt::Display for TypeQueryMemberExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for TypeQueryMemberExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_query_member_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_TYPE_QUERY_MEMBER_EXPRESSION_AFTER]);
         self.type_query_member_expression_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_TYPE_QUERY_MEMBER_EXPRESSION_BEFORE]);
+        self.type_query_member_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_MEMBER_EXPRESSION_TYPE_QUERY_MEMBER_EXPRESSION_AFTER]);
         self.object.fill_options(table);
         self.property.fill_options(table);
         self.content.fill_options(table);
@@ -56165,18 +56165,18 @@ pub struct TypeQuerySubscriptExpressionTransport {
     pub object: ::sittir_core::SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
     pub index: ::sittir_core::SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_subscript_expression_after"))]
-    pub type_query_subscript_expression_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_subscript_expression_before"))]
     pub type_query_subscript_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_subscript_expression_after"))]
+    pub type_query_subscript_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeQuerySubscriptExpressionTransport {
@@ -56187,12 +56187,12 @@ impl ::std::fmt::Display for TypeQuerySubscriptExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for TypeQuerySubscriptExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_LBRACK_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_RBRACK_BEFORE]);
-        self.type_query_subscript_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_TYPE_QUERY_SUBSCRIPT_EXPRESSION_AFTER]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_RBRACK_AFTER]);
         self.type_query_subscript_expression_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_TYPE_QUERY_SUBSCRIPT_EXPRESSION_BEFORE]);
+        self.type_query_subscript_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_TYPE_QUERY_SUBSCRIPT_EXPRESSION_AFTER]);
         self.object.fill_options(table);
         self.index.fill_options(table);
     }
@@ -56239,10 +56239,10 @@ pub struct TypeQueryCallExpressionTransport {
     pub function: ::sittir_core::SlotValue<Box<TypeQueryCallExpressionFunctionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_call_expression_after"))]
-    pub type_query_call_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_call_expression_before"))]
     pub type_query_call_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_call_expression_after"))]
+    pub type_query_call_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeQueryCallExpressionTransport {
@@ -56253,8 +56253,8 @@ impl ::std::fmt::Display for TypeQueryCallExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for TypeQueryCallExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_query_call_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_CALL_EXPRESSION_TYPE_QUERY_CALL_EXPRESSION_AFTER]);
         self.type_query_call_expression_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_CALL_EXPRESSION_TYPE_QUERY_CALL_EXPRESSION_BEFORE]);
+        self.type_query_call_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_CALL_EXPRESSION_TYPE_QUERY_CALL_EXPRESSION_AFTER]);
         self.function.fill_options(table);
         self.arguments.fill_options(table);
     }
@@ -56301,10 +56301,10 @@ pub struct TypeQueryInstantiationExpressionTransport {
     pub function: ::sittir_core::SlotValue<TypeQueryInstantiationExpressionFunctionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_instantiation_expression_after"))]
-    pub type_query_instantiation_expression_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_instantiation_expression_before"))]
     pub type_query_instantiation_expression_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_instantiation_expression_after"))]
+    pub type_query_instantiation_expression_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeQueryInstantiationExpressionTransport {
@@ -56315,8 +56315,8 @@ impl ::std::fmt::Display for TypeQueryInstantiationExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for TypeQueryInstantiationExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_query_instantiation_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_INSTANTIATION_EXPRESSION_TYPE_QUERY_INSTANTIATION_EXPRESSION_AFTER]);
         self.type_query_instantiation_expression_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_INSTANTIATION_EXPRESSION_TYPE_QUERY_INSTANTIATION_EXPRESSION_BEFORE]);
+        self.type_query_instantiation_expression_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_INSTANTIATION_EXPRESSION_TYPE_QUERY_INSTANTIATION_EXPRESSION_AFTER]);
         self.function.fill_options(table);
         self.type_arguments.fill_options(table);
     }
@@ -56361,14 +56361,14 @@ pub struct TypeQueryTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<TypeQueryContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_after"))]
-    pub type_query_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_before"))]
-    pub type_query_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_typeof_after"))]
-    pub typeof_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_typeof_before"))]
     pub typeof_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_typeof_after"))]
+    pub typeof_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_before"))]
+    pub type_query_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_query_after"))]
+    pub type_query_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeQueryTransport {
@@ -56379,10 +56379,10 @@ impl ::std::fmt::Display for TypeQueryTransport {
 
 impl ::sittir_core::options::FillOptions for TypeQueryTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_query_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_TYPE_QUERY_AFTER]);
-        self.type_query_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_TYPE_QUERY_BEFORE]);
-        self.typeof_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_TYPEOF_AFTER]);
         self.typeof_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_TYPEOF_BEFORE]);
+        self.typeof_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_TYPEOF_AFTER]);
+        self.type_query_before.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_TYPE_QUERY_BEFORE]);
+        self.type_query_after.get_or_insert(table.spacing[options::SITE_TYPE_QUERY_TYPE_QUERY_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -56426,14 +56426,14 @@ pub struct IndexTypeQueryTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type_query_after"))]
-    pub index_type_query_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type_query_before"))]
-    pub index_type_query_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_keyof_after"))]
-    pub keyof_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_keyof_before"))]
     pub keyof_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_keyof_after"))]
+    pub keyof_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type_query_before"))]
+    pub index_type_query_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type_query_after"))]
+    pub index_type_query_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for IndexTypeQueryTransport {
@@ -56444,10 +56444,10 @@ impl ::std::fmt::Display for IndexTypeQueryTransport {
 
 impl ::sittir_core::options::FillOptions for IndexTypeQueryTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.index_type_query_after.get_or_insert(table.spacing[options::SITE_INDEX_TYPE_QUERY_INDEX_TYPE_QUERY_AFTER]);
-        self.index_type_query_before.get_or_insert(table.spacing[options::SITE_INDEX_TYPE_QUERY_INDEX_TYPE_QUERY_BEFORE]);
-        self.keyof_after.get_or_insert(table.spacing[options::SITE_INDEX_TYPE_QUERY_KEYOF_AFTER]);
         self.keyof_before.get_or_insert(table.spacing[options::SITE_INDEX_TYPE_QUERY_KEYOF_BEFORE]);
+        self.keyof_after.get_or_insert(table.spacing[options::SITE_INDEX_TYPE_QUERY_KEYOF_AFTER]);
+        self.index_type_query_before.get_or_insert(table.spacing[options::SITE_INDEX_TYPE_QUERY_INDEX_TYPE_QUERY_BEFORE]);
+        self.index_type_query_after.get_or_insert(table.spacing[options::SITE_INDEX_TYPE_QUERY_INDEX_TYPE_QUERY_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -56493,18 +56493,18 @@ pub struct LookupTypeTransport {
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type"))]
     pub index_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lookup_type_after"))]
-    pub lookup_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lookup_type_before"))]
-    pub lookup_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lookup_type_before"))]
+    pub lookup_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lookup_type_after"))]
+    pub lookup_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for LookupTypeTransport {
@@ -56515,12 +56515,12 @@ impl ::std::fmt::Display for LookupTypeTransport {
 
 impl ::sittir_core::options::FillOptions for LookupTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_LBRACK_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_LBRACK_BEFORE]);
-        self.lookup_type_after.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_LOOKUP_TYPE_AFTER]);
-        self.lookup_type_before.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_LOOKUP_TYPE_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_RBRACK_BEFORE]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_RBRACK_AFTER]);
+        self.lookup_type_before.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_LOOKUP_TYPE_BEFORE]);
+        self.lookup_type_after.get_or_insert(table.spacing[options::SITE_LOOKUP_TYPE_LOOKUP_TYPE_AFTER]);
         self.type_.fill_options(table);
         self.index_type.fill_options(table);
     }
@@ -56569,18 +56569,18 @@ pub struct MappedTypeClauseTransport {
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: Option<::sittir_core::SlotValue<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
+    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_before"))]
     pub in_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mapped_type_clause_after"))]
-    pub mapped_type_clause_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
+    pub in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mapped_type_clause_before"))]
     pub mapped_type_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mapped_type_clause_after"))]
+    pub mapped_type_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for MappedTypeClauseTransport {
@@ -56591,12 +56591,12 @@ impl ::std::fmt::Display for MappedTypeClauseTransport {
 
 impl ::sittir_core::options::FillOptions for MappedTypeClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_AS_AFTER]);
         self.as_before.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_AS_BEFORE]);
-        self.in_after.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_IN_AFTER]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_AS_AFTER]);
         self.in_before.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_IN_BEFORE]);
-        self.mapped_type_clause_after.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_MAPPED_TYPE_CLAUSE_AFTER]);
+        self.in_after.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_IN_AFTER]);
         self.mapped_type_clause_before.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_MAPPED_TYPE_CLAUSE_BEFORE]);
+        self.mapped_type_clause_after.get_or_insert(table.spacing[options::SITE_MAPPED_TYPE_CLAUSE_MAPPED_TYPE_CLAUSE_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
         self.alias.fill_options(table);
@@ -56697,10 +56697,10 @@ pub struct _NumberTransport {
     pub operator: ::sittir_core::SlotValue<NumberOperatorEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<NumberTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
     pub dot_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
+    pub dot_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for _NumberTransport {
@@ -56711,8 +56711,8 @@ impl ::std::fmt::Display for _NumberTransport {
 
 impl ::sittir_core::options::FillOptions for _NumberTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dot_after.get_or_insert(table.spacing[options::SITE_NUMBER_DOT_AFTER]);
         self.dot_before.get_or_insert(table.spacing[options::SITE_NUMBER_DOT_BEFORE]);
+        self.dot_after.get_or_insert(table.spacing[options::SITE_NUMBER_DOT_AFTER]);
         self.operator.fill_options(table);
         self.argument.fill_options(table);
     }
@@ -56864,14 +56864,14 @@ pub struct FlowMaybeTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_flow_maybe_type_after"))]
-    pub flow_maybe_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_flow_maybe_type_before"))]
-    pub flow_maybe_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
-    pub qmark_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_before"))]
     pub qmark_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
+    pub qmark_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_flow_maybe_type_before"))]
+    pub flow_maybe_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_flow_maybe_type_after"))]
+    pub flow_maybe_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FlowMaybeTypeTransport {
@@ -56882,10 +56882,10 @@ impl ::std::fmt::Display for FlowMaybeTypeTransport {
 
 impl ::sittir_core::options::FillOptions for FlowMaybeTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.flow_maybe_type_after.get_or_insert(table.spacing[options::SITE_FLOW_MAYBE_TYPE_FLOW_MAYBE_TYPE_AFTER]);
-        self.flow_maybe_type_before.get_or_insert(table.spacing[options::SITE_FLOW_MAYBE_TYPE_FLOW_MAYBE_TYPE_BEFORE]);
-        self.qmark_after.get_or_insert(table.spacing[options::SITE_FLOW_MAYBE_TYPE_QMARK_AFTER]);
         self.qmark_before.get_or_insert(table.spacing[options::SITE_FLOW_MAYBE_TYPE_QMARK_BEFORE]);
+        self.qmark_after.get_or_insert(table.spacing[options::SITE_FLOW_MAYBE_TYPE_QMARK_AFTER]);
+        self.flow_maybe_type_before.get_or_insert(table.spacing[options::SITE_FLOW_MAYBE_TYPE_FLOW_MAYBE_TYPE_BEFORE]);
+        self.flow_maybe_type_after.get_or_insert(table.spacing[options::SITE_FLOW_MAYBE_TYPE_FLOW_MAYBE_TYPE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -56929,18 +56929,18 @@ pub struct ParenthesizedTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_type_after"))]
-    pub parenthesized_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_type_before"))]
-    pub parenthesized_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_type_before"))]
+    pub parenthesized_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_type_after"))]
+    pub parenthesized_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ParenthesizedTypeTransport {
@@ -56951,12 +56951,12 @@ impl ::std::fmt::Display for ParenthesizedTypeTransport {
 
 impl ::sittir_core::options::FillOptions for ParenthesizedTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_LPAREN_BEFORE]);
-        self.parenthesized_type_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_PARENTHESIZED_TYPE_AFTER]);
-        self.parenthesized_type_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_PARENTHESIZED_TYPE_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_RPAREN_AFTER]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_RPAREN_AFTER]);
+        self.parenthesized_type_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_PARENTHESIZED_TYPE_BEFORE]);
+        self.parenthesized_type_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_TYPE_PARENTHESIZED_TYPE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -57144,18 +57144,18 @@ pub struct TypeArgumentsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_after"))]
-    pub gt_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_before"))]
-    pub gt_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lt_after"))]
-    pub lt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lt_before"))]
     pub lt_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments_after"))]
-    pub type_arguments_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lt_after"))]
+    pub lt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_before"))]
+    pub gt_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_after"))]
+    pub gt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments_before"))]
     pub type_arguments_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments_after"))]
+    pub type_arguments_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeArgumentsTransport {
@@ -57166,12 +57166,12 @@ impl ::std::fmt::Display for TypeArgumentsTransport {
 
 impl ::sittir_core::options::FillOptions for TypeArgumentsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.gt_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_GT_AFTER]);
-        self.gt_before.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_GT_BEFORE]);
-        self.lt_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_LT_AFTER]);
         self.lt_before.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_LT_BEFORE]);
-        self.type_arguments_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_TYPE_ARGUMENTS_AFTER]);
+        self.lt_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_LT_AFTER]);
+        self.gt_before.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_GT_BEFORE]);
+        self.gt_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_GT_AFTER]);
         self.type_arguments_before.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_TYPE_ARGUMENTS_BEFORE]);
+        self.type_arguments_after.get_or_insert(table.spacing[options::SITE_TYPE_ARGUMENTS_TYPE_ARGUMENTS_AFTER]);
         self.types.fill_options(table);
     }
 }
@@ -57223,14 +57223,14 @@ pub struct ObjectTypeTransport {
     pub closing_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing_after"))]
     pub closing_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_after"))]
-    pub object_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_before"))]
-    pub object_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening_after"))]
-    pub opening_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening_before"))]
     pub opening_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening_after"))]
+    pub opening_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_before"))]
+    pub object_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_after"))]
+    pub object_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ObjectTypeTransport {
@@ -57243,10 +57243,10 @@ impl ::sittir_core::options::FillOptions for ObjectTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.closing_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CLOSING_BEFORE]);
         self.closing_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CLOSING_AFTER]);
-        self.object_type_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OBJECT_TYPE_AFTER]);
-        self.object_type_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OBJECT_TYPE_BEFORE]);
-        self.opening_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OPENING_AFTER]);
         self.opening_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OPENING_BEFORE]);
+        self.opening_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OPENING_AFTER]);
+        self.object_type_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OBJECT_TYPE_BEFORE]);
+        self.object_type_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_OBJECT_TYPE_AFTER]);
         self.opening.fill_options(table);
         self.members.fill_options(table);
         self.closing.fill_options(table);
@@ -57296,10 +57296,10 @@ pub struct CallSignatureTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<CallSignatureReturnTypeTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_signature_after"))]
-    pub call_signature_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_signature_before"))]
     pub call_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_signature_after"))]
+    pub call_signature_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for CallSignatureTransport {
@@ -57310,8 +57310,8 @@ impl ::std::fmt::Display for CallSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for CallSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.call_signature_after.get_or_insert(table.spacing[options::SITE_CALL_SIGNATURE_CALL_SIGNATURE_AFTER]);
         self.call_signature_before.get_or_insert(table.spacing[options::SITE_CALL_SIGNATURE_CALL_SIGNATURE_BEFORE]);
+        self.call_signature_after.get_or_insert(table.spacing[options::SITE_CALL_SIGNATURE_CALL_SIGNATURE_AFTER]);
         self.type_parameters.fill_options(table);
         self.parameters.fill_options(table);
         self.return_type.fill_options(table);
@@ -57369,18 +57369,18 @@ pub struct PropertySignatureTransport {
     pub optional_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
-    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
     pub accessibility_modifier_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
-    pub optional_marker_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
     pub optional_marker_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property_signature_after"))]
-    pub property_signature_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
+    pub optional_marker_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property_signature_before"))]
     pub property_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property_signature_after"))]
+    pub property_signature_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for PropertySignatureTransport {
@@ -57391,12 +57391,12 @@ impl ::std::fmt::Display for PropertySignatureTransport {
 
 impl ::sittir_core::options::FillOptions for PropertySignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
         self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_ACCESSIBILITY_MODIFIER_BEFORE]);
-        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_AFTER]);
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
         self.optional_marker_before.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_BEFORE]);
-        self.property_signature_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_AFTER]);
+        self.optional_marker_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_AFTER]);
         self.property_signature_before.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_BEFORE]);
+        self.property_signature_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_AFTER]);
         self.accessibility_modifier.fill_options(table);
         self.static_marker.fill_options(table);
         self.override_modifier.fill_options(table);
@@ -57446,18 +57446,18 @@ pub struct TypeParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements"))]
     pub type_parameters_elements: ::sittir_core::SlotValue<TypeParametersElementsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_after"))]
-    pub gt_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_before"))]
-    pub gt_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lt_after"))]
-    pub lt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lt_before"))]
     pub lt_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_after"))]
-    pub type_parameters_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lt_after"))]
+    pub lt_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_before"))]
+    pub gt_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_after"))]
+    pub gt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_before"))]
     pub type_parameters_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_after"))]
+    pub type_parameters_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeParametersTransport {
@@ -57468,12 +57468,12 @@ impl ::std::fmt::Display for TypeParametersTransport {
 
 impl ::sittir_core::options::FillOptions for TypeParametersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.gt_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_GT_AFTER]);
-        self.gt_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_GT_BEFORE]);
-        self.lt_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_LT_AFTER]);
         self.lt_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_LT_BEFORE]);
-        self.type_parameters_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_TYPE_PARAMETERS_AFTER]);
+        self.lt_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_LT_AFTER]);
+        self.gt_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_GT_BEFORE]);
+        self.gt_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_GT_AFTER]);
         self.type_parameters_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_TYPE_PARAMETERS_BEFORE]);
+        self.type_parameters_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_TYPE_PARAMETERS_AFTER]);
         self.type_parameters_elements.fill_options(table);
     }
 }
@@ -57523,10 +57523,10 @@ pub struct TypeParameterTransport {
     pub constraint: Option<::sittir_core::SlotValue<ConstraintTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<::sittir_core::SlotValue<DefaultTypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_after"))]
-    pub type_parameter_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_before"))]
     pub type_parameter_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_after"))]
+    pub type_parameter_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeParameterTransport {
@@ -57537,8 +57537,8 @@ impl ::std::fmt::Display for TypeParameterTransport {
 
 impl ::sittir_core::options::FillOptions for TypeParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_parameter_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER]);
         self.type_parameter_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE]);
+        self.type_parameter_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER]);
         self.const_marker.fill_options(table);
         self.name.fill_options(table);
         self.constraint.fill_options(table);
@@ -57585,14 +57585,14 @@ pub struct DefaultTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_type_after"))]
-    pub default_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_type_before"))]
-    pub default_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_type_before"))]
+    pub default_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_type_after"))]
+    pub default_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for DefaultTypeTransport {
@@ -57603,10 +57603,10 @@ impl ::std::fmt::Display for DefaultTypeTransport {
 
 impl ::sittir_core::options::FillOptions for DefaultTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.default_type_after.get_or_insert(table.spacing[options::SITE_DEFAULT_TYPE_DEFAULT_TYPE_AFTER]);
-        self.default_type_before.get_or_insert(table.spacing[options::SITE_DEFAULT_TYPE_DEFAULT_TYPE_BEFORE]);
-        self.eq_after.get_or_insert(table.spacing[options::SITE_DEFAULT_TYPE_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_DEFAULT_TYPE_EQ_BEFORE]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_DEFAULT_TYPE_EQ_AFTER]);
+        self.default_type_before.get_or_insert(table.spacing[options::SITE_DEFAULT_TYPE_DEFAULT_TYPE_BEFORE]);
+        self.default_type_after.get_or_insert(table.spacing[options::SITE_DEFAULT_TYPE_DEFAULT_TYPE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -57652,10 +57652,10 @@ pub struct ConstraintTransport {
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint_after"))]
-    pub constraint_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint_before"))]
     pub constraint_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint_after"))]
+    pub constraint_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ConstraintTransport {
@@ -57666,8 +57666,8 @@ impl ::std::fmt::Display for ConstraintTransport {
 
 impl ::sittir_core::options::FillOptions for ConstraintTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.constraint_after.get_or_insert(table.spacing[options::SITE_CONSTRAINT_CONSTRAINT_AFTER]);
         self.constraint_before.get_or_insert(table.spacing[options::SITE_CONSTRAINT_CONSTRAINT_BEFORE]);
+        self.constraint_after.get_or_insert(table.spacing[options::SITE_CONSTRAINT_CONSTRAINT_AFTER]);
         self.type_.fill_options(table);
         self.content.fill_options(table);
     }
@@ -57718,14 +57718,14 @@ pub struct ConstructSignatureTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_construct_signature_after"))]
-    pub construct_signature_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_construct_signature_before"))]
-    pub construct_signature_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_after"))]
-    pub new_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_before"))]
     pub new_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_new_after"))]
+    pub new_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_construct_signature_before"))]
+    pub construct_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_construct_signature_after"))]
+    pub construct_signature_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ConstructSignatureTransport {
@@ -57736,10 +57736,10 @@ impl ::std::fmt::Display for ConstructSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for ConstructSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.construct_signature_after.get_or_insert(table.spacing[options::SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_AFTER]);
-        self.construct_signature_before.get_or_insert(table.spacing[options::SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_BEFORE]);
-        self.new_after.get_or_insert(table.spacing[options::SITE_CONSTRUCT_SIGNATURE_NEW_AFTER]);
         self.new_before.get_or_insert(table.spacing[options::SITE_CONSTRUCT_SIGNATURE_NEW_BEFORE]);
+        self.new_after.get_or_insert(table.spacing[options::SITE_CONSTRUCT_SIGNATURE_NEW_AFTER]);
+        self.construct_signature_before.get_or_insert(table.spacing[options::SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_BEFORE]);
+        self.construct_signature_after.get_or_insert(table.spacing[options::SITE_CONSTRUCT_SIGNATURE_CONSTRUCT_SIGNATURE_AFTER]);
         self.abstract_marker.fill_options(table);
         self.type_parameters.fill_options(table);
         self.parameters.fill_options(table);
@@ -57792,22 +57792,22 @@ pub struct IndexSignatureTransport {
     pub type_: ::sittir_core::SlotValue<IndexSignatureTypeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<IndexSignatureContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_after"))]
-    pub index_signature_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_before"))]
-    pub index_signature_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
-    pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
-    pub rbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign_after"))]
-    pub sign_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign_before"))]
     pub sign_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign_after"))]
+    pub sign_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
+    pub lbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
+    pub rbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_before"))]
+    pub index_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_after"))]
+    pub index_signature_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for IndexSignatureTransport {
@@ -57818,14 +57818,14 @@ impl ::std::fmt::Display for IndexSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for IndexSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.index_signature_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_INDEX_SIGNATURE_AFTER]);
-        self.index_signature_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_INDEX_SIGNATURE_BEFORE]);
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_LBRACK_AFTER]);
-        self.lbrack_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_RBRACK_AFTER]);
-        self.rbrack_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_RBRACK_BEFORE]);
-        self.sign_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_SIGN_AFTER]);
         self.sign_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_SIGN_BEFORE]);
+        self.sign_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_SIGN_AFTER]);
+        self.lbrack_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_LBRACK_BEFORE]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_LBRACK_AFTER]);
+        self.rbrack_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_RBRACK_BEFORE]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_RBRACK_AFTER]);
+        self.index_signature_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_INDEX_SIGNATURE_BEFORE]);
+        self.index_signature_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_INDEX_SIGNATURE_AFTER]);
         self.sign.fill_options(table);
         self.readonly_marker.fill_options(table);
         self.type_.fill_options(table);
@@ -57872,18 +57872,18 @@ pub struct ArrayTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<PrimaryTypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_type_after"))]
-    pub array_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_type_before"))]
-    pub array_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_type_before"))]
+    pub array_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_type_after"))]
+    pub array_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ArrayTypeTransport {
@@ -57894,12 +57894,12 @@ impl ::std::fmt::Display for ArrayTypeTransport {
 
 impl ::sittir_core::options::FillOptions for ArrayTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.array_type_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_ARRAY_TYPE_AFTER]);
-        self.array_type_before.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_ARRAY_TYPE_BEFORE]);
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_LBRACK_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_RBRACK_BEFORE]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_RBRACK_AFTER]);
+        self.array_type_before.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_ARRAY_TYPE_BEFORE]);
+        self.array_type_after.get_or_insert(table.spacing[options::SITE_ARRAY_TYPE_ARRAY_TYPE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -57943,18 +57943,18 @@ pub struct TupleTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_members"))]
     pub tuple_type_members: Option<::sittir_core::SlotValue<TupleTypeMembersTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
-    pub rbrack_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
+    pub lbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
     pub rbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_after"))]
-    pub tuple_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
+    pub rbrack_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_before"))]
     pub tuple_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_after"))]
+    pub tuple_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TupleTypeTransport {
@@ -57965,12 +57965,12 @@ impl ::std::fmt::Display for TupleTypeTransport {
 
 impl ::sittir_core::options::FillOptions for TupleTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.lbrack_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_LBRACK_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_LBRACK_BEFORE]);
-        self.rbrack_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_RBRACK_AFTER]);
+        self.lbrack_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_RBRACK_BEFORE]);
-        self.tuple_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_TUPLE_TYPE_AFTER]);
+        self.rbrack_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_RBRACK_AFTER]);
         self.tuple_type_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_TUPLE_TYPE_BEFORE]);
+        self.tuple_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_TUPLE_TYPE_AFTER]);
         self.tuple_type_members.fill_options(table);
     }
 }
@@ -58014,14 +58014,14 @@ pub struct ReadonlyTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_after"))]
-    pub readonly_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_before"))]
     pub readonly_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_type_after"))]
-    pub readonly_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_after"))]
+    pub readonly_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_type_before"))]
     pub readonly_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_readonly_type_after"))]
+    pub readonly_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ReadonlyTypeTransport {
@@ -58032,10 +58032,10 @@ impl ::std::fmt::Display for ReadonlyTypeTransport {
 
 impl ::sittir_core::options::FillOptions for ReadonlyTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.readonly_after.get_or_insert(table.spacing[options::SITE_READONLY_TYPE_READONLY_AFTER]);
         self.readonly_before.get_or_insert(table.spacing[options::SITE_READONLY_TYPE_READONLY_BEFORE]);
-        self.readonly_type_after.get_or_insert(table.spacing[options::SITE_READONLY_TYPE_READONLY_TYPE_AFTER]);
+        self.readonly_after.get_or_insert(table.spacing[options::SITE_READONLY_TYPE_READONLY_AFTER]);
         self.readonly_type_before.get_or_insert(table.spacing[options::SITE_READONLY_TYPE_READONLY_TYPE_BEFORE]);
+        self.readonly_type_after.get_or_insert(table.spacing[options::SITE_READONLY_TYPE_READONLY_TYPE_AFTER]);
         self.type_.fill_options(table);
     }
 }
@@ -58081,14 +58081,14 @@ pub struct UnionTypeTransport {
     pub left: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pipe_after"))]
-    pub pipe_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pipe_before"))]
     pub pipe_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_union_type_after"))]
-    pub union_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pipe_after"))]
+    pub pipe_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_union_type_before"))]
     pub union_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_union_type_after"))]
+    pub union_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for UnionTypeTransport {
@@ -58099,10 +58099,10 @@ impl ::std::fmt::Display for UnionTypeTransport {
 
 impl ::sittir_core::options::FillOptions for UnionTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.pipe_after.get_or_insert(table.spacing[options::SITE_UNION_TYPE_PIPE_AFTER]);
         self.pipe_before.get_or_insert(table.spacing[options::SITE_UNION_TYPE_PIPE_BEFORE]);
-        self.union_type_after.get_or_insert(table.spacing[options::SITE_UNION_TYPE_UNION_TYPE_AFTER]);
+        self.pipe_after.get_or_insert(table.spacing[options::SITE_UNION_TYPE_PIPE_AFTER]);
         self.union_type_before.get_or_insert(table.spacing[options::SITE_UNION_TYPE_UNION_TYPE_BEFORE]);
+        self.union_type_after.get_or_insert(table.spacing[options::SITE_UNION_TYPE_UNION_TYPE_AFTER]);
         self.left.fill_options(table);
         self.right.fill_options(table);
     }
@@ -58149,14 +58149,14 @@ pub struct IntersectionTypeTransport {
     pub left: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_amp_after"))]
-    pub amp_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_amp_before"))]
     pub amp_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_intersection_type_after"))]
-    pub intersection_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_amp_after"))]
+    pub amp_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_intersection_type_before"))]
     pub intersection_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_intersection_type_after"))]
+    pub intersection_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for IntersectionTypeTransport {
@@ -58167,10 +58167,10 @@ impl ::std::fmt::Display for IntersectionTypeTransport {
 
 impl ::sittir_core::options::FillOptions for IntersectionTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.amp_after.get_or_insert(table.spacing[options::SITE_INTERSECTION_TYPE_AMP_AFTER]);
         self.amp_before.get_or_insert(table.spacing[options::SITE_INTERSECTION_TYPE_AMP_BEFORE]);
-        self.intersection_type_after.get_or_insert(table.spacing[options::SITE_INTERSECTION_TYPE_INTERSECTION_TYPE_AFTER]);
+        self.amp_after.get_or_insert(table.spacing[options::SITE_INTERSECTION_TYPE_AMP_AFTER]);
         self.intersection_type_before.get_or_insert(table.spacing[options::SITE_INTERSECTION_TYPE_INTERSECTION_TYPE_BEFORE]);
+        self.intersection_type_after.get_or_insert(table.spacing[options::SITE_INTERSECTION_TYPE_INTERSECTION_TYPE_AFTER]);
         self.left.fill_options(table);
         self.right.fill_options(table);
     }
@@ -58219,14 +58219,14 @@ pub struct FunctionTypeTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: ::sittir_core::SlotValue<Box<FunctionTypeReturnTypeTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
-    pub eq_gt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_before"))]
     pub eq_gt_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_after"))]
-    pub function_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
+    pub eq_gt_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_before"))]
     pub function_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_after"))]
+    pub function_type_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FunctionTypeTransport {
@@ -58237,10 +58237,10 @@ impl ::std::fmt::Display for FunctionTypeTransport {
 
 impl ::sittir_core::options::FillOptions for FunctionTypeTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.eq_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_EQ_GT_AFTER]);
         self.eq_gt_before.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_EQ_GT_BEFORE]);
-        self.function_type_after.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_FUNCTION_TYPE_AFTER]);
+        self.eq_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_EQ_GT_AFTER]);
         self.function_type_before.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_FUNCTION_TYPE_BEFORE]);
+        self.function_type_after.get_or_insert(table.spacing[options::SITE_FUNCTION_TYPE_FUNCTION_TYPE_AFTER]);
         self.type_parameters.fill_options(table);
         self.parameters.fill_options(table);
         self.return_type.fill_options(table);
@@ -59529,18 +59529,18 @@ pub struct ExportSpecifiersTransport {
     pub export_specifier: Vec<::sittir_core::SlotValue<ExportSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_separator_space_after"))]
-    pub export_specifier_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_separator_space_before"))]
-    pub export_specifier_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_end"))]
     pub export_specifier_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_start"))]
     pub export_specifier_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifiers_after"))]
-    pub export_specifiers_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_separator_space_before"))]
+    pub export_specifier_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifier_separator_space_after"))]
+    pub export_specifier_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifiers_before"))]
     pub export_specifiers_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_specifiers_after"))]
+    pub export_specifiers_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportSpecifiersTransport {
@@ -59551,12 +59551,12 @@ impl ::std::fmt::Display for ExportSpecifiersTransport {
 
 impl ::sittir_core::options::FillOptions for ExportSpecifiersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_specifier_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_AFTER]);
-        self.export_specifier_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE]);
         self.export_specifier_end.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_END]);
         self.export_specifier_start.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_START]);
-        self.export_specifiers_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_AFTER]);
+        self.export_specifier_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE]);
+        self.export_specifier_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIER_SEPARATOR_SPACE_AFTER]);
         self.export_specifiers_before.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_BEFORE]);
+        self.export_specifiers_after.get_or_insert(table.spacing[options::SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_EXPORT_SPECIFIERS_EXPORT_SPECIFIER]);
         self.export_specifier.fill_options(table);
     }
@@ -59603,18 +59603,18 @@ pub struct ImportSpecifiersTransport {
     pub import_specifier: Vec<::sittir_core::SlotValue<ImportSpecifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_separator_space_after"))]
-    pub import_specifier_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_separator_space_before"))]
-    pub import_specifier_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_end"))]
     pub import_specifier_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_start"))]
     pub import_specifier_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifiers_after"))]
-    pub import_specifiers_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_separator_space_before"))]
+    pub import_specifier_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_separator_space_after"))]
+    pub import_specifier_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifiers_before"))]
     pub import_specifiers_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifiers_after"))]
+    pub import_specifiers_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportSpecifiersTransport {
@@ -59625,12 +59625,12 @@ impl ::std::fmt::Display for ImportSpecifiersTransport {
 
 impl ::sittir_core::options::FillOptions for ImportSpecifiersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.import_specifier_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_AFTER]);
-        self.import_specifier_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE]);
         self.import_specifier_end.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_END]);
         self.import_specifier_start.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_START]);
-        self.import_specifiers_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_AFTER]);
+        self.import_specifier_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE]);
+        self.import_specifier_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_AFTER]);
         self.import_specifiers_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_BEFORE]);
+        self.import_specifiers_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_IMPORT_SPECIFIERS_IMPORT_SPECIFIER]);
         self.import_specifier.fill_options(table);
     }
@@ -59677,18 +59677,18 @@ pub struct FormalParametersElementsTransport {
     pub formal_parameter: Vec<::sittir_core::SlotValue<FormalParametersElementsFormalParameterTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_separator_space_after"))]
-    pub formal_parameter_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_separator_space_before"))]
-    pub formal_parameter_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_end"))]
     pub formal_parameter_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_start"))]
     pub formal_parameter_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_elements_after"))]
-    pub formal_parameters_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_separator_space_before"))]
+    pub formal_parameter_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameter_separator_space_after"))]
+    pub formal_parameter_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_elements_before"))]
     pub formal_parameters_elements_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_formal_parameters_elements_after"))]
+    pub formal_parameters_elements_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for FormalParametersElementsTransport {
@@ -59699,12 +59699,12 @@ impl ::std::fmt::Display for FormalParametersElementsTransport {
 
 impl ::sittir_core::options::FillOptions for FormalParametersElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);
-        self.formal_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);
         self.formal_parameter_end.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_END]);
         self.formal_parameter_start.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_START]);
-        self.formal_parameters_elements_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_AFTER]);
+        self.formal_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);
+        self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);
         self.formal_parameters_elements_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_BEFORE]);
+        self.formal_parameters_elements_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETERS_ELEMENTS_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);
         self.formal_parameter.fill_options(table);
     }
@@ -59751,18 +59751,18 @@ pub struct EnumBodyElementsTransport {
     pub content: Option<Vec<::sittir_core::SlotValue<EnumBodyElementsContentTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_after"))]
-    pub content_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_before"))]
-    pub content_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_end"))]
     pub content_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_start"))]
     pub content_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements_after"))]
-    pub enum_body_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_before"))]
+    pub content_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_after"))]
+    pub content_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements_before"))]
     pub enum_body_elements_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_body_elements_after"))]
+    pub enum_body_elements_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for EnumBodyElementsTransport {
@@ -59773,12 +59773,12 @@ impl ::std::fmt::Display for EnumBodyElementsTransport {
 
 impl ::sittir_core::options::FillOptions for EnumBodyElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.content_separator_space_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_SEPARATOR_SPACE_AFTER]);
-        self.content_separator_space_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_SEPARATOR_SPACE_BEFORE]);
         self.content_end.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_END]);
         self.content_start.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_START]);
-        self.enum_body_elements_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_AFTER]);
+        self.content_separator_space_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_SEPARATOR_SPACE_BEFORE]);
+        self.content_separator_space_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_SEPARATOR_SPACE_AFTER]);
         self.enum_body_elements_before.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_BEFORE]);
+        self.enum_body_elements_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_ENUM_BODY_ELEMENTS_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_ENUM_BODY_ELEMENTS_CONTENT]);
         self.content.fill_options(table);
     }
@@ -59825,18 +59825,18 @@ pub struct TypesTransport {
     pub type_: Vec<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
-    pub type_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
-    pub type_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_end"))]
     pub type_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_start"))]
     pub type_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types_after"))]
-    pub types_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_before"))]
+    pub type_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
+    pub type_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types_before"))]
     pub types_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types_after"))]
+    pub types_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypesTransport {
@@ -59847,12 +59847,12 @@ impl ::std::fmt::Display for TypesTransport {
 
 impl ::sittir_core::options::FillOptions for TypesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER]);
-        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE]);
         self.type_end.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_END]);
         self.type_start.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_START]);
-        self.types_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPES_AFTER]);
+        self.type_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE]);
+        self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER]);
         self.types_before.get_or_insert(table.spacing[options::SITE_TYPES_TYPES_BEFORE]);
+        self.types_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPES_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPES_TYPE]);
         self.type_.fill_options(table);
     }
@@ -59899,18 +59899,18 @@ pub struct TypeParametersElementsTransport {
     pub type_parameter: Vec<::sittir_core::SlotValue<TypeParameterTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_separator_space_after"))]
-    pub type_parameter_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_separator_space_before"))]
-    pub type_parameter_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_end"))]
     pub type_parameter_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_start"))]
     pub type_parameter_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements_after"))]
-    pub type_parameters_elements_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_separator_space_before"))]
+    pub type_parameter_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter_separator_space_after"))]
+    pub type_parameter_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements_before"))]
     pub type_parameters_elements_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters_elements_after"))]
+    pub type_parameters_elements_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TypeParametersElementsTransport {
@@ -59921,12 +59921,12 @@ impl ::std::fmt::Display for TypeParametersElementsTransport {
 
 impl ::sittir_core::options::FillOptions for TypeParametersElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.type_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_AFTER]);
-        self.type_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_BEFORE]);
         self.type_parameter_end.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_END]);
         self.type_parameter_start.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_START]);
-        self.type_parameters_elements_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_AFTER]);
+        self.type_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_BEFORE]);
+        self.type_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER_SEPARATOR_SPACE_AFTER]);
         self.type_parameters_elements_before.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_BEFORE]);
+        self.type_parameters_elements_after.get_or_insert(table.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER]);
         self.type_parameter.fill_options(table);
     }
@@ -59973,18 +59973,18 @@ pub struct TupleTypeMembersTransport {
     pub tuple_type_member: Vec<::sittir_core::SlotValue<TupleTypeMembersTupleTypeMemberTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delimiter"))]
     pub delimiter: Option<u8>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_separator_space_after"))]
-    pub tuple_type_member_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_separator_space_before"))]
-    pub tuple_type_member_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_end"))]
     pub tuple_type_member_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_start"))]
     pub tuple_type_member_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_members_after"))]
-    pub tuple_type_members_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_separator_space_before"))]
+    pub tuple_type_member_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_member_separator_space_after"))]
+    pub tuple_type_member_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_members_before"))]
     pub tuple_type_members_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_type_members_after"))]
+    pub tuple_type_members_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for TupleTypeMembersTransport {
@@ -59995,12 +59995,12 @@ impl ::std::fmt::Display for TupleTypeMembersTransport {
 
 impl ::sittir_core::options::FillOptions for TupleTypeMembersTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.tuple_type_member_separator_space_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_AFTER]);
-        self.tuple_type_member_separator_space_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_BEFORE]);
         self.tuple_type_member_end.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_END]);
         self.tuple_type_member_start.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_START]);
-        self.tuple_type_members_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_AFTER]);
+        self.tuple_type_member_separator_space_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_BEFORE]);
+        self.tuple_type_member_separator_space_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_AFTER]);
         self.tuple_type_members_before.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_BEFORE]);
+        self.tuple_type_members_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER]);
         self.tuple_type_member.fill_options(table);
     }
@@ -60045,14 +60045,14 @@ pub struct ImportClauseGroupTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportClauseGroupContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_after"))]
-    pub comma_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
     pub comma_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_group_after"))]
-    pub import_clause_group_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_after"))]
+    pub comma_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_group_before"))]
     pub import_clause_group_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_group_after"))]
+    pub import_clause_group_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportClauseGroupTransport {
@@ -60063,10 +60063,10 @@ impl ::std::fmt::Display for ImportClauseGroupTransport {
 
 impl ::sittir_core::options::FillOptions for ImportClauseGroupTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.comma_after.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_GROUP_COMMA_AFTER]);
         self.comma_before.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_GROUP_COMMA_BEFORE]);
-        self.import_clause_group_after.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_GROUP_IMPORT_CLAUSE_GROUP_AFTER]);
+        self.comma_after.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_GROUP_COMMA_AFTER]);
         self.import_clause_group_before.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_GROUP_IMPORT_CLAUSE_GROUP_BEFORE]);
+        self.import_clause_group_after.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_GROUP_IMPORT_CLAUSE_GROUP_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -60112,18 +60112,18 @@ pub struct CatchClauseGroupTransport {
     pub parameter: ::sittir_core::SlotValue<CatchClauseGroupParameterTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_group_after"))]
-    pub catch_clause_group_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_group_before"))]
-    pub catch_clause_group_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
-    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
+    pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
     pub rparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
+    pub rparen_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_group_before"))]
+    pub catch_clause_group_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_catch_clause_group_after"))]
+    pub catch_clause_group_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for CatchClauseGroupTransport {
@@ -60134,12 +60134,12 @@ impl ::std::fmt::Display for CatchClauseGroupTransport {
 
 impl ::sittir_core::options::FillOptions for CatchClauseGroupTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.catch_clause_group_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_CATCH_CLAUSE_GROUP_AFTER]);
-        self.catch_clause_group_before.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_CATCH_CLAUSE_GROUP_BEFORE]);
-        self.lparen_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_LPAREN_BEFORE]);
-        self.rparen_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_RPAREN_AFTER]);
+        self.lparen_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_RPAREN_BEFORE]);
+        self.rparen_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_RPAREN_AFTER]);
+        self.catch_clause_group_before.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_CATCH_CLAUSE_GROUP_BEFORE]);
+        self.catch_clause_group_after.get_or_insert(table.spacing[options::SITE_CATCH_CLAUSE_GROUP_CATCH_CLAUSE_GROUP_AFTER]);
         self.parameter.fill_options(table);
         self.type_.fill_options(table);
     }
@@ -60832,14 +60832,14 @@ pub struct AmbientDeclarationGlobalTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_after"))]
-    pub ambient_declaration_global_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_before"))]
-    pub ambient_declaration_global_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_after"))]
-    pub global_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_before"))]
     pub global_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_after"))]
+    pub global_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_before"))]
+    pub ambient_declaration_global_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_after"))]
+    pub ambient_declaration_global_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AmbientDeclarationGlobalTransport {
@@ -60850,10 +60850,10 @@ impl ::std::fmt::Display for AmbientDeclarationGlobalTransport {
 
 impl ::sittir_core::options::FillOptions for AmbientDeclarationGlobalTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.ambient_declaration_global_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_AFTER]);
-        self.ambient_declaration_global_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_BEFORE]);
-        self.global_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_AFTER]);
         self.global_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_BEFORE]);
+        self.global_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_AFTER]);
+        self.ambient_declaration_global_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_BEFORE]);
+        self.ambient_declaration_global_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_AFTER]);
         self.body.fill_options(table);
     }
 }
@@ -60901,22 +60901,22 @@ pub struct AmbientDeclarationModuleTransport {
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: Option<::sittir_core::SlotValue<AmbientDeclarationModuleTerminatorTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_module_after"))]
-    pub ambient_declaration_module_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_module_before"))]
-    pub ambient_declaration_module_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_module_after"))]
-    pub anon_module_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_module_before"))]
-    pub anon_module_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
     pub dot_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
+    pub dot_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
+    pub colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_module_before"))]
+    pub anon_module_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_module_after"))]
+    pub anon_module_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_module_before"))]
+    pub ambient_declaration_module_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_module_after"))]
+    pub ambient_declaration_module_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for AmbientDeclarationModuleTransport {
@@ -60927,14 +60927,14 @@ impl ::std::fmt::Display for AmbientDeclarationModuleTransport {
 
 impl ::sittir_core::options::FillOptions for AmbientDeclarationModuleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.ambient_declaration_module_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_AFTER]);
-        self.ambient_declaration_module_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_BEFORE]);
-        self.anon_module_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_AFTER]);
-        self.anon_module_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_BEFORE]);
-        self.colon_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_COLON_AFTER]);
-        self.colon_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_COLON_BEFORE]);
-        self.dot_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_DOT_AFTER]);
         self.dot_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_DOT_BEFORE]);
+        self.dot_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_DOT_AFTER]);
+        self.colon_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_COLON_BEFORE]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_COLON_AFTER]);
+        self.anon_module_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_BEFORE]);
+        self.anon_module_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_AFTER]);
+        self.ambient_declaration_module_before.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_BEFORE]);
+        self.ambient_declaration_module_after.get_or_insert(table.spacing[options::SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
         self.terminator.fill_options(table);
@@ -60986,16 +60986,16 @@ pub struct ObjectTypeContentTransport {
     pub separator_kind: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_end"))]
     pub content_end: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_after"))]
-    pub content_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_before"))]
-    pub content_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_start"))]
     pub content_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_content_after"))]
-    pub object_type_content_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_before"))]
+    pub content_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space_after"))]
+    pub content_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_content_before"))]
     pub object_type_content_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object_type_content_after"))]
+    pub object_type_content_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ObjectTypeContentTransport {
@@ -61007,11 +61007,11 @@ impl ::std::fmt::Display for ObjectTypeContentTransport {
 impl ::sittir_core::options::FillOptions for ObjectTypeContentTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.content_end.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_END]);
-        self.content_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_AFTER]);
-        self.content_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_BEFORE]);
         self.content_start.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_START]);
-        self.object_type_content_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_AFTER]);
+        self.content_separator_space_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_BEFORE]);
+        self.content_separator_space_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_AFTER]);
         self.object_type_content_before.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_BEFORE]);
+        self.object_type_content_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_AFTER]);
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_OBJECT_TYPE_CONTENT_CONTENT]);
         self.separator_kind.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR]);
         self.content.fill_options(table);
@@ -61112,22 +61112,22 @@ pub struct ExportStatementNamespaceExportTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ExportStatementNamespaceExportTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
-    pub export_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
+    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_before"))]
     pub export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_namespace_export_after"))]
-    pub export_statement_namespace_export_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_namespace_export_before"))]
-    pub export_statement_namespace_export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_after"))]
-    pub namespace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
+    pub export_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_before"))]
     pub namespace_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_after"))]
+    pub namespace_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_namespace_export_before"))]
+    pub export_statement_namespace_export_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_namespace_export_after"))]
+    pub export_statement_namespace_export_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementNamespaceExportTransport {
@@ -61138,14 +61138,14 @@ impl ::std::fmt::Display for ExportStatementNamespaceExportTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementNamespaceExportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_AS_AFTER]);
         self.as_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_AS_BEFORE]);
-        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_AFTER]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_AS_AFTER]);
         self.export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_BEFORE]);
-        self.export_statement_namespace_export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER]);
-        self.export_statement_namespace_export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_STATEMENT_NAMESPACE_EXPORT_BEFORE]);
-        self.namespace_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_NAMESPACE_AFTER]);
+        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_AFTER]);
         self.namespace_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_NAMESPACE_BEFORE]);
+        self.namespace_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_NAMESPACE_AFTER]);
+        self.export_statement_namespace_export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_STATEMENT_NAMESPACE_EXPORT_BEFORE]);
+        self.export_statement_namespace_export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER]);
         self.name.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -61194,22 +61194,22 @@ pub struct ExportStatementTypeExportTransport {
     pub source: Option<::sittir_core::SlotValue<StringTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ExportStatementTypeExportTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_after"))]
-    pub anon_type_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_before"))]
-    pub anon_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
-    pub export_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_before"))]
     pub export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_type_export_after"))]
-    pub export_statement_type_export_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_type_export_before"))]
-    pub export_statement_type_export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
+    pub export_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
     pub from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
+    pub from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_before"))]
+    pub anon_type_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_after"))]
+    pub anon_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_type_export_before"))]
+    pub export_statement_type_export_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_type_export_after"))]
+    pub export_statement_type_export_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementTypeExportTransport {
@@ -61220,14 +61220,14 @@ impl ::std::fmt::Display for ExportStatementTypeExportTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementTypeExportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_type_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_AFTER]);
-        self.anon_type_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_BEFORE]);
-        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_AFTER]);
         self.export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_BEFORE]);
-        self.export_statement_type_export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_STATEMENT_TYPE_EXPORT_AFTER]);
-        self.export_statement_type_export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_STATEMENT_TYPE_EXPORT_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_FROM_AFTER]);
+        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_AFTER]);
         self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_FROM_BEFORE]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_FROM_AFTER]);
+        self.anon_type_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_BEFORE]);
+        self.anon_type_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_AFTER]);
+        self.export_statement_type_export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_STATEMENT_TYPE_EXPORT_BEFORE]);
+        self.export_statement_type_export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_STATEMENT_TYPE_EXPORT_AFTER]);
         self.export_clause.fill_options(table);
         self.source.fill_options(table);
         self.terminator.fill_options(table);
@@ -61275,18 +61275,18 @@ pub struct ExportStatementEqualsExportTransport {
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
     pub terminator: ::sittir_core::SlotValue<ExportStatementEqualsExportTerminatorTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
-    pub export_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_before"))]
     pub export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_equals_export_after"))]
-    pub export_statement_equals_export_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
+    pub export_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
+    pub eq_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_equals_export_before"))]
     pub export_statement_equals_export_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_equals_export_after"))]
+    pub export_statement_equals_export_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementEqualsExportTransport {
@@ -61297,12 +61297,12 @@ impl ::std::fmt::Display for ExportStatementEqualsExportTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementEqualsExportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.eq_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_AFTER]);
-        self.eq_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_BEFORE]);
-        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_AFTER]);
         self.export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_BEFORE]);
-        self.export_statement_equals_export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER]);
+        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_AFTER]);
+        self.eq_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_BEFORE]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_AFTER]);
         self.export_statement_equals_export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_STATEMENT_EQUALS_EXPORT_BEFORE]);
+        self.export_statement_equals_export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER]);
         self.expression.fill_options(table);
         self.terminator.fill_options(table);
     }
@@ -61349,10 +61349,10 @@ pub struct BinaryExpressionInTransport {
     pub left: ::sittir_core::SlotValue<Box<BinaryExpressionInLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_in_after"))]
-    pub binary_expression_in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_in_before"))]
     pub binary_expression_in_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_binary_expression_in_after"))]
+    pub binary_expression_in_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for BinaryExpressionInTransport {
@@ -61363,8 +61363,8 @@ impl ::std::fmt::Display for BinaryExpressionInTransport {
 
 impl ::sittir_core::options::FillOptions for BinaryExpressionInTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.binary_expression_in_after.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_IN_BINARY_EXPRESSION_IN_AFTER]);
         self.binary_expression_in_before.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_IN_BINARY_EXPRESSION_IN_BEFORE]);
+        self.binary_expression_in_after.get_or_insert(table.spacing[options::SITE_BINARY_EXPRESSION_IN_BINARY_EXPRESSION_IN_AFTER]);
         self.left.fill_options(table);
         self.right.fill_options(table);
     }
@@ -61413,16 +61413,16 @@ pub struct ClassBodyMethodTransport {
     pub terminator: Option<::sittir_core::SlotValue<ClassBodyMethodTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
     pub method_definition: ::sittir_core::SlotValue<MethodDefinitionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_method_after"))]
-    pub class_body_method_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_method_before"))]
-    pub class_body_method_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_method_before"))]
+    pub class_body_method_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_method_after"))]
+    pub class_body_method_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassBodyMethodTransport {
@@ -61433,11 +61433,11 @@ impl ::std::fmt::Display for ClassBodyMethodTransport {
 
 impl ::sittir_core::options::FillOptions for ClassBodyMethodTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_body_method_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_AFTER]);
-        self.class_body_method_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_BEFORE]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_DECORATOR_START]);
         self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_DECORATOR_SEPARATOR_SPACE]);
+        self.class_body_method_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_BEFORE]);
+        self.class_body_method_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_AFTER]);
         self.decorator.fill_options(table);
         self.terminator.fill_options(table);
         self.method_definition.fill_options(table);
@@ -61485,10 +61485,10 @@ pub struct ClassBodyMethodSigTransport {
     pub terminator: ::sittir_core::SlotValue<ClassBodyMethodSigTerminatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature"))]
     pub method_signature: ::sittir_core::SlotValue<MethodSignatureTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_method_sig_after"))]
-    pub class_body_method_sig_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_method_sig_before"))]
     pub class_body_method_sig_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_method_sig_after"))]
+    pub class_body_method_sig_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassBodyMethodSigTransport {
@@ -61499,8 +61499,8 @@ impl ::std::fmt::Display for ClassBodyMethodSigTransport {
 
 impl ::sittir_core::options::FillOptions for ClassBodyMethodSigTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_body_method_sig_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_AFTER]);
         self.class_body_method_sig_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_BEFORE]);
+        self.class_body_method_sig_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_AFTER]);
         self.terminator.fill_options(table);
         self.method_signature.fill_options(table);
     }
@@ -61547,10 +61547,10 @@ pub struct ClassBodyMemberTransport {
     pub terminator: ::sittir_core::SlotValue<ClassBodyMemberTerminatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ClassBodyMemberContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_member_after"))]
-    pub class_body_member_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_member_before"))]
     pub class_body_member_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_member_after"))]
+    pub class_body_member_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassBodyMemberTransport {
@@ -61561,8 +61561,8 @@ impl ::std::fmt::Display for ClassBodyMemberTransport {
 
 impl ::sittir_core::options::FillOptions for ClassBodyMemberTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_body_member_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_AFTER]);
         self.class_body_member_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_BEFORE]);
+        self.class_body_member_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_AFTER]);
         self.terminator.fill_options(table);
         self.content.fill_options(table);
     }
@@ -61609,14 +61609,14 @@ pub struct IndexSignatureColonTransport {
     pub name: ::sittir_core::SlotValue<IndexSignatureColonNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type"))]
     pub index_type: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_colon_after"))]
-    pub index_signature_colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
+    pub colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_colon_before"))]
     pub index_signature_colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_colon_after"))]
+    pub index_signature_colon_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for IndexSignatureColonTransport {
@@ -61627,10 +61627,10 @@ impl ::std::fmt::Display for IndexSignatureColonTransport {
 
 impl ::sittir_core::options::FillOptions for IndexSignatureColonTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.colon_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_COLON_COLON_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_COLON_COLON_BEFORE]);
-        self.index_signature_colon_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_COLON_INDEX_SIGNATURE_COLON_AFTER]);
+        self.colon_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_COLON_COLON_AFTER]);
         self.index_signature_colon_before.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_COLON_INDEX_SIGNATURE_COLON_BEFORE]);
+        self.index_signature_colon_after.get_or_insert(table.spacing[options::SITE_INDEX_SIGNATURE_COLON_INDEX_SIGNATURE_COLON_AFTER]);
         self.name.fill_options(table);
         self.index_type.fill_options(table);
     }
@@ -61677,14 +61677,14 @@ pub struct ImportStatementClauseFromTransport {
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause"))]
     pub import_clause: ::sittir_core::SlotValue<ImportClauseTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
     pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_clause_from_after"))]
-    pub import_statement_clause_from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
+    pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_clause_from_before"))]
     pub import_statement_clause_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_clause_from_after"))]
+    pub import_statement_clause_from_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportStatementClauseFromTransport {
@@ -61695,10 +61695,10 @@ impl ::std::fmt::Display for ImportStatementClauseFromTransport {
 
 impl ::sittir_core::options::FillOptions for ImportStatementClauseFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_CLAUSE_FROM_FROM_AFTER]);
         self.from_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_CLAUSE_FROM_FROM_BEFORE]);
-        self.import_statement_clause_from_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_CLAUSE_FROM_IMPORT_STATEMENT_CLAUSE_FROM_AFTER]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_CLAUSE_FROM_FROM_AFTER]);
         self.import_statement_clause_from_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_CLAUSE_FROM_IMPORT_STATEMENT_CLAUSE_FROM_BEFORE]);
+        self.import_statement_clause_from_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_CLAUSE_FROM_IMPORT_STATEMENT_CLAUSE_FROM_AFTER]);
         self.source.fill_options(table);
         self.import_clause.fill_options(table);
     }
@@ -61745,14 +61745,14 @@ pub struct ImportSpecifierAsTransport {
     pub name: ::sittir_core::SlotValue<ImportSpecifierAsNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ::sittir_core::SlotValue<ImportSpecifierAsAliasTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
     pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_as_after"))]
-    pub import_specifier_as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
+    pub as_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_as_before"))]
     pub import_specifier_as_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_as_after"))]
+    pub import_specifier_as_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportSpecifierAsTransport {
@@ -61763,10 +61763,10 @@ impl ::std::fmt::Display for ImportSpecifierAsTransport {
 
 impl ::sittir_core::options::FillOptions for ImportSpecifierAsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_AS_AS_AFTER]);
         self.as_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_AS_AS_BEFORE]);
-        self.import_specifier_as_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_AS_IMPORT_SPECIFIER_AS_AFTER]);
+        self.as_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_AS_AS_AFTER]);
         self.import_specifier_as_before.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_AS_IMPORT_SPECIFIER_AS_BEFORE]);
+        self.import_specifier_as_after.get_or_insert(table.spacing[options::SITE_IMPORT_SPECIFIER_AS_IMPORT_SPECIFIER_AS_AFTER]);
         self.name.fill_options(table);
         self.alias.fill_options(table);
     }
@@ -61813,10 +61813,10 @@ pub struct ParenthesizedExpressionTypedTransport {
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_typed_after"))]
-    pub parenthesized_expression_typed_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_typed_before"))]
     pub parenthesized_expression_typed_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_typed_after"))]
+    pub parenthesized_expression_typed_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ParenthesizedExpressionTypedTransport {
@@ -61827,8 +61827,8 @@ impl ::std::fmt::Display for ParenthesizedExpressionTypedTransport {
 
 impl ::sittir_core::options::FillOptions for ParenthesizedExpressionTypedTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.parenthesized_expression_typed_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_TYPED_PARENTHESIZED_EXPRESSION_TYPED_AFTER]);
         self.parenthesized_expression_typed_before.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_TYPED_PARENTHESIZED_EXPRESSION_TYPED_BEFORE]);
+        self.parenthesized_expression_typed_after.get_or_insert(table.spacing[options::SITE_PARENTHESIZED_EXPRESSION_TYPED_PARENTHESIZED_EXPRESSION_TYPED_AFTER]);
         self.type_.fill_options(table);
         self.expression.fill_options(table);
     }
@@ -61877,10 +61877,10 @@ pub struct CallExpressionCallTransport {
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_call_after"))]
-    pub call_expression_call_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_call_before"))]
     pub call_expression_call_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_call_after"))]
+    pub call_expression_call_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for CallExpressionCallTransport {
@@ -61891,8 +61891,8 @@ impl ::std::fmt::Display for CallExpressionCallTransport {
 
 impl ::sittir_core::options::FillOptions for CallExpressionCallTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.call_expression_call_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_CALL_CALL_EXPRESSION_CALL_AFTER]);
         self.call_expression_call_before.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_CALL_CALL_EXPRESSION_CALL_BEFORE]);
+        self.call_expression_call_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_CALL_CALL_EXPRESSION_CALL_AFTER]);
         self.function.fill_options(table);
         self.type_arguments.fill_options(table);
         self.arguments.fill_options(table);
@@ -61940,10 +61940,10 @@ pub struct CallExpressionTemplateCallTransport {
     pub function: ::sittir_core::SlotValue<Box<CallExpressionTemplateCallFunctionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: ::sittir_core::SlotValue<TemplateStringTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_template_call_after"))]
-    pub call_expression_template_call_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_template_call_before"))]
     pub call_expression_template_call_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_template_call_after"))]
+    pub call_expression_template_call_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for CallExpressionTemplateCallTransport {
@@ -61954,8 +61954,8 @@ impl ::std::fmt::Display for CallExpressionTemplateCallTransport {
 
 impl ::sittir_core::options::FillOptions for CallExpressionTemplateCallTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.call_expression_template_call_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_TEMPLATE_CALL_CALL_EXPRESSION_TEMPLATE_CALL_AFTER]);
         self.call_expression_template_call_before.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_TEMPLATE_CALL_CALL_EXPRESSION_TEMPLATE_CALL_BEFORE]);
+        self.call_expression_template_call_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_TEMPLATE_CALL_CALL_EXPRESSION_TEMPLATE_CALL_AFTER]);
         self.function.fill_options(table);
         self.arguments.fill_options(table);
     }
@@ -62004,14 +62004,14 @@ pub struct CallExpressionMemberTransport {
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: ::sittir_core::SlotValue<ArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_member_after"))]
-    pub call_expression_member_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_member_before"))]
-    pub call_expression_member_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_dot_after"))]
-    pub qmark_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_dot_before"))]
     pub qmark_dot_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_dot_after"))]
+    pub qmark_dot_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_member_before"))]
+    pub call_expression_member_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_member_after"))]
+    pub call_expression_member_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for CallExpressionMemberTransport {
@@ -62022,10 +62022,10 @@ impl ::std::fmt::Display for CallExpressionMemberTransport {
 
 impl ::sittir_core::options::FillOptions for CallExpressionMemberTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.call_expression_member_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_MEMBER_CALL_EXPRESSION_MEMBER_AFTER]);
-        self.call_expression_member_before.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_MEMBER_CALL_EXPRESSION_MEMBER_BEFORE]);
-        self.qmark_dot_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_MEMBER_QMARK_DOT_AFTER]);
         self.qmark_dot_before.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_MEMBER_QMARK_DOT_BEFORE]);
+        self.qmark_dot_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_MEMBER_QMARK_DOT_AFTER]);
+        self.call_expression_member_before.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_MEMBER_CALL_EXPRESSION_MEMBER_BEFORE]);
+        self.call_expression_member_after.get_or_insert(table.spacing[options::SITE_CALL_EXPRESSION_MEMBER_CALL_EXPRESSION_MEMBER_AFTER]);
         self.function.fill_options(table);
         self.type_arguments.fill_options(table);
         self.arguments.fill_options(table);
@@ -62071,14 +62071,14 @@ pub struct StringDoubleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<StringDoubleElementsTransportSlot, true>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dquote_after"))]
-    pub dquote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dquote_before"))]
     pub dquote_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_double_after"))]
-    pub string_double_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dquote_after"))]
+    pub dquote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_double_before"))]
     pub string_double_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_double_after"))]
+    pub string_double_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for StringDoubleTransport {
@@ -62089,10 +62089,10 @@ impl ::std::fmt::Display for StringDoubleTransport {
 
 impl ::sittir_core::options::FillOptions for StringDoubleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.dquote_after.get_or_insert(table.spacing[options::SITE_STRING_DOUBLE_DQUOTE_AFTER]);
         self.dquote_before.get_or_insert(table.spacing[options::SITE_STRING_DOUBLE_DQUOTE_BEFORE]);
-        self.string_double_after.get_or_insert(table.spacing[options::SITE_STRING_DOUBLE_STRING_DOUBLE_AFTER]);
+        self.dquote_after.get_or_insert(table.spacing[options::SITE_STRING_DOUBLE_DQUOTE_AFTER]);
         self.string_double_before.get_or_insert(table.spacing[options::SITE_STRING_DOUBLE_STRING_DOUBLE_BEFORE]);
+        self.string_double_after.get_or_insert(table.spacing[options::SITE_STRING_DOUBLE_STRING_DOUBLE_AFTER]);
         self.elements.fill_options(table);
     }
 }
@@ -62136,14 +62136,14 @@ pub struct StringSingleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<Vec<::sittir_core::SlotValue<StringSingleElementsTransportSlot, true>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_squote_after"))]
-    pub squote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_squote_before"))]
     pub squote_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_single_after"))]
-    pub string_single_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_squote_after"))]
+    pub squote_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_single_before"))]
     pub string_single_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_single_after"))]
+    pub string_single_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for StringSingleTransport {
@@ -62154,10 +62154,10 @@ impl ::std::fmt::Display for StringSingleTransport {
 
 impl ::sittir_core::options::FillOptions for StringSingleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.squote_after.get_or_insert(table.spacing[options::SITE_STRING_SINGLE_SQUOTE_AFTER]);
         self.squote_before.get_or_insert(table.spacing[options::SITE_STRING_SINGLE_SQUOTE_BEFORE]);
-        self.string_single_after.get_or_insert(table.spacing[options::SITE_STRING_SINGLE_STRING_SINGLE_AFTER]);
+        self.squote_after.get_or_insert(table.spacing[options::SITE_STRING_SINGLE_SQUOTE_AFTER]);
         self.string_single_before.get_or_insert(table.spacing[options::SITE_STRING_SINGLE_STRING_SINGLE_BEFORE]);
+        self.string_single_after.get_or_insert(table.spacing[options::SITE_STRING_SINGLE_STRING_SINGLE_AFTER]);
         self.elements.fill_options(table);
     }
 }
@@ -62203,10 +62203,10 @@ pub struct UpdateExpressionPostfixTransport {
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<OperatorEnum>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_postfix_after"))]
-    pub update_expression_postfix_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_postfix_before"))]
     pub update_expression_postfix_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_postfix_after"))]
+    pub update_expression_postfix_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for UpdateExpressionPostfixTransport {
@@ -62217,8 +62217,8 @@ impl ::std::fmt::Display for UpdateExpressionPostfixTransport {
 
 impl ::sittir_core::options::FillOptions for UpdateExpressionPostfixTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.update_expression_postfix_after.get_or_insert(table.spacing[options::SITE_UPDATE_EXPRESSION_POSTFIX_UPDATE_EXPRESSION_POSTFIX_AFTER]);
         self.update_expression_postfix_before.get_or_insert(table.spacing[options::SITE_UPDATE_EXPRESSION_POSTFIX_UPDATE_EXPRESSION_POSTFIX_BEFORE]);
+        self.update_expression_postfix_after.get_or_insert(table.spacing[options::SITE_UPDATE_EXPRESSION_POSTFIX_UPDATE_EXPRESSION_POSTFIX_AFTER]);
         self.argument.fill_options(table);
         self.operator.fill_options(table);
     }
@@ -62265,10 +62265,10 @@ pub struct UpdateExpressionPrefixTransport {
     pub operator: ::sittir_core::SlotValue<OperatorEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_prefix_after"))]
-    pub update_expression_prefix_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_prefix_before"))]
     pub update_expression_prefix_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_prefix_after"))]
+    pub update_expression_prefix_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for UpdateExpressionPrefixTransport {
@@ -62279,8 +62279,8 @@ impl ::std::fmt::Display for UpdateExpressionPrefixTransport {
 
 impl ::sittir_core::options::FillOptions for UpdateExpressionPrefixTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.update_expression_prefix_after.get_or_insert(table.spacing[options::SITE_UPDATE_EXPRESSION_PREFIX_UPDATE_EXPRESSION_PREFIX_AFTER]);
         self.update_expression_prefix_before.get_or_insert(table.spacing[options::SITE_UPDATE_EXPRESSION_PREFIX_UPDATE_EXPRESSION_PREFIX_BEFORE]);
+        self.update_expression_prefix_after.get_or_insert(table.spacing[options::SITE_UPDATE_EXPRESSION_PREFIX_UPDATE_EXPRESSION_PREFIX_AFTER]);
         self.operator.fill_options(table);
         self.argument.fill_options(table);
     }
@@ -62380,10 +62380,10 @@ pub struct ClassHeritageExtendsClauseTransport {
     pub extends_clause: ::sittir_core::SlotValue<ExtendsClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause"))]
     pub implements_clause: Option<::sittir_core::SlotValue<ImplementsClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage_extends_clause_after"))]
-    pub class_heritage_extends_clause_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage_extends_clause_before"))]
     pub class_heritage_extends_clause_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage_extends_clause_after"))]
+    pub class_heritage_extends_clause_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ClassHeritageExtendsClauseTransport {
@@ -62394,8 +62394,8 @@ impl ::std::fmt::Display for ClassHeritageExtendsClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ClassHeritageExtendsClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_heritage_extends_clause_after.get_or_insert(table.spacing[options::SITE_CLASS_HERITAGE_EXTENDS_CLAUSE_CLASS_HERITAGE_EXTENDS_CLAUSE_AFTER]);
         self.class_heritage_extends_clause_before.get_or_insert(table.spacing[options::SITE_CLASS_HERITAGE_EXTENDS_CLAUSE_CLASS_HERITAGE_EXTENDS_CLAUSE_BEFORE]);
+        self.class_heritage_extends_clause_after.get_or_insert(table.spacing[options::SITE_CLASS_HERITAGE_EXTENDS_CLAUSE_CLASS_HERITAGE_EXTENDS_CLAUSE_AFTER]);
         self.extends_clause.fill_options(table);
         self.implements_clause.fill_options(table);
     }
@@ -62442,10 +62442,10 @@ pub struct ImportClauseDefaultImportTransport {
     pub identifier: ::sittir_core::SlotValue<ImportClauseDefaultImportIdentifierTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_group"))]
     pub import_clause_group: Option<::sittir_core::SlotValue<ImportClauseGroupTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_default_import_after"))]
-    pub import_clause_default_import_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_default_import_before"))]
     pub import_clause_default_import_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause_default_import_after"))]
+    pub import_clause_default_import_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ImportClauseDefaultImportTransport {
@@ -62456,8 +62456,8 @@ impl ::std::fmt::Display for ImportClauseDefaultImportTransport {
 
 impl ::sittir_core::options::FillOptions for ImportClauseDefaultImportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.import_clause_default_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_DEFAULT_IMPORT_IMPORT_CLAUSE_DEFAULT_IMPORT_AFTER]);
         self.import_clause_default_import_before.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_DEFAULT_IMPORT_IMPORT_CLAUSE_DEFAULT_IMPORT_BEFORE]);
+        self.import_clause_default_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_CLAUSE_DEFAULT_IMPORT_IMPORT_CLAUSE_DEFAULT_IMPORT_AFTER]);
         self.identifier.fill_options(table);
         self.import_clause_group.fill_options(table);
     }
@@ -62504,14 +62504,14 @@ pub struct ExportStatementDefaultFromTransport {
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultFromContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: ::sittir_core::SlotValue<ExportStatementDefaultFromAutomaticSemicolonTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
-    pub export_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_before"))]
     pub export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_after"))]
-    pub export_statement_default_from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
+    pub export_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_before"))]
     pub export_statement_default_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_after"))]
+    pub export_statement_default_from_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementDefaultFromTransport {
@@ -62522,10 +62522,10 @@ impl ::std::fmt::Display for ExportStatementDefaultFromTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_AFTER]);
         self.export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_BEFORE]);
-        self.export_statement_default_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_AFTER]);
+        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_AFTER]);
         self.export_statement_default_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_BEFORE]);
+        self.export_statement_default_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_AFTER]);
         self.content.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
@@ -62572,20 +62572,20 @@ pub struct ExportStatementDefaultDeclarationTransport {
     pub decorator: Option<Vec<::sittir_core::SlotValue<DecoratorTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
-    pub export_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_before"))]
     pub export_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_after"))]
-    pub export_statement_default_declaration_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
+    pub export_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_before"))]
     pub export_statement_default_declaration_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_after"))]
+    pub export_statement_default_declaration_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementDefaultDeclarationTransport {
@@ -62596,13 +62596,13 @@ impl ::std::fmt::Display for ExportStatementDefaultDeclarationTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_START]);
-        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_AFTER]);
         self.export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_BEFORE]);
-        self.export_statement_default_declaration_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER]);
+        self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_AFTER]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.export_statement_default_declaration_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_BEFORE]);
+        self.export_statement_default_declaration_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER]);
         self.decorator.fill_options(table);
         self.content.fill_options(table);
     }
@@ -62647,18 +62647,18 @@ pub struct ExportStatementDefaultFromStarFromTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: ::sittir_core::SlotValue<StringTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_star_from_after"))]
-    pub export_statement_default_from_star_from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_star_from_before"))]
-    pub export_statement_default_from_star_from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
     pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
+    pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
     pub star_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
+    pub star_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_star_from_before"))]
+    pub export_statement_default_from_star_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_star_from_after"))]
+    pub export_statement_default_from_star_from_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementDefaultFromStarFromTransport {
@@ -62669,12 +62669,12 @@ impl ::std::fmt::Display for ExportStatementDefaultFromStarFromTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromStarFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_from_star_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_AFTER]);
-        self.export_statement_default_from_star_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_FROM_AFTER]);
         self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_FROM_BEFORE]);
-        self.star_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_STAR_AFTER]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_FROM_AFTER]);
         self.star_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_STAR_BEFORE]);
+        self.star_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_STAR_AFTER]);
+        self.export_statement_default_from_star_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_BEFORE]);
+        self.export_statement_default_from_star_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_AFTER]);
         self.source.fill_options(table);
     }
 }
@@ -62720,14 +62720,14 @@ pub struct ExportStatementDefaultFromNsFromTransport {
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export"))]
     pub namespace_export: ::sittir_core::SlotValue<NamespaceExportTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_ns_from_after"))]
-    pub export_statement_default_from_ns_from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_ns_from_before"))]
-    pub export_statement_default_from_ns_from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
     pub from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
+    pub from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_ns_from_before"))]
+    pub export_statement_default_from_ns_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_ns_from_after"))]
+    pub export_statement_default_from_ns_from_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementDefaultFromNsFromTransport {
@@ -62738,10 +62738,10 @@ impl ::std::fmt::Display for ExportStatementDefaultFromNsFromTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromNsFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_from_ns_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_AFTER]);
-        self.export_statement_default_from_ns_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_FROM_AFTER]);
         self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_FROM_BEFORE]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_FROM_AFTER]);
+        self.export_statement_default_from_ns_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_BEFORE]);
+        self.export_statement_default_from_ns_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM_AFTER]);
         self.source.fill_options(table);
         self.namespace_export.fill_options(table);
     }
@@ -62788,14 +62788,14 @@ pub struct ExportStatementDefaultFromClauseFromTransport {
     pub source: ::sittir_core::SlotValue<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ::sittir_core::SlotValue<ExportClauseTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_clause_from_after"))]
-    pub export_statement_default_from_clause_from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_clause_from_before"))]
-    pub export_statement_default_from_clause_from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
     pub from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
+    pub from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_clause_from_before"))]
+    pub export_statement_default_from_clause_from_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_clause_from_after"))]
+    pub export_statement_default_from_clause_from_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementDefaultFromClauseFromTransport {
@@ -62806,10 +62806,10 @@ impl ::std::fmt::Display for ExportStatementDefaultFromClauseFromTransport {
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultFromClauseFromTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_from_clause_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_AFTER]);
-        self.export_statement_default_from_clause_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_AFTER]);
         self.from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_BEFORE]);
+        self.from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_AFTER]);
+        self.export_statement_default_from_clause_from_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_BEFORE]);
+        self.export_statement_default_from_clause_from_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_AFTER]);
         self.source.fill_options(table);
         self.export_clause.fill_options(table);
     }
@@ -62854,14 +62854,14 @@ pub struct ExportStatementDefaultDeclarationDefaultKwTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_after"))]
-    pub default_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_before"))]
     pub default_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_after"))]
-    pub export_statement_default_declaration_default_kw_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_after"))]
+    pub default_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_before"))]
     pub export_statement_default_declaration_default_kw_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_after"))]
+    pub export_statement_default_declaration_default_kw_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwTransport {
@@ -62872,10 +62872,10 @@ impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwTransport
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationDefaultKwTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.default_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_AFTER]);
         self.default_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_BEFORE]);
-        self.export_statement_default_declaration_default_kw_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_AFTER]);
+        self.default_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_AFTER]);
         self.export_statement_default_declaration_default_kw_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_BEFORE]);
+        self.export_statement_default_declaration_default_kw_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_AFTER]);
         self.content.fill_options(table);
     }
 }
@@ -62921,10 +62921,10 @@ pub struct ExportStatementDefaultDeclarationDefaultKwValueTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_value_after"))]
-    pub export_statement_default_declaration_default_kw_value_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_value_before"))]
     pub export_statement_default_declaration_default_kw_value_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_default_kw_value_after"))]
+    pub export_statement_default_declaration_default_kw_value_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwValueTransport {
@@ -62935,8 +62935,8 @@ impl ::std::fmt::Display for ExportStatementDefaultDeclarationDefaultKwValueTran
 
 impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationDefaultKwValueTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.export_statement_default_declaration_default_kw_value_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AFTER]);
         self.export_statement_default_declaration_default_kw_value_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_BEFORE]);
+        self.export_statement_default_declaration_default_kw_value_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AFTER]);
         self.value.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
@@ -62985,14 +62985,14 @@ pub struct VariableDeclaratorPlainTransport {
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_plain_after"))]
-    pub variable_declarator_plain_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_plain_before"))]
     pub variable_declarator_plain_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_plain_after"))]
+    pub variable_declarator_plain_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for VariableDeclaratorPlainTransport {
@@ -63003,10 +63003,10 @@ impl ::std::fmt::Display for VariableDeclaratorPlainTransport {
 
 impl ::sittir_core::options::FillOptions for VariableDeclaratorPlainTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.eq_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_EQ_BEFORE]);
-        self.variable_declarator_plain_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_VARIABLE_DECLARATOR_PLAIN_AFTER]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_EQ_AFTER]);
         self.variable_declarator_plain_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_VARIABLE_DECLARATOR_PLAIN_BEFORE]);
+        self.variable_declarator_plain_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_PLAIN_VARIABLE_DECLARATOR_PLAIN_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
         self.value.fill_options(table);
@@ -63054,14 +63054,14 @@ pub struct VariableDeclaratorDefiniteTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeAnnotationTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bang_after"))]
-    pub bang_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bang_before"))]
     pub bang_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_definite_after"))]
-    pub variable_declarator_definite_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bang_after"))]
+    pub bang_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_definite_before"))]
     pub variable_declarator_definite_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_variable_declarator_definite_after"))]
+    pub variable_declarator_definite_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for VariableDeclaratorDefiniteTransport {
@@ -63072,10 +63072,10 @@ impl ::std::fmt::Display for VariableDeclaratorDefiniteTransport {
 
 impl ::sittir_core::options::FillOptions for VariableDeclaratorDefiniteTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.bang_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_AFTER]);
         self.bang_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_BEFORE]);
-        self.variable_declarator_definite_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_DEFINITE_VARIABLE_DECLARATOR_DEFINITE_AFTER]);
+        self.bang_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_AFTER]);
         self.variable_declarator_definite_before.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_DEFINITE_VARIABLE_DECLARATOR_DEFINITE_BEFORE]);
+        self.variable_declarator_definite_after.get_or_insert(table.spacing[options::SITE_VARIABLE_DECLARATOR_DEFINITE_VARIABLE_DECLARATOR_DEFINITE_AFTER]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
     }
@@ -63389,14 +63389,14 @@ pub struct ForHeaderVarKindTransport {
     pub left: ::sittir_core::SlotValue<ForHeaderVarKindLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_var_kind_after"))]
-    pub for_header_var_kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
+    pub eq_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_var_kind_before"))]
     pub for_header_var_kind_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_var_kind_after"))]
+    pub for_header_var_kind_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ForHeaderVarKindTransport {
@@ -63407,10 +63407,10 @@ impl ::std::fmt::Display for ForHeaderVarKindTransport {
 
 impl ::sittir_core::options::FillOptions for ForHeaderVarKindTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.eq_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_EQ_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_EQ_BEFORE]);
-        self.for_header_var_kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_FOR_HEADER_VAR_KIND_AFTER]);
+        self.eq_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_EQ_AFTER]);
         self.for_header_var_kind_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_FOR_HEADER_VAR_KIND_BEFORE]);
+        self.for_header_var_kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_VAR_KIND_FOR_HEADER_VAR_KIND_AFTER]);
         self.left.fill_options(table);
         self.value.fill_options(table);
     }
@@ -63459,14 +63459,14 @@ pub struct ForHeaderLetConstKindTransport {
     pub left: ::sittir_core::SlotValue<ForHeaderLetConstKindLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
     pub automatic_semicolon: Option<::sittir_core::SlotValue<AutomaticSemicolonTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_let_const_kind_after"))]
-    pub for_header_let_const_kind_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_let_const_kind_before"))]
-    pub for_header_let_const_kind_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_after"))]
-    pub kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_before"))]
     pub kind_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_after"))]
+    pub kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_let_const_kind_before"))]
+    pub for_header_let_const_kind_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_let_const_kind_after"))]
+    pub for_header_let_const_kind_after: Option<u16>,
 }
 
 impl ::std::fmt::Display for ForHeaderLetConstKindTransport {
@@ -63477,10 +63477,10 @@ impl ::std::fmt::Display for ForHeaderLetConstKindTransport {
 
 impl ::sittir_core::options::FillOptions for ForHeaderLetConstKindTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.for_header_let_const_kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_FOR_HEADER_LET_CONST_KIND_AFTER]);
-        self.for_header_let_const_kind_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_FOR_HEADER_LET_CONST_KIND_BEFORE]);
-        self.kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_KIND_AFTER]);
         self.kind_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_KIND_BEFORE]);
+        self.kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_KIND_AFTER]);
+        self.for_header_let_const_kind_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_FOR_HEADER_LET_CONST_KIND_BEFORE]);
+        self.for_header_let_const_kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_FOR_HEADER_LET_CONST_KIND_AFTER]);
         self.kind.fill_options(table);
         self.left.fill_options(table);
         self.automatic_semicolon.fill_options(table);
@@ -80018,8 +80018,8 @@ fn render_program(node: &ProgramTransport, f: &mut ::std::fmt::Formatter<'_>) ->
         head: options::spacing_text(node.statements_start.unwrap_or(0)),
         tail: options::spacing_text(node.statements_end.unwrap_or(0)),
     };
-    let program_after = options::spacing_text(node.program_after.unwrap_or(0));
     let program_before = options::spacing_text(node.program_before.unwrap_or(0));
+    let program_after = options::spacing_text(node.program_after.unwrap_or(0));
     write!(f, "{program_before}{hash_bang_line}{statements}{program_after}")?;
     Ok(())
 }
@@ -80036,12 +80036,12 @@ fn render_export_statement(node: &ExportStatementTransport, f: &mut ::std::fmt::
 
 fn render_namespace_export(node: &NamespaceExportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let module_export_name = &node.module_export_name;
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let namespace_export_after = options::spacing_text(node.namespace_export_after.unwrap_or(0));
-    let namespace_export_before = options::spacing_text(node.namespace_export_before.unwrap_or(0));
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let star_before = options::spacing_text(node.star_before.unwrap_or(0));
+    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let namespace_export_before = options::spacing_text(node.namespace_export_before.unwrap_or(0));
+    let namespace_export_after = options::spacing_text(node.namespace_export_after.unwrap_or(0));
     write!(f, "{namespace_export_before}{star_before}*{star_after}{as_before}as{as_after}{module_export_name}{namespace_export_after}")?;
     Ok(())
 }
@@ -80053,12 +80053,12 @@ fn render_export_clause(node: &ExportClauseTransport, f: &mut ::std::fmt::Format
         }
     }
     let export_specifiers = View::new(&node.export_specifiers, "{}");
-    let export_clause_after = options::spacing_text(node.export_clause_after.unwrap_or(0));
-    let export_clause_before = options::spacing_text(node.export_clause_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
+    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let export_clause_before = options::spacing_text(node.export_clause_before.unwrap_or(0));
+    let export_clause_after = options::spacing_text(node.export_clause_after.unwrap_or(0));
     write!(f, "{export_clause_before}{lbrace_before}{{{lbrace_after}{export_specifiers}{rbrace_before}}}{rbrace_after}{export_clause_after}")?;
     Ok(())
 }
@@ -80067,10 +80067,10 @@ fn render_export_specifier(node: &ExportSpecifierTransport, f: &mut ::std::fmt::
     let alias = View::new(&node.alias, "{}");
     let export_kind = View::new(&node.export_kind, "{}");
     let name = &node.name;
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let export_specifier_after = options::spacing_text(node.export_specifier_after.unwrap_or(0));
+    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let export_specifier_before = options::spacing_text(node.export_specifier_before.unwrap_or(0));
+    let export_specifier_after = options::spacing_text(node.export_specifier_after.unwrap_or(0));
     write!(f, "{export_specifier_before}{export_kind}{name}")?;
     if alias.is_present() {
         write!(f, "{as_before}as{as_after}{alias}")?;
@@ -80088,10 +80088,10 @@ fn render_import_statement(node: &ImportStatementTransport, f: &mut ::std::fmt::
     let import_attribute = View::new(&node.import_attribute, "{}");
     let import_clause = View::new(&node.import_clause, "{}");
     let terminator = &node.terminator;
-    let anon_import_after = options::spacing_text(node.anon_import_after.unwrap_or(0));
     let anon_import_before = options::spacing_text(node.anon_import_before.unwrap_or(0));
-    let import_statement_after = options::spacing_text(node.import_statement_after.unwrap_or(0));
+    let anon_import_after = options::spacing_text(node.anon_import_after.unwrap_or(0));
     let import_statement_before = options::spacing_text(node.import_statement_before.unwrap_or(0));
+    let import_statement_after = options::spacing_text(node.import_statement_after.unwrap_or(0));
     write!(f, "{import_statement_before}{anon_import_before}import{anon_import_after}{import_clause}{from_clause}{import_attribute}{terminator}{import_statement_after}")?;
     Ok(())
 }
@@ -80104,12 +80104,12 @@ fn render_import_clause(node: &ImportClauseTransport, f: &mut ::std::fmt::Format
 
 fn render_namespace_import(node: &NamespaceImportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let namespace_import_after = options::spacing_text(node.namespace_import_after.unwrap_or(0));
-    let namespace_import_before = options::spacing_text(node.namespace_import_before.unwrap_or(0));
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let star_before = options::spacing_text(node.star_before.unwrap_or(0));
+    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let namespace_import_before = options::spacing_text(node.namespace_import_before.unwrap_or(0));
+    let namespace_import_after = options::spacing_text(node.namespace_import_after.unwrap_or(0));
     write!(f, "{namespace_import_before}{star_before}*{star_after}{as_before}as{as_after}{name}{namespace_import_after}")?;
     Ok(())
 }
@@ -80121,12 +80121,12 @@ fn render_named_imports(node: &NamedImportsTransport, f: &mut ::std::fmt::Format
         }
     }
     let import_specifiers = View::new(&node.import_specifiers, "{}");
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let named_imports_after = options::spacing_text(node.named_imports_after.unwrap_or(0));
-    let named_imports_before = options::spacing_text(node.named_imports_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
+    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let named_imports_before = options::spacing_text(node.named_imports_before.unwrap_or(0));
+    let named_imports_after = options::spacing_text(node.named_imports_after.unwrap_or(0));
     write!(f, "{named_imports_before}{lbrace_before}{{{lbrace_after}{import_specifiers}{rbrace_before}}}{rbrace_after}{named_imports_after}")?;
     Ok(())
 }
@@ -80134,8 +80134,8 @@ fn render_named_imports(node: &NamedImportsTransport, f: &mut ::std::fmt::Format
 fn render_import_specifier(node: &ImportSpecifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
     let import_kind = View::new(&node.import_kind, "{}");
-    let import_specifier_after = options::spacing_text(node.import_specifier_after.unwrap_or(0));
     let import_specifier_before = options::spacing_text(node.import_specifier_before.unwrap_or(0));
+    let import_specifier_after = options::spacing_text(node.import_specifier_after.unwrap_or(0));
     write!(f, "{import_specifier_before}{import_kind}{content}{import_specifier_after}")?;
     Ok(())
 }
@@ -80143,8 +80143,8 @@ fn render_import_specifier(node: &ImportSpecifierTransport, f: &mut ::std::fmt::
 fn render_import_attribute(node: &ImportAttributeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let attribute_kind = &node.attribute_kind;
     let object = &node.object;
-    let import_attribute_after = options::spacing_text(node.import_attribute_after.unwrap_or(0));
     let import_attribute_before = options::spacing_text(node.import_attribute_before.unwrap_or(0));
+    let import_attribute_after = options::spacing_text(node.import_attribute_after.unwrap_or(0));
     write!(f, "{import_attribute_before}{attribute_kind}\u{FFFE}{object}{import_attribute_after}")?;
     Ok(())
 }
@@ -80152,8 +80152,8 @@ fn render_import_attribute(node: &ImportAttributeTransport, f: &mut ::std::fmt::
 fn render_expression_statement(node: &ExpressionStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let terminator = &node.terminator;
-    let expression_statement_after = options::spacing_text(node.expression_statement_after.unwrap_or(0));
     let expression_statement_before = options::spacing_text(node.expression_statement_before.unwrap_or(0));
+    let expression_statement_after = options::spacing_text(node.expression_statement_after.unwrap_or(0));
     write!(f, "{expression_statement_before}{expression}{terminator}{expression_statement_after}")?;
     Ok(())
 }
@@ -80171,10 +80171,10 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, f: &mut ::st
         tail: options::spacing_text(node.declarators_end.unwrap_or(0)),
     };
     let terminator = &node.terminator;
-    let var_after = options::spacing_text(node.var_after.unwrap_or(0));
     let var_before = options::spacing_text(node.var_before.unwrap_or(0));
-    let variable_declaration_after = options::spacing_text(node.variable_declaration_after.unwrap_or(0));
+    let var_after = options::spacing_text(node.var_after.unwrap_or(0));
     let variable_declaration_before = options::spacing_text(node.variable_declaration_before.unwrap_or(0));
+    let variable_declaration_after = options::spacing_text(node.variable_declaration_after.unwrap_or(0));
     write!(f, "{variable_declaration_before}{var_before}var{var_after}{declarators}{terminator}{variable_declaration_after}")?;
     Ok(())
 }
@@ -80193,10 +80193,10 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, f: &mut ::std:
     };
     let kind = &node.kind;
     let terminator = &node.terminator;
-    let kind_after = options::spacing_text(node.kind_after.unwrap_or(0));
     let kind_before = options::spacing_text(node.kind_before.unwrap_or(0));
-    let lexical_declaration_after = options::spacing_text(node.lexical_declaration_after.unwrap_or(0));
+    let kind_after = options::spacing_text(node.kind_after.unwrap_or(0));
     let lexical_declaration_before = options::spacing_text(node.lexical_declaration_before.unwrap_or(0));
+    let lexical_declaration_after = options::spacing_text(node.lexical_declaration_after.unwrap_or(0));
     write!(f, "{lexical_declaration_before}{kind_before}{kind}{kind_after}{declarators}{terminator}{lexical_declaration_after}")?;
     Ok(())
 }
@@ -80225,22 +80225,22 @@ fn render_statement_block(node: &StatementBlockTransport, f: &mut ::std::fmt::Fo
         head: options::spacing_text(node.statements_start.unwrap_or(0)),
         tail: options::spacing_text(node.statements_end.unwrap_or(0)),
     };
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
     let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let statement_block_after = options::spacing_text(node.statement_block_after.unwrap_or(0));
     let statement_block_before = options::spacing_text(node.statement_block_before.unwrap_or(0));
+    let statement_block_after = options::spacing_text(node.statement_block_after.unwrap_or(0));
     write!(f, "{statement_block_before}{lbrace_before}{{{lbrace_after}{statements}{rbrace_before}}}{rbrace_after}{automatic_semicolon}{statement_block_after}")?;
     Ok(())
 }
 
 fn render_else_clause(node: &ElseClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
-    let else_after = options::spacing_text(node.else_after.unwrap_or(0));
     let else_before = options::spacing_text(node.else_before.unwrap_or(0));
-    let else_clause_after = options::spacing_text(node.else_clause_after.unwrap_or(0));
+    let else_after = options::spacing_text(node.else_after.unwrap_or(0));
     let else_clause_before = options::spacing_text(node.else_clause_before.unwrap_or(0));
+    let else_clause_after = options::spacing_text(node.else_clause_after.unwrap_or(0));
     write!(f, "{else_clause_before}{else_before}else{else_after}{body}{else_clause_after}")?;
     Ok(())
 }
@@ -80249,10 +80249,10 @@ fn render_if_statement(node: &IfStatementTransport, f: &mut ::std::fmt::Formatte
     let alternative = View::new(&node.alternative, "{}");
     let condition = &node.condition;
     let consequence = &node.consequence;
-    let if_after = options::spacing_text(node.if_after.unwrap_or(0));
     let if_before = options::spacing_text(node.if_before.unwrap_or(0));
-    let if_statement_after = options::spacing_text(node.if_statement_after.unwrap_or(0));
+    let if_after = options::spacing_text(node.if_after.unwrap_or(0));
     let if_statement_before = options::spacing_text(node.if_statement_before.unwrap_or(0));
+    let if_statement_after = options::spacing_text(node.if_statement_after.unwrap_or(0));
     write!(f, "{if_statement_before}{if_before}if\u{FFFE}{if_after}{condition}{consequence}{alternative}{if_statement_after}")?;
     Ok(())
 }
@@ -80260,10 +80260,10 @@ fn render_if_statement(node: &IfStatementTransport, f: &mut ::std::fmt::Formatte
 fn render_switch_statement(node: &SwitchStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
     let value = &node.value;
-    let switch_after = options::spacing_text(node.switch_after.unwrap_or(0));
     let switch_before = options::spacing_text(node.switch_before.unwrap_or(0));
-    let switch_statement_after = options::spacing_text(node.switch_statement_after.unwrap_or(0));
+    let switch_after = options::spacing_text(node.switch_after.unwrap_or(0));
     let switch_statement_before = options::spacing_text(node.switch_statement_before.unwrap_or(0));
+    let switch_statement_after = options::spacing_text(node.switch_statement_after.unwrap_or(0));
     write!(f, "{switch_statement_before}{switch_before}switch\u{FFFE}{switch_after}{value}{body}{switch_statement_after}")?;
     Ok(())
 }
@@ -80273,15 +80273,15 @@ fn render_for_statement(node: &ForStatementTransport, f: &mut ::std::fmt::Format
     let condition = &node.condition;
     let increment = View::new(&node.increment, "{}");
     let initializer = &node.initializer;
-    let for_after = options::spacing_text(node.for_after.unwrap_or(0));
     let for_before = options::spacing_text(node.for_before.unwrap_or(0));
-    let for_statement_after = options::spacing_text(node.for_statement_after.unwrap_or(0));
-    let for_statement_before = options::spacing_text(node.for_statement_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
+    let for_after = options::spacing_text(node.for_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
     let semi_before = options::spacing_text(node.semi_before.unwrap_or(0));
+    let for_statement_before = options::spacing_text(node.for_statement_before.unwrap_or(0));
+    let for_statement_after = options::spacing_text(node.for_statement_after.unwrap_or(0));
     write!(f, "{for_statement_before}{for_before}for{for_after}{lparen_before}({lparen_after}{initializer}{condition}{increment}{rparen_before}){rparen_after}{body}{for_statement_after}")?;
     Ok(())
 }
@@ -80292,16 +80292,16 @@ fn render_for_in_statement(node: &ForInStatementTransport, f: &mut ::std::fmt::F
     let content = &node.content;
     let operator = &node.operator;
     let right = &node.right;
-    let for_after = options::spacing_text(node.for_after.unwrap_or(0));
     let for_before = options::spacing_text(node.for_before.unwrap_or(0));
-    let for_in_statement_after = options::spacing_text(node.for_in_statement_after.unwrap_or(0));
-    let for_in_statement_before = options::spacing_text(node.for_in_statement_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let for_after = options::spacing_text(node.for_after.unwrap_or(0));
     let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let for_in_statement_before = options::spacing_text(node.for_in_statement_before.unwrap_or(0));
+    let for_in_statement_after = options::spacing_text(node.for_in_statement_after.unwrap_or(0));
     write!(f, "{for_in_statement_before}{for_before}for{for_after}{await_marker}{lparen_before}({lparen_after}{content}{operator_before}{operator}{operator_after}{right}{rparen_before}){rparen_after}{body}{for_in_statement_after}")?;
     Ok(())
 }
@@ -80309,10 +80309,10 @@ fn render_for_in_statement(node: &ForInStatementTransport, f: &mut ::std::fmt::F
 fn render_while_statement(node: &WhileStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
     let condition = &node.condition;
-    let while_after = options::spacing_text(node.while_after.unwrap_or(0));
     let while_before = options::spacing_text(node.while_before.unwrap_or(0));
-    let while_statement_after = options::spacing_text(node.while_statement_after.unwrap_or(0));
+    let while_after = options::spacing_text(node.while_after.unwrap_or(0));
     let while_statement_before = options::spacing_text(node.while_statement_before.unwrap_or(0));
+    let while_statement_after = options::spacing_text(node.while_statement_after.unwrap_or(0));
     write!(f, "{while_statement_before}{while_before}while\u{FFFE}{while_after}{condition}{body}{while_statement_after}")?;
     Ok(())
 }
@@ -80321,12 +80321,12 @@ fn render_do_statement(node: &DoStatementTransport, f: &mut ::std::fmt::Formatte
     let body = &node.body;
     let condition = &node.condition;
     let terminator = View::new(&node.terminator, "{}");
-    let do_after = options::spacing_text(node.do_after.unwrap_or(0));
     let do_before = options::spacing_text(node.do_before.unwrap_or(0));
-    let do_statement_after = options::spacing_text(node.do_statement_after.unwrap_or(0));
-    let do_statement_before = options::spacing_text(node.do_statement_before.unwrap_or(0));
-    let while_after = options::spacing_text(node.while_after.unwrap_or(0));
+    let do_after = options::spacing_text(node.do_after.unwrap_or(0));
     let while_before = options::spacing_text(node.while_before.unwrap_or(0));
+    let while_after = options::spacing_text(node.while_after.unwrap_or(0));
+    let do_statement_before = options::spacing_text(node.do_statement_before.unwrap_or(0));
+    let do_statement_after = options::spacing_text(node.do_statement_after.unwrap_or(0));
     write!(f, "{do_statement_before}{do_before}do{do_after}{body}{while_before}while\u{FFFE}{while_after}{condition}{terminator}{do_statement_after}")?;
     Ok(())
 }
@@ -80335,10 +80335,10 @@ fn render_try_statement(node: &TryStatementTransport, f: &mut ::std::fmt::Format
     let body = &node.body;
     let finalizer = View::new(&node.finalizer, "{}");
     let handler = View::new(&node.handler, "{}");
-    let try_after = options::spacing_text(node.try_after.unwrap_or(0));
     let try_before = options::spacing_text(node.try_before.unwrap_or(0));
-    let try_statement_after = options::spacing_text(node.try_statement_after.unwrap_or(0));
+    let try_after = options::spacing_text(node.try_after.unwrap_or(0));
     let try_statement_before = options::spacing_text(node.try_statement_before.unwrap_or(0));
+    let try_statement_after = options::spacing_text(node.try_statement_after.unwrap_or(0));
     write!(f, "{try_statement_before}{try_before}try\u{FFFE}{try_after}{body}{handler}{finalizer}{try_statement_after}")?;
     Ok(())
 }
@@ -80346,10 +80346,10 @@ fn render_try_statement(node: &TryStatementTransport, f: &mut ::std::fmt::Format
 fn render_with_statement(node: &WithStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
     let object = &node.object;
-    let with_after = options::spacing_text(node.with_after.unwrap_or(0));
     let with_before = options::spacing_text(node.with_before.unwrap_or(0));
-    let with_statement_after = options::spacing_text(node.with_statement_after.unwrap_or(0));
+    let with_after = options::spacing_text(node.with_after.unwrap_or(0));
     let with_statement_before = options::spacing_text(node.with_statement_before.unwrap_or(0));
+    let with_statement_after = options::spacing_text(node.with_statement_after.unwrap_or(0));
     write!(f, "{with_statement_before}{with_before}with\u{FFFE}{with_after}{object}{body}{with_statement_after}")?;
     Ok(())
 }
@@ -80357,10 +80357,10 @@ fn render_with_statement(node: &WithStatementTransport, f: &mut ::std::fmt::Form
 fn render_break_statement(node: &BreakStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let label = View::new(&node.label, "{}");
     let terminator = &node.terminator;
-    let break_after = options::spacing_text(node.break_after.unwrap_or(0));
     let break_before = options::spacing_text(node.break_before.unwrap_or(0));
-    let break_statement_after = options::spacing_text(node.break_statement_after.unwrap_or(0));
+    let break_after = options::spacing_text(node.break_after.unwrap_or(0));
     let break_statement_before = options::spacing_text(node.break_statement_before.unwrap_or(0));
+    let break_statement_after = options::spacing_text(node.break_statement_after.unwrap_or(0));
     write!(f, "{break_statement_before}{break_before}break{break_after}{label}{terminator}{break_statement_after}")?;
     Ok(())
 }
@@ -80368,20 +80368,20 @@ fn render_break_statement(node: &BreakStatementTransport, f: &mut ::std::fmt::Fo
 fn render_continue_statement(node: &ContinueStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let label = View::new(&node.label, "{}");
     let terminator = &node.terminator;
-    let continue_after = options::spacing_text(node.continue_after.unwrap_or(0));
     let continue_before = options::spacing_text(node.continue_before.unwrap_or(0));
-    let continue_statement_after = options::spacing_text(node.continue_statement_after.unwrap_or(0));
+    let continue_after = options::spacing_text(node.continue_after.unwrap_or(0));
     let continue_statement_before = options::spacing_text(node.continue_statement_before.unwrap_or(0));
+    let continue_statement_after = options::spacing_text(node.continue_statement_after.unwrap_or(0));
     write!(f, "{continue_statement_before}{continue_before}continue{continue_after}{label}{terminator}{continue_statement_after}")?;
     Ok(())
 }
 
 fn render_debugger_statement(node: &DebuggerStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let terminator = &node.terminator;
-    let debugger_after = options::spacing_text(node.debugger_after.unwrap_or(0));
     let debugger_before = options::spacing_text(node.debugger_before.unwrap_or(0));
-    let debugger_statement_after = options::spacing_text(node.debugger_statement_after.unwrap_or(0));
+    let debugger_after = options::spacing_text(node.debugger_after.unwrap_or(0));
     let debugger_statement_before = options::spacing_text(node.debugger_statement_before.unwrap_or(0));
+    let debugger_statement_after = options::spacing_text(node.debugger_statement_after.unwrap_or(0));
     write!(f, "{debugger_statement_before}{debugger_before}debugger{debugger_after}{terminator}{debugger_statement_after}")?;
     Ok(())
 }
@@ -80389,10 +80389,10 @@ fn render_debugger_statement(node: &DebuggerStatementTransport, f: &mut ::std::f
 fn render_return_statement(node: &ReturnStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = View::new(&node.expression, "{}");
     let terminator = &node.terminator;
-    let return_after = options::spacing_text(node.return_after.unwrap_or(0));
     let return_before = options::spacing_text(node.return_before.unwrap_or(0));
-    let return_statement_after = options::spacing_text(node.return_statement_after.unwrap_or(0));
+    let return_after = options::spacing_text(node.return_after.unwrap_or(0));
     let return_statement_before = options::spacing_text(node.return_statement_before.unwrap_or(0));
+    let return_statement_after = options::spacing_text(node.return_statement_after.unwrap_or(0));
     write!(f, "{return_statement_before}{return_before}return{return_after}{expression}{terminator}{return_statement_after}")?;
     Ok(())
 }
@@ -80400,10 +80400,10 @@ fn render_return_statement(node: &ReturnStatementTransport, f: &mut ::std::fmt::
 fn render_throw_statement(node: &ThrowStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let terminator = &node.terminator;
-    let throw_after = options::spacing_text(node.throw_after.unwrap_or(0));
     let throw_before = options::spacing_text(node.throw_before.unwrap_or(0));
-    let throw_statement_after = options::spacing_text(node.throw_statement_after.unwrap_or(0));
+    let throw_after = options::spacing_text(node.throw_after.unwrap_or(0));
     let throw_statement_before = options::spacing_text(node.throw_statement_before.unwrap_or(0));
+    let throw_statement_after = options::spacing_text(node.throw_statement_after.unwrap_or(0));
     write!(f, "{throw_statement_before}{throw_before}throw{throw_after}{expression}{terminator}{throw_statement_after}")?;
     Ok(())
 }
@@ -80415,10 +80415,10 @@ fn render_empty_statement(t: &EmptyStatementTransport, f: &mut ::std::fmt::Forma
 fn render_labeled_statement(node: &LabeledStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
     let label = &node.label;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let labeled_statement_after = options::spacing_text(node.labeled_statement_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let labeled_statement_before = options::spacing_text(node.labeled_statement_before.unwrap_or(0));
+    let labeled_statement_after = options::spacing_text(node.labeled_statement_after.unwrap_or(0));
     write!(f, "{labeled_statement_before}{label}{colon_before}:{colon_after}{body}{labeled_statement_after}")?;
     Ok(())
 }
@@ -80440,12 +80440,12 @@ fn render_switch_body(node: &SwitchBodyTransport, f: &mut ::std::fmt::Formatter<
         head: options::spacing_text(node.cases_start.unwrap_or(0)),
         tail: options::spacing_text(node.cases_end.unwrap_or(0)),
     };
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
     let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let switch_body_after = options::spacing_text(node.switch_body_after.unwrap_or(0));
     let switch_body_before = options::spacing_text(node.switch_body_before.unwrap_or(0));
+    let switch_body_after = options::spacing_text(node.switch_body_after.unwrap_or(0));
     write!(f, "{switch_body_before}{lbrace_before}{{{lbrace_after}{cases}{rbrace_before}}}{rbrace_after}{switch_body_after}")?;
     Ok(())
 }
@@ -80463,12 +80463,12 @@ fn render_switch_case(node: &SwitchCaseTransport, f: &mut ::std::fmt::Formatter<
         tail: options::spacing_text(node.body_end.unwrap_or(0)),
     };
     let value = &node.value;
-    let case_after = options::spacing_text(node.case_after.unwrap_or(0));
     let case_before = options::spacing_text(node.case_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
+    let case_after = options::spacing_text(node.case_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let switch_case_after = options::spacing_text(node.switch_case_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let switch_case_before = options::spacing_text(node.switch_case_before.unwrap_or(0));
+    let switch_case_after = options::spacing_text(node.switch_case_after.unwrap_or(0));
     write!(f, "{switch_case_before}{case_before}case{case_after}{value}{colon_before}:{colon_after}{body}{switch_case_after}")?;
     Ok(())
 }
@@ -80490,12 +80490,12 @@ fn render_switch_default(node: &SwitchDefaultTransport, f: &mut ::std::fmt::Form
         head: options::spacing_text(node.body_start.unwrap_or(0)),
         tail: options::spacing_text(node.body_end.unwrap_or(0)),
     };
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let default_after = options::spacing_text(node.default_after.unwrap_or(0));
     let default_before = options::spacing_text(node.default_before.unwrap_or(0));
-    let switch_default_after = options::spacing_text(node.switch_default_after.unwrap_or(0));
+    let default_after = options::spacing_text(node.default_after.unwrap_or(0));
+    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let switch_default_before = options::spacing_text(node.switch_default_before.unwrap_or(0));
+    let switch_default_after = options::spacing_text(node.switch_default_after.unwrap_or(0));
     write!(f, "{switch_default_before}{default_before}default{default_after}{colon_before}:{colon_after}{body}{switch_default_after}")?;
     Ok(())
 }
@@ -80503,32 +80503,32 @@ fn render_switch_default(node: &SwitchDefaultTransport, f: &mut ::std::fmt::Form
 fn render_catch_clause(node: &CatchClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
     let catch_clause_group = View::new(&node.catch_clause_group, "{}");
-    let catch_after = options::spacing_text(node.catch_after.unwrap_or(0));
     let catch_before = options::spacing_text(node.catch_before.unwrap_or(0));
-    let catch_clause_after = options::spacing_text(node.catch_clause_after.unwrap_or(0));
+    let catch_after = options::spacing_text(node.catch_after.unwrap_or(0));
     let catch_clause_before = options::spacing_text(node.catch_clause_before.unwrap_or(0));
+    let catch_clause_after = options::spacing_text(node.catch_clause_after.unwrap_or(0));
     write!(f, "{catch_clause_before}{catch_before}catch{catch_after}{catch_clause_group}{body}{catch_clause_after}")?;
     Ok(())
 }
 
 fn render_finally_clause(node: &FinallyClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
-    let finally_after = options::spacing_text(node.finally_after.unwrap_or(0));
     let finally_before = options::spacing_text(node.finally_before.unwrap_or(0));
-    let finally_clause_after = options::spacing_text(node.finally_clause_after.unwrap_or(0));
+    let finally_after = options::spacing_text(node.finally_after.unwrap_or(0));
     let finally_clause_before = options::spacing_text(node.finally_clause_before.unwrap_or(0));
+    let finally_clause_after = options::spacing_text(node.finally_clause_after.unwrap_or(0));
     write!(f, "{finally_clause_before}{finally_before}finally\u{FFFE}{finally_after}{body}{finally_clause_after}")?;
     Ok(())
 }
 
 fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let parenthesized_expression_after = options::spacing_text(node.parenthesized_expression_after.unwrap_or(0));
-    let parenthesized_expression_before = options::spacing_text(node.parenthesized_expression_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let parenthesized_expression_before = options::spacing_text(node.parenthesized_expression_before.unwrap_or(0));
+    let parenthesized_expression_after = options::spacing_text(node.parenthesized_expression_after.unwrap_or(0));
     write!(f, "{parenthesized_expression_before}{lparen_before}({lparen_after}{content}{rparen_before}){rparen_after}{parenthesized_expression_after}")?;
     Ok(())
 }
@@ -80540,11 +80540,11 @@ fn render_yield_expression(node: &YieldExpressionTransport, f: &mut ::std::fmt::
         }
     }
     let expression = View::new(&node.expression, "{}");
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
-    let yield_after = options::spacing_text(node.yield_after.unwrap_or(0));
     let yield_before = options::spacing_text(node.yield_before.unwrap_or(0));
-    let yield_expression_after = options::spacing_text(node.yield_expression_after.unwrap_or(0));
+    let yield_after = options::spacing_text(node.yield_after.unwrap_or(0));
+    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
     let yield_expression_before = options::spacing_text(node.yield_expression_before.unwrap_or(0));
+    let yield_expression_after = options::spacing_text(node.yield_expression_after.unwrap_or(0));
     write!(f, "{yield_expression_before}{yield_before}yield{yield_after}{expression}{yield_expression_after}")?;
     Ok(())
 }
@@ -80566,12 +80566,12 @@ fn render_object(node: &ObjectTransport, f: &mut ::std::fmt::Formatter<'_>) -> :
         head: options::spacing_text(node.properties_start.unwrap_or(0)),
         tail: options::spacing_text(node.properties_end.unwrap_or(0)),
     };
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let object_after = options::spacing_text(node.object_after.unwrap_or(0));
-    let object_before = options::spacing_text(node.object_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
+    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let object_before = options::spacing_text(node.object_before.unwrap_or(0));
+    let object_after = options::spacing_text(node.object_after.unwrap_or(0));
     write!(f, "{object_before}{lbrace_before}{{{lbrace_after}{properties}{rbrace_before}}}{rbrace_after}{object_after}")?;
     Ok(())
 }
@@ -80593,12 +80593,12 @@ fn render_object_pattern(node: &ObjectPatternTransport, f: &mut ::std::fmt::Form
         head: options::spacing_text(node.properties_start.unwrap_or(0)),
         tail: options::spacing_text(node.properties_end.unwrap_or(0)),
     };
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let object_pattern_after = options::spacing_text(node.object_pattern_after.unwrap_or(0));
-    let object_pattern_before = options::spacing_text(node.object_pattern_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
+    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let object_pattern_before = options::spacing_text(node.object_pattern_before.unwrap_or(0));
+    let object_pattern_after = options::spacing_text(node.object_pattern_after.unwrap_or(0));
     write!(f, "{object_pattern_before}{lbrace_before}{{{lbrace_after}{properties}{rbrace_before}}}{rbrace_after}{object_pattern_after}")?;
     Ok(())
 }
@@ -80606,10 +80606,10 @@ fn render_object_pattern(node: &ObjectPatternTransport, f: &mut ::std::fmt::Form
 fn render_assignment_pattern(node: &AssignmentPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let left = &node.left;
     let right = &node.right;
-    let assignment_pattern_after = options::spacing_text(node.assignment_pattern_after.unwrap_or(0));
-    let assignment_pattern_before = options::spacing_text(node.assignment_pattern_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let assignment_pattern_before = options::spacing_text(node.assignment_pattern_before.unwrap_or(0));
+    let assignment_pattern_after = options::spacing_text(node.assignment_pattern_after.unwrap_or(0));
     write!(f, "{assignment_pattern_before}{left}{eq_before}={eq_after}{right}{assignment_pattern_after}")?;
     Ok(())
 }
@@ -80617,10 +80617,10 @@ fn render_assignment_pattern(node: &AssignmentPatternTransport, f: &mut ::std::f
 fn render_object_assignment_pattern(node: &ObjectAssignmentPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let left = &node.left;
     let right = &node.right;
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let object_assignment_pattern_after = options::spacing_text(node.object_assignment_pattern_after.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let object_assignment_pattern_before = options::spacing_text(node.object_assignment_pattern_before.unwrap_or(0));
+    let object_assignment_pattern_after = options::spacing_text(node.object_assignment_pattern_after.unwrap_or(0));
     write!(f, "{object_assignment_pattern_before}{left}{eq_before}={eq_after}{right}{object_assignment_pattern_after}")?;
     Ok(())
 }
@@ -80642,12 +80642,12 @@ fn render_array(node: &ArrayTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::s
         head: options::spacing_text(node.elements_start.unwrap_or(0)),
         tail: options::spacing_text(node.elements_end.unwrap_or(0)),
     };
-    let array_after = options::spacing_text(node.array_after.unwrap_or(0));
-    let array_before = options::spacing_text(node.array_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let array_before = options::spacing_text(node.array_before.unwrap_or(0));
+    let array_after = options::spacing_text(node.array_after.unwrap_or(0));
     write!(f, "{array_before}{lbrack_before}[{lbrack_after}{elements}{rbrack_before}]{rbrack_after}{array_after}")?;
     Ok(())
 }
@@ -80669,12 +80669,12 @@ fn render_array_pattern(node: &ArrayPatternTransport, f: &mut ::std::fmt::Format
         head: options::spacing_text(node.elements_start.unwrap_or(0)),
         tail: options::spacing_text(node.elements_end.unwrap_or(0)),
     };
-    let array_pattern_after = options::spacing_text(node.array_pattern_after.unwrap_or(0));
-    let array_pattern_before = options::spacing_text(node.array_pattern_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let array_pattern_before = options::spacing_text(node.array_pattern_before.unwrap_or(0));
+    let array_pattern_after = options::spacing_text(node.array_pattern_after.unwrap_or(0));
     write!(f, "{array_pattern_before}{lbrack_before}[{lbrack_after}{elements}{rbrack_before}]{rbrack_after}{array_pattern_after}")?;
     Ok(())
 }
@@ -80682,10 +80682,10 @@ fn render_array_pattern(node: &ArrayPatternTransport, f: &mut ::std::fmt::Format
 fn render_nested_identifier(node: &NestedIdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let object = &node.object;
     let property = &node.property;
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
-    let nested_identifier_after = options::spacing_text(node.nested_identifier_after.unwrap_or(0));
+    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let nested_identifier_before = options::spacing_text(node.nested_identifier_before.unwrap_or(0));
+    let nested_identifier_after = options::spacing_text(node.nested_identifier_after.unwrap_or(0));
     write!(f, "{nested_identifier_before}{object}{dot_before}.{dot_after}{property}{nested_identifier_after}")?;
     Ok(())
 }
@@ -80706,10 +80706,10 @@ fn render_class(node: &ClassTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::s
     let heritage = View::new(&node.heritage, "{}");
     let name = View::new(&node.name, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let anon_class_after = options::spacing_text(node.anon_class_after.unwrap_or(0));
     let anon_class_before = options::spacing_text(node.anon_class_before.unwrap_or(0));
-    let class_after = options::spacing_text(node.class_after.unwrap_or(0));
+    let anon_class_after = options::spacing_text(node.anon_class_after.unwrap_or(0));
     let class_before = options::spacing_text(node.class_before.unwrap_or(0));
+    let class_after = options::spacing_text(node.class_after.unwrap_or(0));
     write!(f, "{class_before}{decorator}{anon_class_before}class{anon_class_after}{name}{type_parameters}{heritage}{body}{class_after}")?;
     Ok(())
 }
@@ -80731,10 +80731,10 @@ fn render_class_declaration(node: &ClassDeclarationTransport, f: &mut ::std::fmt
     let heritage = View::new(&node.heritage, "{}");
     let name = &node.name;
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let anon_class_after = options::spacing_text(node.anon_class_after.unwrap_or(0));
     let anon_class_before = options::spacing_text(node.anon_class_before.unwrap_or(0));
-    let class_declaration_after = options::spacing_text(node.class_declaration_after.unwrap_or(0));
+    let anon_class_after = options::spacing_text(node.anon_class_after.unwrap_or(0));
     let class_declaration_before = options::spacing_text(node.class_declaration_before.unwrap_or(0));
+    let class_declaration_after = options::spacing_text(node.class_declaration_after.unwrap_or(0));
     write!(f, "{class_declaration_before}{decorator}{anon_class_before}class{anon_class_after}{name}{type_parameters}{heritage}{body}{automatic_semicolon}{class_declaration_after}")?;
     Ok(())
 }
@@ -80752,10 +80752,10 @@ fn render_function_expression(node: &FunctionExpressionTransport, f: &mut ::std:
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_before = options::spacing_text(node.function_before.unwrap_or(0));
-    let function_expression_after = options::spacing_text(node.function_expression_after.unwrap_or(0));
+    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_expression_before = options::spacing_text(node.function_expression_before.unwrap_or(0));
+    let function_expression_after = options::spacing_text(node.function_expression_after.unwrap_or(0));
     write!(f, "{function_expression_before}{async_marker}{function_before}function{function_after}{name}{type_parameters}{parameters}{return_type}{body}{function_expression_after}")?;
     Ok(())
 }
@@ -80768,10 +80768,10 @@ fn render_function_declaration(node: &FunctionDeclarationTransport, f: &mut ::st
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_before = options::spacing_text(node.function_before.unwrap_or(0));
-    let function_declaration_after = options::spacing_text(node.function_declaration_after.unwrap_or(0));
+    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_declaration_before = options::spacing_text(node.function_declaration_before.unwrap_or(0));
+    let function_declaration_after = options::spacing_text(node.function_declaration_after.unwrap_or(0));
     write!(f, "{function_declaration_before}{async_marker}{function_before}function{function_after}{name}{type_parameters}{parameters}{return_type}{body}{automatic_semicolon}{function_declaration_after}")?;
     Ok(())
 }
@@ -80783,12 +80783,12 @@ fn render_generator_function(node: &GeneratorFunctionTransport, f: &mut ::std::f
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_before = options::spacing_text(node.function_before.unwrap_or(0));
-    let generator_function_after = options::spacing_text(node.generator_function_after.unwrap_or(0));
-    let generator_function_before = options::spacing_text(node.generator_function_before.unwrap_or(0));
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let star_before = options::spacing_text(node.star_before.unwrap_or(0));
+    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let generator_function_before = options::spacing_text(node.generator_function_before.unwrap_or(0));
+    let generator_function_after = options::spacing_text(node.generator_function_after.unwrap_or(0));
     write!(f, "{generator_function_before}{async_marker}{function_before}function{function_after}{star_before}*{star_after}{name}{type_parameters}{parameters}{return_type}{body}{generator_function_after}")?;
     Ok(())
 }
@@ -80801,12 +80801,12 @@ fn render_generator_function_declaration(node: &GeneratorFunctionDeclarationTran
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_before = options::spacing_text(node.function_before.unwrap_or(0));
-    let generator_function_declaration_after = options::spacing_text(node.generator_function_declaration_after.unwrap_or(0));
-    let generator_function_declaration_before = options::spacing_text(node.generator_function_declaration_before.unwrap_or(0));
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let star_before = options::spacing_text(node.star_before.unwrap_or(0));
+    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let generator_function_declaration_before = options::spacing_text(node.generator_function_declaration_before.unwrap_or(0));
+    let generator_function_declaration_after = options::spacing_text(node.generator_function_declaration_after.unwrap_or(0));
     write!(f, "{generator_function_declaration_before}{async_marker}{function_before}function{function_after}{star_before}*{star_after}{name}{type_parameters}{parameters}{return_type}{body}{automatic_semicolon}{generator_function_declaration_after}")?;
     Ok(())
 }
@@ -80815,10 +80815,10 @@ fn render_arrow_function(node: &ArrowFunctionTransport, f: &mut ::std::fmt::Form
     let async_marker = View::new(&node.async_marker, "{}");
     let body = &node.body;
     let content = &node.content;
-    let arrow_function_after = options::spacing_text(node.arrow_function_after.unwrap_or(0));
-    let arrow_function_before = options::spacing_text(node.arrow_function_before.unwrap_or(0));
-    let eq_gt_after = options::spacing_text(node.eq_gt_after.unwrap_or(0));
     let eq_gt_before = options::spacing_text(node.eq_gt_before.unwrap_or(0));
+    let eq_gt_after = options::spacing_text(node.eq_gt_after.unwrap_or(0));
+    let arrow_function_before = options::spacing_text(node.arrow_function_before.unwrap_or(0));
+    let arrow_function_after = options::spacing_text(node.arrow_function_after.unwrap_or(0));
     write!(f, "{arrow_function_before}{async_marker}{content}{eq_gt_before}=>{eq_gt_after}{body}{arrow_function_after}")?;
     Ok(())
 }
@@ -80837,20 +80837,20 @@ fn render_new_expression(node: &NewExpressionTransport, f: &mut ::std::fmt::Form
     let arguments = View::new(&node.arguments, "{}");
     let constructor = &node.constructor;
     let type_arguments = View::new(&node.type_arguments, "{}");
-    let new_after = options::spacing_text(node.new_after.unwrap_or(0));
     let new_before = options::spacing_text(node.new_before.unwrap_or(0));
-    let new_expression_after = options::spacing_text(node.new_expression_after.unwrap_or(0));
+    let new_after = options::spacing_text(node.new_after.unwrap_or(0));
     let new_expression_before = options::spacing_text(node.new_expression_before.unwrap_or(0));
+    let new_expression_after = options::spacing_text(node.new_expression_after.unwrap_or(0));
     write!(f, "{new_expression_before}{new_before}new{new_after}{constructor}{type_arguments}{arguments}{new_expression_after}")?;
     Ok(())
 }
 
 fn render_await_expression(node: &AwaitExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
-    let await_after = options::spacing_text(node.await_after.unwrap_or(0));
     let await_before = options::spacing_text(node.await_before.unwrap_or(0));
-    let await_expression_after = options::spacing_text(node.await_expression_after.unwrap_or(0));
+    let await_after = options::spacing_text(node.await_after.unwrap_or(0));
     let await_expression_before = options::spacing_text(node.await_expression_before.unwrap_or(0));
+    let await_expression_after = options::spacing_text(node.await_expression_after.unwrap_or(0));
     write!(f, "{await_expression_before}{await_before}await{await_after}{expression}{await_expression_after}")?;
     Ok(())
 }
@@ -80859,8 +80859,8 @@ fn render_member_expression(node: &MemberExpressionTransport, f: &mut ::std::fmt
     let object = &node.object;
     let property = &node.property;
     let separator = &node.separator;
-    let member_expression_after = options::spacing_text(node.member_expression_after.unwrap_or(0));
     let member_expression_before = options::spacing_text(node.member_expression_before.unwrap_or(0));
+    let member_expression_after = options::spacing_text(node.member_expression_after.unwrap_or(0));
     write!(f, "{member_expression_before}{object}{separator}{property}{member_expression_after}")?;
     Ok(())
 }
@@ -80869,12 +80869,12 @@ fn render_subscript_expression(node: &SubscriptExpressionTransport, f: &mut ::st
     let index = &node.index;
     let object = &node.object;
     let optional_chain = View::new(&node.optional_chain, "{}");
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let subscript_expression_after = options::spacing_text(node.subscript_expression_after.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
     let subscript_expression_before = options::spacing_text(node.subscript_expression_before.unwrap_or(0));
+    let subscript_expression_after = options::spacing_text(node.subscript_expression_after.unwrap_or(0));
     write!(f, "{subscript_expression_before}{object}{optional_chain}{lbrack_before}[{lbrack_after}{index}{rbrack_before}]{rbrack_after}{subscript_expression_after}")?;
     Ok(())
 }
@@ -80883,10 +80883,10 @@ fn render_assignment_expression(node: &AssignmentExpressionTransport, f: &mut ::
     let left = &node.left;
     let right = &node.right;
     let using_marker = View::new(&node.using_marker, "{}");
-    let assignment_expression_after = options::spacing_text(node.assignment_expression_after.unwrap_or(0));
-    let assignment_expression_before = options::spacing_text(node.assignment_expression_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let assignment_expression_before = options::spacing_text(node.assignment_expression_before.unwrap_or(0));
+    let assignment_expression_after = options::spacing_text(node.assignment_expression_after.unwrap_or(0));
     write!(f, "{assignment_expression_before}{using_marker}{left}{eq_before}={eq_after}{right}{assignment_expression_after}")?;
     Ok(())
 }
@@ -80895,18 +80895,18 @@ fn render_augmented_assignment_expression(node: &AugmentedAssignmentExpressionTr
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    let augmented_assignment_expression_after = options::spacing_text(node.augmented_assignment_expression_after.unwrap_or(0));
     let augmented_assignment_expression_before = options::spacing_text(node.augmented_assignment_expression_before.unwrap_or(0));
+    let augmented_assignment_expression_after = options::spacing_text(node.augmented_assignment_expression_after.unwrap_or(0));
     write!(f, "{augmented_assignment_expression_before}{left}{operator}{right}{augmented_assignment_expression_after}")?;
     Ok(())
 }
 
 fn render_spread_element(node: &SpreadElementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
-    let dot_dot_dot_after = options::spacing_text(node.dot_dot_dot_after.unwrap_or(0));
     let dot_dot_dot_before = options::spacing_text(node.dot_dot_dot_before.unwrap_or(0));
-    let spread_element_after = options::spacing_text(node.spread_element_after.unwrap_or(0));
+    let dot_dot_dot_after = options::spacing_text(node.dot_dot_dot_after.unwrap_or(0));
     let spread_element_before = options::spacing_text(node.spread_element_before.unwrap_or(0));
+    let spread_element_after = options::spacing_text(node.spread_element_after.unwrap_or(0));
     write!(f, "{spread_element_before}{dot_dot_dot_before}...{dot_dot_dot_after}{expression}{spread_element_after}")?;
     Ok(())
 }
@@ -80915,12 +80915,12 @@ fn render_ternary_expression(node: &TernaryExpressionTransport, f: &mut ::std::f
     let alternative = &node.alternative;
     let condition = &node.condition;
     let consequence = &node.consequence;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let qmark_before = options::spacing_text(node.qmark_before.unwrap_or(0));
-    let ternary_expression_after = options::spacing_text(node.ternary_expression_after.unwrap_or(0));
+    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
     let ternary_expression_before = options::spacing_text(node.ternary_expression_before.unwrap_or(0));
+    let ternary_expression_after = options::spacing_text(node.ternary_expression_after.unwrap_or(0));
     write!(f, "{ternary_expression_before}{condition}{qmark_before}?{qmark_after}{consequence}{colon_before}:{colon_after}{alternative}{ternary_expression_after}")?;
     Ok(())
 }
@@ -80935,8 +80935,8 @@ fn render_binary_expression(node: &BinaryExpressionTransport, f: &mut ::std::fmt
     let left = View::new(&node.left, "{}");
     let operator = View::new(&node.operator, "{}");
     let right = View::new(&node.right, "{}");
-    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
     let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
     write!(f, "{left}{operator_before}{operator}{operator_after}{right}{binary_expression_in}")?;
     Ok(())
 }
@@ -80944,8 +80944,8 @@ fn render_binary_expression(node: &BinaryExpressionTransport, f: &mut ::std::fmt
 fn render_unary_expression(node: &UnaryExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let argument = &node.argument;
     let operator = &node.operator;
-    let unary_expression_after = options::spacing_text(node.unary_expression_after.unwrap_or(0));
     let unary_expression_before = options::spacing_text(node.unary_expression_before.unwrap_or(0));
+    let unary_expression_after = options::spacing_text(node.unary_expression_after.unwrap_or(0));
     write!(f, "{unary_expression_before}{operator}{argument}{unary_expression_after}")?;
     Ok(())
 }
@@ -80973,8 +80973,8 @@ fn render_sequence_expression(node: &SequenceExpressionTransport, f: &mut ::std:
         head: options::spacing_text(node.expression_start.unwrap_or(0)),
         tail: options::spacing_text(node.expression_end.unwrap_or(0)),
     };
-    let sequence_expression_after = options::spacing_text(node.sequence_expression_after.unwrap_or(0));
     let sequence_expression_before = options::spacing_text(node.sequence_expression_before.unwrap_or(0));
+    let sequence_expression_after = options::spacing_text(node.sequence_expression_after.unwrap_or(0));
     write!(f, "{sequence_expression_before}{expression}{sequence_expression_after}")?;
     Ok(())
 }
@@ -81021,22 +81021,22 @@ fn render_template_string(node: &TemplateStringTransport, f: &mut ::std::fmt::Fo
         head: "",
         tail: "",
     };
-    let bquote_after = options::spacing_text(node.bquote_after.unwrap_or(0));
     let bquote_before = options::spacing_text(node.bquote_before.unwrap_or(0));
-    let template_string_after = options::spacing_text(node.template_string_after.unwrap_or(0));
+    let bquote_after = options::spacing_text(node.bquote_after.unwrap_or(0));
     let template_string_before = options::spacing_text(node.template_string_before.unwrap_or(0));
+    let template_string_after = options::spacing_text(node.template_string_after.unwrap_or(0));
     write!(f, "{template_string_before}{bquote_before}`{bquote_after}{elements}{bquote_before}`{bquote_after}{template_string_after}")?;
     Ok(())
 }
 
 fn render_template_substitution(node: &TemplateSubstitutionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
-    let dollar_lbrace_after = options::spacing_text(node.dollar_lbrace_after.unwrap_or(0));
     let dollar_lbrace_before = options::spacing_text(node.dollar_lbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let dollar_lbrace_after = options::spacing_text(node.dollar_lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let template_substitution_after = options::spacing_text(node.template_substitution_after.unwrap_or(0));
+    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
     let template_substitution_before = options::spacing_text(node.template_substitution_before.unwrap_or(0));
+    let template_substitution_after = options::spacing_text(node.template_substitution_after.unwrap_or(0));
     write!(f, "{template_substitution_before}{dollar_lbrace_before}${{{dollar_lbrace_after}{expression}{rbrace_before}}}{rbrace_after}{template_substitution_after}")?;
     Ok(())
 }
@@ -81044,10 +81044,10 @@ fn render_template_substitution(node: &TemplateSubstitutionTransport, f: &mut ::
 fn render_regex(node: &RegexTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let flags = View::new(&node.flags, "{}");
     let pattern = &node.pattern;
-    let regex_after = options::spacing_text(node.regex_after.unwrap_or(0));
-    let regex_before = options::spacing_text(node.regex_before.unwrap_or(0));
-    let slash_after = options::spacing_text(node.slash_after.unwrap_or(0));
     let slash_before = options::spacing_text(node.slash_before.unwrap_or(0));
+    let slash_after = options::spacing_text(node.slash_after.unwrap_or(0));
+    let regex_before = options::spacing_text(node.regex_before.unwrap_or(0));
+    let regex_after = options::spacing_text(node.regex_after.unwrap_or(0));
     write!(f, "{regex_before}{slash_before}/{slash_after}{pattern}{slash_before}/{slash_after}{flags}{regex_after}")?;
     Ok(())
 }
@@ -81121,22 +81121,22 @@ fn render_arguments(node: &ArgumentsTransport, f: &mut ::std::fmt::Formatter<'_>
         head: options::spacing_text(node.arguments_start.unwrap_or(0)),
         tail: options::spacing_text(node.arguments_end.unwrap_or(0)),
     };
-    let arguments_after = options::spacing_text(node.arguments_after.unwrap_or(0));
-    let arguments_before = options::spacing_text(node.arguments_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let arguments_before = options::spacing_text(node.arguments_before.unwrap_or(0));
+    let arguments_after = options::spacing_text(node.arguments_after.unwrap_or(0));
     write!(f, "{arguments_before}{lparen_before}({lparen_after}{arguments}{rparen_before}){rparen_after}{arguments_after}")?;
     Ok(())
 }
 
 fn render_decorator(node: &DecoratorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let at_after = options::spacing_text(node.at_after.unwrap_or(0));
     let at_before = options::spacing_text(node.at_before.unwrap_or(0));
-    let decorator_after = options::spacing_text(node.decorator_after.unwrap_or(0));
+    let at_after = options::spacing_text(node.at_after.unwrap_or(0));
     let decorator_before = options::spacing_text(node.decorator_before.unwrap_or(0));
+    let decorator_after = options::spacing_text(node.decorator_after.unwrap_or(0));
     write!(f, "{decorator_before}{at_before}@{at_after}{content}{decorator_after}")?;
     Ok(())
 }
@@ -81144,10 +81144,10 @@ fn render_decorator(node: &DecoratorTransport, f: &mut ::std::fmt::Formatter<'_>
 fn render_decorator_member_expression(node: &DecoratorMemberExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let object = &node.object;
     let property = &node.property;
-    let decorator_member_expression_after = options::spacing_text(node.decorator_member_expression_after.unwrap_or(0));
-    let decorator_member_expression_before = options::spacing_text(node.decorator_member_expression_before.unwrap_or(0));
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
+    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
+    let decorator_member_expression_before = options::spacing_text(node.decorator_member_expression_before.unwrap_or(0));
+    let decorator_member_expression_after = options::spacing_text(node.decorator_member_expression_after.unwrap_or(0));
     write!(f, "{decorator_member_expression_before}{object}{dot_before}.{dot_after}{property}{decorator_member_expression_after}")?;
     Ok(())
 }
@@ -81156,8 +81156,8 @@ fn render_decorator_call_expression(node: &DecoratorCallExpressionTransport, f: 
     let arguments = &node.arguments;
     let function = &node.function;
     let type_arguments = View::new(&node.type_arguments, "{}");
-    let decorator_call_expression_after = options::spacing_text(node.decorator_call_expression_after.unwrap_or(0));
     let decorator_call_expression_before = options::spacing_text(node.decorator_call_expression_before.unwrap_or(0));
+    let decorator_call_expression_after = options::spacing_text(node.decorator_call_expression_after.unwrap_or(0));
     write!(f, "{decorator_call_expression_before}{function}{type_arguments}{arguments}{decorator_call_expression_after}")?;
     Ok(())
 }
@@ -81179,12 +81179,12 @@ fn render_class_body(node: &ClassBodyTransport, f: &mut ::std::fmt::Formatter<'_
         head: options::spacing_text(node.content_start.unwrap_or(0)),
         tail: options::spacing_text(node.content_end.unwrap_or(0)),
     };
-    let class_body_after = options::spacing_text(node.class_body_after.unwrap_or(0));
-    let class_body_before = options::spacing_text(node.class_body_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
     let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let class_body_before = options::spacing_text(node.class_body_before.unwrap_or(0));
+    let class_body_after = options::spacing_text(node.class_body_after.unwrap_or(0));
     write!(f, "{class_body_before}{lbrace_before}{{{lbrace_after}{content}{rbrace_before}}}{rbrace_after}{class_body_after}")?;
     Ok(())
 }
@@ -81196,12 +81196,12 @@ fn render_formal_parameters(node: &FormalParametersTransport, f: &mut ::std::fmt
         }
     }
     let formal_parameters_elements = View::new(&node.formal_parameters_elements, "{}");
-    let formal_parameters_after = options::spacing_text(node.formal_parameters_after.unwrap_or(0));
-    let formal_parameters_before = options::spacing_text(node.formal_parameters_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let formal_parameters_before = options::spacing_text(node.formal_parameters_before.unwrap_or(0));
+    let formal_parameters_after = options::spacing_text(node.formal_parameters_after.unwrap_or(0));
     write!(f, "{formal_parameters_before}{lparen_before}({lparen_after}{formal_parameters_elements}{rparen_before}){rparen_after}{formal_parameters_after}")?;
     Ok(())
 }
@@ -81209,20 +81209,20 @@ fn render_formal_parameters(node: &FormalParametersTransport, f: &mut ::std::fmt
 fn render_class_static_block(node: &ClassStaticBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let automatic_semicolon = View::new(&node.automatic_semicolon, "{}");
     let body = &node.body;
-    let class_static_block_after = options::spacing_text(node.class_static_block_after.unwrap_or(0));
-    let class_static_block_before = options::spacing_text(node.class_static_block_before.unwrap_or(0));
-    let static_after = options::spacing_text(node.static_after.unwrap_or(0));
     let static_before = options::spacing_text(node.static_before.unwrap_or(0));
+    let static_after = options::spacing_text(node.static_after.unwrap_or(0));
+    let class_static_block_before = options::spacing_text(node.class_static_block_before.unwrap_or(0));
+    let class_static_block_after = options::spacing_text(node.class_static_block_after.unwrap_or(0));
     write!(f, "{class_static_block_before}{static_before}static{static_after}{automatic_semicolon}{body}{class_static_block_after}")?;
     Ok(())
 }
 
 fn render_rest_pattern(node: &RestPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let lhs_expression = &node.lhs_expression;
-    let dot_dot_dot_after = options::spacing_text(node.dot_dot_dot_after.unwrap_or(0));
     let dot_dot_dot_before = options::spacing_text(node.dot_dot_dot_before.unwrap_or(0));
-    let rest_pattern_after = options::spacing_text(node.rest_pattern_after.unwrap_or(0));
+    let dot_dot_dot_after = options::spacing_text(node.dot_dot_dot_after.unwrap_or(0));
     let rest_pattern_before = options::spacing_text(node.rest_pattern_before.unwrap_or(0));
+    let rest_pattern_after = options::spacing_text(node.rest_pattern_after.unwrap_or(0));
     write!(f, "{rest_pattern_before}{dot_dot_dot_before}...{dot_dot_dot_after}{lhs_expression}{rest_pattern_after}")?;
     Ok(())
 }
@@ -81240,14 +81240,14 @@ fn render_method_definition(node: &MethodDefinitionTransport, f: &mut ::std::fmt
     let return_type = View::new(&node.return_type, "{}");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
-    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
-    let method_definition_after = options::spacing_text(node.method_definition_after.unwrap_or(0));
-    let method_definition_before = options::spacing_text(node.method_definition_before.unwrap_or(0));
-    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let method_definition_before = options::spacing_text(node.method_definition_before.unwrap_or(0));
+    let method_definition_after = options::spacing_text(node.method_definition_after.unwrap_or(0));
     write!(f, "{method_definition_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{body}{method_definition_after}")?;
     Ok(())
 }
@@ -81255,10 +81255,10 @@ fn render_method_definition(node: &MethodDefinitionTransport, f: &mut ::std::fmt
 fn render_pair(node: &PairTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let key = &node.key;
     let value = &node.value;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let pair_after = options::spacing_text(node.pair_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let pair_before = options::spacing_text(node.pair_before.unwrap_or(0));
+    let pair_after = options::spacing_text(node.pair_after.unwrap_or(0));
     write!(f, "{pair_before}{key}{colon_before}:{colon_after}{value}{pair_after}")?;
     Ok(())
 }
@@ -81266,22 +81266,22 @@ fn render_pair(node: &PairTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std
 fn render_pair_pattern(node: &PairPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let key = &node.key;
     let value = &node.value;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let pair_pattern_after = options::spacing_text(node.pair_pattern_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let pair_pattern_before = options::spacing_text(node.pair_pattern_before.unwrap_or(0));
+    let pair_pattern_after = options::spacing_text(node.pair_pattern_after.unwrap_or(0));
     write!(f, "{pair_pattern_before}{key}{colon_before}:{colon_after}{value}{pair_pattern_after}")?;
     Ok(())
 }
 
 fn render_computed_property_name(node: &ComputedPropertyNameTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
-    let computed_property_name_after = options::spacing_text(node.computed_property_name_after.unwrap_or(0));
-    let computed_property_name_before = options::spacing_text(node.computed_property_name_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let computed_property_name_before = options::spacing_text(node.computed_property_name_before.unwrap_or(0));
+    let computed_property_name_after = options::spacing_text(node.computed_property_name_after.unwrap_or(0));
     write!(f, "{computed_property_name_before}{lbrack_before}[{lbrack_after}{expression}{rbrack_before}]{rbrack_after}{computed_property_name_after}")?;
     Ok(())
 }
@@ -81313,14 +81313,14 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, f: &mut
     let static_marker = View::new(&node.static_marker, "{}");
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
-    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let optionality_marker_after = options::spacing_text(node.optionality_marker_after.unwrap_or(0));
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let optionality_marker_before = options::spacing_text(node.optionality_marker_before.unwrap_or(0));
-    let public_field_definition_after = options::spacing_text(node.public_field_definition_after.unwrap_or(0));
+    let optionality_marker_after = options::spacing_text(node.optionality_marker_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let public_field_definition_before = options::spacing_text(node.public_field_definition_before.unwrap_or(0));
+    let public_field_definition_after = options::spacing_text(node.public_field_definition_after.unwrap_or(0));
     write!(f, "{public_field_definition_before}{decorator}{declare_marker}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{abstract_marker}{accessor_marker}{name}{optionality_marker_before}{optionality_marker}{optionality_marker_after}{type_}")?;
     if value.is_present() {
         write!(f, "{eq_before}={eq_after}{value}")?;
@@ -81331,10 +81331,10 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, f: &mut
 
 fn render_non_null_expression(node: &NonNullExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
-    let bang_after = options::spacing_text(node.bang_after.unwrap_or(0));
     let bang_before = options::spacing_text(node.bang_before.unwrap_or(0));
-    let non_null_expression_after = options::spacing_text(node.non_null_expression_after.unwrap_or(0));
+    let bang_after = options::spacing_text(node.bang_after.unwrap_or(0));
     let non_null_expression_before = options::spacing_text(node.non_null_expression_before.unwrap_or(0));
+    let non_null_expression_after = options::spacing_text(node.non_null_expression_after.unwrap_or(0));
     write!(f, "{non_null_expression_before}{expression}{bang_before}!{bang_after}{non_null_expression_after}")?;
     Ok(())
 }
@@ -81351,14 +81351,14 @@ fn render_method_signature(node: &MethodSignatureTransport, f: &mut ::std::fmt::
     let return_type = View::new(&node.return_type, "{}");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
-    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
-    let method_signature_after = options::spacing_text(node.method_signature_after.unwrap_or(0));
-    let method_signature_before = options::spacing_text(node.method_signature_before.unwrap_or(0));
-    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let method_signature_before = options::spacing_text(node.method_signature_before.unwrap_or(0));
+    let method_signature_after = options::spacing_text(node.method_signature_after.unwrap_or(0));
     write!(f, "{method_signature_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{method_signature_after}")?;
     Ok(())
 }
@@ -81372,16 +81372,16 @@ fn render_abstract_method_signature(node: &AbstractMethodSignatureTransport, f: 
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let abstract_after = options::spacing_text(node.abstract_after.unwrap_or(0));
     let abstract_before = options::spacing_text(node.abstract_before.unwrap_or(0));
-    let abstract_method_signature_after = options::spacing_text(node.abstract_method_signature_after.unwrap_or(0));
-    let abstract_method_signature_before = options::spacing_text(node.abstract_method_signature_before.unwrap_or(0));
-    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
+    let abstract_after = options::spacing_text(node.abstract_after.unwrap_or(0));
     let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
-    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
-    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let abstract_method_signature_before = options::spacing_text(node.abstract_method_signature_before.unwrap_or(0));
+    let abstract_method_signature_after = options::spacing_text(node.abstract_method_signature_after.unwrap_or(0));
     write!(f, "{abstract_method_signature_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{abstract_before}abstract{abstract_after}{override_modifier}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{abstract_method_signature_after}")?;
     Ok(())
 }
@@ -81393,22 +81393,22 @@ fn render_function_signature(node: &FunctionSignatureTransport, f: &mut ::std::f
     let return_type = View::new(&node.return_type, "{}");
     let terminator = &node.terminator;
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_before = options::spacing_text(node.function_before.unwrap_or(0));
-    let function_signature_after = options::spacing_text(node.function_signature_after.unwrap_or(0));
+    let function_after = options::spacing_text(node.function_after.unwrap_or(0));
     let function_signature_before = options::spacing_text(node.function_signature_before.unwrap_or(0));
+    let function_signature_after = options::spacing_text(node.function_signature_after.unwrap_or(0));
     write!(f, "{function_signature_before}{async_marker}{function_before}function{function_after}{name}{type_parameters}{parameters}{return_type}{terminator}{function_signature_after}")?;
     Ok(())
 }
 
 fn render_decorator_parenthesized_expression(node: &DecoratorParenthesizedExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let decorator_parenthesized_expression_after = options::spacing_text(node.decorator_parenthesized_expression_after.unwrap_or(0));
-    let decorator_parenthesized_expression_before = options::spacing_text(node.decorator_parenthesized_expression_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let decorator_parenthesized_expression_before = options::spacing_text(node.decorator_parenthesized_expression_before.unwrap_or(0));
+    let decorator_parenthesized_expression_after = options::spacing_text(node.decorator_parenthesized_expression_after.unwrap_or(0));
     write!(f, "{decorator_parenthesized_expression_before}{lparen_before}({lparen_after}{content}{rparen_before}){rparen_after}{decorator_parenthesized_expression_after}")?;
     Ok(())
 }
@@ -81416,8 +81416,8 @@ fn render_decorator_parenthesized_expression(node: &DecoratorParenthesizedExpres
 fn render_type_assertion(node: &TypeAssertionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let type_arguments = &node.type_arguments;
-    let type_assertion_after = options::spacing_text(node.type_assertion_after.unwrap_or(0));
     let type_assertion_before = options::spacing_text(node.type_assertion_before.unwrap_or(0));
+    let type_assertion_after = options::spacing_text(node.type_assertion_after.unwrap_or(0));
     write!(f, "{type_assertion_before}{type_arguments}{expression}{type_assertion_after}")?;
     Ok(())
 }
@@ -81425,10 +81425,10 @@ fn render_type_assertion(node: &TypeAssertionTransport, f: &mut ::std::fmt::Form
 fn render_as_expression(node: &AsExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let type_annotation = &node.type_annotation;
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let as_expression_after = options::spacing_text(node.as_expression_after.unwrap_or(0));
+    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_expression_before = options::spacing_text(node.as_expression_before.unwrap_or(0));
+    let as_expression_after = options::spacing_text(node.as_expression_after.unwrap_or(0));
     write!(f, "{as_expression_before}{expression}{as_before}as{as_after}{type_annotation}{as_expression_after}")?;
     Ok(())
 }
@@ -81436,10 +81436,10 @@ fn render_as_expression(node: &AsExpressionTransport, f: &mut ::std::fmt::Format
 fn render_satisfies_expression(node: &SatisfiesExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let type_annotation = &node.type_annotation;
-    let satisfies_after = options::spacing_text(node.satisfies_after.unwrap_or(0));
     let satisfies_before = options::spacing_text(node.satisfies_before.unwrap_or(0));
-    let satisfies_expression_after = options::spacing_text(node.satisfies_expression_after.unwrap_or(0));
+    let satisfies_after = options::spacing_text(node.satisfies_after.unwrap_or(0));
     let satisfies_expression_before = options::spacing_text(node.satisfies_expression_before.unwrap_or(0));
+    let satisfies_expression_after = options::spacing_text(node.satisfies_expression_after.unwrap_or(0));
     write!(f, "{satisfies_expression_before}{expression}{satisfies_before}satisfies{satisfies_after}{type_annotation}{satisfies_expression_after}")?;
     Ok(())
 }
@@ -81447,8 +81447,8 @@ fn render_satisfies_expression(node: &SatisfiesExpressionTransport, f: &mut ::st
 fn render_instantiation_expression(node: &InstantiationExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let type_arguments = &node.type_arguments;
-    let instantiation_expression_after = options::spacing_text(node.instantiation_expression_after.unwrap_or(0));
     let instantiation_expression_before = options::spacing_text(node.instantiation_expression_before.unwrap_or(0));
+    let instantiation_expression_after = options::spacing_text(node.instantiation_expression_after.unwrap_or(0));
     write!(f, "{instantiation_expression_before}{expression}{type_arguments}{instantiation_expression_after}")?;
     Ok(())
 }
@@ -81456,16 +81456,16 @@ fn render_instantiation_expression(node: &InstantiationExpressionTransport, f: &
 fn render_import_require_clause(node: &ImportRequireClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let source = &node.source;
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let import_require_clause_after = options::spacing_text(node.import_require_clause_after.unwrap_or(0));
-    let import_require_clause_before = options::spacing_text(node.import_require_clause_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let require_after = options::spacing_text(node.require_after.unwrap_or(0));
     let require_before = options::spacing_text(node.require_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let require_after = options::spacing_text(node.require_after.unwrap_or(0));
+    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let import_require_clause_before = options::spacing_text(node.import_require_clause_before.unwrap_or(0));
+    let import_require_clause_after = options::spacing_text(node.import_require_clause_after.unwrap_or(0));
     write!(f, "{import_require_clause_before}{name}{eq_before}={eq_after}{require_before}require{require_after}{lparen_before}({lparen_after}{source}{rparen_before}){rparen_after}{import_require_clause_after}")?;
     Ok(())
 }
@@ -81487,10 +81487,10 @@ fn render_extends_clause(node: &ExtendsClauseTransport, f: &mut ::std::fmt::Form
         head: options::spacing_text(node.extends_clause_single_start.unwrap_or(0)),
         tail: options::spacing_text(node.extends_clause_single_end.unwrap_or(0)),
     };
-    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let extends_before = options::spacing_text(node.extends_before.unwrap_or(0));
-    let extends_clause_after = options::spacing_text(node.extends_clause_after.unwrap_or(0));
+    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let extends_clause_before = options::spacing_text(node.extends_clause_before.unwrap_or(0));
+    let extends_clause_after = options::spacing_text(node.extends_clause_after.unwrap_or(0));
     write!(f, "{extends_clause_before}{extends_before}extends{extends_after}{extends_clause_single}{extends_clause_after}")?;
     Ok(())
 }
@@ -81498,8 +81498,8 @@ fn render_extends_clause(node: &ExtendsClauseTransport, f: &mut ::std::fmt::Form
 fn render_extends_clause_single(node: &ExtendsClauseSingleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_arguments = View::new(&node.type_arguments, "{}");
     let value = &node.value;
-    let extends_clause_single_after = options::spacing_text(node.extends_clause_single_after.unwrap_or(0));
     let extends_clause_single_before = options::spacing_text(node.extends_clause_single_before.unwrap_or(0));
+    let extends_clause_single_after = options::spacing_text(node.extends_clause_single_after.unwrap_or(0));
     write!(f, "{extends_clause_single_before}{value}{type_arguments}{extends_clause_single_after}")?;
     Ok(())
 }
@@ -81521,20 +81521,20 @@ fn render_implements_clause(node: &ImplementsClauseTransport, f: &mut ::std::fmt
         head: options::spacing_text(node.type_start.unwrap_or(0)),
         tail: options::spacing_text(node.type_end.unwrap_or(0)),
     };
-    let implements_after = options::spacing_text(node.implements_after.unwrap_or(0));
     let implements_before = options::spacing_text(node.implements_before.unwrap_or(0));
-    let implements_clause_after = options::spacing_text(node.implements_clause_after.unwrap_or(0));
+    let implements_after = options::spacing_text(node.implements_after.unwrap_or(0));
     let implements_clause_before = options::spacing_text(node.implements_clause_before.unwrap_or(0));
+    let implements_clause_after = options::spacing_text(node.implements_clause_after.unwrap_or(0));
     write!(f, "{implements_clause_before}{implements_before}implements{implements_after}{type_}{implements_clause_after}")?;
     Ok(())
 }
 
 fn render_ambient_declaration(node: &AmbientDeclarationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let ambient_declaration_after = options::spacing_text(node.ambient_declaration_after.unwrap_or(0));
-    let ambient_declaration_before = options::spacing_text(node.ambient_declaration_before.unwrap_or(0));
-    let declare_after = options::spacing_text(node.declare_after.unwrap_or(0));
     let declare_before = options::spacing_text(node.declare_before.unwrap_or(0));
+    let declare_after = options::spacing_text(node.declare_after.unwrap_or(0));
+    let ambient_declaration_before = options::spacing_text(node.ambient_declaration_before.unwrap_or(0));
+    let ambient_declaration_after = options::spacing_text(node.ambient_declaration_after.unwrap_or(0));
     write!(f, "{ambient_declaration_before}{declare_before}declare{declare_after}{content}{ambient_declaration_after}")?;
     Ok(())
 }
@@ -81555,12 +81555,12 @@ fn render_abstract_class_declaration(node: &AbstractClassDeclarationTransport, f
     let heritage = View::new(&node.heritage, "{}");
     let name = &node.name;
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let abstract_after = options::spacing_text(node.abstract_after.unwrap_or(0));
     let abstract_before = options::spacing_text(node.abstract_before.unwrap_or(0));
-    let abstract_class_declaration_after = options::spacing_text(node.abstract_class_declaration_after.unwrap_or(0));
-    let abstract_class_declaration_before = options::spacing_text(node.abstract_class_declaration_before.unwrap_or(0));
-    let anon_class_after = options::spacing_text(node.anon_class_after.unwrap_or(0));
+    let abstract_after = options::spacing_text(node.abstract_after.unwrap_or(0));
     let anon_class_before = options::spacing_text(node.anon_class_before.unwrap_or(0));
+    let anon_class_after = options::spacing_text(node.anon_class_after.unwrap_or(0));
+    let abstract_class_declaration_before = options::spacing_text(node.abstract_class_declaration_before.unwrap_or(0));
+    let abstract_class_declaration_after = options::spacing_text(node.abstract_class_declaration_after.unwrap_or(0));
     write!(f, "{abstract_class_declaration_before}{decorator}{abstract_before}abstract{abstract_after}{anon_class_before}class{anon_class_after}{name}{type_parameters}{heritage}{body}{abstract_class_declaration_after}")?;
     Ok(())
 }
@@ -81568,10 +81568,10 @@ fn render_abstract_class_declaration(node: &AbstractClassDeclarationTransport, f
 fn render_module(node: &ModuleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = View::new(&node.body, "{}");
     let name = &node.name;
-    let anon_module_after = options::spacing_text(node.anon_module_after.unwrap_or(0));
     let anon_module_before = options::spacing_text(node.anon_module_before.unwrap_or(0));
-    let module_after = options::spacing_text(node.module_after.unwrap_or(0));
+    let anon_module_after = options::spacing_text(node.anon_module_after.unwrap_or(0));
     let module_before = options::spacing_text(node.module_before.unwrap_or(0));
+    let module_after = options::spacing_text(node.module_after.unwrap_or(0));
     write!(f, "{module_before}{anon_module_before}module{anon_module_after}{name}{body}{module_after}")?;
     Ok(())
 }
@@ -81579,10 +81579,10 @@ fn render_module(node: &ModuleTransport, f: &mut ::std::fmt::Formatter<'_>) -> :
 fn render_internal_module(node: &InternalModuleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = View::new(&node.body, "{}");
     let name = &node.name;
-    let internal_module_after = options::spacing_text(node.internal_module_after.unwrap_or(0));
-    let internal_module_before = options::spacing_text(node.internal_module_before.unwrap_or(0));
-    let namespace_after = options::spacing_text(node.namespace_after.unwrap_or(0));
     let namespace_before = options::spacing_text(node.namespace_before.unwrap_or(0));
+    let namespace_after = options::spacing_text(node.namespace_after.unwrap_or(0));
+    let internal_module_before = options::spacing_text(node.internal_module_before.unwrap_or(0));
+    let internal_module_after = options::spacing_text(node.internal_module_after.unwrap_or(0));
     write!(f, "{internal_module_before}{namespace_before}namespace{namespace_after}{name}{body}{internal_module_after}")?;
     Ok(())
 }
@@ -81591,12 +81591,12 @@ fn render_import_alias(node: &ImportAliasTransport, f: &mut ::std::fmt::Formatte
     let name = &node.name;
     let terminator = &node.terminator;
     let value = &node.value;
-    let anon_import_after = options::spacing_text(node.anon_import_after.unwrap_or(0));
-    let anon_import_before = options::spacing_text(node.anon_import_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let import_alias_after = options::spacing_text(node.import_alias_after.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let anon_import_before = options::spacing_text(node.anon_import_before.unwrap_or(0));
+    let anon_import_after = options::spacing_text(node.anon_import_after.unwrap_or(0));
     let import_alias_before = options::spacing_text(node.import_alias_before.unwrap_or(0));
+    let import_alias_after = options::spacing_text(node.import_alias_after.unwrap_or(0));
     write!(f, "{import_alias_before}{anon_import_before}import{anon_import_after}{name}{eq_before}={eq_after}{value}{terminator}{import_alias_after}")?;
     Ok(())
 }
@@ -81604,10 +81604,10 @@ fn render_import_alias(node: &ImportAliasTransport, f: &mut ::std::fmt::Formatte
 fn render_nested_type_identifier(node: &NestedTypeIdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let module = &node.module;
     let name = &node.name;
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
-    let nested_type_identifier_after = options::spacing_text(node.nested_type_identifier_after.unwrap_or(0));
+    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let nested_type_identifier_before = options::spacing_text(node.nested_type_identifier_before.unwrap_or(0));
+    let nested_type_identifier_after = options::spacing_text(node.nested_type_identifier_after.unwrap_or(0));
     write!(f, "{nested_type_identifier_before}{module}{dot_before}.{dot_after}{name}{nested_type_identifier_after}")?;
     Ok(())
 }
@@ -81617,10 +81617,10 @@ fn render_interface_declaration(node: &InterfaceDeclarationTransport, f: &mut ::
     let extends_type_clause = View::new(&node.extends_type_clause, "{}");
     let name = &node.name;
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let interface_after = options::spacing_text(node.interface_after.unwrap_or(0));
     let interface_before = options::spacing_text(node.interface_before.unwrap_or(0));
-    let interface_declaration_after = options::spacing_text(node.interface_declaration_after.unwrap_or(0));
+    let interface_after = options::spacing_text(node.interface_after.unwrap_or(0));
     let interface_declaration_before = options::spacing_text(node.interface_declaration_before.unwrap_or(0));
+    let interface_declaration_after = options::spacing_text(node.interface_declaration_after.unwrap_or(0));
     write!(f, "{interface_declaration_before}{interface_before}interface{interface_after}{name}{type_parameters}{extends_type_clause}{body}{interface_declaration_after}")?;
     Ok(())
 }
@@ -81642,10 +81642,10 @@ fn render_extends_type_clause(node: &ExtendsTypeClauseTransport, f: &mut ::std::
         head: options::spacing_text(node.type_start.unwrap_or(0)),
         tail: options::spacing_text(node.type_end.unwrap_or(0)),
     };
-    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let extends_before = options::spacing_text(node.extends_before.unwrap_or(0));
-    let extends_type_clause_after = options::spacing_text(node.extends_type_clause_after.unwrap_or(0));
+    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let extends_type_clause_before = options::spacing_text(node.extends_type_clause_before.unwrap_or(0));
+    let extends_type_clause_after = options::spacing_text(node.extends_type_clause_after.unwrap_or(0));
     write!(f, "{extends_type_clause_before}{extends_before}extends{extends_after}{type_}{extends_type_clause_after}")?;
     Ok(())
 }
@@ -81654,10 +81654,10 @@ fn render_enum_declaration(node: &EnumDeclarationTransport, f: &mut ::std::fmt::
     let body = &node.body;
     let const_marker = View::new(&node.const_marker, "{}");
     let name = &node.name;
-    let enum_after = options::spacing_text(node.enum_after.unwrap_or(0));
     let enum_before = options::spacing_text(node.enum_before.unwrap_or(0));
-    let enum_declaration_after = options::spacing_text(node.enum_declaration_after.unwrap_or(0));
+    let enum_after = options::spacing_text(node.enum_after.unwrap_or(0));
     let enum_declaration_before = options::spacing_text(node.enum_declaration_before.unwrap_or(0));
+    let enum_declaration_after = options::spacing_text(node.enum_declaration_after.unwrap_or(0));
     write!(f, "{enum_declaration_before}{const_marker}{enum_before}enum{enum_after}{name}{body}{enum_declaration_after}")?;
     Ok(())
 }
@@ -81669,12 +81669,12 @@ fn render_enum_body(node: &EnumBodyTransport, f: &mut ::std::fmt::Formatter<'_>)
         }
     }
     let enum_body_elements = View::new(&node.enum_body_elements, "{}");
-    let enum_body_after = options::spacing_text(node.enum_body_after.unwrap_or(0));
-    let enum_body_before = options::spacing_text(node.enum_body_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
+    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
     let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let enum_body_before = options::spacing_text(node.enum_body_before.unwrap_or(0));
+    let enum_body_after = options::spacing_text(node.enum_body_after.unwrap_or(0));
     write!(f, "{enum_body_before}{lbrace_before}{{{lbrace_after}{enum_body_elements}{rbrace_before}}}{rbrace_after}{enum_body_after}")?;
     Ok(())
 }
@@ -81682,10 +81682,10 @@ fn render_enum_body(node: &EnumBodyTransport, f: &mut ::std::fmt::Formatter<'_>)
 fn render_enum_assignment(node: &EnumAssignmentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let value = &node.value;
-    let enum_assignment_after = options::spacing_text(node.enum_assignment_after.unwrap_or(0));
-    let enum_assignment_before = options::spacing_text(node.enum_assignment_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let enum_assignment_before = options::spacing_text(node.enum_assignment_before.unwrap_or(0));
+    let enum_assignment_after = options::spacing_text(node.enum_assignment_after.unwrap_or(0));
     write!(f, "{enum_assignment_before}{name}{eq_before}={eq_after}{value}{enum_assignment_after}")?;
     Ok(())
 }
@@ -81695,12 +81695,12 @@ fn render_type_alias_declaration(node: &TypeAliasDeclarationTransport, f: &mut :
     let terminator = &node.terminator;
     let type_parameters = View::new(&node.type_parameters, "{}");
     let value = &node.value;
-    let anon_type_after = options::spacing_text(node.anon_type_after.unwrap_or(0));
-    let anon_type_before = options::spacing_text(node.anon_type_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let type_alias_declaration_after = options::spacing_text(node.type_alias_declaration_after.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let anon_type_before = options::spacing_text(node.anon_type_before.unwrap_or(0));
+    let anon_type_after = options::spacing_text(node.anon_type_after.unwrap_or(0));
     let type_alias_declaration_before = options::spacing_text(node.type_alias_declaration_before.unwrap_or(0));
+    let type_alias_declaration_after = options::spacing_text(node.type_alias_declaration_after.unwrap_or(0));
     write!(f, "{type_alias_declaration_before}{anon_type_before}type{anon_type_after}{name}{type_parameters}{eq_before}={eq_after}{value}{terminator}{type_alias_declaration_after}")?;
     Ok(())
 }
@@ -81731,10 +81731,10 @@ fn render_required_parameter(node: &RequiredParameterTransport, f: &mut ::std::f
     let readonly_marker = View::new(&node.readonly_marker, "readonly");
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let required_parameter_after = options::spacing_text(node.required_parameter_after.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let required_parameter_before = options::spacing_text(node.required_parameter_before.unwrap_or(0));
+    let required_parameter_after = options::spacing_text(node.required_parameter_after.unwrap_or(0));
     write!(f, "{required_parameter_before}{decorator}{accessibility_modifier}{override_modifier}{readonly_marker}{pattern}{type_}")?;
     if value.is_present() {
         write!(f, "{eq_before}={eq_after}{value}")?;
@@ -81761,12 +81761,12 @@ fn render_optional_parameter(node: &OptionalParameterTransport, f: &mut ::std::f
     let readonly_marker = View::new(&node.readonly_marker, "readonly");
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let optional_parameter_after = options::spacing_text(node.optional_parameter_after.unwrap_or(0));
-    let optional_parameter_before = options::spacing_text(node.optional_parameter_before.unwrap_or(0));
-    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let qmark_before = options::spacing_text(node.qmark_before.unwrap_or(0));
+    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let optional_parameter_before = options::spacing_text(node.optional_parameter_before.unwrap_or(0));
+    let optional_parameter_after = options::spacing_text(node.optional_parameter_after.unwrap_or(0));
     write!(f, "{optional_parameter_before}{decorator}{accessibility_modifier}{override_modifier}{readonly_marker}{pattern}{qmark_before}?{qmark_after}{type_}")?;
     if value.is_present() {
         write!(f, "{eq_before}={eq_after}{value}")?;
@@ -81777,40 +81777,40 @@ fn render_optional_parameter(node: &OptionalParameterTransport, f: &mut ::std::f
 
 fn render_omitting_type_annotation(node: &OmittingTypeAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let dash_qmark_colon_after = options::spacing_text(node.dash_qmark_colon_after.unwrap_or(0));
     let dash_qmark_colon_before = options::spacing_text(node.dash_qmark_colon_before.unwrap_or(0));
-    let omitting_type_annotation_after = options::spacing_text(node.omitting_type_annotation_after.unwrap_or(0));
+    let dash_qmark_colon_after = options::spacing_text(node.dash_qmark_colon_after.unwrap_or(0));
     let omitting_type_annotation_before = options::spacing_text(node.omitting_type_annotation_before.unwrap_or(0));
+    let omitting_type_annotation_after = options::spacing_text(node.omitting_type_annotation_after.unwrap_or(0));
     write!(f, "{omitting_type_annotation_before}{dash_qmark_colon_before}-?:{dash_qmark_colon_after}{type_}{omitting_type_annotation_after}")?;
     Ok(())
 }
 
 fn render_adding_type_annotation(node: &AddingTypeAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let adding_type_annotation_after = options::spacing_text(node.adding_type_annotation_after.unwrap_or(0));
-    let adding_type_annotation_before = options::spacing_text(node.adding_type_annotation_before.unwrap_or(0));
-    let plus_qmark_colon_after = options::spacing_text(node.plus_qmark_colon_after.unwrap_or(0));
     let plus_qmark_colon_before = options::spacing_text(node.plus_qmark_colon_before.unwrap_or(0));
+    let plus_qmark_colon_after = options::spacing_text(node.plus_qmark_colon_after.unwrap_or(0));
+    let adding_type_annotation_before = options::spacing_text(node.adding_type_annotation_before.unwrap_or(0));
+    let adding_type_annotation_after = options::spacing_text(node.adding_type_annotation_after.unwrap_or(0));
     write!(f, "{adding_type_annotation_before}{plus_qmark_colon_before}+?:{plus_qmark_colon_after}{type_}{adding_type_annotation_after}")?;
     Ok(())
 }
 
 fn render_opting_type_annotation(node: &OptingTypeAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let opting_type_annotation_after = options::spacing_text(node.opting_type_annotation_after.unwrap_or(0));
-    let opting_type_annotation_before = options::spacing_text(node.opting_type_annotation_before.unwrap_or(0));
-    let qmark_colon_after = options::spacing_text(node.qmark_colon_after.unwrap_or(0));
     let qmark_colon_before = options::spacing_text(node.qmark_colon_before.unwrap_or(0));
+    let qmark_colon_after = options::spacing_text(node.qmark_colon_after.unwrap_or(0));
+    let opting_type_annotation_before = options::spacing_text(node.opting_type_annotation_before.unwrap_or(0));
+    let opting_type_annotation_after = options::spacing_text(node.opting_type_annotation_after.unwrap_or(0));
     write!(f, "{opting_type_annotation_before}{qmark_colon_before}?:{qmark_colon_after}{type_}{opting_type_annotation_after}")?;
     Ok(())
 }
 
 fn render_type_annotation(node: &TypeAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let type_annotation_after = options::spacing_text(node.type_annotation_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let type_annotation_before = options::spacing_text(node.type_annotation_before.unwrap_or(0));
+    let type_annotation_after = options::spacing_text(node.type_annotation_after.unwrap_or(0));
     write!(f, "{type_annotation_before}{colon_before}:{colon_after}{type_}{type_annotation_after}")?;
     Ok(())
 }
@@ -81818,10 +81818,10 @@ fn render_type_annotation(node: &TypeAnnotationTransport, f: &mut ::std::fmt::Fo
 fn render_type_query_member_expression_in_type_annotation(node: &TypeQueryMemberExpressionInTypeAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let object = &node.object;
     let property = &node.property;
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
-    let type_query_member_expression_in_type_annotation_after = options::spacing_text(node.type_query_member_expression_in_type_annotation_after.unwrap_or(0));
+    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let type_query_member_expression_in_type_annotation_before = options::spacing_text(node.type_query_member_expression_in_type_annotation_before.unwrap_or(0));
+    let type_query_member_expression_in_type_annotation_after = options::spacing_text(node.type_query_member_expression_in_type_annotation_after.unwrap_or(0));
     write!(f, "{type_query_member_expression_in_type_annotation_before}{object}{dot_before}.{dot_after}{property}{type_query_member_expression_in_type_annotation_after}")?;
     Ok(())
 }
@@ -81829,28 +81829,28 @@ fn render_type_query_member_expression_in_type_annotation(node: &TypeQueryMember
 fn render_type_query_call_expression_in_type_annotation(node: &TypeQueryCallExpressionInTypeAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let arguments = &node.arguments;
     let function = &node.function;
-    let type_query_call_expression_in_type_annotation_after = options::spacing_text(node.type_query_call_expression_in_type_annotation_after.unwrap_or(0));
     let type_query_call_expression_in_type_annotation_before = options::spacing_text(node.type_query_call_expression_in_type_annotation_before.unwrap_or(0));
+    let type_query_call_expression_in_type_annotation_after = options::spacing_text(node.type_query_call_expression_in_type_annotation_after.unwrap_or(0));
     write!(f, "{type_query_call_expression_in_type_annotation_before}{function}{arguments}{type_query_call_expression_in_type_annotation_after}")?;
     Ok(())
 }
 
 fn render_asserts(node: &AssertsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let anon_asserts_after = options::spacing_text(node.anon_asserts_after.unwrap_or(0));
     let anon_asserts_before = options::spacing_text(node.anon_asserts_before.unwrap_or(0));
-    let asserts_after = options::spacing_text(node.asserts_after.unwrap_or(0));
+    let anon_asserts_after = options::spacing_text(node.anon_asserts_after.unwrap_or(0));
     let asserts_before = options::spacing_text(node.asserts_before.unwrap_or(0));
+    let asserts_after = options::spacing_text(node.asserts_after.unwrap_or(0));
     write!(f, "{asserts_before}{anon_asserts_before}asserts{anon_asserts_after}{content}{asserts_after}")?;
     Ok(())
 }
 
 fn render_asserts_annotation(node: &AssertsAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let asserts = &node.asserts;
-    let asserts_annotation_after = options::spacing_text(node.asserts_annotation_after.unwrap_or(0));
-    let asserts_annotation_before = options::spacing_text(node.asserts_annotation_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
+    let asserts_annotation_before = options::spacing_text(node.asserts_annotation_before.unwrap_or(0));
+    let asserts_annotation_after = options::spacing_text(node.asserts_annotation_after.unwrap_or(0));
     write!(f, "{asserts_annotation_before}{colon_before}:\u{FFFE}{colon_after}{asserts}{asserts_annotation_after}")?;
     Ok(())
 }
@@ -81858,8 +81858,8 @@ fn render_asserts_annotation(node: &AssertsAnnotationTransport, f: &mut ::std::f
 fn render_tuple_parameter(node: &TupleParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let type_ = &node.type_;
-    let tuple_parameter_after = options::spacing_text(node.tuple_parameter_after.unwrap_or(0));
     let tuple_parameter_before = options::spacing_text(node.tuple_parameter_before.unwrap_or(0));
+    let tuple_parameter_after = options::spacing_text(node.tuple_parameter_after.unwrap_or(0));
     write!(f, "{tuple_parameter_before}{name}{type_}{tuple_parameter_after}")?;
     Ok(())
 }
@@ -81867,30 +81867,30 @@ fn render_tuple_parameter(node: &TupleParameterTransport, f: &mut ::std::fmt::Fo
 fn render_optional_tuple_parameter(node: &OptionalTupleParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let type_ = &node.type_;
-    let optional_tuple_parameter_after = options::spacing_text(node.optional_tuple_parameter_after.unwrap_or(0));
-    let optional_tuple_parameter_before = options::spacing_text(node.optional_tuple_parameter_before.unwrap_or(0));
-    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
     let qmark_before = options::spacing_text(node.qmark_before.unwrap_or(0));
+    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let optional_tuple_parameter_before = options::spacing_text(node.optional_tuple_parameter_before.unwrap_or(0));
+    let optional_tuple_parameter_after = options::spacing_text(node.optional_tuple_parameter_after.unwrap_or(0));
     write!(f, "{optional_tuple_parameter_before}{name}{qmark_before}?{qmark_after}{type_}{optional_tuple_parameter_after}")?;
     Ok(())
 }
 
 fn render_optional_type(node: &OptionalTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let optional_type_after = options::spacing_text(node.optional_type_after.unwrap_or(0));
-    let optional_type_before = options::spacing_text(node.optional_type_before.unwrap_or(0));
-    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
     let qmark_before = options::spacing_text(node.qmark_before.unwrap_or(0));
+    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let optional_type_before = options::spacing_text(node.optional_type_before.unwrap_or(0));
+    let optional_type_after = options::spacing_text(node.optional_type_after.unwrap_or(0));
     write!(f, "{optional_type_before}{type_}{qmark_before}?{qmark_after}{optional_type_after}")?;
     Ok(())
 }
 
 fn render_rest_type(node: &RestTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let dot_dot_dot_after = options::spacing_text(node.dot_dot_dot_after.unwrap_or(0));
     let dot_dot_dot_before = options::spacing_text(node.dot_dot_dot_before.unwrap_or(0));
-    let rest_type_after = options::spacing_text(node.rest_type_after.unwrap_or(0));
+    let dot_dot_dot_after = options::spacing_text(node.dot_dot_dot_after.unwrap_or(0));
     let rest_type_before = options::spacing_text(node.rest_type_before.unwrap_or(0));
+    let rest_type_after = options::spacing_text(node.rest_type_after.unwrap_or(0));
     write!(f, "{rest_type_before}{dot_dot_dot_before}...{dot_dot_dot_after}{type_}{rest_type_after}")?;
     Ok(())
 }
@@ -81900,24 +81900,24 @@ fn render_constructor_type(node: &ConstructorTypeTransport, f: &mut ::std::fmt::
     let parameters = &node.parameters;
     let type_ = &node.type_;
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let constructor_type_after = options::spacing_text(node.constructor_type_after.unwrap_or(0));
-    let constructor_type_before = options::spacing_text(node.constructor_type_before.unwrap_or(0));
-    let eq_gt_after = options::spacing_text(node.eq_gt_after.unwrap_or(0));
-    let eq_gt_before = options::spacing_text(node.eq_gt_before.unwrap_or(0));
-    let new_after = options::spacing_text(node.new_after.unwrap_or(0));
     let new_before = options::spacing_text(node.new_before.unwrap_or(0));
+    let new_after = options::spacing_text(node.new_after.unwrap_or(0));
+    let eq_gt_before = options::spacing_text(node.eq_gt_before.unwrap_or(0));
+    let eq_gt_after = options::spacing_text(node.eq_gt_after.unwrap_or(0));
+    let constructor_type_before = options::spacing_text(node.constructor_type_before.unwrap_or(0));
+    let constructor_type_after = options::spacing_text(node.constructor_type_after.unwrap_or(0));
     write!(f, "{constructor_type_before}{abstract_marker}{new_before}new{new_after}{type_parameters}{parameters}{eq_gt_before}=>{eq_gt_after}{type_}{constructor_type_after}")?;
     Ok(())
 }
 
 fn render_template_type(node: &TemplateTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let dollar_lbrace_after = options::spacing_text(node.dollar_lbrace_after.unwrap_or(0));
     let dollar_lbrace_before = options::spacing_text(node.dollar_lbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
+    let dollar_lbrace_after = options::spacing_text(node.dollar_lbrace_after.unwrap_or(0));
     let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let template_type_after = options::spacing_text(node.template_type_after.unwrap_or(0));
+    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
     let template_type_before = options::spacing_text(node.template_type_before.unwrap_or(0));
+    let template_type_after = options::spacing_text(node.template_type_after.unwrap_or(0));
     write!(f, "{template_type_before}{dollar_lbrace_before}${{{dollar_lbrace_after}{content}{rbrace_before}}}{rbrace_after}{template_type_after}")?;
     Ok(())
 }
@@ -81939,10 +81939,10 @@ fn render_template_literal_type(node: &TemplateLiteralTypeTransport, f: &mut ::s
         head: "",
         tail: "",
     };
-    let bquote_after = options::spacing_text(node.bquote_after.unwrap_or(0));
     let bquote_before = options::spacing_text(node.bquote_before.unwrap_or(0));
-    let template_literal_type_after = options::spacing_text(node.template_literal_type_after.unwrap_or(0));
+    let bquote_after = options::spacing_text(node.bquote_after.unwrap_or(0));
     let template_literal_type_before = options::spacing_text(node.template_literal_type_before.unwrap_or(0));
+    let template_literal_type_after = options::spacing_text(node.template_literal_type_after.unwrap_or(0));
     write!(f, "{template_literal_type_before}{bquote_before}`{bquote_after}{elements}{bquote_before}`{bquote_after}{template_literal_type_after}")?;
     Ok(())
 }
@@ -81950,12 +81950,12 @@ fn render_template_literal_type(node: &TemplateLiteralTypeTransport, f: &mut ::s
 fn render_infer_type(node: &InferTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let type_ = View::new(&node.type_, "{}");
-    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let extends_before = options::spacing_text(node.extends_before.unwrap_or(0));
-    let infer_after = options::spacing_text(node.infer_after.unwrap_or(0));
+    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let infer_before = options::spacing_text(node.infer_before.unwrap_or(0));
-    let infer_type_after = options::spacing_text(node.infer_type_after.unwrap_or(0));
+    let infer_after = options::spacing_text(node.infer_after.unwrap_or(0));
     let infer_type_before = options::spacing_text(node.infer_type_before.unwrap_or(0));
+    let infer_type_after = options::spacing_text(node.infer_type_after.unwrap_or(0));
     write!(f, "{infer_type_before}{infer_before}infer{infer_after}{name}")?;
     if type_.is_present() {
         write!(f, "{extends_before}extends{extends_after}{type_}")?;
@@ -81969,14 +81969,14 @@ fn render_conditional_type(node: &ConditionalTypeTransport, f: &mut ::std::fmt::
     let consequence = &node.consequence;
     let left = &node.left;
     let right = &node.right;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let conditional_type_after = options::spacing_text(node.conditional_type_after.unwrap_or(0));
-    let conditional_type_before = options::spacing_text(node.conditional_type_before.unwrap_or(0));
-    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
     let extends_before = options::spacing_text(node.extends_before.unwrap_or(0));
-    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let extends_after = options::spacing_text(node.extends_after.unwrap_or(0));
+    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let qmark_before = options::spacing_text(node.qmark_before.unwrap_or(0));
+    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let conditional_type_before = options::spacing_text(node.conditional_type_before.unwrap_or(0));
+    let conditional_type_after = options::spacing_text(node.conditional_type_after.unwrap_or(0));
     write!(f, "{conditional_type_before}{left}{extends_before}extends{extends_after}{right}{qmark_before}?{qmark_after}{consequence}{colon_before}:{colon_after}{alternative}{conditional_type_after}")?;
     Ok(())
 }
@@ -81984,8 +81984,8 @@ fn render_conditional_type(node: &ConditionalTypeTransport, f: &mut ::std::fmt::
 fn render_generic_type(node: &GenericTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let type_arguments = &node.type_arguments;
-    let generic_type_after = options::spacing_text(node.generic_type_after.unwrap_or(0));
     let generic_type_before = options::spacing_text(node.generic_type_before.unwrap_or(0));
+    let generic_type_after = options::spacing_text(node.generic_type_after.unwrap_or(0));
     write!(f, "{generic_type_before}{name}{type_arguments}{generic_type_after}")?;
     Ok(())
 }
@@ -81993,20 +81993,20 @@ fn render_generic_type(node: &GenericTypeTransport, f: &mut ::std::fmt::Formatte
 fn render_type_predicate(node: &TypePredicateTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let type_ = &node.type_;
-    let is_after = options::spacing_text(node.is_after.unwrap_or(0));
     let is_before = options::spacing_text(node.is_before.unwrap_or(0));
-    let type_predicate_after = options::spacing_text(node.type_predicate_after.unwrap_or(0));
+    let is_after = options::spacing_text(node.is_after.unwrap_or(0));
     let type_predicate_before = options::spacing_text(node.type_predicate_before.unwrap_or(0));
+    let type_predicate_after = options::spacing_text(node.type_predicate_after.unwrap_or(0));
     write!(f, "{type_predicate_before}{name}{is_before}is{is_after}{type_}{type_predicate_after}")?;
     Ok(())
 }
 
 fn render_type_predicate_annotation(node: &TypePredicateAnnotationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_predicate = &node.type_predicate;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let type_predicate_annotation_after = options::spacing_text(node.type_predicate_annotation_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let type_predicate_annotation_before = options::spacing_text(node.type_predicate_annotation_before.unwrap_or(0));
+    let type_predicate_annotation_after = options::spacing_text(node.type_predicate_annotation_after.unwrap_or(0));
     write!(f, "{type_predicate_annotation_before}{colon_before}:{colon_after}{type_predicate}{type_predicate_annotation_after}")?;
     Ok(())
 }
@@ -82015,8 +82015,8 @@ fn render_type_query_member_expression(node: &TypeQueryMemberExpressionTransport
     let content = &node.content;
     let object = &node.object;
     let property = &node.property;
-    let type_query_member_expression_after = options::spacing_text(node.type_query_member_expression_after.unwrap_or(0));
     let type_query_member_expression_before = options::spacing_text(node.type_query_member_expression_before.unwrap_or(0));
+    let type_query_member_expression_after = options::spacing_text(node.type_query_member_expression_after.unwrap_or(0));
     write!(f, "{type_query_member_expression_before}{object}{content}{property}{type_query_member_expression_after}")?;
     Ok(())
 }
@@ -82024,12 +82024,12 @@ fn render_type_query_member_expression(node: &TypeQueryMemberExpressionTransport
 fn render_type_query_subscript_expression(node: &TypeQuerySubscriptExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let index = &node.index;
     let object = &node.object;
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let type_query_subscript_expression_after = options::spacing_text(node.type_query_subscript_expression_after.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
     let type_query_subscript_expression_before = options::spacing_text(node.type_query_subscript_expression_before.unwrap_or(0));
+    let type_query_subscript_expression_after = options::spacing_text(node.type_query_subscript_expression_after.unwrap_or(0));
     write!(f, "{type_query_subscript_expression_before}{object}{lbrack_before}[{lbrack_after}{index}{rbrack_before}]{rbrack_after}{type_query_subscript_expression_after}")?;
     Ok(())
 }
@@ -82037,8 +82037,8 @@ fn render_type_query_subscript_expression(node: &TypeQuerySubscriptExpressionTra
 fn render_type_query_call_expression(node: &TypeQueryCallExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let arguments = &node.arguments;
     let function = &node.function;
-    let type_query_call_expression_after = options::spacing_text(node.type_query_call_expression_after.unwrap_or(0));
     let type_query_call_expression_before = options::spacing_text(node.type_query_call_expression_before.unwrap_or(0));
+    let type_query_call_expression_after = options::spacing_text(node.type_query_call_expression_after.unwrap_or(0));
     write!(f, "{type_query_call_expression_before}{function}{arguments}{type_query_call_expression_after}")?;
     Ok(())
 }
@@ -82046,28 +82046,28 @@ fn render_type_query_call_expression(node: &TypeQueryCallExpressionTransport, f:
 fn render_type_query_instantiation_expression(node: &TypeQueryInstantiationExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let function = &node.function;
     let type_arguments = &node.type_arguments;
-    let type_query_instantiation_expression_after = options::spacing_text(node.type_query_instantiation_expression_after.unwrap_or(0));
     let type_query_instantiation_expression_before = options::spacing_text(node.type_query_instantiation_expression_before.unwrap_or(0));
+    let type_query_instantiation_expression_after = options::spacing_text(node.type_query_instantiation_expression_after.unwrap_or(0));
     write!(f, "{type_query_instantiation_expression_before}{function}{type_arguments}{type_query_instantiation_expression_after}")?;
     Ok(())
 }
 
 fn render_type_query(node: &TypeQueryTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let type_query_after = options::spacing_text(node.type_query_after.unwrap_or(0));
-    let type_query_before = options::spacing_text(node.type_query_before.unwrap_or(0));
-    let typeof_after = options::spacing_text(node.typeof_after.unwrap_or(0));
     let typeof_before = options::spacing_text(node.typeof_before.unwrap_or(0));
+    let typeof_after = options::spacing_text(node.typeof_after.unwrap_or(0));
+    let type_query_before = options::spacing_text(node.type_query_before.unwrap_or(0));
+    let type_query_after = options::spacing_text(node.type_query_after.unwrap_or(0));
     write!(f, "{type_query_before}{typeof_before}typeof{typeof_after}{content}{type_query_after}")?;
     Ok(())
 }
 
 fn render_index_type_query(node: &IndexTypeQueryTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let index_type_query_after = options::spacing_text(node.index_type_query_after.unwrap_or(0));
-    let index_type_query_before = options::spacing_text(node.index_type_query_before.unwrap_or(0));
-    let keyof_after = options::spacing_text(node.keyof_after.unwrap_or(0));
     let keyof_before = options::spacing_text(node.keyof_before.unwrap_or(0));
+    let keyof_after = options::spacing_text(node.keyof_after.unwrap_or(0));
+    let index_type_query_before = options::spacing_text(node.index_type_query_before.unwrap_or(0));
+    let index_type_query_after = options::spacing_text(node.index_type_query_after.unwrap_or(0));
     write!(f, "{index_type_query_before}{keyof_before}keyof{keyof_after}{type_}{index_type_query_after}")?;
     Ok(())
 }
@@ -82075,12 +82075,12 @@ fn render_index_type_query(node: &IndexTypeQueryTransport, f: &mut ::std::fmt::F
 fn render_lookup_type(node: &LookupTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let index_type = &node.index_type;
     let type_ = &node.type_;
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let lookup_type_after = options::spacing_text(node.lookup_type_after.unwrap_or(0));
-    let lookup_type_before = options::spacing_text(node.lookup_type_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lookup_type_before = options::spacing_text(node.lookup_type_before.unwrap_or(0));
+    let lookup_type_after = options::spacing_text(node.lookup_type_after.unwrap_or(0));
     write!(f, "{lookup_type_before}{type_}{lbrack_before}[{lbrack_after}{index_type}{rbrack_before}]{rbrack_after}{lookup_type_after}")?;
     Ok(())
 }
@@ -82089,12 +82089,12 @@ fn render_mapped_type_clause(node: &MappedTypeClauseTransport, f: &mut ::std::fm
     let alias = View::new(&node.alias, "{}");
     let name = &node.name;
     let type_ = &node.type_;
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let in_after = options::spacing_text(node.in_after.unwrap_or(0));
+    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let in_before = options::spacing_text(node.in_before.unwrap_or(0));
-    let mapped_type_clause_after = options::spacing_text(node.mapped_type_clause_after.unwrap_or(0));
+    let in_after = options::spacing_text(node.in_after.unwrap_or(0));
     let mapped_type_clause_before = options::spacing_text(node.mapped_type_clause_before.unwrap_or(0));
+    let mapped_type_clause_after = options::spacing_text(node.mapped_type_clause_after.unwrap_or(0));
     write!(f, "{mapped_type_clause_before}{name}{in_before}in{in_after}{type_}")?;
     if alias.is_present() {
         write!(f, "{as_before}as{as_after}{alias}")?;
@@ -82112,8 +82112,8 @@ fn render_literal_type(node: &LiteralTypeTransport, f: &mut ::std::fmt::Formatte
 fn render__number(node: &_NumberTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let argument = &node.argument;
     let operator = &node.operator;
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
+    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     write!(f, "{operator}{argument}")?;
     Ok(())
 }
@@ -82124,22 +82124,22 @@ fn render_existential_type(t: &ExistentialTypeTransport, f: &mut ::std::fmt::For
 
 fn render_flow_maybe_type(node: &FlowMaybeTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let flow_maybe_type_after = options::spacing_text(node.flow_maybe_type_after.unwrap_or(0));
-    let flow_maybe_type_before = options::spacing_text(node.flow_maybe_type_before.unwrap_or(0));
-    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
     let qmark_before = options::spacing_text(node.qmark_before.unwrap_or(0));
+    let qmark_after = options::spacing_text(node.qmark_after.unwrap_or(0));
+    let flow_maybe_type_before = options::spacing_text(node.flow_maybe_type_before.unwrap_or(0));
+    let flow_maybe_type_after = options::spacing_text(node.flow_maybe_type_after.unwrap_or(0));
     write!(f, "{flow_maybe_type_before}{qmark_before}?{qmark_after}{type_}{flow_maybe_type_after}")?;
     Ok(())
 }
 
 fn render_parenthesized_type(node: &ParenthesizedTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let parenthesized_type_after = options::spacing_text(node.parenthesized_type_after.unwrap_or(0));
-    let parenthesized_type_before = options::spacing_text(node.parenthesized_type_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let parenthesized_type_before = options::spacing_text(node.parenthesized_type_before.unwrap_or(0));
+    let parenthesized_type_after = options::spacing_text(node.parenthesized_type_after.unwrap_or(0));
     write!(f, "{parenthesized_type_before}{lparen_before}({lparen_after}{type_}{rparen_before}){rparen_after}{parenthesized_type_after}")?;
     Ok(())
 }
@@ -82150,12 +82150,12 @@ fn render_predefined_type(t: &PredefinedTypeEnum, f: &mut ::std::fmt::Formatter<
 
 fn render_type_arguments(node: &TypeArgumentsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let types = &node.types;
-    let gt_after = options::spacing_text(node.gt_after.unwrap_or(0));
-    let gt_before = options::spacing_text(node.gt_before.unwrap_or(0));
-    let lt_after = options::spacing_text(node.lt_after.unwrap_or(0));
     let lt_before = options::spacing_text(node.lt_before.unwrap_or(0));
-    let type_arguments_after = options::spacing_text(node.type_arguments_after.unwrap_or(0));
+    let lt_after = options::spacing_text(node.lt_after.unwrap_or(0));
+    let gt_before = options::spacing_text(node.gt_before.unwrap_or(0));
+    let gt_after = options::spacing_text(node.gt_after.unwrap_or(0));
     let type_arguments_before = options::spacing_text(node.type_arguments_before.unwrap_or(0));
+    let type_arguments_after = options::spacing_text(node.type_arguments_after.unwrap_or(0));
     write!(f, "{type_arguments_before}{lt_before}<{lt_after}{types}{gt_before}>{gt_after}{type_arguments_after}")?;
     Ok(())
 }
@@ -82166,10 +82166,10 @@ fn render_object_type(node: &ObjectTypeTransport, f: &mut ::std::fmt::Formatter<
     let opening = &node.opening;
     let closing_before = options::spacing_text(node.closing_before.unwrap_or(0));
     let closing_after = options::spacing_text(node.closing_after.unwrap_or(0));
-    let object_type_after = options::spacing_text(node.object_type_after.unwrap_or(0));
-    let object_type_before = options::spacing_text(node.object_type_before.unwrap_or(0));
-    let opening_after = options::spacing_text(node.opening_after.unwrap_or(0));
     let opening_before = options::spacing_text(node.opening_before.unwrap_or(0));
+    let opening_after = options::spacing_text(node.opening_after.unwrap_or(0));
+    let object_type_before = options::spacing_text(node.object_type_before.unwrap_or(0));
+    let object_type_after = options::spacing_text(node.object_type_after.unwrap_or(0));
     write!(f, "{object_type_before}{opening_before}{opening}{opening_after}{members}{closing_before}{closing}{closing_after}{object_type_after}")?;
     Ok(())
 }
@@ -82178,8 +82178,8 @@ fn render_call_signature(node: &CallSignatureTransport, f: &mut ::std::fmt::Form
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let call_signature_after = options::spacing_text(node.call_signature_after.unwrap_or(0));
     let call_signature_before = options::spacing_text(node.call_signature_before.unwrap_or(0));
+    let call_signature_after = options::spacing_text(node.call_signature_after.unwrap_or(0));
     write!(f, "{call_signature_before}{type_parameters}{parameters}{return_type}{call_signature_after}")?;
     Ok(())
 }
@@ -82192,24 +82192,24 @@ fn render_property_signature(node: &PropertySignatureTransport, f: &mut ::std::f
     let readonly_marker = View::new(&node.readonly_marker, "readonly");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_ = View::new(&node.type_, "{}");
-    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
-    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
-    let property_signature_after = options::spacing_text(node.property_signature_after.unwrap_or(0));
+    let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
     let property_signature_before = options::spacing_text(node.property_signature_before.unwrap_or(0));
+    let property_signature_after = options::spacing_text(node.property_signature_after.unwrap_or(0));
     write!(f, "{property_signature_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_}{property_signature_after}")?;
     Ok(())
 }
 
 fn render_type_parameters(node: &TypeParametersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_parameters_elements = &node.type_parameters_elements;
-    let gt_after = options::spacing_text(node.gt_after.unwrap_or(0));
-    let gt_before = options::spacing_text(node.gt_before.unwrap_or(0));
-    let lt_after = options::spacing_text(node.lt_after.unwrap_or(0));
     let lt_before = options::spacing_text(node.lt_before.unwrap_or(0));
-    let type_parameters_after = options::spacing_text(node.type_parameters_after.unwrap_or(0));
+    let lt_after = options::spacing_text(node.lt_after.unwrap_or(0));
+    let gt_before = options::spacing_text(node.gt_before.unwrap_or(0));
+    let gt_after = options::spacing_text(node.gt_after.unwrap_or(0));
     let type_parameters_before = options::spacing_text(node.type_parameters_before.unwrap_or(0));
+    let type_parameters_after = options::spacing_text(node.type_parameters_after.unwrap_or(0));
     write!(f, "{type_parameters_before}{lt_before}<{lt_after}{type_parameters_elements}{gt_before}>{gt_after}{type_parameters_after}")?;
     Ok(())
 }
@@ -82219,18 +82219,18 @@ fn render_type_parameter(node: &TypeParameterTransport, f: &mut ::std::fmt::Form
     let constraint = View::new(&node.constraint, "{}");
     let name = &node.name;
     let value = View::new(&node.value, "{}");
-    let type_parameter_after = options::spacing_text(node.type_parameter_after.unwrap_or(0));
     let type_parameter_before = options::spacing_text(node.type_parameter_before.unwrap_or(0));
+    let type_parameter_after = options::spacing_text(node.type_parameter_after.unwrap_or(0));
     write!(f, "{type_parameter_before}{const_marker}{name}{constraint}{value}{type_parameter_after}")?;
     Ok(())
 }
 
 fn render_default_type(node: &DefaultTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let default_type_after = options::spacing_text(node.default_type_after.unwrap_or(0));
-    let default_type_before = options::spacing_text(node.default_type_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
+    let default_type_before = options::spacing_text(node.default_type_before.unwrap_or(0));
+    let default_type_after = options::spacing_text(node.default_type_after.unwrap_or(0));
     write!(f, "{default_type_before}{eq_before}={eq_after}{type_}{default_type_after}")?;
     Ok(())
 }
@@ -82238,8 +82238,8 @@ fn render_default_type(node: &DefaultTypeTransport, f: &mut ::std::fmt::Formatte
 fn render_constraint(node: &ConstraintTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
     let type_ = &node.type_;
-    let constraint_after = options::spacing_text(node.constraint_after.unwrap_or(0));
     let constraint_before = options::spacing_text(node.constraint_before.unwrap_or(0));
+    let constraint_after = options::spacing_text(node.constraint_after.unwrap_or(0));
     write!(f, "{constraint_before}{content}{type_}{constraint_after}")?;
     Ok(())
 }
@@ -82249,10 +82249,10 @@ fn render_construct_signature(node: &ConstructSignatureTransport, f: &mut ::std:
     let parameters = &node.parameters;
     let type_ = View::new(&node.type_, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let construct_signature_after = options::spacing_text(node.construct_signature_after.unwrap_or(0));
-    let construct_signature_before = options::spacing_text(node.construct_signature_before.unwrap_or(0));
-    let new_after = options::spacing_text(node.new_after.unwrap_or(0));
     let new_before = options::spacing_text(node.new_before.unwrap_or(0));
+    let new_after = options::spacing_text(node.new_after.unwrap_or(0));
+    let construct_signature_before = options::spacing_text(node.construct_signature_before.unwrap_or(0));
+    let construct_signature_after = options::spacing_text(node.construct_signature_after.unwrap_or(0));
     write!(f, "{construct_signature_before}{abstract_marker}{new_before}new{new_after}{type_parameters}{parameters}{type_}{construct_signature_after}")?;
     Ok(())
 }
@@ -82262,26 +82262,26 @@ fn render_index_signature(node: &IndexSignatureTransport, f: &mut ::std::fmt::Fo
     let readonly_marker = View::new(&node.readonly_marker, "readonly");
     let sign = View::new(&node.sign, "{}");
     let type_ = &node.type_;
-    let index_signature_after = options::spacing_text(node.index_signature_after.unwrap_or(0));
-    let index_signature_before = options::spacing_text(node.index_signature_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
-    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
-    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let sign_after = options::spacing_text(node.sign_after.unwrap_or(0));
     let sign_before = options::spacing_text(node.sign_before.unwrap_or(0));
+    let sign_after = options::spacing_text(node.sign_after.unwrap_or(0));
+    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
+    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let index_signature_before = options::spacing_text(node.index_signature_before.unwrap_or(0));
+    let index_signature_after = options::spacing_text(node.index_signature_after.unwrap_or(0));
     write!(f, "{index_signature_before}{sign_before}{sign}{sign_after}{readonly_marker}{lbrack_before}[{lbrack_after}{content}{rbrack_before}]{rbrack_after}{type_}{index_signature_after}")?;
     Ok(())
 }
 
 fn render_array_type(node: &ArrayTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let array_type_after = options::spacing_text(node.array_type_after.unwrap_or(0));
-    let array_type_before = options::spacing_text(node.array_type_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let array_type_before = options::spacing_text(node.array_type_before.unwrap_or(0));
+    let array_type_after = options::spacing_text(node.array_type_after.unwrap_or(0));
     write!(f, "{array_type_before}{type_}{lbrack_before}[{lbrack_after}{rbrack_before}]{rbrack_after}{array_type_after}")?;
     Ok(())
 }
@@ -82293,22 +82293,22 @@ fn render_tuple_type(node: &TupleTypeTransport, f: &mut ::std::fmt::Formatter<'_
         }
     }
     let tuple_type_members = View::new(&node.tuple_type_members, "{}");
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
+    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
     let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let tuple_type_after = options::spacing_text(node.tuple_type_after.unwrap_or(0));
+    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
     let tuple_type_before = options::spacing_text(node.tuple_type_before.unwrap_or(0));
+    let tuple_type_after = options::spacing_text(node.tuple_type_after.unwrap_or(0));
     write!(f, "{tuple_type_before}{lbrack_before}[{lbrack_after}{tuple_type_members}{rbrack_before}]{rbrack_after}{tuple_type_after}")?;
     Ok(())
 }
 
 fn render_readonly_type(node: &ReadonlyTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let type_ = &node.type_;
-    let readonly_after = options::spacing_text(node.readonly_after.unwrap_or(0));
     let readonly_before = options::spacing_text(node.readonly_before.unwrap_or(0));
-    let readonly_type_after = options::spacing_text(node.readonly_type_after.unwrap_or(0));
+    let readonly_after = options::spacing_text(node.readonly_after.unwrap_or(0));
     let readonly_type_before = options::spacing_text(node.readonly_type_before.unwrap_or(0));
+    let readonly_type_after = options::spacing_text(node.readonly_type_after.unwrap_or(0));
     write!(f, "{readonly_type_before}{readonly_before}readonly{readonly_after}{type_}{readonly_type_after}")?;
     Ok(())
 }
@@ -82316,10 +82316,10 @@ fn render_readonly_type(node: &ReadonlyTypeTransport, f: &mut ::std::fmt::Format
 fn render_union_type(node: &UnionTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let left = View::new(&node.left, "{}");
     let right = &node.right;
-    let pipe_after = options::spacing_text(node.pipe_after.unwrap_or(0));
     let pipe_before = options::spacing_text(node.pipe_before.unwrap_or(0));
-    let union_type_after = options::spacing_text(node.union_type_after.unwrap_or(0));
+    let pipe_after = options::spacing_text(node.pipe_after.unwrap_or(0));
     let union_type_before = options::spacing_text(node.union_type_before.unwrap_or(0));
+    let union_type_after = options::spacing_text(node.union_type_after.unwrap_or(0));
     write!(f, "{union_type_before}{left}{pipe_before}|{pipe_after}{right}{union_type_after}")?;
     Ok(())
 }
@@ -82327,10 +82327,10 @@ fn render_union_type(node: &UnionTypeTransport, f: &mut ::std::fmt::Formatter<'_
 fn render_intersection_type(node: &IntersectionTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let left = View::new(&node.left, "{}");
     let right = &node.right;
-    let amp_after = options::spacing_text(node.amp_after.unwrap_or(0));
     let amp_before = options::spacing_text(node.amp_before.unwrap_or(0));
-    let intersection_type_after = options::spacing_text(node.intersection_type_after.unwrap_or(0));
+    let amp_after = options::spacing_text(node.amp_after.unwrap_or(0));
     let intersection_type_before = options::spacing_text(node.intersection_type_before.unwrap_or(0));
+    let intersection_type_after = options::spacing_text(node.intersection_type_after.unwrap_or(0));
     write!(f, "{intersection_type_before}{left}{amp_before}&{amp_after}{right}{intersection_type_after}")?;
     Ok(())
 }
@@ -82339,10 +82339,10 @@ fn render_function_type(node: &FunctionTypeTransport, f: &mut ::std::fmt::Format
     let parameters = &node.parameters;
     let return_type = &node.return_type;
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let eq_gt_after = options::spacing_text(node.eq_gt_after.unwrap_or(0));
     let eq_gt_before = options::spacing_text(node.eq_gt_before.unwrap_or(0));
-    let function_type_after = options::spacing_text(node.function_type_after.unwrap_or(0));
+    let eq_gt_after = options::spacing_text(node.eq_gt_after.unwrap_or(0));
     let function_type_before = options::spacing_text(node.function_type_before.unwrap_or(0));
+    let function_type_after = options::spacing_text(node.function_type_after.unwrap_or(0));
     write!(f, "{function_type_before}{type_parameters}{parameters}{eq_gt_before}=>{eq_gt_after}{return_type}{function_type_after}")?;
     Ok(())
 }
@@ -82400,8 +82400,8 @@ fn render_export_specifiers(node: &ExportSpecifiersTransport, f: &mut ::std::fmt
         head: options::spacing_text(node.export_specifier_start.unwrap_or(0)),
         tail: options::spacing_text(node.export_specifier_end.unwrap_or(0)),
     };
-    let export_specifiers_after = options::spacing_text(node.export_specifiers_after.unwrap_or(0));
     let export_specifiers_before = options::spacing_text(node.export_specifiers_before.unwrap_or(0));
+    let export_specifiers_after = options::spacing_text(node.export_specifiers_after.unwrap_or(0));
     write!(f, "{export_specifiers_before}{export_specifier}{export_specifiers_after}")?;
     Ok(())
 }
@@ -82423,8 +82423,8 @@ fn render_import_specifiers(node: &ImportSpecifiersTransport, f: &mut ::std::fmt
         head: options::spacing_text(node.import_specifier_start.unwrap_or(0)),
         tail: options::spacing_text(node.import_specifier_end.unwrap_or(0)),
     };
-    let import_specifiers_after = options::spacing_text(node.import_specifiers_after.unwrap_or(0));
     let import_specifiers_before = options::spacing_text(node.import_specifiers_before.unwrap_or(0));
+    let import_specifiers_after = options::spacing_text(node.import_specifiers_after.unwrap_or(0));
     write!(f, "{import_specifiers_before}{import_specifier}{import_specifiers_after}")?;
     Ok(())
 }
@@ -82446,8 +82446,8 @@ fn render_formal_parameters_elements(node: &FormalParametersElementsTransport, f
         head: options::spacing_text(node.formal_parameter_start.unwrap_or(0)),
         tail: options::spacing_text(node.formal_parameter_end.unwrap_or(0)),
     };
-    let formal_parameters_elements_after = options::spacing_text(node.formal_parameters_elements_after.unwrap_or(0));
     let formal_parameters_elements_before = options::spacing_text(node.formal_parameters_elements_before.unwrap_or(0));
+    let formal_parameters_elements_after = options::spacing_text(node.formal_parameters_elements_after.unwrap_or(0));
     write!(f, "{formal_parameters_elements_before}{formal_parameter}{formal_parameters_elements_after}")?;
     Ok(())
 }
@@ -82469,8 +82469,8 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, f: &mut ::std::fm
         head: options::spacing_text(node.content_start.unwrap_or(0)),
         tail: options::spacing_text(node.content_end.unwrap_or(0)),
     };
-    let enum_body_elements_after = options::spacing_text(node.enum_body_elements_after.unwrap_or(0));
     let enum_body_elements_before = options::spacing_text(node.enum_body_elements_before.unwrap_or(0));
+    let enum_body_elements_after = options::spacing_text(node.enum_body_elements_after.unwrap_or(0));
     write!(f, "{enum_body_elements_before}{content}{enum_body_elements_after}")?;
     Ok(())
 }
@@ -82492,8 +82492,8 @@ fn render_types(node: &TypesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::s
         head: options::spacing_text(node.type_start.unwrap_or(0)),
         tail: options::spacing_text(node.type_end.unwrap_or(0)),
     };
-    let types_after = options::spacing_text(node.types_after.unwrap_or(0));
     let types_before = options::spacing_text(node.types_before.unwrap_or(0));
+    let types_after = options::spacing_text(node.types_after.unwrap_or(0));
     write!(f, "{types_before}{type_}{types_after}")?;
     Ok(())
 }
@@ -82515,8 +82515,8 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, f: &m
         head: options::spacing_text(node.type_parameter_start.unwrap_or(0)),
         tail: options::spacing_text(node.type_parameter_end.unwrap_or(0)),
     };
-    let type_parameters_elements_after = options::spacing_text(node.type_parameters_elements_after.unwrap_or(0));
     let type_parameters_elements_before = options::spacing_text(node.type_parameters_elements_before.unwrap_or(0));
+    let type_parameters_elements_after = options::spacing_text(node.type_parameters_elements_after.unwrap_or(0));
     write!(f, "{type_parameters_elements_before}{type_parameter}{type_parameters_elements_after}")?;
     Ok(())
 }
@@ -82538,18 +82538,18 @@ fn render_tuple_type_members(node: &TupleTypeMembersTransport, f: &mut ::std::fm
         head: options::spacing_text(node.tuple_type_member_start.unwrap_or(0)),
         tail: options::spacing_text(node.tuple_type_member_end.unwrap_or(0)),
     };
-    let tuple_type_members_after = options::spacing_text(node.tuple_type_members_after.unwrap_or(0));
     let tuple_type_members_before = options::spacing_text(node.tuple_type_members_before.unwrap_or(0));
+    let tuple_type_members_after = options::spacing_text(node.tuple_type_members_after.unwrap_or(0));
     write!(f, "{tuple_type_members_before}{tuple_type_member}{tuple_type_members_after}")?;
     Ok(())
 }
 
 fn render_import_clause_group(node: &ImportClauseGroupTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let comma_after = options::spacing_text(node.comma_after.unwrap_or(0));
     let comma_before = options::spacing_text(node.comma_before.unwrap_or(0));
-    let import_clause_group_after = options::spacing_text(node.import_clause_group_after.unwrap_or(0));
+    let comma_after = options::spacing_text(node.comma_after.unwrap_or(0));
     let import_clause_group_before = options::spacing_text(node.import_clause_group_before.unwrap_or(0));
+    let import_clause_group_after = options::spacing_text(node.import_clause_group_after.unwrap_or(0));
     write!(f, "{import_clause_group_before}{comma_before},{comma_after}{content}{import_clause_group_after}")?;
     Ok(())
 }
@@ -82557,12 +82557,12 @@ fn render_import_clause_group(node: &ImportClauseGroupTransport, f: &mut ::std::
 fn render_catch_clause_group(node: &CatchClauseGroupTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let parameter = &node.parameter;
     let type_ = View::new(&node.type_, "{}");
-    let catch_clause_group_after = options::spacing_text(node.catch_clause_group_after.unwrap_or(0));
-    let catch_clause_group_before = options::spacing_text(node.catch_clause_group_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
+    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
+    let catch_clause_group_before = options::spacing_text(node.catch_clause_group_before.unwrap_or(0));
+    let catch_clause_group_after = options::spacing_text(node.catch_clause_group_after.unwrap_or(0));
     write!(f, "{catch_clause_group_before}{lparen_before}({lparen_after}{parameter}{type_}{rparen_before}){rparen_after}{catch_clause_group_after}")?;
     Ok(())
 }
@@ -82593,10 +82593,10 @@ fn render_operator(t: &OperatorEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std
 
 fn render_ambient_declaration_global(node: &AmbientDeclarationGlobalTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let body = &node.body;
-    let ambient_declaration_global_after = options::spacing_text(node.ambient_declaration_global_after.unwrap_or(0));
-    let ambient_declaration_global_before = options::spacing_text(node.ambient_declaration_global_before.unwrap_or(0));
-    let global_after = options::spacing_text(node.global_after.unwrap_or(0));
     let global_before = options::spacing_text(node.global_before.unwrap_or(0));
+    let global_after = options::spacing_text(node.global_after.unwrap_or(0));
+    let ambient_declaration_global_before = options::spacing_text(node.ambient_declaration_global_before.unwrap_or(0));
+    let ambient_declaration_global_after = options::spacing_text(node.ambient_declaration_global_after.unwrap_or(0));
     write!(f, "{ambient_declaration_global_before}{global_before}global\u{FFFE}{global_after}{body}{ambient_declaration_global_after}")?;
     Ok(())
 }
@@ -82605,14 +82605,14 @@ fn render_ambient_declaration_module(node: &AmbientDeclarationModuleTransport, f
     let name = &node.name;
     let terminator = View::new(&node.terminator, "{}");
     let type_ = &node.type_;
-    let ambient_declaration_module_after = options::spacing_text(node.ambient_declaration_module_after.unwrap_or(0));
-    let ambient_declaration_module_before = options::spacing_text(node.ambient_declaration_module_before.unwrap_or(0));
-    let anon_module_after = options::spacing_text(node.anon_module_after.unwrap_or(0));
-    let anon_module_before = options::spacing_text(node.anon_module_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
     let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
+    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
+    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
+    let anon_module_before = options::spacing_text(node.anon_module_before.unwrap_or(0));
+    let anon_module_after = options::spacing_text(node.anon_module_after.unwrap_or(0));
+    let ambient_declaration_module_before = options::spacing_text(node.ambient_declaration_module_before.unwrap_or(0));
+    let ambient_declaration_module_after = options::spacing_text(node.ambient_declaration_module_after.unwrap_or(0));
     write!(f, "{ambient_declaration_module_before}{anon_module_before}module{anon_module_after}{dot_before}.{dot_after}{name}{colon_before}:{colon_after}{type_}{terminator}{ambient_declaration_module_after}")?;
     Ok(())
 }
@@ -82638,8 +82638,8 @@ fn render_object_type_content(node: &ObjectTypeContentTransport, f: &mut ::std::
         head: options::spacing_text(node.content_start.unwrap_or(0)),
         tail: options::spacing_text(node.content_end.unwrap_or(0)),
     };
-    let object_type_content_after = options::spacing_text(node.object_type_content_after.unwrap_or(0));
     let object_type_content_before = options::spacing_text(node.object_type_content_before.unwrap_or(0));
+    let object_type_content_after = options::spacing_text(node.object_type_content_after.unwrap_or(0));
     write!(f, "{object_type_content_before}{content}{object_type_content_after}")?;
     Ok(())
 }
@@ -82653,14 +82653,14 @@ fn render_export_statement_default(node: &ExportStatementDefaultTransport, f: &m
 fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let terminator = &node.terminator;
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
+    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let export_before = options::spacing_text(node.export_before.unwrap_or(0));
-    let export_statement_namespace_export_after = options::spacing_text(node.export_statement_namespace_export_after.unwrap_or(0));
-    let export_statement_namespace_export_before = options::spacing_text(node.export_statement_namespace_export_before.unwrap_or(0));
-    let namespace_after = options::spacing_text(node.namespace_after.unwrap_or(0));
+    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let namespace_before = options::spacing_text(node.namespace_before.unwrap_or(0));
+    let namespace_after = options::spacing_text(node.namespace_after.unwrap_or(0));
+    let export_statement_namespace_export_before = options::spacing_text(node.export_statement_namespace_export_before.unwrap_or(0));
+    let export_statement_namespace_export_after = options::spacing_text(node.export_statement_namespace_export_after.unwrap_or(0));
     write!(f, "{export_statement_namespace_export_before}{export_before}export{export_after}{as_before}as{as_after}{namespace_before}namespace{namespace_after}{name}{terminator}{export_statement_namespace_export_after}")?;
     Ok(())
 }
@@ -82669,14 +82669,14 @@ fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport
     let export_clause = &node.export_clause;
     let source = View::new(&node.source, "{}");
     let terminator = &node.terminator;
-    let anon_type_after = options::spacing_text(node.anon_type_after.unwrap_or(0));
-    let anon_type_before = options::spacing_text(node.anon_type_before.unwrap_or(0));
-    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let export_before = options::spacing_text(node.export_before.unwrap_or(0));
-    let export_statement_type_export_after = options::spacing_text(node.export_statement_type_export_after.unwrap_or(0));
-    let export_statement_type_export_before = options::spacing_text(node.export_statement_type_export_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
+    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
+    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
+    let anon_type_before = options::spacing_text(node.anon_type_before.unwrap_or(0));
+    let anon_type_after = options::spacing_text(node.anon_type_after.unwrap_or(0));
+    let export_statement_type_export_before = options::spacing_text(node.export_statement_type_export_before.unwrap_or(0));
+    let export_statement_type_export_after = options::spacing_text(node.export_statement_type_export_after.unwrap_or(0));
     write!(f, "{export_statement_type_export_before}{export_before}export{export_after}{anon_type_before}type\u{FFFE}{anon_type_after}{export_clause}")?;
     if source.is_present() {
         write!(f, "{from_before}from{from_after}{source}")?;
@@ -82688,12 +82688,12 @@ fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport
 fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let terminator = &node.terminator;
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let export_before = options::spacing_text(node.export_before.unwrap_or(0));
-    let export_statement_equals_export_after = options::spacing_text(node.export_statement_equals_export_after.unwrap_or(0));
+    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
+    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let export_statement_equals_export_before = options::spacing_text(node.export_statement_equals_export_before.unwrap_or(0));
+    let export_statement_equals_export_after = options::spacing_text(node.export_statement_equals_export_after.unwrap_or(0));
     write!(f, "{export_statement_equals_export_before}{export_before}export{export_after}{eq_before}={eq_after}{expression}{terminator}{export_statement_equals_export_after}")?;
     Ok(())
 }
@@ -82701,8 +82701,8 @@ fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTrans
 fn render_binary_expression_in(node: &BinaryExpressionInTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let left = &node.left;
     let right = &node.right;
-    let binary_expression_in_after = options::spacing_text(node.binary_expression_in_after.unwrap_or(0));
     let binary_expression_in_before = options::spacing_text(node.binary_expression_in_before.unwrap_or(0));
+    let binary_expression_in_after = options::spacing_text(node.binary_expression_in_after.unwrap_or(0));
     write!(f, "{binary_expression_in_before}{left}in{right}{binary_expression_in_after}")?;
     Ok(())
 }
@@ -82721,8 +82721,8 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, f: &mut ::std::fmt:
     };
     let method_definition = &node.method_definition;
     let terminator = View::new(&node.terminator, "{}");
-    let class_body_method_after = options::spacing_text(node.class_body_method_after.unwrap_or(0));
     let class_body_method_before = options::spacing_text(node.class_body_method_before.unwrap_or(0));
+    let class_body_method_after = options::spacing_text(node.class_body_method_after.unwrap_or(0));
     write!(f, "{class_body_method_before}{decorator}{method_definition}{terminator}{class_body_method_after}")?;
     Ok(())
 }
@@ -82730,8 +82730,8 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, f: &mut ::std::fmt:
 fn render_class_body_method_sig(node: &ClassBodyMethodSigTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let method_signature = &node.method_signature;
     let terminator = &node.terminator;
-    let class_body_method_sig_after = options::spacing_text(node.class_body_method_sig_after.unwrap_or(0));
     let class_body_method_sig_before = options::spacing_text(node.class_body_method_sig_before.unwrap_or(0));
+    let class_body_method_sig_after = options::spacing_text(node.class_body_method_sig_after.unwrap_or(0));
     write!(f, "{class_body_method_sig_before}{method_signature}{terminator}{class_body_method_sig_after}")?;
     Ok(())
 }
@@ -82739,8 +82739,8 @@ fn render_class_body_method_sig(node: &ClassBodyMethodSigTransport, f: &mut ::st
 fn render_class_body_member(node: &ClassBodyMemberTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
     let terminator = &node.terminator;
-    let class_body_member_after = options::spacing_text(node.class_body_member_after.unwrap_or(0));
     let class_body_member_before = options::spacing_text(node.class_body_member_before.unwrap_or(0));
+    let class_body_member_after = options::spacing_text(node.class_body_member_after.unwrap_or(0));
     write!(f, "{class_body_member_before}{content}{terminator}{class_body_member_after}")?;
     Ok(())
 }
@@ -82748,10 +82748,10 @@ fn render_class_body_member(node: &ClassBodyMemberTransport, f: &mut ::std::fmt:
 fn render_index_signature_colon(node: &IndexSignatureColonTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let index_type = &node.index_type;
     let name = &node.name;
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let index_signature_colon_after = options::spacing_text(node.index_signature_colon_after.unwrap_or(0));
+    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
     let index_signature_colon_before = options::spacing_text(node.index_signature_colon_before.unwrap_or(0));
+    let index_signature_colon_after = options::spacing_text(node.index_signature_colon_after.unwrap_or(0));
     write!(f, "{index_signature_colon_before}{name}{colon_before}:{colon_after}{index_type}{index_signature_colon_after}")?;
     Ok(())
 }
@@ -82759,10 +82759,10 @@ fn render_index_signature_colon(node: &IndexSignatureColonTransport, f: &mut ::s
 fn render_import_statement_clause_from(node: &ImportStatementClauseFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let import_clause = &node.import_clause;
     let source = &node.source;
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    let import_statement_clause_from_after = options::spacing_text(node.import_statement_clause_from_after.unwrap_or(0));
+    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let import_statement_clause_from_before = options::spacing_text(node.import_statement_clause_from_before.unwrap_or(0));
+    let import_statement_clause_from_after = options::spacing_text(node.import_statement_clause_from_after.unwrap_or(0));
     write!(f, "{import_statement_clause_from_before}{import_clause}{from_before}from\u{FFFE}{from_after}{source}{import_statement_clause_from_after}")?;
     Ok(())
 }
@@ -82770,10 +82770,10 @@ fn render_import_statement_clause_from(node: &ImportStatementClauseFromTransport
 fn render_import_specifier_as(node: &ImportSpecifierAsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let alias = &node.alias;
     let name = &node.name;
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let import_specifier_as_after = options::spacing_text(node.import_specifier_as_after.unwrap_or(0));
+    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
     let import_specifier_as_before = options::spacing_text(node.import_specifier_as_before.unwrap_or(0));
+    let import_specifier_as_after = options::spacing_text(node.import_specifier_as_after.unwrap_or(0));
     write!(f, "{import_specifier_as_before}{name}{as_before}as{as_after}{alias}{import_specifier_as_after}")?;
     Ok(())
 }
@@ -82781,8 +82781,8 @@ fn render_import_specifier_as(node: &ImportSpecifierAsTransport, f: &mut ::std::
 fn render_parenthesized_expression_typed(node: &ParenthesizedExpressionTypedTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let expression = &node.expression;
     let type_ = View::new(&node.type_, "{}");
-    let parenthesized_expression_typed_after = options::spacing_text(node.parenthesized_expression_typed_after.unwrap_or(0));
     let parenthesized_expression_typed_before = options::spacing_text(node.parenthesized_expression_typed_before.unwrap_or(0));
+    let parenthesized_expression_typed_after = options::spacing_text(node.parenthesized_expression_typed_after.unwrap_or(0));
     write!(f, "{parenthesized_expression_typed_before}{expression}{type_}{parenthesized_expression_typed_after}")?;
     Ok(())
 }
@@ -82791,8 +82791,8 @@ fn render_call_expression_call(node: &CallExpressionCallTransport, f: &mut ::std
     let arguments = &node.arguments;
     let function = &node.function;
     let type_arguments = View::new(&node.type_arguments, "{}");
-    let call_expression_call_after = options::spacing_text(node.call_expression_call_after.unwrap_or(0));
     let call_expression_call_before = options::spacing_text(node.call_expression_call_before.unwrap_or(0));
+    let call_expression_call_after = options::spacing_text(node.call_expression_call_after.unwrap_or(0));
     write!(f, "{call_expression_call_before}{function}{type_arguments}{arguments}{call_expression_call_after}")?;
     Ok(())
 }
@@ -82800,8 +82800,8 @@ fn render_call_expression_call(node: &CallExpressionCallTransport, f: &mut ::std
 fn render_call_expression_template_call(node: &CallExpressionTemplateCallTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let arguments = &node.arguments;
     let function = &node.function;
-    let call_expression_template_call_after = options::spacing_text(node.call_expression_template_call_after.unwrap_or(0));
     let call_expression_template_call_before = options::spacing_text(node.call_expression_template_call_before.unwrap_or(0));
+    let call_expression_template_call_after = options::spacing_text(node.call_expression_template_call_after.unwrap_or(0));
     write!(f, "{call_expression_template_call_before}{function}{arguments}{call_expression_template_call_after}")?;
     Ok(())
 }
@@ -82810,10 +82810,10 @@ fn render_call_expression_member(node: &CallExpressionMemberTransport, f: &mut :
     let arguments = &node.arguments;
     let function = &node.function;
     let type_arguments = View::new(&node.type_arguments, "{}");
-    let call_expression_member_after = options::spacing_text(node.call_expression_member_after.unwrap_or(0));
-    let call_expression_member_before = options::spacing_text(node.call_expression_member_before.unwrap_or(0));
-    let qmark_dot_after = options::spacing_text(node.qmark_dot_after.unwrap_or(0));
     let qmark_dot_before = options::spacing_text(node.qmark_dot_before.unwrap_or(0));
+    let qmark_dot_after = options::spacing_text(node.qmark_dot_after.unwrap_or(0));
+    let call_expression_member_before = options::spacing_text(node.call_expression_member_before.unwrap_or(0));
+    let call_expression_member_after = options::spacing_text(node.call_expression_member_after.unwrap_or(0));
     write!(f, "{call_expression_member_before}{function}{qmark_dot_before}?.{qmark_dot_after}{type_arguments}{arguments}{call_expression_member_after}")?;
     Ok(())
 }
@@ -82835,10 +82835,10 @@ fn render_string_double(node: &StringDoubleTransport, f: &mut ::std::fmt::Format
         head: "",
         tail: "",
     };
-    let dquote_after = options::spacing_text(node.dquote_after.unwrap_or(0));
     let dquote_before = options::spacing_text(node.dquote_before.unwrap_or(0));
-    let string_double_after = options::spacing_text(node.string_double_after.unwrap_or(0));
+    let dquote_after = options::spacing_text(node.dquote_after.unwrap_or(0));
     let string_double_before = options::spacing_text(node.string_double_before.unwrap_or(0));
+    let string_double_after = options::spacing_text(node.string_double_after.unwrap_or(0));
     write!(f, "{string_double_before}{dquote_before}\"{dquote_after}{elements}{dquote_before}\"{dquote_after}{string_double_after}")?;
     Ok(())
 }
@@ -82860,10 +82860,10 @@ fn render_string_single(node: &StringSingleTransport, f: &mut ::std::fmt::Format
         head: "",
         tail: "",
     };
-    let squote_after = options::spacing_text(node.squote_after.unwrap_or(0));
     let squote_before = options::spacing_text(node.squote_before.unwrap_or(0));
-    let string_single_after = options::spacing_text(node.string_single_after.unwrap_or(0));
+    let squote_after = options::spacing_text(node.squote_after.unwrap_or(0));
     let string_single_before = options::spacing_text(node.string_single_before.unwrap_or(0));
+    let string_single_after = options::spacing_text(node.string_single_after.unwrap_or(0));
     write!(f, "{string_single_before}{squote_before}'{squote_after}{elements}{squote_before}'{squote_after}{string_single_after}")?;
     Ok(())
 }
@@ -82871,8 +82871,8 @@ fn render_string_single(node: &StringSingleTransport, f: &mut ::std::fmt::Format
 fn render_update_expression_postfix(node: &UpdateExpressionPostfixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let argument = &node.argument;
     let operator = &node.operator;
-    let update_expression_postfix_after = options::spacing_text(node.update_expression_postfix_after.unwrap_or(0));
     let update_expression_postfix_before = options::spacing_text(node.update_expression_postfix_before.unwrap_or(0));
+    let update_expression_postfix_after = options::spacing_text(node.update_expression_postfix_after.unwrap_or(0));
     write!(f, "{update_expression_postfix_before}{argument}{operator}{update_expression_postfix_after}")?;
     Ok(())
 }
@@ -82880,8 +82880,8 @@ fn render_update_expression_postfix(node: &UpdateExpressionPostfixTransport, f: 
 fn render_update_expression_prefix(node: &UpdateExpressionPrefixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let argument = &node.argument;
     let operator = &node.operator;
-    let update_expression_prefix_after = options::spacing_text(node.update_expression_prefix_after.unwrap_or(0));
     let update_expression_prefix_before = options::spacing_text(node.update_expression_prefix_before.unwrap_or(0));
+    let update_expression_prefix_after = options::spacing_text(node.update_expression_prefix_after.unwrap_or(0));
     write!(f, "{update_expression_prefix_before}{operator}{argument}{update_expression_prefix_after}")?;
     Ok(())
 }
@@ -82895,8 +82895,8 @@ fn render_arrow_function_parameter(node: &ArrowFunctionParameterTransport, f: &m
 fn render_class_heritage_extends_clause(node: &ClassHeritageExtendsClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let extends_clause = &node.extends_clause;
     let implements_clause = View::new(&node.implements_clause, "{}");
-    let class_heritage_extends_clause_after = options::spacing_text(node.class_heritage_extends_clause_after.unwrap_or(0));
     let class_heritage_extends_clause_before = options::spacing_text(node.class_heritage_extends_clause_before.unwrap_or(0));
+    let class_heritage_extends_clause_after = options::spacing_text(node.class_heritage_extends_clause_after.unwrap_or(0));
     write!(f, "{class_heritage_extends_clause_before}{extends_clause}{implements_clause}{class_heritage_extends_clause_after}")?;
     Ok(())
 }
@@ -82904,8 +82904,8 @@ fn render_class_heritage_extends_clause(node: &ClassHeritageExtendsClauseTranspo
 fn render_import_clause_default_import(node: &ImportClauseDefaultImportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let identifier = &node.identifier;
     let import_clause_group = View::new(&node.import_clause_group, "{}");
-    let import_clause_default_import_after = options::spacing_text(node.import_clause_default_import_after.unwrap_or(0));
     let import_clause_default_import_before = options::spacing_text(node.import_clause_default_import_before.unwrap_or(0));
+    let import_clause_default_import_after = options::spacing_text(node.import_clause_default_import_after.unwrap_or(0));
     write!(f, "{import_clause_default_import_before}{identifier}{import_clause_group}{import_clause_default_import_after}")?;
     Ok(())
 }
@@ -82913,10 +82913,10 @@ fn render_import_clause_default_import(node: &ImportClauseDefaultImportTransport
 fn render_export_statement_default_from(node: &ExportStatementDefaultFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let automatic_semicolon = &node.automatic_semicolon;
     let content = &node.content;
-    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let export_before = options::spacing_text(node.export_before.unwrap_or(0));
-    let export_statement_default_from_after = options::spacing_text(node.export_statement_default_from_after.unwrap_or(0));
+    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let export_statement_default_from_before = options::spacing_text(node.export_statement_default_from_before.unwrap_or(0));
+    let export_statement_default_from_after = options::spacing_text(node.export_statement_default_from_after.unwrap_or(0));
     write!(f, "{export_statement_default_from_before}{export_before}export\u{FFFE}{export_after}{content}{automatic_semicolon}{export_statement_default_from_after}")?;
     Ok(())
 }
@@ -82934,22 +82934,22 @@ fn render_export_statement_default_declaration(node: &ExportStatementDefaultDecl
         head: options::spacing_text(node.decorator_start.unwrap_or(0)),
         tail: options::spacing_text(node.decorator_end.unwrap_or(0)),
     };
-    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let export_before = options::spacing_text(node.export_before.unwrap_or(0));
-    let export_statement_default_declaration_after = options::spacing_text(node.export_statement_default_declaration_after.unwrap_or(0));
+    let export_after = options::spacing_text(node.export_after.unwrap_or(0));
     let export_statement_default_declaration_before = options::spacing_text(node.export_statement_default_declaration_before.unwrap_or(0));
+    let export_statement_default_declaration_after = options::spacing_text(node.export_statement_default_declaration_after.unwrap_or(0));
     write!(f, "{export_statement_default_declaration_before}{decorator}{export_before}export{export_after}{content}{export_statement_default_declaration_after}")?;
     Ok(())
 }
 
 fn render_export_statement_default_from_star_from(node: &ExportStatementDefaultFromStarFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let source = &node.source;
-    let export_statement_default_from_star_from_after = options::spacing_text(node.export_statement_default_from_star_from_after.unwrap_or(0));
-    let export_statement_default_from_star_from_before = options::spacing_text(node.export_statement_default_from_star_from_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let star_before = options::spacing_text(node.star_before.unwrap_or(0));
+    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
+    let export_statement_default_from_star_from_before = options::spacing_text(node.export_statement_default_from_star_from_before.unwrap_or(0));
+    let export_statement_default_from_star_from_after = options::spacing_text(node.export_statement_default_from_star_from_after.unwrap_or(0));
     write!(f, "{export_statement_default_from_star_from_before}{star_before}*{star_after}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_from_star_from_after}")?;
     Ok(())
 }
@@ -82957,10 +82957,10 @@ fn render_export_statement_default_from_star_from(node: &ExportStatementDefaultF
 fn render_export_statement_default_from_ns_from(node: &ExportStatementDefaultFromNsFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let namespace_export = &node.namespace_export;
     let source = &node.source;
-    let export_statement_default_from_ns_from_after = options::spacing_text(node.export_statement_default_from_ns_from_after.unwrap_or(0));
-    let export_statement_default_from_ns_from_before = options::spacing_text(node.export_statement_default_from_ns_from_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
+    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
+    let export_statement_default_from_ns_from_before = options::spacing_text(node.export_statement_default_from_ns_from_before.unwrap_or(0));
+    let export_statement_default_from_ns_from_after = options::spacing_text(node.export_statement_default_from_ns_from_after.unwrap_or(0));
     write!(f, "{export_statement_default_from_ns_from_before}{namespace_export}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_from_ns_from_after}")?;
     Ok(())
 }
@@ -82968,20 +82968,20 @@ fn render_export_statement_default_from_ns_from(node: &ExportStatementDefaultFro
 fn render_export_statement_default_from_clause_from(node: &ExportStatementDefaultFromClauseFromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let export_clause = &node.export_clause;
     let source = &node.source;
-    let export_statement_default_from_clause_from_after = options::spacing_text(node.export_statement_default_from_clause_from_after.unwrap_or(0));
-    let export_statement_default_from_clause_from_before = options::spacing_text(node.export_statement_default_from_clause_from_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
     let from_before = options::spacing_text(node.from_before.unwrap_or(0));
+    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
+    let export_statement_default_from_clause_from_before = options::spacing_text(node.export_statement_default_from_clause_from_before.unwrap_or(0));
+    let export_statement_default_from_clause_from_after = options::spacing_text(node.export_statement_default_from_clause_from_after.unwrap_or(0));
     write!(f, "{export_statement_default_from_clause_from_before}{export_clause}{from_before}from\u{FFFE}{from_after}{source}{export_statement_default_from_clause_from_after}")?;
     Ok(())
 }
 
 fn render_export_statement_default_declaration_default_kw(node: &ExportStatementDefaultDeclarationDefaultKwTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let content = &node.content;
-    let default_after = options::spacing_text(node.default_after.unwrap_or(0));
     let default_before = options::spacing_text(node.default_before.unwrap_or(0));
-    let export_statement_default_declaration_default_kw_after = options::spacing_text(node.export_statement_default_declaration_default_kw_after.unwrap_or(0));
+    let default_after = options::spacing_text(node.default_after.unwrap_or(0));
     let export_statement_default_declaration_default_kw_before = options::spacing_text(node.export_statement_default_declaration_default_kw_before.unwrap_or(0));
+    let export_statement_default_declaration_default_kw_after = options::spacing_text(node.export_statement_default_declaration_default_kw_after.unwrap_or(0));
     write!(f, "{export_statement_default_declaration_default_kw_before}{default_before}default{default_after}{content}{export_statement_default_declaration_default_kw_after}")?;
     Ok(())
 }
@@ -82989,8 +82989,8 @@ fn render_export_statement_default_declaration_default_kw(node: &ExportStatement
 fn render_export_statement_default_declaration_default_kw_value(node: &ExportStatementDefaultDeclarationDefaultKwValueTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let automatic_semicolon = &node.automatic_semicolon;
     let value = &node.value;
-    let export_statement_default_declaration_default_kw_value_after = options::spacing_text(node.export_statement_default_declaration_default_kw_value_after.unwrap_or(0));
     let export_statement_default_declaration_default_kw_value_before = options::spacing_text(node.export_statement_default_declaration_default_kw_value_before.unwrap_or(0));
+    let export_statement_default_declaration_default_kw_value_after = options::spacing_text(node.export_statement_default_declaration_default_kw_value_after.unwrap_or(0));
     write!(f, "{export_statement_default_declaration_default_kw_value_before}{value}{automatic_semicolon}{export_statement_default_declaration_default_kw_value_after}")?;
     Ok(())
 }
@@ -82999,10 +82999,10 @@ fn render_variable_declarator_plain(node: &VariableDeclaratorPlainTransport, f: 
     let name = &node.name;
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let variable_declarator_plain_after = options::spacing_text(node.variable_declarator_plain_after.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let variable_declarator_plain_before = options::spacing_text(node.variable_declarator_plain_before.unwrap_or(0));
+    let variable_declarator_plain_after = options::spacing_text(node.variable_declarator_plain_after.unwrap_or(0));
     write!(f, "{variable_declarator_plain_before}{name}{type_}")?;
     if value.is_present() {
         write!(f, "{eq_before}={eq_after}{value}")?;
@@ -83014,10 +83014,10 @@ fn render_variable_declarator_plain(node: &VariableDeclaratorPlainTransport, f: 
 fn render_variable_declarator_definite(node: &VariableDeclaratorDefiniteTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let name = &node.name;
     let type_ = &node.type_;
-    let bang_after = options::spacing_text(node.bang_after.unwrap_or(0));
     let bang_before = options::spacing_text(node.bang_before.unwrap_or(0));
-    let variable_declarator_definite_after = options::spacing_text(node.variable_declarator_definite_after.unwrap_or(0));
+    let bang_after = options::spacing_text(node.bang_after.unwrap_or(0));
     let variable_declarator_definite_before = options::spacing_text(node.variable_declarator_definite_before.unwrap_or(0));
+    let variable_declarator_definite_after = options::spacing_text(node.variable_declarator_definite_after.unwrap_or(0));
     write!(f, "{variable_declarator_definite_before}{name}{bang_before}!{bang_after}{type_}{variable_declarator_definite_after}")?;
     Ok(())
 }
@@ -83039,10 +83039,10 @@ fn render_for_header_lhs(node: &ForHeaderLhsTransport, f: &mut ::std::fmt::Forma
 fn render_for_header_var_kind(node: &ForHeaderVarKindTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     let left = &node.left;
     let value = View::new(&node.value, "{}");
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let for_header_var_kind_after = options::spacing_text(node.for_header_var_kind_after.unwrap_or(0));
+    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let for_header_var_kind_before = options::spacing_text(node.for_header_var_kind_before.unwrap_or(0));
+    let for_header_var_kind_after = options::spacing_text(node.for_header_var_kind_after.unwrap_or(0));
     write!(f, "{for_header_var_kind_before}var{left}")?;
     if value.is_present() {
         write!(f, "{eq_before}={eq_after}{value}")?;
@@ -83055,10 +83055,10 @@ fn render_for_header_let_const_kind(node: &ForHeaderLetConstKindTransport, f: &m
     let automatic_semicolon = View::new(&node.automatic_semicolon, "{}");
     let kind = &node.kind;
     let left = &node.left;
-    let for_header_let_const_kind_after = options::spacing_text(node.for_header_let_const_kind_after.unwrap_or(0));
-    let for_header_let_const_kind_before = options::spacing_text(node.for_header_let_const_kind_before.unwrap_or(0));
-    let kind_after = options::spacing_text(node.kind_after.unwrap_or(0));
     let kind_before = options::spacing_text(node.kind_before.unwrap_or(0));
+    let kind_after = options::spacing_text(node.kind_after.unwrap_or(0));
+    let for_header_let_const_kind_before = options::spacing_text(node.for_header_let_const_kind_before.unwrap_or(0));
+    let for_header_let_const_kind_after = options::spacing_text(node.for_header_let_const_kind_after.unwrap_or(0));
     write!(f, "{for_header_let_const_kind_before}{kind_before}{kind}{kind_after}{left}{automatic_semicolon}{for_header_let_const_kind_after}")?;
     Ok(())
 }

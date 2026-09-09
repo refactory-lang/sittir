@@ -1040,7 +1040,7 @@ export function emitHashFiles(
 
 type RenderPlan = RenderOptionsPlan;
 
-const EMPTY_PLAN: RenderPlan = { spacingSites: [], delimiterSites: [], depthSites: [], indentId: 0, dedentId: 0, labels: [], supertypes: [], whitespaceText: [] };
+const EMPTY_PLAN: RenderPlan = { spacingSites: [], sitePaths: [], delimiterSites: [], depthSites: [], indentId: 0, dedentId: 0, labels: [], supertypes: [], whitespaceText: [] };
 
 function planRenderOptionsFor(
 	nodeMap: NodeMap,

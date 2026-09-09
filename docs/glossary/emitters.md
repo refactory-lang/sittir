@@ -14914,3 +14914,17 @@ literal tokens: the spacing-table row with `role: 'separator'`, if any.
 // top level (`<kind>_start` / `<kind>_end`, emitted in FLANK_SITES) for an
 // array flank. The transport field of a flank is `<slot>_start` / `_end`.
 ```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
+
+Spacing sites are numbered in canonical path order rather than by kind, slot and
+label. That is what makes every descendant of a prefix a contiguous index range,
+so a scoped declaration resolves by binary search rather than a scan. The sort is
+in place, because the depth walk identifies its sites by object and reads their
+indices afterwards.
+
+`SITE_PATHS` is emitted parallel to `SPACING_SITES`, one formatted address per
+site, and is the table a prefix is looked up in.
+
+Delimiter sites keep their own kind-and-slot order: they are addressed by name,
+not by range.

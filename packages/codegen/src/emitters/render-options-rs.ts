@@ -3,6 +3,8 @@ import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { admitsDepth, type WhitespaceText } from '../compiler/model/render-rules.ts';
+import { pathOf } from '../compiler/model/site-addresses.ts';
+import { comparePreferencePaths, formatPreferencePath } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
 
@@ -36,6 +38,7 @@ export interface DepthSites {
 
 export interface RenderOptionsPlan {
 	readonly spacingSites: readonly SpacingSite[];
+	readonly sitePaths: readonly string[];
 	readonly delimiterSites: readonly DelimiterSite[];
 	readonly depthSites: readonly DepthSites[];
 	readonly indentId: number;
@@ -127,13 +130,15 @@ export function planRenderOptions(
 		labels.set(site.label, allowedIds);
 		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
-	spacing.sort((a, b) => byTuple([a.kind, a.slot, a.label], [b.kind, b.slot, b.label]));
+	const paths = new Map(spacing.map((site) => [site, pathOf(site, kindEntries)]));
+	spacing.sort((a, b) => comparePreferencePaths(paths.get(a)!, paths.get(b)!));
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
 	const depthSites = new Map<string, number[]>();
 	for (const s of depthCapable) depthSites.set(s.kind, [...(depthSites.get(s.kind) ?? []), spacing.indexOf(s)]);
 	const idOfText = (constant: string): number => whitespaceText.size === 0 ? 0 : ([...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)?.[0] ?? undefined) === undefined ? 0 : idOf(kindEntries, [...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)![0], 'visibleExternals');
 	return {
 		spacingSites: spacing,
+		sitePaths: spacing.map((site) => formatPreferencePath(paths.get(site)!)),
 		delimiterSites: delimiters,
 		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
 		indentId: idOfText('INDENT_NEWLINE'),
@@ -166,6 +171,11 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	for (const s of plan.spacingSites) {
 		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
 	}
+	L.push('];', '');
+	L.push("/// Each site's canonical address, parallel to `SPACING_SITES`. Sites are in");
+	L.push('/// sorted path order, so every descendant of a prefix is a contiguous range.');
+	L.push('pub static SITE_PATHS: &[&str] = &[');
+	for (const path of plan.sitePaths) L.push(`    ${q(path)},`);
 	L.push('];', '');
 	L.push('/// Site indices of the array flanks, keyed by their top-level address.');
 	L.push('pub static FLANK_SITES: &[(&str, usize)] = &[');

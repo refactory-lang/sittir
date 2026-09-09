@@ -5,23 +5,29 @@ import {
 	type PreferenceSegment
 } from '../../dsl/primitives/preference-path.ts';
 import { findEntryForKindName, type KindEntryLike } from '../generated-metadata.ts';
-import { publicKindName, type RuleSpacingSite } from './render-rules.ts';
+import { publicKindName } from './render-rules.ts';
 import type { AddressBinding, PathDeclaration } from '../../dsl/wire/options-block.ts';
 
-export interface AddressedSite extends RuleSpacingSite {
-	readonly path: readonly PreferenceSegment[];
+export interface SiteAddressInput {
+	readonly kind: string;
+	readonly slot: string;
+	readonly address: string;
 }
 
-export function addressSites(
-	sites: readonly RuleSpacingSite[],
+export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
+	readonly path: readonly PreferenceSegment[];
+};
+
+export function addressSites<T extends SiteAddressInput>(
+	sites: readonly T[],
 	kindEntries: readonly KindEntryLike[]
-): AddressedSite[] {
+): AddressedSite<T>[] {
 	return sites
 		.map((site) => ({ ...site, path: pathOf(site, kindEntries) }))
 		.sort((a, b) => comparePreferencePaths(a.path, b.path));
 }
 
-function pathOf(site: RuleSpacingSite, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] {
+export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] {
 	const own = publicKindName(site.kind);
 	const kind: PreferenceSegment = { kind: 'kind-match', name: own };
 
@@ -30,10 +36,9 @@ function pathOf(site: RuleSpacingSite, kindEntries: readonly KindEntryLike[]): r
 		const side: PreferenceSegment = { kind: 'name', name: seam.side };
 		if (seam.token === own) return [kind, side];
 		const text = anonTokenText(kindEntries, seam.token);
-		if (text === undefined) {
-			throw new Error(`render options: seam '${site.address}' on '${own}' names no anonymous token '${seam.token}'`);
-		}
-		return [kind, { kind: 'literal', text }, side];
+		return text === undefined
+			? [kind, { kind: 'fieldName', name: seam.token }, side]
+			: [kind, { kind: 'literal', text }, side];
 	}
 
 	const spacing = parseSpacingLabel(site.address);

@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "81aea3c959e01250b1fd0166cf2505eaaf204e0a5dc56e86fbe6b38ed6feddc6",
+  "source_hash": "b1d13018b6d830155b9d4d49503524e733cea257ff7c7a121f5ae794534442c1",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "7cca52b4bc0f1aec58b78f53e0c042e6aca5579aab56548bd3e1440906f252f1",
     "packages/python/.sittir/grammar.js": "32a1d239e8c9f86dc5b26cacd51d163cf6ec28f9368a95b82e5449682636b03e",
@@ -28,7 +28,7 @@
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "190670dffc2b0028bcf73429d58a71b282f8eff29c6c3d718c1549386dbf5b1d",
     "packages/python/src/grammar.ts": "eb99ff20074d89d3cf98c98a326bef1e54b54f920783d3eca3b1aae2bbeb2547",
-    "packages/python/src/hash.ts": "e77e139c64bcf78cb56fedc79d6f761b41881a65a2c9fee6dd774c4e2da14aa8",
+    "packages/python/src/hash.ts": "e8df255beb6f7c42a34e4a43edb302eb053050db7a9742b94d79e47a188cde52",
     "packages/python/src/index.ts": "dde8f93f6c1ee1f11445d8814046d1a2935cbc3166266058f75e29326c3e200c",
     "packages/python/src/ir.ts": "0135ad973044d6bb54a0908b14882f9ad590d1d5d5cdac0e08f44dc646c96316",
     "packages/python/src/is.ts": "81e7944b7f87b052f5e1c254f682cddaefe9dae9873283468bc97a5d7d7555d9",
@@ -38,14 +38,14 @@
     "packages/python/src/types.ts": "13f99abdb635974f2ecc548c3505f9bb9c4cb1fa4a07c557cdb1fd8f291ebe88",
     "packages/python/src/utils.ts": "91eeb57378c3c69dbdef34333ef56a0ecb5a4eff742db1a4f290430e0c4eeee0",
     "packages/python/src/wrap.ts": "0c1bec2ce4994a06d1f1f97fc4d6e8f7e07991594e11ab9716434f83637c8218",
-    "rust/crates/sittir-python/index.d.ts": "0af71424992b70be8df4b905ea5d2613bdecaeb0164f79ecd77871b9f888f5e7",
+    "rust/crates/sittir-python/index.d.ts": "df75522142282d05d9046037327d516550d84b1624b0cecf421d04ae35a5af84",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "a13731e0ec40f61a97a22a303762c3d52e4634ad6f5caaf0015aefa9ec367451",
-    "rust/crates/sittir-python/src/render/hash.rs": "dd166e586180f56ec9764201122289f9ba1441a2e6eb31bdb94257f654e844bb",
+    "rust/crates/sittir-python/src/render/hash.rs": "60b705d6857967977a24cfd91173894dcb7a800cacf7672d43b143ad67b34e2e",
     "rust/crates/sittir-python/src/render/kind_ids.rs": "9f2fa327c599f511711020eabc4209b478244af924f2aa427e9f6ff8a1ef37c6",
     "rust/crates/sittir-python/src/render/mod.rs": "dfc0341bd2d54b5bcb07095803e9fe77872288f84f839adbf7b032be3a2eb4e6",
-    "rust/crates/sittir-python/src/render/options.rs": "600fb9d00afdbf2de97002bdca31f620bde5cff98fe839b15de74ada02aea9d2",
-    "rust/crates/sittir-python/src/render/transport.rs": "e0a74edc7c87c3a6d2ff2ac00a30676a7ac284f47a4c5f43fb8778c01bfc92a5"
+    "rust/crates/sittir-python/src/render/options.rs": "f5b70c79d6ad0e5dd3ad22469dbeef700efa1517d06f96e4af5fcc0258439773",
+    "rust/crates/sittir-python/src/render/transport.rs": "613577c427569df5022b1744fab0f165f94fad30323b869b9ae40a4713235ef6"
   },
   "host_files": {
     "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "freshness-checked",

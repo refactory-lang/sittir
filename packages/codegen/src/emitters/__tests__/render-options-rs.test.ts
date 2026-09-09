@@ -8,7 +8,9 @@ const kindEntries = [
 	{ kind: 'space', member: 'Space', id: 168 },
 	{ kind: 'newline', member: 'Newline', id: 169 },
 	{ kind: 'semi', member: 'Semi', id: 20, symbolName: ';', anon: true },
-	{ kind: 'automatic_semicolon', member: 'AutomaticSemicolon', id: 160 }
+	{ kind: 'automatic_semicolon', member: 'AutomaticSemicolon', id: 160 },
+	{ kind: 'lparen', member: 'Lparen', id: 21, symbolName: '(', anon: true },
+	{ kind: 'rparen', member: 'Rparen', id: 22, symbolName: ')', anon: true }
 ];
 
 const sites: SitePreference[] = [
@@ -38,16 +40,34 @@ const whitespaceText = new Map([
 ]);
 
 describe('planRenderOptions', () => {
-	it('numbers spacing and flank sites densely, in kind then slot then label order', () => {
+	it('numbers spacing and flank sites densely, in canonical path order', () => {
 		const plan = planRenderOptions(sites, kindEntries, supertypes, whitespaceText);
 		expect(plan.spacingSites.map((s) => [s.constName, s.defaultId, s.fieldIdent, s.wireKey])).toEqual([
 			['SITE_CALL_EXPRESSION_LPAREN_BEFORE', 167, 'lparen_before', '_lparen_before'],
-			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER', 168, 'elements_separator_space_after', '_elements_separator_space_after'],
 			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_BEFORE', 167, 'elements_separator_space_before', '_elements_separator_space_before'],
+			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER', 168, 'elements_separator_space_after', '_elements_separator_space_after'],
 			['SITE_RETURN_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR', 20, 'terminator_statement_terminator', '_terminator_statement_terminator'],
 			['SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE', 169, 'statements_separator_space', '_statements_separator_space']
 		]);
 		expect(plan.delimiterSites.map((s) => [s.constName, s.allowed, s.defaultBits])).toEqual([['DELIM_FORMAL_PARAMETERS_ELEMENTS', 2, 0]]);
+	});
+
+	it('carries a path table parallel to the sites, in the order that numbers them', () => {
+		const plan = planRenderOptions(sites, kindEntries, supertypes, whitespaceText);
+		expect(plan.sitePaths).toEqual([
+			'(call_expression)/"("/before',
+			'(formal_parameters)/elements:/separator/before',
+			'(formal_parameters)/elements:/separator/after',
+			'(return_statement)/terminator_statement_terminator',
+			'(statement_block)/statements_separator_space'
+		]);
+		expect(plan.sitePaths).toHaveLength(plan.spacingSites.length);
+	});
+
+	it("orders a kind's own sides after everything nested beneath them", () => {
+		const edge: SitePreference = { kind: 'call_expression', slot: 'call_expression', address: 'call_expression_after', label: 'call_expression_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
+		const plan = planRenderOptions([edge, ...sites], kindEntries, supertypes, whitespaceText);
+		expect(plan.sitePaths.slice(0, 2)).toEqual(['(call_expression)/"("/before', '(call_expression)/after']);
 	});
 
 	it('a declared preference site is a spacing-table site too, typed by its arms', () => {
@@ -104,7 +124,8 @@ describe('renderOptionsRs', () => {
 		const src = renderOptionsRs(planRenderOptions(sites, kindEntries, supertypes, whitespaceText));
 		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 5;');
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
-		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 1;');
+		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 2;');
+		expect(src).toContain('    "(formal_parameters)/elements:/separator/after",');
 		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
@@ -122,8 +143,8 @@ describe('renderOptionsRs', () => {
 		const entries = [...kindEntries, { kind: 'indent', member: 'Indent', id: 170 }, { kind: 'dedent', member: 'Dedent', id: 171 }];
 		const depth = (slot: string, address: string): SitePreference => ({ kind: 'call_expression', slot, address, label: address, arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' });
 		const plan = planRenderOptions([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, supertypes, whitespaceText);
-		expect(plan.spacingSites.slice(0, 3).map((s) => s.fieldIdent)).toEqual(['lparen_after', 'lparen_before', 'rparen_before']);
-		expect(plan.depthSites).toEqual([{ kind: 'call_expression', sites: [2, 0] }]);
-		expect(renderOptionsRs(plan)).toContain('    ("call_expression", &[2, 0]),');
+		expect(plan.spacingSites.slice(0, 3).map((s) => s.fieldIdent)).toEqual(['lparen_before', 'lparen_after', 'rparen_before']);
+		expect(plan.depthSites).toEqual([{ kind: 'call_expression', sites: [2, 1] }]);
+		expect(renderOptionsRs(plan)).toContain('    ("call_expression", &[2, 1]),');
 	});
 });
