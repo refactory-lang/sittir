@@ -2743,6 +2743,8 @@ export interface TokenBindingPatternTransport {
   _colon_before?: number
   _token_binding_pattern_after?: number
   _token_binding_pattern_before?: number
+  _type_after?: number
+  _type_before?: number
 }
 
 export interface TokenRepetitionPatternTransport {

@@ -128,6 +128,8 @@ export interface AbstractMethodSignatureTransport {
   _abstract_before?: number
   _abstract_method_signature_after?: number
   _abstract_method_signature_before?: number
+  _accessibility_modifier_after?: number
+  _accessibility_modifier_before?: number
   _accessor_kind_after?: number
   _accessor_kind_before?: number
   _optional_marker_after?: number
@@ -1387,6 +1389,8 @@ export interface ForHeaderLetConstKindTransport {
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
   _for_header_let_const_kind_after?: number
   _for_header_let_const_kind_before?: number
+  _kind_after?: number
+  _kind_before?: number
 }
 
 export interface ForHeaderLhsTransport {
@@ -1435,6 +1439,8 @@ export interface ForInStatementTransport {
   _for_in_statement_before?: number
   _lparen_after?: number
   _lparen_before?: number
+  _operator_after?: number
+  _operator_before?: number
   _rparen_after?: number
   _rparen_before?: number
 }
@@ -2013,6 +2019,8 @@ export interface LexicalDeclarationTransport {
   _declarators_separator_space_before?: number
   _declarators_end?: number
   _declarators_start?: number
+  _kind_after?: number
+  _kind_before?: number
   _lexical_declaration_after?: number
   _lexical_declaration_before?: number
 }
@@ -2111,6 +2119,8 @@ export interface MethodDefinitionTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodDefinitionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
+  _accessibility_modifier_after?: number
+  _accessibility_modifier_before?: number
   _accessor_kind_after?: number
   _accessor_kind_before?: number
   _method_definition_after?: number
@@ -2138,6 +2148,8 @@ export interface MethodSignatureTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodSignatureReturnTypeTransportSlot>
+  _accessibility_modifier_after?: number
+  _accessibility_modifier_before?: number
   _accessor_kind_after?: number
   _accessor_kind_before?: number
   _method_signature_after?: number
@@ -2586,6 +2598,8 @@ export interface PropertySignatureTransport {
   _name: SlotValue<PropertySignatureNameTransportSlot>
   _optional_marker?: boolean
   _type?: SlotValue<TypeAnnotationTransport>
+  _accessibility_modifier_after?: number
+  _accessibility_modifier_before?: number
   _optional_marker_after?: number
   _optional_marker_before?: number
   _property_signature_after?: number
@@ -2612,6 +2626,8 @@ export interface PublicFieldDefinitionTransport {
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _override_modifier?: SlotValue<OverrideModifierTransport>
+  _accessibility_modifier_after?: number
+  _accessibility_modifier_before?: number
   _decorator_separator_space?: number
   _decorator_end?: number
   _decorator_start?: number

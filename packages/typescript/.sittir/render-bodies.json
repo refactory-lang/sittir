@@ -825,8 +825,16 @@
 			"field": "for_header_let_const_kind_before"
 		},
 		{
+			"kind": "seam",
+			"field": "kind_before"
+		},
+		{
 			"kind": "slot",
 			"name": "kind"
+		},
+		{
+			"kind": "seam",
+			"field": "kind_after"
 		},
 		{
 			"kind": "slot",
@@ -1600,6 +1608,10 @@
 			"field": "abstract_method_signature_before"
 		},
 		{
+			"kind": "seam",
+			"field": "accessibility_modifier_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -1612,6 +1624,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "accessibility_modifier_after"
 		},
 		{
 			"kind": "seam",
@@ -3587,8 +3603,16 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
 		},
 		{
 			"kind": "slot",
@@ -4905,8 +4929,16 @@
 			"field": "lexical_declaration_before"
 		},
 		{
+			"kind": "seam",
+			"field": "kind_before"
+		},
+		{
 			"kind": "slot",
 			"name": "kind"
+		},
+		{
+			"kind": "seam",
+			"field": "kind_after"
 		},
 		{
 			"kind": "slot",
@@ -5069,6 +5101,10 @@
 			"field": "method_definition_before"
 		},
 		{
+			"kind": "seam",
+			"field": "accessibility_modifier_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -5081,6 +5117,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "accessibility_modifier_after"
 		},
 		{
 			"kind": "if",
@@ -5233,6 +5273,10 @@
 			"field": "method_signature_before"
 		},
 		{
+			"kind": "seam",
+			"field": "accessibility_modifier_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -5245,6 +5289,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "accessibility_modifier_after"
 		},
 		{
 			"kind": "if",
@@ -6259,6 +6307,10 @@
 			"field": "property_signature_before"
 		},
 		{
+			"kind": "seam",
+			"field": "accessibility_modifier_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -6271,6 +6323,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "accessibility_modifier_after"
 		},
 		{
 			"kind": "if",
@@ -6383,6 +6439,10 @@
 			]
 		},
 		{
+			"kind": "seam",
+			"field": "accessibility_modifier_before"
+		},
+		{
 			"kind": "if",
 			"arms": [
 				{
@@ -6395,6 +6455,10 @@
 					]
 				}
 			]
+		},
+		{
+			"kind": "seam",
+			"field": "accessibility_modifier_after"
 		},
 		{
 			"kind": "if",

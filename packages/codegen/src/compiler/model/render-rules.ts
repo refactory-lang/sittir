@@ -4,7 +4,7 @@ import type { RenderRule, Rule, RuleAnnotations, RuleId } from '../../types/rule
 import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { AbstractAssembledCompound } from './node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum } from './node-map.ts';
 import { buildSupertypeMembersMap } from './supertype-members.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
@@ -513,8 +513,18 @@ function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	return field === undefined ? undefined : field.toLowerCase();
 }
 
+function enumSlotOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	const r = bag(rule);
+	if (r.type !== SYMBOL || r.fieldName === undefined || r.name === undefined) return undefined;
+	const target = config.nodeMap.nodes.get(r.name);
+	if (!(target instanceof AssembledEnum)) return undefined;
+	const values = target.values;
+	if (values.length === 0 || values.some((v) => !matchesWordShape(v, config.nodeMap.wordMatcher))) return undefined;
+	return r.fieldName.toLowerCase();
+}
+
 function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
-	return literalTokenOf(rule, config) ?? literalSlotOf(rule, config);
+	return literalTokenOf(rule, config) ?? literalSlotOf(rule, config) ?? enumSlotOf(rule, config);
 }
 
 function inlinedRuleNames(rules: Readonly<Record<string, RenderRule>>): ReadonlySet<string> {

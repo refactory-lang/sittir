@@ -716,7 +716,7 @@ export interface KindWhitespace {
 	readonly struct_item: 'struct_after' | 'struct_before';
 	readonly struct_item_tuple: 'semi_after' | 'semi_before';
 	readonly struct_pattern: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
-	readonly token_binding_pattern: 'colon_after' | 'colon_before';
+	readonly token_binding_pattern: 'colon_after' | 'colon_before' | 'type_after' | 'type_before';
 	readonly token_repetition:
 		| 'dollar_after'
 		| 'dollar_before'

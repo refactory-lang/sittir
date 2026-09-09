@@ -214,6 +214,8 @@ export type WhitespaceLabel =
 	| 'abstract_before'
 	| 'abstract_class_declaration_end'
 	| 'abstract_class_declaration_start'
+	| 'accessibility_modifier_after'
+	| 'accessibility_modifier_before'
 	| 'accessor_kind_after'
 	| 'accessor_kind_before'
 	| 'amp_after'
@@ -351,6 +353,8 @@ export type WhitespaceLabel =
 	| 'is_before'
 	| 'keyof_after'
 	| 'keyof_before'
+	| 'kind_after'
+	| 'kind_before'
 	| 'lbrace_after'
 	| 'lbrace_before'
 	| 'lbrack_after'
@@ -516,6 +520,8 @@ export interface KindWhitespace {
 	readonly abstract_method_signature:
 		| 'abstract_after'
 		| 'abstract_before'
+		| 'accessibility_modifier_after'
+		| 'accessibility_modifier_before'
 		| 'accessor_kind_after'
 		| 'accessor_kind_before'
 		| 'optional_marker_after'
@@ -599,12 +605,15 @@ export interface KindWhitespace {
 	readonly extends_type_clause: 'extends_after' | 'extends_before';
 	readonly finally_clause: 'finally_after' | 'finally_before';
 	readonly flow_maybe_type: 'qmark_after' | 'qmark_before';
+	readonly for_header_let_const_kind: 'kind_after' | 'kind_before';
 	readonly for_header_var_kind: 'eq_after' | 'eq_before';
 	readonly for_in_statement:
 		| 'for_after'
 		| 'for_before'
 		| 'lparen_after'
 		| 'lparen_before'
+		| 'operator_after'
+		| 'operator_before'
 		| 'rparen_after'
 		| 'rparen_before';
 	readonly for_statement:
@@ -652,16 +661,21 @@ export interface KindWhitespace {
 	readonly internal_module: 'namespace_after' | 'namespace_before';
 	readonly intersection_type: 'amp_after' | 'amp_before';
 	readonly labeled_statement: 'colon_after' | 'colon_before';
+	readonly lexical_declaration: 'kind_after' | 'kind_before';
 	readonly lookup_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly mapped_type_clause: 'as_after' | 'as_before' | 'in_after' | 'in_before';
 	readonly meta_property_import_meta: 'anon_import_after' | 'dot_after' | 'dot_before' | 'meta_before';
 	readonly meta_property_new_target: 'dot_after' | 'dot_before' | 'new_after' | 'target_before';
 	readonly method_definition:
+		| 'accessibility_modifier_after'
+		| 'accessibility_modifier_before'
 		| 'accessor_kind_after'
 		| 'accessor_kind_before'
 		| 'optional_marker_after'
 		| 'optional_marker_before';
 	readonly method_signature:
+		| 'accessibility_modifier_after'
+		| 'accessibility_modifier_before'
 		| 'accessor_kind_after'
 		| 'accessor_kind_before'
 		| 'optional_marker_after'
@@ -688,8 +702,18 @@ export interface KindWhitespace {
 	readonly pair_pattern: 'colon_after' | 'colon_before';
 	readonly parenthesized_expression: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly parenthesized_type: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
-	readonly property_signature: 'optional_marker_after' | 'optional_marker_before';
-	readonly public_field_definition: 'eq_after' | 'eq_before' | 'optionality_marker_after' | 'optionality_marker_before';
+	readonly property_signature:
+		| 'accessibility_modifier_after'
+		| 'accessibility_modifier_before'
+		| 'optional_marker_after'
+		| 'optional_marker_before';
+	readonly public_field_definition:
+		| 'accessibility_modifier_after'
+		| 'accessibility_modifier_before'
+		| 'eq_after'
+		| 'eq_before'
+		| 'optionality_marker_after'
+		| 'optionality_marker_before';
 	readonly readonly_type: 'readonly_after' | 'readonly_before';
 	readonly regex: 'slash_after' | 'slash_before';
 	readonly regex_pattern: 'lbrack_after' | 'rbrack_before';

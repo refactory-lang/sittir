@@ -6537,8 +6537,16 @@
 			"field": "colon_after"
 		},
 		{
+			"kind": "seam",
+			"field": "type_before"
+		},
+		{
 			"kind": "slot",
 			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "type_after"
 		},
 		{
 			"kind": "seam",

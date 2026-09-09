@@ -40100,6 +40100,10 @@ pub struct TokenBindingPatternTransport {
     pub token_binding_pattern_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_binding_pattern_before"))]
     pub token_binding_pattern_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_after"))]
+    pub type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_before"))]
+    pub type_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for TokenBindingPatternTransport {
@@ -40114,6 +40118,8 @@ impl ::sittir_core::options::FillOptions for TokenBindingPatternTransport {
         self.colon_before.get_or_insert(table.spacing[options::SITE_TOKEN_BINDING_PATTERN_COLON_BEFORE]);
         self.token_binding_pattern_after.get_or_insert(table.spacing[options::SITE_TOKEN_BINDING_PATTERN_TOKEN_BINDING_PATTERN_AFTER]);
         self.token_binding_pattern_before.get_or_insert(table.spacing[options::SITE_TOKEN_BINDING_PATTERN_TOKEN_BINDING_PATTERN_BEFORE]);
+        self.type_after.get_or_insert(table.spacing[options::SITE_TOKEN_BINDING_PATTERN_TYPE_AFTER]);
+        self.type_before.get_or_insert(table.spacing[options::SITE_TOKEN_BINDING_PATTERN_TYPE_BEFORE]);
         self.name.fill_options(table);
         self.type_.fill_options(table);
     }
@@ -75662,7 +75668,9 @@ fn render_token_binding_pattern(node: &TokenBindingPatternTransport, f: &mut ::s
     let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
     let token_binding_pattern_after = options::spacing_text(node.token_binding_pattern_after.unwrap_or(0));
     let token_binding_pattern_before = options::spacing_text(node.token_binding_pattern_before.unwrap_or(0));
-    write!(f, "{token_binding_pattern_before}{name}{colon_before}:\u{FFFE}{colon_after}{type_}{token_binding_pattern_after}")?;
+    let type_after = options::spacing_text(node.type_after.unwrap_or(0));
+    let type_before = options::spacing_text(node.type_before.unwrap_or(0));
+    write!(f, "{token_binding_pattern_before}{name}{colon_before}:\u{FFFE}{colon_after}{type_before}{type_}{type_after}{token_binding_pattern_after}")?;
     Ok(())
 }
 

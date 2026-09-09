@@ -45214,6 +45214,10 @@ pub struct LexicalDeclarationTransport {
     pub declarators_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_start"))]
     pub declarators_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_after"))]
+    pub kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_before"))]
+    pub kind_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lexical_declaration_after"))]
     pub lexical_declaration_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lexical_declaration_before"))]
@@ -45232,6 +45236,8 @@ impl ::sittir_core::options::FillOptions for LexicalDeclarationTransport {
         self.declarators_separator_space_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE]);
         self.declarators_end.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_END]);
         self.declarators_start.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_START]);
+        self.kind_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_KIND_AFTER]);
+        self.kind_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_KIND_BEFORE]);
         self.lexical_declaration_after.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_LEXICAL_DECLARATION_AFTER]);
         self.lexical_declaration_before.get_or_insert(table.spacing[options::SITE_LEXICAL_DECLARATION_LEXICAL_DECLARATION_BEFORE]);
         self.kind.fill_options(table);
@@ -45728,6 +45734,10 @@ pub struct ForInStatementTransport {
     pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
+    pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
+    pub operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
@@ -45748,6 +45758,8 @@ impl ::sittir_core::options::FillOptions for ForInStatementTransport {
         self.for_in_statement_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_FOR_IN_STATEMENT_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_LPAREN_BEFORE]);
+        self.operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_OPERATOR_AFTER]);
+        self.operator_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_OPERATOR_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_RPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_FOR_IN_STATEMENT_RPAREN_BEFORE]);
         self.await_marker.fill_options(table);
@@ -51770,6 +51782,10 @@ pub struct MethodDefinitionTransport {
     pub return_type: Option<::sittir_core::SlotValue<MethodDefinitionReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
+    pub accessibility_modifier_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
     pub accessor_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
@@ -51792,6 +51808,8 @@ impl ::std::fmt::Display for MethodDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for MethodDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER]);
+        self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSIBILITY_MODIFIER_BEFORE]);
         self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER]);
         self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE]);
         self.method_definition_after.get_or_insert(table.spacing[options::SITE_METHOD_DEFINITION_METHOD_DEFINITION_AFTER]);
@@ -52298,6 +52316,10 @@ pub struct PublicFieldDefinitionTransport {
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
     pub override_modifier: Option<::sittir_core::SlotValue<OverrideModifierTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
+    pub accessibility_modifier_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
     pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_end"))]
@@ -52326,6 +52348,8 @@ impl ::std::fmt::Display for PublicFieldDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for PublicFieldDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER]);
+        self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_BEFORE]);
         self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START]);
@@ -52474,6 +52498,10 @@ pub struct MethodSignatureTransport {
     pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<MethodSignatureReturnTypeTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
+    pub accessibility_modifier_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
     pub accessor_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
@@ -52496,6 +52524,8 @@ impl ::std::fmt::Display for MethodSignatureTransport {
 
 impl ::sittir_core::options::FillOptions for MethodSignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
+        self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_BEFORE]);
         self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
         self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE]);
         self.method_signature_after.get_or_insert(table.spacing[options::SITE_METHOD_SIGNATURE_METHOD_SIGNATURE_AFTER]);
@@ -52577,6 +52607,10 @@ pub struct AbstractMethodSignatureTransport {
     pub abstract_method_signature_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_method_signature_before"))]
     pub abstract_method_signature_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
+    pub accessibility_modifier_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_after"))]
     pub accessor_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_kind_before"))]
@@ -52599,6 +52633,8 @@ impl ::sittir_core::options::FillOptions for AbstractMethodSignatureTransport {
         self.abstract_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_BEFORE]);
         self.abstract_method_signature_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_AFTER]);
         self.abstract_method_signature_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_METHOD_SIGNATURE_BEFORE]);
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
+        self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSIBILITY_MODIFIER_BEFORE]);
         self.accessor_kind_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER]);
         self.accessor_kind_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE]);
         self.optional_marker_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OPTIONAL_MARKER_AFTER]);
@@ -57272,6 +57308,10 @@ pub struct PropertySignatureTransport {
     pub optional_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_after"))]
+    pub accessibility_modifier_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier_before"))]
+    pub accessibility_modifier_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_after"))]
     pub optional_marker_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_marker_before"))]
@@ -57290,6 +57330,8 @@ impl ::std::fmt::Display for PropertySignatureTransport {
 
 impl ::sittir_core::options::FillOptions for PropertySignatureTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
+        self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_ACCESSIBILITY_MODIFIER_AFTER]);
+        self.accessibility_modifier_before.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_ACCESSIBILITY_MODIFIER_BEFORE]);
         self.optional_marker_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_AFTER]);
         self.optional_marker_before.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_OPTIONAL_MARKER_BEFORE]);
         self.property_signature_after.get_or_insert(table.spacing[options::SITE_PROPERTY_SIGNATURE_PROPERTY_SIGNATURE_AFTER]);
@@ -63300,6 +63342,10 @@ pub struct ForHeaderLetConstKindTransport {
     pub for_header_let_const_kind_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_header_let_const_kind_before"))]
     pub for_header_let_const_kind_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_after"))]
+    pub kind_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind_before"))]
+    pub kind_before: Option<u16>,
 }
 
 impl ::std::fmt::Display for ForHeaderLetConstKindTransport {
@@ -63312,6 +63358,8 @@ impl ::sittir_core::options::FillOptions for ForHeaderLetConstKindTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.for_header_let_const_kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_FOR_HEADER_LET_CONST_KIND_AFTER]);
         self.for_header_let_const_kind_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_FOR_HEADER_LET_CONST_KIND_BEFORE]);
+        self.kind_after.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_KIND_AFTER]);
+        self.kind_before.get_or_insert(table.spacing[options::SITE_FOR_HEADER_LET_CONST_KIND_KIND_BEFORE]);
         self.kind.fill_options(table);
         self.left.fill_options(table);
         self.automatic_semicolon.fill_options(table);
@@ -79919,9 +79967,11 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, f: &mut ::std:
     };
     let kind = &node.kind;
     let terminator = &node.terminator;
+    let kind_after = options::spacing_text(node.kind_after.unwrap_or(0));
+    let kind_before = options::spacing_text(node.kind_before.unwrap_or(0));
     let lexical_declaration_after = options::spacing_text(node.lexical_declaration_after.unwrap_or(0));
     let lexical_declaration_before = options::spacing_text(node.lexical_declaration_before.unwrap_or(0));
-    write!(f, "{lexical_declaration_before}{kind}{declarators}{terminator}{lexical_declaration_after}")?;
+    write!(f, "{lexical_declaration_before}{kind_before}{kind}{kind_after}{declarators}{terminator}{lexical_declaration_after}")?;
     Ok(())
 }
 
@@ -80022,9 +80072,11 @@ fn render_for_in_statement(node: &ForInStatementTransport, f: &mut ::std::fmt::F
     let for_in_statement_before = options::spacing_text(node.for_in_statement_before.unwrap_or(0));
     let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
     let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
+    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
+    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
     let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
     let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    write!(f, "{for_in_statement_before}{for_before}for{for_after}{await_marker}{lparen_before}({lparen_after}{content}{operator}{right}{rparen_before}){rparen_after}{body}{for_in_statement_after}")?;
+    write!(f, "{for_in_statement_before}{for_before}for{for_after}{await_marker}{lparen_before}({lparen_after}{content}{operator_before}{operator}{operator_after}{right}{rparen_before}){rparen_after}{body}{for_in_statement_after}")?;
     Ok(())
 }
 
@@ -80962,13 +81014,15 @@ fn render_method_definition(node: &MethodDefinitionTransport, f: &mut ::std::fmt
     let return_type = View::new(&node.return_type, "{}");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
+    let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
     let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
     let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
     let method_definition_after = options::spacing_text(node.method_definition_after.unwrap_or(0));
     let method_definition_before = options::spacing_text(node.method_definition_before.unwrap_or(0));
     let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
-    write!(f, "{method_definition_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{body}{method_definition_after}")?;
+    write!(f, "{method_definition_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{body}{method_definition_after}")?;
     Ok(())
 }
 
@@ -81033,13 +81087,15 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, f: &mut
     let static_marker = View::new(&node.static_marker, "{}");
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
+    let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
     let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
     let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
     let optionality_marker_after = options::spacing_text(node.optionality_marker_after.unwrap_or(0));
     let optionality_marker_before = options::spacing_text(node.optionality_marker_before.unwrap_or(0));
     let public_field_definition_after = options::spacing_text(node.public_field_definition_after.unwrap_or(0));
     let public_field_definition_before = options::spacing_text(node.public_field_definition_before.unwrap_or(0));
-    write!(f, "{public_field_definition_before}{decorator}{declare_marker}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{abstract_marker}{accessor_marker}{name}{optionality_marker_before}{optionality_marker}{optionality_marker_after}{type_}")?;
+    write!(f, "{public_field_definition_before}{decorator}{declare_marker}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{abstract_marker}{accessor_marker}{name}{optionality_marker_before}{optionality_marker}{optionality_marker_after}{type_}")?;
     if value.is_present() {
         write!(f, "{eq_before}={eq_after}{value}")?;
     }
@@ -81069,13 +81125,15 @@ fn render_method_signature(node: &MethodSignatureTransport, f: &mut ::std::fmt::
     let return_type = View::new(&node.return_type, "{}");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
+    let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
     let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
     let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
     let method_signature_after = options::spacing_text(node.method_signature_after.unwrap_or(0));
     let method_signature_before = options::spacing_text(node.method_signature_before.unwrap_or(0));
     let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
-    write!(f, "{method_signature_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{method_signature_after}")?;
+    write!(f, "{method_signature_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{async_marker}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{method_signature_after}")?;
     Ok(())
 }
 
@@ -81092,11 +81150,13 @@ fn render_abstract_method_signature(node: &AbstractMethodSignatureTransport, f: 
     let abstract_before = options::spacing_text(node.abstract_before.unwrap_or(0));
     let abstract_method_signature_after = options::spacing_text(node.abstract_method_signature_after.unwrap_or(0));
     let abstract_method_signature_before = options::spacing_text(node.abstract_method_signature_before.unwrap_or(0));
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
+    let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
     let accessor_kind_after = options::spacing_text(node.accessor_kind_after.unwrap_or(0));
     let accessor_kind_before = options::spacing_text(node.accessor_kind_before.unwrap_or(0));
     let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
-    write!(f, "{abstract_method_signature_before}{accessibility_modifier}{abstract_before}abstract{abstract_after}{override_modifier}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{abstract_method_signature_after}")?;
+    write!(f, "{abstract_method_signature_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{abstract_before}abstract{abstract_after}{override_modifier}{accessor_kind_before}{accessor_kind}{accessor_kind_after}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_parameters}{parameters}{return_type}{abstract_method_signature_after}")?;
     Ok(())
 }
 
@@ -81906,11 +81966,13 @@ fn render_property_signature(node: &PropertySignatureTransport, f: &mut ::std::f
     let readonly_marker = View::new(&node.readonly_marker, "readonly");
     let static_marker = View::new(&node.static_marker, "{}");
     let type_ = View::new(&node.type_, "{}");
+    let accessibility_modifier_after = options::spacing_text(node.accessibility_modifier_after.unwrap_or(0));
+    let accessibility_modifier_before = options::spacing_text(node.accessibility_modifier_before.unwrap_or(0));
     let optional_marker_after = options::spacing_text(node.optional_marker_after.unwrap_or(0));
     let optional_marker_before = options::spacing_text(node.optional_marker_before.unwrap_or(0));
     let property_signature_after = options::spacing_text(node.property_signature_after.unwrap_or(0));
     let property_signature_before = options::spacing_text(node.property_signature_before.unwrap_or(0));
-    write!(f, "{property_signature_before}{accessibility_modifier}{static_marker}{override_modifier}{readonly_marker}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_}{property_signature_after}")?;
+    write!(f, "{property_signature_before}{accessibility_modifier_before}{accessibility_modifier}{accessibility_modifier_after}{static_marker}{override_modifier}{readonly_marker}{name}{optional_marker_before}{optional_marker}{optional_marker_after}{type_}{property_signature_after}")?;
     Ok(())
 }
 
@@ -82769,7 +82831,9 @@ fn render_for_header_let_const_kind(node: &ForHeaderLetConstKindTransport, f: &m
     let left = &node.left;
     let for_header_let_const_kind_after = options::spacing_text(node.for_header_let_const_kind_after.unwrap_or(0));
     let for_header_let_const_kind_before = options::spacing_text(node.for_header_let_const_kind_before.unwrap_or(0));
-    write!(f, "{for_header_let_const_kind_before}{kind}{left}{automatic_semicolon}{for_header_let_const_kind_after}")?;
+    let kind_after = options::spacing_text(node.kind_after.unwrap_or(0));
+    let kind_before = options::spacing_text(node.kind_before.unwrap_or(0));
+    write!(f, "{for_header_let_const_kind_before}{kind_before}{kind}{kind_after}{left}{automatic_semicolon}{for_header_let_const_kind_after}")?;
     Ok(())
 }
 
