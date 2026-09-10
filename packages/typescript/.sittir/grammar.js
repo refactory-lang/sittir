@@ -5285,7 +5285,8 @@ var grammar_sittir_default = grammar(
         case_body: { start: preference("indent"), end: preference("dedent") },
         gap: { separator: preference("newline") },
         statements: { terminator: preference(";") },
-        enum_body_elements: { 'content:/separator/","/after': preference("newline") },
+        quotes: { style: preference("double") },
+        enum_body_elements: { 'content:/separator/","/after': preference("newline"), "content:/delimiter": preference("Delimiter.Trailing") },
         _: {
           '_/separator/","/before': preference("tight"),
           '":"/after': preference("space"),
@@ -5312,7 +5313,9 @@ var grammar_sittir_default = grammar(
         },
         object_type_content: {
           "content:/separator/before": preference("tight"),
-          "content:/separator/after": preference("newline")
+          "content:/separator/after": preference("newline"),
+          "content:/separator/kind": preference("semi"),
+          "content:/delimiter": preference("Delimiter.Trailing")
         },
         statement_block: { before: preference("space") },
         class_body: { before: preference("space") },
@@ -5335,6 +5338,7 @@ var grammar_sittir_default = grammar(
         for_statement: { '"("/before': preference("space") },
         _bindings: {
           "_/terminator:": "statements/terminator",
+          "string/content:": "quotes/style",
           "_/automatic_semicolon:": "statements/terminator",
           'class_body/"{"/after': "body/before",
           'class_body/"}"/before': "body/after",
@@ -5367,11 +5371,6 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
-        object_type_content: [
-          { content: preference("separator", "semi") },
-          { content: preference("delimiter", "Delimiter.Trailing") }
-        ],
-        enum_body_elements: { content: preference("delimiter", "Delimiter.Trailing") },
         binary_expression: {
           24: variant("in")
         },
@@ -5628,8 +5627,7 @@ var grammar_sittir_default = grammar(
           1: variant("template_call"),
           2: variant("member")
         },
-        string: [{ 0: variant("double"), 1: variant("single") }, preference("quote_style", "double")],
-        _semicolon: preference("statement_terminator", ";"),
+        string: { 0: variant("double"), 1: variant("single") },
         update_expression: {
           0: variant("postfix"),
           1: variant("prefix")

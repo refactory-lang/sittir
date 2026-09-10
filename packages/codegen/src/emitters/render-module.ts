@@ -133,9 +133,9 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates, renderRules, renderDefaults, visibleExternals } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, renderRules, renderDefaults, visibleExternals, options } = config;
 	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, renderDefaults, visibleExternals })
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, renderDefaults, visibleExternals, options })
 	};
 }
 
@@ -149,7 +149,12 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#grammar = config.grammar;
 		this.#nodeMap = config.nodeMap;
 		this.#generatedIdTables = config.generatedIdTables;
-		this.#options = { renderRules: config.renderRules, renderDefaults: config.renderDefaults, visibleExternals: config.visibleExternals };
+		this.#options = {
+			renderRules: config.renderRules,
+			renderDefaults: config.renderDefaults,
+			visibleExternals: config.visibleExternals,
+			options: config.options
+		};
 	}
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}

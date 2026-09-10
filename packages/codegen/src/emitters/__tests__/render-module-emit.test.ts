@@ -149,7 +149,8 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
 		renderDefaults: raw.renderDefaults,
-		visibleExternals: raw.visibleExternals
+		visibleExternals: raw.visibleExternals,
+		options: raw.options
 	});
 	return emit.transportRs.contents;
 }

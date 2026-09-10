@@ -1124,6 +1124,7 @@ export class AssembledNonterminal {
 	readonly metadata: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
+	optionDefaultArm?: string;
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;
@@ -1923,6 +1924,8 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 	readonly separatorRule: RenderRule | undefined;
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	resolvedDelimiterArm?: string;
+	resolvedSeparatorArm?: string;
 
 	constructor(
 		kind: string,

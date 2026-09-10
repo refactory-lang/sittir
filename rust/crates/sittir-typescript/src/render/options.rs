@@ -37,13 +37,13 @@ pub const SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_BEFORE: usize = 28;
 pub const SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_AFTER: usize = 29;
 pub const SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_BEFORE: usize = 30;
 pub const SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_AFTER: usize = 31;
-pub const SITE_AMBIENT_DECLARATION_MODULE_TERMINATOR_STATEMENT_TERMINATOR: usize = 32;
-pub const SITE_AMBIENT_DECLARATION_MODULE_DOT_BEFORE: usize = 33;
-pub const SITE_AMBIENT_DECLARATION_MODULE_DOT_AFTER: usize = 34;
-pub const SITE_AMBIENT_DECLARATION_MODULE_COLON_BEFORE: usize = 35;
-pub const SITE_AMBIENT_DECLARATION_MODULE_COLON_AFTER: usize = 36;
-pub const SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_BEFORE: usize = 37;
-pub const SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_AFTER: usize = 38;
+pub const SITE_AMBIENT_DECLARATION_MODULE_DOT_BEFORE: usize = 32;
+pub const SITE_AMBIENT_DECLARATION_MODULE_DOT_AFTER: usize = 33;
+pub const SITE_AMBIENT_DECLARATION_MODULE_COLON_BEFORE: usize = 34;
+pub const SITE_AMBIENT_DECLARATION_MODULE_COLON_AFTER: usize = 35;
+pub const SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_BEFORE: usize = 36;
+pub const SITE_AMBIENT_DECLARATION_MODULE_ANON_MODULE_AFTER: usize = 37;
+pub const SITE_AMBIENT_DECLARATION_MODULE_TERMINATOR: usize = 38;
 pub const SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_BEFORE: usize = 39;
 pub const SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_AFTER: usize = 40;
 pub const SITE_ARGUMENTS_ARGUMENTS_ARRAY_AFTER: usize = 41;
@@ -205,7 +205,7 @@ pub const SITE_BINARY_EXPRESSION_IN_BINARY_EXPRESSION_IN_BEFORE: usize = 196;
 pub const SITE_BINARY_EXPRESSION_IN_BINARY_EXPRESSION_IN_AFTER: usize = 197;
 pub const SITE_BREAK_STATEMENT_BREAK_BEFORE: usize = 198;
 pub const SITE_BREAK_STATEMENT_BREAK_AFTER: usize = 199;
-pub const SITE_BREAK_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 200;
+pub const SITE_BREAK_STATEMENT_TERMINATOR: usize = 200;
 pub const SITE_BREAK_STATEMENT_BREAK_STATEMENT_BEFORE: usize = 201;
 pub const SITE_BREAK_STATEMENT_BREAK_STATEMENT_AFTER: usize = 202;
 pub const SITE_CALL_EXPRESSION_CALL_CALL_EXPRESSION_CALL_BEFORE: usize = 203;
@@ -249,14 +249,14 @@ pub const SITE_CLASS_BODY_RBRACE_BEFORE: usize = 240;
 pub const SITE_CLASS_BODY_RBRACE_AFTER: usize = 241;
 pub const SITE_CLASS_BODY_CLASS_BODY_BEFORE: usize = 242;
 pub const SITE_CLASS_BODY_CLASS_BODY_AFTER: usize = 243;
-pub const SITE_CLASS_BODY_MEMBER_TERMINATOR_STATEMENT_TERMINATOR: usize = 244;
+pub const SITE_CLASS_BODY_MEMBER_TERMINATOR: usize = 244;
 pub const SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_BEFORE: usize = 245;
 pub const SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_AFTER: usize = 246;
 pub const SITE_CLASS_BODY_METHOD_DECORATOR_DECORATOR_AFTER: usize = 247;
 pub const SITE_CLASS_BODY_METHOD_DECORATOR_END: usize = 248;
 pub const SITE_CLASS_BODY_METHOD_DECORATOR_START: usize = 249;
 pub const SITE_CLASS_BODY_METHOD_DECORATOR_SEPARATOR_SPACE: usize = 250;
-pub const SITE_CLASS_BODY_METHOD_TERMINATOR_STATEMENT_TERMINATOR: usize = 251;
+pub const SITE_CLASS_BODY_METHOD_TERMINATOR: usize = 251;
 pub const SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_BEFORE: usize = 252;
 pub const SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_AFTER: usize = 253;
 pub const SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_BEFORE: usize = 254;
@@ -304,12 +304,12 @@ pub const SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_BEFORE: usize = 295;
 pub const SITE_CONSTRUCTOR_TYPE_CONSTRUCTOR_TYPE_AFTER: usize = 296;
 pub const SITE_CONTINUE_STATEMENT_CONTINUE_BEFORE: usize = 297;
 pub const SITE_CONTINUE_STATEMENT_CONTINUE_AFTER: usize = 298;
-pub const SITE_CONTINUE_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 299;
+pub const SITE_CONTINUE_STATEMENT_TERMINATOR: usize = 299;
 pub const SITE_CONTINUE_STATEMENT_CONTINUE_STATEMENT_BEFORE: usize = 300;
 pub const SITE_CONTINUE_STATEMENT_CONTINUE_STATEMENT_AFTER: usize = 301;
 pub const SITE_DEBUGGER_STATEMENT_DEBUGGER_BEFORE: usize = 302;
 pub const SITE_DEBUGGER_STATEMENT_DEBUGGER_AFTER: usize = 303;
-pub const SITE_DEBUGGER_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 304;
+pub const SITE_DEBUGGER_STATEMENT_TERMINATOR: usize = 304;
 pub const SITE_DEBUGGER_STATEMENT_DEBUGGER_STATEMENT_BEFORE: usize = 305;
 pub const SITE_DEBUGGER_STATEMENT_DEBUGGER_STATEMENT_AFTER: usize = 306;
 pub const SITE_DECORATOR_AT_BEFORE: usize = 307;
@@ -334,9 +334,9 @@ pub const SITE_DEFAULT_TYPE_DEFAULT_TYPE_BEFORE: usize = 325;
 pub const SITE_DEFAULT_TYPE_DEFAULT_TYPE_AFTER: usize = 326;
 pub const SITE_DO_STATEMENT_DO_BEFORE: usize = 327;
 pub const SITE_DO_STATEMENT_DO_AFTER: usize = 328;
-pub const SITE_DO_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 329;
-pub const SITE_DO_STATEMENT_WHILE_BEFORE: usize = 330;
-pub const SITE_DO_STATEMENT_WHILE_AFTER: usize = 331;
+pub const SITE_DO_STATEMENT_WHILE_BEFORE: usize = 329;
+pub const SITE_DO_STATEMENT_WHILE_AFTER: usize = 330;
+pub const SITE_DO_STATEMENT_TERMINATOR: usize = 331;
 pub const SITE_DO_STATEMENT_DO_STATEMENT_BEFORE: usize = 332;
 pub const SITE_DO_STATEMENT_DO_STATEMENT_AFTER: usize = 333;
 pub const SITE_ELSE_CLAUSE_ELSE_BEFORE: usize = 334;
@@ -394,12 +394,12 @@ pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_BEFORE: u
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_AFTER: usize = 386;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_BEFORE: usize = 387;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_AFTER: usize = 388;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 389;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AUTOMATIC_SEMICOLON: usize = 389;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_BEFORE: usize = 390;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AFTER: usize = 391;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_AUTOMATIC_SEMICOLON_STATEMENT_TERMINATOR: usize = 392;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_BEFORE: usize = 393;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_AFTER: usize = 394;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_BEFORE: usize = 392;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_AFTER: usize = 393;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_AUTOMATIC_SEMICOLON: usize = 394;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_BEFORE: usize = 395;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: usize = 396;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM_FROM_BEFORE: usize = 397;
@@ -418,9 +418,9 @@ pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_
 pub const SITE_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM_AFTER: usize = 410;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_BEFORE: usize = 411;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_AFTER: usize = 412;
-pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_TERMINATOR_STATEMENT_TERMINATOR: usize = 413;
-pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_BEFORE: usize = 414;
-pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_AFTER: usize = 415;
+pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_BEFORE: usize = 413;
+pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_AFTER: usize = 414;
+pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_TERMINATOR: usize = 415;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_STATEMENT_EQUALS_EXPORT_BEFORE: usize = 416;
 pub const SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: usize = 417;
 pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_AS_BEFORE: usize = 418;
@@ -429,19 +429,19 @@ pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_BEFORE: usize = 420;
 pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_AFTER: usize = 421;
 pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_NAMESPACE_BEFORE: usize = 422;
 pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_NAMESPACE_AFTER: usize = 423;
-pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_TERMINATOR_STATEMENT_TERMINATOR: usize = 424;
+pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_TERMINATOR: usize = 424;
 pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_STATEMENT_NAMESPACE_EXPORT_BEFORE: usize = 425;
 pub const SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: usize = 426;
 pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_BEFORE: usize = 427;
 pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_AFTER: usize = 428;
 pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_FROM_BEFORE: usize = 429;
 pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_FROM_AFTER: usize = 430;
-pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_TERMINATOR_STATEMENT_TERMINATOR: usize = 431;
-pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_BEFORE: usize = 432;
-pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_AFTER: usize = 433;
+pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_BEFORE: usize = 431;
+pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_ANON_TYPE_AFTER: usize = 432;
+pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_TERMINATOR: usize = 433;
 pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_STATEMENT_TYPE_EXPORT_BEFORE: usize = 434;
 pub const SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_STATEMENT_TYPE_EXPORT_AFTER: usize = 435;
-pub const SITE_EXPRESSION_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 436;
+pub const SITE_EXPRESSION_STATEMENT_TERMINATOR: usize = 436;
 pub const SITE_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_BEFORE: usize = 437;
 pub const SITE_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_AFTER: usize = 438;
 pub const SITE_EXTENDS_CLAUSE_EXTENDS_BEFORE: usize = 439;
@@ -524,7 +524,7 @@ pub const SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_BEFORE: usize = 515;
 pub const SITE_FUNCTION_EXPRESSION_FUNCTION_EXPRESSION_AFTER: usize = 516;
 pub const SITE_FUNCTION_SIGNATURE_FUNCTION_BEFORE: usize = 517;
 pub const SITE_FUNCTION_SIGNATURE_FUNCTION_AFTER: usize = 518;
-pub const SITE_FUNCTION_SIGNATURE_TERMINATOR_STATEMENT_TERMINATOR: usize = 519;
+pub const SITE_FUNCTION_SIGNATURE_TERMINATOR: usize = 519;
 pub const SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_BEFORE: usize = 520;
 pub const SITE_FUNCTION_SIGNATURE_FUNCTION_SIGNATURE_AFTER: usize = 521;
 pub const SITE_FUNCTION_TYPE_EQ_GT_BEFORE: usize = 522;
@@ -563,11 +563,11 @@ pub const SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_BEFORE: usize = 554;
 pub const SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER: usize = 555;
 pub const SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_BEFORE: usize = 556;
 pub const SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_AFTER: usize = 557;
-pub const SITE_IMPORT_ALIAS_TERMINATOR_STATEMENT_TERMINATOR: usize = 558;
-pub const SITE_IMPORT_ALIAS_EQ_BEFORE: usize = 559;
-pub const SITE_IMPORT_ALIAS_EQ_AFTER: usize = 560;
-pub const SITE_IMPORT_ALIAS_ANON_IMPORT_BEFORE: usize = 561;
-pub const SITE_IMPORT_ALIAS_ANON_IMPORT_AFTER: usize = 562;
+pub const SITE_IMPORT_ALIAS_EQ_BEFORE: usize = 558;
+pub const SITE_IMPORT_ALIAS_EQ_AFTER: usize = 559;
+pub const SITE_IMPORT_ALIAS_ANON_IMPORT_BEFORE: usize = 560;
+pub const SITE_IMPORT_ALIAS_ANON_IMPORT_AFTER: usize = 561;
+pub const SITE_IMPORT_ALIAS_TERMINATOR: usize = 562;
 pub const SITE_IMPORT_ALIAS_IMPORT_ALIAS_BEFORE: usize = 563;
 pub const SITE_IMPORT_ALIAS_IMPORT_ALIAS_AFTER: usize = 564;
 pub const SITE_IMPORT_ATTRIBUTE_IMPORT_ATTRIBUTE_BEFORE: usize = 565;
@@ -601,9 +601,9 @@ pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_BEFORE: usize 
 pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIER_SEPARATOR_SPACE_AFTER: usize = 593;
 pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_BEFORE: usize = 594;
 pub const SITE_IMPORT_SPECIFIERS_IMPORT_SPECIFIERS_AFTER: usize = 595;
-pub const SITE_IMPORT_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 596;
-pub const SITE_IMPORT_STATEMENT_ANON_IMPORT_BEFORE: usize = 597;
-pub const SITE_IMPORT_STATEMENT_ANON_IMPORT_AFTER: usize = 598;
+pub const SITE_IMPORT_STATEMENT_ANON_IMPORT_BEFORE: usize = 596;
+pub const SITE_IMPORT_STATEMENT_ANON_IMPORT_AFTER: usize = 597;
+pub const SITE_IMPORT_STATEMENT_TERMINATOR: usize = 598;
 pub const SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_BEFORE: usize = 599;
 pub const SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_AFTER: usize = 600;
 pub const SITE_IMPORT_STATEMENT_CLAUSE_FROM_FROM_BEFORE: usize = 601;
@@ -656,7 +656,7 @@ pub const SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE: usize = 6
 pub const SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER: usize = 648;
 pub const SITE_LEXICAL_DECLARATION_KIND_BEFORE: usize = 649;
 pub const SITE_LEXICAL_DECLARATION_KIND_AFTER: usize = 650;
-pub const SITE_LEXICAL_DECLARATION_TERMINATOR_STATEMENT_TERMINATOR: usize = 651;
+pub const SITE_LEXICAL_DECLARATION_TERMINATOR: usize = 651;
 pub const SITE_LEXICAL_DECLARATION_LEXICAL_DECLARATION_BEFORE: usize = 652;
 pub const SITE_LEXICAL_DECLARATION_LEXICAL_DECLARATION_AFTER: usize = 653;
 pub const SITE_LOOKUP_TYPE_LBRACK_BEFORE: usize = 654;
@@ -911,7 +911,7 @@ pub const SITE_REST_TYPE_REST_TYPE_BEFORE: usize = 902;
 pub const SITE_REST_TYPE_REST_TYPE_AFTER: usize = 903;
 pub const SITE_RETURN_STATEMENT_RETURN_BEFORE: usize = 904;
 pub const SITE_RETURN_STATEMENT_RETURN_AFTER: usize = 905;
-pub const SITE_RETURN_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 906;
+pub const SITE_RETURN_STATEMENT_TERMINATOR: usize = 906;
 pub const SITE_RETURN_STATEMENT_RETURN_STATEMENT_BEFORE: usize = 907;
 pub const SITE_RETURN_STATEMENT_RETURN_STATEMENT_AFTER: usize = 908;
 pub const SITE_SATISFIES_EXPRESSION_SATISFIES_BEFORE: usize = 909;
@@ -966,7 +966,7 @@ pub const SITE_STATEMENT_BLOCK_RBRACE_BEFORE: usize = 957;
 pub const SITE_STATEMENT_BLOCK_RBRACE_AFTER: usize = 958;
 pub const SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_BEFORE: usize = 959;
 pub const SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_AFTER: usize = 960;
-pub const SITE_STRING_CONTENT_QUOTE_STYLE: usize = 961;
+pub const SITE_STRING_CONTENT: usize = 961;
 pub const SITE_STRING_DOUBLE_DQUOTE_BEFORE: usize = 962;
 pub const SITE_STRING_DOUBLE_DQUOTE_AFTER: usize = 963;
 pub const SITE_STRING_DOUBLE_STRING_DOUBLE_BEFORE: usize = 964;
@@ -1074,9 +1074,9 @@ pub const SITE_TERNARY_EXPRESSION_QMARK_BEFORE: usize = 1065;
 pub const SITE_TERNARY_EXPRESSION_QMARK_AFTER: usize = 1066;
 pub const SITE_TERNARY_EXPRESSION_TERNARY_EXPRESSION_BEFORE: usize = 1067;
 pub const SITE_TERNARY_EXPRESSION_TERNARY_EXPRESSION_AFTER: usize = 1068;
-pub const SITE_THROW_STATEMENT_TERMINATOR_STATEMENT_TERMINATOR: usize = 1069;
-pub const SITE_THROW_STATEMENT_THROW_BEFORE: usize = 1070;
-pub const SITE_THROW_STATEMENT_THROW_AFTER: usize = 1071;
+pub const SITE_THROW_STATEMENT_THROW_BEFORE: usize = 1069;
+pub const SITE_THROW_STATEMENT_THROW_AFTER: usize = 1070;
+pub const SITE_THROW_STATEMENT_TERMINATOR: usize = 1071;
 pub const SITE_THROW_STATEMENT_THROW_STATEMENT_BEFORE: usize = 1072;
 pub const SITE_THROW_STATEMENT_THROW_STATEMENT_AFTER: usize = 1073;
 pub const SITE_TRY_STATEMENT_TRY_BEFORE: usize = 1074;
@@ -1121,11 +1121,11 @@ pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_BEFORE: usiz
 pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_SEPARATOR_SPACE_AFTER: usize = 1113;
 pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_BEFORE: usize = 1114;
 pub const SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBERS_AFTER: usize = 1115;
-pub const SITE_TYPE_ALIAS_DECLARATION_TERMINATOR_STATEMENT_TERMINATOR: usize = 1116;
-pub const SITE_TYPE_ALIAS_DECLARATION_EQ_BEFORE: usize = 1117;
-pub const SITE_TYPE_ALIAS_DECLARATION_EQ_AFTER: usize = 1118;
-pub const SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_BEFORE: usize = 1119;
-pub const SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_AFTER: usize = 1120;
+pub const SITE_TYPE_ALIAS_DECLARATION_EQ_BEFORE: usize = 1116;
+pub const SITE_TYPE_ALIAS_DECLARATION_EQ_AFTER: usize = 1117;
+pub const SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_BEFORE: usize = 1118;
+pub const SITE_TYPE_ALIAS_DECLARATION_ANON_TYPE_AFTER: usize = 1119;
+pub const SITE_TYPE_ALIAS_DECLARATION_TERMINATOR: usize = 1120;
 pub const SITE_TYPE_ALIAS_DECLARATION_TYPE_ALIAS_DECLARATION_BEFORE: usize = 1121;
 pub const SITE_TYPE_ALIAS_DECLARATION_TYPE_ALIAS_DECLARATION_AFTER: usize = 1122;
 pub const SITE_TYPE_ANNOTATION_COLON_BEFORE: usize = 1123;
@@ -1219,9 +1219,9 @@ pub const SITE_VARIABLE_DECLARATION_DECLARATORS_END: usize = 1210;
 pub const SITE_VARIABLE_DECLARATION_DECLARATORS_START: usize = 1211;
 pub const SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE: usize = 1212;
 pub const SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER: usize = 1213;
-pub const SITE_VARIABLE_DECLARATION_TERMINATOR_STATEMENT_TERMINATOR: usize = 1214;
-pub const SITE_VARIABLE_DECLARATION_VAR_BEFORE: usize = 1215;
-pub const SITE_VARIABLE_DECLARATION_VAR_AFTER: usize = 1216;
+pub const SITE_VARIABLE_DECLARATION_VAR_BEFORE: usize = 1214;
+pub const SITE_VARIABLE_DECLARATION_VAR_AFTER: usize = 1215;
+pub const SITE_VARIABLE_DECLARATION_TERMINATOR: usize = 1216;
 pub const SITE_VARIABLE_DECLARATION_VARIABLE_DECLARATION_BEFORE: usize = 1217;
 pub const SITE_VARIABLE_DECLARATION_VARIABLE_DECLARATION_AFTER: usize = 1218;
 pub const SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_BEFORE: usize = 1219;
@@ -1290,13 +1290,13 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("ambient_declaration_global", "global_after", "global_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_global", "ambient_declaration_global_before", "ambient_declaration_global_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_global", "ambient_declaration_global_after", "ambient_declaration_global_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("ambient_declaration_module", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("ambient_declaration_module", "dot_before", "dot_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_module", "dot_after", "dot_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_module", "colon_before", "colon_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_module", "colon_after", "colon_after", 168, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_module", "anon_module_before", "anon_module_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_module", "anon_module_after", "anon_module_after", 167, &[167, 168, 169, 170, 171, 172]),
+    ("ambient_declaration_module", "terminator", "terminator", 20, &[160, 20]),
     ("ambient_declaration_module", "ambient_declaration_module_before", "ambient_declaration_module_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("ambient_declaration_module", "ambient_declaration_module_after", "ambient_declaration_module_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("arguments", "arguments_array_after", "array_after", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1458,7 +1458,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("binary_expression_in", "binary_expression_in_after", "binary_expression_in_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("break_statement", "break_before", "break_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("break_statement", "break_after", "break_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("break_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("break_statement", "terminator", "terminator", 20, &[160, 20]),
     ("break_statement", "break_statement_before", "break_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("break_statement", "break_statement_after", "break_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("call_expression_call", "call_expression_call_before", "call_expression_call_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1502,14 +1502,14 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("class_body", "rbrace_after", "rbrace_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "class_body_before", "class_body_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "class_body_after", "class_body_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("class_body_member", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("class_body_member", "terminator", "terminator", 20, &[160, 20, 14]),
     ("class_body_member", "class_body_member_before", "class_body_member_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_member", "class_body_member_after", "class_body_member_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_method", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_method", "class_body_method_end", "class_body_method_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_method", "class_body_method_start", "class_body_method_start", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_method", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
-    ("class_body_method", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("class_body_method", "terminator", "terminator", 20, &[160, 20]),
     ("class_body_method", "class_body_method_before", "class_body_method_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_method", "class_body_method_after", "class_body_method_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_method_sig", "class_body_method_sig_before", "class_body_method_sig_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1557,12 +1557,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("constructor_type", "constructor_type_after", "constructor_type_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("continue_statement", "continue_before", "continue_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("continue_statement", "continue_after", "continue_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("continue_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("continue_statement", "terminator", "terminator", 20, &[160, 20]),
     ("continue_statement", "continue_statement_before", "continue_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("continue_statement", "continue_statement_after", "continue_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("debugger_statement", "debugger_before", "debugger_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("debugger_statement", "debugger_after", "debugger_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("debugger_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("debugger_statement", "terminator", "terminator", 20, &[160, 20]),
     ("debugger_statement", "debugger_statement_before", "debugger_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("debugger_statement", "debugger_statement_after", "debugger_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("decorator", "at_before", "at_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1587,9 +1587,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("default_type", "default_type_after", "default_type_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("do_statement", "do_before", "do_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("do_statement", "do_after", "do_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("do_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("do_statement", "while_before", "while_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("do_statement", "while_after", "while_after", 168, &[167, 168, 169, 170, 171, 172]),
+    ("do_statement", "terminator", "terminator", 20, &[160, 20]),
     ("do_statement", "do_statement_before", "do_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("do_statement", "do_statement_after", "do_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("else_clause", "else_before", "else_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1647,12 +1647,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("export_statement_default_declaration_default_kw", "default_after", "default_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration_default_kw", "export_statement_default_declaration_default_kw_before", "export_statement_default_declaration_default_kw_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration_default_kw", "export_statement_default_declaration_default_kw_after", "export_statement_default_declaration_default_kw_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("export_statement_default_declaration_default_kw_value", "automatic_semicolon_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("export_statement_default_declaration_default_kw_value", "automatic_semicolon", "automatic_semicolon", 20, &[160, 20]),
     ("export_statement_default_declaration_default_kw_value", "export_statement_default_declaration_default_kw_value_before", "export_statement_default_declaration_default_kw_value_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration_default_kw_value", "export_statement_default_declaration_default_kw_value_after", "export_statement_default_declaration_default_kw_value_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("export_statement_default_from", "automatic_semicolon_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_default_from", "export_before", "export_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_from", "export_after", "export_after", 167, &[167, 168, 169, 170, 171, 172]),
+    ("export_statement_default_from", "automatic_semicolon", "automatic_semicolon", 20, &[160, 20]),
     ("export_statement_default_from", "export_statement_default_from_before", "export_statement_default_from_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_from", "export_statement_default_from_after", "export_statement_default_from_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_from_clause_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1671,9 +1671,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("export_statement_default_from_star_from", "export_statement_default_from_star_from_after", "export_statement_default_from_star_from_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_equals_export", "export_before", "export_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_equals_export", "export_after", "export_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("export_statement_equals_export", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_equals_export", "eq_before", "eq_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_equals_export", "eq_after", "eq_after", 168, &[167, 168, 169, 170, 171, 172]),
+    ("export_statement_equals_export", "terminator", "terminator", 20, &[160, 20]),
     ("export_statement_equals_export", "export_statement_equals_export_before", "export_statement_equals_export_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_equals_export", "export_statement_equals_export_after", "export_statement_equals_export_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_namespace_export", "as_before", "as_before", 168, &[167, 168, 169, 170, 171, 172]),
@@ -1682,19 +1682,19 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("export_statement_namespace_export", "export_after", "export_after", 168, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_namespace_export", "namespace_before", "namespace_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_namespace_export", "namespace_after", "namespace_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("export_statement_namespace_export", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("export_statement_namespace_export", "terminator", "terminator", 20, &[160, 20]),
     ("export_statement_namespace_export", "export_statement_namespace_export_before", "export_statement_namespace_export_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_namespace_export", "export_statement_namespace_export_after", "export_statement_namespace_export_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_type_export", "export_before", "export_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_type_export", "export_after", "export_after", 168, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_type_export", "from_before", "from_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_type_export", "from_after", "from_after", 168, &[167, 168, 169, 170, 171, 172]),
-    ("export_statement_type_export", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("export_statement_type_export", "anon_type_before", "anon_type_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_type_export", "anon_type_after", "anon_type_after", 167, &[167, 168, 169, 170, 171, 172]),
+    ("export_statement_type_export", "terminator", "terminator", 20, &[160, 20]),
     ("export_statement_type_export", "export_statement_type_export_before", "export_statement_type_export_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_type_export", "export_statement_type_export_after", "export_statement_type_export_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("expression_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("expression_statement", "terminator", "terminator", 20, &[160, 20]),
     ("expression_statement", "expression_statement_before", "expression_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("expression_statement", "expression_statement_after", "expression_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("extends_clause", "extends_before", "extends_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1777,7 +1777,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("function_expression", "function_expression_after", "function_expression_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("function_signature", "function_before", "function_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("function_signature", "function_after", "function_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("function_signature", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("function_signature", "terminator", "terminator", 20, &[160, 20, 165]),
     ("function_signature", "function_signature_before", "function_signature_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("function_signature", "function_signature_after", "function_signature_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("function_type", "eq_gt_before", "eq_gt_before", 168, &[167, 168, 169, 170, 171, 172]),
@@ -1816,11 +1816,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("implements_clause", "type_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169, 170]),
     ("implements_clause", "implements_clause_before", "implements_clause_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("implements_clause", "implements_clause_after", "implements_clause_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("import_alias", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("import_alias", "eq_before", "eq_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("import_alias", "eq_after", "eq_after", 168, &[167, 168, 169, 170, 171, 172]),
     ("import_alias", "anon_import_before", "anon_import_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("import_alias", "anon_import_after", "anon_import_after", 167, &[167, 168, 169, 170, 171, 172]),
+    ("import_alias", "terminator", "terminator", 20, &[160, 20]),
     ("import_alias", "import_alias_before", "import_alias_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("import_alias", "import_alias_after", "import_alias_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("import_attribute", "import_attribute_before", "import_attribute_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1854,9 +1854,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("import_specifiers", "import_specifier_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169, 170]),
     ("import_specifiers", "import_specifiers_before", "import_specifiers_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("import_specifiers", "import_specifiers_after", "import_specifiers_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("import_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("import_statement", "anon_import_before", "anon_import_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("import_statement", "anon_import_after", "anon_import_after", 167, &[167, 168, 169, 170, 171, 172]),
+    ("import_statement", "terminator", "terminator", 20, &[160, 20]),
     ("import_statement", "import_statement_before", "import_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("import_statement", "import_statement_after", "import_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("import_statement_clause_from", "from_before", "from_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1909,7 +1909,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("lexical_declaration", "declarators_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169, 170]),
     ("lexical_declaration", "kind_before", "kind_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("lexical_declaration", "kind_after", "kind_after", 168, &[167, 168, 169, 170, 171, 172]),
-    ("lexical_declaration", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("lexical_declaration", "terminator", "terminator", 20, &[160, 20]),
     ("lexical_declaration", "lexical_declaration_before", "lexical_declaration_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("lexical_declaration", "lexical_declaration_after", "lexical_declaration_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("lookup_type", "lbrack_before", "lbrack_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2164,7 +2164,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("rest_type", "rest_type_after", "rest_type_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("return_statement", "return_before", "return_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("return_statement", "return_after", "return_after", 168, &[167, 168, 169, 170, 171, 172]),
-    ("return_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
+    ("return_statement", "terminator", "terminator", 20, &[160, 20]),
     ("return_statement", "return_statement_before", "return_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("return_statement", "return_statement_after", "return_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("satisfies_expression", "satisfies_before", "satisfies_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2219,7 +2219,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("statement_block", "rbrace_after", "rbrace_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "statement_block_before", "statement_block_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "statement_block_after", "statement_block_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("string", "content_quote_style", "quote_style", 397, &[397, 398]),
+    ("string", "content", "content", 397, &[397, 398]),
     ("string_double", "dquote_before", "dquote_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("string_double", "dquote_after", "dquote_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("string_double", "string_double_before", "string_double_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2327,9 +2327,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("ternary_expression", "qmark_after", "qmark_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("ternary_expression", "ternary_expression_before", "ternary_expression_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("ternary_expression", "ternary_expression_after", "ternary_expression_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("throw_statement", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("throw_statement", "throw_before", "throw_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("throw_statement", "throw_after", "throw_after", 167, &[167, 168, 169, 170, 171, 172]),
+    ("throw_statement", "terminator", "terminator", 20, &[160, 20]),
     ("throw_statement", "throw_statement_before", "throw_statement_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("throw_statement", "throw_statement_after", "throw_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("try_statement", "try_before", "try_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2374,11 +2374,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("tuple_type_members", "tuple_type_member_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169, 170]),
     ("tuple_type_members", "tuple_type_members_before", "tuple_type_members_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("tuple_type_members", "tuple_type_members_after", "tuple_type_members_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("type_alias_declaration", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("type_alias_declaration", "eq_before", "eq_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("type_alias_declaration", "eq_after", "eq_after", 168, &[167, 168, 169, 170, 171, 172]),
     ("type_alias_declaration", "anon_type_before", "anon_type_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("type_alias_declaration", "anon_type_after", "anon_type_after", 167, &[167, 168, 169, 170, 171, 172]),
+    ("type_alias_declaration", "terminator", "terminator", 20, &[160, 20]),
     ("type_alias_declaration", "type_alias_declaration_before", "type_alias_declaration_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("type_alias_declaration", "type_alias_declaration_after", "type_alias_declaration_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("type_annotation", "colon_before", "colon_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2472,9 +2472,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("variable_declaration", "variable_declaration_start", "variable_declaration_start", 167, &[167, 168, 169, 170, 171, 172]),
     ("variable_declaration", "declarators_separator_space_before", "comma_separator_space_before", 167, &[167, 168, 169, 170]),
     ("variable_declaration", "declarators_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169, 170]),
-    ("variable_declaration", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
     ("variable_declaration", "var_before", "var_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("variable_declaration", "var_after", "var_after", 168, &[167, 168, 169, 170, 171, 172]),
+    ("variable_declaration", "terminator", "terminator", 20, &[160, 20]),
     ("variable_declaration", "variable_declaration_before", "variable_declaration_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("variable_declaration", "variable_declaration_after", "variable_declaration_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("variable_declarator_definite", "bang_before", "bang_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2535,13 +2535,13 @@ pub static SITE_PATHS: &[&str] = &[
     "(ambient_declaration_global)/global:/after",
     "(ambient_declaration_global)/before",
     "(ambient_declaration_global)/after",
-    "(ambient_declaration_module)/terminator:/statement_terminator",
     "(ambient_declaration_module)/\".\"/before",
     "(ambient_declaration_module)/\".\"/after",
     "(ambient_declaration_module)/\":\"/before",
     "(ambient_declaration_module)/\":\"/after",
     "(ambient_declaration_module)/\"module\"/before",
     "(ambient_declaration_module)/\"module\"/after",
+    "(ambient_declaration_module)/terminator",
     "(ambient_declaration_module)/before",
     "(ambient_declaration_module)/after",
     "(arguments)/arguments:/(array)/after",
@@ -2703,7 +2703,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(binary_expression_in)/after",
     "(break_statement)/break:/before",
     "(break_statement)/break:/after",
-    "(break_statement)/terminator:/statement_terminator",
+    "(break_statement)/terminator",
     "(break_statement)/before",
     "(break_statement)/after",
     "(call_expression_call)/before",
@@ -2747,14 +2747,14 @@ pub static SITE_PATHS: &[&str] = &[
     "(class_body)/\"}\"/after",
     "(class_body)/before",
     "(class_body)/after",
-    "(class_body_member)/terminator:/statement_terminator",
+    "(class_body_member)/terminator",
     "(class_body_member)/before",
     "(class_body_member)/after",
     "(class_body_method)/decorator:/(decorator)/after",
     "(class_body_method)/decorator:/end",
     "(class_body_method)/decorator:/start",
     "(class_body_method)/decorator:/separator",
-    "(class_body_method)/terminator:/statement_terminator",
+    "(class_body_method)/terminator",
     "(class_body_method)/before",
     "(class_body_method)/after",
     "(class_body_method_sig)/before",
@@ -2802,12 +2802,12 @@ pub static SITE_PATHS: &[&str] = &[
     "(constructor_type)/after",
     "(continue_statement)/continue:/before",
     "(continue_statement)/continue:/after",
-    "(continue_statement)/terminator:/statement_terminator",
+    "(continue_statement)/terminator",
     "(continue_statement)/before",
     "(continue_statement)/after",
     "(debugger_statement)/debugger:/before",
     "(debugger_statement)/debugger:/after",
-    "(debugger_statement)/terminator:/statement_terminator",
+    "(debugger_statement)/terminator",
     "(debugger_statement)/before",
     "(debugger_statement)/after",
     "(decorator)/\"@\"/before",
@@ -2832,9 +2832,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(default_type)/after",
     "(do_statement)/do:/before",
     "(do_statement)/do:/after",
-    "(do_statement)/terminator:/statement_terminator",
     "(do_statement)/while:/before",
     "(do_statement)/while:/after",
+    "(do_statement)/terminator",
     "(do_statement)/before",
     "(do_statement)/after",
     "(else_clause)/else:/before",
@@ -2892,12 +2892,12 @@ pub static SITE_PATHS: &[&str] = &[
     "(export_statement_default_declaration_default_kw)/default:/after",
     "(export_statement_default_declaration_default_kw)/before",
     "(export_statement_default_declaration_default_kw)/after",
-    "(export_statement_default_declaration_default_kw_value)/automatic_semicolon:/statement_terminator",
+    "(export_statement_default_declaration_default_kw_value)/automatic_semicolon",
     "(export_statement_default_declaration_default_kw_value)/before",
     "(export_statement_default_declaration_default_kw_value)/after",
-    "(export_statement_default_from)/automatic_semicolon:/statement_terminator",
     "(export_statement_default_from)/export:/before",
     "(export_statement_default_from)/export:/after",
+    "(export_statement_default_from)/automatic_semicolon",
     "(export_statement_default_from)/before",
     "(export_statement_default_from)/after",
     "(export_statement_default_from_clause_from)/from:/before",
@@ -2916,9 +2916,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(export_statement_default_from_star_from)/after",
     "(export_statement_equals_export)/export:/before",
     "(export_statement_equals_export)/export:/after",
-    "(export_statement_equals_export)/terminator:/statement_terminator",
     "(export_statement_equals_export)/\"=\"/before",
     "(export_statement_equals_export)/\"=\"/after",
+    "(export_statement_equals_export)/terminator",
     "(export_statement_equals_export)/before",
     "(export_statement_equals_export)/after",
     "(export_statement_namespace_export)/as:/before",
@@ -2927,19 +2927,19 @@ pub static SITE_PATHS: &[&str] = &[
     "(export_statement_namespace_export)/export:/after",
     "(export_statement_namespace_export)/namespace:/before",
     "(export_statement_namespace_export)/namespace:/after",
-    "(export_statement_namespace_export)/terminator:/statement_terminator",
+    "(export_statement_namespace_export)/terminator",
     "(export_statement_namespace_export)/before",
     "(export_statement_namespace_export)/after",
     "(export_statement_type_export)/export:/before",
     "(export_statement_type_export)/export:/after",
     "(export_statement_type_export)/from:/before",
     "(export_statement_type_export)/from:/after",
-    "(export_statement_type_export)/terminator:/statement_terminator",
     "(export_statement_type_export)/\"type\"/before",
     "(export_statement_type_export)/\"type\"/after",
+    "(export_statement_type_export)/terminator",
     "(export_statement_type_export)/before",
     "(export_statement_type_export)/after",
-    "(expression_statement)/terminator:/statement_terminator",
+    "(expression_statement)/terminator",
     "(expression_statement)/before",
     "(expression_statement)/after",
     "(extends_clause)/extends:/before",
@@ -3022,7 +3022,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(function_expression)/after",
     "(function_signature)/function:/before",
     "(function_signature)/function:/after",
-    "(function_signature)/terminator:/statement_terminator",
+    "(function_signature)/terminator",
     "(function_signature)/before",
     "(function_signature)/after",
     "(function_type)/\"=>\"/before",
@@ -3061,11 +3061,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(implements_clause)/type:/separator/\",\"/after",
     "(implements_clause)/before",
     "(implements_clause)/after",
-    "(import_alias)/terminator:/statement_terminator",
     "(import_alias)/\"=\"/before",
     "(import_alias)/\"=\"/after",
     "(import_alias)/\"import\"/before",
     "(import_alias)/\"import\"/after",
+    "(import_alias)/terminator",
     "(import_alias)/before",
     "(import_alias)/after",
     "(import_attribute)/before",
@@ -3099,9 +3099,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(import_specifiers)/import_specifier:/separator/\",\"/after",
     "(import_specifiers)/before",
     "(import_specifiers)/after",
-    "(import_statement)/terminator:/statement_terminator",
     "(import_statement)/\"import\"/before",
     "(import_statement)/\"import\"/after",
+    "(import_statement)/terminator",
     "(import_statement)/before",
     "(import_statement)/after",
     "(import_statement_clause_from)/from:/before",
@@ -3154,7 +3154,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(lexical_declaration)/declarators:/separator/\",\"/after",
     "(lexical_declaration)/kind:/before",
     "(lexical_declaration)/kind:/after",
-    "(lexical_declaration)/terminator:/statement_terminator",
+    "(lexical_declaration)/terminator",
     "(lexical_declaration)/before",
     "(lexical_declaration)/after",
     "(lookup_type)/\"[\"/before",
@@ -3409,7 +3409,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(rest_type)/after",
     "(return_statement)/return:/before",
     "(return_statement)/return:/after",
-    "(return_statement)/terminator:/statement_terminator",
+    "(return_statement)/terminator",
     "(return_statement)/before",
     "(return_statement)/after",
     "(satisfies_expression)/satisfies:/before",
@@ -3464,7 +3464,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(statement_block)/\"}\"/after",
     "(statement_block)/before",
     "(statement_block)/after",
-    "(string)/content:/quote_style",
+    "(string)/content",
     "(string_double)/\"\"\"/before",
     "(string_double)/\"\"\"/after",
     "(string_double)/before",
@@ -3572,9 +3572,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(ternary_expression)/\"?\"/after",
     "(ternary_expression)/before",
     "(ternary_expression)/after",
-    "(throw_statement)/terminator:/statement_terminator",
     "(throw_statement)/throw:/before",
     "(throw_statement)/throw:/after",
+    "(throw_statement)/terminator",
     "(throw_statement)/before",
     "(throw_statement)/after",
     "(try_statement)/try:/before",
@@ -3619,11 +3619,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(tuple_type_members)/tuple_type_member:/separator/\",\"/after",
     "(tuple_type_members)/before",
     "(tuple_type_members)/after",
-    "(type_alias_declaration)/terminator:/statement_terminator",
     "(type_alias_declaration)/\"=\"/before",
     "(type_alias_declaration)/\"=\"/after",
     "(type_alias_declaration)/\"type\"/before",
     "(type_alias_declaration)/\"type\"/after",
+    "(type_alias_declaration)/terminator",
     "(type_alias_declaration)/before",
     "(type_alias_declaration)/after",
     "(type_annotation)/\":\"/before",
@@ -3717,9 +3717,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(variable_declaration)/declarators:/start",
     "(variable_declaration)/declarators:/separator/\",\"/before",
     "(variable_declaration)/declarators:/separator/\",\"/after",
-    "(variable_declaration)/terminator:/statement_terminator",
     "(variable_declaration)/var:/before",
     "(variable_declaration)/var:/after",
+    "(variable_declaration)/terminator",
     "(variable_declaration)/before",
     "(variable_declaration)/after",
     "(variable_declarator_definite)/\"!\"/before",
@@ -3837,7 +3837,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("adding_type_annotation", &[22, 20, 21, 23]),
     ("ambient_declaration", &[26, 24, 25, 27]),
     ("ambient_declaration_global", &[30, 28, 29, 31]),
-    ("ambient_declaration_module", &[39, 37, 38, 33, 34, 35, 36, 40]),
+    ("ambient_declaration_module", &[39, 36, 37, 32, 33, 34, 35, 40]),
     ("arguments", &[74, 70, 71, 67, 66, 72, 73, 75, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65]),
     ("array", &[109, 105, 106, 102, 101, 107, 108, 110, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]),
     ("array_pattern", &[126, 122, 123, 119, 118, 124, 125, 127, 111, 112, 113, 114, 115, 116, 117]),
@@ -3881,7 +3881,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("decorator_member_expression", &[315, 313, 314, 316]),
     ("decorator_parenthesized_expression", &[321, 317, 318, 319, 320, 322]),
     ("default_type", &[325, 323, 324, 326]),
-    ("do_statement", &[332, 327, 328, 330, 331, 333]),
+    ("do_statement", &[332, 327, 328, 329, 330, 333]),
     ("else_clause", &[336, 334, 335, 337]),
     ("enum_assignment", &[340, 338, 339, 341]),
     ("enum_body", &[346, 342, 343, 344, 345, 347]),
@@ -3893,13 +3893,13 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("export_statement_default_declaration", &[383, 379, 378, 381, 382, 384, 377]),
     ("export_statement_default_declaration_default_kw", &[387, 385, 386, 388]),
     ("export_statement_default_declaration_default_kw_value", &[390, 391]),
-    ("export_statement_default_from", &[395, 393, 394, 396]),
+    ("export_statement_default_from", &[395, 392, 393, 396]),
     ("export_statement_default_from_clause_from", &[399, 397, 398, 400]),
     ("export_statement_default_from_ns_from", &[403, 401, 402, 404]),
     ("export_statement_default_from_star_from", &[409, 407, 408, 405, 406, 410]),
-    ("export_statement_equals_export", &[416, 411, 412, 414, 415, 417]),
+    ("export_statement_equals_export", &[416, 411, 412, 413, 414, 417]),
     ("export_statement_namespace_export", &[425, 420, 421, 418, 419, 422, 423, 426]),
-    ("export_statement_type_export", &[434, 427, 428, 432, 433, 429, 430, 435]),
+    ("export_statement_type_export", &[434, 427, 428, 431, 432, 429, 430, 435]),
     ("expression_statement", &[437, 438]),
     ("extends_clause", &[446, 439, 440, 443, 442, 447, 441]),
     ("extends_clause_single", &[448, 449]),
@@ -3921,7 +3921,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("generic_type", &[538, 539]),
     ("if_statement", &[542, 540, 541, 543]),
     ("implements_clause", &[556, 544, 545, 553, 552, 557, 546, 547, 548, 549, 550, 551]),
-    ("import_alias", &[563, 561, 562, 559, 560, 564]),
+    ("import_alias", &[563, 560, 561, 558, 559, 564]),
     ("import_attribute", &[565, 566]),
     ("import_clause_default_import", &[567, 568]),
     ("import_clause_group", &[571, 569, 570, 572]),
@@ -3929,7 +3929,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("import_specifier", &[583, 584]),
     ("import_specifier_as", &[587, 585, 586, 588]),
     ("import_specifiers", &[594, 591, 590, 595, 589]),
-    ("import_statement", &[599, 597, 598, 600]),
+    ("import_statement", &[599, 596, 597, 600]),
     ("import_statement_clause_from", &[603, 601, 602, 604]),
     ("index_signature", &[611, 605, 606, 607, 608, 609, 610, 612]),
     ("index_signature_colon", &[615, 613, 614, 616]),
@@ -4001,12 +4001,12 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("template_substitution", &[1055, 1051, 1052, 1053, 1054, 1056]),
     ("template_type", &[1061, 1057, 1058, 1059, 1060, 1062]),
     ("ternary_expression", &[1067, 1065, 1066, 1063, 1064, 1068]),
-    ("throw_statement", &[1072, 1070, 1071, 1073]),
+    ("throw_statement", &[1072, 1069, 1070, 1073]),
     ("try_statement", &[1076, 1074, 1075, 1077]),
     ("tuple_parameter", &[1078, 1079]),
     ("tuple_type", &[1084, 1080, 1081, 1082, 1083, 1085]),
     ("tuple_type_members", &[1114, 1111, 1110, 1115, 1086, 1087, 1088, 1089, 1090, 1091, 1092, 1093, 1094, 1095, 1096, 1097, 1098, 1099, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109]),
-    ("type_alias_declaration", &[1121, 1119, 1120, 1117, 1118, 1122]),
+    ("type_alias_declaration", &[1121, 1118, 1119, 1116, 1117, 1122]),
     ("type_annotation", &[1125, 1123, 1124, 1126]),
     ("type_arguments", &[1131, 1127, 1128, 1129, 1130, 1132]),
     ("type_assertion", &[1133, 1134]),
@@ -4028,7 +4028,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("union_type", &[1204, 1202, 1203, 1205]),
     ("update_expression_postfix", &[1206, 1207]),
     ("update_expression_prefix", &[1208, 1209]),
-    ("variable_declaration", &[1217, 1215, 1216, 1211, 1210, 1218]),
+    ("variable_declaration", &[1217, 1214, 1215, 1211, 1210, 1218]),
     ("variable_declarator_definite", &[1221, 1219, 1220, 1222]),
     ("variable_declarator_plain", &[1225, 1223, 1224, 1226]),
     ("while_statement", &[1229, 1227, 1228, 1230]),
@@ -4105,6 +4105,7 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("at_before", &[167, 168, 169, 170, 171, 172]),
     ("augmented_assignment_expression_after", &[167, 168, 169, 170, 171, 172]),
     ("augmented_assignment_expression_before", &[167, 168, 169, 170, 171, 172]),
+    ("automatic_semicolon", &[160, 20]),
     ("await_after", &[167, 168, 169, 170, 171, 172]),
     ("await_before", &[167, 168, 169, 170, 171, 172]),
     ("await_expression_after", &[167, 168, 169, 170, 171, 172]),
@@ -4179,6 +4180,7 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("construct_signature_before", &[167, 168, 169, 170, 171, 172]),
     ("constructor_type_after", &[167, 168, 169, 170, 171, 172]),
     ("constructor_type_before", &[167, 168, 169, 170, 171, 172]),
+    ("content", &[397, 398]),
     ("continue_after", &[167, 168, 169, 170, 171, 172]),
     ("continue_before", &[167, 168, 169, 170, 171, 172]),
     ("continue_statement_after", &[167, 168, 169, 170, 171, 172]),
@@ -4525,7 +4527,6 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("qmark_dot_before", &[167, 168, 169, 170, 171, 172]),
     ("qmark_qmark_eq_after", &[167, 168, 169, 170, 171, 172]),
     ("qmark_qmark_eq_before", &[167, 168, 169, 170, 171, 172]),
-    ("quote_style", &[397, 398]),
     ("rbrace_after", &[167, 168, 169, 170, 171, 172]),
     ("rbrace_before", &[167, 168, 169, 170, 171, 172]),
     ("rbrack_after", &[167, 168, 169, 170, 171, 172]),
@@ -4581,7 +4582,6 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("statement_block_before", &[167, 168, 169, 170, 171, 172]),
     ("statement_block_end", &[167, 168, 169, 170, 171, 172]),
     ("statement_block_start", &[167, 168, 169, 170, 171, 172]),
-    ("statement_terminator", &[160, 20]),
     ("static_after", &[167, 168, 169, 170, 171, 172]),
     ("static_before", &[167, 168, 169, 170, 171, 172]),
     ("string_double_after", &[167, 168, 169, 170, 171, 172]),
@@ -4615,6 +4615,7 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("template_substitution_before", &[167, 168, 169, 170, 171, 172]),
     ("template_type_after", &[167, 168, 169, 170, 171, 172]),
     ("template_type_before", &[167, 168, 169, 170, 171, 172]),
+    ("terminator", &[160, 20]),
     ("ternary_expression_after", &[167, 168, 169, 170, 171, 172]),
     ("ternary_expression_before", &[167, 168, 169, 170, 171, 172]),
     ("throw_after", &[167, 168, 169, 170, 171, 172]),

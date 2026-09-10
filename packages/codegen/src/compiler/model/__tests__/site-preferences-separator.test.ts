@@ -81,7 +81,7 @@ describe('collectSitePreferences — separator sites', () => {
 
 	it('an undeclared choice separator, a foreign arm, and a declaration naming no list are build errors', () => {
 		expect(() => collectSitePreferences({ nodeMap: listNodeMap(SEP), kindEntries })).toThrow(
-			/member_list\.member chooses its separator per instance \(comma, semi\); declare preference\('separator', <kind>\)/
+			/member_list\.member chooses its separator per instance \(comma, semi\); declare its kind under options:/
 		);
 		expect(() =>
 			collectSitePreferences({

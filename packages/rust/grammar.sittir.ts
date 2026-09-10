@@ -78,8 +78,14 @@ export default grammar(
 			options: {
 				body: { before: preference('indent'), after: preference('dedent') },
 				gap: { separator: preference('newline') },
-				field_declaration_list_elements: { 'element:/separator/","/after': preference('newline') },
-				enum_variant_list_elements: { 'element:/separator/","/after': preference('newline') },
+				field_declaration_list_elements: {
+					'element:/separator/","/after': preference('newline'),
+					'element:/delimiter': preference('Delimiter.Trailing')
+				},
+				enum_variant_list_elements: {
+					'element:/separator/","/after': preference('newline'),
+					'element:/delimiter': preference('Delimiter.Trailing')
+				},
 
 				_: {
 					'_/separator/","/before': preference('tight'),
@@ -165,8 +171,6 @@ export default grammar(
 			},
 
 			patches: {
-				field_declaration_list_elements: { element: preference('delimiter', 'Delimiter.Trailing') },
-				enum_variant_list_elements: { element: preference('delimiter', 'Delimiter.Trailing') },
 				parameter: {
 					'1': field('name')
 				},

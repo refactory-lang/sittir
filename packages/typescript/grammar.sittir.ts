@@ -180,7 +180,8 @@ export default grammar(
 				case_body: { start: preference('indent'), end: preference('dedent') },
 				gap: { separator: preference('newline') },
 				statements: { terminator: preference(';') },
-				enum_body_elements: { 'content:/separator/","/after': preference('newline') },
+				quotes: { style: preference('double') },
+				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
 
 				_: {
 					'_/separator/","/before': preference('tight'),
@@ -209,7 +210,9 @@ export default grammar(
 
 				object_type_content: {
 					'content:/separator/before': preference('tight'),
-					'content:/separator/after': preference('newline')
+					'content:/separator/after': preference('newline'),
+					'content:/separator/kind': preference('semi'),
+					'content:/delimiter': preference('Delimiter.Trailing')
 				},
 
 				statement_block: { before: preference('space') },
@@ -234,6 +237,7 @@ export default grammar(
 
 				_bindings: {
 					'_/terminator:': 'statements/terminator',
+					'string/content:': 'quotes/style',
 					'_/automatic_semicolon:': 'statements/terminator',
 					'class_body/"{"/after': 'body/before',
 					'class_body/"}"/before': 'body/after',
@@ -267,11 +271,6 @@ export default grammar(
 			},
 
 			patches: {
-				object_type_content: [
-					{ content: preference('separator', 'semi') },
-					{ content: preference('delimiter', 'Delimiter.Trailing') }
-				],
-				enum_body_elements: { content: preference('delimiter', 'Delimiter.Trailing') },
 				binary_expression: {
 					24: variant('in')
 				},
@@ -578,9 +577,8 @@ export default grammar(
 					2: variant('member')
 				},
 
-				string: [{ 0: variant('double'), 1: variant('single') }, preference('quote_style', 'double')],
+				string: { 0: variant('double'), 1: variant('single') },
 
-				_semicolon: preference('statement_terminator', ';'),
 
 				update_expression: {
 					0: variant('postfix'),

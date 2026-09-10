@@ -5374,9 +5374,7 @@
             "name": "_string_double",
             "annotations": {
               "variant": "double",
-              "variantOf": "string",
-              "preference": "quote_style",
-              "default": true
+              "variantOf": "string"
             }
           },
           "named": true,
@@ -5389,8 +5387,7 @@
             "name": "_string_single",
             "annotations": {
               "variant": "single",
-              "variantOf": "string",
-              "preference": "quote_style"
+              "variantOf": "string"
             }
           },
           "named": true,
@@ -7202,21 +7199,14 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_automatic_semicolon",
-            "annotations": {
-              "preference": "statement_terminator"
-            }
+            "name": "_automatic_semicolon"
           },
           "named": true,
           "value": "automatic_semicolon"
         },
         {
           "type": "STRING",
-          "value": ";",
-          "annotations": {
-            "preference": "statement_terminator",
-            "default": true
-          }
+          "value": ";"
         }
       ]
     },

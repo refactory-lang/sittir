@@ -1239,16 +1239,13 @@ export function declaredSeparatorDefault(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	renderDefaults: RenderDefaults | undefined
 ): string {
-	const slot = node.slots[0]?.name;
-	const declared = slot === undefined ? undefined : renderDefaults?.sites[publicKindName(node.kind)]?.[`${slot}_${SEPARATOR_LABEL}`]?.arm;
+	const declared = node.resolvedSeparatorArm;
 	if (declared === undefined) throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
 	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
 }
 
-function declaredDelimiterDefault(node: AssembledList, renderDefaults: RenderDefaults | undefined): string {
-	const slot = node.slots[0]?.name;
-	const declared = slot === undefined ? undefined : renderDefaults?.sites[publicKindName(node.kind)]?.[`${slot}_${DELIMITER_LABEL}`]?.arm;
-	return declared ?? 'Delimiter.None';
+function declaredDelimiterDefault(node: AssembledList): string {
+	return node.resolvedDelimiterArm ?? 'Delimiter.None';
 }
 
 function emitSeparatedListFactory(
@@ -1259,7 +1256,7 @@ function emitSeparatedListFactory(
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
-	const delimiterDefault = declaredDelimiterDefault(node, renderDefaults);
+	const delimiterDefault = declaredDelimiterDefault(node);
 
 	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);

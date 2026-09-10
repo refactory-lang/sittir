@@ -778,7 +778,12 @@ function altKindDiscriminants(
 	});
 }
 
-function defaultArmKindOf(field: { values: readonly NodeOrTerminal[] }): string | undefined {
+function defaultArmKindOf(field: { values: readonly NodeOrTerminal[]; optionDefaultArm?: string }): string | undefined {
+	const declared = field.optionDefaultArm;
+	if (declared !== undefined) {
+		const chosen = field.values.find((v) => isNodeRef(v) && (v.variant ?? v.resolvedKind) === declared);
+		if (chosen !== undefined && isNodeRef(chosen)) return storageKindOfRef(chosen.node);
+	}
 	const flagged = field.values.filter((v) => v.default === true && isNodeRef(v));
 	if (flagged.length > 1) {
 		const names = flagged.filter(isNodeRef).map((v) => storageKindOfRef(v.node));

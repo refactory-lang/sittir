@@ -56,7 +56,19 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 ];
 
 function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, renderDefaults?: RenderDefaults): string {
+	stampDeclaredArms(nodeMap, renderDefaults);
 	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES, renderDefaults });
+}
+
+function stampDeclaredArms(nodeMap: ReturnType<typeof makeNodeMapWith>, renderDefaults: RenderDefaults | undefined): void {
+	for (const [kind, sites] of Object.entries(renderDefaults?.sites ?? {})) {
+		const node = nodeMap.nodes.get(kind);
+		if (!(node instanceof AssembledList)) continue;
+		for (const [address, site] of Object.entries(sites)) {
+			if (address.endsWith('_separator')) node.resolvedSeparatorArm = site.arm;
+			else if (address.endsWith('_delimiter')) node.resolvedDelimiterArm = site.arm;
+		}
+	}
 }
 
 function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {

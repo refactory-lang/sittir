@@ -76,7 +76,7 @@ export function deriveOptionsShape(
 			flanks.set(publicKindName(site.kind), own);
 			continue;
 		}
-		if (site.source !== 'delimiter' && site.source !== 'separator') {
+		if (site.source !== 'delimiter' && site.source !== 'separator' && site.source !== 'choice') {
 			const existing = topLevel.get(site.label);
 			if (existing === undefined) {
 				topLevel.set(site.label, { type, defaultArm: site.defaultArm, site: at });
@@ -369,16 +369,19 @@ export interface EmitOptionsConfig {
 	readonly renderRules: RenderRules;
 	readonly renderDefaults?: RenderDefaults;
 	readonly options?: OptionsConfig;
+	readonly sites?: readonly SitePreference[];
 }
 
 export function emitOptions(config: EmitOptionsConfig): string {
-	const sites = collectSitePreferences({
-		nodeMap: config.nodeMap,
-		kindEntries: config.kindEntries,
-		renderRules: config.renderRules,
-		defaults: config.renderDefaults,
-		options: config.options
-	});
+	const sites =
+		config.sites ??
+		collectSitePreferences({
+			nodeMap: config.nodeMap,
+			kindEntries: config.kindEntries,
+			renderRules: config.renderRules,
+			defaults: config.renderDefaults,
+			options: config.options
+		});
 	const supertypeMembers = buildSupertypeMembersMap(config.nodeMap);
 	const armType = kindIdArmType(config.kindEntries);
 	const shape = deriveOptionsShape(sites, supertypeMembers, armType);
