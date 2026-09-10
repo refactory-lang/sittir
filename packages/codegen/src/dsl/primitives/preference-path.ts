@@ -1,4 +1,5 @@
 import { splitSegments, type PathSegment } from '../transform/transform-path.ts';
+import type { Segments } from '../../grammar-shapes/path-type.ts';
 
 export type PreferenceSegment = PathSegment | { readonly kind: 'name'; readonly name: string };
 
@@ -103,3 +104,34 @@ function compareSegment(a: PreferenceSegment, b: PreferenceSegment): number {
 function compareText(a: string, b: string): number {
 	return a < b ? -1 : a > b ? 1 : 0;
 }
+
+type Punctuated = `${string}${' ' | '"' | '(' | ')' | ':' | '/'}${string}`;
+
+type IsPreferenceSegment<S extends string> = S extends ''
+	? false
+	: S extends `"${string}"`
+		? true
+		: S extends '_' | `-${number}` | `${number}`
+			? true
+			: S extends `(${infer K})`
+				? K extends '' | Punctuated
+					? false
+					: true
+				: S extends `${infer N}:`
+					? N extends '' | Punctuated
+						? false
+						: true
+					: S extends Punctuated
+						? false
+						: true;
+
+type AllSegments<Segs extends readonly string[]> = Segs extends readonly [
+	infer S extends string,
+	...infer Rest extends string[]
+]
+	? IsPreferenceSegment<S> extends true
+		? AllSegments<Rest>
+		: false
+	: true;
+
+export type IsPreferencePath<P extends string> = AllSegments<Segments<P>>;

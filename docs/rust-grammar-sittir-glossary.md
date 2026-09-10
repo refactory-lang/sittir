@@ -58,17 +58,17 @@ pattern-replacing passthroughs. Without the base arg, unoverridden base rules
 bypass pattern replacement and tree-sitter never emits the `alias()`-wrapped
 visible kinds.
 
-### `wire<EnrichedGrammar<RustGrammarShape>>` (`packages/rust/grammar.sittir.ts:32`)
+### `wire(…, enrichedBase)` (`packages/rust/grammar.sittir.ts:20`)
 
-The explicit type-arg binds `B` to the lazy `EnrichedGrammar<RustGrammarShape>`
-alias rather than letting it reach `WireConfig<B>` as a fresh generic
-parameter. That distinction is load-bearing: a generically-parameterized
-`config: WireConfig<B>` forces TS to eagerly instantiate the precise
-`PatchesConfig<B>` mapped-type branch while contextually typing the literal,
-which trips TS2589 ("excessively deep"). The concrete alias is evaluated lazily
-and stays shallow. The type-arg is the only `EnrichedGrammar` reference left at
-a value position, and the inline literal is still fully checked against
-`WireConfig<EnrichedGrammar<RustGrammarShape>>`.
+No type argument: `B` infers from the `enrichedBase` value and the `patches`
+and `options` blocks infer on their own, which is what lets `wire()` judge
+every written path key against the rule shapes (`PatchesCheck`) and every
+option address and binding for syntax and resolution (`OptionsCheck`). An
+explicit type argument would disable inference for the parameters after it
+and check nothing. The earlier explicit `wire<EnrichedGrammar<RustGrammarShape>>`
+form guarded a TS2589 that came from enumerating path keys inside
+`PatchesConfig`; keys are now judged per written key instead, so the mapped
+type stays shallow and the generic call is safe.
 
 `grammar` here is `dsl-authoring.ts`'s own typed re-export of the
 runtime-injected `grammarFn` — its real two-arg contract is

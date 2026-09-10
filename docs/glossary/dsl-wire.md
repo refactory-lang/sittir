@@ -996,7 +996,7 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  *     async_block: { '1/0': field('move'), 2: field('block') },
  *     array_expression: [
  *       { 1: field('attributes') },
- *       { '2/_expression': field('elements') },
+ *       { '2/(_expression)': field('elements') },
  *     ],
  *   }
  *
@@ -1010,33 +1010,65 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  */
 ```
 
-```text
-// Loose default (`Base = GrammarJson`, rule values are the open
-```
+The loose default (`Base = GrammarJson`, rule values the open `GrammarRule`
+union) is the plain `PatchEntry` form the internal pipeline sees. A concrete
+`Base` (an `as const` shape) restricts the kind keys to the grammar's rules
+and the values to `TransformPatchValue`; the path keys stay open here and are
+judged per written key by `PatchesCheck`, which is what keeps this mapped type
+shallow enough to contextually type the config literal.
 
-#### body
+### `packages/codegen/src/dsl/wire/wire.ts::RulesOf`
 
-```text
-// `GrammarRule` union): use the plain `PatchMap` form. Mapping
-// `PathKey<…>` over the OPEN union recurses unboundedly (TS2589); the
-// per-rule precise form is only meaningful — and only safe — when
-// `Base` is a CONCRETE `as const` schema (tuple rule bodies). The
-// internal pipeline always sees this loose form.
-```
+The rule map of a base, or `never` for a type with none.
 
-#### body
+### `packages/codegen/src/dsl/wire/wire.ts::IsShaped`
 
-```text
-// Concrete `Base` (e.g. `RustGrammarShape`): per rule K, keys are
-// segment-1-precise path strings. We derive them from the RAW rule
-// (`FastKeys` = PathKey<R[K]>) rather than the post-Enrich shape:
-// `PathKey` only consumes the FIRST segment (`TopLevelKeys`), and
-// enrich wraps top-level members IN PLACE (never adds/removes one),
-// so `PathKey<EnrichRule<X>> ≡ PathKey<X>` (proven in
-// wire-transforms.test-d.ts). FastKeys is therefore LOSSLESS for
-// keys and avoids instantiating EnrichRule over the loose union
-// (which is the TS2589 source). Array form = multi-patchset rules.
-```
+Whether a base carries concrete rule shapes to check paths against. `any`
+and the loose `GrammarJson` (rules typed as the open union) do not, and every
+check degrades to `unknown` for them — walking the open union would recurse
+without end.
+
+### `packages/codegen/src/dsl/wire/wire.ts::PatchKeyCheck`
+
+One patch map with each written key judged by `IsPath` against the rule.
+A key the walker would throw on maps to an object demanding the property
+`patches: no such path in this rule`, so the error lands on that key and
+names it. A non-literal key (`string`) passes: there is nothing to judge.
+
+### `packages/codegen/src/dsl/wire/wire.ts::PatchEntryCheck`
+
+`PatchKeyCheck` over one map or over each map of the array form.
+
+### `packages/codegen/src/dsl/wire/wire.ts::PatchesCheck`
+
+The `patches:` block with every key judged against its rule's post-enrich
+shape. Intersected with the written block in `wire()`'s parameter, so an
+invalid key fails assignability at its own line.
+
+### `packages/codegen/src/dsl/wire/wire.ts::DeclaredLabels`
+
+Every `kind/relative` path the `options:` block declares — what a
+`_bindings` value must name, as `readOptionsBlock` requires at load time.
+
+### `packages/codegen/src/dsl/wire/wire.ts::PreferencePathCheck`
+
+One kind's map of relative paths with each key judged by `IsPreferencePath`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::BindingsCheck`
+
+The `_bindings` map: each address must be a path, each label must be a
+declared one, and a label's root must not be a rule of the grammar — the
+three refusals `readOptionsBlock` makes at load time, brought forward to the
+type check where a shaped base allows.
+
+### `packages/codegen/src/dsl/wire/wire.ts::OptionsCheck`
+
+The `options:` block with its paths and bindings judged. Structural checking
+against the rule shapes is deliberately absent: option addresses name model
+sites — slots enrich mints at runtime, kinds `variant()` mints, supertype
+members reached through a slot — which the base shape cannot see, so a
+structural check would refuse real addresses. Syntax and binding resolution
+are what the shape-free half of the load-time check can promise.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchMap`
 
@@ -1383,18 +1415,18 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 // `base` is omitted, `B` defaults to `any` (the loose form, identical to
 // the prior `C extends WireConfig<any>` behavior — there is nothing to
 // infer grammar precision from).
-//
-// NOTE on TS2589: routing the literal through the generic `WireConfig<B>`
-// is REQUIRED for base-present precision — but at a no-`base` call site
-// (where `B` reaches the generic with nothing to pin it) TS may eagerly
-// instantiate the precise `PatchesConfig<B>` mapped-type branch and
-// report "excessively deep". A call site that pins `B` to a lazy alias —
-// an explicit type-arg (`wire<EnrichedGrammar<RustGrammarShape>>(…)` in
-// grammar.sittir.ts) or a concrete `base` — evaluates that branch lazily and
-// stays shallow. The residual no-base artifact is editor-only typecheck
-// noise; runtime is unaffected (`config` is aliased to a loose
-// `WireConfig<any>` in the body below).
 ```
+
+The `patches` and `options` blocks are inferred on their own (`P`, `O`) so
+their written keys can be judged by `PatchesCheck` and `OptionsCheck`. They
+are inferred separately from the config, not as one type parameter over the
+whole literal, because a type parameter that the contextual type of a
+context-sensitive callback mentions gets fixed before the callbacks are typed
+— inferring the whole config would fix it to its default and check nothing.
+Neither block holds a function, so neither is fixed early. An explicit type
+argument disables inference for the parameters after it; the grammars pass
+`enrich(base)` and let every parameter infer.
+
 
 #### body
 
@@ -1602,9 +1634,9 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 
 ```text
 /**
- * What a `patches:` key may hold: one patch map, a list of patch maps, or
- * a kind-level `preference()` placeholder — alone or among the maps. Path
- * maps apply first, in order; kind-level preferences apply to the result.
+ * What a `patches:` key may hold: one patch map or a list of patch maps,
+ * applied in order. The list is read-only so a literal inferred as a tuple
+ * fits it.
  */
 ```
 
@@ -1667,11 +1699,3 @@ were how a default reached every site sharing a label before `options:` could
 address a site by its path; a key that parses as one and names no rule says so
 here rather than falling through to the patch machinery as a rule that does
 not exist.
-
-
-### `packages/codegen/src/dsl/wire/wire.ts::OpenPatchMap`
-
-A patch map keyed by any path. The shape types give a rule's own keys, which
-is the stricter surface and the one to prefer; this arm is what lets a patch
-address a position those keys do not enumerate.
-

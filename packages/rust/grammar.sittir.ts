@@ -10,8 +10,6 @@
 import base from './base.ts';
 
 import { enrich, field, alias, variant, arm, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
-import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
-import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -19,7 +17,7 @@ const enrichedBase = enrich(base);
 
 export default grammar(
 	enrichedBase,
-	wire<EnrichedGrammar<RustGrammarShape>>(
+	wire(
 		{
 			name: 'rust',
 			conflicts: ($, previous) => [

@@ -3,7 +3,8 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
-import type { OptionsConfig } from './options-block.ts';
+import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
+import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
 	isSpacingArm,
 	isWhitespaceArm,
@@ -30,7 +31,7 @@ import {
 } from '../primitives/variant.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
-import type { FastKeys, TransformPatchMap, TransformPatchValue } from '../../grammar-shapes/path-type.ts';
+import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
@@ -152,21 +153,72 @@ export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule
 ]
 	? Partial<Record<BaseKind<Base>, PatchEntry>>
 	: Base extends { readonly rules: infer R }
-		? {
-				readonly [K in keyof R]?: R[K] extends GrammarRule
-					?
-							| TransformPatchMap<FastKeys<R[K]>>
-							| OpenPatchMap
-							| (TransformPatchMap<FastKeys<R[K]>> | OpenPatchMap)[]
-					: PatchEntry;
-			}
+		? { readonly [K in keyof R]?: TransformPatchMap | readonly TransformPatchMap[] }
 		: Partial<Record<BaseKind<Base>, PatchEntry>>;
 
-export type PatchEntry = PatchMap | PatchMap[];
-
-export type OpenPatchMap = Readonly<Record<string, TransformPatchValue>>;
+export type PatchEntry = PatchMap | readonly PatchMap[];
 
 export type PatchMap = Record<string, unknown>;
+
+type RulesOf<B> = B extends { readonly rules: infer R } ? R : never;
+
+type PatchKeyCheck<Rule, M> = {
+	readonly [Path in keyof M]: Path extends string | number
+		? string extends Path
+			? M[Path]
+			: IsPath<Rule, `${Path}`> extends true
+				? M[Path]
+				: { readonly 'patches: no such path in this rule': `${Path}` }
+		: M[Path];
+};
+
+type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
+	? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I]> }
+	: PatchKeyCheck<Rule, E>;
+
+type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
+
+export type PatchesCheck<B, P> = IsShaped<B> extends false
+	? unknown
+	: { readonly [K in keyof P]: K extends keyof RulesOf<B> ? PatchEntryCheck<RulesOf<B>[K], P[K]> : P[K] };
+
+type DeclaredLabels<O> = {
+	[K in Exclude<keyof O, typeof BINDINGS_KEY> & string]: `${K}/${keyof O[K] & string}`;
+}[Exclude<keyof O, typeof BINDINGS_KEY> & string];
+
+type PreferencePathCheck<M> = {
+	readonly [Path in keyof M]: Path extends string
+		? string extends Path
+			? M[Path]
+			: IsPreferencePath<Path> extends true
+				? M[Path]
+				: { readonly 'options: not a path': Path }
+		: M[Path];
+};
+
+type BindingsCheck<B, O, M> = {
+	readonly [Address in keyof M]: Address extends string
+		? string extends Address
+			? M[Address]
+			: IsPreferencePath<Address> extends false
+				? { readonly 'options: _bindings address is not a path': Address }
+				: M[Address] extends DeclaredLabels<O>
+					? M[Address] extends `${infer Root}/${string}`
+						? IsShaped<B> extends true
+							? Root extends keyof RulesOf<B>
+								? { readonly "options: a label's kind is virtual, this names a real kind": Root }
+								: M[Address]
+							: M[Address]
+						: M[Address]
+					: { readonly 'options: _bindings names no declared label': M[Address] }
+		: M[Address];
+};
+
+export type OptionsCheck<B, O> = {
+	readonly [K in keyof O]: K extends typeof BINDINGS_KEY
+		? BindingsCheck<B, O, O[K]>
+		: PreferencePathCheck<O[K]>;
+};
 
 export type ShapedSymbols<B extends GrammarJson> = {
 	readonly [R in keyof B['rules'] & string]: SymbolRule<R>;
@@ -222,7 +274,10 @@ type RuleFn = SittirRuleFn;
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
-export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: B): WiredOpts {
+export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
+	config: WireConfig<B> & { readonly patches?: P & PatchesCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
+	base?: B
+): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
 	const baseArg = base as unknown as BaseArg | undefined;
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));

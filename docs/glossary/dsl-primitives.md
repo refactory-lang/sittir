@@ -447,6 +447,29 @@ children's.
 An address back in its written spelling, so a diagnostic names what an author
 typed rather than a segment dump.
 
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::Punctuated`
+
+A segment text holding a character no bare name may: space, quote, either
+paren, colon or slash.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::IsPreferenceSegment`
+
+Type-level twin of `parseSegment`: a quoted literal, `_`, an index, a
+`(kind)`, a `name:` or a bare name. Looser than the runtime on the
+characters a name may hold — it refuses punctuation rather than requiring an
+identifier — so it never rejects what `parsePreferencePath` accepts.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::AllSegments`
+
+`true` when every split segment is a preference segment.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::IsPreferencePath`
+
+`true` when `parsePreferencePath` would accept the path. Splits with
+`Segments` (`grammar-shapes/path-type.ts`), the type-level `splitSegments`,
+so a quoted literal may hold a slash. What `OptionsCheck` consults per key.
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::spacingLabel`
 
 ```text

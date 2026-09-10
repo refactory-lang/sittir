@@ -18,7 +18,7 @@ export interface OptionsDeclarations {
 
 export type OptionsConfig = Record<string, unknown>;
 
-const BINDINGS_KEY = '_bindings';
+export const BINDINGS_KEY = '_bindings';
 
 export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<string>): OptionsDeclarations {
 	const declarations: PathDeclaration[] = [];

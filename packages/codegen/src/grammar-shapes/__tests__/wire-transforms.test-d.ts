@@ -1,84 +1,149 @@
-/**
- * wire-transforms.test-d.ts — proves the Phase-2 wiring decisions:
- *
- *  1. FastKeys ≡ PreciseKeys: `PathKey<EnrichRule<X>> ≡ PathKey<X>` for the
- *     transform key surface. `PathKey` only consumes the FIRST path segment
- *     (`TopLevelKeys`), and enrich wraps top-level members IN PLACE (never
- *     adds/removes one), so deriving keys from the RAW rule is LOSSLESS —
- *     and avoids instantiating `EnrichRule` over the loose `GrammarRule`
- *     union (the TS2589 source). This is why PatchesConfig uses FastKeys.
- *
- *  2. The per-rule transform patch-map autocompletes real segment-1 keys and
- *     rejects out-of-bounds first segments (negative-controlled @ts-expect-error).
- */
-import { describe, it, expectTypeOf, assertType } from 'vitest';
-import { rustGrammarShape } from '../grammar-shape.rust.ts';
-import { field, variant } from '../../dsl/index.ts';
+import { describe, it, expectTypeOf } from 'vitest';
+import type { RustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { PathKey, FastKeys, TransformPatchMap, TopLevelKeys, TransformPatchValue } from '../path-type.ts';
+import type { EnrichedGrammar } from '../../dsl/enrich.ts';
+import type { IsPath } from '../path-type.ts';
+import type { IsPreferencePath } from '../../dsl/primitives/preference-path.ts';
+import { wire } from '../../dsl/wire/wire.ts';
+import { field, variant, preference } from '../../dsl/index.ts';
 
-type Rules = (typeof rustGrammarShape)['rules'];
+type Rules = RustGrammarShape['rules'];
+type R<K extends keyof Rules> = EnrichRule<Rules[K]>;
 
-describe('FastKeys ≡ PreciseKeys (first-segment keys are enrich-invariant)', () => {
-	it('Shape-1 (await_expression): post-enrich keys equal raw keys', () => {
-		expectTypeOf<PathKey<EnrichRule<Rules['await_expression']>>>().toEqualTypeOf<PathKey<Rules['await_expression']>>();
+declare const enriched: EnrichedGrammar<RustGrammarShape>;
+
+describe('IsPath accepts what applyPath walks and rejects what it throws on', () => {
+	it('index and negative index on a sequence are bounds-checked', () => {
+		expectTypeOf<IsPath<R<'parameter'>, '1'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'parameter'>, '-1'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'parameter'>, '9'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'parameter'>, '-9'>>().toEqualTypeOf<false>();
 	});
 
-	it('Shape-2 nested insert (reference_type): keys still equal', () => {
-		// reference_type inserts a FIELD INSIDE member-1's CHOICE — a deeper
-		// level — yet the TOP-LEVEL member count is unchanged, so segment-1
-		// keys are identical.
-		expectTypeOf<PathKey<EnrichRule<Rules['reference_type']>>>().toEqualTypeOf<PathKey<Rules['reference_type']>>();
+	it('a choice arity is a lower bound: enrich can distribute more arms onto it', () => {
+		expectTypeOf<IsPath<R<'or_pattern'>, '0/0'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'or_pattern'>, '1/1'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'or_pattern'>, '1/9'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'line_comment'>, '1/3'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'line_comment'>, '1/3/0/anything'>>().toEqualTypeOf<true>();
 	});
 
-	it('duplicate (index_expression): keys equal despite numbered fields', () => {
-		expectTypeOf<PathKey<EnrichRule<Rules['index_expression']>>>().toEqualTypeOf<PathKey<Rules['index_expression']>>();
+	it('wildcard descends into every member and needs one to accept the rest', () => {
+		expectTypeOf<IsPath<R<'function_modifiers'>, '_'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'or_pattern'>, '_/1'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'or_pattern'>, '_/9'>>().toEqualTypeOf<false>();
+	});
+
+	it('a field segment names the field wrapper it sits on', () => {
+		expectTypeOf<IsPath<R<'await_expression'>, '0/expression:'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'await_expression'>, '0/nope:'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'await_expression'>, 'expression:'>>().toEqualTypeOf<false>();
+	});
+
+	it('a literal segment names a string member', () => {
+		expectTypeOf<IsPath<R<'await_expression'>, '"."'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'await_expression'>, '"!"'>>().toEqualTypeOf<false>();
+	});
+
+	it('a kind match finds a symbol anywhere below, except under a field', () => {
+		expectTypeOf<IsPath<R<'or_pattern'>, '(_pattern)'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'or_pattern'>, '(_expression)'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'await_expression'>, '(_expression)'>>().toEqualTypeOf<false>();
+	});
+
+	it('a deep authored path resolves', () => {
+		expectTypeOf<IsPath<R<'visibility_modifier'>, '1/1/0/1/3/0'>>().toEqualTypeOf<true>();
 	});
 });
 
-describe('per-rule patch-map (the PatchesConfig value surface)', () => {
-	it('or_pattern: segment-1 keys are 0 | 1 (PREC>CHOICE, 2 arms)', () => {
-		expectTypeOf<TopLevelKeys<Rules['or_pattern']>>().toEqualTypeOf<'0' | '1'>();
+describe('wire() checks patch keys per rule, from the base it is given', () => {
+	it('accepts authored keys, alone and in the array form, beside rule callbacks', () => {
+		wire({ name: 'rust', patches: { parameter: { '1': field('name') } } }, enriched);
+		wire({ name: 'rust', patches: { or_pattern: [{ '0/0': field('left') }, { '0': variant('binary') }] } }, enriched);
+		wire(
+			{
+				name: 'rust',
+				rules: { parameter: ($, previous) => previous },
+				patches: { parameter: { '1': field('name') } }
+			},
+			enriched
+		);
 	});
 
-	it('authored keys typecheck against the patch-map', () => {
-		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
-		// real authored paths (from grammar.sittir.ts): 0/0, 0/2, 1/1
-		assertType<Patch>({ '0/0': { __sittirPlaceholder: 'field', name: 'left' } });
-		assertType<Patch>({ '1/1': { __sittirPlaceholder: 'field', name: 'right' } });
+	it('rejects a key the walker would throw on', () => {
+		// @ts-expect-error — parameter has no member 9
+		wire({ name: 'rust', patches: { parameter: { '9': field('name') } } }, enriched);
+		// @ts-expect-error — the second patch set names a member or_pattern's arm 1 lacks
+		wire({ name: 'rust', patches: { or_pattern: [{ '0/0': field('left') }, { '1/9': variant('x') }] } }, enriched);
 	});
 
-	it('out-of-bounds first segment is rejected (negative-controlled)', () => {
-		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
-		// @ts-expect-error — '7' is not a valid first segment for a 2-arm choice.
-		const _bad: Patch = { '7': { __sittirPlaceholder: 'field', name: 'x' } };
-		void _bad;
+	it('an unshaped base checks nothing', () => {
+		wire({ name: 'loose', patches: { anything: { '99/99': field('x') } } });
+	});
+});
+
+describe('wire() checks the options block', () => {
+	it('accepts paths, declarations and bindings that resolve', () => {
+		wire(
+			{
+				name: 'rust',
+				options: {
+					body: { before: preference('indent'), after: preference('dedent') },
+					block: { '"{"/after': preference('space'), 'statements:/(_)/after': preference('newline') },
+					_: { '_/separator/","/before': preference('tight'), '"/="/after': preference('space') },
+					_bindings: { 'block/"{"/after': 'body/before' }
+				}
+			},
+			enriched
+		);
 	});
 
-	it('non-numeric path keys (wildcard / kind-match / reverse) are accepted', () => {
-		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
-		// These authored forms exist in real grammar.sittir.ts (`_pattern` uses `-1`,
-		// other rules use `(_expression)` / `_`) — must NOT false-reject.
-		assertType<Patch>({ _: field('x') });
-		assertType<Patch>({ '(_expression)': field('elements') });
-		assertType<Patch>({ '-1': field('last') });
+	it('rejects a binding whose label is not declared', () => {
+		wire(
+			{
+				name: 'rust',
+				options: {
+					body: { before: preference('indent') },
+					// @ts-expect-error — body/after is declared nowhere
+					_bindings: { 'block/"{"/after': 'body/after' }
+				}
+			},
+			enriched
+		);
 	});
 
-	it('transform VALUE: a field()/variant() placeholder type-checks', () => {
-		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
-		// The real value-axis: field()/variant() RETURN types are accepted by
-		// TransformPatchValue (clears the TS2322 cascade on transform values).
-		assertType<Patch>({ '0/0': field('left') });
-		assertType<Patch>({ '0/0': variant('binary') });
-		// And the bare value type accepts them:
-		expectTypeOf<ReturnType<typeof field>>().toExtend<TransformPatchValue>();
-		expectTypeOf<ReturnType<typeof variant>>().toExtend<TransformPatchValue>();
+	it('rejects a label rooted at a real kind', () => {
+		wire(
+			{
+				name: 'rust',
+				options: {
+					block: { before: preference('space') },
+					// @ts-expect-error — block is a rule of the grammar, a label's kind is virtual
+					_bindings: { 'match_block/before': 'block/before' }
+				}
+			},
+			enriched
+		);
 	});
 
-	it('transform VALUE: a bogus value is rejected (negative-controlled)', () => {
-		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
-		// @ts-expect-error — 42 is neither a RuleOrLiteral nor a DSL placeholder.
-		const _bad1: Patch = { '0/0': 42 };
-		void _bad1;
+	it('rejects a key that is not a path', () => {
+		// @ts-expect-error — a segment may not hold a space
+		wire({ name: 'rust', options: { block: { 'a b/after': preference('space') } } }, enriched);
+	});
+});
+
+describe('IsPreferencePath mirrors parsePreferencePath', () => {
+	it('admits every segment form', () => {
+		expectTypeOf<IsPreferencePath<'statements:/(_)/after'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPreferencePath<'_/separator/","/before'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPreferencePath<'"/="/after'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPreferencePath<'-1/0/before'>>().toEqualTypeOf<true>();
+	});
+
+	it('refuses an empty segment or punctuation in a bare one', () => {
+		expectTypeOf<IsPreferencePath<''>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPreferencePath<'block/'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPreferencePath<'a b'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPreferencePath<'(:)/after'>>().toEqualTypeOf<false>();
 	});
 });
