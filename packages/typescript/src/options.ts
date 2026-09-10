@@ -1354,6 +1354,7 @@ export type AddressRoot =
 	| 'sequence_expression'
 	| 'spread_element'
 	| 'statement_block'
+	| 'statements'
 	| 'string'
 	| 'string_double'
 	| 'string_single'
@@ -2179,6 +2180,7 @@ export interface AddressBranch {
 	readonly 'statement_block/statements/with_statement': 'after';
 	readonly 'statement_block/{': 'after' | 'before';
 	readonly 'statement_block/}': 'after' | 'before';
+	readonly statements: 'terminator';
 	readonly string: 'content';
 	readonly 'string/content': 'quote_style';
 	readonly string_double: '"' | 'after' | 'before';
@@ -3424,6 +3426,7 @@ export interface AddressLeaf {
 	readonly 'statement_block/{/before': Whitespace;
 	readonly 'statement_block/}/after': Whitespace;
 	readonly 'statement_block/}/before': Whitespace;
+	readonly 'statements/terminator': TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly 'string/content/quote_style': TSKindId.StringDouble | TSKindId.StringSingle;
 	readonly 'string_double/"/after': Whitespace;
 	readonly 'string_double/"/before': Whitespace;

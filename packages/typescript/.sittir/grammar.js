@@ -5284,6 +5284,7 @@ var grammar_sittir_default = grammar(
         body: { before: preference("indent"), after: preference("dedent") },
         case_body: { start: preference("indent"), end: preference("dedent") },
         gap: { separator: preference("newline") },
+        statements: { terminator: preference(";") },
         enum_body_elements: { 'content:/separator/","/after': preference("newline") },
         _: {
           '_/separator/","/before': preference("tight"),
@@ -5333,6 +5334,8 @@ var grammar_sittir_default = grammar(
         ternary_expression: { '":"/before': preference("space") },
         for_statement: { '"("/before': preference("space") },
         _bindings: {
+          "_/terminator:": "statements/terminator",
+          "_/automatic_semicolon:": "statements/terminator",
           'class_body/"{"/after': "body/before",
           'class_body/"}"/before': "body/after",
           'statement_block/"{"/after': "body/before",

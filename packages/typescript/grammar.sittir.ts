@@ -179,6 +179,7 @@ export default grammar(
 				body: { before: preference('indent'), after: preference('dedent') },
 				case_body: { start: preference('indent'), end: preference('dedent') },
 				gap: { separator: preference('newline') },
+				statements: { terminator: preference(';') },
 				enum_body_elements: { 'content:/separator/","/after': preference('newline') },
 
 				_: {
@@ -232,6 +233,8 @@ export default grammar(
 				for_statement: { '"("/before': preference('space') },
 
 				_bindings: {
+					'_/terminator:': 'statements/terminator',
+					'_/automatic_semicolon:': 'statements/terminator',
 					'class_body/"{"/after': 'body/before',
 					'class_body/"}"/before': 'body/after',
 					'statement_block/"{"/after': 'body/before',
