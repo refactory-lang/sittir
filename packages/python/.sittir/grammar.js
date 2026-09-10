@@ -3807,7 +3807,7 @@ function wire(config, base2) {
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
+  const patches = structuralPatchesOf(cfg.patches ?? {});
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
@@ -3876,11 +3876,9 @@ function knownRuleNames(cfg, base2) {
 function isSitePreferenceEntry(key, value) {
   return SLOT_KEY.test(key) && isPreference(value);
 }
-function isFlankDefaultKey(key, rules) {
-  return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
-}
-function isSeamDefaultKey(key, rules) {
-  return parseSeamLabel(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
+function isRetiredAddressKey(key, rules) {
+  if (rules.has(key) || rules.has(`_${key}`)) return false;
+  return parseSpacingLabel(key) !== void 0 || parseSeamLabel(key) !== void 0 || parseFlankAddress(key) !== void 0;
 }
 function checkSpacingArm(at, arm2) {
   if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
@@ -3894,16 +3892,7 @@ function checkWhitespaceArm(at, arm2) {
   if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
   return arm2;
 }
-function onePreference(kind, entry, what) {
-  const preferences = kindPreferencesOf(entry);
-  const only = preferences.length === 1 ? preferences[0] : void 0;
-  if (patchSetsOf(entry).length > 0 || only === void 0 || only.label === void 0) {
-    throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
-  }
-  return { label: only.label, arm: only.default };
-}
 function renderDefaultsOf(patches, rules) {
-  const labels = {};
   const sites = {};
   const site = (kind, address, value) => {
     const own = sites[kind] ?? {};
@@ -3913,23 +3902,8 @@ function renderDefaultsOf(patches, rules) {
   };
   for (const [key, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    if (parseSpacingLabel(key) !== void 0) {
-      const { label, arm: arm2 } = onePreference(key, entry, "a separator spacing preference");
-      if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', \u2026) does not rename it`);
-      labels[key] = checkSpacingArm(`'${key}'`, arm2);
-      continue;
-    }
-    if (isSeamDefaultKey(key, rules)) {
-      const { label, arm: arm2 } = onePreference(key, entry, "a token seam preference");
-      if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
-      labels[key] = checkWhitespaceArm(`'${key}'`, arm2);
-      continue;
-    }
-    const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
-    if (flank !== void 0) {
-      const { label, arm: arm2 } = onePreference(key, entry, "an array flank");
-      site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm2) });
-      continue;
+    if (isRetiredAddressKey(key, rules)) {
+      throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
     }
     for (const patchMap of patchSetsOf(entry)) {
       for (const [slot, value] of Object.entries(patchMap)) {
@@ -3946,12 +3920,12 @@ function renderDefaultsOf(patches, rules) {
       }
     }
   }
-  return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? void 0 : { labels, sites };
+  return Object.keys(sites).length === 0 ? void 0 : { labels: {}, sites };
 }
-function structuralPatchesOf(patches, rules) {
+function structuralPatchesOf(patches) {
   const out = {};
   for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
+    if (!entry) continue;
     const items = Array.isArray(entry) ? entry : [entry];
     const kept = [];
     for (const item of items) {
@@ -5213,6 +5187,7 @@ var grammar_sittir_default = grammar(
         yield_from_clause: ($) => seq("from", $.expression)
       },
       options: {
+        gap: { separator: preference("tight") },
         _: {
           '_/separator/","/before': preference("tight"),
           '_/separator/";"/before': preference("tight"),
@@ -5234,10 +5209,20 @@ var grammar_sittir_default = grammar(
         default_parameter: { '"="/before': preference("tight"), '"="/after': preference("tight") },
         slice: { '":"/before': preference("tight"), '":"/after': preference("tight") },
         splat_pattern: { "operator:/after": preference("tight") },
-        splat_type: { "operator:/after": preference("tight") }
+        splat_type: { "operator:/after": preference("tight") },
+        _bindings: {
+          "block/statements:/separator": "gap/separator",
+          "comparison_operator/comparators:/separator": "gap/separator",
+          "comprehension_clauses/content:/separator": "gap/separator",
+          "concatenated_string/string:/separator": "gap/separator",
+          "decorated_definition/decorator:/separator": "gap/separator",
+          "if_statement/alternative:/separator": "gap/separator",
+          "match_block_block/alternative:/separator": "gap/separator",
+          "module/statements:/separator": "gap/separator",
+          "try_statement/except_clauses:/separator": "gap/separator"
+        }
       },
       patches: {
-        empty_separator_space: preference("empty_separator_space", "tight"),
         argument_list: {
           1: field("arguments")
         },

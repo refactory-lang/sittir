@@ -77,6 +77,9 @@ export default grammar(
 			},
 			options: {
 				body: { before: preference('indent'), after: preference('dedent') },
+				gap: { separator: preference('newline') },
+				field_declaration_list_elements: { 'element:/separator/","/after': preference('newline') },
+				enum_variant_list_elements: { 'element:/separator/","/after': preference('newline') },
 
 				_: {
 					'_/separator/","/before': preference('tight'),
@@ -97,9 +100,20 @@ export default grammar(
 				},
 
 				source_file: {
+					'statements:/separator': preference('tight'),
 					'statements:/(_)/after': preference('blankline'),
 					'statements:/(attribute_item)/after': preference('newline')
 				},
+
+				delim_token_tree_brace: { 'delim_tokens:/separator': preference('tight') },
+				delim_token_tree_bracket: { 'delim_tokens:/separator': preference('tight') },
+				delim_token_tree_paren: { 'delim_tokens:/separator': preference('tight') },
+				token_tree_brace: { 'tokens:/separator': preference('tight') },
+				token_tree_bracket: { 'tokens:/separator': preference('tight') },
+				token_tree_paren: { 'tokens:/separator': preference('tight') },
+				token_tree_pattern_brace: { 'token_patterns:/separator': preference('tight') },
+				token_tree_pattern_bracket: { 'token_patterns:/separator': preference('tight') },
+				token_tree_pattern_paren: { 'token_patterns:/separator': preference('tight') },
 
 				block: { before: preference('space'), 'statements:/end': preference('newline') },
 				match_block: { before: preference('space') },
@@ -129,31 +143,30 @@ export default grammar(
 					'field_declaration_list/"}"/before': 'body/after',
 					'enum_variant_list/"{"/after': 'body/before',
 					'enum_variant_list/"}"/before': 'body/after',
+					'array_expression_list/attributes:/separator': 'gap/separator',
+					'array_expression_semi/attributes:/separator': 'gap/separator',
+					'attributed_argument/attribute_item:/separator': 'gap/separator',
+					'attributed_enum_variant/attribute_item:/separator': 'gap/separator',
+					'attributed_field_declaration/attribute_item:/separator': 'gap/separator',
+					'attributed_ordered_field/attribute_item:/separator': 'gap/separator',
+					'attributed_type_parameter/attribute_item:/separator': 'gap/separator',
+					'block/statements:/separator': 'gap/separator',
+					'declaration_list/declarations:/separator': 'gap/separator',
+					'field_initializer/attribute_item:/separator': 'gap/separator',
+					'function_modifiers/modifier:/separator': 'gap/separator',
+					'last_match_arm/attributes:/separator': 'gap/separator',
+					'match_arm/attributes:/separator': 'gap/separator',
+					'match_block_arms/match_arm:/separator': 'gap/separator',
+					'shorthand_field_initializer/attributes:/separator': 'gap/separator',
+					'token_repetition/tokens:/separator': 'gap/separator',
+					'token_repetition_pattern/token_patterns:/separator': 'gap/separator',
+					'tuple_expression/attributes:/separator': 'gap/separator'
 				}
 			},
 
 			patches: {
-				empty_separator_space: preference('empty_separator_space', 'newline'),
-				source_file: { statements: preference('empty_separator_space', 'tight') },
-				field_declaration_list_elements: [
-					{ element: preference('comma_separator_space_after', 'newline') },
-					{ element: preference('delimiter', 'Delimiter.Trailing') }
-				],
-				enum_variant_list_elements: [
-					{ element: preference('comma_separator_space_after', 'newline') },
-					{ element: preference('delimiter', 'Delimiter.Trailing') }
-				],
-				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') },
-				_token_tree_bracket: { tokens: preference('empty_separator_space', 'tight') },
-				_token_tree_brace: { tokens: preference('empty_separator_space', 'tight') },
-				_delim_token_tree_paren: { delim_tokens: preference('empty_separator_space', 'tight') },
-				_delim_token_tree_bracket: { delim_tokens: preference('empty_separator_space', 'tight') },
-				_delim_token_tree_brace: { delim_tokens: preference('empty_separator_space', 'tight') },
-				_token_tree_pattern_paren: { token_patterns: preference('empty_separator_space', 'tight') },
-				_token_tree_pattern_bracket: { token_patterns: preference('empty_separator_space', 'tight') },
-				_token_tree_pattern_brace: { token_patterns: preference('empty_separator_space', 'tight') },
-				token_repetition: { tokens: preference('empty_separator_space', 'tight') },
-				token_repetition_pattern: { token_patterns: preference('empty_separator_space', 'tight') },
+				field_declaration_list_elements: { element: preference('delimiter', 'Delimiter.Trailing') },
+				enum_variant_list_elements: { element: preference('delimiter', 'Delimiter.Trailing') },
 				parameter: {
 					'1': field('name')
 				},

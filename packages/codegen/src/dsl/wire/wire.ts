@@ -245,7 +245,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
+	const patches = structuralPatchesOf(cfg.patches ?? {});
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
@@ -324,12 +324,10 @@ function isSitePreferenceEntry(key: string, value: unknown): boolean {
 	return SLOT_KEY.test(key) && isPreference(value);
 }
 
-function isFlankDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
-	return parseFlankAddress(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
-}
-
-function isSeamDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
-	return parseSeamLabel(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
+/// A top-level gap, seam or flank spelling, retired from patches.
+function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
+	if (rules.has(key) || rules.has(`_${key}`)) return false;
+	return parseSpacingLabel(key) !== undefined || parseSeamLabel(key) !== undefined || parseFlankAddress(key) !== undefined;
 }
 
 function checkSpacingArm(at: string, arm: string): string {
@@ -347,17 +345,7 @@ function checkWhitespaceArm(at: string, arm: string): string {
 	return arm;
 }
 
-function onePreference(kind: string, entry: PatchEntry, what: string): { label: string; arm: string } {
-	const preferences = kindPreferencesOf(entry);
-	const only = preferences.length === 1 ? preferences[0]! : undefined;
-	if (patchSetsOf(entry).length > 0 || only === undefined || only.label === undefined) {
-		throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
-	}
-	return { label: only.label, arm: only.default };
-}
-
 function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): RenderDefaults | undefined {
-	const labels: Record<string, string> = {};
 	const sites: Record<string, Record<string, SiteDefault>> = {};
 	const site = (kind: string, address: string, value: SiteDefault): void => {
 		const own = sites[kind] ?? {};
@@ -367,23 +355,8 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 	};
 	for (const [key, entry] of Object.entries(patches)) {
 		if (!entry) continue;
-		if (parseSpacingLabel(key) !== undefined) {
-			const { label, arm } = onePreference(key, entry, 'a separator spacing preference');
-			if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', …) does not rename it`);
-			labels[key] = checkSpacingArm(`'${key}'`, arm);
-			continue;
-		}
-		if (isSeamDefaultKey(key, rules)) {
-			const { label, arm } = onePreference(key, entry, 'a token seam preference');
-			if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', …) does not rename it`);
-			labels[key] = checkWhitespaceArm(`'${key}'`, arm);
-			continue;
-		}
-		const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : undefined;
-		if (flank !== undefined) {
-			const { label, arm } = onePreference(key, entry, 'an array flank');
-			site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm) });
-			continue;
+		if (isRetiredAddressKey(key, rules)) {
+			throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
 		}
 		for (const patchMap of patchSetsOf(entry)) {
 			for (const [slot, value] of Object.entries(patchMap)) {
@@ -407,13 +380,13 @@ function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): R
 			}
 		}
 	}
-	return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? undefined : { labels, sites };
+	return Object.keys(sites).length === 0 ? undefined : { labels: {}, sites };
 }
 
-function structuralPatchesOf(patches: PatchesConfig, rules: ReadonlySet<string>): PatchesConfig {
+function structuralPatchesOf(patches: PatchesConfig): PatchesConfig {
 	const out: Record<string, PatchEntry> = {};
 	for (const [kind, entry] of Object.entries(patches)) {
-		if (!entry || parseSpacingLabel(kind) !== undefined || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
+		if (!entry) continue;
 		const items = Array.isArray(entry) ? entry : [entry];
 		const kept: (PatchMap | PreferencePlaceholder)[] = [];
 		for (const item of items) {

@@ -40257,6 +40257,8 @@ pub struct TokenRepetitionPatternTransport {
     pub token_patterns_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_start"))]
     pub token_patterns_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
+    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_before"))]
     pub dollar_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_after"))]
@@ -40269,8 +40271,6 @@ pub struct TokenRepetitionPatternTransport {
     pub rparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
-    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_repetition_pattern_before"))]
     pub token_repetition_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_repetition_pattern_after"))]
@@ -40289,13 +40289,13 @@ impl ::sittir_core::options::FillOptions for TokenRepetitionPatternTransport {
         self.operator_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_OPERATOR_AFTER]);
         self.token_patterns_end.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_END]);
         self.token_patterns_start.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_START]);
+        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.dollar_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_DOLLAR_BEFORE]);
         self.dollar_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_DOLLAR_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_LPAREN_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_AFTER]);
-        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.token_repetition_pattern_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_REPETITION_PATTERN_BEFORE]);
         self.token_repetition_pattern_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_REPETITION_PATTERN_AFTER]);
         if let Some(seated_items) = self.token_patterns.as_mut() {
@@ -40591,6 +40591,8 @@ pub struct TokenRepetitionTransport {
     pub tokens_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_start"))]
     pub tokens_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
+    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_before"))]
     pub dollar_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dollar_after"))]
@@ -40603,8 +40605,6 @@ pub struct TokenRepetitionTransport {
     pub rparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
-    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_repetition_before"))]
     pub token_repetition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_repetition_after"))]
@@ -40623,13 +40623,13 @@ impl ::sittir_core::options::FillOptions for TokenRepetitionTransport {
         self.operator_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_OPERATOR_AFTER]);
         self.tokens_end.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_TOKENS_END]);
         self.tokens_start.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_TOKENS_START]);
+        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE]);
         self.dollar_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_DOLLAR_BEFORE]);
         self.dollar_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_DOLLAR_AFTER]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_LPAREN_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_RPAREN_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_RPAREN_AFTER]);
-        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE]);
         self.token_repetition_before.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_TOKEN_REPETITION_BEFORE]);
         self.token_repetition_after.get_or_insert(table.spacing[options::SITE_TOKEN_REPETITION_TOKEN_REPETITION_AFTER]);
         if let Some(seated_items) = self.tokens.as_mut() {
@@ -41053,6 +41053,8 @@ pub struct DeclarationListTransport {
     pub declarations_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarations_start"))]
     pub declarations_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarations_separator_space"))]
+    pub declarations_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -41061,8 +41063,6 @@ pub struct DeclarationListTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarations_separator_space"))]
-    pub declarations_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declaration_list_before"))]
     pub declaration_list_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declaration_list_after"))]
@@ -41079,11 +41079,11 @@ impl ::sittir_core::options::FillOptions for DeclarationListTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.declarations_end.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_END]);
         self.declarations_start.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_START]);
+        self.declarations_separator_space.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_RBRACE_AFTER]);
-        self.declarations_separator_space.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE]);
         self.declaration_list_before.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_DECLARATION_LIST_BEFORE]);
         self.declaration_list_after.get_or_insert(table.spacing[options::SITE_DECLARATION_LIST_DECLARATION_LIST_AFTER]);
         if let Some(seated_items) = self.declarations.as_mut() {
@@ -46999,6 +46999,8 @@ pub struct TupleExpressionTransport {
     pub attributes_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_start"))]
     pub attributes_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
+    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
@@ -47007,8 +47009,6 @@ pub struct TupleExpressionTransport {
     pub rparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
-    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_expression_before"))]
     pub tuple_expression_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_expression_after"))]
@@ -47025,11 +47025,11 @@ impl ::sittir_core::options::FillOptions for TupleExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.attributes_end.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_START]);
+        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_LPAREN_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_RPAREN_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_RPAREN_AFTER]);
-        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE]);
         self.tuple_expression_before.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_TUPLE_EXPRESSION_BEFORE]);
         self.tuple_expression_after.get_or_insert(table.spacing[options::SITE_TUPLE_EXPRESSION_TUPLE_EXPRESSION_AFTER]);
         if let Some(seated_items) = self.attributes.as_mut() {
@@ -47413,12 +47413,12 @@ pub struct FieldInitializerTransport {
     pub attribute_item_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_item_start"))]
     pub attribute_item_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_item_separator_space"))]
+    pub attribute_item_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_item_separator_space"))]
-    pub attribute_item_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_initializer_before"))]
     pub field_initializer_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_initializer_after"))]
@@ -47435,9 +47435,9 @@ impl ::sittir_core::options::FillOptions for FieldInitializerTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.attribute_item_end.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_END]);
         self.attribute_item_start.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_START]);
+        self.attribute_item_separator_space.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_COLON_AFTER]);
-        self.attribute_item_separator_space.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
         self.field_initializer_before.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_FIELD_INITIALIZER_BEFORE]);
         self.field_initializer_after.get_or_insert(table.spacing[options::SITE_FIELD_INITIALIZER_FIELD_INITIALIZER_AFTER]);
         if let Some(seated_items) = self.attribute_item.as_mut() {
@@ -48031,12 +48031,12 @@ pub struct MatchArmTransport {
     pub attributes_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_start"))]
     pub attributes_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
+    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_before"))]
     pub eq_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
     pub eq_gt_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
-    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm_before"))]
     pub match_arm_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm_after"))]
@@ -48053,9 +48053,9 @@ impl ::sittir_core::options::FillOptions for MatchArmTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.attributes_end.get_or_insert(table.spacing[options::SITE_MATCH_ARM_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(table.spacing[options::SITE_MATCH_ARM_ATTRIBUTES_START]);
+        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE]);
         self.eq_gt_before.get_or_insert(table.spacing[options::SITE_MATCH_ARM_EQ_GT_BEFORE]);
         self.eq_gt_after.get_or_insert(table.spacing[options::SITE_MATCH_ARM_EQ_GT_AFTER]);
-        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE]);
         self.match_arm_before.get_or_insert(table.spacing[options::SITE_MATCH_ARM_MATCH_ARM_BEFORE]);
         self.match_arm_after.get_or_insert(table.spacing[options::SITE_MATCH_ARM_MATCH_ARM_AFTER]);
         if let Some(seated_items) = self.attributes.as_mut() {
@@ -48126,6 +48126,8 @@ pub struct LastMatchArmTransport {
     pub attributes_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_start"))]
     pub attributes_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
+    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
     pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_after"))]
@@ -48134,8 +48136,6 @@ pub struct LastMatchArmTransport {
     pub eq_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_gt_after"))]
     pub eq_gt_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
-    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last_match_arm_before"))]
     pub last_match_arm_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last_match_arm_after"))]
@@ -48152,11 +48152,11 @@ impl ::sittir_core::options::FillOptions for LastMatchArmTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.attributes_end.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_START]);
+        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE]);
         self.comma_before.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_COMMA_BEFORE]);
         self.comma_after.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_COMMA_AFTER]);
         self.eq_gt_before.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_EQ_GT_BEFORE]);
         self.eq_gt_after.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER]);
-        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE]);
         self.last_match_arm_before.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_LAST_MATCH_ARM_BEFORE]);
         self.last_match_arm_after.get_or_insert(table.spacing[options::SITE_LAST_MATCH_ARM_LAST_MATCH_ARM_AFTER]);
         if let Some(seated_items) = self.attributes.as_mut() {
@@ -49448,6 +49448,8 @@ pub struct BlockTransport {
     pub statements_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_start"))]
     pub statements_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
+    pub statements_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
@@ -49460,8 +49462,6 @@ pub struct BlockTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
-    pub statements_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_before"))]
     pub block_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_after"))]
@@ -49478,13 +49478,13 @@ impl ::sittir_core::options::FillOptions for BlockTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.statements_end.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_END]);
         self.statements_start.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_START]);
+        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_BLOCK_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_BLOCK_COLON_AFTER]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_BLOCK_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_BLOCK_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_BLOCK_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_BLOCK_RBRACE_AFTER]);
-        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.block_before.get_or_insert(table.spacing[options::SITE_BLOCK_BLOCK_BEFORE]);
         self.block_after.get_or_insert(table.spacing[options::SITE_BLOCK_BLOCK_AFTER]);
         if let Some(seated_items) = self.statements.as_mut() {
@@ -57131,6 +57131,8 @@ pub struct ArrayExpressionSemiTransport {
     pub attributes_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_start"))]
     pub attributes_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
+    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semi_before"))]
     pub semi_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semi_after"))]
@@ -57143,8 +57145,6 @@ pub struct ArrayExpressionSemiTransport {
     pub rbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
     pub rbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
-    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_expression_semi_before"))]
     pub array_expression_semi_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_expression_semi_after"))]
@@ -57161,13 +57161,13 @@ impl ::sittir_core::options::FillOptions for ArrayExpressionSemiTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.attributes_end.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_START]);
+        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE]);
         self.semi_before.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_SEMI_BEFORE]);
         self.semi_after.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_SEMI_AFTER]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_LBRACK_BEFORE]);
         self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_RBRACK_BEFORE]);
         self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_RBRACK_AFTER]);
-        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE]);
         self.array_expression_semi_before.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ARRAY_EXPRESSION_SEMI_BEFORE]);
         self.array_expression_semi_after.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ARRAY_EXPRESSION_SEMI_AFTER]);
         if let Some(seated_items) = self.attributes.as_mut() {
@@ -57230,6 +57230,8 @@ pub struct ArrayExpressionListTransport {
     pub attributes_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_start"))]
     pub attributes_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
+    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
@@ -57238,8 +57240,6 @@ pub struct ArrayExpressionListTransport {
     pub rbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
     pub rbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes_separator_space"))]
-    pub attributes_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_expression_list_before"))]
     pub array_expression_list_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_expression_list_after"))]
@@ -57256,11 +57256,11 @@ impl ::sittir_core::options::FillOptions for ArrayExpressionListTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.attributes_end.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_START]);
+        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_LBRACK_BEFORE]);
         self.lbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_RBRACK_BEFORE]);
         self.rbrack_after.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_RBRACK_AFTER]);
-        self.attributes_separator_space.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE]);
         self.array_expression_list_before.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ARRAY_EXPRESSION_LIST_BEFORE]);
         self.array_expression_list_after.get_or_insert(table.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ARRAY_EXPRESSION_LIST_AFTER]);
         if let Some(seated_items) = self.attributes.as_mut() {
@@ -58973,6 +58973,8 @@ pub struct TokenTreePatternParenTransport {
     pub token_patterns_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_start"))]
     pub token_patterns_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
+    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
@@ -58981,8 +58983,6 @@ pub struct TokenTreePatternParenTransport {
     pub rparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
-    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_pattern_paren_before"))]
     pub token_tree_pattern_paren_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_pattern_paren_after"))]
@@ -58999,11 +58999,11 @@ impl ::sittir_core::options::FillOptions for TokenTreePatternParenTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.token_patterns_end.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_END]);
         self.token_patterns_start.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_START]);
+        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_LPAREN_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_RPAREN_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_RPAREN_AFTER]);
-        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.token_tree_pattern_paren_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_TREE_PATTERN_PAREN_BEFORE]);
         self.token_tree_pattern_paren_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_TREE_PATTERN_PAREN_AFTER]);
         if let Some(seated_items) = self.token_patterns.as_mut() {
@@ -59068,6 +59068,8 @@ pub struct TokenTreePatternBracketTransport {
     pub token_patterns_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_start"))]
     pub token_patterns_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
+    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
@@ -59076,8 +59078,6 @@ pub struct TokenTreePatternBracketTransport {
     pub rbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
     pub rbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
-    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_pattern_bracket_before"))]
     pub token_tree_pattern_bracket_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_pattern_bracket_after"))]
@@ -59094,11 +59094,11 @@ impl ::sittir_core::options::FillOptions for TokenTreePatternBracketTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.token_patterns_end.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_END]);
         self.token_patterns_start.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_START]);
+        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_LBRACK_BEFORE]);
         self.lbrack_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_RBRACK_BEFORE]);
         self.rbrack_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_RBRACK_AFTER]);
-        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.token_tree_pattern_bracket_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_TREE_PATTERN_BRACKET_BEFORE]);
         self.token_tree_pattern_bracket_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_TREE_PATTERN_BRACKET_AFTER]);
         if let Some(seated_items) = self.token_patterns.as_mut() {
@@ -59163,6 +59163,8 @@ pub struct TokenTreePatternBraceTransport {
     pub token_patterns_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_start"))]
     pub token_patterns_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
+    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -59171,8 +59173,6 @@ pub struct TokenTreePatternBraceTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_patterns_separator_space"))]
-    pub token_patterns_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_pattern_brace_before"))]
     pub token_tree_pattern_brace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_pattern_brace_after"))]
@@ -59189,11 +59189,11 @@ impl ::sittir_core::options::FillOptions for TokenTreePatternBraceTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.token_patterns_end.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_END]);
         self.token_patterns_start.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_START]);
+        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_RBRACE_AFTER]);
-        self.token_patterns_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE]);
         self.token_tree_pattern_brace_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_TREE_PATTERN_BRACE_BEFORE]);
         self.token_tree_pattern_brace_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_TREE_PATTERN_BRACE_AFTER]);
         if let Some(seated_items) = self.token_patterns.as_mut() {
@@ -59258,6 +59258,8 @@ pub struct TokenTreeParenTransport {
     pub tokens_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_start"))]
     pub tokens_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
+    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
@@ -59266,8 +59268,6 @@ pub struct TokenTreeParenTransport {
     pub rparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
-    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_paren_before"))]
     pub token_tree_paren_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_paren_after"))]
@@ -59284,11 +59284,11 @@ impl ::sittir_core::options::FillOptions for TokenTreeParenTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.tokens_end.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_END]);
         self.tokens_start.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_START]);
+        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_LPAREN_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_RPAREN_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_RPAREN_AFTER]);
-        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE]);
         self.token_tree_paren_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_TOKEN_TREE_PAREN_BEFORE]);
         self.token_tree_paren_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_PAREN_TOKEN_TREE_PAREN_AFTER]);
         if let Some(seated_items) = self.tokens.as_mut() {
@@ -59352,6 +59352,8 @@ pub struct TokenTreeBracketTransport {
     pub tokens_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_start"))]
     pub tokens_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
+    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
@@ -59360,8 +59362,6 @@ pub struct TokenTreeBracketTransport {
     pub rbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
     pub rbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
-    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_bracket_before"))]
     pub token_tree_bracket_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_bracket_after"))]
@@ -59378,11 +59378,11 @@ impl ::sittir_core::options::FillOptions for TokenTreeBracketTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.tokens_end.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_END]);
         self.tokens_start.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_START]);
+        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_LBRACK_BEFORE]);
         self.lbrack_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_RBRACK_BEFORE]);
         self.rbrack_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_RBRACK_AFTER]);
-        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE]);
         self.token_tree_bracket_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKEN_TREE_BRACKET_BEFORE]);
         self.token_tree_bracket_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKEN_TREE_BRACKET_AFTER]);
         if let Some(seated_items) = self.tokens.as_mut() {
@@ -59446,6 +59446,8 @@ pub struct TokenTreeBraceTransport {
     pub tokens_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_start"))]
     pub tokens_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
+    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -59454,8 +59456,6 @@ pub struct TokenTreeBraceTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens_separator_space"))]
-    pub tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_brace_before"))]
     pub token_tree_brace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_tree_brace_after"))]
@@ -59472,11 +59472,11 @@ impl ::sittir_core::options::FillOptions for TokenTreeBraceTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.tokens_end.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_END]);
         self.tokens_start.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_START]);
+        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_RBRACE_AFTER]);
-        self.tokens_separator_space.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE]);
         self.token_tree_brace_before.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_TOKEN_TREE_BRACE_BEFORE]);
         self.token_tree_brace_after.get_or_insert(table.spacing[options::SITE_TOKEN_TREE_BRACE_TOKEN_TREE_BRACE_AFTER]);
         if let Some(seated_items) = self.tokens.as_mut() {
@@ -59540,6 +59540,8 @@ pub struct DelimTokenTreeParenTransport {
     pub delim_tokens_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_start"))]
     pub delim_tokens_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_separator_space"))]
+    pub delim_tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
     pub lparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
@@ -59548,8 +59550,6 @@ pub struct DelimTokenTreeParenTransport {
     pub rparen_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_after"))]
     pub rparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_separator_space"))]
-    pub delim_tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_token_tree_paren_before"))]
     pub delim_token_tree_paren_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_token_tree_paren_after"))]
@@ -59566,11 +59566,11 @@ impl ::sittir_core::options::FillOptions for DelimTokenTreeParenTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.delim_tokens_end.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_END]);
         self.delim_tokens_start.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_START]);
+        self.delim_tokens_separator_space.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE]);
         self.lparen_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_LPAREN_BEFORE]);
         self.lparen_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_RPAREN_BEFORE]);
         self.rparen_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_RPAREN_AFTER]);
-        self.delim_tokens_separator_space.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE]);
         self.delim_token_tree_paren_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKEN_TREE_PAREN_BEFORE]);
         self.delim_token_tree_paren_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKEN_TREE_PAREN_AFTER]);
         if let Some(seated_items) = self.delim_tokens.as_mut() {
@@ -59633,6 +59633,8 @@ pub struct DelimTokenTreeBracketTransport {
     pub delim_tokens_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_start"))]
     pub delim_tokens_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_separator_space"))]
+    pub delim_tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
@@ -59641,8 +59643,6 @@ pub struct DelimTokenTreeBracketTransport {
     pub rbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_after"))]
     pub rbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_separator_space"))]
-    pub delim_tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_token_tree_bracket_before"))]
     pub delim_token_tree_bracket_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_token_tree_bracket_after"))]
@@ -59659,11 +59659,11 @@ impl ::sittir_core::options::FillOptions for DelimTokenTreeBracketTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.delim_tokens_end.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_END]);
         self.delim_tokens_start.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_START]);
+        self.delim_tokens_separator_space.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE]);
         self.lbrack_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_LBRACK_BEFORE]);
         self.lbrack_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_RBRACK_BEFORE]);
         self.rbrack_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_RBRACK_AFTER]);
-        self.delim_tokens_separator_space.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE]);
         self.delim_token_tree_bracket_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKEN_TREE_BRACKET_BEFORE]);
         self.delim_token_tree_bracket_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKEN_TREE_BRACKET_AFTER]);
         if let Some(seated_items) = self.delim_tokens.as_mut() {
@@ -59726,6 +59726,8 @@ pub struct DelimTokenTreeBraceTransport {
     pub delim_tokens_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_start"))]
     pub delim_tokens_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_separator_space"))]
+    pub delim_tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -59734,8 +59736,6 @@ pub struct DelimTokenTreeBraceTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_tokens_separator_space"))]
-    pub delim_tokens_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_token_tree_brace_before"))]
     pub delim_token_tree_brace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delim_token_tree_brace_after"))]
@@ -59752,11 +59752,11 @@ impl ::sittir_core::options::FillOptions for DelimTokenTreeBraceTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.delim_tokens_end.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_END]);
         self.delim_tokens_start.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_START]);
+        self.delim_tokens_separator_space.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_RBRACE_AFTER]);
-        self.delim_tokens_separator_space.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE]);
         self.delim_token_tree_brace_before.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKEN_TREE_BRACE_BEFORE]);
         self.delim_token_tree_brace_after.get_or_insert(table.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKEN_TREE_BRACE_AFTER]);
         if let Some(seated_items) = self.delim_tokens.as_mut() {

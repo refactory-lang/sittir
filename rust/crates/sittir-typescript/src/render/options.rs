@@ -10,9 +10,9 @@ pub const SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_AFTER: usize = 1;
 pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_DECORATOR_AFTER: usize = 2;
 pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_END: usize = 3;
 pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_START: usize = 4;
-pub const SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_BEFORE: usize = 5;
-pub const SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_AFTER: usize = 6;
-pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 7;
+pub const SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 5;
+pub const SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_BEFORE: usize = 6;
+pub const SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_AFTER: usize = 7;
 pub const SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_BEFORE: usize = 8;
 pub const SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_AFTER: usize = 9;
 pub const SITE_ABSTRACT_METHOD_SIGNATURE_ABSTRACT_BEFORE: usize = 10;
@@ -231,9 +231,9 @@ pub const SITE_CATCH_CLAUSE_GROUP_CATCH_CLAUSE_GROUP_AFTER: usize = 222;
 pub const SITE_CLASS_DECORATOR_DECORATOR_AFTER: usize = 223;
 pub const SITE_CLASS_DECORATOR_END: usize = 224;
 pub const SITE_CLASS_DECORATOR_START: usize = 225;
-pub const SITE_CLASS_ANON_CLASS_BEFORE: usize = 226;
-pub const SITE_CLASS_ANON_CLASS_AFTER: usize = 227;
-pub const SITE_CLASS_DECORATOR_SEPARATOR_SPACE: usize = 228;
+pub const SITE_CLASS_DECORATOR_SEPARATOR_SPACE: usize = 226;
+pub const SITE_CLASS_ANON_CLASS_BEFORE: usize = 227;
+pub const SITE_CLASS_ANON_CLASS_AFTER: usize = 228;
 pub const SITE_CLASS_CLASS_BEFORE: usize = 229;
 pub const SITE_CLASS_CLASS_AFTER: usize = 230;
 pub const SITE_CLASS_BODY_CONTENT_CLASS_BODY_MEMBER_AFTER: usize = 231;
@@ -242,11 +242,11 @@ pub const SITE_CLASS_BODY_CONTENT_CLASS_BODY_METHOD_SIG_AFTER: usize = 233;
 pub const SITE_CLASS_BODY_CONTENT_CLASS_STATIC_BLOCK_AFTER: usize = 234;
 pub const SITE_CLASS_BODY_CONTENT_END: usize = 235;
 pub const SITE_CLASS_BODY_CONTENT_START: usize = 236;
-pub const SITE_CLASS_BODY_LBRACE_BEFORE: usize = 237;
-pub const SITE_CLASS_BODY_LBRACE_AFTER: usize = 238;
-pub const SITE_CLASS_BODY_RBRACE_BEFORE: usize = 239;
-pub const SITE_CLASS_BODY_RBRACE_AFTER: usize = 240;
-pub const SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE: usize = 241;
+pub const SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE: usize = 237;
+pub const SITE_CLASS_BODY_LBRACE_BEFORE: usize = 238;
+pub const SITE_CLASS_BODY_LBRACE_AFTER: usize = 239;
+pub const SITE_CLASS_BODY_RBRACE_BEFORE: usize = 240;
+pub const SITE_CLASS_BODY_RBRACE_AFTER: usize = 241;
 pub const SITE_CLASS_BODY_CLASS_BODY_BEFORE: usize = 242;
 pub const SITE_CLASS_BODY_CLASS_BODY_AFTER: usize = 243;
 pub const SITE_CLASS_BODY_MEMBER_TERMINATOR_STATEMENT_TERMINATOR: usize = 244;
@@ -264,9 +264,9 @@ pub const SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_AFTER: usize = 255;
 pub const SITE_CLASS_DECLARATION_DECORATOR_DECORATOR_AFTER: usize = 256;
 pub const SITE_CLASS_DECLARATION_DECORATOR_END: usize = 257;
 pub const SITE_CLASS_DECLARATION_DECORATOR_START: usize = 258;
-pub const SITE_CLASS_DECLARATION_ANON_CLASS_BEFORE: usize = 259;
-pub const SITE_CLASS_DECLARATION_ANON_CLASS_AFTER: usize = 260;
-pub const SITE_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 261;
+pub const SITE_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 259;
+pub const SITE_CLASS_DECLARATION_ANON_CLASS_BEFORE: usize = 260;
+pub const SITE_CLASS_DECLARATION_ANON_CLASS_AFTER: usize = 261;
 pub const SITE_CLASS_DECLARATION_CLASS_DECLARATION_BEFORE: usize = 262;
 pub const SITE_CLASS_DECLARATION_CLASS_DECLARATION_AFTER: usize = 263;
 pub const SITE_CLASS_HERITAGE_EXTENDS_CLAUSE_CLASS_HERITAGE_EXTENDS_CLAUSE_BEFORE: usize = 264;
@@ -385,9 +385,9 @@ pub const SITE_EXPORT_SPECIFIERS_EXPORT_SPECIFIERS_AFTER: usize = 376;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_DECORATOR_AFTER: usize = 377;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_END: usize = 378;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_START: usize = 379;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_BEFORE: usize = 380;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_AFTER: usize = 381;
-pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 382;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE: usize = 380;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_BEFORE: usize = 381;
+pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_AFTER: usize = 382;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_BEFORE: usize = 383;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: usize = 384;
 pub const SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_BEFORE: usize = 385;
@@ -804,11 +804,11 @@ pub const SITE_OPTING_TYPE_ANNOTATION_OPTING_TYPE_ANNOTATION_AFTER: usize = 795;
 pub const SITE_OPTIONAL_PARAMETER_DECORATOR_DECORATOR_AFTER: usize = 796;
 pub const SITE_OPTIONAL_PARAMETER_DECORATOR_END: usize = 797;
 pub const SITE_OPTIONAL_PARAMETER_DECORATOR_START: usize = 798;
-pub const SITE_OPTIONAL_PARAMETER_EQ_BEFORE: usize = 799;
-pub const SITE_OPTIONAL_PARAMETER_EQ_AFTER: usize = 800;
-pub const SITE_OPTIONAL_PARAMETER_QMARK_BEFORE: usize = 801;
-pub const SITE_OPTIONAL_PARAMETER_QMARK_AFTER: usize = 802;
-pub const SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 803;
+pub const SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 799;
+pub const SITE_OPTIONAL_PARAMETER_EQ_BEFORE: usize = 800;
+pub const SITE_OPTIONAL_PARAMETER_EQ_AFTER: usize = 801;
+pub const SITE_OPTIONAL_PARAMETER_QMARK_BEFORE: usize = 802;
+pub const SITE_OPTIONAL_PARAMETER_QMARK_AFTER: usize = 803;
 pub const SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_BEFORE: usize = 804;
 pub const SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_AFTER: usize = 805;
 pub const SITE_OPTIONAL_TUPLE_PARAMETER_QMARK_BEFORE: usize = 806;
@@ -876,11 +876,11 @@ pub const SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER: usize = 867
 pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_DECORATOR_AFTER: usize = 868;
 pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END: usize = 869;
 pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START: usize = 870;
-pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE: usize = 871;
-pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER: usize = 872;
-pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE: usize = 873;
-pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER: usize = 874;
-pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE: usize = 875;
+pub const SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE: usize = 871;
+pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE: usize = 872;
+pub const SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER: usize = 873;
+pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE: usize = 874;
+pub const SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER: usize = 875;
 pub const SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_BEFORE: usize = 876;
 pub const SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER: usize = 877;
 pub const SITE_READONLY_TYPE_READONLY_BEFORE: usize = 878;
@@ -896,9 +896,9 @@ pub const SITE_REGEX_PATTERN_RBRACK_BEFORE: usize = 887;
 pub const SITE_REQUIRED_PARAMETER_DECORATOR_DECORATOR_AFTER: usize = 888;
 pub const SITE_REQUIRED_PARAMETER_DECORATOR_END: usize = 889;
 pub const SITE_REQUIRED_PARAMETER_DECORATOR_START: usize = 890;
-pub const SITE_REQUIRED_PARAMETER_EQ_BEFORE: usize = 891;
-pub const SITE_REQUIRED_PARAMETER_EQ_AFTER: usize = 892;
-pub const SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 893;
+pub const SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE: usize = 891;
+pub const SITE_REQUIRED_PARAMETER_EQ_BEFORE: usize = 892;
+pub const SITE_REQUIRED_PARAMETER_EQ_AFTER: usize = 893;
 pub const SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_BEFORE: usize = 894;
 pub const SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_AFTER: usize = 895;
 pub const SITE_REST_PATTERN_DOT_DOT_DOT_BEFORE: usize = 896;
@@ -959,11 +959,11 @@ pub const SITE_STATEMENT_BLOCK_STATEMENTS_WHILE_STATEMENT_AFTER: usize = 950;
 pub const SITE_STATEMENT_BLOCK_STATEMENTS_WITH_STATEMENT_AFTER: usize = 951;
 pub const SITE_STATEMENT_BLOCK_STATEMENTS_END: usize = 952;
 pub const SITE_STATEMENT_BLOCK_STATEMENTS_START: usize = 953;
-pub const SITE_STATEMENT_BLOCK_LBRACE_BEFORE: usize = 954;
-pub const SITE_STATEMENT_BLOCK_LBRACE_AFTER: usize = 955;
-pub const SITE_STATEMENT_BLOCK_RBRACE_BEFORE: usize = 956;
-pub const SITE_STATEMENT_BLOCK_RBRACE_AFTER: usize = 957;
-pub const SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE: usize = 958;
+pub const SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE: usize = 954;
+pub const SITE_STATEMENT_BLOCK_LBRACE_BEFORE: usize = 955;
+pub const SITE_STATEMENT_BLOCK_LBRACE_AFTER: usize = 956;
+pub const SITE_STATEMENT_BLOCK_RBRACE_BEFORE: usize = 957;
+pub const SITE_STATEMENT_BLOCK_RBRACE_AFTER: usize = 958;
 pub const SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_BEFORE: usize = 959;
 pub const SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_AFTER: usize = 960;
 pub const SITE_STRING_CONTENT_QUOTE_STYLE: usize = 961;
@@ -985,11 +985,11 @@ pub const SITE_SWITCH_BODY_CASES_SWITCH_CASE_AFTER: usize = 976;
 pub const SITE_SWITCH_BODY_CASES_SWITCH_DEFAULT_AFTER: usize = 977;
 pub const SITE_SWITCH_BODY_CASES_END: usize = 978;
 pub const SITE_SWITCH_BODY_CASES_START: usize = 979;
-pub const SITE_SWITCH_BODY_LBRACE_BEFORE: usize = 980;
-pub const SITE_SWITCH_BODY_LBRACE_AFTER: usize = 981;
-pub const SITE_SWITCH_BODY_RBRACE_BEFORE: usize = 982;
-pub const SITE_SWITCH_BODY_RBRACE_AFTER: usize = 983;
-pub const SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE: usize = 984;
+pub const SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE: usize = 980;
+pub const SITE_SWITCH_BODY_LBRACE_BEFORE: usize = 981;
+pub const SITE_SWITCH_BODY_LBRACE_AFTER: usize = 982;
+pub const SITE_SWITCH_BODY_RBRACE_BEFORE: usize = 983;
+pub const SITE_SWITCH_BODY_RBRACE_AFTER: usize = 984;
 pub const SITE_SWITCH_BODY_SWITCH_BODY_BEFORE: usize = 985;
 pub const SITE_SWITCH_BODY_SWITCH_BODY_AFTER: usize = 986;
 pub const SITE_SWITCH_CASE_BODY_BREAK_STATEMENT_AFTER: usize = 987;
@@ -1011,11 +1011,11 @@ pub const SITE_SWITCH_CASE_BODY_WHILE_STATEMENT_AFTER: usize = 1002;
 pub const SITE_SWITCH_CASE_BODY_WITH_STATEMENT_AFTER: usize = 1003;
 pub const SITE_SWITCH_CASE_BODY_END: usize = 1004;
 pub const SITE_SWITCH_CASE_BODY_START: usize = 1005;
-pub const SITE_SWITCH_CASE_CASE_BEFORE: usize = 1006;
-pub const SITE_SWITCH_CASE_CASE_AFTER: usize = 1007;
-pub const SITE_SWITCH_CASE_COLON_BEFORE: usize = 1008;
-pub const SITE_SWITCH_CASE_COLON_AFTER: usize = 1009;
-pub const SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE: usize = 1010;
+pub const SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE: usize = 1006;
+pub const SITE_SWITCH_CASE_CASE_BEFORE: usize = 1007;
+pub const SITE_SWITCH_CASE_CASE_AFTER: usize = 1008;
+pub const SITE_SWITCH_CASE_COLON_BEFORE: usize = 1009;
+pub const SITE_SWITCH_CASE_COLON_AFTER: usize = 1010;
 pub const SITE_SWITCH_CASE_SWITCH_CASE_BEFORE: usize = 1011;
 pub const SITE_SWITCH_CASE_SWITCH_CASE_AFTER: usize = 1012;
 pub const SITE_SWITCH_DEFAULT_BODY_BREAK_STATEMENT_AFTER: usize = 1013;
@@ -1037,11 +1037,11 @@ pub const SITE_SWITCH_DEFAULT_BODY_WHILE_STATEMENT_AFTER: usize = 1028;
 pub const SITE_SWITCH_DEFAULT_BODY_WITH_STATEMENT_AFTER: usize = 1029;
 pub const SITE_SWITCH_DEFAULT_BODY_END: usize = 1030;
 pub const SITE_SWITCH_DEFAULT_BODY_START: usize = 1031;
-pub const SITE_SWITCH_DEFAULT_DEFAULT_BEFORE: usize = 1032;
-pub const SITE_SWITCH_DEFAULT_DEFAULT_AFTER: usize = 1033;
-pub const SITE_SWITCH_DEFAULT_COLON_BEFORE: usize = 1034;
-pub const SITE_SWITCH_DEFAULT_COLON_AFTER: usize = 1035;
-pub const SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE: usize = 1036;
+pub const SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE: usize = 1032;
+pub const SITE_SWITCH_DEFAULT_DEFAULT_BEFORE: usize = 1033;
+pub const SITE_SWITCH_DEFAULT_DEFAULT_AFTER: usize = 1034;
+pub const SITE_SWITCH_DEFAULT_COLON_BEFORE: usize = 1035;
+pub const SITE_SWITCH_DEFAULT_COLON_AFTER: usize = 1036;
 pub const SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_BEFORE: usize = 1037;
 pub const SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_AFTER: usize = 1038;
 pub const SITE_SWITCH_STATEMENT_SWITCH_BEFORE: usize = 1039;
@@ -1263,9 +1263,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("abstract_class_declaration", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("abstract_class_declaration", "abstract_class_declaration_end", "abstract_class_declaration_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("abstract_class_declaration", "abstract_class_declaration_start", "abstract_class_declaration_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("abstract_class_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("abstract_class_declaration", "anon_class_before", "anon_class_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("abstract_class_declaration", "anon_class_after", "anon_class_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("abstract_class_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("abstract_class_declaration", "abstract_class_declaration_before", "abstract_class_declaration_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("abstract_class_declaration", "abstract_class_declaration_after", "abstract_class_declaration_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("abstract_method_signature", "abstract_before", "abstract_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1484,9 +1484,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("class", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class", "class_end", "class_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("class", "class_start", "class_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("class", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("class", "anon_class_before", "anon_class_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("class", "anon_class_after", "anon_class_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("class", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("class", "class_before", "class_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("class", "class_after", "class_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "content_class_body_member_after", "class_body_member_after", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1495,11 +1495,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("class_body", "content_class_static_block_after", "class_static_block_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "class_body_end", "class_body_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "class_body_start", "class_body_start", 167, &[167, 168, 169, 170, 171, 172]),
-    ("class_body", "lbrace_before", "lbrace_before", 167, &[167, 168, 169, 170, 171, 172]),
-    ("class_body", "lbrace_after", "block_body_before", 171, &[167, 168, 169, 170, 171, 172]),
-    ("class_body", "rbrace_before", "block_body_after", 172, &[167, 168, 169, 170, 171, 172]),
-    ("class_body", "rbrace_after", "rbrace_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "content_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
+    ("class_body", "lbrace_before", "lbrace_before", 167, &[167, 168, 169, 170, 171, 172]),
+    ("class_body", "lbrace_after", "lbrace_after", 171, &[167, 168, 169, 170, 171, 172]),
+    ("class_body", "rbrace_before", "rbrace_before", 172, &[167, 168, 169, 170, 171, 172]),
+    ("class_body", "rbrace_after", "rbrace_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "class_body_before", "class_body_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("class_body", "class_body_after", "class_body_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_body_member", "terminator_statement_terminator", "statement_terminator", 20, &[160, 20]),
@@ -1517,9 +1517,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("class_declaration", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_declaration", "class_declaration_end", "class_declaration_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_declaration", "class_declaration_start", "class_declaration_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("class_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("class_declaration", "anon_class_before", "anon_class_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_declaration", "anon_class_after", "anon_class_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("class_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("class_declaration", "class_declaration_before", "class_declaration_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_declaration", "class_declaration_after", "class_declaration_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("class_heritage_extends_clause", "class_heritage_extends_clause_before", "class_heritage_extends_clause_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -1638,9 +1638,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("export_statement_default_declaration", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration", "export_statement_default_declaration_end", "export_statement_default_declaration_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration", "export_statement_default_declaration_start", "export_statement_default_declaration_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("export_statement_default_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("export_statement_default_declaration", "export_before", "export_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration", "export_after", "export_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("export_statement_default_declaration", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("export_statement_default_declaration", "export_statement_default_declaration_before", "export_statement_default_declaration_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration", "export_statement_default_declaration_after", "export_statement_default_declaration_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("export_statement_default_declaration_default_kw", "default_before", "default_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2057,11 +2057,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("optional_parameter", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("optional_parameter", "optional_parameter_end", "optional_parameter_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("optional_parameter", "optional_parameter_start", "optional_parameter_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("optional_parameter", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("optional_parameter", "eq_before", "eq_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("optional_parameter", "eq_after", "eq_after", 168, &[167, 168, 169, 170, 171, 172]),
     ("optional_parameter", "qmark_before", "qmark_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("optional_parameter", "qmark_after", "qmark_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("optional_parameter", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("optional_parameter", "optional_parameter_before", "optional_parameter_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("optional_parameter", "optional_parameter_after", "optional_parameter_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("optional_tuple_parameter", "qmark_before", "qmark_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2129,11 +2129,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("public_field_definition", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("public_field_definition", "public_field_definition_end", "public_field_definition_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("public_field_definition", "public_field_definition_start", "public_field_definition_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("public_field_definition", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("public_field_definition", "optionality_marker_before", "optionality_marker_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("public_field_definition", "optionality_marker_after", "optionality_marker_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("public_field_definition", "eq_before", "eq_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("public_field_definition", "eq_after", "eq_after", 168, &[167, 168, 169, 170, 171, 172]),
-    ("public_field_definition", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("public_field_definition", "public_field_definition_before", "public_field_definition_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("public_field_definition", "public_field_definition_after", "public_field_definition_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("readonly_type", "readonly_before", "readonly_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2149,9 +2149,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("required_parameter", "decorator_decorator_after", "decorator_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("required_parameter", "required_parameter_end", "required_parameter_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("required_parameter", "required_parameter_start", "required_parameter_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("required_parameter", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("required_parameter", "eq_before", "eq_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("required_parameter", "eq_after", "eq_after", 168, &[167, 168, 169, 170, 171, 172]),
-    ("required_parameter", "decorator_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("required_parameter", "required_parameter_before", "required_parameter_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("required_parameter", "required_parameter_after", "required_parameter_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("rest_pattern", "dot_dot_dot_before", "dot_dot_dot_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2212,11 +2212,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("statement_block", "statements_with_statement_after", "with_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "statement_block_end", "statement_block_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "statement_block_start", "statement_block_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("statement_block", "statements_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("statement_block", "lbrace_before", "lbrace_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "lbrace_after", "lbrace_after", 171, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "rbrace_before", "rbrace_before", 172, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "rbrace_after", "rbrace_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("statement_block", "statements_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("statement_block", "statement_block_before", "statement_block_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("statement_block", "statement_block_after", "statement_block_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("string", "content_quote_style", "quote_style", 397, &[397, 398]),
@@ -2238,11 +2238,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("switch_body", "cases_switch_default_after", "switch_default_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_body", "switch_body_end", "switch_body_end", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_body", "switch_body_start", "switch_body_start", 167, &[167, 168, 169, 170, 171, 172]),
+    ("switch_body", "cases_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("switch_body", "lbrace_before", "lbrace_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_body", "lbrace_after", "lbrace_after", 171, &[167, 168, 169, 170, 171, 172]),
     ("switch_body", "rbrace_before", "rbrace_before", 172, &[167, 168, 169, 170, 171, 172]),
     ("switch_body", "rbrace_after", "rbrace_after", 167, &[167, 168, 169, 170, 171, 172]),
-    ("switch_body", "cases_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("switch_body", "switch_body_before", "switch_body_before", 168, &[167, 168, 169, 170, 171, 172]),
     ("switch_body", "switch_body_after", "switch_body_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_case", "body_break_statement_after", "break_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2264,11 +2264,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("switch_case", "body_with_statement_after", "with_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_case", "switch_case_end", "switch_case_end", 172, &[167, 168, 169, 170, 171, 172]),
     ("switch_case", "switch_case_start", "switch_case_start", 171, &[167, 168, 169, 170, 171, 172]),
+    ("switch_case", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("switch_case", "case_before", "case_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_case", "case_after", "case_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_case", "colon_before", "colon_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_case", "colon_after", "colon_after", 168, &[167, 168, 169, 170, 171, 172]),
-    ("switch_case", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("switch_case", "switch_case_before", "switch_case_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_case", "switch_case_after", "switch_case_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_default", "body_break_statement_after", "break_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2290,11 +2290,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("switch_default", "body_with_statement_after", "with_statement_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_default", "switch_default_end", "switch_default_end", 172, &[167, 168, 169, 170, 171, 172]),
     ("switch_default", "switch_default_start", "switch_default_start", 171, &[167, 168, 169, 170, 171, 172]),
+    ("switch_default", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("switch_default", "default_before", "default_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_default", "default_after", "default_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_default", "colon_before", "colon_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_default", "colon_after", "colon_after", 168, &[167, 168, 169, 170, 171, 172]),
-    ("switch_default", "body_separator_space", "empty_separator_space", 169, &[167, 168, 169, 170]),
     ("switch_default", "switch_default_before", "switch_default_before", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_default", "switch_default_after", "switch_default_after", 167, &[167, 168, 169, 170, 171, 172]),
     ("switch_statement", "switch_before", "switch_before", 167, &[167, 168, 169, 170, 171, 172]),
@@ -2508,9 +2508,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(abstract_class_declaration)/decorator:/(decorator)/after",
     "(abstract_class_declaration)/decorator:/end",
     "(abstract_class_declaration)/decorator:/start",
+    "(abstract_class_declaration)/decorator:/separator",
     "(abstract_class_declaration)/\"class\"/before",
     "(abstract_class_declaration)/\"class\"/after",
-    "(abstract_class_declaration)/decorator_separator_space",
     "(abstract_class_declaration)/before",
     "(abstract_class_declaration)/after",
     "(abstract_method_signature)/abstract:/before",
@@ -2729,9 +2729,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(class)/decorator:/(decorator)/after",
     "(class)/decorator:/end",
     "(class)/decorator:/start",
+    "(class)/decorator:/separator",
     "(class)/\"class\"/before",
     "(class)/\"class\"/after",
-    "(class)/decorator_separator_space",
     "(class)/before",
     "(class)/after",
     "(class_body)/content:/(class_body_member)/after",
@@ -2740,11 +2740,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(class_body)/content:/(class_static_block)/after",
     "(class_body)/content:/end",
     "(class_body)/content:/start",
+    "(class_body)/content:/separator",
     "(class_body)/\"{\"/before",
     "(class_body)/\"{\"/after",
     "(class_body)/\"}\"/before",
     "(class_body)/\"}\"/after",
-    "(class_body)/content_separator_space",
     "(class_body)/before",
     "(class_body)/after",
     "(class_body_member)/terminator_statement_terminator",
@@ -2753,7 +2753,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(class_body_method)/decorator:/(decorator)/after",
     "(class_body_method)/decorator:/end",
     "(class_body_method)/decorator:/start",
-    "(class_body_method)/decorator_separator_space",
+    "(class_body_method)/decorator:/separator",
     "(class_body_method)/terminator_statement_terminator",
     "(class_body_method)/before",
     "(class_body_method)/after",
@@ -2762,9 +2762,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(class_declaration)/decorator:/(decorator)/after",
     "(class_declaration)/decorator:/end",
     "(class_declaration)/decorator:/start",
+    "(class_declaration)/decorator:/separator",
     "(class_declaration)/\"class\"/before",
     "(class_declaration)/\"class\"/after",
-    "(class_declaration)/decorator_separator_space",
     "(class_declaration)/before",
     "(class_declaration)/after",
     "(class_heritage_extends_clause)/before",
@@ -2883,9 +2883,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(export_statement_default_declaration)/decorator:/(decorator)/after",
     "(export_statement_default_declaration)/decorator:/end",
     "(export_statement_default_declaration)/decorator:/start",
+    "(export_statement_default_declaration)/decorator:/separator",
     "(export_statement_default_declaration)/export:/before",
     "(export_statement_default_declaration)/export:/after",
-    "(export_statement_default_declaration)/decorator_separator_space",
     "(export_statement_default_declaration)/before",
     "(export_statement_default_declaration)/after",
     "(export_statement_default_declaration_default_kw)/default:/before",
@@ -3302,11 +3302,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(optional_parameter)/decorator:/(decorator)/after",
     "(optional_parameter)/decorator:/end",
     "(optional_parameter)/decorator:/start",
+    "(optional_parameter)/decorator:/separator",
     "(optional_parameter)/\"=\"/before",
     "(optional_parameter)/\"=\"/after",
     "(optional_parameter)/\"?\"/before",
     "(optional_parameter)/\"?\"/after",
-    "(optional_parameter)/decorator_separator_space",
     "(optional_parameter)/before",
     "(optional_parameter)/after",
     "(optional_tuple_parameter)/\"?\"/before",
@@ -3360,7 +3360,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(program)/statements:/(with_statement)/after",
     "(program)/statements:/end",
     "(program)/statements:/start",
-    "(program)/statements_separator_space",
+    "(program)/statements:/separator",
     "(program)/before",
     "(program)/after",
     "(property_signature)/accessibility_modifier:/before",
@@ -3374,11 +3374,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(public_field_definition)/decorator:/(decorator)/after",
     "(public_field_definition)/decorator:/end",
     "(public_field_definition)/decorator:/start",
+    "(public_field_definition)/decorator:/separator",
     "(public_field_definition)/optionality_marker:/before",
     "(public_field_definition)/optionality_marker:/after",
     "(public_field_definition)/\"=\"/before",
     "(public_field_definition)/\"=\"/after",
-    "(public_field_definition)/decorator_separator_space",
     "(public_field_definition)/before",
     "(public_field_definition)/after",
     "(readonly_type)/readonly:/before",
@@ -3394,9 +3394,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(required_parameter)/decorator:/(decorator)/after",
     "(required_parameter)/decorator:/end",
     "(required_parameter)/decorator:/start",
+    "(required_parameter)/decorator:/separator",
     "(required_parameter)/\"=\"/before",
     "(required_parameter)/\"=\"/after",
-    "(required_parameter)/decorator_separator_space",
     "(required_parameter)/before",
     "(required_parameter)/after",
     "(rest_pattern)/\"...\"/before",
@@ -3457,11 +3457,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(statement_block)/statements:/(with_statement)/after",
     "(statement_block)/statements:/end",
     "(statement_block)/statements:/start",
+    "(statement_block)/statements:/separator",
     "(statement_block)/\"{\"/before",
     "(statement_block)/\"{\"/after",
     "(statement_block)/\"}\"/before",
     "(statement_block)/\"}\"/after",
-    "(statement_block)/statements_separator_space",
     "(statement_block)/before",
     "(statement_block)/after",
     "(string)/content_quote_style",
@@ -3483,11 +3483,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(switch_body)/cases:/(switch_default)/after",
     "(switch_body)/cases:/end",
     "(switch_body)/cases:/start",
+    "(switch_body)/cases:/separator",
     "(switch_body)/\"{\"/before",
     "(switch_body)/\"{\"/after",
     "(switch_body)/\"}\"/before",
     "(switch_body)/\"}\"/after",
-    "(switch_body)/cases_separator_space",
     "(switch_body)/before",
     "(switch_body)/after",
     "(switch_case)/body:/(break_statement)/after",
@@ -3509,11 +3509,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(switch_case)/body:/(with_statement)/after",
     "(switch_case)/body:/end",
     "(switch_case)/body:/start",
+    "(switch_case)/body:/separator",
     "(switch_case)/case:/before",
     "(switch_case)/case:/after",
     "(switch_case)/\":\"/before",
     "(switch_case)/\":\"/after",
-    "(switch_case)/body_separator_space",
     "(switch_case)/before",
     "(switch_case)/after",
     "(switch_default)/body:/(break_statement)/after",
@@ -3535,11 +3535,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(switch_default)/body:/(with_statement)/after",
     "(switch_default)/body:/end",
     "(switch_default)/body:/start",
+    "(switch_default)/body:/separator",
     "(switch_default)/default:/before",
     "(switch_default)/default:/after",
     "(switch_default)/\":\"/before",
     "(switch_default)/\":\"/after",
-    "(switch_default)/body_separator_space",
     "(switch_default)/before",
     "(switch_default)/after",
     "(switch_statement)/switch:/before",
@@ -3832,7 +3832,7 @@ pub const DEDENT_KIND: u16 = 172;
 
 /// (kind, its indent-capable sites in rule order): an indent opened at one site is dedented at a later one of the same kind.
 pub static DEPTH_SITES: &[(&str, &[usize])] = &[
-    ("abstract_class_declaration", &[8, 4, 3, 0, 1, 5, 6, 9, 2]),
+    ("abstract_class_declaration", &[8, 4, 3, 0, 1, 6, 7, 9, 2]),
     ("abstract_method_signature", &[18, 12, 13, 10, 11, 14, 15, 16, 17, 19]),
     ("adding_type_annotation", &[22, 20, 21, 23]),
     ("ambient_declaration", &[26, 24, 25, 27]),
@@ -3860,12 +3860,12 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("call_signature", &[211, 212]),
     ("catch_clause", &[215, 213, 214, 216]),
     ("catch_clause_group", &[221, 217, 218, 219, 220, 222]),
-    ("class", &[229, 225, 224, 226, 227, 230, 223]),
-    ("class_body", &[242, 237, 238, 236, 235, 239, 240, 243, 231, 232, 233, 234]),
+    ("class", &[229, 225, 224, 227, 228, 230, 223]),
+    ("class_body", &[242, 238, 239, 236, 235, 240, 241, 243, 231, 232, 233, 234]),
     ("class_body_member", &[245, 246]),
     ("class_body_method", &[252, 249, 248, 253, 247]),
     ("class_body_method_sig", &[254, 255]),
-    ("class_declaration", &[262, 258, 257, 259, 260, 263, 256]),
+    ("class_declaration", &[262, 258, 257, 260, 261, 263, 256]),
     ("class_heritage_extends_clause", &[264, 265]),
     ("class_static_block", &[268, 266, 267, 269]),
     ("comment", &[270]),
@@ -3890,7 +3890,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("export_clause", &[364, 360, 361, 362, 363, 365]),
     ("export_specifier", &[368, 366, 367, 369]),
     ("export_specifiers", &[375, 372, 371, 376, 370]),
-    ("export_statement_default_declaration", &[383, 379, 378, 380, 381, 384, 377]),
+    ("export_statement_default_declaration", &[383, 379, 378, 381, 382, 384, 377]),
     ("export_statement_default_declaration_default_kw", &[387, 385, 386, 388]),
     ("export_statement_default_declaration_default_kw_value", &[390, 391]),
     ("export_statement_default_from", &[395, 392, 393, 396]),
@@ -3966,7 +3966,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("omitting_type_annotation", &[786, 784, 785, 787]),
     ("operator", &[788, 789, 790, 791]),
     ("opting_type_annotation", &[794, 792, 793, 795]),
-    ("optional_parameter", &[804, 798, 797, 801, 802, 799, 800, 805, 796]),
+    ("optional_parameter", &[804, 798, 797, 802, 803, 800, 801, 805, 796]),
     ("optional_tuple_parameter", &[808, 806, 807, 809]),
     ("optional_type", &[812, 810, 811, 813]),
     ("pair", &[816, 814, 815, 817]),
@@ -3977,24 +3977,24 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("predefined_type", &[836, 837]),
     ("program", &[858, 856, 855, 859, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849, 850, 851, 852, 853, 854]),
     ("property_signature", &[864, 860, 861, 862, 863, 865]),
-    ("public_field_definition", &[876, 870, 869, 866, 867, 871, 872, 873, 874, 877, 868]),
+    ("public_field_definition", &[876, 870, 869, 866, 867, 872, 873, 874, 875, 877, 868]),
     ("readonly_type", &[880, 878, 879, 881]),
     ("regex", &[884, 882, 883, 885]),
     ("regex_pattern", &[886, 887]),
-    ("required_parameter", &[894, 890, 889, 891, 892, 895, 888]),
+    ("required_parameter", &[894, 890, 889, 892, 893, 895, 888]),
     ("rest_pattern", &[898, 896, 897, 899]),
     ("rest_type", &[902, 900, 901, 903]),
     ("return_statement", &[907, 904, 905, 908]),
     ("satisfies_expression", &[911, 909, 910, 912]),
     ("sequence_expression", &[929, 926, 925, 930, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924]),
     ("spread_element", &[933, 931, 932, 934]),
-    ("statement_block", &[959, 954, 955, 953, 952, 956, 957, 960, 935, 936, 937, 938, 939, 940, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951]),
+    ("statement_block", &[959, 955, 956, 953, 952, 957, 958, 960, 935, 936, 937, 938, 939, 940, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950, 951]),
     ("string_double", &[964, 962, 963, 965]),
     ("string_single", &[968, 966, 967, 969]),
     ("subscript_expression", &[974, 970, 971, 972, 973, 975]),
-    ("switch_body", &[985, 980, 981, 979, 978, 982, 983, 986, 976, 977]),
-    ("switch_case", &[1011, 1006, 1007, 1008, 1009, 1005, 1004, 1012, 987, 988, 989, 990, 991, 992, 993, 994, 995, 996, 997, 998, 999, 1000, 1001, 1002, 1003]),
-    ("switch_default", &[1037, 1032, 1033, 1034, 1035, 1031, 1030, 1038, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029]),
+    ("switch_body", &[985, 981, 982, 979, 978, 983, 984, 986, 976, 977]),
+    ("switch_case", &[1011, 1007, 1008, 1009, 1010, 1005, 1004, 1012, 987, 988, 989, 990, 991, 992, 993, 994, 995, 996, 997, 998, 999, 1000, 1001, 1002, 1003]),
+    ("switch_default", &[1037, 1033, 1034, 1035, 1036, 1031, 1030, 1038, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029]),
     ("switch_statement", &[1041, 1039, 1040, 1042]),
     ("template_literal_type", &[1045, 1043, 1044, 1046]),
     ("template_string", &[1049, 1047, 1048, 1050]),
@@ -4113,8 +4113,6 @@ pub static LABELS: &[(&str, &[u16])] = &[
     ("bang_before", &[167, 168, 169, 170, 171, 172]),
     ("binary_expression_in_after", &[167, 168, 169, 170, 171, 172]),
     ("binary_expression_in_before", &[167, 168, 169, 170, 171, 172]),
-    ("block_body_after", &[167, 168, 169, 170, 171, 172]),
-    ("block_body_before", &[167, 168, 169, 170, 171, 172]),
     ("bquote_after", &[167, 168, 169, 170, 171, 172]),
     ("bquote_before", &[167, 168, 169, 170, 171, 172]),
     ("break_after", &[167, 168, 169, 170, 171, 172]),

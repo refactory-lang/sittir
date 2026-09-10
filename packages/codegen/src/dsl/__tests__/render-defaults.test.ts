@@ -18,23 +18,30 @@ describe('render defaults declared in patches', () => {
 	const str = (value: string) => ({ type: 'STRING', value });
 	const rules = { a: () => str('x'), block: () => str('y') };
 
-	it('collect a label default and a slot default in the shape of the Options type, leaving no rule behind', () => {
+	it('collect a slot default in the shape of the Options type, leaving no rule behind', () => {
 		const wired = wire({
 			rules,
 			patches: {
-				empty_separator_space: preference('empty_separator_space', 'newline'),
 				block: { statements: preference('empty_separator_space', 'tight') },
 				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') }
 			}
 		} as never);
 		expect(wired.__wireContext__?.defaults).toEqual({
-			labels: { empty_separator_space: 'newline' },
+			labels: {},
 			sites: {
 				block: { statements_separator_space: { label: 'empty_separator_space', arm: 'tight' } },
 				_token_tree_paren: { tokens_separator_space: { label: 'empty_separator_space', arm: 'tight' } }
 			}
 		});
 		expect(Object.keys(wired.rules).sort()).toEqual(['a', 'block']);
+	});
+
+	it('refuse a top-level gap, seam or flank spelling, which the options block now addresses', () => {
+		for (const key of ['empty_separator_space', 'comma_separator_space_before', 'lparen_before', 'block_start']) {
+			expect(() => wire({ rules, patches: { [key]: preference('x', 'tight') } } as never)).toThrow(
+				/is a spacing address; declare it under options:/
+			);
+		}
 	});
 
 	it('keep structural patches beside slot defaults on the same kind', () => {
@@ -67,35 +74,19 @@ describe('render defaults declared in patches', () => {
 		expect(wire({ rules } as never).__wireContext__?.defaults).toBeUndefined();
 	});
 
-	it('refuse a relabel, a structural patch on a label, and an arm outside the whitespace kinds', () => {
-		expect(() =>
-			wire({ rules, patches: { comma_separator_space_before: preference('comma_spacing', 'tight') } } as never)
-		).toThrow(/named by its gap/);
-		expect(() => wire({ rules, patches: { comma_separator_space_before: { 0: str('y') } } } as never)).toThrow(
-			/exactly one preference/
-		);
+	it('refuse an arm outside the whitespace kinds', () => {
 		expect(() =>
 			wire({ rules, patches: { block: { statements: preference('empty_separator_space', 'wide') } } } as never)
 		).toThrow(/not one of tight, space, newline/);
 	});
 
-	it('read a kind-level flank address that is not a rule name, and leave a rule of that spelling to the patch machinery', () => {
+	it('leaves a rule spelled like a flank address to the patch machinery', () => {
 		const wired = wire({
 			rules: { ...rules, string_start: () => str('"') },
-			patches: {
-				block_start: preference('body_start', 'indent'),
-				block_end: preference('body_end', 'dedent'),
-				string_start: preference('quote', '"')
-			}
+			patches: { string_start: preference('quote', '"') }
 		} as never);
-		expect(wired.__wireContext__?.defaults).toEqual({
-			labels: {},
-			sites: { block: { start: { label: 'body_start', arm: 'indent' }, end: { label: 'body_end', arm: 'dedent' } } }
-		});
+		expect(wired.__wireContext__?.defaults).toBeUndefined();
 		expect(Object.keys(wired.rules).sort()).toEqual(['a', 'block', 'string_start']);
-		expect(() => wire({ rules, patches: { block_start: preference('x', 'wide') } } as never)).toThrow(
-			/not one of tight, space, newline, blankline, indent, dedent/
-		);
 	});
 
 });
@@ -115,16 +106,13 @@ describe('seam defaults declared in patches', () => {
 	const str = (value: string) => ({ type: 'STRING', value });
 	const rules = { call: () => str('x'), lparen_after: () => str('y') };
 
-	it('collect a top-level token seam and a kind-level one, leaving no rule behind', () => {
+	it('collect a kind-level token seam, leaving no rule behind', () => {
 		const wired = wire({
 			rules,
-			patches: {
-				lparen_before: preference('lparen_before', 'space'),
-				call: { rparen_before: preference('rparen_before', 'newline') }
-			}
+			patches: { call: { rparen_before: preference('rparen_before', 'newline') } }
 		} as never);
 		expect(wired.__wireContext__?.defaults).toEqual({
-			labels: { lparen_before: 'space' },
+			labels: {},
 			sites: { call: { rparen_before: { label: 'rparen_before', arm: 'newline' } } }
 		});
 		expect(Object.keys(wired.rules).sort()).toEqual(['call', 'lparen_after']);
@@ -136,28 +124,20 @@ describe('seam defaults declared in patches', () => {
 		expect(Object.keys(wired.rules).sort()).toEqual(['call', 'lparen_after']);
 	});
 
-	it('take indent and dedent on any seam key, and a declared label on a kind-level one', () => {
+	it('take indent and dedent with a declared label on a kind-level seam', () => {
 		const wired = wire({
 			rules: { ...rules, arms: () => str('z') },
 			patches: {
-				arms_before: preference('arms_before', 'indent'),
-				arms_after: preference('arms_after', 'dedent'),
 				call: { lparen_after: preference('body_before', 'indent'), rparen_before: preference('body_after', 'dedent') }
 			}
 		} as never);
 		expect(wired.__wireContext__?.defaults).toEqual({
-			labels: { arms_before: 'indent', arms_after: 'dedent' },
+			labels: {},
 			sites: { call: { lparen_after: { label: 'body_before', arm: 'indent' }, rparen_before: { label: 'body_after', arm: 'dedent' } } }
 		});
 	});
 
-	it('refuse a top-level relabel, an arm outside the whitespace kinds, and a kind-level label not spelled as a seam', () => {
-		expect(() => wire({ rules, patches: { lparen_before: preference('paren_gap', 'space') } } as never)).toThrow(
-			/'lparen_before' is named by its token and side/
-		);
-		expect(() => wire({ rules, patches: { lparen_before: preference('lparen_before', 'wide') } } as never)).toThrow(
-			/'lparen_before' defaults to 'wide', not one of tight, space, newline, blankline, indent, dedent/
-		);
+	it('refuse a kind-level label not spelled as a seam', () => {
 		expect(() => wire({ rules, patches: { call: { lparen_before: preference('paren_gap', 'space') } } } as never)).toThrow(
 			/call\.lparen_before labels a token seam 'paren_gap', which is not spelled <token>_before \/ <token>_after/
 		);

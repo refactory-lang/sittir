@@ -450,11 +450,11 @@ pub const SITE_IF_CLAUSE_IF_CLAUSE_BEFORE: usize = 441;
 pub const SITE_IF_CLAUSE_IF_CLAUSE_AFTER: usize = 442;
 pub const SITE_IF_STATEMENT_ALTERNATIVE_ELIF_CLAUSE_AFTER: usize = 443;
 pub const SITE_IF_STATEMENT_ALTERNATIVE_ELSE_CLAUSE_AFTER: usize = 444;
-pub const SITE_IF_STATEMENT_IF_BEFORE: usize = 445;
-pub const SITE_IF_STATEMENT_IF_AFTER: usize = 446;
-pub const SITE_IF_STATEMENT_COLON_BEFORE: usize = 447;
-pub const SITE_IF_STATEMENT_COLON_AFTER: usize = 448;
-pub const SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE: usize = 449;
+pub const SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE: usize = 445;
+pub const SITE_IF_STATEMENT_IF_BEFORE: usize = 446;
+pub const SITE_IF_STATEMENT_IF_AFTER: usize = 447;
+pub const SITE_IF_STATEMENT_COLON_BEFORE: usize = 448;
+pub const SITE_IF_STATEMENT_COLON_AFTER: usize = 449;
 pub const SITE_IF_STATEMENT_IF_STATEMENT_BEFORE: usize = 450;
 pub const SITE_IF_STATEMENT_IF_STATEMENT_AFTER: usize = 451;
 pub const SITE_IMPORT_FROM_STATEMENT_FROM_BEFORE: usize = 452;
@@ -755,11 +755,11 @@ pub const SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER: usize = 746;
 pub const SITE_SUITE_BLOCK_SUITE_BLOCK_BEFORE: usize = 747;
 pub const SITE_SUITE_BLOCK_SUITE_BLOCK_AFTER: usize = 748;
 pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_EXCEPT_CLAUSE_AFTER: usize = 749;
-pub const SITE_TRY_STATEMENT_TRY_BEFORE: usize = 750;
-pub const SITE_TRY_STATEMENT_TRY_AFTER: usize = 751;
-pub const SITE_TRY_STATEMENT_COLON_BEFORE: usize = 752;
-pub const SITE_TRY_STATEMENT_COLON_AFTER: usize = 753;
-pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE: usize = 754;
+pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE: usize = 750;
+pub const SITE_TRY_STATEMENT_TRY_BEFORE: usize = 751;
+pub const SITE_TRY_STATEMENT_TRY_AFTER: usize = 752;
+pub const SITE_TRY_STATEMENT_COLON_BEFORE: usize = 753;
+pub const SITE_TRY_STATEMENT_COLON_AFTER: usize = 754;
 pub const SITE_TRY_STATEMENT_TRY_STATEMENT_BEFORE: usize = 755;
 pub const SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER: usize = 756;
 pub const SITE_TUPLE_LPAREN_BEFORE: usize = 757;
@@ -1321,11 +1321,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("if_clause", "if_clause_after", "if_clause_after", 108, &[108, 109, 101, 110]),
     ("if_statement", "alternative_elif_clause_after", "elif_clause_after", 108, &[108, 109, 101, 110]),
     ("if_statement", "alternative_else_clause_after", "else_clause_after", 108, &[108, 109, 101, 110]),
+    ("if_statement", "alternative_separator_space", "empty_separator_space", 108, &[108, 109, 101, 110]),
     ("if_statement", "if_before", "if_before", 108, &[108, 109, 101, 110]),
     ("if_statement", "if_after", "if_after", 108, &[108, 109, 101, 110]),
     ("if_statement", "colon_before", "colon_before", 108, &[108, 109, 101, 110]),
     ("if_statement", "colon_after", "colon_after", 109, &[108, 109, 101, 110]),
-    ("if_statement", "alternative_separator_space", "empty_separator_space", 108, &[108, 109, 101, 110]),
     ("if_statement", "if_statement_before", "if_statement_before", 108, &[108, 109, 101, 110]),
     ("if_statement", "if_statement_after", "if_statement_after", 108, &[108, 109, 101, 110]),
     ("import_from_statement", "from_before", "from_before", 108, &[108, 109, 101, 110]),
@@ -1626,11 +1626,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("suite_block", "suite_block_before", "suite_block_before", 108, &[108, 109, 101, 110]),
     ("suite_block", "suite_block_after", "suite_block_after", 108, &[108, 109, 101, 110]),
     ("try_statement", "except_clauses_except_clause_after", "except_clause_after", 108, &[108, 109, 101, 110]),
+    ("try_statement", "except_clauses_separator_space", "empty_separator_space", 108, &[108, 109, 101, 110]),
     ("try_statement", "try_before", "try_before", 108, &[108, 109, 101, 110]),
     ("try_statement", "try_after", "try_after", 108, &[108, 109, 101, 110]),
     ("try_statement", "colon_before", "colon_before", 108, &[108, 109, 101, 110]),
     ("try_statement", "colon_after", "colon_after", 109, &[108, 109, 101, 110]),
-    ("try_statement", "except_clauses_separator_space", "empty_separator_space", 108, &[108, 109, 101, 110]),
     ("try_statement", "try_statement_before", "try_statement_before", 108, &[108, 109, 101, 110]),
     ("try_statement", "try_statement_after", "try_statement_after", 108, &[108, 109, 101, 110]),
     ("tuple", "lparen_before", "lparen_before", 108, &[108, 109, 101, 110]),
@@ -1851,7 +1851,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(block)/statements:/(try_statement)/after",
     "(block)/statements:/(while_statement)/after",
     "(block)/statements:/(with_statement)/after",
-    "(block)/statements_separator_space",
+    "(block)/statements:/separator",
     "(block)/before",
     "(block)/after",
     "(boolean_operator)/before",
@@ -1929,7 +1929,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(collection_elements)/element:/separator/\",\"/before",
     "(collection_elements)/element:/separator/\",\"/after",
     "(comparison_operator)/comparators:/(comparison_operator_comparator)/after",
-    "(comparison_operator)/comparators_separator_space",
+    "(comparison_operator)/comparators:/separator",
     "(comparison_operator)/before",
     "(comparison_operator)/after",
     "(comparison_operator_comparator)/operators:/before",
@@ -1944,9 +1944,9 @@ pub static SITE_PATHS: &[&str] = &[
     "(complex_pattern)/after",
     "(comprehension_clauses)/content:/(for_in_clause)/after",
     "(comprehension_clauses)/content:/(if_clause)/after",
-    "(comprehension_clauses)/content_separator_space",
+    "(comprehension_clauses)/content:/separator",
     "(concatenated_string)/string:/(string)/after",
-    "(concatenated_string)/string_separator_space",
+    "(concatenated_string)/string:/separator",
     "(concatenated_string)/before",
     "(concatenated_string)/after",
     "(conditional_expression)/else:/before",
@@ -1960,7 +1960,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(constrained_type)/before",
     "(constrained_type)/after",
     "(decorated_definition)/decorator:/(decorator)/after",
-    "(decorated_definition)/decorator_separator_space",
+    "(decorated_definition)/decorator:/separator",
     "(decorated_definition)/before",
     "(decorated_definition)/after",
     "(decorator)/\"@\"/before",
@@ -2172,11 +2172,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(if_clause)/after",
     "(if_statement)/alternative:/(elif_clause)/after",
     "(if_statement)/alternative:/(else_clause)/after",
+    "(if_statement)/alternative:/separator",
     "(if_statement)/if:/before",
     "(if_statement)/if:/after",
     "(if_statement)/\":\"/before",
     "(if_statement)/\":\"/after",
-    "(if_statement)/alternative_separator_space",
     "(if_statement)/before",
     "(if_statement)/after",
     "(import_from_statement)/from:/before",
@@ -2254,7 +2254,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(list_splat_pattern)/before",
     "(list_splat_pattern)/after",
     "(match_block_block)/alternative:/(case_clause)/after",
-    "(match_block_block)/alternative_separator_space",
+    "(match_block_block)/alternative:/separator",
     "(match_block_block)/before",
     "(match_block_block)/after",
     "(match_statement)/match:/before",
@@ -2277,7 +2277,7 @@ pub static SITE_PATHS: &[&str] = &[
     "(module)/statements:/(try_statement)/after",
     "(module)/statements:/(while_statement)/after",
     "(module)/statements:/(with_statement)/after",
-    "(module)/statements_separator_space",
+    "(module)/statements:/separator",
     "(named_expression)/\":=\"/before",
     "(named_expression)/\":=\"/after",
     "(named_expression)/before",
@@ -2477,11 +2477,11 @@ pub static SITE_PATHS: &[&str] = &[
     "(suite_block)/before",
     "(suite_block)/after",
     "(try_statement)/except_clauses:/(except_clause)/after",
+    "(try_statement)/except_clauses:/separator",
     "(try_statement)/try:/before",
     "(try_statement)/try:/after",
     "(try_statement)/\":\"/before",
     "(try_statement)/\":\"/after",
-    "(try_statement)/except_clauses_separator_space",
     "(try_statement)/before",
     "(try_statement)/after",
     "(tuple)/\"(\"/before",

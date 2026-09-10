@@ -4454,7 +4454,7 @@ function wire(config, base2) {
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
+  const patches = structuralPatchesOf(cfg.patches ?? {});
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
@@ -4523,11 +4523,9 @@ function knownRuleNames(cfg, base2) {
 function isSitePreferenceEntry(key, value) {
   return SLOT_KEY.test(key) && isPreference(value);
 }
-function isFlankDefaultKey(key, rules) {
-  return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
-}
-function isSeamDefaultKey(key, rules) {
-  return parseSeamLabel(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
+function isRetiredAddressKey(key, rules) {
+  if (rules.has(key) || rules.has(`_${key}`)) return false;
+  return parseSpacingLabel(key) !== void 0 || parseSeamLabel(key) !== void 0 || parseFlankAddress(key) !== void 0;
 }
 function checkSpacingArm(at, arm2) {
   if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
@@ -4541,16 +4539,7 @@ function checkWhitespaceArm(at, arm2) {
   if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
   return arm2;
 }
-function onePreference(kind, entry, what) {
-  const preferences = kindPreferencesOf(entry);
-  const only = preferences.length === 1 ? preferences[0] : void 0;
-  if (patchSetsOf(entry).length > 0 || only === void 0 || only.label === void 0) {
-    throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
-  }
-  return { label: only.label, arm: only.default };
-}
 function renderDefaultsOf(patches, rules) {
-  const labels = {};
   const sites = {};
   const site = (kind, address, value) => {
     const own = sites[kind] ?? {};
@@ -4560,23 +4549,8 @@ function renderDefaultsOf(patches, rules) {
   };
   for (const [key, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    if (parseSpacingLabel(key) !== void 0) {
-      const { label, arm: arm2 } = onePreference(key, entry, "a separator spacing preference");
-      if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', \u2026) does not rename it`);
-      labels[key] = checkSpacingArm(`'${key}'`, arm2);
-      continue;
-    }
-    if (isSeamDefaultKey(key, rules)) {
-      const { label, arm: arm2 } = onePreference(key, entry, "a token seam preference");
-      if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
-      labels[key] = checkWhitespaceArm(`'${key}'`, arm2);
-      continue;
-    }
-    const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
-    if (flank !== void 0) {
-      const { label, arm: arm2 } = onePreference(key, entry, "an array flank");
-      site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm2) });
-      continue;
+    if (isRetiredAddressKey(key, rules)) {
+      throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
     }
     for (const patchMap of patchSetsOf(entry)) {
       for (const [slot, value] of Object.entries(patchMap)) {
@@ -4593,12 +4567,12 @@ function renderDefaultsOf(patches, rules) {
       }
     }
   }
-  return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? void 0 : { labels, sites };
+  return Object.keys(sites).length === 0 ? void 0 : { labels: {}, sites };
 }
-function structuralPatchesOf(patches, rules) {
+function structuralPatchesOf(patches) {
   const out = {};
   for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
+    if (!entry) continue;
     const items = Array.isArray(entry) ? entry : [entry];
     const kept = [];
     for (const item of items) {
@@ -5180,6 +5154,9 @@ var grammar_sittir_default = grammar(
       },
       options: {
         body: { before: preference("indent"), after: preference("dedent") },
+        gap: { separator: preference("newline") },
+        field_declaration_list_elements: { 'element:/separator/","/after': preference("newline") },
+        enum_variant_list_elements: { 'element:/separator/","/after': preference("newline") },
         _: {
           '_/separator/","/before': preference("tight"),
           '_/separator/";"/before': preference("tight"),
@@ -5198,9 +5175,19 @@ var grammar_sittir_default = grammar(
           "in:/after": preference("space")
         },
         source_file: {
+          "statements:/separator": preference("tight"),
           "statements:/(_)/after": preference("blankline"),
           "statements:/(attribute_item)/after": preference("newline")
         },
+        delim_token_tree_brace: { "delim_tokens:/separator": preference("tight") },
+        delim_token_tree_bracket: { "delim_tokens:/separator": preference("tight") },
+        delim_token_tree_paren: { "delim_tokens:/separator": preference("tight") },
+        token_tree_brace: { "tokens:/separator": preference("tight") },
+        token_tree_bracket: { "tokens:/separator": preference("tight") },
+        token_tree_paren: { "tokens:/separator": preference("tight") },
+        token_tree_pattern_brace: { "token_patterns:/separator": preference("tight") },
+        token_tree_pattern_bracket: { "token_patterns:/separator": preference("tight") },
+        token_tree_pattern_paren: { "token_patterns:/separator": preference("tight") },
         block: { before: preference("space"), "statements:/end": preference("newline") },
         match_block: { before: preference("space") },
         declaration_list: { before: preference("space") },
@@ -5226,31 +5213,30 @@ var grammar_sittir_default = grammar(
           'field_declaration_list/"{"/after': "body/before",
           'field_declaration_list/"}"/before': "body/after",
           'enum_variant_list/"{"/after': "body/before",
-          'enum_variant_list/"}"/before': "body/after"
+          'enum_variant_list/"}"/before': "body/after",
+          "array_expression_list/attributes:/separator": "gap/separator",
+          "array_expression_semi/attributes:/separator": "gap/separator",
+          "attributed_argument/attribute_item:/separator": "gap/separator",
+          "attributed_enum_variant/attribute_item:/separator": "gap/separator",
+          "attributed_field_declaration/attribute_item:/separator": "gap/separator",
+          "attributed_ordered_field/attribute_item:/separator": "gap/separator",
+          "attributed_type_parameter/attribute_item:/separator": "gap/separator",
+          "block/statements:/separator": "gap/separator",
+          "declaration_list/declarations:/separator": "gap/separator",
+          "field_initializer/attribute_item:/separator": "gap/separator",
+          "function_modifiers/modifier:/separator": "gap/separator",
+          "last_match_arm/attributes:/separator": "gap/separator",
+          "match_arm/attributes:/separator": "gap/separator",
+          "match_block_arms/match_arm:/separator": "gap/separator",
+          "shorthand_field_initializer/attributes:/separator": "gap/separator",
+          "token_repetition/tokens:/separator": "gap/separator",
+          "token_repetition_pattern/token_patterns:/separator": "gap/separator",
+          "tuple_expression/attributes:/separator": "gap/separator"
         }
       },
       patches: {
-        empty_separator_space: preference("empty_separator_space", "newline"),
-        source_file: { statements: preference("empty_separator_space", "tight") },
-        field_declaration_list_elements: [
-          { element: preference("comma_separator_space_after", "newline") },
-          { element: preference("delimiter", "Delimiter.Trailing") }
-        ],
-        enum_variant_list_elements: [
-          { element: preference("comma_separator_space_after", "newline") },
-          { element: preference("delimiter", "Delimiter.Trailing") }
-        ],
-        _token_tree_paren: { tokens: preference("empty_separator_space", "tight") },
-        _token_tree_bracket: { tokens: preference("empty_separator_space", "tight") },
-        _token_tree_brace: { tokens: preference("empty_separator_space", "tight") },
-        _delim_token_tree_paren: { delim_tokens: preference("empty_separator_space", "tight") },
-        _delim_token_tree_bracket: { delim_tokens: preference("empty_separator_space", "tight") },
-        _delim_token_tree_brace: { delim_tokens: preference("empty_separator_space", "tight") },
-        _token_tree_pattern_paren: { token_patterns: preference("empty_separator_space", "tight") },
-        _token_tree_pattern_bracket: { token_patterns: preference("empty_separator_space", "tight") },
-        _token_tree_pattern_brace: { token_patterns: preference("empty_separator_space", "tight") },
-        token_repetition: { tokens: preference("empty_separator_space", "tight") },
-        token_repetition_pattern: { token_patterns: preference("empty_separator_space", "tight") },
+        field_declaration_list_elements: { element: preference("delimiter", "Delimiter.Trailing") },
+        enum_variant_list_elements: { element: preference("delimiter", "Delimiter.Trailing") },
         parameter: {
           "1": field2("name")
         },

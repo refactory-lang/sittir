@@ -82,6 +82,8 @@ export default grammar(
 				yield_from_clause: ($) => seq('from', $.expression)
 			},
 			options: {
+				gap: { separator: preference('tight') },
+
 				_: {
 					'_/separator/","/before': preference('tight'),
 					'_/separator/";"/before': preference('tight'),
@@ -103,11 +105,22 @@ export default grammar(
 				default_parameter: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 				slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
 				splat_pattern: { 'operator:/after': preference('tight') },
-				splat_type: { 'operator:/after': preference('tight') }
+				splat_type: { 'operator:/after': preference('tight') },
+
+				_bindings: {
+					'block/statements:/separator': 'gap/separator',
+					'comparison_operator/comparators:/separator': 'gap/separator',
+					'comprehension_clauses/content:/separator': 'gap/separator',
+					'concatenated_string/string:/separator': 'gap/separator',
+					'decorated_definition/decorator:/separator': 'gap/separator',
+					'if_statement/alternative:/separator': 'gap/separator',
+					'match_block_block/alternative:/separator': 'gap/separator',
+					'module/statements:/separator': 'gap/separator',
+					'try_statement/except_clauses:/separator': 'gap/separator'
+				}
 			},
 
 			patches: {
-				empty_separator_space: preference('empty_separator_space', 'tight'),
 				argument_list: {
 					1: field('arguments')
 				},

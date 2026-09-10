@@ -178,6 +178,8 @@ export default grammar(
 			options: {
 				body: { before: preference('indent'), after: preference('dedent') },
 				case_body: { start: preference('indent'), end: preference('dedent') },
+				gap: { separator: preference('newline') },
+				enum_body_elements: { 'content:/separator/","/after': preference('newline') },
 
 				_: {
 					'_/separator/","/before': preference('tight'),
@@ -230,6 +232,8 @@ export default grammar(
 				for_statement: { '"("/before': preference('space') },
 
 				_bindings: {
+					'class_body/"{"/after': 'body/before',
+					'class_body/"}"/before': 'body/after',
 					'statement_block/"{"/after': 'body/before',
 					'statement_block/"}"/before': 'body/after',
 					'switch_body/"{"/after': 'body/before',
@@ -241,12 +245,25 @@ export default grammar(
 					'switch_case/body:/start': 'case_body/start',
 					'switch_case/body:/end': 'case_body/end',
 					'switch_default/body:/start': 'case_body/start',
-					'switch_default/body:/end': 'case_body/end'
+					'switch_default/body:/end': 'case_body/end',
+					'abstract_class_declaration/decorator:/separator': 'gap/separator',
+					'class/decorator:/separator': 'gap/separator',
+					'class_body/content:/separator': 'gap/separator',
+					'class_body_method/decorator:/separator': 'gap/separator',
+					'class_declaration/decorator:/separator': 'gap/separator',
+					'export_statement_default_declaration/decorator:/separator': 'gap/separator',
+					'optional_parameter/decorator:/separator': 'gap/separator',
+					'program/statements:/separator': 'gap/separator',
+					'public_field_definition/decorator:/separator': 'gap/separator',
+					'required_parameter/decorator:/separator': 'gap/separator',
+					'statement_block/statements:/separator': 'gap/separator',
+					'switch_body/cases:/separator': 'gap/separator',
+					'switch_case/body:/separator': 'gap/separator',
+					'switch_default/body:/separator': 'gap/separator'
 				}
 			},
 
 			patches: {
-				empty_separator_space: preference('empty_separator_space', 'newline'),
 				binary_expression: {
 					24: variant('in')
 				},
@@ -272,10 +289,7 @@ export default grammar(
 				},
 				enum_body: {
 				},
-				enum_body_elements: [
-					{ content: preference('comma_separator_space_after', 'newline') },
-					{ content: preference('delimiter', 'Delimiter.Trailing') }
-				],
+				enum_body_elements: { content: preference('delimiter', 'Delimiter.Trailing') },
 				object_type_content: [
 					{ content: preference('separator', 'semi') },
 					{ content: preference('delimiter', 'Delimiter.Trailing') }
@@ -292,7 +306,6 @@ export default grammar(
 				// retiring this kind's per-kind bucket merge. The third's variant
 				// paths then traverse the `content` field the second added.
 				class_body: [
-					{ lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
 					{
 						'1/0/0/2': field('terminator'),
 						'1/0/1/1': field('terminator'),

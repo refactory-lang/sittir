@@ -45422,6 +45422,8 @@ pub struct StatementBlockTransport {
     pub statements_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_start"))]
     pub statements_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
+    pub statements_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -45430,8 +45432,6 @@ pub struct StatementBlockTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements_separator_space"))]
-    pub statements_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_before"))]
     pub statement_block_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statement_block_after"))]
@@ -45448,11 +45448,11 @@ impl ::sittir_core::options::FillOptions for StatementBlockTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.statements_end.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_END]);
         self.statements_start.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_START]);
+        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_RBRACE_AFTER]);
-        self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.statement_block_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_BEFORE]);
         self.statement_block_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_AFTER]);
         if let Some(seated_items) = self.statements.as_mut() {
@@ -46715,6 +46715,8 @@ pub struct SwitchBodyTransport {
     pub cases_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_start"))]
     pub cases_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_separator_space"))]
+    pub cases_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -46723,8 +46725,6 @@ pub struct SwitchBodyTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cases_separator_space"))]
-    pub cases_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_body_before"))]
     pub switch_body_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_body_after"))]
@@ -46741,11 +46741,11 @@ impl ::sittir_core::options::FillOptions for SwitchBodyTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.cases_end.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_END]);
         self.cases_start.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_START]);
+        self.cases_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_RBRACE_AFTER]);
-        self.cases_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE]);
         self.switch_body_before.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_SWITCH_BODY_BEFORE]);
         self.switch_body_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_SWITCH_BODY_AFTER]);
         if let Some(seated_items) = self.cases.as_mut() {
@@ -46810,6 +46810,8 @@ pub struct SwitchCaseTransport {
     pub body_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_start"))]
     pub body_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_before"))]
     pub case_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_after"))]
@@ -46818,8 +46820,6 @@ pub struct SwitchCaseTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
-    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_case_before"))]
     pub switch_case_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_case_after"))]
@@ -46836,11 +46836,11 @@ impl ::sittir_core::options::FillOptions for SwitchCaseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.body_end.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_END]);
         self.body_start.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_START]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
         self.case_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_CASE_BEFORE]);
         self.case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_CASE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_COLON_AFTER]);
-        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
         self.switch_case_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_SWITCH_CASE_BEFORE]);
         self.switch_case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_SWITCH_CASE_AFTER]);
         if let Some(seated_items) = self.body.as_mut() {
@@ -46919,6 +46919,8 @@ pub struct SwitchDefaultTransport {
     pub body_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_start"))]
     pub body_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
+    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_before"))]
     pub default_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_after"))]
@@ -46927,8 +46929,6 @@ pub struct SwitchDefaultTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body_separator_space"))]
-    pub body_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_default_before"))]
     pub switch_default_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_switch_default_after"))]
@@ -46945,11 +46945,11 @@ impl ::sittir_core::options::FillOptions for SwitchDefaultTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.body_end.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_END]);
         self.body_start.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_START]);
+        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
         self.default_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_DEFAULT_BEFORE]);
         self.default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_DEFAULT_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_COLON_AFTER]);
-        self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
         self.switch_default_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_BEFORE]);
         self.switch_default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_AFTER]);
         if let Some(seated_items) = self.body.as_mut() {
@@ -47929,12 +47929,12 @@ pub struct ClassTransport {
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
     pub anon_class_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
     pub anon_class_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_before"))]
     pub class_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_after"))]
@@ -47951,9 +47951,9 @@ impl ::sittir_core::options::FillOptions for ClassTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_START]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_SEPARATOR_SPACE]);
         self.anon_class_before.get_or_insert(table.spacing[options::SITE_CLASS_ANON_CLASS_BEFORE]);
         self.anon_class_after.get_or_insert(table.spacing[options::SITE_CLASS_ANON_CLASS_AFTER]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECORATOR_SEPARATOR_SPACE]);
         self.class_before.get_or_insert(table.spacing[options::SITE_CLASS_CLASS_BEFORE]);
         self.class_after.get_or_insert(table.spacing[options::SITE_CLASS_CLASS_AFTER]);
         if let Some(seated_items) = self.decorator.as_mut() {
@@ -48026,12 +48026,12 @@ pub struct ClassDeclarationTransport {
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
     pub anon_class_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
     pub anon_class_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_declaration_before"))]
     pub class_declaration_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_declaration_after"))]
@@ -48048,9 +48048,9 @@ impl ::sittir_core::options::FillOptions for ClassDeclarationTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_START]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.anon_class_before.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_ANON_CLASS_BEFORE]);
         self.anon_class_after.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_ANON_CLASS_AFTER]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.class_declaration_before.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_CLASS_DECLARATION_BEFORE]);
         self.class_declaration_after.get_or_insert(table.spacing[options::SITE_CLASS_DECLARATION_CLASS_DECLARATION_AFTER]);
         if let Some(seated_items) = self.decorator.as_mut() {
@@ -51820,6 +51820,8 @@ pub struct ClassBodyTransport {
     pub content_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_start"))]
     pub content_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
+    pub content_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_before"))]
     pub lbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
@@ -51828,8 +51830,6 @@ pub struct ClassBodyTransport {
     pub rbrace_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_after"))]
     pub rbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
-    pub content_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_before"))]
     pub class_body_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_body_after"))]
@@ -51846,11 +51846,11 @@ impl ::sittir_core::options::FillOptions for ClassBodyTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.content_end.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_END]);
         self.content_start.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_START]);
+        self.content_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE]);
         self.lbrace_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_LBRACE_BEFORE]);
         self.lbrace_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_LBRACE_AFTER]);
         self.rbrace_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_RBRACE_BEFORE]);
         self.rbrace_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_RBRACE_AFTER]);
-        self.content_separator_space.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE]);
         self.class_body_before.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CLASS_BODY_BEFORE]);
         self.class_body_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CLASS_BODY_AFTER]);
         if let Some(seated_items) = self.content.as_mut() {
@@ -52679,6 +52679,8 @@ pub struct PublicFieldDefinitionTransport {
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_before"))]
     pub optionality_marker_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker_after"))]
@@ -52687,8 +52689,6 @@ pub struct PublicFieldDefinitionTransport {
     pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_before"))]
     pub public_field_definition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_after"))]
@@ -52707,11 +52707,11 @@ impl ::sittir_core::options::FillOptions for PublicFieldDefinitionTransport {
         self.accessibility_modifier_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_ACCESSIBILITY_MODIFIER_AFTER]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE]);
         self.optionality_marker_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_BEFORE]);
         self.optionality_marker_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKER_AFTER]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_EQ_AFTER]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_SEPARATOR_SPACE]);
         self.public_field_definition_before.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_BEFORE]);
         self.public_field_definition_after.get_or_insert(table.spacing[options::SITE_PUBLIC_FIELD_DEFINITION_PUBLIC_FIELD_DEFINITION_AFTER]);
         if let Some(seated_items) = self.decorator.as_mut() {
@@ -53875,12 +53875,12 @@ pub struct AbstractClassDeclarationTransport {
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_before"))]
     pub anon_class_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_class_after"))]
     pub anon_class_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_class_declaration_before"))]
     pub abstract_class_declaration_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_abstract_class_declaration_after"))]
@@ -53899,9 +53899,9 @@ impl ::sittir_core::options::FillOptions for AbstractClassDeclarationTransport {
         self.abstract_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_AFTER]);
         self.decorator_end.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_START]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.anon_class_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_BEFORE]);
         self.anon_class_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ANON_CLASS_AFTER]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.abstract_class_declaration_before.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_BEFORE]);
         self.abstract_class_declaration_after.get_or_insert(table.spacing[options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_CLASS_DECLARATION_AFTER]);
         if let Some(seated_items) = self.decorator.as_mut() {
@@ -54938,12 +54938,12 @@ pub struct RequiredParameterTransport {
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_required_parameter_before"))]
     pub required_parameter_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_required_parameter_after"))]
@@ -54960,9 +54960,9 @@ impl ::sittir_core::options::FillOptions for RequiredParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_START]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_EQ_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_EQ_AFTER]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.required_parameter_before.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_BEFORE]);
         self.required_parameter_after.get_or_insert(table.spacing[options::SITE_REQUIRED_PARAMETER_REQUIRED_PARAMETER_AFTER]);
         if let Some(seated_items) = self.decorator.as_mut() {
@@ -55039,6 +55039,8 @@ pub struct OptionalParameterTransport {
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
     pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
@@ -55047,8 +55049,6 @@ pub struct OptionalParameterTransport {
     pub qmark_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_after"))]
     pub qmark_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_before"))]
     pub optional_parameter_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_parameter_after"))]
@@ -55065,11 +55065,11 @@ impl ::sittir_core::options::FillOptions for OptionalParameterTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_START]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.eq_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_EQ_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_EQ_AFTER]);
         self.qmark_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_QMARK_BEFORE]);
         self.qmark_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_QMARK_AFTER]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_DECORATOR_SEPARATOR_SPACE]);
         self.optional_parameter_before.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_BEFORE]);
         self.optional_parameter_after.get_or_insert(table.spacing[options::SITE_OPTIONAL_PARAMETER_OPTIONAL_PARAMETER_AFTER]);
         if let Some(seated_items) = self.decorator.as_mut() {
@@ -63095,12 +63095,12 @@ pub struct ExportStatementDefaultDeclarationTransport {
     pub decorator_end: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_start"))]
     pub decorator_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
+    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_before"))]
     pub export_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_after"))]
     pub export_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator_separator_space"))]
-    pub decorator_separator_space: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_before"))]
     pub export_statement_default_declaration_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_declaration_after"))]
@@ -63117,9 +63117,9 @@ impl ::sittir_core::options::FillOptions for ExportStatementDefaultDeclarationTr
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.decorator_end.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_END]);
         self.decorator_start.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_START]);
+        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.export_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_BEFORE]);
         self.export_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_AFTER]);
-        self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_SEPARATOR_SPACE]);
         self.export_statement_default_declaration_before.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_BEFORE]);
         self.export_statement_default_declaration_after.get_or_insert(table.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER]);
         if let Some(seated_items) = self.decorator.as_mut() {

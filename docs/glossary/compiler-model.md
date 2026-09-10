@@ -3796,6 +3796,13 @@ minted from it — a site can carry one only if the catalog existed when the sit
 was made. So the absence of an entry is not a phase that ran too early; it means
 the seam names a field, which is the remaining case.
 
+A separator is named by its own label rather than by its address, because a
+gap with no token spells its address `<slot>_separator_space`, which reads as
+a token named after the slot. The label says which it is: a token separator
+carries the token's text as a literal segment and a side; the empty gap
+carries neither, so it addresses as `<slot>:/separator` — one place, whether
+or not a token sits in it.
+
 A side is a bare name segment. That is what the canonical order recognises, so
 a kind's own edges sort after everything nested beneath them and each subtree
 stays contiguous.
@@ -3803,7 +3810,6 @@ stays contiguous.
 A site that was born knowing its path returns it unchanged. No decomposition
 branch produces a kind-match in the middle of a path, so a seated site could
 only be spelled flat to be parsed back — the address exists to be read.
-
 ### `packages/codegen/src/compiler/model/site-addresses.ts::matchAddress`
 
 The sites an address names: itself and everything beneath it. A wildcard

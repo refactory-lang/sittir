@@ -892,6 +892,7 @@ export type AddressRoot =
 	| 'format_specifier'
 	| 'function_definition'
 	| 'future_import_statement'
+	| 'gap'
 	| 'generator_expression'
 	| 'generic_type'
 	| 'global_statement'
@@ -1103,7 +1104,7 @@ export interface AddressBranch {
 	readonly 'await/await': 'after' | 'before';
 	readonly binary_operator: 'after' | 'before' | 'operator';
 	readonly 'binary_operator/operator': 'after' | 'before';
-	readonly block: 'after' | 'before' | 'statements' | 'statements_separator_space';
+	readonly block: 'after' | 'before' | 'statements';
 	readonly 'block/statements':
 		| 'class_definition'
 		| 'decorated_definition'
@@ -1111,6 +1112,7 @@ export interface AddressBranch {
 		| 'function_definition'
 		| 'if_statement'
 		| 'match_statement'
+		| 'separator'
 		| 'simple_statements'
 		| 'try_statement'
 		| 'while_statement'
@@ -1211,28 +1213,28 @@ export interface AddressBranch {
 	readonly 'collection_elements/element/tuple': 'after';
 	readonly 'collection_elements/element/unary_operator': 'after';
 	readonly 'collection_elements/element/yield': 'after';
-	readonly comparison_operator: 'after' | 'before' | 'comparators' | 'comparators_separator_space';
-	readonly 'comparison_operator/comparators': 'comparison_operator_comparator';
+	readonly comparison_operator: 'after' | 'before' | 'comparators';
+	readonly 'comparison_operator/comparators': 'comparison_operator_comparator' | 'separator';
 	readonly 'comparison_operator/comparators/comparison_operator_comparator': 'after';
 	readonly comparison_operator_comparator: 'after' | 'before' | 'operators';
 	readonly 'comparison_operator_comparator/operators': 'after' | 'before';
 	readonly complex_pattern: 'after' | 'before' | 'operator' | 'real';
 	readonly 'complex_pattern/operator': 'after' | 'before';
 	readonly 'complex_pattern/real': 'after' | 'before';
-	readonly comprehension_clauses: 'content' | 'content_separator_space';
-	readonly 'comprehension_clauses/content': 'for_in_clause' | 'if_clause';
+	readonly comprehension_clauses: 'content';
+	readonly 'comprehension_clauses/content': 'for_in_clause' | 'if_clause' | 'separator';
 	readonly 'comprehension_clauses/content/for_in_clause': 'after';
 	readonly 'comprehension_clauses/content/if_clause': 'after';
-	readonly concatenated_string: 'after' | 'before' | 'string' | 'string_separator_space';
-	readonly 'concatenated_string/string': 'string';
+	readonly concatenated_string: 'after' | 'before' | 'string';
+	readonly 'concatenated_string/string': 'separator' | 'string';
 	readonly 'concatenated_string/string/string': 'after';
 	readonly conditional_expression: 'after' | 'before' | 'else' | 'if';
 	readonly 'conditional_expression/else': 'after' | 'before';
 	readonly 'conditional_expression/if': 'after' | 'before';
 	readonly constrained_type: ':' | 'after' | 'before';
 	readonly 'constrained_type/:': 'after' | 'before';
-	readonly decorated_definition: 'after' | 'before' | 'decorator' | 'decorator_separator_space';
-	readonly 'decorated_definition/decorator': 'decorator';
+	readonly decorated_definition: 'after' | 'before' | 'decorator';
+	readonly 'decorated_definition/decorator': 'decorator' | 'separator';
 	readonly 'decorated_definition/decorator/decorator': 'after';
 	readonly decorator: '@' | 'after' | 'before';
 	readonly 'decorator/@': 'after' | 'before';
@@ -1441,6 +1443,7 @@ export interface AddressBranch {
 	readonly 'future_import_statement/from': 'after' | 'before';
 	readonly 'future_import_statement/future__': 'after' | 'before';
 	readonly 'future_import_statement/import': 'after' | 'before';
+	readonly gap: 'separator';
 	readonly generator_expression: '(' | ')' | 'after' | 'before';
 	readonly 'generator_expression/(': 'after' | 'before';
 	readonly 'generator_expression/)': 'after' | 'before';
@@ -1452,9 +1455,9 @@ export interface AddressBranch {
 	readonly 'global_statement/names/separator/,': 'after' | 'before';
 	readonly if_clause: 'after' | 'before' | 'if';
 	readonly 'if_clause/if': 'after' | 'before';
-	readonly if_statement: ':' | 'after' | 'alternative' | 'alternative_separator_space' | 'before' | 'if';
+	readonly if_statement: ':' | 'after' | 'alternative' | 'before' | 'if';
 	readonly 'if_statement/:': 'after' | 'before';
-	readonly 'if_statement/alternative': 'elif_clause' | 'else_clause';
+	readonly 'if_statement/alternative': 'elif_clause' | 'else_clause' | 'separator';
 	readonly 'if_statement/alternative/elif_clause': 'after';
 	readonly 'if_statement/alternative/else_clause': 'after';
 	readonly 'if_statement/if': 'after' | 'before';
@@ -1503,15 +1506,15 @@ export interface AddressBranch {
 	readonly 'list_splat/*': 'after' | 'before';
 	readonly list_splat_pattern: '*' | 'after' | 'before';
 	readonly 'list_splat_pattern/*': 'after' | 'before';
-	readonly match_block_block: 'after' | 'alternative' | 'alternative_separator_space' | 'before';
-	readonly 'match_block_block/alternative': 'case_clause';
+	readonly match_block_block: 'after' | 'alternative' | 'before';
+	readonly 'match_block_block/alternative': 'case_clause' | 'separator';
 	readonly 'match_block_block/alternative/case_clause': 'after';
 	readonly match_statement: ':' | 'after' | 'before' | 'match';
 	readonly 'match_statement/:': 'after' | 'before';
 	readonly 'match_statement/match': 'after' | 'before';
 	readonly member_type: '.' | 'after' | 'before';
 	readonly 'member_type/.': 'after' | 'before';
-	readonly module: 'statements' | 'statements_separator_space';
+	readonly module: 'statements';
 	readonly 'module/statements':
 		| 'class_definition'
 		| 'decorated_definition'
@@ -1519,6 +1522,7 @@ export interface AddressBranch {
 		| 'function_definition'
 		| 'if_statement'
 		| 'match_statement'
+		| 'separator'
 		| 'simple_statements'
 		| 'try_statement'
 		| 'while_statement'
@@ -1776,9 +1780,9 @@ export interface AddressBranch {
 	readonly 'subscripts/subscript/tuple': 'after';
 	readonly 'subscripts/subscript/unary_operator': 'after';
 	readonly suite_block: 'after' | 'before';
-	readonly try_statement: ':' | 'after' | 'before' | 'except_clauses' | 'except_clauses_separator_space' | 'try';
+	readonly try_statement: ':' | 'after' | 'before' | 'except_clauses' | 'try';
 	readonly 'try_statement/:': 'after' | 'before';
-	readonly 'try_statement/except_clauses': 'except_clause';
+	readonly 'try_statement/except_clauses': 'except_clause' | 'separator';
 	readonly 'try_statement/except_clauses/except_clause': 'after';
 	readonly 'try_statement/try': 'after' | 'before';
 	readonly tuple: '(' | ')' | 'after' | 'before';
@@ -1980,11 +1984,11 @@ export interface AddressLeaf {
 	readonly 'block/statements/function_definition/after': Spacing;
 	readonly 'block/statements/if_statement/after': Spacing;
 	readonly 'block/statements/match_statement/after': Spacing;
+	readonly 'block/statements/separator': Spacing;
 	readonly 'block/statements/simple_statements/after': Spacing;
 	readonly 'block/statements/try_statement/after': Spacing;
 	readonly 'block/statements/while_statement/after': Spacing;
 	readonly 'block/statements/with_statement/after': Spacing;
-	readonly 'block/statements_separator_space': Spacing;
 	readonly 'boolean_operator/after': Spacing;
 	readonly 'boolean_operator/before': Spacing;
 	readonly 'call/after': Spacing;
@@ -2064,7 +2068,7 @@ export interface AddressLeaf {
 	readonly 'comparison_operator/after': Spacing;
 	readonly 'comparison_operator/before': Spacing;
 	readonly 'comparison_operator/comparators/comparison_operator_comparator/after': Spacing;
-	readonly 'comparison_operator/comparators_separator_space': Spacing;
+	readonly 'comparison_operator/comparators/separator': Spacing;
 	readonly 'comparison_operator_comparator/after': Spacing;
 	readonly 'comparison_operator_comparator/before': Spacing;
 	readonly 'comparison_operator_comparator/operators/after': Spacing;
@@ -2077,11 +2081,11 @@ export interface AddressLeaf {
 	readonly 'complex_pattern/real/before': Spacing;
 	readonly 'comprehension_clauses/content/for_in_clause/after': Spacing;
 	readonly 'comprehension_clauses/content/if_clause/after': Spacing;
-	readonly 'comprehension_clauses/content_separator_space': Spacing;
+	readonly 'comprehension_clauses/content/separator': Spacing;
 	readonly 'concatenated_string/after': Spacing;
 	readonly 'concatenated_string/before': Spacing;
+	readonly 'concatenated_string/string/separator': Spacing;
 	readonly 'concatenated_string/string/string/after': Spacing;
-	readonly 'concatenated_string/string_separator_space': Spacing;
 	readonly 'conditional_expression/after': Spacing;
 	readonly 'conditional_expression/before': Spacing;
 	readonly 'conditional_expression/else/after': Spacing;
@@ -2095,7 +2099,7 @@ export interface AddressLeaf {
 	readonly 'decorated_definition/after': Spacing;
 	readonly 'decorated_definition/before': Spacing;
 	readonly 'decorated_definition/decorator/decorator/after': Spacing;
-	readonly 'decorated_definition/decorator_separator_space': Spacing;
+	readonly 'decorated_definition/decorator/separator': Spacing;
 	readonly 'decorator/@/after': Spacing;
 	readonly 'decorator/@/before': Spacing;
 	readonly 'decorator/after': Spacing;
@@ -2289,6 +2293,7 @@ export interface AddressLeaf {
 	readonly 'future_import_statement/future__/before': Spacing;
 	readonly 'future_import_statement/import/after': Spacing;
 	readonly 'future_import_statement/import/before': Spacing;
+	readonly 'gap/separator': Spacing;
 	readonly 'generator_expression/(/after': Spacing;
 	readonly 'generator_expression/(/before': Spacing;
 	readonly 'generator_expression/)/after': Spacing;
@@ -2312,7 +2317,7 @@ export interface AddressLeaf {
 	readonly 'if_statement/after': Spacing;
 	readonly 'if_statement/alternative/elif_clause/after': Spacing;
 	readonly 'if_statement/alternative/else_clause/after': Spacing;
-	readonly 'if_statement/alternative_separator_space': Spacing;
+	readonly 'if_statement/alternative/separator': Spacing;
 	readonly 'if_statement/before': Spacing;
 	readonly 'if_statement/if/after': Spacing;
 	readonly 'if_statement/if/before': Spacing;
@@ -2394,7 +2399,7 @@ export interface AddressLeaf {
 	readonly 'list_splat_pattern/before': Spacing;
 	readonly 'match_block_block/after': Spacing;
 	readonly 'match_block_block/alternative/case_clause/after': Spacing;
-	readonly 'match_block_block/alternative_separator_space': Spacing;
+	readonly 'match_block_block/alternative/separator': Spacing;
 	readonly 'match_block_block/before': Spacing;
 	readonly 'match_statement/:/after': Spacing;
 	readonly 'match_statement/:/before': Spacing;
@@ -2412,11 +2417,11 @@ export interface AddressLeaf {
 	readonly 'module/statements/function_definition/after': Spacing;
 	readonly 'module/statements/if_statement/after': Spacing;
 	readonly 'module/statements/match_statement/after': Spacing;
+	readonly 'module/statements/separator': Spacing;
 	readonly 'module/statements/simple_statements/after': Spacing;
 	readonly 'module/statements/try_statement/after': Spacing;
 	readonly 'module/statements/while_statement/after': Spacing;
 	readonly 'module/statements/with_statement/after': Spacing;
-	readonly 'module/statements_separator_space': Spacing;
 	readonly 'named_expression/:=/after': Spacing;
 	readonly 'named_expression/:=/before': Spacing;
 	readonly 'named_expression/after': Spacing;
@@ -2628,7 +2633,7 @@ export interface AddressLeaf {
 	readonly 'try_statement/after': Spacing;
 	readonly 'try_statement/before': Spacing;
 	readonly 'try_statement/except_clauses/except_clause/after': Spacing;
-	readonly 'try_statement/except_clauses_separator_space': Spacing;
+	readonly 'try_statement/except_clauses/separator': Spacing;
 	readonly 'try_statement/try/after': Spacing;
 	readonly 'try_statement/try/before': Spacing;
 	readonly 'tuple/(/after': Spacing;

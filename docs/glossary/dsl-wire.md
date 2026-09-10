@@ -19,6 +19,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *  accumulator in `synthetic-rules.ts`. */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::isRetiredAddressKey`
+
+Whether a top-level `patches:` key is a gap, seam or flank spelling rather
+than a rule. Those forms were retired when the `options:` block learned to
+address a site by its path, and a key that looks like one and names no rule
+would otherwise be taken for a structural patch on a rule that does not
+exist.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticRule`
 
 ```text
@@ -1633,41 +1641,23 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::renderDefaultsOf`
 
-```text
-/**
- * The render defaults a `patches:` block declares. A key that is a spacing
- * label takes exactly one `preference(label, arm)` naming that same label —
- * a spacing preference is named by its gap — and sets the label's default.
- * A key of the form `<kind>_start` / `<kind>_end` that is not a rule name
- * is an array flank default for that kind or supertype, with its label and
- * a whitespace or indentation arm. A key of the form `<token>_before` /
- * `<token>_after` that is not a rule name is a token seam default and, like
- * a spacing label, takes one `preference` naming that same key with any
- * whitespace arm (the site decides which it admits). Inside a kind's patch
- * map, a slot-named key (a bare identifier, never a path) holding a
- * `preference(label, arm)` sets that site's key for the kind or supertype;
- * a key that is a seam label is the site's address, and its preference may
- * declare a label of its own, spelled as a seam label, that becomes the
- * top-level key governing every site so labelled (`lbrace_after:
- * preference('block_body_before', 'indent')` on each brace body). A slot key with
- * `preference('delimiter', arm)` sets the list's delimiter default and its
- * arm is a `Delimiter` member; beside the slot's spacing preference it
- * takes the array form, one map per preference.
- */
-```
+The render defaults a grammar declares under `patches:`: a preference under a
+kind's slot, resolved to that kind's site and address.
 
-A `preference('separator', <kind>)` under a list slot is lifted with its
-arm unchecked: the wire has no kind catalog, and `collectSitePreferences`
-checks the arm against the list's literal separator kinds.
+A gap, seam or flank named at the top level is refused. Those spellings were
+how a default reached every site sharing a label before the `options:` block
+could address a site by its path; a key that parses as one and names no rule
+now says so rather than falling through to the patch machinery as a rule that
+does not exist.
+
+What remains here is the arm space the address surface does not carry — a
+list's delimiter and its choice of separator token.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::structuralPatchesOf`
 
-```text
-/** The `patches:` block with its render-default entries removed: spacing
- *  label, flank and seam keys dropped, slot-keyed preferences filtered out
- *  of each patch map, empty maps and kinds dropped. What remains composes
- *  onto rules. */
-```
+The patches with their site preferences removed: what is left is a structural
+edit to a rule, which the patch machinery applies. A kind carrying both keeps
+its structural half here and its preference half in `renderDefaultsOf`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::isSitePreferenceEntry`
 
@@ -1683,18 +1673,6 @@ checks the arm against the list's literal separator kinds.
 // A patch map of slot name → preference(label, arm): the site-default form
 // a kind or supertype key may take beside, or instead of, path patches.
 ```
-
-### `packages/codegen/src/dsl/wire/wire.ts::isFlankDefaultKey`
-
-```text
-/** A `patches:` key spelled `<kind>_start` / `<kind>_end` that names no
- *  rule of either spelling: an array flank default rather than a patch. */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::isSeamDefaultKey`
-
-A `patches:` key spelled `<token>_before` / `<token>_after` that names no
-rule of either spelling: a token seam default rather than a patch.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::knownRuleNames`
 

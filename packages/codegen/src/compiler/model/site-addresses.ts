@@ -1,4 +1,4 @@
-import { parseSeamLabel, parseSpacingLabel, parseFlankAddress } from '../../dsl/primitives/spacing.ts';
+import { EMPTY_SEPARATOR_TOKEN, parseSeamLabel, parseSpacingLabel, parseFlankAddress } from '../../dsl/primitives/spacing.ts';
 import {
 	comparePreferencePaths,
 	parsePreferencePath,
@@ -44,16 +44,15 @@ export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLi
 			: [kind, { kind: 'literal', text }, side];
 	}
 
-	const spacing = parseSpacingLabel(site.address);
-	if (spacing !== undefined) {
-		const declared = parseSpacingLabel(site.label);
-		const text = declared === undefined ? undefined : anonTokenText(kindEntries, declared.token);
+	const declared = parseSpacingLabel(site.label);
+	if (declared !== undefined) {
+		const text = declared.token === EMPTY_SEPARATOR_TOKEN ? undefined : anonTokenText(kindEntries, declared.token);
 		const separator: readonly PreferenceSegment[] = [
 			{ kind: 'fieldName', name: site.slot },
 			{ kind: 'name', name: 'separator' },
 			...(text === undefined ? [] : [{ kind: 'literal', text } as PreferenceSegment])
 		];
-		return spacing.side === undefined ? [kind, ...separator] : [kind, ...separator, { kind: 'name', name: spacing.side }];
+		return declared.side === undefined ? [kind, ...separator] : [kind, ...separator, { kind: 'name', name: declared.side }];
 	}
 
 	const flank = parseFlankAddress(site.address);
