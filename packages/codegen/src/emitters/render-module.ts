@@ -22,6 +22,7 @@ import {
 	isNodeRef,
 	isTerminalValue,
 	kindsOf,
+	concreteKindsOf,
 	aliasTargetToSourceMapOf,
 	acceptedIdPairsByKindOf,
 	storageKindOfRef,
@@ -35,9 +36,17 @@ import { renderModuleSrcDir } from './render-module-paths.ts';
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
+	RESERVED_SUPERTYPE_ENUM_NAMES,
+	RUST_KEYWORDS,
 	acceptedTransportKinds,
 	buildSupertypeTransportSet,
 	classifySlot,
+	classifySlotForEmit,
+	findSupertypeKindByTypeName,
+	isReservedSupertypeTransportNode,
+	rustTypeIdent,
+	slotElementKinds,
+	supertypeTransportKinds,
 	type SlotClass
 } from './transport-common.ts';
 import {
@@ -194,70 +203,9 @@ function transportRsHeader(lang: Grammar): string {
 
 type EmittedNonterminalView = 'scalar' | 'list' | 'field';
 
-export const RUST_KEYWORDS = new Set([
-	'as',
-	'break',
-	'const',
-	'continue',
-	'crate',
-	'else',
-	'enum',
-	'extern',
-	'false',
-	'fn',
-	'for',
-	'if',
-	'impl',
-	'in',
-	'let',
-	'loop',
-	'match',
-	'mod',
-	'move',
-	'mut',
-	'pub',
-	'ref',
-	'return',
-	'self',
-	'Self',
-	'static',
-	'struct',
-	'super',
-	'trait',
-	'true',
-	'type',
-	'unsafe',
-	'use',
-	'where',
-	'while',
-	'async',
-	'await',
-	'dyn',
-	'abstract',
-	'become',
-	'box',
-	'do',
-	'final',
-	'macro',
-	'override',
-	'priv',
-	'typeof',
-	'unsized',
-	'virtual',
-	'yield',
-	'try',
-	'union'
-]);
 
-const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
 const RESERVED_TRANSPORT_STRUCT_NAMES = new Set(['AnyTransport', 'ProtectedTransport', 'LiteralTransport']);
-
-function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
-	return (
-		node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
-	);
-}
 
 interface EffectiveSupertypeTransportSubtype {
 	readonly subKind: string;
@@ -272,62 +220,25 @@ interface EffectiveSupertypeTransportShape {
 
 function collectEffectiveSupertypeTransportShape(
 	supertypeNode: AssembledSupertype,
-	nodeMap: NodeMap,
-	seen: Set<string> = new Set(),
-	state: {
-		readonly variantKindByName: Map<string, string>;
-		readonly emittedKinds: Set<string>;
-		readonly suppressedKinds: Set<string>;
-		readonly subtypes: EffectiveSupertypeTransportSubtype[];
-		readonly parseNames: Map<string, string>;
-	} = {
-		variantKindByName: new Map(),
-		emittedKinds: new Set(),
-		suppressedKinds: new Set(),
-		subtypes: [],
-		parseNames: new Map()
-	}
+	nodeMap: NodeMap
 ): EffectiveSupertypeTransportShape {
-	const appendSubtype = (subKind: string, subNode: AssembledNode): void => {
+	const walk = supertypeTransportKinds(supertypeNode, nodeMap);
+	const variantKindByName = new Map<string, string>();
+	const subtypes: EffectiveSupertypeTransportSubtype[] = [];
+	for (const subKind of walk.kinds) {
+		const subNode = nodeMap.nodes.get(subKind);
+		if (subNode === undefined) continue;
 		const variantName = rustTypeIdent(subNode.typeName);
-		const existingKind = state.variantKindByName.get(variantName);
+		const existingKind = variantKindByName.get(variantName);
 		if (existingKind !== undefined && existingKind !== subKind) {
 			throw new Error(
 				`reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`
 			);
 		}
-		state.variantKindByName.set(variantName, subKind);
-		if (state.emittedKinds.has(subKind)) return;
-		state.emittedKinds.add(subKind);
-		state.subtypes.push({ subKind, subNode });
-	};
-
-	if (seen.has(supertypeNode.kind)) {
-		return {
-			subtypes: state.subtypes,
-			suppressedKinds: [...state.suppressedKinds],
-			parseNames: state.parseNames
-		};
+		variantKindByName.set(variantName, subKind);
+		subtypes.push({ subKind, subNode });
 	}
-	seen.add(supertypeNode.kind);
-	for (const [storage, parse] of Object.entries(supertypeNode.subtypeParseNames ?? {})) {
-		if (!state.parseNames.has(storage)) state.parseNames.set(storage, parse);
-	}
-	for (const subKind of supertypeNode.subtypeNames) {
-		const subNode = nodeMap.nodes.get(subKind);
-		if (subNode === undefined) continue;
-		if (isReservedSupertypeTransportNode(subNode)) {
-			state.suppressedKinds.add(subKind);
-			collectEffectiveSupertypeTransportShape(subNode, nodeMap, seen, state);
-			continue;
-		}
-		appendSubtype(subKind, subNode);
-	}
-	return {
-		subtypes: state.subtypes,
-		suppressedKinds: [...state.suppressedKinds],
-		parseNames: state.parseNames
-	};
+	return { subtypes, suppressedKinds: walk.suppressed, parseNames: walk.parseNames };
 }
 
 export function rustFieldIdent(id: string): string {
@@ -600,25 +511,6 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	return { separators };
 }
 
-function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotClass {
-	const supertypeMap = buildSupertypeTransportSet(nodeMap);
-	const cls = classifySlot(kinds, supertypeMap);
-	if (cls.tag === 'concrete') {
-		const node = nodeMap.nodes.get(cls.kind);
-		if (node === undefined) return { tag: 'heterogeneous' };
-		if (node instanceof AssembledSupertype) {
-			const enumName = `${rustTypeIdent(node.typeName)}Transport`;
-			if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
-			return { tag: 'supertype', supertypeName: node.typeName };
-		}
-		return { tag: 'concrete', kind: cls.kind, typeName: node.typeName };
-	}
-	if (cls.tag === 'supertype') {
-		const enumName = `${rustTypeIdent(cls.supertypeName)}Transport`;
-		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
-	}
-	return cls;
-}
 
 function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 	switch (cls.tag) {
@@ -1161,7 +1053,7 @@ function renderTransportSupport(
 		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries, plan)
 	);
 
 	return pruneUnreferencedBridges(
@@ -1706,21 +1598,6 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	return lines;
 }
 
-function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set<string> = new Set()): string[] {
-	if (seen.has(kind)) return [];
-	seen.add(kind);
-	const node = nodeMap.nodes.get(kind);
-	if (node === undefined) return [];
-	if (!(node instanceof AssembledSupertype)) return [kind];
-	const concreteKinds = new Set<string>();
-	for (const subtype of node.subtypeNames) {
-		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
-			concreteKinds.add(concreteKind);
-		}
-	}
-	return [...concreteKinds];
-}
-
 function collectConcreteTransportKindIds(kind: string, nodeMap: NodeMap, seen: Set<string> = new Set()): number[] {
 	if (seen.has(kind)) return [];
 	seen.add(kind);
@@ -1779,7 +1656,7 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
 		const nameKeyedIds = [
 			...new Set<string>([
-				...collectConcreteTransportKinds(kind, nodeMap),
+				...concreteKindsOf(kind, nodeMap),
 				...acceptedTransportKinds(kind, nodeMap, parseAliases)
 			])
 		]
@@ -1794,7 +1671,7 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const storageId = findKindEntry(kindEntries, kind)?.id;
 		if (storageId !== undefined && !acceptedIds.includes(storageId)) acceptedIds.push(storageId);
 	}
-	for (const concreteKind of collectConcreteTransportKinds(kind, nodeMap)) {
+	for (const concreteKind of concreteKindsOf(kind, nodeMap)) {
 		const concrete = nodeMap.nodes.get(concreteKind);
 		if (concrete instanceof AssembledEnum) acceptedIds.push(...enumMemberAcceptedIds(concrete));
 	}
@@ -1843,7 +1720,7 @@ function expandConcreteTransportKinds(
 			return;
 		}
 		if (!(node instanceof AssembledSupertype)) return;
-		for (const concreteKind of collectConcreteTransportKinds(kind, nodeMap)) {
+		for (const concreteKind of concreteKindsOf(kind, nodeMap)) {
 			includeKind(concreteKind);
 		}
 	};
@@ -2054,7 +1931,8 @@ function emitPerSlotChildEnum(
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	nodeMap: NodeMap,
 	literalVariantByKey: ReadonlyMap<string, string>,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries?: readonly KindEnumEntry[],
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
@@ -2082,9 +1960,17 @@ function emitPerSlotChildEnum(
 	}
 	lines.push(`}`);
 	lines.push(``);
+	const seats = seatedSitesOf(plan, entry.ownerKind, entry.fieldName);
 	lines.push(
 		...fillOptionsEnumImpl(enumName, [
-			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
+			...validKinds.map(({ kind, node }) => {
+				const seat = seats.get(publicKindName(kind));
+				return {
+					variant: rustTypeIdent(node.typeName),
+					payload: true,
+					...(seat === undefined ? {} : { seat: { field: seat.seat!.field, constName: seat.constName } })
+				};
+			}),
 			...literalVariants.map((variant) => ({ variant, payload: false }))
 		])
 	);
@@ -2529,17 +2415,26 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 
 const OPTIONS_MOD = '::sittir_core::options';
 
-function fillOptionsEnumImpl(
-	enumName: string,
-	arms: readonly { readonly variant: string; readonly payload: boolean }[]
-): string[] {
+interface FillArm {
+	readonly variant: string;
+	readonly payload: boolean;
+	readonly seat?: { readonly field: string; readonly constName: string };
+}
+
+function fillOptionsEnumImpl(enumName: string, arms: readonly FillArm[]): string[] {
+	const arm = (a: FillArm): string => {
+		if (!a.payload) return `            ${enumName}::${a.variant} => {}`;
+		if (a.seat === undefined) return `            ${enumName}::${a.variant}(t) => t.fill_options(table),`;
+		return (
+			`            ${enumName}::${a.variant}(t) => { t.${rustFieldIdent(a.seat.field)}` +
+			`.get_or_insert(table.spacing[options::${a.seat.constName}]); t.fill_options(table) },`
+		);
+	};
 	return [
 		`impl ${OPTIONS_MOD}::FillOptions for ${enumName} {`,
 		`    fn fill_options(&mut self, ${arms.some((a) => a.payload) ? 'table' : '_table'}: &${OPTIONS_MOD}::ResolvedOptions) {`,
 		`        match self {`,
-		...arms.map((a) =>
-			a.payload ? `            ${enumName}::${a.variant}(t) => t.fill_options(table),` : `            ${enumName}::${a.variant} => {}`
-		),
+		...arms.map(arm),
 		`        }`,
 		`    }`,
 		`}`,
@@ -2558,7 +2453,17 @@ function noopFillOptionsImpl(typeName: string): string[] {
 
 function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
 	const kind = publicKindName(node.kind);
-	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined);
+	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined && site.seat === undefined);
+}
+
+function seatedSitesOf(plan: RenderPlan, parentKind: string, slot: string): ReadonlyMap<string, SpacingSite> {
+	const kind = publicKindName(parentKind);
+	const out = new Map<string, SpacingSite>();
+	for (const site of plan.spacingSites) {
+		if (site.seat === undefined || site.kind !== kind || site.slot !== slot) continue;
+		out.set(site.seat.kind, site);
+	}
+	return out;
 }
 
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
@@ -2588,18 +2493,57 @@ function spacingFieldExprs(
 	};
 }
 
+function sharedEnumSeatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
+	const lines: string[] = [];
+	const slotModel = renderSlotModelOf(node);
+	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
+		if (field.name === undefined || !isMultiple(field)) continue;
+		const seats = seatedSitesOf(plan, node.kind, field.name);
+		if (seats.size === 0) continue;
+		const cls = classifySlotForEmit(kindsOf(field), nodeMap);
+		if (cls.tag !== 'supertype') continue;
+		const supertypeNode = nodeMap.nodes.get(findSupertypeKindByTypeName(cls.supertypeName, nodeMap) ?? '');
+		if (!(supertypeNode instanceof AssembledSupertype)) continue;
+		const enumName = `${rustTypeIdent(cls.supertypeName)}Transport`;
+		const arms = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap)
+			.subtypes.flatMap(({ subKind, subNode }) => {
+				const seat = seats.get(publicKindName(subKind));
+				if (seat === undefined) return [];
+				return [
+					`                    ${enumName}::${rustTypeIdent(subNode.typeName)}(t) => { t.${rustFieldIdent(seat.seat!.field)}` +
+						`.get_or_insert(table.spacing[options::${seat.constName}]); }`
+				];
+			});
+		if (arms.length === 0) continue;
+		const flatten = `${isRequired(field) ? '' : '.flatten()'}${hasOptionalElements(field) ? '.flatten()' : ''}`;
+		lines.push(
+			`        for item in self.${rustFieldIdent(field.name)}.iter_mut()${flatten} {`,
+			`            if let ::sittir_core::SlotValue::Node(seated) = item {`,
+			`                match seated {`,
+			...arms,
+			`                    _ => {}`,
+			`                }`,
+			`            }`,
+			`        }`
+		);
+	}
+	return lines;
+}
+
 function fillOptionsStructImpl(
 	structName: string,
 	node: AssembledNode,
 	fillFields: readonly string[],
 	plan: RenderPlan,
-	isCompound: boolean
+	isCompound: boolean,
+	nodeMap: NodeMap
 ): string[] {
 	const body: string[] = [];
 	if (isCompound) {
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(table.spacing[options::${site.constName}]);`);
 		}
+		body.push(...sharedEnumSeatLoops(plan, node, nodeMap));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
 			body.push(`        self.delimiter.get_or_insert(table.delimiter[options::${delim.constName}]);`);
@@ -2718,7 +2662,7 @@ function renderTransportDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...fillOptionsStructImpl(structName, node, fillFields, plan, isCompoundNode));
+	lines.push(...fillOptionsStructImpl(structName, node, fillFields, plan, isCompoundNode, nodeMap));
 	if (isLeafNode) {
 		const leafNamed = !(node instanceof AssembledToken);
 		lines.push(
@@ -3045,20 +2989,6 @@ function rustTransportSlotType(
 	}
 }
 
-let supertypeKindByTypeNameCache: WeakMap<NodeMap, Map<string, string>> = new WeakMap();
-function findSupertypeKindByTypeName(supertypeName: string, nodeMap: NodeMap): string | undefined {
-	let map = supertypeKindByTypeNameCache.get(nodeMap);
-	if (map === undefined) {
-		map = new Map<string, string>();
-		for (const [kind, node] of nodeMap.nodes) {
-			if (node instanceof AssembledSupertype) {
-				map.set(node.typeName, kind);
-			}
-		}
-		supertypeKindByTypeNameCache.set(nodeMap, map);
-	}
-	return map.get(supertypeName);
-}
 
 function renderBoxedEnumNapiImpls(enumName: string): string[] {
 	return [
@@ -3135,12 +3065,6 @@ function rustLiteralTransportVariantName(literal: TransportLiteral, index: numbe
 	return rustTypeIdent(`Literal${index}_${suffix}`);
 }
 
-function rustTypeIdent(name: string): string {
-	const replaced = name.replace(/[^A-Za-z0-9_]/g, '_');
-	const withStart = /^[A-Za-z_]/.test(replaced) ? replaced : `Transport${replaced}`;
-	const ident = withStart.length > 0 ? withStart : 'Transport';
-	return RUST_KEYWORDS.has(ident) ? `${ident}_` : ident;
-}
 
 const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
 	['+', 'Plus'],
@@ -3355,7 +3279,7 @@ function armSeamPairsOf(plan: RenderPlan, node: AssembledEnum): Map<string, { be
 	const kind = publicKindName(node.kind);
 	const bySlot = new Map<string, { before?: string; after?: string }>();
 	for (const site of plan.spacingSites) {
-		if (site.kind !== kind || site.side !== 'seam') continue;
+		if (site.kind !== kind || site.side !== 'seam' || site.seat !== undefined) continue;
 		const seam = parseSeamLabel(site.address);
 		if (seam === undefined) continue;
 		const entry = bySlot.get(site.slot) ?? {};

@@ -13,6 +13,7 @@ export interface SiteAddressInput {
 	readonly slot: string;
 	readonly address: string;
 	readonly label: string;
+	readonly path?: readonly PreferenceSegment[];
 }
 
 export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
@@ -29,6 +30,7 @@ export function addressSites<T extends SiteAddressInput>(
 }
 
 export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] {
+	if (site.path !== undefined) return site.path;
 	const own = publicKindName(site.kind);
 	const kind: PreferenceSegment = { kind: 'kind-match', name: own };
 

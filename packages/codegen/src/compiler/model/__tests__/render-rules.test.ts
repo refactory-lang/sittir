@@ -5,6 +5,7 @@ import { flanksOf, isSeamChoice, resolveRenderRules, seamPartOf, seamRenderRules
 import { AssembledBranch, AssembledSupertype } from '../node-map.ts';
 import type { RenderDefaults } from '../../../dsl/primitives/spacing.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
+import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -26,7 +27,7 @@ const kindEntries = [
 function nodeMapOf(
 	rules: Record<string, RenderRule>,
 	slots: Record<string, string>,
-	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]> } = {}
+	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]> } = {}
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
 	for (const kind of Object.keys(rules)) nodes.set(kind, { kind });
@@ -41,7 +42,12 @@ function nodeMapOf(
 			)
 		);
 	}
-	const slotByRuleId = new Map(Object.entries(slots).map(([id, name]) => [id, { name }]));
+	const slotByRuleId = new Map(
+		Object.entries(slots).map(([id, name]) => [
+			id,
+			{ name, values: (opts.slotKinds?.[id] ?? []).map((kind) => ({ node: { kind }, multiplicity: 'array' })) }
+		])
+	);
 	return {
 		name: 'test',
 		nodes,
@@ -425,6 +431,44 @@ describe('seamRenderRules', () => {
 		expect(at({ labels: {}, sites: { call: { rparen_before: { arm: 'tight' } } } })).toThrow(/call\.rparen_before names no site/);
 		expect(at({ labels: { comma_separator_space_before: 'wide' }, sites: {} })).toThrow(/is 'wide', not one of tight, space, newline/);
 		expect(at({ labels: { lparen_before: 'indent' }, sites: {} })).toThrow(/is 'indent', not one of tight, space, newline/);
+	});
+});
+
+describe('a seated child edge', () => {
+	const seat = (defaults?: RenderDefaults) => {
+		const rules = {
+			file: sym('stmt', { id: 'r9', multiplicity: 'array', fieldName: 'statements' }),
+			solo: sym('attr', { id: 'r8', multiplicity: 'array', fieldName: 'only' }),
+			attr: seq(str('#'), sym('a')),
+			item: seq(str('fn'), sym('b'))
+		};
+		const nodeMap = nodeMapOf(rules, { r9: 'statements', r8: 'only' }, { slotKinds: { r9: ['attr', 'item'], r8: ['attr'] } });
+		for (const kind of ['file', 'solo', 'attr', 'item'] as const) {
+			nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		}
+		const config = { nodeMap, kindEntries, defaults };
+		return spacingSitesOf(seamRenderRules(spaceRenderRules(config), config), nodeMap);
+	};
+
+	it('seats one per (slot, child kind) where a slot admits several', () => {
+		const paths = seat()
+			.filter((s) => s.seat !== undefined)
+			.map((s) => formatPreferencePath(s.path!));
+		expect(paths).toContain('(file)/statements:/(attr)/after');
+		expect(paths).toContain('(file)/statements:/(item)/after');
+	});
+
+	it('seats none where a slot admits one kind', () => {
+		expect(seat().filter((s) => s.seat !== undefined && s.slot === 'only')).toEqual([]);
+	});
+
+	it('takes the arm the child edge already resolves to, so minting moves nothing', () => {
+		const sites = seat({ labels: { attr_after: 'newline' }, sites: {} });
+		const global = sites.find((s) => s.kind === 'attr' && s.address === 'attr_after')!;
+		const seated = sites.find((s) => s.kind === 'file' && s.seat?.kind === 'attr')!;
+		expect(global.defaultArm).toBe('newline');
+		expect(seated.defaultArm).toBe('newline');
+		expect(seated.seat?.field).toBe('attr_after');
 	});
 });
 

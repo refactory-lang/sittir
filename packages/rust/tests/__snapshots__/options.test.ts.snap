@@ -605,7 +605,33 @@ export interface KindWhitespace {
 	readonly await_expression: 'await_after' | 'await_before' | 'dot_after' | 'dot_before';
 	readonly base_field_initializer: 'dot_dot_after' | 'dot_dot_before';
 	readonly binary_expression: 'operator_after' | 'operator_before';
-	readonly block: 'colon_after' | 'colon_before' | 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
+	readonly block:
+		| 'colon_after'
+		| 'colon_before'
+		| 'lbrace_after'
+		| 'lbrace_before'
+		| 'rbrace_after'
+		| 'rbrace_before'
+		| 'statements_associated_type_after'
+		| 'statements_attribute_item_after'
+		| 'statements_const_item_after'
+		| 'statements_enum_item_after'
+		| 'statements_extern_crate_declaration_after'
+		| 'statements_foreign_mod_item_after'
+		| 'statements_function_item_after'
+		| 'statements_function_signature_item_after'
+		| 'statements_impl_item_after'
+		| 'statements_inner_attribute_item_after'
+		| 'statements_let_declaration_after'
+		| 'statements_macro_definition_after'
+		| 'statements_macro_invocation_after'
+		| 'statements_mod_item_after'
+		| 'statements_static_item_after'
+		| 'statements_struct_item_after'
+		| 'statements_trait_item_after'
+		| 'statements_type_item_after'
+		| 'statements_union_item_after'
+		| 'statements_use_declaration_after';
 	readonly block_comment: 'slash_star_after' | 'slash_star_before' | 'star_slash_after' | 'star_slash_before';
 	readonly bounded_type: 'plus_after' | 'plus_before';
 	readonly bracketed_type: 'gt_after' | 'gt_before' | 'lt_after' | 'lt_before';
@@ -613,7 +639,25 @@ export interface KindWhitespace {
 	readonly captured_pattern: 'at_after' | 'at_before';
 	readonly char_literal: 'squote_after' | 'squote_before';
 	readonly closure_expression_block: 'dash_gt_after' | 'dash_gt_before';
-	readonly closure_parameters: 'pipe_after' | 'pipe_before';
+	readonly closure_parameters:
+		| 'parameters_captured_pattern_after'
+		| 'parameters_const_block_after'
+		| 'parameters_generic_pattern_after'
+		| 'parameters_macro_invocation_after'
+		| 'parameters_mut_pattern_after'
+		| 'parameters_negative_literal_after'
+		| 'parameters_parameter_after'
+		| 'parameters_raw_string_literal_after'
+		| 'parameters_ref_pattern_after'
+		| 'parameters_reference_pattern_after'
+		| 'parameters_scoped_identifier_after'
+		| 'parameters_slice_pattern_after'
+		| 'parameters_string_literal_after'
+		| 'parameters_struct_pattern_after'
+		| 'parameters_tuple_pattern_after'
+		| 'parameters_tuple_struct_pattern_after'
+		| 'pipe_after'
+		| 'pipe_before';
 	readonly compound_assignment_expr_operator:
 		| 'amp_eq_after'
 		| 'amp_eq_before'
@@ -647,10 +691,52 @@ export interface KindWhitespace {
 		| 'semi_before';
 	readonly const_parameter: 'colon_after' | 'colon_before' | 'const_after' | 'const_before' | 'eq_after' | 'eq_before';
 	readonly continue_expression: 'continue_after' | 'continue_before';
-	readonly declaration_list: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
-	readonly delim_token_tree_brace: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
-	readonly delim_token_tree_bracket: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
-	readonly delim_token_tree_paren: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly declaration_list:
+		| 'declarations_associated_type_after'
+		| 'declarations_attribute_item_after'
+		| 'declarations_const_item_after'
+		| 'declarations_enum_item_after'
+		| 'declarations_extern_crate_declaration_after'
+		| 'declarations_foreign_mod_item_after'
+		| 'declarations_function_item_after'
+		| 'declarations_function_signature_item_after'
+		| 'declarations_impl_item_after'
+		| 'declarations_inner_attribute_item_after'
+		| 'declarations_let_declaration_after'
+		| 'declarations_macro_definition_after'
+		| 'declarations_macro_invocation_after'
+		| 'declarations_mod_item_after'
+		| 'declarations_static_item_after'
+		| 'declarations_struct_item_after'
+		| 'declarations_trait_item_after'
+		| 'declarations_type_item_after'
+		| 'declarations_union_item_after'
+		| 'declarations_use_declaration_after'
+		| 'lbrace_after'
+		| 'lbrace_before'
+		| 'rbrace_after'
+		| 'rbrace_before';
+	readonly delim_token_tree_brace:
+		| 'delim_tokens_raw_string_literal_after'
+		| 'delim_tokens_string_literal_after'
+		| 'lbrace_after'
+		| 'lbrace_before'
+		| 'rbrace_after'
+		| 'rbrace_before';
+	readonly delim_token_tree_bracket:
+		| 'delim_tokens_raw_string_literal_after'
+		| 'delim_tokens_string_literal_after'
+		| 'lbrack_after'
+		| 'lbrack_before'
+		| 'rbrack_after'
+		| 'rbrack_before';
+	readonly delim_token_tree_paren:
+		| 'delim_tokens_raw_string_literal_after'
+		| 'delim_tokens_string_literal_after'
+		| 'lparen_after'
+		| 'lparen_before'
+		| 'rparen_after'
+		| 'rparen_before';
 	readonly dynamic_type: 'dyn_after' | 'dyn_before';
 	readonly else_clause: 'else_after' | 'else_before';
 	readonly enum_item: 'enum_after' | 'enum_before';
@@ -670,10 +756,15 @@ export interface KindWhitespace {
 	readonly field_expression: 'dot_after' | 'dot_before';
 	readonly field_initializer: 'colon_after' | 'colon_before';
 	readonly field_initializer_list: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
+	readonly field_initializer_list_elements:
+		| 'element_base_field_initializer_after'
+		| 'element_field_initializer_after'
+		| 'element_shorthand_field_initializer_after';
 	readonly field_pattern_named: 'colon_after' | 'colon_before';
 	readonly for_expression: 'colon_after' | 'colon_before' | 'for_after' | 'for_before' | 'in_after' | 'in_before';
 	readonly for_lifetimes: 'for_after' | 'for_before' | 'gt_after' | 'gt_before' | 'lt_after' | 'lt_before';
 	readonly function_item: 'dash_gt_after' | 'dash_gt_before' | 'fn_after' | 'fn_before';
+	readonly function_modifiers: 'modifier_extern_modifier_after';
 	readonly function_signature_item:
 		| 'dash_gt_after'
 		| 'dash_gt_before'
@@ -703,8 +794,52 @@ export interface KindWhitespace {
 		| 'rbrack_after'
 		| 'rbrack_before';
 	readonly label: 'squote_after' | 'squote_before';
-	readonly last_match_arm: 'comma_after' | 'comma_before' | 'eq_gt_after' | 'eq_gt_before';
-	readonly let_chain: 'amp_amp_after' | 'amp_amp_before';
+	readonly last_match_arm:
+		| 'attributes_attribute_item_after'
+		| 'attributes_inner_attribute_item_after'
+		| 'comma_after'
+		| 'comma_before'
+		| 'eq_gt_after'
+		| 'eq_gt_before';
+	readonly let_chain:
+		| 'amp_amp_after'
+		| 'amp_amp_before'
+		| 'right_assignment_expression_after'
+		| 'right_async_block_after'
+		| 'right_await_expression_after'
+		| 'right_binary_expression_after'
+		| 'right_block_after'
+		| 'right_break_expression_after'
+		| 'right_call_expression_after'
+		| 'right_closure_expression_after'
+		| 'right_compound_assignment_expr_after'
+		| 'right_const_block_after'
+		| 'right_continue_expression_after'
+		| 'right_field_expression_after'
+		| 'right_for_expression_after'
+		| 'right_gen_block_after'
+		| 'right_generic_function_after'
+		| 'right_if_expression_after'
+		| 'right_index_expression_after'
+		| 'right_let_condition_after'
+		| 'right_loop_expression_after'
+		| 'right_macro_invocation_after'
+		| 'right_match_expression_after'
+		| 'right_parenthesized_expression_after'
+		| 'right_raw_string_literal_after'
+		| 'right_reference_expression_after'
+		| 'right_return_expression_after'
+		| 'right_scoped_identifier_after'
+		| 'right_string_literal_after'
+		| 'right_struct_expression_after'
+		| 'right_try_block_after'
+		| 'right_try_expression_after'
+		| 'right_tuple_expression_after'
+		| 'right_type_cast_expression_after'
+		| 'right_unary_expression_after'
+		| 'right_unsafe_block_after'
+		| 'right_while_expression_after'
+		| 'right_yield_expression_after';
 	readonly let_condition: 'eq_after' | 'eq_before' | 'let_after' | 'let_before';
 	readonly let_declaration:
 		| 'colon_after'
@@ -738,7 +873,11 @@ export interface KindWhitespace {
 		| 'semi_before';
 	readonly macro_invocation: 'bang_after' | 'bang_before';
 	readonly macro_rule: 'eq_gt_after' | 'eq_gt_before';
-	readonly match_arm: 'eq_gt_after' | 'eq_gt_before';
+	readonly match_arm:
+		| 'attributes_attribute_item_after'
+		| 'attributes_inner_attribute_item_after'
+		| 'eq_gt_after'
+		| 'eq_gt_before';
 	readonly match_arm_with_comma: 'comma_after' | 'comma_before';
 	readonly match_block: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly match_expression: 'match_after' | 'match_before';
@@ -751,6 +890,22 @@ export interface KindWhitespace {
 	readonly parameter: 'colon_after' | 'colon_before';
 	readonly parameters: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly parenthesized_expression: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly patterns:
+		| 'pattern_captured_pattern_after'
+		| 'pattern_const_block_after'
+		| 'pattern_generic_pattern_after'
+		| 'pattern_macro_invocation_after'
+		| 'pattern_mut_pattern_after'
+		| 'pattern_negative_literal_after'
+		| 'pattern_raw_string_literal_after'
+		| 'pattern_ref_pattern_after'
+		| 'pattern_reference_pattern_after'
+		| 'pattern_scoped_identifier_after'
+		| 'pattern_slice_pattern_after'
+		| 'pattern_string_literal_after'
+		| 'pattern_struct_pattern_after'
+		| 'pattern_tuple_pattern_after'
+		| 'pattern_tuple_struct_pattern_after';
 	readonly pointer_type: 'star_after' | 'star_before';
 	readonly qualified_type: 'as_after' | 'as_before';
 	readonly range_expression_binary: 'operator_after' | 'operator_before';
@@ -770,6 +925,27 @@ export interface KindWhitespace {
 	readonly scoped_use_list: 'colon_colon_after' | 'colon_colon_before';
 	readonly self_parameter: 'reference_after' | 'reference_before';
 	readonly slice_pattern: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
+	readonly source_file:
+		| 'statements_associated_type_after'
+		| 'statements_attribute_item_after'
+		| 'statements_const_item_after'
+		| 'statements_enum_item_after'
+		| 'statements_extern_crate_declaration_after'
+		| 'statements_foreign_mod_item_after'
+		| 'statements_function_item_after'
+		| 'statements_function_signature_item_after'
+		| 'statements_impl_item_after'
+		| 'statements_inner_attribute_item_after'
+		| 'statements_let_declaration_after'
+		| 'statements_macro_definition_after'
+		| 'statements_macro_invocation_after'
+		| 'statements_mod_item_after'
+		| 'statements_static_item_after'
+		| 'statements_struct_item_after'
+		| 'statements_trait_item_after'
+		| 'statements_type_item_after'
+		| 'statements_union_item_after'
+		| 'statements_use_declaration_after';
 	readonly static_item:
 		| 'colon_after'
 		| 'colon_before'
@@ -783,6 +959,7 @@ export interface KindWhitespace {
 	readonly struct_item: 'struct_after' | 'struct_before';
 	readonly struct_item_tuple: 'semi_after' | 'semi_before';
 	readonly struct_pattern: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
+	readonly struct_pattern_elements: 'element_field_pattern_after';
 	readonly token_binding_pattern: 'colon_after' | 'colon_before' | 'type_after' | 'type_before';
 	readonly token_keywords: 'squote_after' | 'squote_before';
 	readonly token_repetition:
@@ -793,7 +970,10 @@ export interface KindWhitespace {
 		| 'operator_after'
 		| 'operator_before'
 		| 'rparen_after'
-		| 'rparen_before';
+		| 'rparen_before'
+		| 'tokens_raw_string_literal_after'
+		| 'tokens_string_literal_after'
+		| 'tokens_token_repetition_after';
 	readonly token_repetition_pattern:
 		| 'dollar_after'
 		| 'dollar_before'
@@ -802,13 +982,62 @@ export interface KindWhitespace {
 		| 'operator_after'
 		| 'operator_before'
 		| 'rparen_after'
-		| 'rparen_before';
-	readonly token_tree_brace: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
-	readonly token_tree_bracket: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
-	readonly token_tree_paren: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
-	readonly token_tree_pattern_brace: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
-	readonly token_tree_pattern_bracket: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
-	readonly token_tree_pattern_paren: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+		| 'rparen_before'
+		| 'token_patterns_raw_string_literal_after'
+		| 'token_patterns_string_literal_after'
+		| 'token_patterns_token_binding_pattern_after'
+		| 'token_patterns_token_repetition_pattern_after';
+	readonly token_tree_brace:
+		| 'lbrace_after'
+		| 'lbrace_before'
+		| 'rbrace_after'
+		| 'rbrace_before'
+		| 'tokens_raw_string_literal_after'
+		| 'tokens_string_literal_after'
+		| 'tokens_token_repetition_after';
+	readonly token_tree_bracket:
+		| 'lbrack_after'
+		| 'lbrack_before'
+		| 'rbrack_after'
+		| 'rbrack_before'
+		| 'tokens_raw_string_literal_after'
+		| 'tokens_string_literal_after'
+		| 'tokens_token_repetition_after';
+	readonly token_tree_paren:
+		| 'lparen_after'
+		| 'lparen_before'
+		| 'rparen_after'
+		| 'rparen_before'
+		| 'tokens_raw_string_literal_after'
+		| 'tokens_string_literal_after'
+		| 'tokens_token_repetition_after';
+	readonly token_tree_pattern_brace:
+		| 'lbrace_after'
+		| 'lbrace_before'
+		| 'rbrace_after'
+		| 'rbrace_before'
+		| 'token_patterns_raw_string_literal_after'
+		| 'token_patterns_string_literal_after'
+		| 'token_patterns_token_binding_pattern_after'
+		| 'token_patterns_token_repetition_pattern_after';
+	readonly token_tree_pattern_bracket:
+		| 'lbrack_after'
+		| 'lbrack_before'
+		| 'rbrack_after'
+		| 'rbrack_before'
+		| 'token_patterns_raw_string_literal_after'
+		| 'token_patterns_string_literal_after'
+		| 'token_patterns_token_binding_pattern_after'
+		| 'token_patterns_token_repetition_pattern_after';
+	readonly token_tree_pattern_paren:
+		| 'lparen_after'
+		| 'lparen_before'
+		| 'rparen_after'
+		| 'rparen_before'
+		| 'token_patterns_raw_string_literal_after'
+		| 'token_patterns_string_literal_after'
+		| 'token_patterns_token_binding_pattern_after'
+		| 'token_patterns_token_repetition_pattern_after';
 	readonly token_tree_punctuation:
 		| 'amp_after'
 		| 'amp_amp_after'
@@ -898,14 +1127,96 @@ export interface KindWhitespace {
 		| 'star_before'
 		| 'star_eq_after'
 		| 'star_eq_before';
-	readonly trait_bounds: 'colon_after' | 'colon_before';
+	readonly trait_bounds:
+		| 'bounds_abstract_type_after'
+		| 'bounds_array_type_after'
+		| 'bounds_bounded_type_after'
+		| 'bounds_dynamic_type_after'
+		| 'bounds_function_type_after'
+		| 'bounds_generic_type_after'
+		| 'bounds_higher_ranked_trait_bound_after'
+		| 'bounds_lifetime_after'
+		| 'bounds_macro_invocation_after'
+		| 'bounds_pointer_type_after'
+		| 'bounds_reference_type_after'
+		| 'bounds_removed_trait_bound_after'
+		| 'bounds_scoped_type_identifier_after'
+		| 'bounds_tuple_type_after'
+		| 'colon_after'
+		| 'colon_before';
 	readonly trait_item: 'trait_after' | 'trait_before';
 	readonly try_block: 'try_after' | 'try_before';
 	readonly try_expression: 'qmark_after' | 'qmark_before';
 	readonly tuple_expression: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly tuple_expression_elements:
+		| 'element_assignment_expression_after'
+		| 'element_async_block_after'
+		| 'element_await_expression_after'
+		| 'element_binary_expression_after'
+		| 'element_block_after'
+		| 'element_break_expression_after'
+		| 'element_call_expression_after'
+		| 'element_closure_expression_after'
+		| 'element_compound_assignment_expr_after'
+		| 'element_const_block_after'
+		| 'element_continue_expression_after'
+		| 'element_field_expression_after'
+		| 'element_for_expression_after'
+		| 'element_gen_block_after'
+		| 'element_generic_function_after'
+		| 'element_if_expression_after'
+		| 'element_index_expression_after'
+		| 'element_loop_expression_after'
+		| 'element_macro_invocation_after'
+		| 'element_match_expression_after'
+		| 'element_parenthesized_expression_after'
+		| 'element_raw_string_literal_after'
+		| 'element_reference_expression_after'
+		| 'element_return_expression_after'
+		| 'element_scoped_identifier_after'
+		| 'element_string_literal_after'
+		| 'element_struct_expression_after'
+		| 'element_try_block_after'
+		| 'element_try_expression_after'
+		| 'element_tuple_expression_after'
+		| 'element_type_cast_expression_after'
+		| 'element_unary_expression_after'
+		| 'element_unsafe_block_after'
+		| 'element_while_expression_after'
+		| 'element_yield_expression_after';
 	readonly tuple_pattern: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly tuple_pattern_elements:
+		| 'element_captured_pattern_after'
+		| 'element_closure_expression_after'
+		| 'element_const_block_after'
+		| 'element_generic_pattern_after'
+		| 'element_macro_invocation_after'
+		| 'element_mut_pattern_after'
+		| 'element_negative_literal_after'
+		| 'element_raw_string_literal_after'
+		| 'element_ref_pattern_after'
+		| 'element_reference_pattern_after'
+		| 'element_scoped_identifier_after'
+		| 'element_slice_pattern_after'
+		| 'element_string_literal_after'
+		| 'element_struct_pattern_after'
+		| 'element_tuple_pattern_after'
+		| 'element_tuple_struct_pattern_after';
 	readonly tuple_struct_pattern: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly tuple_type: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
+	readonly tuple_type_elements:
+		| 'type_abstract_type_after'
+		| 'type_array_type_after'
+		| 'type_bounded_type_after'
+		| 'type_dynamic_type_after'
+		| 'type_function_type_after'
+		| 'type_generic_type_after'
+		| 'type_macro_invocation_after'
+		| 'type_pointer_type_after'
+		| 'type_reference_type_after'
+		| 'type_removed_trait_bound_after'
+		| 'type_scoped_type_identifier_after'
+		| 'type_tuple_type_after';
 	readonly type_arguments: 'gt_after' | 'gt_before' | 'lt_after' | 'lt_before';
 	readonly type_binding: 'eq_after' | 'eq_before';
 	readonly type_cast_expression: 'as_after' | 'as_before';
@@ -919,6 +1230,13 @@ export interface KindWhitespace {
 	readonly unsafe_block: 'unsafe_after' | 'unsafe_before';
 	readonly use_as_clause: 'as_after' | 'as_before';
 	readonly use_bounds: 'gt_after' | 'gt_before' | 'lt_after' | 'lt_before' | 'use_after' | 'use_before';
+	readonly use_bounds_elements: 'element_lifetime_after';
+	readonly use_clauses:
+		| 'use_clause_scoped_identifier_after'
+		| 'use_clause_scoped_use_list_after'
+		| 'use_clause_use_as_clause_after'
+		| 'use_clause_use_list_after'
+		| 'use_clause_use_wildcard_after';
 	readonly use_declaration: 'semi_after' | 'semi_before' | 'use_after' | 'use_before';
 	readonly use_list: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly use_wildcard: 'colon_colon_after' | 'colon_colon_before' | 'star_after' | 'star_before';
@@ -1254,7 +1572,49 @@ export interface AddressBranch {
 	readonly 'binary_expression/operator': 'after' | 'before';
 	readonly block: ':' | 'after' | 'before' | 'statements' | 'statements_separator_space' | '{' | '}';
 	readonly 'block/:': 'after' | 'before';
-	readonly 'block/statements': 'end' | 'start';
+	readonly 'block/statements':
+		| 'associated_type'
+		| 'attribute_item'
+		| 'const_item'
+		| 'end'
+		| 'enum_item'
+		| 'extern_crate_declaration'
+		| 'foreign_mod_item'
+		| 'function_item'
+		| 'function_signature_item'
+		| 'impl_item'
+		| 'inner_attribute_item'
+		| 'let_declaration'
+		| 'macro_definition'
+		| 'macro_invocation'
+		| 'mod_item'
+		| 'start'
+		| 'static_item'
+		| 'struct_item'
+		| 'trait_item'
+		| 'type_item'
+		| 'union_item'
+		| 'use_declaration';
+	readonly 'block/statements/associated_type': 'after';
+	readonly 'block/statements/attribute_item': 'after';
+	readonly 'block/statements/const_item': 'after';
+	readonly 'block/statements/enum_item': 'after';
+	readonly 'block/statements/extern_crate_declaration': 'after';
+	readonly 'block/statements/foreign_mod_item': 'after';
+	readonly 'block/statements/function_item': 'after';
+	readonly 'block/statements/function_signature_item': 'after';
+	readonly 'block/statements/impl_item': 'after';
+	readonly 'block/statements/inner_attribute_item': 'after';
+	readonly 'block/statements/let_declaration': 'after';
+	readonly 'block/statements/macro_definition': 'after';
+	readonly 'block/statements/macro_invocation': 'after';
+	readonly 'block/statements/mod_item': 'after';
+	readonly 'block/statements/static_item': 'after';
+	readonly 'block/statements/struct_item': 'after';
+	readonly 'block/statements/trait_item': 'after';
+	readonly 'block/statements/type_item': 'after';
+	readonly 'block/statements/union_item': 'after';
+	readonly 'block/statements/use_declaration': 'after';
 	readonly 'block/{': 'after' | 'before';
 	readonly 'block/}': 'after' | 'before';
 	readonly block_comment: '*/' | '/*' | 'after' | 'before';
@@ -1279,9 +1639,44 @@ export interface AddressBranch {
 	readonly closure_expression_block: '->' | 'after' | 'before';
 	readonly 'closure_expression_block/->': 'after' | 'before';
 	readonly closure_parameters: 'after' | 'before' | 'parameters' | '|';
-	readonly 'closure_parameters/parameters': 'end' | 'separator' | 'start';
+	readonly 'closure_parameters/parameters':
+		| 'captured_pattern'
+		| 'const_block'
+		| 'end'
+		| 'generic_pattern'
+		| 'macro_invocation'
+		| 'mut_pattern'
+		| 'negative_literal'
+		| 'parameter'
+		| 'raw_string_literal'
+		| 'ref_pattern'
+		| 'reference_pattern'
+		| 'scoped_identifier'
+		| 'separator'
+		| 'slice_pattern'
+		| 'start'
+		| 'string_literal'
+		| 'struct_pattern'
+		| 'tuple_pattern'
+		| 'tuple_struct_pattern';
+	readonly 'closure_parameters/parameters/captured_pattern': 'after';
+	readonly 'closure_parameters/parameters/const_block': 'after';
+	readonly 'closure_parameters/parameters/generic_pattern': 'after';
+	readonly 'closure_parameters/parameters/macro_invocation': 'after';
+	readonly 'closure_parameters/parameters/mut_pattern': 'after';
+	readonly 'closure_parameters/parameters/negative_literal': 'after';
+	readonly 'closure_parameters/parameters/parameter': 'after';
+	readonly 'closure_parameters/parameters/raw_string_literal': 'after';
+	readonly 'closure_parameters/parameters/ref_pattern': 'after';
+	readonly 'closure_parameters/parameters/reference_pattern': 'after';
+	readonly 'closure_parameters/parameters/scoped_identifier': 'after';
 	readonly 'closure_parameters/parameters/separator': ',';
 	readonly 'closure_parameters/parameters/separator/,': 'after' | 'before';
+	readonly 'closure_parameters/parameters/slice_pattern': 'after';
+	readonly 'closure_parameters/parameters/string_literal': 'after';
+	readonly 'closure_parameters/parameters/struct_pattern': 'after';
+	readonly 'closure_parameters/parameters/tuple_pattern': 'after';
+	readonly 'closure_parameters/parameters/tuple_struct_pattern': 'after';
 	readonly 'closure_parameters/|': 'after' | 'before';
 	readonly compound_assignment_expr: 'after' | 'before';
 	readonly compound_assignment_expr_operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
@@ -1309,21 +1704,69 @@ export interface AddressBranch {
 	readonly continue_expression: 'after' | 'before' | 'continue';
 	readonly 'continue_expression/continue': 'after' | 'before';
 	readonly declaration_list: 'after' | 'before' | 'declarations' | 'declarations_separator_space' | '{' | '}';
-	readonly 'declaration_list/declarations': 'end' | 'start';
+	readonly 'declaration_list/declarations':
+		| 'associated_type'
+		| 'attribute_item'
+		| 'const_item'
+		| 'end'
+		| 'enum_item'
+		| 'extern_crate_declaration'
+		| 'foreign_mod_item'
+		| 'function_item'
+		| 'function_signature_item'
+		| 'impl_item'
+		| 'inner_attribute_item'
+		| 'let_declaration'
+		| 'macro_definition'
+		| 'macro_invocation'
+		| 'mod_item'
+		| 'start'
+		| 'static_item'
+		| 'struct_item'
+		| 'trait_item'
+		| 'type_item'
+		| 'union_item'
+		| 'use_declaration';
+	readonly 'declaration_list/declarations/associated_type': 'after';
+	readonly 'declaration_list/declarations/attribute_item': 'after';
+	readonly 'declaration_list/declarations/const_item': 'after';
+	readonly 'declaration_list/declarations/enum_item': 'after';
+	readonly 'declaration_list/declarations/extern_crate_declaration': 'after';
+	readonly 'declaration_list/declarations/foreign_mod_item': 'after';
+	readonly 'declaration_list/declarations/function_item': 'after';
+	readonly 'declaration_list/declarations/function_signature_item': 'after';
+	readonly 'declaration_list/declarations/impl_item': 'after';
+	readonly 'declaration_list/declarations/inner_attribute_item': 'after';
+	readonly 'declaration_list/declarations/let_declaration': 'after';
+	readonly 'declaration_list/declarations/macro_definition': 'after';
+	readonly 'declaration_list/declarations/macro_invocation': 'after';
+	readonly 'declaration_list/declarations/mod_item': 'after';
+	readonly 'declaration_list/declarations/static_item': 'after';
+	readonly 'declaration_list/declarations/struct_item': 'after';
+	readonly 'declaration_list/declarations/trait_item': 'after';
+	readonly 'declaration_list/declarations/type_item': 'after';
+	readonly 'declaration_list/declarations/union_item': 'after';
+	readonly 'declaration_list/declarations/use_declaration': 'after';
 	readonly 'declaration_list/{': 'after' | 'before';
 	readonly 'declaration_list/}': 'after' | 'before';
 	readonly delim_token_tree_brace: 'after' | 'before' | 'delim_tokens' | 'delim_tokens_separator_space' | '{' | '}';
-	readonly 'delim_token_tree_brace/delim_tokens': 'end' | 'start';
+	readonly 'delim_token_tree_brace/delim_tokens': 'end' | 'raw_string_literal' | 'start' | 'string_literal';
+	readonly 'delim_token_tree_brace/delim_tokens/raw_string_literal': 'after';
+	readonly 'delim_token_tree_brace/delim_tokens/string_literal': 'after';
 	readonly 'delim_token_tree_brace/{': 'after' | 'before';
 	readonly 'delim_token_tree_brace/}': 'after' | 'before';
 	readonly delim_token_tree_bracket: '[' | ']' | 'after' | 'before' | 'delim_tokens' | 'delim_tokens_separator_space';
 	readonly 'delim_token_tree_bracket/[': 'after' | 'before';
 	readonly 'delim_token_tree_bracket/]': 'after' | 'before';
-	readonly 'delim_token_tree_bracket/delim_tokens': 'end' | 'start';
+	readonly 'delim_token_tree_bracket/delim_tokens': 'end' | 'raw_string_literal' | 'start' | 'string_literal';
+	readonly 'delim_token_tree_bracket/delim_tokens/raw_string_literal': 'after';
+	readonly 'delim_token_tree_bracket/delim_tokens/string_literal': 'after';
 	readonly delim_token_tree_paren: '(' | ')' | 'after' | 'before' | 'delim_tokens' | 'delim_tokens_separator_space';
 	readonly 'delim_token_tree_paren/(': 'after' | 'before';
 	readonly 'delim_token_tree_paren/)': 'after' | 'before';
-	readonly 'delim_token_tree_paren/delim_tokens': 'end' | 'start';
+	readonly 'delim_token_tree_paren/delim_tokens': 'end' | 'raw_string_literal' | 'start' | 'string_literal';
+	readonly 'delim_token_tree_paren/delim_tokens/raw_string_literal': 'after';
+	readonly 'delim_token_tree_paren/delim_tokens/string_literal': 'after';
 	readonly dynamic_type: 'after' | 'before' | 'dyn';
 	readonly 'dynamic_type/dyn': 'after' | 'before';
 	readonly else_clause: 'after' | 'before' | 'else';
@@ -1365,9 +1808,18 @@ export interface AddressBranch {
 	readonly 'field_initializer_list/{': 'after' | 'before';
 	readonly 'field_initializer_list/}': 'after' | 'before';
 	readonly field_initializer_list_elements: 'after' | 'before' | 'element' | 'element_delimiter';
-	readonly 'field_initializer_list_elements/element': 'end' | 'separator' | 'start';
+	readonly 'field_initializer_list_elements/element':
+		| 'base_field_initializer'
+		| 'end'
+		| 'field_initializer'
+		| 'separator'
+		| 'shorthand_field_initializer'
+		| 'start';
+	readonly 'field_initializer_list_elements/element/base_field_initializer': 'after';
+	readonly 'field_initializer_list_elements/element/field_initializer': 'after';
 	readonly 'field_initializer_list_elements/element/separator': ',';
 	readonly 'field_initializer_list_elements/element/separator/,': 'after' | 'before';
+	readonly 'field_initializer_list_elements/element/shorthand_field_initializer': 'after';
 	readonly field_pattern: 'after' | 'before';
 	readonly field_pattern_named: ':' | 'after' | 'before';
 	readonly 'field_pattern_named/:': 'after' | 'before';
@@ -1384,7 +1836,8 @@ export interface AddressBranch {
 	readonly 'function_item/->': 'after' | 'before';
 	readonly 'function_item/fn': 'after' | 'before';
 	readonly function_modifiers: 'after' | 'before' | 'modifier' | 'modifier_separator_space';
-	readonly 'function_modifiers/modifier': 'end' | 'start';
+	readonly 'function_modifiers/modifier': 'end' | 'extern_modifier' | 'start';
+	readonly 'function_modifiers/modifier/extern_modifier': 'after';
 	readonly function_signature_item: '->' | ';' | 'after' | 'before' | 'fn';
 	readonly 'function_signature_item/->': 'after' | 'before';
 	readonly 'function_signature_item/;': 'after' | 'before';
@@ -1426,12 +1879,87 @@ export interface AddressBranch {
 	readonly last_match_arm: ',' | '=>' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
 	readonly 'last_match_arm/,': 'after' | 'before';
 	readonly 'last_match_arm/=>': 'after' | 'before';
-	readonly 'last_match_arm/attributes': 'end' | 'start';
+	readonly 'last_match_arm/attributes': 'attribute_item' | 'end' | 'inner_attribute_item' | 'start';
+	readonly 'last_match_arm/attributes/attribute_item': 'after';
+	readonly 'last_match_arm/attributes/inner_attribute_item': 'after';
 	readonly let_chain: '&&' | 'right';
 	readonly 'let_chain/&&': 'after' | 'before';
-	readonly 'let_chain/right': 'separator';
+	readonly 'let_chain/right':
+		| 'assignment_expression'
+		| 'async_block'
+		| 'await_expression'
+		| 'binary_expression'
+		| 'block'
+		| 'break_expression'
+		| 'call_expression'
+		| 'closure_expression'
+		| 'compound_assignment_expr'
+		| 'const_block'
+		| 'continue_expression'
+		| 'field_expression'
+		| 'for_expression'
+		| 'gen_block'
+		| 'generic_function'
+		| 'if_expression'
+		| 'index_expression'
+		| 'let_condition'
+		| 'loop_expression'
+		| 'macro_invocation'
+		| 'match_expression'
+		| 'parenthesized_expression'
+		| 'raw_string_literal'
+		| 'reference_expression'
+		| 'return_expression'
+		| 'scoped_identifier'
+		| 'separator'
+		| 'string_literal'
+		| 'struct_expression'
+		| 'try_block'
+		| 'try_expression'
+		| 'tuple_expression'
+		| 'type_cast_expression'
+		| 'unary_expression'
+		| 'unsafe_block'
+		| 'while_expression'
+		| 'yield_expression';
+	readonly 'let_chain/right/assignment_expression': 'after';
+	readonly 'let_chain/right/async_block': 'after';
+	readonly 'let_chain/right/await_expression': 'after';
+	readonly 'let_chain/right/binary_expression': 'after';
+	readonly 'let_chain/right/block': 'after';
+	readonly 'let_chain/right/break_expression': 'after';
+	readonly 'let_chain/right/call_expression': 'after';
+	readonly 'let_chain/right/closure_expression': 'after';
+	readonly 'let_chain/right/compound_assignment_expr': 'after';
+	readonly 'let_chain/right/const_block': 'after';
+	readonly 'let_chain/right/continue_expression': 'after';
+	readonly 'let_chain/right/field_expression': 'after';
+	readonly 'let_chain/right/for_expression': 'after';
+	readonly 'let_chain/right/gen_block': 'after';
+	readonly 'let_chain/right/generic_function': 'after';
+	readonly 'let_chain/right/if_expression': 'after';
+	readonly 'let_chain/right/index_expression': 'after';
+	readonly 'let_chain/right/let_condition': 'after';
+	readonly 'let_chain/right/loop_expression': 'after';
+	readonly 'let_chain/right/macro_invocation': 'after';
+	readonly 'let_chain/right/match_expression': 'after';
+	readonly 'let_chain/right/parenthesized_expression': 'after';
+	readonly 'let_chain/right/raw_string_literal': 'after';
+	readonly 'let_chain/right/reference_expression': 'after';
+	readonly 'let_chain/right/return_expression': 'after';
+	readonly 'let_chain/right/scoped_identifier': 'after';
 	readonly 'let_chain/right/separator': '&&';
 	readonly 'let_chain/right/separator/&&': 'after' | 'before';
+	readonly 'let_chain/right/string_literal': 'after';
+	readonly 'let_chain/right/struct_expression': 'after';
+	readonly 'let_chain/right/try_block': 'after';
+	readonly 'let_chain/right/try_expression': 'after';
+	readonly 'let_chain/right/tuple_expression': 'after';
+	readonly 'let_chain/right/type_cast_expression': 'after';
+	readonly 'let_chain/right/unary_expression': 'after';
+	readonly 'let_chain/right/unsafe_block': 'after';
+	readonly 'let_chain/right/while_expression': 'after';
+	readonly 'let_chain/right/yield_expression': 'after';
 	readonly let_condition: '=' | 'after' | 'before' | 'let';
 	readonly 'let_condition/=': 'after' | 'before';
 	readonly 'let_condition/let': 'after' | 'before';
@@ -1478,7 +2006,9 @@ export interface AddressBranch {
 	readonly 'macro_rules/macro_rule/separator/;': 'after' | 'before';
 	readonly match_arm: '=>' | 'after' | 'attributes' | 'attributes_separator_space' | 'before';
 	readonly 'match_arm/=>': 'after' | 'before';
-	readonly 'match_arm/attributes': 'end' | 'start';
+	readonly 'match_arm/attributes': 'attribute_item' | 'end' | 'inner_attribute_item' | 'start';
+	readonly 'match_arm/attributes/attribute_item': 'after';
+	readonly 'match_arm/attributes/inner_attribute_item': 'after';
 	readonly match_arm_with_comma: ',' | 'after' | 'before';
 	readonly 'match_arm_with_comma/,': 'after' | 'before';
 	readonly match_block: 'after' | 'before' | '{' | '}';
@@ -1519,9 +2049,42 @@ export interface AddressBranch {
 	readonly 'parenthesized_expression/(': 'after' | 'before';
 	readonly 'parenthesized_expression/)': 'after' | 'before';
 	readonly patterns: 'after' | 'before' | 'pattern' | 'pattern_delimiter';
-	readonly 'patterns/pattern': 'end' | 'separator' | 'start';
+	readonly 'patterns/pattern':
+		| 'captured_pattern'
+		| 'const_block'
+		| 'end'
+		| 'generic_pattern'
+		| 'macro_invocation'
+		| 'mut_pattern'
+		| 'negative_literal'
+		| 'raw_string_literal'
+		| 'ref_pattern'
+		| 'reference_pattern'
+		| 'scoped_identifier'
+		| 'separator'
+		| 'slice_pattern'
+		| 'start'
+		| 'string_literal'
+		| 'struct_pattern'
+		| 'tuple_pattern'
+		| 'tuple_struct_pattern';
+	readonly 'patterns/pattern/captured_pattern': 'after';
+	readonly 'patterns/pattern/const_block': 'after';
+	readonly 'patterns/pattern/generic_pattern': 'after';
+	readonly 'patterns/pattern/macro_invocation': 'after';
+	readonly 'patterns/pattern/mut_pattern': 'after';
+	readonly 'patterns/pattern/negative_literal': 'after';
+	readonly 'patterns/pattern/raw_string_literal': 'after';
+	readonly 'patterns/pattern/ref_pattern': 'after';
+	readonly 'patterns/pattern/reference_pattern': 'after';
+	readonly 'patterns/pattern/scoped_identifier': 'after';
 	readonly 'patterns/pattern/separator': ',';
 	readonly 'patterns/pattern/separator/,': 'after' | 'before';
+	readonly 'patterns/pattern/slice_pattern': 'after';
+	readonly 'patterns/pattern/string_literal': 'after';
+	readonly 'patterns/pattern/struct_pattern': 'after';
+	readonly 'patterns/pattern/tuple_pattern': 'after';
+	readonly 'patterns/pattern/tuple_struct_pattern': 'after';
 	readonly pointer_type: '*' | 'after' | 'before';
 	readonly 'pointer_type/*': 'after' | 'before';
 	readonly qualified_type: 'after' | 'as' | 'before';
@@ -1569,7 +2132,49 @@ export interface AddressBranch {
 	readonly 'slice_pattern/[': 'after' | 'before';
 	readonly 'slice_pattern/]': 'after' | 'before';
 	readonly source_file: 'after' | 'before' | 'statements' | 'statements_separator_space';
-	readonly 'source_file/statements': 'end' | 'start';
+	readonly 'source_file/statements':
+		| 'associated_type'
+		| 'attribute_item'
+		| 'const_item'
+		| 'end'
+		| 'enum_item'
+		| 'extern_crate_declaration'
+		| 'foreign_mod_item'
+		| 'function_item'
+		| 'function_signature_item'
+		| 'impl_item'
+		| 'inner_attribute_item'
+		| 'let_declaration'
+		| 'macro_definition'
+		| 'macro_invocation'
+		| 'mod_item'
+		| 'start'
+		| 'static_item'
+		| 'struct_item'
+		| 'trait_item'
+		| 'type_item'
+		| 'union_item'
+		| 'use_declaration';
+	readonly 'source_file/statements/associated_type': 'after';
+	readonly 'source_file/statements/attribute_item': 'after';
+	readonly 'source_file/statements/const_item': 'after';
+	readonly 'source_file/statements/enum_item': 'after';
+	readonly 'source_file/statements/extern_crate_declaration': 'after';
+	readonly 'source_file/statements/foreign_mod_item': 'after';
+	readonly 'source_file/statements/function_item': 'after';
+	readonly 'source_file/statements/function_signature_item': 'after';
+	readonly 'source_file/statements/impl_item': 'after';
+	readonly 'source_file/statements/inner_attribute_item': 'after';
+	readonly 'source_file/statements/let_declaration': 'after';
+	readonly 'source_file/statements/macro_definition': 'after';
+	readonly 'source_file/statements/macro_invocation': 'after';
+	readonly 'source_file/statements/mod_item': 'after';
+	readonly 'source_file/statements/static_item': 'after';
+	readonly 'source_file/statements/struct_item': 'after';
+	readonly 'source_file/statements/trait_item': 'after';
+	readonly 'source_file/statements/type_item': 'after';
+	readonly 'source_file/statements/union_item': 'after';
+	readonly 'source_file/statements/use_declaration': 'after';
 	readonly static_item: ':' | ';' | '=' | 'after' | 'before' | 'static';
 	readonly 'static_item/:': 'after' | 'before';
 	readonly 'static_item/;': 'after' | 'before';
@@ -1587,7 +2192,8 @@ export interface AddressBranch {
 	readonly 'struct_pattern/{': 'after' | 'before';
 	readonly 'struct_pattern/}': 'after' | 'before';
 	readonly struct_pattern_elements: 'after' | 'before' | 'element' | 'element_delimiter';
-	readonly 'struct_pattern_elements/element': 'end' | 'separator' | 'start';
+	readonly 'struct_pattern_elements/element': 'end' | 'field_pattern' | 'separator' | 'start';
+	readonly 'struct_pattern_elements/element/field_pattern': 'after';
 	readonly 'struct_pattern_elements/element/separator': ',';
 	readonly 'struct_pattern_elements/element/separator/,': 'after' | 'before';
 	readonly token_binding_pattern: ':' | 'after' | 'before' | 'type';
@@ -1600,7 +2206,10 @@ export interface AddressBranch {
 	readonly 'token_repetition/(': 'after' | 'before';
 	readonly 'token_repetition/)': 'after' | 'before';
 	readonly 'token_repetition/operator': 'after' | 'before';
-	readonly 'token_repetition/tokens': 'end' | 'start';
+	readonly 'token_repetition/tokens': 'end' | 'raw_string_literal' | 'start' | 'string_literal' | 'token_repetition';
+	readonly 'token_repetition/tokens/raw_string_literal': 'after';
+	readonly 'token_repetition/tokens/string_literal': 'after';
+	readonly 'token_repetition/tokens/token_repetition': 'after';
 	readonly token_repetition_pattern:
 		| '$'
 		| '('
@@ -1614,19 +2223,38 @@ export interface AddressBranch {
 	readonly 'token_repetition_pattern/(': 'after' | 'before';
 	readonly 'token_repetition_pattern/)': 'after' | 'before';
 	readonly 'token_repetition_pattern/operator': 'after' | 'before';
-	readonly 'token_repetition_pattern/token_patterns': 'end' | 'start';
+	readonly 'token_repetition_pattern/token_patterns':
+		| 'end'
+		| 'raw_string_literal'
+		| 'start'
+		| 'string_literal'
+		| 'token_binding_pattern'
+		| 'token_repetition_pattern';
+	readonly 'token_repetition_pattern/token_patterns/raw_string_literal': 'after';
+	readonly 'token_repetition_pattern/token_patterns/string_literal': 'after';
+	readonly 'token_repetition_pattern/token_patterns/token_binding_pattern': 'after';
+	readonly 'token_repetition_pattern/token_patterns/token_repetition_pattern': 'after';
 	readonly token_tree_brace: 'after' | 'before' | 'tokens' | 'tokens_separator_space' | '{' | '}';
-	readonly 'token_tree_brace/tokens': 'end' | 'start';
+	readonly 'token_tree_brace/tokens': 'end' | 'raw_string_literal' | 'start' | 'string_literal' | 'token_repetition';
+	readonly 'token_tree_brace/tokens/raw_string_literal': 'after';
+	readonly 'token_tree_brace/tokens/string_literal': 'after';
+	readonly 'token_tree_brace/tokens/token_repetition': 'after';
 	readonly 'token_tree_brace/{': 'after' | 'before';
 	readonly 'token_tree_brace/}': 'after' | 'before';
 	readonly token_tree_bracket: '[' | ']' | 'after' | 'before' | 'tokens' | 'tokens_separator_space';
 	readonly 'token_tree_bracket/[': 'after' | 'before';
 	readonly 'token_tree_bracket/]': 'after' | 'before';
-	readonly 'token_tree_bracket/tokens': 'end' | 'start';
+	readonly 'token_tree_bracket/tokens': 'end' | 'raw_string_literal' | 'start' | 'string_literal' | 'token_repetition';
+	readonly 'token_tree_bracket/tokens/raw_string_literal': 'after';
+	readonly 'token_tree_bracket/tokens/string_literal': 'after';
+	readonly 'token_tree_bracket/tokens/token_repetition': 'after';
 	readonly token_tree_paren: '(' | ')' | 'after' | 'before' | 'tokens' | 'tokens_separator_space';
 	readonly 'token_tree_paren/(': 'after' | 'before';
 	readonly 'token_tree_paren/)': 'after' | 'before';
-	readonly 'token_tree_paren/tokens': 'end' | 'start';
+	readonly 'token_tree_paren/tokens': 'end' | 'raw_string_literal' | 'start' | 'string_literal' | 'token_repetition';
+	readonly 'token_tree_paren/tokens/raw_string_literal': 'after';
+	readonly 'token_tree_paren/tokens/string_literal': 'after';
+	readonly 'token_tree_paren/tokens/token_repetition': 'after';
 	readonly token_tree_pattern_brace:
 		| 'after'
 		| 'before'
@@ -1634,7 +2262,17 @@ export interface AddressBranch {
 		| 'token_patterns_separator_space'
 		| '{'
 		| '}';
-	readonly 'token_tree_pattern_brace/token_patterns': 'end' | 'start';
+	readonly 'token_tree_pattern_brace/token_patterns':
+		| 'end'
+		| 'raw_string_literal'
+		| 'start'
+		| 'string_literal'
+		| 'token_binding_pattern'
+		| 'token_repetition_pattern';
+	readonly 'token_tree_pattern_brace/token_patterns/raw_string_literal': 'after';
+	readonly 'token_tree_pattern_brace/token_patterns/string_literal': 'after';
+	readonly 'token_tree_pattern_brace/token_patterns/token_binding_pattern': 'after';
+	readonly 'token_tree_pattern_brace/token_patterns/token_repetition_pattern': 'after';
 	readonly 'token_tree_pattern_brace/{': 'after' | 'before';
 	readonly 'token_tree_pattern_brace/}': 'after' | 'before';
 	readonly token_tree_pattern_bracket:
@@ -1646,7 +2284,17 @@ export interface AddressBranch {
 		| 'token_patterns_separator_space';
 	readonly 'token_tree_pattern_bracket/[': 'after' | 'before';
 	readonly 'token_tree_pattern_bracket/]': 'after' | 'before';
-	readonly 'token_tree_pattern_bracket/token_patterns': 'end' | 'start';
+	readonly 'token_tree_pattern_bracket/token_patterns':
+		| 'end'
+		| 'raw_string_literal'
+		| 'start'
+		| 'string_literal'
+		| 'token_binding_pattern'
+		| 'token_repetition_pattern';
+	readonly 'token_tree_pattern_bracket/token_patterns/raw_string_literal': 'after';
+	readonly 'token_tree_pattern_bracket/token_patterns/string_literal': 'after';
+	readonly 'token_tree_pattern_bracket/token_patterns/token_binding_pattern': 'after';
+	readonly 'token_tree_pattern_bracket/token_patterns/token_repetition_pattern': 'after';
 	readonly token_tree_pattern_paren:
 		| '('
 		| ')'
@@ -1656,7 +2304,17 @@ export interface AddressBranch {
 		| 'token_patterns_separator_space';
 	readonly 'token_tree_pattern_paren/(': 'after' | 'before';
 	readonly 'token_tree_pattern_paren/)': 'after' | 'before';
-	readonly 'token_tree_pattern_paren/token_patterns': 'end' | 'start';
+	readonly 'token_tree_pattern_paren/token_patterns':
+		| 'end'
+		| 'raw_string_literal'
+		| 'start'
+		| 'string_literal'
+		| 'token_binding_pattern'
+		| 'token_repetition_pattern';
+	readonly 'token_tree_pattern_paren/token_patterns/raw_string_literal': 'after';
+	readonly 'token_tree_pattern_paren/token_patterns/string_literal': 'after';
+	readonly 'token_tree_pattern_paren/token_patterns/token_binding_pattern': 'after';
+	readonly 'token_tree_pattern_paren/token_patterns/token_repetition_pattern': 'after';
 	readonly token_tree_punctuation:
 		| '!'
 		| '!='
@@ -1748,9 +2406,40 @@ export interface AddressBranch {
 	readonly 'token_tree_punctuation/||': 'after' | 'before';
 	readonly trait_bounds: ':' | 'after' | 'before' | 'bounds';
 	readonly 'trait_bounds/:': 'after' | 'before';
-	readonly 'trait_bounds/bounds': 'end' | 'separator' | 'start';
+	readonly 'trait_bounds/bounds':
+		| 'abstract_type'
+		| 'array_type'
+		| 'bounded_type'
+		| 'dynamic_type'
+		| 'end'
+		| 'function_type'
+		| 'generic_type'
+		| 'higher_ranked_trait_bound'
+		| 'lifetime'
+		| 'macro_invocation'
+		| 'pointer_type'
+		| 'reference_type'
+		| 'removed_trait_bound'
+		| 'scoped_type_identifier'
+		| 'separator'
+		| 'start'
+		| 'tuple_type';
+	readonly 'trait_bounds/bounds/abstract_type': 'after';
+	readonly 'trait_bounds/bounds/array_type': 'after';
+	readonly 'trait_bounds/bounds/bounded_type': 'after';
+	readonly 'trait_bounds/bounds/dynamic_type': 'after';
+	readonly 'trait_bounds/bounds/function_type': 'after';
+	readonly 'trait_bounds/bounds/generic_type': 'after';
+	readonly 'trait_bounds/bounds/higher_ranked_trait_bound': 'after';
+	readonly 'trait_bounds/bounds/lifetime': 'after';
+	readonly 'trait_bounds/bounds/macro_invocation': 'after';
+	readonly 'trait_bounds/bounds/pointer_type': 'after';
+	readonly 'trait_bounds/bounds/reference_type': 'after';
+	readonly 'trait_bounds/bounds/removed_trait_bound': 'after';
+	readonly 'trait_bounds/bounds/scoped_type_identifier': 'after';
 	readonly 'trait_bounds/bounds/separator': '+';
 	readonly 'trait_bounds/bounds/separator/+': 'after' | 'before';
+	readonly 'trait_bounds/bounds/tuple_type': 'after';
 	readonly trait_item: 'after' | 'before' | 'trait';
 	readonly 'trait_item/trait': 'after' | 'before';
 	readonly try_block: 'after' | 'before' | 'try';
@@ -1762,16 +2451,124 @@ export interface AddressBranch {
 	readonly 'tuple_expression/)': 'after' | 'before';
 	readonly 'tuple_expression/attributes': 'end' | 'start';
 	readonly tuple_expression_elements: 'after' | 'before' | 'element' | 'element_delimiter';
-	readonly 'tuple_expression_elements/element': 'end' | 'separator' | 'start';
+	readonly 'tuple_expression_elements/element':
+		| 'assignment_expression'
+		| 'async_block'
+		| 'await_expression'
+		| 'binary_expression'
+		| 'block'
+		| 'break_expression'
+		| 'call_expression'
+		| 'closure_expression'
+		| 'compound_assignment_expr'
+		| 'const_block'
+		| 'continue_expression'
+		| 'end'
+		| 'field_expression'
+		| 'for_expression'
+		| 'gen_block'
+		| 'generic_function'
+		| 'if_expression'
+		| 'index_expression'
+		| 'loop_expression'
+		| 'macro_invocation'
+		| 'match_expression'
+		| 'parenthesized_expression'
+		| 'raw_string_literal'
+		| 'reference_expression'
+		| 'return_expression'
+		| 'scoped_identifier'
+		| 'separator'
+		| 'start'
+		| 'string_literal'
+		| 'struct_expression'
+		| 'try_block'
+		| 'try_expression'
+		| 'tuple_expression'
+		| 'type_cast_expression'
+		| 'unary_expression'
+		| 'unsafe_block'
+		| 'while_expression'
+		| 'yield_expression';
+	readonly 'tuple_expression_elements/element/assignment_expression': 'after';
+	readonly 'tuple_expression_elements/element/async_block': 'after';
+	readonly 'tuple_expression_elements/element/await_expression': 'after';
+	readonly 'tuple_expression_elements/element/binary_expression': 'after';
+	readonly 'tuple_expression_elements/element/block': 'after';
+	readonly 'tuple_expression_elements/element/break_expression': 'after';
+	readonly 'tuple_expression_elements/element/call_expression': 'after';
+	readonly 'tuple_expression_elements/element/closure_expression': 'after';
+	readonly 'tuple_expression_elements/element/compound_assignment_expr': 'after';
+	readonly 'tuple_expression_elements/element/const_block': 'after';
+	readonly 'tuple_expression_elements/element/continue_expression': 'after';
+	readonly 'tuple_expression_elements/element/field_expression': 'after';
+	readonly 'tuple_expression_elements/element/for_expression': 'after';
+	readonly 'tuple_expression_elements/element/gen_block': 'after';
+	readonly 'tuple_expression_elements/element/generic_function': 'after';
+	readonly 'tuple_expression_elements/element/if_expression': 'after';
+	readonly 'tuple_expression_elements/element/index_expression': 'after';
+	readonly 'tuple_expression_elements/element/loop_expression': 'after';
+	readonly 'tuple_expression_elements/element/macro_invocation': 'after';
+	readonly 'tuple_expression_elements/element/match_expression': 'after';
+	readonly 'tuple_expression_elements/element/parenthesized_expression': 'after';
+	readonly 'tuple_expression_elements/element/raw_string_literal': 'after';
+	readonly 'tuple_expression_elements/element/reference_expression': 'after';
+	readonly 'tuple_expression_elements/element/return_expression': 'after';
+	readonly 'tuple_expression_elements/element/scoped_identifier': 'after';
 	readonly 'tuple_expression_elements/element/separator': ',';
 	readonly 'tuple_expression_elements/element/separator/,': 'after' | 'before';
+	readonly 'tuple_expression_elements/element/string_literal': 'after';
+	readonly 'tuple_expression_elements/element/struct_expression': 'after';
+	readonly 'tuple_expression_elements/element/try_block': 'after';
+	readonly 'tuple_expression_elements/element/try_expression': 'after';
+	readonly 'tuple_expression_elements/element/tuple_expression': 'after';
+	readonly 'tuple_expression_elements/element/type_cast_expression': 'after';
+	readonly 'tuple_expression_elements/element/unary_expression': 'after';
+	readonly 'tuple_expression_elements/element/unsafe_block': 'after';
+	readonly 'tuple_expression_elements/element/while_expression': 'after';
+	readonly 'tuple_expression_elements/element/yield_expression': 'after';
 	readonly tuple_pattern: '(' | ')' | 'after' | 'before';
 	readonly 'tuple_pattern/(': 'after' | 'before';
 	readonly 'tuple_pattern/)': 'after' | 'before';
 	readonly tuple_pattern_elements: 'after' | 'before' | 'element' | 'element_delimiter';
-	readonly 'tuple_pattern_elements/element': 'end' | 'separator' | 'start';
+	readonly 'tuple_pattern_elements/element':
+		| 'captured_pattern'
+		| 'closure_expression'
+		| 'const_block'
+		| 'end'
+		| 'generic_pattern'
+		| 'macro_invocation'
+		| 'mut_pattern'
+		| 'negative_literal'
+		| 'raw_string_literal'
+		| 'ref_pattern'
+		| 'reference_pattern'
+		| 'scoped_identifier'
+		| 'separator'
+		| 'slice_pattern'
+		| 'start'
+		| 'string_literal'
+		| 'struct_pattern'
+		| 'tuple_pattern'
+		| 'tuple_struct_pattern';
+	readonly 'tuple_pattern_elements/element/captured_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/closure_expression': 'after';
+	readonly 'tuple_pattern_elements/element/const_block': 'after';
+	readonly 'tuple_pattern_elements/element/generic_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/macro_invocation': 'after';
+	readonly 'tuple_pattern_elements/element/mut_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/negative_literal': 'after';
+	readonly 'tuple_pattern_elements/element/raw_string_literal': 'after';
+	readonly 'tuple_pattern_elements/element/ref_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/reference_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/scoped_identifier': 'after';
 	readonly 'tuple_pattern_elements/element/separator': ',';
 	readonly 'tuple_pattern_elements/element/separator/,': 'after' | 'before';
+	readonly 'tuple_pattern_elements/element/slice_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/string_literal': 'after';
+	readonly 'tuple_pattern_elements/element/struct_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/tuple_pattern': 'after';
+	readonly 'tuple_pattern_elements/element/tuple_struct_pattern': 'after';
 	readonly tuple_struct_pattern: '(' | ')' | 'after' | 'before';
 	readonly 'tuple_struct_pattern/(': 'after' | 'before';
 	readonly 'tuple_struct_pattern/)': 'after' | 'before';
@@ -1779,9 +2576,36 @@ export interface AddressBranch {
 	readonly 'tuple_type/(': 'after' | 'before';
 	readonly 'tuple_type/)': 'after' | 'before';
 	readonly tuple_type_elements: 'after' | 'before' | 'type' | 'type_delimiter';
-	readonly 'tuple_type_elements/type': 'end' | 'separator' | 'start';
+	readonly 'tuple_type_elements/type':
+		| 'abstract_type'
+		| 'array_type'
+		| 'bounded_type'
+		| 'dynamic_type'
+		| 'end'
+		| 'function_type'
+		| 'generic_type'
+		| 'macro_invocation'
+		| 'pointer_type'
+		| 'reference_type'
+		| 'removed_trait_bound'
+		| 'scoped_type_identifier'
+		| 'separator'
+		| 'start'
+		| 'tuple_type';
+	readonly 'tuple_type_elements/type/abstract_type': 'after';
+	readonly 'tuple_type_elements/type/array_type': 'after';
+	readonly 'tuple_type_elements/type/bounded_type': 'after';
+	readonly 'tuple_type_elements/type/dynamic_type': 'after';
+	readonly 'tuple_type_elements/type/function_type': 'after';
+	readonly 'tuple_type_elements/type/generic_type': 'after';
+	readonly 'tuple_type_elements/type/macro_invocation': 'after';
+	readonly 'tuple_type_elements/type/pointer_type': 'after';
+	readonly 'tuple_type_elements/type/reference_type': 'after';
+	readonly 'tuple_type_elements/type/removed_trait_bound': 'after';
+	readonly 'tuple_type_elements/type/scoped_type_identifier': 'after';
 	readonly 'tuple_type_elements/type/separator': ',';
 	readonly 'tuple_type_elements/type/separator/,': 'after' | 'before';
+	readonly 'tuple_type_elements/type/tuple_type': 'after';
 	readonly type_argument: 'after' | 'before';
 	readonly type_arguments: '<' | '>' | 'after' | 'before';
 	readonly 'type_arguments/<': 'after' | 'before';
@@ -1826,13 +2650,27 @@ export interface AddressBranch {
 	readonly 'use_bounds/>': 'after' | 'before';
 	readonly 'use_bounds/use': 'after' | 'before';
 	readonly use_bounds_elements: 'after' | 'before' | 'element' | 'element_delimiter';
-	readonly 'use_bounds_elements/element': 'end' | 'separator' | 'start';
+	readonly 'use_bounds_elements/element': 'end' | 'lifetime' | 'separator' | 'start';
+	readonly 'use_bounds_elements/element/lifetime': 'after';
 	readonly 'use_bounds_elements/element/separator': ',';
 	readonly 'use_bounds_elements/element/separator/,': 'after' | 'before';
 	readonly use_clauses: 'after' | 'before' | 'use_clause' | 'use_clause_delimiter';
-	readonly 'use_clauses/use_clause': 'end' | 'separator' | 'start';
+	readonly 'use_clauses/use_clause':
+		| 'end'
+		| 'scoped_identifier'
+		| 'scoped_use_list'
+		| 'separator'
+		| 'start'
+		| 'use_as_clause'
+		| 'use_list'
+		| 'use_wildcard';
+	readonly 'use_clauses/use_clause/scoped_identifier': 'after';
+	readonly 'use_clauses/use_clause/scoped_use_list': 'after';
 	readonly 'use_clauses/use_clause/separator': ',';
 	readonly 'use_clauses/use_clause/separator/,': 'after' | 'before';
+	readonly 'use_clauses/use_clause/use_as_clause': 'after';
+	readonly 'use_clauses/use_clause/use_list': 'after';
+	readonly 'use_clauses/use_clause/use_wildcard': 'after';
 	readonly use_declaration: ';' | 'after' | 'before' | 'use';
 	readonly 'use_declaration/;': 'after' | 'before';
 	readonly 'use_declaration/use': 'after' | 'before';
@@ -1984,8 +2822,28 @@ export interface AddressLeaf {
 	readonly 'block/:/before': Whitespace;
 	readonly 'block/after': Whitespace;
 	readonly 'block/before': Whitespace;
+	readonly 'block/statements/associated_type/after': Whitespace;
+	readonly 'block/statements/attribute_item/after': Whitespace;
+	readonly 'block/statements/const_item/after': Whitespace;
 	readonly 'block/statements/end': Whitespace;
+	readonly 'block/statements/enum_item/after': Whitespace;
+	readonly 'block/statements/extern_crate_declaration/after': Whitespace;
+	readonly 'block/statements/foreign_mod_item/after': Whitespace;
+	readonly 'block/statements/function_item/after': Whitespace;
+	readonly 'block/statements/function_signature_item/after': Whitespace;
+	readonly 'block/statements/impl_item/after': Whitespace;
+	readonly 'block/statements/inner_attribute_item/after': Whitespace;
+	readonly 'block/statements/let_declaration/after': Whitespace;
+	readonly 'block/statements/macro_definition/after': Whitespace;
+	readonly 'block/statements/macro_invocation/after': Whitespace;
+	readonly 'block/statements/mod_item/after': Whitespace;
 	readonly 'block/statements/start': Whitespace;
+	readonly 'block/statements/static_item/after': Whitespace;
+	readonly 'block/statements/struct_item/after': Whitespace;
+	readonly 'block/statements/trait_item/after': Whitespace;
+	readonly 'block/statements/type_item/after': Whitespace;
+	readonly 'block/statements/union_item/after': Whitespace;
+	readonly 'block/statements/use_declaration/after': Whitespace;
 	readonly 'block/statements_separator_space': Spacing;
 	readonly 'block/{/after': Whitespace;
 	readonly 'block/{/before': Whitespace;
@@ -2033,10 +2891,26 @@ export interface AddressLeaf {
 	readonly 'closure_expression_block/before': Whitespace;
 	readonly 'closure_parameters/after': Whitespace;
 	readonly 'closure_parameters/before': Whitespace;
+	readonly 'closure_parameters/parameters/captured_pattern/after': Whitespace;
+	readonly 'closure_parameters/parameters/const_block/after': Whitespace;
 	readonly 'closure_parameters/parameters/end': Whitespace;
+	readonly 'closure_parameters/parameters/generic_pattern/after': Whitespace;
+	readonly 'closure_parameters/parameters/macro_invocation/after': Whitespace;
+	readonly 'closure_parameters/parameters/mut_pattern/after': Whitespace;
+	readonly 'closure_parameters/parameters/negative_literal/after': Whitespace;
+	readonly 'closure_parameters/parameters/parameter/after': Whitespace;
+	readonly 'closure_parameters/parameters/raw_string_literal/after': Whitespace;
+	readonly 'closure_parameters/parameters/ref_pattern/after': Whitespace;
+	readonly 'closure_parameters/parameters/reference_pattern/after': Whitespace;
+	readonly 'closure_parameters/parameters/scoped_identifier/after': Whitespace;
 	readonly 'closure_parameters/parameters/separator/,/after': Spacing;
 	readonly 'closure_parameters/parameters/separator/,/before': Spacing;
+	readonly 'closure_parameters/parameters/slice_pattern/after': Whitespace;
 	readonly 'closure_parameters/parameters/start': Whitespace;
+	readonly 'closure_parameters/parameters/string_literal/after': Whitespace;
+	readonly 'closure_parameters/parameters/struct_pattern/after': Whitespace;
+	readonly 'closure_parameters/parameters/tuple_pattern/after': Whitespace;
+	readonly 'closure_parameters/parameters/tuple_struct_pattern/after': Whitespace;
 	readonly 'closure_parameters/|/after': Whitespace;
 	readonly 'closure_parameters/|/before': Whitespace;
 	readonly 'compound_assignment_expr/after': Whitespace;
@@ -2089,8 +2963,28 @@ export interface AddressLeaf {
 	readonly 'continue_expression/continue/before': Whitespace;
 	readonly 'declaration_list/after': Whitespace;
 	readonly 'declaration_list/before': Whitespace;
+	readonly 'declaration_list/declarations/associated_type/after': Whitespace;
+	readonly 'declaration_list/declarations/attribute_item/after': Whitespace;
+	readonly 'declaration_list/declarations/const_item/after': Whitespace;
 	readonly 'declaration_list/declarations/end': Whitespace;
+	readonly 'declaration_list/declarations/enum_item/after': Whitespace;
+	readonly 'declaration_list/declarations/extern_crate_declaration/after': Whitespace;
+	readonly 'declaration_list/declarations/foreign_mod_item/after': Whitespace;
+	readonly 'declaration_list/declarations/function_item/after': Whitespace;
+	readonly 'declaration_list/declarations/function_signature_item/after': Whitespace;
+	readonly 'declaration_list/declarations/impl_item/after': Whitespace;
+	readonly 'declaration_list/declarations/inner_attribute_item/after': Whitespace;
+	readonly 'declaration_list/declarations/let_declaration/after': Whitespace;
+	readonly 'declaration_list/declarations/macro_definition/after': Whitespace;
+	readonly 'declaration_list/declarations/macro_invocation/after': Whitespace;
+	readonly 'declaration_list/declarations/mod_item/after': Whitespace;
 	readonly 'declaration_list/declarations/start': Whitespace;
+	readonly 'declaration_list/declarations/static_item/after': Whitespace;
+	readonly 'declaration_list/declarations/struct_item/after': Whitespace;
+	readonly 'declaration_list/declarations/trait_item/after': Whitespace;
+	readonly 'declaration_list/declarations/type_item/after': Whitespace;
+	readonly 'declaration_list/declarations/union_item/after': Whitespace;
+	readonly 'declaration_list/declarations/use_declaration/after': Whitespace;
 	readonly 'declaration_list/declarations_separator_space': Spacing;
 	readonly 'declaration_list/{/after': Whitespace;
 	readonly 'declaration_list/{/before': Whitespace;
@@ -2099,7 +2993,9 @@ export interface AddressLeaf {
 	readonly 'delim_token_tree_brace/after': Whitespace;
 	readonly 'delim_token_tree_brace/before': Whitespace;
 	readonly 'delim_token_tree_brace/delim_tokens/end': Whitespace;
+	readonly 'delim_token_tree_brace/delim_tokens/raw_string_literal/after': Whitespace;
 	readonly 'delim_token_tree_brace/delim_tokens/start': Whitespace;
+	readonly 'delim_token_tree_brace/delim_tokens/string_literal/after': Whitespace;
 	readonly 'delim_token_tree_brace/delim_tokens_separator_space': Spacing;
 	readonly 'delim_token_tree_brace/{/after': Whitespace;
 	readonly 'delim_token_tree_brace/{/before': Whitespace;
@@ -2112,7 +3008,9 @@ export interface AddressLeaf {
 	readonly 'delim_token_tree_bracket/after': Whitespace;
 	readonly 'delim_token_tree_bracket/before': Whitespace;
 	readonly 'delim_token_tree_bracket/delim_tokens/end': Whitespace;
+	readonly 'delim_token_tree_bracket/delim_tokens/raw_string_literal/after': Whitespace;
 	readonly 'delim_token_tree_bracket/delim_tokens/start': Whitespace;
+	readonly 'delim_token_tree_bracket/delim_tokens/string_literal/after': Whitespace;
 	readonly 'delim_token_tree_bracket/delim_tokens_separator_space': Spacing;
 	readonly 'delim_token_tree_paren/(/after': Whitespace;
 	readonly 'delim_token_tree_paren/(/before': Whitespace;
@@ -2121,7 +3019,9 @@ export interface AddressLeaf {
 	readonly 'delim_token_tree_paren/after': Whitespace;
 	readonly 'delim_token_tree_paren/before': Whitespace;
 	readonly 'delim_token_tree_paren/delim_tokens/end': Whitespace;
+	readonly 'delim_token_tree_paren/delim_tokens/raw_string_literal/after': Whitespace;
 	readonly 'delim_token_tree_paren/delim_tokens/start': Whitespace;
+	readonly 'delim_token_tree_paren/delim_tokens/string_literal/after': Whitespace;
 	readonly 'delim_token_tree_paren/delim_tokens_separator_space': Spacing;
 	readonly 'dynamic_type/after': Whitespace;
 	readonly 'dynamic_type/before': Whitespace;
@@ -2204,9 +3104,12 @@ export interface AddressLeaf {
 	readonly 'field_initializer_list/}/before': Whitespace;
 	readonly 'field_initializer_list_elements/after': Whitespace;
 	readonly 'field_initializer_list_elements/before': Whitespace;
+	readonly 'field_initializer_list_elements/element/base_field_initializer/after': Whitespace;
 	readonly 'field_initializer_list_elements/element/end': Whitespace;
+	readonly 'field_initializer_list_elements/element/field_initializer/after': Whitespace;
 	readonly 'field_initializer_list_elements/element/separator/,/after': Spacing;
 	readonly 'field_initializer_list_elements/element/separator/,/before': Spacing;
+	readonly 'field_initializer_list_elements/element/shorthand_field_initializer/after': Whitespace;
 	readonly 'field_initializer_list_elements/element/start': Whitespace;
 	readonly 'field_initializer_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'field_pattern/after': Whitespace;
@@ -2242,6 +3145,7 @@ export interface AddressLeaf {
 	readonly 'function_modifiers/after': Whitespace;
 	readonly 'function_modifiers/before': Whitespace;
 	readonly 'function_modifiers/modifier/end': Whitespace;
+	readonly 'function_modifiers/modifier/extern_modifier/after': Whitespace;
 	readonly 'function_modifiers/modifier/start': Whitespace;
 	readonly 'function_modifiers/modifier_separator_space': Spacing;
 	readonly 'function_signature_item/->/after': Whitespace;
@@ -2325,14 +3229,52 @@ export interface AddressLeaf {
 	readonly 'last_match_arm/=>/after': Whitespace;
 	readonly 'last_match_arm/=>/before': Whitespace;
 	readonly 'last_match_arm/after': Whitespace;
+	readonly 'last_match_arm/attributes/attribute_item/after': Whitespace;
 	readonly 'last_match_arm/attributes/end': Whitespace;
+	readonly 'last_match_arm/attributes/inner_attribute_item/after': Whitespace;
 	readonly 'last_match_arm/attributes/start': Whitespace;
 	readonly 'last_match_arm/attributes_separator_space': Spacing;
 	readonly 'last_match_arm/before': Whitespace;
 	readonly 'let_chain/&&/after': Whitespace;
 	readonly 'let_chain/&&/before': Whitespace;
+	readonly 'let_chain/right/assignment_expression/after': Whitespace;
+	readonly 'let_chain/right/async_block/after': Whitespace;
+	readonly 'let_chain/right/await_expression/after': Whitespace;
+	readonly 'let_chain/right/binary_expression/after': Whitespace;
+	readonly 'let_chain/right/block/after': Whitespace;
+	readonly 'let_chain/right/break_expression/after': Whitespace;
+	readonly 'let_chain/right/call_expression/after': Whitespace;
+	readonly 'let_chain/right/closure_expression/after': Whitespace;
+	readonly 'let_chain/right/compound_assignment_expr/after': Whitespace;
+	readonly 'let_chain/right/const_block/after': Whitespace;
+	readonly 'let_chain/right/continue_expression/after': Whitespace;
+	readonly 'let_chain/right/field_expression/after': Whitespace;
+	readonly 'let_chain/right/for_expression/after': Whitespace;
+	readonly 'let_chain/right/gen_block/after': Whitespace;
+	readonly 'let_chain/right/generic_function/after': Whitespace;
+	readonly 'let_chain/right/if_expression/after': Whitespace;
+	readonly 'let_chain/right/index_expression/after': Whitespace;
+	readonly 'let_chain/right/let_condition/after': Whitespace;
+	readonly 'let_chain/right/loop_expression/after': Whitespace;
+	readonly 'let_chain/right/macro_invocation/after': Whitespace;
+	readonly 'let_chain/right/match_expression/after': Whitespace;
+	readonly 'let_chain/right/parenthesized_expression/after': Whitespace;
+	readonly 'let_chain/right/raw_string_literal/after': Whitespace;
+	readonly 'let_chain/right/reference_expression/after': Whitespace;
+	readonly 'let_chain/right/return_expression/after': Whitespace;
+	readonly 'let_chain/right/scoped_identifier/after': Whitespace;
 	readonly 'let_chain/right/separator/&&/after': Spacing;
 	readonly 'let_chain/right/separator/&&/before': Spacing;
+	readonly 'let_chain/right/string_literal/after': Whitespace;
+	readonly 'let_chain/right/struct_expression/after': Whitespace;
+	readonly 'let_chain/right/try_block/after': Whitespace;
+	readonly 'let_chain/right/try_expression/after': Whitespace;
+	readonly 'let_chain/right/tuple_expression/after': Whitespace;
+	readonly 'let_chain/right/type_cast_expression/after': Whitespace;
+	readonly 'let_chain/right/unary_expression/after': Whitespace;
+	readonly 'let_chain/right/unsafe_block/after': Whitespace;
+	readonly 'let_chain/right/while_expression/after': Whitespace;
+	readonly 'let_chain/right/yield_expression/after': Whitespace;
 	readonly 'let_condition/=/after': Whitespace;
 	readonly 'let_condition/=/before': Whitespace;
 	readonly 'let_condition/after': Whitespace;
@@ -2422,7 +3364,9 @@ export interface AddressLeaf {
 	readonly 'match_arm/=>/after': Whitespace;
 	readonly 'match_arm/=>/before': Whitespace;
 	readonly 'match_arm/after': Whitespace;
+	readonly 'match_arm/attributes/attribute_item/after': Whitespace;
 	readonly 'match_arm/attributes/end': Whitespace;
+	readonly 'match_arm/attributes/inner_attribute_item/after': Whitespace;
 	readonly 'match_arm/attributes/start': Whitespace;
 	readonly 'match_arm/attributes_separator_space': Spacing;
 	readonly 'match_arm/before': Whitespace;
@@ -2505,10 +3449,25 @@ export interface AddressLeaf {
 	readonly 'parenthesized_expression/before': Whitespace;
 	readonly 'patterns/after': Whitespace;
 	readonly 'patterns/before': Whitespace;
+	readonly 'patterns/pattern/captured_pattern/after': Whitespace;
+	readonly 'patterns/pattern/const_block/after': Whitespace;
 	readonly 'patterns/pattern/end': Whitespace;
+	readonly 'patterns/pattern/generic_pattern/after': Whitespace;
+	readonly 'patterns/pattern/macro_invocation/after': Whitespace;
+	readonly 'patterns/pattern/mut_pattern/after': Whitespace;
+	readonly 'patterns/pattern/negative_literal/after': Whitespace;
+	readonly 'patterns/pattern/raw_string_literal/after': Whitespace;
+	readonly 'patterns/pattern/ref_pattern/after': Whitespace;
+	readonly 'patterns/pattern/reference_pattern/after': Whitespace;
+	readonly 'patterns/pattern/scoped_identifier/after': Whitespace;
 	readonly 'patterns/pattern/separator/,/after': Spacing;
 	readonly 'patterns/pattern/separator/,/before': Spacing;
+	readonly 'patterns/pattern/slice_pattern/after': Whitespace;
 	readonly 'patterns/pattern/start': Whitespace;
+	readonly 'patterns/pattern/string_literal/after': Whitespace;
+	readonly 'patterns/pattern/struct_pattern/after': Whitespace;
+	readonly 'patterns/pattern/tuple_pattern/after': Whitespace;
+	readonly 'patterns/pattern/tuple_struct_pattern/after': Whitespace;
 	readonly 'patterns/pattern_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'pointer_type/*/after': Whitespace;
 	readonly 'pointer_type/*/before': Whitespace;
@@ -2601,8 +3560,28 @@ export interface AddressLeaf {
 	readonly 'slice_pattern/before': Whitespace;
 	readonly 'source_file/after': Whitespace;
 	readonly 'source_file/before': Whitespace;
+	readonly 'source_file/statements/associated_type/after': Whitespace;
+	readonly 'source_file/statements/attribute_item/after': Whitespace;
+	readonly 'source_file/statements/const_item/after': Whitespace;
 	readonly 'source_file/statements/end': Whitespace;
+	readonly 'source_file/statements/enum_item/after': Whitespace;
+	readonly 'source_file/statements/extern_crate_declaration/after': Whitespace;
+	readonly 'source_file/statements/foreign_mod_item/after': Whitespace;
+	readonly 'source_file/statements/function_item/after': Whitespace;
+	readonly 'source_file/statements/function_signature_item/after': Whitespace;
+	readonly 'source_file/statements/impl_item/after': Whitespace;
+	readonly 'source_file/statements/inner_attribute_item/after': Whitespace;
+	readonly 'source_file/statements/let_declaration/after': Whitespace;
+	readonly 'source_file/statements/macro_definition/after': Whitespace;
+	readonly 'source_file/statements/macro_invocation/after': Whitespace;
+	readonly 'source_file/statements/mod_item/after': Whitespace;
 	readonly 'source_file/statements/start': Whitespace;
+	readonly 'source_file/statements/static_item/after': Whitespace;
+	readonly 'source_file/statements/struct_item/after': Whitespace;
+	readonly 'source_file/statements/trait_item/after': Whitespace;
+	readonly 'source_file/statements/type_item/after': Whitespace;
+	readonly 'source_file/statements/union_item/after': Whitespace;
+	readonly 'source_file/statements/use_declaration/after': Whitespace;
 	readonly 'source_file/statements_separator_space': Spacing;
 	readonly 'static_item/:/after': Whitespace;
 	readonly 'static_item/:/before': Whitespace;
@@ -2639,6 +3618,7 @@ export interface AddressLeaf {
 	readonly 'struct_pattern_elements/after': Whitespace;
 	readonly 'struct_pattern_elements/before': Whitespace;
 	readonly 'struct_pattern_elements/element/end': Whitespace;
+	readonly 'struct_pattern_elements/element/field_pattern/after': Whitespace;
 	readonly 'struct_pattern_elements/element/separator/,/after': Spacing;
 	readonly 'struct_pattern_elements/element/separator/,/before': Spacing;
 	readonly 'struct_pattern_elements/element/start': Whitespace;
@@ -2662,7 +3642,10 @@ export interface AddressLeaf {
 	readonly 'token_repetition/operator/after': Whitespace;
 	readonly 'token_repetition/operator/before': Whitespace;
 	readonly 'token_repetition/tokens/end': Whitespace;
+	readonly 'token_repetition/tokens/raw_string_literal/after': Whitespace;
 	readonly 'token_repetition/tokens/start': Whitespace;
+	readonly 'token_repetition/tokens/string_literal/after': Whitespace;
+	readonly 'token_repetition/tokens/token_repetition/after': Whitespace;
 	readonly 'token_repetition/tokens_separator_space': Spacing;
 	readonly 'token_repetition_pattern/$/after': Whitespace;
 	readonly 'token_repetition_pattern/$/before': Whitespace;
@@ -2675,12 +3658,19 @@ export interface AddressLeaf {
 	readonly 'token_repetition_pattern/operator/after': Whitespace;
 	readonly 'token_repetition_pattern/operator/before': Whitespace;
 	readonly 'token_repetition_pattern/token_patterns/end': Whitespace;
+	readonly 'token_repetition_pattern/token_patterns/raw_string_literal/after': Whitespace;
 	readonly 'token_repetition_pattern/token_patterns/start': Whitespace;
+	readonly 'token_repetition_pattern/token_patterns/string_literal/after': Whitespace;
+	readonly 'token_repetition_pattern/token_patterns/token_binding_pattern/after': Whitespace;
+	readonly 'token_repetition_pattern/token_patterns/token_repetition_pattern/after': Whitespace;
 	readonly 'token_repetition_pattern/token_patterns_separator_space': Spacing;
 	readonly 'token_tree_brace/after': Whitespace;
 	readonly 'token_tree_brace/before': Whitespace;
 	readonly 'token_tree_brace/tokens/end': Whitespace;
+	readonly 'token_tree_brace/tokens/raw_string_literal/after': Whitespace;
 	readonly 'token_tree_brace/tokens/start': Whitespace;
+	readonly 'token_tree_brace/tokens/string_literal/after': Whitespace;
+	readonly 'token_tree_brace/tokens/token_repetition/after': Whitespace;
 	readonly 'token_tree_brace/tokens_separator_space': Spacing;
 	readonly 'token_tree_brace/{/after': Whitespace;
 	readonly 'token_tree_brace/{/before': Whitespace;
@@ -2693,7 +3683,10 @@ export interface AddressLeaf {
 	readonly 'token_tree_bracket/after': Whitespace;
 	readonly 'token_tree_bracket/before': Whitespace;
 	readonly 'token_tree_bracket/tokens/end': Whitespace;
+	readonly 'token_tree_bracket/tokens/raw_string_literal/after': Whitespace;
 	readonly 'token_tree_bracket/tokens/start': Whitespace;
+	readonly 'token_tree_bracket/tokens/string_literal/after': Whitespace;
+	readonly 'token_tree_bracket/tokens/token_repetition/after': Whitespace;
 	readonly 'token_tree_bracket/tokens_separator_space': Spacing;
 	readonly 'token_tree_paren/(/after': Whitespace;
 	readonly 'token_tree_paren/(/before': Whitespace;
@@ -2702,12 +3695,19 @@ export interface AddressLeaf {
 	readonly 'token_tree_paren/after': Whitespace;
 	readonly 'token_tree_paren/before': Whitespace;
 	readonly 'token_tree_paren/tokens/end': Whitespace;
+	readonly 'token_tree_paren/tokens/raw_string_literal/after': Whitespace;
 	readonly 'token_tree_paren/tokens/start': Whitespace;
+	readonly 'token_tree_paren/tokens/string_literal/after': Whitespace;
+	readonly 'token_tree_paren/tokens/token_repetition/after': Whitespace;
 	readonly 'token_tree_paren/tokens_separator_space': Spacing;
 	readonly 'token_tree_pattern_brace/after': Whitespace;
 	readonly 'token_tree_pattern_brace/before': Whitespace;
 	readonly 'token_tree_pattern_brace/token_patterns/end': Whitespace;
+	readonly 'token_tree_pattern_brace/token_patterns/raw_string_literal/after': Whitespace;
 	readonly 'token_tree_pattern_brace/token_patterns/start': Whitespace;
+	readonly 'token_tree_pattern_brace/token_patterns/string_literal/after': Whitespace;
+	readonly 'token_tree_pattern_brace/token_patterns/token_binding_pattern/after': Whitespace;
+	readonly 'token_tree_pattern_brace/token_patterns/token_repetition_pattern/after': Whitespace;
 	readonly 'token_tree_pattern_brace/token_patterns_separator_space': Spacing;
 	readonly 'token_tree_pattern_brace/{/after': Whitespace;
 	readonly 'token_tree_pattern_brace/{/before': Whitespace;
@@ -2720,7 +3720,11 @@ export interface AddressLeaf {
 	readonly 'token_tree_pattern_bracket/after': Whitespace;
 	readonly 'token_tree_pattern_bracket/before': Whitespace;
 	readonly 'token_tree_pattern_bracket/token_patterns/end': Whitespace;
+	readonly 'token_tree_pattern_bracket/token_patterns/raw_string_literal/after': Whitespace;
 	readonly 'token_tree_pattern_bracket/token_patterns/start': Whitespace;
+	readonly 'token_tree_pattern_bracket/token_patterns/string_literal/after': Whitespace;
+	readonly 'token_tree_pattern_bracket/token_patterns/token_binding_pattern/after': Whitespace;
+	readonly 'token_tree_pattern_bracket/token_patterns/token_repetition_pattern/after': Whitespace;
 	readonly 'token_tree_pattern_bracket/token_patterns_separator_space': Spacing;
 	readonly 'token_tree_pattern_paren/(/after': Whitespace;
 	readonly 'token_tree_pattern_paren/(/before': Whitespace;
@@ -2729,7 +3733,11 @@ export interface AddressLeaf {
 	readonly 'token_tree_pattern_paren/after': Whitespace;
 	readonly 'token_tree_pattern_paren/before': Whitespace;
 	readonly 'token_tree_pattern_paren/token_patterns/end': Whitespace;
+	readonly 'token_tree_pattern_paren/token_patterns/raw_string_literal/after': Whitespace;
 	readonly 'token_tree_pattern_paren/token_patterns/start': Whitespace;
+	readonly 'token_tree_pattern_paren/token_patterns/string_literal/after': Whitespace;
+	readonly 'token_tree_pattern_paren/token_patterns/token_binding_pattern/after': Whitespace;
+	readonly 'token_tree_pattern_paren/token_patterns/token_repetition_pattern/after': Whitespace;
 	readonly 'token_tree_pattern_paren/token_patterns_separator_space': Spacing;
 	readonly 'token_tree_punctuation/!/after': Whitespace;
 	readonly 'token_tree_punctuation/!/before': Whitespace;
@@ -2823,10 +3831,24 @@ export interface AddressLeaf {
 	readonly 'trait_bounds/:/before': Whitespace;
 	readonly 'trait_bounds/after': Whitespace;
 	readonly 'trait_bounds/before': Whitespace;
+	readonly 'trait_bounds/bounds/abstract_type/after': Whitespace;
+	readonly 'trait_bounds/bounds/array_type/after': Whitespace;
+	readonly 'trait_bounds/bounds/bounded_type/after': Whitespace;
+	readonly 'trait_bounds/bounds/dynamic_type/after': Whitespace;
 	readonly 'trait_bounds/bounds/end': Whitespace;
+	readonly 'trait_bounds/bounds/function_type/after': Whitespace;
+	readonly 'trait_bounds/bounds/generic_type/after': Whitespace;
+	readonly 'trait_bounds/bounds/higher_ranked_trait_bound/after': Whitespace;
+	readonly 'trait_bounds/bounds/lifetime/after': Whitespace;
+	readonly 'trait_bounds/bounds/macro_invocation/after': Whitespace;
+	readonly 'trait_bounds/bounds/pointer_type/after': Whitespace;
+	readonly 'trait_bounds/bounds/reference_type/after': Whitespace;
+	readonly 'trait_bounds/bounds/removed_trait_bound/after': Whitespace;
+	readonly 'trait_bounds/bounds/scoped_type_identifier/after': Whitespace;
 	readonly 'trait_bounds/bounds/separator/+/after': Spacing;
 	readonly 'trait_bounds/bounds/separator/+/before': Spacing;
 	readonly 'trait_bounds/bounds/start': Whitespace;
+	readonly 'trait_bounds/bounds/tuple_type/after': Whitespace;
 	readonly 'trait_item/after': Whitespace;
 	readonly 'trait_item/before': Whitespace;
 	readonly 'trait_item/trait/after': Whitespace;
@@ -2850,10 +3872,45 @@ export interface AddressLeaf {
 	readonly 'tuple_expression/before': Whitespace;
 	readonly 'tuple_expression_elements/after': Whitespace;
 	readonly 'tuple_expression_elements/before': Whitespace;
+	readonly 'tuple_expression_elements/element/assignment_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/async_block/after': Whitespace;
+	readonly 'tuple_expression_elements/element/await_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/binary_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/block/after': Whitespace;
+	readonly 'tuple_expression_elements/element/break_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/call_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/closure_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/compound_assignment_expr/after': Whitespace;
+	readonly 'tuple_expression_elements/element/const_block/after': Whitespace;
+	readonly 'tuple_expression_elements/element/continue_expression/after': Whitespace;
 	readonly 'tuple_expression_elements/element/end': Whitespace;
+	readonly 'tuple_expression_elements/element/field_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/for_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/gen_block/after': Whitespace;
+	readonly 'tuple_expression_elements/element/generic_function/after': Whitespace;
+	readonly 'tuple_expression_elements/element/if_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/index_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/loop_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/macro_invocation/after': Whitespace;
+	readonly 'tuple_expression_elements/element/match_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/parenthesized_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/raw_string_literal/after': Whitespace;
+	readonly 'tuple_expression_elements/element/reference_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/return_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/scoped_identifier/after': Whitespace;
 	readonly 'tuple_expression_elements/element/separator/,/after': Spacing;
 	readonly 'tuple_expression_elements/element/separator/,/before': Spacing;
 	readonly 'tuple_expression_elements/element/start': Whitespace;
+	readonly 'tuple_expression_elements/element/string_literal/after': Whitespace;
+	readonly 'tuple_expression_elements/element/struct_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/try_block/after': Whitespace;
+	readonly 'tuple_expression_elements/element/try_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/tuple_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/type_cast_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/unary_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/unsafe_block/after': Whitespace;
+	readonly 'tuple_expression_elements/element/while_expression/after': Whitespace;
+	readonly 'tuple_expression_elements/element/yield_expression/after': Whitespace;
 	readonly 'tuple_expression_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'tuple_pattern/(/after': Whitespace;
 	readonly 'tuple_pattern/(/before': Whitespace;
@@ -2863,10 +3920,26 @@ export interface AddressLeaf {
 	readonly 'tuple_pattern/before': Whitespace;
 	readonly 'tuple_pattern_elements/after': Whitespace;
 	readonly 'tuple_pattern_elements/before': Whitespace;
+	readonly 'tuple_pattern_elements/element/captured_pattern/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/closure_expression/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/const_block/after': Whitespace;
 	readonly 'tuple_pattern_elements/element/end': Whitespace;
+	readonly 'tuple_pattern_elements/element/generic_pattern/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/macro_invocation/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/mut_pattern/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/negative_literal/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/raw_string_literal/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/ref_pattern/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/reference_pattern/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/scoped_identifier/after': Whitespace;
 	readonly 'tuple_pattern_elements/element/separator/,/after': Spacing;
 	readonly 'tuple_pattern_elements/element/separator/,/before': Spacing;
+	readonly 'tuple_pattern_elements/element/slice_pattern/after': Whitespace;
 	readonly 'tuple_pattern_elements/element/start': Whitespace;
+	readonly 'tuple_pattern_elements/element/string_literal/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/struct_pattern/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/tuple_pattern/after': Whitespace;
+	readonly 'tuple_pattern_elements/element/tuple_struct_pattern/after': Whitespace;
 	readonly 'tuple_pattern_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'tuple_struct_pattern/(/after': Whitespace;
 	readonly 'tuple_struct_pattern/(/before': Whitespace;
@@ -2882,10 +3955,22 @@ export interface AddressLeaf {
 	readonly 'tuple_type/before': Whitespace;
 	readonly 'tuple_type_elements/after': Whitespace;
 	readonly 'tuple_type_elements/before': Whitespace;
+	readonly 'tuple_type_elements/type/abstract_type/after': Whitespace;
+	readonly 'tuple_type_elements/type/array_type/after': Whitespace;
+	readonly 'tuple_type_elements/type/bounded_type/after': Whitespace;
+	readonly 'tuple_type_elements/type/dynamic_type/after': Whitespace;
 	readonly 'tuple_type_elements/type/end': Whitespace;
+	readonly 'tuple_type_elements/type/function_type/after': Whitespace;
+	readonly 'tuple_type_elements/type/generic_type/after': Whitespace;
+	readonly 'tuple_type_elements/type/macro_invocation/after': Whitespace;
+	readonly 'tuple_type_elements/type/pointer_type/after': Whitespace;
+	readonly 'tuple_type_elements/type/reference_type/after': Whitespace;
+	readonly 'tuple_type_elements/type/removed_trait_bound/after': Whitespace;
+	readonly 'tuple_type_elements/type/scoped_type_identifier/after': Whitespace;
 	readonly 'tuple_type_elements/type/separator/,/after': Spacing;
 	readonly 'tuple_type_elements/type/separator/,/before': Spacing;
 	readonly 'tuple_type_elements/type/start': Whitespace;
+	readonly 'tuple_type_elements/type/tuple_type/after': Whitespace;
 	readonly 'tuple_type_elements/type_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'type_argument/after': Whitespace;
 	readonly 'type_argument/before': Whitespace;
@@ -2966,6 +4051,7 @@ export interface AddressLeaf {
 	readonly 'use_bounds_elements/after': Whitespace;
 	readonly 'use_bounds_elements/before': Whitespace;
 	readonly 'use_bounds_elements/element/end': Whitespace;
+	readonly 'use_bounds_elements/element/lifetime/after': Whitespace;
 	readonly 'use_bounds_elements/element/separator/,/after': Spacing;
 	readonly 'use_bounds_elements/element/separator/,/before': Spacing;
 	readonly 'use_bounds_elements/element/start': Whitespace;
@@ -2973,9 +4059,14 @@ export interface AddressLeaf {
 	readonly 'use_clauses/after': Whitespace;
 	readonly 'use_clauses/before': Whitespace;
 	readonly 'use_clauses/use_clause/end': Whitespace;
+	readonly 'use_clauses/use_clause/scoped_identifier/after': Whitespace;
+	readonly 'use_clauses/use_clause/scoped_use_list/after': Whitespace;
 	readonly 'use_clauses/use_clause/separator/,/after': Spacing;
 	readonly 'use_clauses/use_clause/separator/,/before': Spacing;
 	readonly 'use_clauses/use_clause/start': Whitespace;
+	readonly 'use_clauses/use_clause/use_as_clause/after': Whitespace;
+	readonly 'use_clauses/use_clause/use_list/after': Whitespace;
+	readonly 'use_clauses/use_clause/use_wildcard/after': Whitespace;
 	readonly 'use_clauses/use_clause_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'use_declaration/;/after': Whitespace;
 	readonly 'use_declaration/;/before': Whitespace;

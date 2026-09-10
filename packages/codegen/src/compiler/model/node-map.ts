@@ -1185,6 +1185,21 @@ export class AssembledNonterminal {
 	}
 }
 
+export function concreteKindsOf(kind: string, ctx: NodesCtx): string[] {
+	const seen = new Set<string>();
+	const walk = (name: string): string[] => {
+		if (seen.has(name)) return [];
+		seen.add(name);
+		const node = ctx.nodes.get(name);
+		if (node === undefined) return [];
+		if (!(node instanceof AssembledSupertype)) return [name];
+		const concrete = new Set<string>();
+		for (const subtype of node.subtypeNames) for (const found of walk(subtype)) concrete.add(found);
+		return [...concrete];
+	};
+	return walk(kind);
+}
+
 export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 	const seen = new Set<string>();
 	const out: string[] = [];

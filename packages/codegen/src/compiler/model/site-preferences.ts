@@ -11,7 +11,8 @@ import {
 	isTerminalValue,
 	type NodeOrTerminal
 } from './node-map.ts';
-import { publicKindName, spacingSitesOf, type RenderRules, type SpacingSide } from './render-rules.ts';
+import { publicKindName, spacingSitesOf, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
+import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 
 export { publicKindName, type SpacingSide } from './render-rules.ts';
 
@@ -31,6 +32,8 @@ export interface SitePreference {
 	readonly defaultArm: string;
 	readonly source: PreferenceSource;
 	readonly side?: SpacingSide;
+	readonly seat?: SeatedChild;
+	readonly path?: readonly PreferenceSegment[];
 }
 
 export interface SitePreferencesConfig {
@@ -61,7 +64,9 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 				arms: arms.map((arm) => ({ value: arm, kind: arm })),
 				defaultArm: site.defaultArm,
 				source: 'spacing',
-				side: site.side
+				side: site.side,
+				...(site.seat === undefined ? {} : { seat: site.seat }),
+				...(site.path === undefined ? {} : { path: site.path })
 			});
 		}
 	}

@@ -1351,8 +1351,6 @@ Rust's spacing site count is 1149 at the start of this plan. Tasks 1-10 must not
 
 ---
 
----
-
 ### Task 11: A sibling gap belongs to the child before it
 
 The gap between two siblings has three owners today — the preceding child's
@@ -1366,67 +1364,126 @@ is `blankline` for all of them.
 The fix is not a new kind of site. A child's trailing edge already is one —
 `("attribute_item", "attribute_item_after", …)` — it is merely global to the
 kind, and global is wrong: an attribute wants a newline after it among
-statements and a space after it among parameters. This task gives kind edges
+statements and a space after it among parameters. This task gives that edge
 (parent kind, slot, child kind) granularity so the two can differ, and lets a
 slot hand its gaps to its children by declaring its separator `tight`.
 
-No writer change. Once the separator contributes nothing, the preceding
+**The seat is the parent's; the field is the child's.** A kind sits in many
+slots — rust's `attribute_item` in `source_file/statements` and in four
+`attributes` slots — so the narrow arm cannot live in the child's own rule,
+which renders once per seating and could carry only one. It is applied where
+the parent knows which slot it is filling. `FillOptions` is a pre-order walk
+and every child fill is `get_or_insert`, so a parent that writes the seated arm
+into an element's own `<child>_after` field before descending has already
+decided it:
+
+```rust
+impl FillOptions for SourceFileTransport {
+    fn fill_options(&mut self, table: &ResolvedOptions) {
+        …
+        for item in self.statements.iter_mut().flatten() {
+            if let SlotValue::Node(node) = item {
+                match node {
+                    Slot::AttributeItem(c) => { c.attribute_item_after
+                        .get_or_insert(table.spacing[SITE_SOURCE_FILE_STATEMENTS_ATTRIBUTE_ITEM_AFTER]); }
+                    Slot::EnumItem(c) => { c.enum_item_after
+                        .get_or_insert(table.spacing[SITE_SOURCE_FILE_STATEMENTS_ENUM_ITEM_AFTER]); }
+                    …
+                }
+            }
+        }
+        self.statements.fill_options(table);
+    }
+}
+```
+
+Nothing else moves: no writer change, no `ListView` change, no body IR change,
+no new transport field. A child kind with no trailing edge of its own — a leaf,
+which `ownsKindEdges` already excludes — takes no seated site, and a
+`SlotValue::Verbatim` element has no kind with which to select one.
+
+**Precedence is walk order, not path specificity.** `(attribute_item)/after`
+and `(source_file)/statements:/(attribute_item)/after` differ at their first
+segment, so `matchAddress` sees two disjoint addresses rather than a nesting;
+Task 5's subset rule never compares them. The parent fills first and the child's
+`get_or_insert` yields, which is what makes the narrow arm win.
+
+**A seated site is born with its child's arm.** Because the parent fills
+unconditionally, a seated site always decides the edge inside a heterogeneous
+repeat. Each one therefore takes the arm its child's global edge resolves to,
+so minting the whole space changes no rendered byte and only a declaration
+moves anything.
+
+**No writer change.** Once the separator contributes nothing, the preceding
 child's edge is the only mark in the gap, so coalescing has nothing left to
 arbitrate and specificity decides alone.
 
 **Files:**
-- Modify: `packages/codegen/src/compiler/model/render-rules.ts` — `withKindEdges`, `spacingSitesOf`
+- Modify: `packages/codegen/src/compiler/model/render-rules.ts` — `RuleSpacingSite`, `spacingSitesOf`
+- Modify: `packages/codegen/src/compiler/model/site-addresses.ts` — `pathOf` returns a stamped path
+- Modify: `packages/codegen/src/emitters/render-module.ts` — the seating loop in `fill_options`
 - Modify: `packages/codegen/src/compiler/model/__tests__/render-rules.test.ts`
 - Modify: `packages/rust/grammar.sittir.ts`
-- Docs: `docs/glossary/compiler-model.md`
+- Docs: `docs/glossary/compiler-model.md`, `docs/glossary/emitters.md`
 
 **Interfaces:**
 - Consumes: `AddressedSite`, `resolveBindings` from Tasks 4-5.
-- Produces: a kind-edge site per (parent kind, slot, child kind), addressed
-  `(<parent>)/<slot>:/(<child>)/after`. The existing global `(<child>)/after`
-  stays as the broad address those narrow ones override — subset specificity,
-  no new resolution rule. A slot admitting one child kind keeps one site.
+- Produces: a seated site per (parent kind, slot, child kind), addressed
+  `(<parent>)/<slot>:/(<child>)/after`, carrying the child kind and the child's
+  edge field as what it fills. A slot resolving to a single child kind keeps its
+  one global edge and takes no seated site.
+- A seated site is **born with its path**: `spacingSitesOf` stamps it where it
+  mints it and `pathOf` returns a stamped path unchanged. No existing branch
+  produces a kind-match in the middle of a path, so spelling these flat only to
+  decompose them back would invent a form for the sake of undoing it; Task 10
+  deletes the decomposition whole.
 
 - [ ] **Step 1: Write the failing test**
 
 In `render-rules.test.ts`:
 
 ```ts
-it('gives a child edge per (slot, child kind) where a slot is heterogeneous', () => {
-	const sites = spacingSitesOf(renderRules, nodeMap).filter(
-		(s) => s.kind === 'source_file' && s.slot === 'statements'
-	);
-	const addresses = sites.map((s) => s.address);
-	expect(addresses).toContain('statements_attribute_item_after');
-	expect(addresses).toContain('statements_enum_item_after');
+it('seats a child edge per (slot, child kind) where a slot is heterogeneous', () => {
+	const seated = spacingSitesOf(renderRules, nodeMap).filter((s) => s.seat !== undefined);
+	const paths = seated.map((s) => formatPreferencePath(s.path!));
+	expect(paths).toContain('(source_file)/statements:/(attribute_item)/after');
+	expect(paths).toContain('(source_file)/statements:/(enum_item)/after');
 });
 
-it('keeps one child edge where a slot admits one kind', () => {
-	const sites = spacingSitesOf(renderRules, nodeMap).filter(
-		(s) => s.kind === 'enum_variant_list_elements' && s.address.endsWith('_after')
+it('seats no child edge where a slot admits one kind', () => {
+	const seated = spacingSitesOf(renderRules, nodeMap).filter(
+		(s) => s.seat !== undefined && s.slot === 'enum_variant_list_elements'
 	);
-	expect(sites).toHaveLength(1);
+	expect(seated).toHaveLength(0);
+});
+
+it('gives a seated edge the arm its child edge resolves to', () => {
+	const sites = spacingSitesOf(renderRules, nodeMap);
+	const global = sites.find((s) => s.kind === 'attribute_item' && s.address === 'attribute_item_after')!;
+	const seated = sites.find((s) => s.seat?.kind === 'attribute_item' && s.kind === 'source_file')!;
+	expect(seated.defaultArm).toBe(global.defaultArm);
 });
 ```
 
 - [ ] **Step 2: Run to verify failure**
 
 ```bash
-pnpm exec vitest run packages/codegen/src/compiler/model/__tests__/render-rules.test.ts -t 'child edge'
+pnpm exec vitest run packages/codegen/src/compiler/model/__tests__/render-rules.test.ts -t 'seat'
 ```
-Expected: FAIL — one global edge per child kind.
+Expected: FAIL — one global edge per child kind, no seated sites at all.
 
-- [ ] **Step 3: Mint child edges per slot**
+- [ ] **Step 3: Mint the seated sites**
 
-In `withKindEdges`, where `part('before')` and `part('after')` are built for a
-kind, a kind reached as a repeat element also takes a pair addressed by its
-seating: `siteKey(`${slot}_${publicKindName(childKind)}`, seamLabel(...))`.
-A slot whose values resolve to a single kind emits the current single pair
-unchanged, so homogeneous slots keep their site and their address.
+`RuleSpacingSite` gains `readonly seat?: { readonly kind: string; readonly field: string }`
+and `readonly path?: readonly PreferenceSegment[]`. `pathOf` returns `site.path`
+when it is stamped.
 
-The render side selects among them by the element's kind, which `ListView`
-already knows per item — the same `base + ordinal` shape as the punctuation
-arm seams, not a named field per child kind.
+In `spacingSitesOf`, after the walk has collected every kind edge, mint one
+seated site per (parent kind, repeat slot, admitted child kind that owns a kind
+edge), stamped with its path and carrying the child's edge arm as its default.
+The admitted kinds come from the slot's `AssembledNonterminal`, the same source
+`rustTransportSlotType` reads, so the sites and the generated slot enum cannot
+disagree.
 
 - [ ] **Step 4: Run to verify passing**
 
@@ -1435,38 +1492,44 @@ pnpm exec vitest run packages/codegen/src/compiler/model/__tests__/render-rules.
 ```
 Expected: PASS.
 
-- [ ] **Step 5: Regenerate and confirm the corpus has not moved**
+- [ ] **Step 5: Emit the seating loop**
+
+In `render-module.ts`, a kind's `fill_options` gains, before it descends into a
+repeat slot with seated sites, the `match` that writes each element's edge
+field. `SlotValue::Verbatim` and a variant whose kind has no seated site fall
+through untouched.
+
+- [ ] **Step 6: Regenerate and confirm the corpus has not moved**
 
 ```bash
 for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts gen --grammar $g --all --output packages/$g/src; done
-git diff --stat -- rust/crates/sittir-rust/test-fixtures.json
+for c in rust typescript python; do (cd rust/crates/sittir-$c && pnpm run build); done
+git diff --stat -- 'rust/crates/*/test-fixtures.json'
 ```
-Expected: **no movement.** Minting alone changes nothing — every new site
-inherits the arm the single site had.
+Expected: **no movement.** Every seated site inherits the arm its child's edge
+already had, so the whole space can be minted without changing a byte.
 
-- [ ] **Step 6: Delegate the slot and declare the exception**
+- [ ] **Step 7: Delegate the slot and declare the exception**
 
-In `packages/rust/grammar.sittir.ts`, replace the `source_file` separator
-declaration with:
+In `packages/rust/grammar.sittir.ts`:
 
 ```ts
 '(source_file)/statements:/(_)/after':              'blankline',
 '(source_file)/statements:/(attribute_item)/after': 'newline',
 ```
 
-The slot's `empty_separator_space` declaration goes; a repeat with no separator
-token has nothing between its elements but this gap. `(_)` matches any kind, as
-in scm, where `_` matches any node at all. The first line is the slot's default
-gap; the second matches a strict subset of it and wins.
+and the slot's separator declares itself `tight`, so the gap belongs to the
+children alone. `(_)` matches any kind, as in scm, where `_` matches any node at
+all. The first line is the slot's default gap; the second matches a strict
+subset of it and wins.
 
 The last element's `after` needs no special case: the writer drops a seam
 payload with nothing following it, so a trailing gap at end-of-render
 disappears rather than trailing whitespace onto the output.
 
-- [ ] **Step 7: Verify the rebuild**
+- [ ] **Step 8: Verify the rebuild**
 
 ```bash
-cd rust/crates/sittir-rust && pnpm run build && cd ../../..
 pnpm exec vitest run packages/rust/tests/examples-verify.test.ts
 ```
 Expected: the generated rebuild of `splice.rs` no longer carries a blank line
@@ -1474,17 +1537,19 @@ between the derive attribute and `pub enum SpliceError`, and still carries one
 between every other pair of top-level items. Blank lines move from 4 correct /
 1 spurious / 3 missing to 4 correct / 0 spurious / 3 missing.
 
-- [ ] **Step 8: Record the ratchet move**
+- [ ] **Step 9: Record the ratchet move**
 
-The site count rises by the number of heterogeneous repeat slots across the
-three grammars. Record the new ceiling with its reason: an edge now
-distinguishes the child it belongs to, which is what makes a per-child gap
+The site count rises by the number of (heterogeneous repeat slot, admitted child
+kind) pairs across the three grammars — 306 of them in rust, taking it from
+1149 to roughly 1455. Record the new ceiling with its reason: an edge now
+distinguishes the seat it belongs to, which is what makes a per-child gap
 declarable.
 
-- [ ] **Step 9: Full gate and commit**
+- [ ] **Step 10: Full gate and commit**
 
 ```bash
-pnpm run validate:native && pnpm exec vitest run && cd rust && cargo test -p sittir-core
+pnpm run validate:native && cd rust && cargo test -p sittir-core
+pnpm exec vitest run
 ```
 
 

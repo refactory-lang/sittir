@@ -13444,8 +13444,8 @@ pub enum SwitchBodyCasesTransportSlot {
 impl ::sittir_core::options::FillOptions for SwitchBodyCasesTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            SwitchBodyCasesTransportSlot::SwitchCase(t) => t.fill_options(table),
-            SwitchBodyCasesTransportSlot::SwitchDefault(t) => t.fill_options(table),
+            SwitchBodyCasesTransportSlot::SwitchCase(t) => { t.switch_case_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_SWITCH_CASE_AFTER]); t.fill_options(table) },
+            SwitchBodyCasesTransportSlot::SwitchDefault(t) => { t.switch_default_after.get_or_insert(table.spacing[options::SITE_SWITCH_BODY_CASES_SWITCH_DEFAULT_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -14306,9 +14306,9 @@ pub enum ObjectPropertiesTransportSlot {
 impl ::sittir_core::options::FillOptions for ObjectPropertiesTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ObjectPropertiesTransportSlot::Pair(t) => t.fill_options(table),
-            ObjectPropertiesTransportSlot::SpreadElement(t) => t.fill_options(table),
-            ObjectPropertiesTransportSlot::MethodDefinition(t) => t.fill_options(table),
+            ObjectPropertiesTransportSlot::Pair(t) => { t.pair_after.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_PAIR_AFTER]); t.fill_options(table) },
+            ObjectPropertiesTransportSlot::SpreadElement(t) => { t.spread_element_after.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_SPREAD_ELEMENT_AFTER]); t.fill_options(table) },
+            ObjectPropertiesTransportSlot::MethodDefinition(t) => { t.method_definition_after.get_or_insert(table.spacing[options::SITE_OBJECT_PROPERTIES_METHOD_DEFINITION_AFTER]); t.fill_options(table) },
             ObjectPropertiesTransportSlot::Identifier(t) => t.fill_options(table),
             ObjectPropertiesTransportSlot::ReservedIdentifier(t) => t.fill_options(table),
         }
@@ -14605,9 +14605,9 @@ pub enum ObjectPatternPropertiesTransportSlot {
 impl ::sittir_core::options::FillOptions for ObjectPatternPropertiesTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ObjectPatternPropertiesTransportSlot::PairPattern(t) => t.fill_options(table),
-            ObjectPatternPropertiesTransportSlot::RestPattern(t) => t.fill_options(table),
-            ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(t) => t.fill_options(table),
+            ObjectPatternPropertiesTransportSlot::PairPattern(t) => { t.pair_pattern_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_PAIR_PATTERN_AFTER]); t.fill_options(table) },
+            ObjectPatternPropertiesTransportSlot::RestPattern(t) => { t.rest_pattern_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_REST_PATTERN_AFTER]); t.fill_options(table) },
+            ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(t) => { t.object_assignment_pattern_after.get_or_insert(table.spacing[options::SITE_OBJECT_PATTERN_PROPERTIES_OBJECT_ASSIGNMENT_PATTERN_AFTER]); t.fill_options(table) },
             ObjectPatternPropertiesTransportSlot::Identifier(t) => t.fill_options(table),
             ObjectPatternPropertiesTransportSlot::ReservedIdentifier(t) => t.fill_options(table),
         }
@@ -15227,14 +15227,14 @@ pub enum ArrayElementsTransportSlot {
 impl ::sittir_core::options::FillOptions for ArrayElementsTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ArrayElementsTransportSlot::AsExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::SatisfiesExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::InstantiationExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::InternalModule(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::TypeAssertion(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::SubscriptExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::MemberExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ArrayElementsTransportSlot::AsExpression(t) => { t.as_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_AS_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::SatisfiesExpression(t) => { t.satisfies_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SATISFIES_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::InstantiationExpression(t) => { t.instantiation_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_INSTANTIATION_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::InternalModule(t) => { t.internal_module_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_INTERNAL_MODULE_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::TypeAssertion(t) => { t.type_assertion_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_TYPE_ASSERTION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::SubscriptExpression(t) => { t.subscript_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SUBSCRIPT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::MemberExpression(t) => { t.member_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_MEMBER_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_PARENTHESIZED_EXPRESSION_AFTER]); t.fill_options(table) },
             ArrayElementsTransportSlot::Undefined(t) => t.fill_options(table),
             ArrayElementsTransportSlot::Identifier(t) => t.fill_options(table),
             ArrayElementsTransportSlot::ReservedIdentifier(t) => t.fill_options(table),
@@ -15242,30 +15242,30 @@ impl ::sittir_core::options::FillOptions for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::Super(t) => t.fill_options(table),
             ArrayElementsTransportSlot::Number(t) => t.fill_options(table),
             ArrayElementsTransportSlot::String(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::TemplateString(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::Regex(t) => t.fill_options(table),
+            ArrayElementsTransportSlot::TemplateString(t) => { t.template_string_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_TEMPLATE_STRING_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::Regex(t) => { t.regex_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_REGEX_AFTER]); t.fill_options(table) },
             ArrayElementsTransportSlot::True(t) => t.fill_options(table),
             ArrayElementsTransportSlot::False(t) => t.fill_options(table),
             ArrayElementsTransportSlot::Null(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::Object(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::Array(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::FunctionExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::ArrowFunction(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::GeneratorFunction(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::Class(t) => t.fill_options(table),
+            ArrayElementsTransportSlot::Object(t) => { t.object_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_OBJECT_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::Array(t) => { t.array_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_ARRAY_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::FunctionExpression(t) => { t.function_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_FUNCTION_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::ArrowFunction(t) => { t.arrow_function_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_ARROW_FUNCTION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::GeneratorFunction(t) => { t.generator_function_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_GENERATOR_FUNCTION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::Class(t) => { t.class_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_CLASS_AFTER]); t.fill_options(table) },
             ArrayElementsTransportSlot::MetaProperty(t) => t.fill_options(table),
             ArrayElementsTransportSlot::CallExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::NonNullExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::AssignmentExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::AugmentedAssignmentExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::AwaitExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::UnaryExpression(t) => t.fill_options(table),
+            ArrayElementsTransportSlot::NonNullExpression(t) => { t.non_null_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_NON_NULL_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::AssignmentExpression(t) => { t.assignment_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_ASSIGNMENT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::AugmentedAssignmentExpression(t) => { t.augmented_assignment_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::AwaitExpression(t) => { t.await_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_AWAIT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::UnaryExpression(t) => { t.unary_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_UNARY_EXPRESSION_AFTER]); t.fill_options(table) },
             ArrayElementsTransportSlot::BinaryExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::TernaryExpression(t) => t.fill_options(table),
+            ArrayElementsTransportSlot::TernaryExpression(t) => { t.ternary_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_TERNARY_EXPRESSION_AFTER]); t.fill_options(table) },
             ArrayElementsTransportSlot::UpdateExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::NewExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::YieldExpression(t) => t.fill_options(table),
-            ArrayElementsTransportSlot::SpreadElement(t) => t.fill_options(table),
+            ArrayElementsTransportSlot::NewExpression(t) => { t.new_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_NEW_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::YieldExpression(t) => { t.yield_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_YIELD_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayElementsTransportSlot::SpreadElement(t) => { t.spread_element_after.get_or_insert(table.spacing[options::SITE_ARRAY_ELEMENTS_SPREAD_ELEMENT_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -15803,16 +15803,16 @@ pub enum ArrayPatternElementsTransportSlot {
 impl ::sittir_core::options::FillOptions for ArrayPatternElementsTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ArrayPatternElementsTransportSlot::MemberExpression(t) => t.fill_options(table),
-            ArrayPatternElementsTransportSlot::SubscriptExpression(t) => t.fill_options(table),
+            ArrayPatternElementsTransportSlot::MemberExpression(t) => { t.member_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_MEMBER_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayPatternElementsTransportSlot::SubscriptExpression(t) => { t.subscript_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_SUBSCRIPT_EXPRESSION_AFTER]); t.fill_options(table) },
             ArrayPatternElementsTransportSlot::Undefined(t) => t.fill_options(table),
             ArrayPatternElementsTransportSlot::Identifier(t) => t.fill_options(table),
             ArrayPatternElementsTransportSlot::ReservedIdentifier(t) => t.fill_options(table),
-            ArrayPatternElementsTransportSlot::ObjectPattern(t) => t.fill_options(table),
-            ArrayPatternElementsTransportSlot::ArrayPattern(t) => t.fill_options(table),
-            ArrayPatternElementsTransportSlot::NonNullExpression(t) => t.fill_options(table),
-            ArrayPatternElementsTransportSlot::RestPattern(t) => t.fill_options(table),
-            ArrayPatternElementsTransportSlot::AssignmentPattern(t) => t.fill_options(table),
+            ArrayPatternElementsTransportSlot::ObjectPattern(t) => { t.object_pattern_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_OBJECT_PATTERN_AFTER]); t.fill_options(table) },
+            ArrayPatternElementsTransportSlot::ArrayPattern(t) => { t.array_pattern_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_ARRAY_PATTERN_AFTER]); t.fill_options(table) },
+            ArrayPatternElementsTransportSlot::NonNullExpression(t) => { t.non_null_expression_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_NON_NULL_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArrayPatternElementsTransportSlot::RestPattern(t) => { t.rest_pattern_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_REST_PATTERN_AFTER]); t.fill_options(table) },
+            ArrayPatternElementsTransportSlot::AssignmentPattern(t) => { t.assignment_pattern_after.get_or_insert(table.spacing[options::SITE_ARRAY_PATTERN_ELEMENTS_ASSIGNMENT_PATTERN_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -22725,14 +22725,14 @@ pub enum ArgumentsArgumentsTransportSlot {
 impl ::sittir_core::options::FillOptions for ArgumentsArgumentsTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ArgumentsArgumentsTransportSlot::AsExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::SatisfiesExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::InstantiationExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::InternalModule(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::TypeAssertion(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::SubscriptExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::MemberExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ArgumentsArgumentsTransportSlot::AsExpression(t) => { t.as_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AS_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::SatisfiesExpression(t) => { t.satisfies_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SATISFIES_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::InstantiationExpression(t) => { t.instantiation_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_INSTANTIATION_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::InternalModule(t) => { t.internal_module_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_INTERNAL_MODULE_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::TypeAssertion(t) => { t.type_assertion_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_TYPE_ASSERTION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::SubscriptExpression(t) => { t.subscript_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SUBSCRIPT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::MemberExpression(t) => { t.member_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_MEMBER_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_AFTER]); t.fill_options(table) },
             ArgumentsArgumentsTransportSlot::Undefined(t) => t.fill_options(table),
             ArgumentsArgumentsTransportSlot::Identifier(t) => t.fill_options(table),
             ArgumentsArgumentsTransportSlot::ReservedIdentifier(t) => t.fill_options(table),
@@ -22740,30 +22740,30 @@ impl ::sittir_core::options::FillOptions for ArgumentsArgumentsTransportSlot {
             ArgumentsArgumentsTransportSlot::Super(t) => t.fill_options(table),
             ArgumentsArgumentsTransportSlot::Number(t) => t.fill_options(table),
             ArgumentsArgumentsTransportSlot::String(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::TemplateString(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::Regex(t) => t.fill_options(table),
+            ArgumentsArgumentsTransportSlot::TemplateString(t) => { t.template_string_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_TEMPLATE_STRING_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::Regex(t) => { t.regex_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_REGEX_AFTER]); t.fill_options(table) },
             ArgumentsArgumentsTransportSlot::True(t) => t.fill_options(table),
             ArgumentsArgumentsTransportSlot::False(t) => t.fill_options(table),
             ArgumentsArgumentsTransportSlot::Null(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::Object(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::Array(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::FunctionExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::ArrowFunction(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::GeneratorFunction(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::Class(t) => t.fill_options(table),
+            ArgumentsArgumentsTransportSlot::Object(t) => { t.object_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_OBJECT_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::Array(t) => { t.array_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_ARRAY_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::FunctionExpression(t) => { t.function_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_FUNCTION_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::ArrowFunction(t) => { t.arrow_function_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_ARROW_FUNCTION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::GeneratorFunction(t) => { t.generator_function_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_GENERATOR_FUNCTION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::Class(t) => { t.class_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_CLASS_AFTER]); t.fill_options(table) },
             ArgumentsArgumentsTransportSlot::MetaProperty(t) => t.fill_options(table),
             ArgumentsArgumentsTransportSlot::CallExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::NonNullExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::AssignmentExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::AwaitExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::UnaryExpression(t) => t.fill_options(table),
+            ArgumentsArgumentsTransportSlot::NonNullExpression(t) => { t.non_null_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_NON_NULL_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::AssignmentExpression(t) => { t.assignment_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_ASSIGNMENT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(t) => { t.augmented_assignment_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::AwaitExpression(t) => { t.await_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AWAIT_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::UnaryExpression(t) => { t.unary_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_UNARY_EXPRESSION_AFTER]); t.fill_options(table) },
             ArgumentsArgumentsTransportSlot::BinaryExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::TernaryExpression(t) => t.fill_options(table),
+            ArgumentsArgumentsTransportSlot::TernaryExpression(t) => { t.ternary_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_TERNARY_EXPRESSION_AFTER]); t.fill_options(table) },
             ArgumentsArgumentsTransportSlot::UpdateExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::NewExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::YieldExpression(t) => t.fill_options(table),
-            ArgumentsArgumentsTransportSlot::SpreadElement(t) => t.fill_options(table),
+            ArgumentsArgumentsTransportSlot::NewExpression(t) => { t.new_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_NEW_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::YieldExpression(t) => { t.yield_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_YIELD_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentsArgumentsTransportSlot::SpreadElement(t) => { t.spread_element_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SPREAD_ELEMENT_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -23673,10 +23673,10 @@ pub enum ClassBodyContentTransportSlot {
 impl ::sittir_core::options::FillOptions for ClassBodyContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ClassBodyContentTransportSlot::ClassBodyMethod(t) => t.fill_options(table),
-            ClassBodyContentTransportSlot::ClassBodyMethodSig(t) => t.fill_options(table),
-            ClassBodyContentTransportSlot::ClassStaticBlock(t) => t.fill_options(table),
-            ClassBodyContentTransportSlot::ClassBodyMember(t) => t.fill_options(table),
+            ClassBodyContentTransportSlot::ClassBodyMethod(t) => { t.class_body_method_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_CLASS_BODY_METHOD_AFTER]); t.fill_options(table) },
+            ClassBodyContentTransportSlot::ClassBodyMethodSig(t) => { t.class_body_method_sig_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_CLASS_BODY_METHOD_SIG_AFTER]); t.fill_options(table) },
+            ClassBodyContentTransportSlot::ClassStaticBlock(t) => { t.class_static_block_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_CLASS_STATIC_BLOCK_AFTER]); t.fill_options(table) },
+            ClassBodyContentTransportSlot::ClassBodyMember(t) => { t.class_body_member_after.get_or_insert(table.spacing[options::SITE_CLASS_BODY_CONTENT_CLASS_BODY_MEMBER_AFTER]); t.fill_options(table) },
             ClassBodyContentTransportSlot::Literal3_73_65_6d_69 => {}
         }
     }
@@ -30752,8 +30752,8 @@ impl ::sittir_core::options::FillOptions for ExtendsTypeClauseTypeTransportSlot 
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             ExtendsTypeClauseTypeTransportSlot::Identifier(t) => t.fill_options(table),
-            ExtendsTypeClauseTypeTransportSlot::NestedTypeIdentifier(t) => t.fill_options(table),
-            ExtendsTypeClauseTypeTransportSlot::GenericType(t) => t.fill_options(table),
+            ExtendsTypeClauseTypeTransportSlot::NestedTypeIdentifier(t) => { t.nested_type_identifier_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_NESTED_TYPE_IDENTIFIER_AFTER]); t.fill_options(table) },
+            ExtendsTypeClauseTypeTransportSlot::GenericType(t) => { t.generic_type_after.get_or_insert(table.spacing[options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_GENERIC_TYPE_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -37537,8 +37537,8 @@ pub enum FormalParametersElementsFormalParameterTransportSlot {
 impl ::sittir_core::options::FillOptions for FormalParametersElementsFormalParameterTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            FormalParametersElementsFormalParameterTransportSlot::RequiredParameter(t) => t.fill_options(table),
-            FormalParametersElementsFormalParameterTransportSlot::OptionalParameter(t) => t.fill_options(table),
+            FormalParametersElementsFormalParameterTransportSlot::RequiredParameter(t) => { t.required_parameter_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_REQUIRED_PARAMETER_AFTER]); t.fill_options(table) },
+            FormalParametersElementsFormalParameterTransportSlot::OptionalParameter(t) => { t.optional_parameter_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_OPTIONAL_PARAMETER_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -37645,13 +37645,13 @@ pub enum EnumBodyElementsContentTransportSlot {
 impl ::sittir_core::options::FillOptions for EnumBodyElementsContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            EnumBodyElementsContentTransportSlot::EnumAssignment(t) => t.fill_options(table),
+            EnumBodyElementsContentTransportSlot::EnumAssignment(t) => { t.enum_assignment_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_ENUM_ASSIGNMENT_AFTER]); t.fill_options(table) },
             EnumBodyElementsContentTransportSlot::Identifier(t) => t.fill_options(table),
             EnumBodyElementsContentTransportSlot::ReservedIdentifier(t) => t.fill_options(table),
             EnumBodyElementsContentTransportSlot::PrivatePropertyIdentifier(t) => t.fill_options(table),
             EnumBodyElementsContentTransportSlot::String(t) => t.fill_options(table),
             EnumBodyElementsContentTransportSlot::Number(t) => t.fill_options(table),
-            EnumBodyElementsContentTransportSlot::ComputedPropertyName(t) => t.fill_options(table),
+            EnumBodyElementsContentTransportSlot::ComputedPropertyName(t) => { t.computed_property_name_after.get_or_insert(table.spacing[options::SITE_ENUM_BODY_ELEMENTS_CONTENT_COMPUTED_PROPERTY_NAME_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -37986,35 +37986,35 @@ pub enum TupleTypeMembersTupleTypeMemberTransportSlot {
 impl ::sittir_core::options::FillOptions for TupleTypeMembersTupleTypeMemberTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            TupleTypeMembersTupleTypeMemberTransportSlot::TupleParameter(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::OptionalTupleParameter(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::OptionalType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::RestType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::ParenthesizedType(t) => t.fill_options(table),
+            TupleTypeMembersTupleTypeMemberTransportSlot::TupleParameter(t) => { t.tuple_parameter_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TUPLE_PARAMETER_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::OptionalTupleParameter(t) => { t.optional_tuple_parameter_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OPTIONAL_TUPLE_PARAMETER_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::OptionalType(t) => { t.optional_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OPTIONAL_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::RestType(t) => { t.rest_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_REST_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::ParenthesizedType(t) => { t.parenthesized_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_PARENTHESIZED_TYPE_AFTER]); t.fill_options(table) },
             TupleTypeMembersTupleTypeMemberTransportSlot::PredefinedType(t) => t.fill_options(table),
             TupleTypeMembersTupleTypeMemberTransportSlot::Identifier(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::NestedTypeIdentifier(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::GenericType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::ObjectType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::ArrayType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::TupleType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::FlowMaybeType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::TypeQuery(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::IndexTypeQuery(t) => t.fill_options(table),
+            TupleTypeMembersTupleTypeMemberTransportSlot::NestedTypeIdentifier(t) => { t.nested_type_identifier_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_NESTED_TYPE_IDENTIFIER_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::GenericType(t) => { t.generic_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_GENERIC_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::ObjectType(t) => { t.object_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_OBJECT_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::ArrayType(t) => { t.array_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_ARRAY_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::TupleType(t) => { t.tuple_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TUPLE_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::FlowMaybeType(t) => { t.flow_maybe_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_FLOW_MAYBE_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::TypeQuery(t) => { t.type_query_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::IndexTypeQuery(t) => { t.index_type_query_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INDEX_TYPE_QUERY_AFTER]); t.fill_options(table) },
             TupleTypeMembersTupleTypeMemberTransportSlot::This(t) => t.fill_options(table),
             TupleTypeMembersTupleTypeMemberTransportSlot::ExistentialType(t) => t.fill_options(table),
             TupleTypeMembersTupleTypeMemberTransportSlot::LiteralType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::LookupType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::ConditionalType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::TemplateLiteralType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::IntersectionType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::UnionType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::FunctionType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::ReadonlyType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::ConstructorType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::InferType(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.fill_options(table),
-            TupleTypeMembersTupleTypeMemberTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.fill_options(table),
+            TupleTypeMembersTupleTypeMemberTransportSlot::LookupType(t) => { t.lookup_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_LOOKUP_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::ConditionalType(t) => { t.conditional_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_CONDITIONAL_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::TemplateLiteralType(t) => { t.template_literal_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TEMPLATE_LITERAL_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::IntersectionType(t) => { t.intersection_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INTERSECTION_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::UnionType(t) => { t.union_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_UNION_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::FunctionType(t) => { t.function_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_FUNCTION_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::ReadonlyType(t) => { t.readonly_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_READONLY_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::ConstructorType(t) => { t.constructor_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_CONSTRUCTOR_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::InferType(t) => { t.infer_type_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_INFER_TYPE_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => { t.type_query_member_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]); t.fill_options(table) },
+            TupleTypeMembersTupleTypeMemberTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => { t.type_query_call_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -38732,11 +38732,11 @@ impl ::sittir_core::options::FillOptions for ObjectTypeContentContentTransportSl
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             ObjectTypeContentContentTransportSlot::ExportStatement(t) => t.fill_options(table),
-            ObjectTypeContentContentTransportSlot::PropertySignature(t) => t.fill_options(table),
-            ObjectTypeContentContentTransportSlot::CallSignature(t) => t.fill_options(table),
-            ObjectTypeContentContentTransportSlot::ConstructSignature(t) => t.fill_options(table),
-            ObjectTypeContentContentTransportSlot::IndexSignature(t) => t.fill_options(table),
-            ObjectTypeContentContentTransportSlot::MethodSignature(t) => t.fill_options(table),
+            ObjectTypeContentContentTransportSlot::PropertySignature(t) => { t.property_signature_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_PROPERTY_SIGNATURE_AFTER]); t.fill_options(table) },
+            ObjectTypeContentContentTransportSlot::CallSignature(t) => { t.call_signature_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_CALL_SIGNATURE_AFTER]); t.fill_options(table) },
+            ObjectTypeContentContentTransportSlot::ConstructSignature(t) => { t.construct_signature_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_CONSTRUCT_SIGNATURE_AFTER]); t.fill_options(table) },
+            ObjectTypeContentContentTransportSlot::IndexSignature(t) => { t.index_signature_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_INDEX_SIGNATURE_AFTER]); t.fill_options(table) },
+            ObjectTypeContentContentTransportSlot::MethodSignature(t) => { t.method_signature_after.get_or_insert(table.spacing[options::SITE_OBJECT_TYPE_CONTENT_CONTENT_METHOD_SIGNATURE_AFTER]); t.fill_options(table) },
         }
     }
 }
@@ -44195,6 +44195,30 @@ impl ::sittir_core::options::FillOptions for ProgramTransport {
         self.statements_separator_space.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_SEPARATOR_SPACE]);
         self.program_before.get_or_insert(table.spacing[options::SITE_PROGRAM_PROGRAM_BEFORE]);
         self.program_after.get_or_insert(table.spacing[options::SITE_PROGRAM_PROGRAM_AFTER]);
+        for item in self.statements.iter_mut().flatten() {
+            if let ::sittir_core::SlotValue::Node(seated) = item {
+                match seated {
+                    StatementTransport::ImportStatement(t) => { t.import_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_IMPORT_STATEMENT_AFTER]); }
+                    StatementTransport::DebuggerStatement(t) => { t.debugger_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_DEBUGGER_STATEMENT_AFTER]); }
+                    StatementTransport::ExpressionStatement(t) => { t.expression_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_EXPRESSION_STATEMENT_AFTER]); }
+                    StatementTransport::StatementBlock(t) => { t.statement_block_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_STATEMENT_BLOCK_AFTER]); }
+                    StatementTransport::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_IF_STATEMENT_AFTER]); }
+                    StatementTransport::SwitchStatement(t) => { t.switch_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_SWITCH_STATEMENT_AFTER]); }
+                    StatementTransport::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_FOR_STATEMENT_AFTER]); }
+                    StatementTransport::ForInStatement(t) => { t.for_in_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_FOR_IN_STATEMENT_AFTER]); }
+                    StatementTransport::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_WHILE_STATEMENT_AFTER]); }
+                    StatementTransport::DoStatement(t) => { t.do_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_DO_STATEMENT_AFTER]); }
+                    StatementTransport::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_TRY_STATEMENT_AFTER]); }
+                    StatementTransport::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_WITH_STATEMENT_AFTER]); }
+                    StatementTransport::BreakStatement(t) => { t.break_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_BREAK_STATEMENT_AFTER]); }
+                    StatementTransport::ContinueStatement(t) => { t.continue_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_CONTINUE_STATEMENT_AFTER]); }
+                    StatementTransport::ReturnStatement(t) => { t.return_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_RETURN_STATEMENT_AFTER]); }
+                    StatementTransport::ThrowStatement(t) => { t.throw_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_THROW_STATEMENT_AFTER]); }
+                    StatementTransport::LabeledStatement(t) => { t.labeled_statement_after.get_or_insert(table.spacing[options::SITE_PROGRAM_STATEMENTS_LABELED_STATEMENT_AFTER]); }
+                    _ => {}
+                }
+            }
+        }
         self.hash_bang_line.fill_options(table);
         self.statements.fill_options(table);
     }
@@ -45427,6 +45451,30 @@ impl ::sittir_core::options::FillOptions for StatementBlockTransport {
         self.statements_separator_space.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.statement_block_before.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_BEFORE]);
         self.statement_block_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENT_BLOCK_AFTER]);
+        for item in self.statements.iter_mut().flatten() {
+            if let ::sittir_core::SlotValue::Node(seated) = item {
+                match seated {
+                    StatementTransport::ImportStatement(t) => { t.import_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_IMPORT_STATEMENT_AFTER]); }
+                    StatementTransport::DebuggerStatement(t) => { t.debugger_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_DEBUGGER_STATEMENT_AFTER]); }
+                    StatementTransport::ExpressionStatement(t) => { t.expression_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_EXPRESSION_STATEMENT_AFTER]); }
+                    StatementTransport::StatementBlock(t) => { t.statement_block_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_STATEMENT_BLOCK_AFTER]); }
+                    StatementTransport::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_IF_STATEMENT_AFTER]); }
+                    StatementTransport::SwitchStatement(t) => { t.switch_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_SWITCH_STATEMENT_AFTER]); }
+                    StatementTransport::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_FOR_STATEMENT_AFTER]); }
+                    StatementTransport::ForInStatement(t) => { t.for_in_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_FOR_IN_STATEMENT_AFTER]); }
+                    StatementTransport::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_WHILE_STATEMENT_AFTER]); }
+                    StatementTransport::DoStatement(t) => { t.do_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_DO_STATEMENT_AFTER]); }
+                    StatementTransport::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_TRY_STATEMENT_AFTER]); }
+                    StatementTransport::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_WITH_STATEMENT_AFTER]); }
+                    StatementTransport::BreakStatement(t) => { t.break_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_BREAK_STATEMENT_AFTER]); }
+                    StatementTransport::ContinueStatement(t) => { t.continue_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_CONTINUE_STATEMENT_AFTER]); }
+                    StatementTransport::ReturnStatement(t) => { t.return_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_RETURN_STATEMENT_AFTER]); }
+                    StatementTransport::ThrowStatement(t) => { t.throw_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_THROW_STATEMENT_AFTER]); }
+                    StatementTransport::LabeledStatement(t) => { t.labeled_statement_after.get_or_insert(table.spacing[options::SITE_STATEMENT_BLOCK_STATEMENTS_LABELED_STATEMENT_AFTER]); }
+                    _ => {}
+                }
+            }
+        }
         self.statements.fill_options(table);
         self.automatic_semicolon.fill_options(table);
     }
@@ -46774,6 +46822,30 @@ impl ::sittir_core::options::FillOptions for SwitchCaseTransport {
         self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE]);
         self.switch_case_before.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_SWITCH_CASE_BEFORE]);
         self.switch_case_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_SWITCH_CASE_AFTER]);
+        for item in self.body.iter_mut().flatten() {
+            if let ::sittir_core::SlotValue::Node(seated) = item {
+                match seated {
+                    StatementTransport::ImportStatement(t) => { t.import_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_IMPORT_STATEMENT_AFTER]); }
+                    StatementTransport::DebuggerStatement(t) => { t.debugger_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_DEBUGGER_STATEMENT_AFTER]); }
+                    StatementTransport::ExpressionStatement(t) => { t.expression_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_EXPRESSION_STATEMENT_AFTER]); }
+                    StatementTransport::StatementBlock(t) => { t.statement_block_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_STATEMENT_BLOCK_AFTER]); }
+                    StatementTransport::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_IF_STATEMENT_AFTER]); }
+                    StatementTransport::SwitchStatement(t) => { t.switch_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_SWITCH_STATEMENT_AFTER]); }
+                    StatementTransport::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_FOR_STATEMENT_AFTER]); }
+                    StatementTransport::ForInStatement(t) => { t.for_in_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_FOR_IN_STATEMENT_AFTER]); }
+                    StatementTransport::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_WHILE_STATEMENT_AFTER]); }
+                    StatementTransport::DoStatement(t) => { t.do_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_DO_STATEMENT_AFTER]); }
+                    StatementTransport::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_TRY_STATEMENT_AFTER]); }
+                    StatementTransport::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_WITH_STATEMENT_AFTER]); }
+                    StatementTransport::BreakStatement(t) => { t.break_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_BREAK_STATEMENT_AFTER]); }
+                    StatementTransport::ContinueStatement(t) => { t.continue_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_CONTINUE_STATEMENT_AFTER]); }
+                    StatementTransport::ReturnStatement(t) => { t.return_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_RETURN_STATEMENT_AFTER]); }
+                    StatementTransport::ThrowStatement(t) => { t.throw_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_THROW_STATEMENT_AFTER]); }
+                    StatementTransport::LabeledStatement(t) => { t.labeled_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_CASE_BODY_LABELED_STATEMENT_AFTER]); }
+                    _ => {}
+                }
+            }
+        }
         self.value.fill_options(table);
         self.body.fill_options(table);
     }
@@ -46855,6 +46927,30 @@ impl ::sittir_core::options::FillOptions for SwitchDefaultTransport {
         self.body_separator_space.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE]);
         self.switch_default_before.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_BEFORE]);
         self.switch_default_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_AFTER]);
+        for item in self.body.iter_mut().flatten() {
+            if let ::sittir_core::SlotValue::Node(seated) = item {
+                match seated {
+                    StatementTransport::ImportStatement(t) => { t.import_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_IMPORT_STATEMENT_AFTER]); }
+                    StatementTransport::DebuggerStatement(t) => { t.debugger_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_DEBUGGER_STATEMENT_AFTER]); }
+                    StatementTransport::ExpressionStatement(t) => { t.expression_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_EXPRESSION_STATEMENT_AFTER]); }
+                    StatementTransport::StatementBlock(t) => { t.statement_block_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_STATEMENT_BLOCK_AFTER]); }
+                    StatementTransport::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_IF_STATEMENT_AFTER]); }
+                    StatementTransport::SwitchStatement(t) => { t.switch_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_SWITCH_STATEMENT_AFTER]); }
+                    StatementTransport::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_FOR_STATEMENT_AFTER]); }
+                    StatementTransport::ForInStatement(t) => { t.for_in_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_FOR_IN_STATEMENT_AFTER]); }
+                    StatementTransport::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_WHILE_STATEMENT_AFTER]); }
+                    StatementTransport::DoStatement(t) => { t.do_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_DO_STATEMENT_AFTER]); }
+                    StatementTransport::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_TRY_STATEMENT_AFTER]); }
+                    StatementTransport::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_WITH_STATEMENT_AFTER]); }
+                    StatementTransport::BreakStatement(t) => { t.break_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_BREAK_STATEMENT_AFTER]); }
+                    StatementTransport::ContinueStatement(t) => { t.continue_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_CONTINUE_STATEMENT_AFTER]); }
+                    StatementTransport::ReturnStatement(t) => { t.return_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_RETURN_STATEMENT_AFTER]); }
+                    StatementTransport::ThrowStatement(t) => { t.throw_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_THROW_STATEMENT_AFTER]); }
+                    StatementTransport::LabeledStatement(t) => { t.labeled_statement_after.get_or_insert(table.spacing[options::SITE_SWITCH_DEFAULT_BODY_LABELED_STATEMENT_AFTER]); }
+                    _ => {}
+                }
+            }
+        }
         self.body.fill_options(table);
     }
 }
@@ -49305,6 +49401,25 @@ impl ::sittir_core::options::FillOptions for SequenceExpressionTransport {
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SEPARATOR_SPACE_AFTER]);
         self.sequence_expression_before.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_SEQUENCE_EXPRESSION_BEFORE]);
         self.sequence_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_SEQUENCE_EXPRESSION_AFTER]);
+        for item in self.expression.iter_mut() {
+            if let ::sittir_core::SlotValue::Node(seated) = item {
+                match seated {
+                    ExpressionTransport::AsExpression(t) => { t.as_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_AS_EXPRESSION_AFTER]); }
+                    ExpressionTransport::SatisfiesExpression(t) => { t.satisfies_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_SATISFIES_EXPRESSION_AFTER]); }
+                    ExpressionTransport::InstantiationExpression(t) => { t.instantiation_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_INSTANTIATION_EXPRESSION_AFTER]); }
+                    ExpressionTransport::InternalModule(t) => { t.internal_module_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_INTERNAL_MODULE_AFTER]); }
+                    ExpressionTransport::TypeAssertion(t) => { t.type_assertion_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_TYPE_ASSERTION_AFTER]); }
+                    ExpressionTransport::AssignmentExpression(t) => { t.assignment_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_ASSIGNMENT_EXPRESSION_AFTER]); }
+                    ExpressionTransport::AugmentedAssignmentExpression(t) => { t.augmented_assignment_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER]); }
+                    ExpressionTransport::AwaitExpression(t) => { t.await_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_AWAIT_EXPRESSION_AFTER]); }
+                    ExpressionTransport::UnaryExpression(t) => { t.unary_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_UNARY_EXPRESSION_AFTER]); }
+                    ExpressionTransport::TernaryExpression(t) => { t.ternary_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_TERNARY_EXPRESSION_AFTER]); }
+                    ExpressionTransport::NewExpression(t) => { t.new_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_NEW_EXPRESSION_AFTER]); }
+                    ExpressionTransport::YieldExpression(t) => { t.yield_expression_after.get_or_insert(table.spacing[options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_YIELD_EXPRESSION_AFTER]); }
+                    _ => {}
+                }
+            }
+        }
         self.expression.fill_options(table);
     }
 }
@@ -53409,6 +53524,19 @@ impl ::sittir_core::options::FillOptions for ImplementsClauseTransport {
         self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_SEPARATOR_SPACE_AFTER]);
         self.implements_clause_before.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_BEFORE]);
         self.implements_clause_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_IMPLEMENTS_CLAUSE_AFTER]);
+        for item in self.type_.iter_mut() {
+            if let ::sittir_core::SlotValue::Node(seated) = item {
+                match seated {
+                    TypeTransport::FunctionType(t) => { t.function_type_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_FUNCTION_TYPE_AFTER]); }
+                    TypeTransport::ReadonlyType(t) => { t.readonly_type_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_READONLY_TYPE_AFTER]); }
+                    TypeTransport::ConstructorType(t) => { t.constructor_type_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_CONSTRUCTOR_TYPE_AFTER]); }
+                    TypeTransport::InferType(t) => { t.infer_type_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_INFER_TYPE_AFTER]); }
+                    TypeTransport::TypeQueryMemberExpressionInTypeAnnotation(t) => { t.type_query_member_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]); }
+                    TypeTransport::TypeQueryCallExpressionInTypeAnnotation(t) => { t.type_query_call_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_IMPLEMENTS_CLAUSE_TYPE_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]); }
+                    _ => {}
+                }
+            }
+        }
         self.type_.fill_options(table);
     }
 }
@@ -59853,6 +59981,19 @@ impl ::sittir_core::options::FillOptions for TypesTransport {
         self.type_separator_space_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER]);
         self.types_before.get_or_insert(table.spacing[options::SITE_TYPES_TYPES_BEFORE]);
         self.types_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPES_AFTER]);
+        for item in self.type_.iter_mut() {
+            if let ::sittir_core::SlotValue::Node(seated) = item {
+                match seated {
+                    TypeTransport::FunctionType(t) => { t.function_type_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_FUNCTION_TYPE_AFTER]); }
+                    TypeTransport::ReadonlyType(t) => { t.readonly_type_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_READONLY_TYPE_AFTER]); }
+                    TypeTransport::ConstructorType(t) => { t.constructor_type_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_CONSTRUCTOR_TYPE_AFTER]); }
+                    TypeTransport::InferType(t) => { t.infer_type_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_INFER_TYPE_AFTER]); }
+                    TypeTransport::TypeQueryMemberExpressionInTypeAnnotation(t) => { t.type_query_member_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]); }
+                    TypeTransport::TypeQueryCallExpressionInTypeAnnotation(t) => { t.type_query_call_expression_in_type_annotation_after.get_or_insert(table.spacing[options::SITE_TYPES_TYPE_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION_AFTER]); }
+                    _ => {}
+                }
+            }
+        }
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_TYPES_TYPE]);
         self.type_.fill_options(table);
     }

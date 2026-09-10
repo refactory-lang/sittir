@@ -279,6 +279,20 @@ read the third pass's rules.
 // path doesn't widen.
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::seatedSitesOf`
+
+The seated child edges of one slot, keyed by the child kind each belongs to.
+
+### `packages/codegen/src/emitters/render-module.ts::sharedEnumSeatLoops`
+
+The seating for a repeat slot whose element type is a supertype transport
+enum. A per-slot enum belongs to exactly one seat, so its seating rides its
+own `fill_options` at no extra walk; a supertype enum is shared across seats
+and cannot carry a seat-specific arm, so the parent applies it here, looping
+its own slot before descending. The arms come from
+`collectEffectiveSupertypeTransportShape`, the same shape the enum was
+emitted from, so a suppressed kind is never named.
+
 ### `packages/codegen/src/emitters/shared.ts::emitsPlainBuiltAlias`
 
 ```text
@@ -6041,6 +6055,23 @@ One generated test per wired sub-factory, driven by `collectPolymorphWires` — 
  * @returns deduplicated list of resolved kind names
  */
 ```
+
+### `packages/codegen/src/emitters/transport-common.ts::slotElementKinds`
+
+The child kinds a repeat slot's element type actually carries as variants.
+A per-slot enum flattens a supertype to its concrete kinds; a supertype enum
+stops at any subtype holding its own transport type, so `Declaration` stays
+one variant rather than the fourteen declarations under it. Read by the enum
+emitters and by the model that mints seated sites, so an address always has
+a variant behind it.
+
+### `packages/codegen/src/emitters/transport-common.ts::supertypeTransportKinds`
+
+The walk behind a supertype's transport enum: its subtypes in declaration
+order, with a reserved supertype flattened through rather than kept as a
+variant, plus the kinds that flattening suppressed and the parse names the
+subtypes carry. `collectEffectiveSupertypeTransportShape` maps the result to
+nodes and names the variants; `slotElementKinds` reads the kinds alone.
 
 ### `packages/codegen/src/emitters/types.ts::kindDiscriminantOrLiteral`
 

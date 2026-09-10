@@ -4,7 +4,7 @@ import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { admitsDepth, type WhitespaceText } from '../compiler/model/render-rules.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
-import { comparePreferencePaths, formatPreferencePath } from '../dsl/primitives/preference-path.ts';
+import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
 
@@ -21,6 +21,8 @@ export interface SpacingSite {
 	readonly side?: SpacingSide;
 	readonly role?: 'separator';
 	readonly defaultText?: string;
+	readonly seat?: { readonly kind: string; readonly field: string };
+	readonly path?: readonly PreferenceSegment[];
 }
 
 export interface DelimiterSite {
@@ -125,7 +127,9 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
-			...(site.side === undefined ? {} : { side: site.side })
+			...(site.side === undefined ? {} : { side: site.side }),
+			...(site.seat === undefined ? {} : { seat: site.seat }),
+			...(site.path === undefined ? {} : { path: site.path })
 		});
 		labels.set(site.label, allowedIds);
 		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);

@@ -15,6 +15,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 How a slot's values are stored on the built node: `verbatim` (values as given), `boolean`/`bitflag` (keyword presence collapsed), `kindEnum` (every value is a literal arm — the slot stores kind ids), and `mixedEnum` (literal arms store their kind ids beside whole-node arms). Classified once in `emitters/shared.ts::classifyFieldStorageInfo` and cached on the slot; every storage-aware emitter reads the cached classification.
 
+### `packages/codegen/src/compiler/model/node-map.ts::concreteKindsOf`
+
+A kind expanded to the concrete kinds it can stand for: itself when it is not
+a supertype, otherwise the union over its subtypes, transitively. Shared with
+the transport emitters, which need the same closure to decide what a slot's
+element type can hold — one derivation, so the sites addressed against a
+generated enum and the enum's own variants cannot disagree.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isNodeRef`
 
 ```text
@@ -3300,6 +3308,33 @@ the rule shape.
 carries it as a fact, a caller may name it, and a render option may set it
 over a declared `Trailing` default.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::SeatedChild`
+
+The child a seated site belongs to: the kind that occupies the position, and
+the transport field carrying that kind's own trailing edge. A seated site
+writes no field of its own — the parent fills the child's.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatedSites`
+
+The kind edges scoped to a seat. A kind's trailing edge is global to that
+kind, so an attribute takes the same gap after it among statements as among
+parameters; a seated site narrows it to one (parent kind, slot, child kind)
+so the two can differ. One per admitted child kind of every heterogeneous
+repeat slot, addressed `(<parent>)/<slot>:/(<child>)/after` and born with
+that path stamped rather than spelled flat for `pathOf` to decompose.
+
+Seats are grouped by (kind, slot) and their admitted kinds unioned, because
+more than one render rule can reach the same slot. The admitted kinds come
+from `slotElementKinds`, the same derivation the element enum is emitted
+from, so every seated site has a variant to seat it. A child with no
+trailing edge of its own — a leaf — takes none, and a slot resolving to one
+child kind keeps its global edge alone.
+
+Each seated site takes the arm its child's global edge already resolves to.
+The parent fills unconditionally, so a seated site always decides the edge
+inside its slot; inheriting the arm is what lets the whole space be minted
+without moving a rendered byte.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -3424,6 +3459,9 @@ or default label, and side `seam`. Rule order is what the depth walk
 its array's sites and its end follows them. One entry per kind × transport
 field; two seams of one token in one kind resolving to different defaults
 is an error, since they share one transport field.
+
+After the walk it appends the seated sites (`seatedSites`), which carry no
+transport field of the kind that holds them.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamRenderRules`
 
@@ -3746,6 +3784,10 @@ the seam names a field, which is the remaining case.
 A side is a bare name segment. That is what the canonical order recognises, so
 a kind's own edges sort after everything nested beneath them and each subtree
 stays contiguous.
+
+A site that was born knowing its path returns it unchanged. No decomposition
+branch produces a kind-match in the middle of a path, so a seated site could
+only be spelled flat to be parsed back — the address exists to be read.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::matchAddress`
 

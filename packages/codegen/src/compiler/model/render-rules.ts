@@ -5,8 +5,10 @@ import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-ty
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { AbstractAssembledCompound, AssembledEnum } from './node-map.ts';
+import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { buildSupertypeMembersMap } from './supertype-members.ts';
 import { addressSites, resolveBindings } from './site-addresses.ts';
+import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
@@ -82,6 +84,11 @@ export interface RenderRulesConfig {
 	readonly whitespaceText?: ReadonlyMap<string, WhitespaceText>;
 }
 
+export interface SeatedChild {
+	readonly kind: string;
+	readonly field: string;
+}
+
 export interface RuleSpacingSite {
 	readonly kind: string;
 	readonly slot: string;
@@ -90,6 +97,8 @@ export interface RuleSpacingSite {
 	readonly side: SpacingSide;
 	readonly defaultArm: WhitespaceArm;
 	readonly arms: readonly WhitespaceArm[];
+	readonly seat?: SeatedChild;
+	readonly path?: readonly PreferenceSegment[];
 }
 
 type Bag = {
@@ -749,6 +758,7 @@ export function declaredOptionArms(
 
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {
 	const out = new Map<string, RuleSpacingSite>();
+	const seats: Seat[] = [];
 	const add = (kind: string, slot: string, part: SpacingPart, address: string): void => {
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
@@ -788,7 +798,59 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 		for (const part of [spaced.before, spaced.after]) {
 			if (part !== undefined) add(kind, slot, part, siteKey(slot, part.label));
 		}
+		seats.push({ kind, slot, id: bag(r).id! });
 	};
 	for (const [kind, rule] of Object.entries(renderRules.rules)) visit(kind, rule);
-	return [...out.values()];
+	const sites = [...out.values()];
+	return [...sites, ...seatedSites(seats, sites, nodeMap)];
+}
+
+interface Seat {
+	readonly kind: string;
+	readonly slot: string;
+	readonly id: RuleId;
+}
+
+function seatedSites(seats: readonly Seat[], sites: readonly RuleSpacingSite[], nodeMap: NodeMap): RuleSpacingSite[] {
+	const edgeOf = new Map<string, RuleSpacingSite>();
+	for (const site of sites) {
+		const own = publicKindName(site.kind);
+		if (site.side === 'seam' && site.address === seamLabel(own, 'after')) edgeOf.set(own, site);
+	}
+	const admitted = new Map<string, { kind: string; slot: string; children: Set<string> }>();
+	for (const seat of seats) {
+		const slot = nodeMap.slotByRuleId.get(seat.id);
+		if (slot === undefined) continue;
+		const key = `${seat.kind}\u0000${seat.slot}`;
+		const entry = admitted.get(key) ?? { kind: seat.kind, slot: seat.slot, children: new Set<string>() };
+		for (const c of slotElementKinds(slot, nodeMap)) entry.children.add(publicKindName(c));
+		admitted.set(key, entry);
+	}
+	const out: RuleSpacingSite[] = [];
+	for (const seat of admitted.values()) {
+		const children = [...seat.children].sort();
+		if (children.length < 2) continue;
+		const parent = publicKindName(seat.kind);
+		for (const child of children) {
+			const edge = edgeOf.get(child);
+			if (edge === undefined) continue;
+			out.push({
+				kind: seat.kind,
+				slot: seat.slot,
+				address: `${seat.slot}_${edge.address}`,
+				label: edge.label,
+				side: edge.side,
+				defaultArm: edge.defaultArm,
+				arms: edge.arms,
+				seat: { kind: child, field: edge.address },
+				path: [
+					{ kind: 'kind-match', name: parent },
+					{ kind: 'fieldName', name: seat.slot },
+					{ kind: 'kind-match', name: child },
+					{ kind: 'name', name: 'after' }
+				]
+			});
+		}
+	}
+	return out;
 }
