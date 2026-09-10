@@ -184,6 +184,9 @@ export default grammar(
 				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
 
 				_: {
+					'decorator:/separator': preference('tight'),
+					'decorator:/(_)/after': preference('newline'),
+					'decorator:/end': preference('newline'),
 					'_/separator/","/before': preference('tight'),
 					'":"/after': preference('space'),
 					'"="/before': preference('space'),
@@ -234,6 +237,8 @@ export default grammar(
 				object_pattern: { '"{"/after': preference('space'), '"}"/before': preference('space') },
 				ternary_expression: { '":"/before': preference('space') },
 				for_statement: { '"("/before': preference('space') },
+				required_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
+				optional_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
 
 				_bindings: {
 					'_/terminator:': 'statements/terminator',
@@ -253,16 +258,8 @@ export default grammar(
 					'switch_case/body:/end': 'case_body/end',
 					'switch_default/body:/start': 'case_body/start',
 					'switch_default/body:/end': 'case_body/end',
-					'abstract_class_declaration/decorator:/separator': 'gap/separator',
-					'class/decorator:/separator': 'gap/separator',
 					'class_body/content:/separator': 'gap/separator',
-					'class_body_method/decorator:/separator': 'gap/separator',
-					'class_declaration/decorator:/separator': 'gap/separator',
-					'export_statement_default_declaration/decorator:/separator': 'gap/separator',
-					'optional_parameter/decorator:/separator': 'gap/separator',
 					'program/statements:/separator': 'gap/separator',
-					'public_field_definition/decorator:/separator': 'gap/separator',
-					'required_parameter/decorator:/separator': 'gap/separator',
 					'statement_block/statements:/separator': 'gap/separator',
 					'switch_body/cases:/separator': 'gap/separator',
 					'switch_case/body:/separator': 'gap/separator',

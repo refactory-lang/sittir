@@ -5066,6 +5066,12 @@ var grammar_sittir_default = grammar(
       },
       options: {
         gap: { separator: preference("tight") },
+        module: {
+          "statements:/separator": preference("tight"),
+          "statements:/(function_definition)/after": preference("blankline"),
+          "statements:/(class_definition)/after": preference("blankline"),
+          "statements:/(decorated_definition)/after": preference("blankline")
+        },
         _: {
           '_/separator/","/before': preference("tight"),
           '_/separator/";"/before': preference("tight"),
@@ -5096,7 +5102,6 @@ var grammar_sittir_default = grammar(
           "decorated_definition/decorator:/separator": "gap/separator",
           "if_statement/alternative:/separator": "gap/separator",
           "match_block_block/alternative:/separator": "gap/separator",
-          "module/statements:/separator": "gap/separator",
           "try_statement/except_clauses:/separator": "gap/separator"
         }
       },
