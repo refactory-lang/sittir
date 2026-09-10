@@ -3425,18 +3425,6 @@ The catalog kinds of a list's separator tokens: one for a literal, the
 members' kinds for a choice of literals. A token with no catalog kind, or
 a separator of any other shape, is a build error naming the list.
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::declaredPreference`
-
-```text
-/**
- * The `preference()` a slot's labelled arms carry, if any. A slot may not
- * mix labels and must mark a default arm; unlabelled arms beside the
- * labelled ones stay outside the preference. An arm's value is its variant
- * name, else its literal text, else its kind; its kind is the parse kind
- * the arm resolves to, which is what the option is typed by.
- */
-```
-
 ### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
 
 ```text
@@ -3908,3 +3896,54 @@ rule across every comma-separated list in a grammar, and every list has a
 different kind and slot, so the token is the only thing they share. With the
 token in the path, `_/_/separator/","/before` is that rule and a longer path
 under one kind is an exception to it, ranked by the ordinary subset test.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::SiteCandidate`
+
+A choice slot that could be a site, with the arms its members admit and the
+address it would answer to. It becomes a `SitePreference` only where the
+options block names it, so the site space holds what a grammar addresses and
+not every choice in the model.
+
+It carries its own `path`: the address a candidate answers to is decided where
+the candidate is made, and the emitters read that stamp rather than deriving a
+path a second time from the address string.
+
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::choiceCandidate`
+
+The candidate a slot offers when it holds more than one value and every value
+names an arm. Arms come from the slot's own members, the way a separated
+list's arms come from its separator rule.
+
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::stampResolvedDefaults`
+
+Writes each resolved site's arm back onto the model: a choice slot's
+`optionDefaultArm`, a list's `resolvedDelimiterArm` and `resolvedSeparatorArm`.
+
+The factory reads the stamp rather than the options block, so the arm it
+bakes in and the arm the renderer resolves have one source. Resolution runs
+before the emitters walk the model, and a slot with no stamp is one no option
+addressed.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultArm`
+
+The arm an option declared for this slot, stamped once resolution has run.
+The factory consults it to pick among arms a bare input fits, so the value it
+bakes in is the one the options block chose rather than a second declaration
+beside it. Undefined on a slot no option addressed.
+
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.resolvedDelimiterArm`
+
+The delimiter member an option declared for this list, stamped once
+resolution has run. Absent when nothing addressed it, which the factory reads
+as `Delimiter.None`.
+
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.resolvedSeparatorArm`
+
+The separator token an option declared for this list, stamped once resolution
+has run. A list that chooses its separator per instance and has no stamp is a
+build error naming the arms it admits.
+

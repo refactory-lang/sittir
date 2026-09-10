@@ -1340,6 +1340,7 @@ export type AddressRoot =
 	| 'program'
 	| 'property_signature'
 	| 'public_field_definition'
+	| 'quotes'
 	| 'readonly_type'
 	| 'regex'
 	| 'regex_pattern'
@@ -1351,6 +1352,7 @@ export type AddressRoot =
 	| 'sequence_expression'
 	| 'spread_element'
 	| 'statement_block'
+	| 'statements'
 	| 'string'
 	| 'string_double'
 	| 'string_single'
@@ -2065,6 +2067,7 @@ export interface AddressBranch {
 	readonly 'public_field_definition/decorator': 'decorator' | 'end' | 'separator' | 'start';
 	readonly 'public_field_definition/decorator/decorator': 'after';
 	readonly 'public_field_definition/optionality_marker': 'after' | 'before';
+	readonly quotes: 'style';
 	readonly readonly_type: 'after' | 'before' | 'readonly';
 	readonly 'readonly_type/readonly': 'after' | 'before';
 	readonly regex: '/' | 'after' | 'before';
@@ -2158,6 +2161,7 @@ export interface AddressBranch {
 	readonly 'statement_block/statements/with_statement': 'after';
 	readonly 'statement_block/{': 'after' | 'before';
 	readonly 'statement_block/}': 'after' | 'before';
+	readonly statements: 'terminator';
 	readonly string: 'content';
 	readonly string_double: '"' | 'after' | 'before';
 	readonly 'string_double/"': 'after' | 'before';
@@ -3313,6 +3317,7 @@ export interface AddressLeaf {
 	readonly 'public_field_definition/decorator/start': Whitespace;
 	readonly 'public_field_definition/optionality_marker/after': Whitespace;
 	readonly 'public_field_definition/optionality_marker/before': Whitespace;
+	readonly 'quotes/style': TSKindId.StringDouble | TSKindId.StringSingle;
 	readonly 'readonly_type/after': Whitespace;
 	readonly 'readonly_type/before': Whitespace;
 	readonly 'readonly_type/readonly/after': Whitespace;
@@ -3396,6 +3401,11 @@ export interface AddressLeaf {
 	readonly 'statement_block/{/before': Whitespace;
 	readonly 'statement_block/}/after': Whitespace;
 	readonly 'statement_block/}/before': Whitespace;
+	readonly 'statements/terminator':
+		| TSKindId.AutomaticSemicolon
+		| TSKindId.Semi
+		| TSKindId.Comma
+		| TSKindId.FunctionSignatureAutomaticSemicolon;
 	readonly 'string/content': TSKindId.StringDouble | TSKindId.StringSingle;
 	readonly 'string_double/"/after': Whitespace;
 	readonly 'string_double/"/before': Whitespace;

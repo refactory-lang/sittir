@@ -1,7 +1,7 @@
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
-import { transform as transformFn, applyPreference } from '../transform/transform.ts';
+import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
 import type { OptionsConfig } from './options-block.ts';
 import {
@@ -30,7 +30,7 @@ import {
 } from '../primitives/variant.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
-import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
+import type { FastKeys, TransformPatchMap, TransformPatchValue } from '../../grammar-shapes/path-type.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
@@ -156,16 +156,15 @@ export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule
 				readonly [K in keyof R]?: R[K] extends GrammarRule
 					?
 							| TransformPatchMap<FastKeys<R[K]>>
-							| SitePreferenceMap
-							| (TransformPatchMap<FastKeys<R[K]>> | SitePreferenceMap | PreferencePlaceholder)[]
-							| PreferencePlaceholder
+							| OpenPatchMap
+							| (TransformPatchMap<FastKeys<R[K]>> | OpenPatchMap)[]
 					: PatchEntry;
 			}
 		: Partial<Record<BaseKind<Base>, PatchEntry>>;
 
-export type PatchEntry = PatchMap | (PatchMap | PreferencePlaceholder)[] | PreferencePlaceholder;
+export type PatchEntry = PatchMap | PatchMap[];
 
-export type SitePreferenceMap = Readonly<Record<string, PreferencePlaceholder>>;
+export type OpenPatchMap = Readonly<Record<string, TransformPatchValue>>;
 
 export type PatchMap = Record<string, unknown>;
 
@@ -226,6 +225,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: B): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
 	const baseArg = base as unknown as BaseArg | undefined;
+	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
@@ -239,13 +239,13 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
-		defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
+		defaults: undefined,
 		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const patches = structuralPatchesOf(cfg.patches ?? {});
+	const patches = cfg.patches ?? {};
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
@@ -320,86 +320,22 @@ function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 
-function isSitePreferenceEntry(key: string, value: unknown): boolean {
-	return SLOT_KEY.test(key) && isPreference(value);
-}
-
 /// A top-level gap, seam or flank spelling, retired from patches.
 function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
 	if (rules.has(key) || rules.has(`_${key}`)) return false;
 	return parseSpacingLabel(key) !== undefined || parseSeamLabel(key) !== undefined || parseFlankAddress(key) !== undefined;
 }
 
-function checkSpacingArm(at: string, arm: string): string {
-	if (!isSpacingArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${SPACING_ARMS.join(', ')}`);
-	return arm;
-}
 
-function checkDelimiterArm(at: string, arm: string): string {
-	if (!isDelimiterArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${DELIMITER_ARMS.join(', ')}`);
-	return arm;
-}
 
-function checkWhitespaceArm(at: string, arm: string): string {
-	if (!isWhitespaceArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${WHITESPACE_ARMS.join(', ')}`);
-	return arm;
-}
 
-function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): RenderDefaults | undefined {
-	const sites: Record<string, Record<string, SiteDefault>> = {};
-	const site = (kind: string, address: string, value: SiteDefault): void => {
-		const own = sites[kind] ?? {};
-		if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
-		own[address] = value;
-		sites[kind] = own;
-	};
-	for (const [key, entry] of Object.entries(patches)) {
-		if (!entry) continue;
+function assertNoSpacingAddressPatches(patches: PatchesConfig, rules: ReadonlySet<string>): void {
+	for (const key of Object.keys(patches)) {
+		if (!patches[key]) continue;
 		if (isRetiredAddressKey(key, rules)) {
 			throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
 		}
-		for (const patchMap of patchSetsOf(entry)) {
-			for (const [slot, value] of Object.entries(patchMap)) {
-				if (!isSitePreferenceEntry(slot, value)) continue;
-				const { label, default: arm } = value as PreferencePlaceholder;
-				if (label === undefined) throw new Error(`patches: ${key}.${slot} takes preference(label, default)`);
-				const seam = parseSeamLabel(slot);
-				if (seam !== undefined && parseSeamLabel(label) === undefined) {
-					throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
-				}
-				const address = seam === undefined ? siteKey(slot, label) : slot;
-				const checked =
-					label === DELIMITER_LABEL
-						? checkDelimiterArm(`${key}.${address}`, arm)
-						: label === SEPARATOR_LABEL
-							? arm
-							: seam !== undefined
-								? checkWhitespaceArm(`${key}.${address}`, arm)
-								: checkSpacingArm(`${key}.${address}`, arm);
-				site(key, address, { label, arm: checked });
-			}
-		}
 	}
-	return Object.keys(sites).length === 0 ? undefined : { labels: {}, sites };
-}
-
-function structuralPatchesOf(patches: PatchesConfig): PatchesConfig {
-	const out: Record<string, PatchEntry> = {};
-	for (const [kind, entry] of Object.entries(patches)) {
-		if (!entry) continue;
-		const items = Array.isArray(entry) ? entry : [entry];
-		const kept: (PatchMap | PreferencePlaceholder)[] = [];
-		for (const item of items) {
-			if (isPreference(item)) {
-				kept.push(item);
-				continue;
-			}
-			const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
-			if (Object.keys(structural).length > 0) kept.push(structural);
-		}
-		if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0]! : kept;
-	}
-	return out as PatchesConfig;
 }
 
 function patchSetsOf(entry: PatchEntry): readonly PatchMap[] {
@@ -449,11 +385,6 @@ function nestVariantsByPath(sets: readonly PatchMap[]): readonly PatchMap[] {
 	});
 }
 
-function kindPreferencesOf(entry: PatchEntry): readonly PreferencePlaceholder[] {
-	const items = Array.isArray(entry) ? entry : [entry];
-	return items.filter(isPreference);
-}
-
 function composeOrSynthesizePatchedParents(
 	rules: Record<string, RuleFn>,
 	patches: PatchesConfig,
@@ -461,14 +392,13 @@ function composeOrSynthesizePatchedParents(
 ): void {
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
-		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
+		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
 	}
 }
 
 function buildPatchedParentFn(
 	kind: string,
 	patchSets: readonly PatchMap[],
-	preferences: readonly PreferencePlaceholder[],
 	userFn: SittirRuleFn | undefined,
 	context: WireContext
 ): SittirRuleFn {
@@ -479,12 +409,9 @@ function buildPatchedParentFn(
 			: isHidden && context.deposits.has(kind)
 				? context.deposits.get(kind)
 				: original;
-		let result =
-			patchSets.length === 0
-				? base
-				: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
-		for (const pref of preferences) result = applyPreference(result as RuntimeRule, pref, kind);
-		return result;
+		return patchSets.length === 0
+			? base
+			: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
 

@@ -1717,19 +1717,6 @@ rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
 // Dispatched before reaching applyToMembers — should never arrive here.
 ```
 
-### `packages/codegen/src/dsl/transform/transform.ts::applyPreference`
-
-```text
-/**
- * Lowers `preference(label, default)` onto the choice it was declared on:
- * every arm is stamped with the label and the arm spelled `default` (by
- * literal, alias target, variant or symbol name) is marked default; a
- * `default` no arm spells is a build error. Wrappers (fields, precedence,
- * aliases, repeats) are looked through; a rule that is not a choice is a
- * build error naming the kind.
- */
-```
-
 ### `packages/codegen/src/dsl/transform/transform.ts::armNamesOf`
 
 ```text

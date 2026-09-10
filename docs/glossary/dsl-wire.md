@@ -1608,12 +1608,6 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::kindPreferencesOf`
-
-```text
-/** The kind-level preference placeholders in a patch entry, in order. */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
 
 ```text
@@ -1630,49 +1624,6 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  */
 ```
 
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.defaults`
-
-```text
-// The grammar's render defaults, derived from the preference() declarations
-// in `patches:` before the structural patches are composed; drained into
-// RawGrammar.renderDefaults by evaluate.
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::renderDefaultsOf`
-
-The render defaults a grammar declares under `patches:`: a preference under a
-kind's slot, resolved to that kind's site and address.
-
-A gap, seam or flank named at the top level is refused. Those spellings were
-how a default reached every site sharing a label before the `options:` block
-could address a site by its path; a key that parses as one and names no rule
-now says so rather than falling through to the patch machinery as a rule that
-does not exist.
-
-What remains here is the arm space the address surface does not carry — a
-list's delimiter and its choice of separator token.
-
-### `packages/codegen/src/dsl/wire/wire.ts::structuralPatchesOf`
-
-The patches with their site preferences removed: what is left is a structural
-edit to a rule, which the patch machinery applies. A kind carrying both keeps
-its structural half here and its preference half in `renderDefaultsOf`.
-
-### `packages/codegen/src/dsl/wire/wire.ts::isSitePreferenceEntry`
-
-```text
-/** A patch-map entry that declares a site default: a slot name (a bare
- *  identifier; paths carry digits, slashes, colons or parentheses) holding a
- *  preference placeholder. */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::SitePreferenceMap`
-
-```text
-// A patch map of slot name → preference(label, arm): the site-default form
-// a kind or supertype key may take beside, or instead of, path patches.
-```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::knownRuleNames`
 
@@ -1708,3 +1659,19 @@ default live in the two halves: the binding says which label an address belongs
 to, the declaration under its kind says what its arm is. Welded together, as
 `preference(label, arm)` repeated at every site does today, neither can be
 stated once.
+
+### `packages/codegen/src/dsl/wire/wire.ts::assertNoSpacingAddressPatches`
+
+Refuses a gap, seam or flank spelling as a top-level `patches:` key. Those
+were how a default reached every site sharing a label before `options:` could
+address a site by its path; a key that parses as one and names no rule says so
+here rather than falling through to the patch machinery as a rule that does
+not exist.
+
+
+### `packages/codegen/src/dsl/wire/wire.ts::OpenPatchMap`
+
+A patch map keyed by any path. The shape types give a rule's own keys, which
+is the stricter surface and the one to prefer; this arm is what lets a patch
+address a position those keys do not enumerate.
+

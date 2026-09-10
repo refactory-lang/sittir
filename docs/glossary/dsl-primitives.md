@@ -416,10 +416,13 @@ It carries no data; it is a placeholder like `arm.default`, recognised by
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::preference`
 
-A preference's arm, and — for as long as `patches:` still holds declarations —
-the label it belongs to. Under `options:` the key is the address, so the label
-argument would only repeat it back and the one-argument form takes the arm
-alone. Membership is declared once in `_bindings` instead of at every site.
+A preference's arm: the value chosen at the site an `options:` key addresses.
+The key is the address, so the arm is all a preference carries.
+
+A choice is addressable because it is a choice, not because anything labelled
+it. What names a site for a reader is the `options:` key, and a binding maps
+one address onto another key, so a name never has to be stamped onto the arms
+themselves.
 
 ### `packages/codegen/src/dsl/primitives/preference-path.ts::parsePreferencePath`
 

@@ -71,32 +71,6 @@ function armNamesOf(arm: unknown): string[] {
 	return names;
 }
 
-export function applyPreference(rule: RuntimeRule, patch: PreferencePlaceholder, kind: string): RuntimeRule {
-	const node = rule as { type?: string; content?: unknown; members?: unknown[]; annotations?: RuleAnnotations };
-	if (node.type === 'CHOICE' && Array.isArray(node.members)) {
-		let matched = false;
-		const members = node.members.map((arm) => {
-			const isDefault = armNamesOf(arm).includes(patch.default);
-			matched ||= isDefault;
-			return withAnnotations(arm, { preference: patch.label, ...(isDefault ? { default: true as const } : {}) });
-		});
-		if (!matched) {
-			throw new Error(
-				`preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? '?').join(', ')})`
-			);
-		}
-		return { ...(node as object), members } as unknown as RuntimeRule;
-	}
-	if (node.content !== undefined && node.content !== null && typeof node.content === 'object') {
-		return {
-			...(node as object),
-			content: applyPreference(node.content as RuntimeRule, patch, kind)
-		} as unknown as RuntimeRule;
-	}
-	throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
-}
-
-
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
 	return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
@@ -478,9 +452,6 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	}
 	if (isGroupPlaceholder(patch)) {
 		return withAnnotations(originalMember, { hoisted: true });
-	}
-	if (isPreference(patch)) {
-		return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? '(unknown)');
 	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();

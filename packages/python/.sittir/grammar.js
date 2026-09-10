@@ -566,20 +566,12 @@ function withHoistedAnnotation(rule) {
 function isPreference(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
 }
-function preference(first, second) {
-  return second === void 0 ? { __sittirPlaceholder: "preference", default: first } : { __sittirPlaceholder: "preference", label: first, default: second };
+function preference(arm2) {
+  return { __sittirPlaceholder: "preference", default: arm2 };
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
-var SPACING_ARMS = ["tight", "space", "newline", "blankline"];
-var WHITESPACE_ARMS = ["tight", "space", "newline", "blankline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
-var DELIMITER_LABEL = "delimiter";
-var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
-function isDelimiterArm(value) {
-  return DELIMITER_ARMS.includes(value);
-}
-var SEPARATOR_LABEL = "separator";
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
 function parseSpacingLabel(name) {
   const m = SPACING_LABEL.exec(name);
@@ -595,21 +587,10 @@ function parseSeamLabel(name) {
   const m = SEAM_LABEL.exec(name);
   return m ? { token: m[1], side: m[2] } : void 0;
 }
-function siteKey(slot, label) {
-  const spacing = parseSpacingLabel(label);
-  if (spacing === void 0) return `${slot}_${label}`;
-  return spacing.side === void 0 ? `${slot}_separator_space` : `${slot}_separator_space_${spacing.side}`;
-}
 var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
 function parseFlankAddress(key) {
   const m = FLANK_ADDRESS.exec(key);
   return m ? { kind: m[1], side: m[2] } : void 0;
-}
-function isSpacingArm(value) {
-  return SPACING_ARMS.includes(value);
-}
-function isWhitespaceArm(value) {
-  return WHITESPACE_ARMS.includes(value);
 }
 
 // packages/codegen/src/dsl/primitives/alias.ts
@@ -3789,6 +3770,7 @@ function wireGetCurrentRuleKind() {
 function wire(config, base2) {
   const cfg = config;
   const baseArg = base2;
+  assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
@@ -3802,12 +3784,12 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
-    defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
+    defaults: void 0,
     options: cfg.options,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = structuralPatchesOf(cfg.patches ?? {});
+  const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
@@ -3868,77 +3850,21 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 function knownRuleNames(cfg, base2) {
   const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
   return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
-}
-function isSitePreferenceEntry(key, value) {
-  return SLOT_KEY.test(key) && isPreference(value);
 }
 function isRetiredAddressKey(key, rules) {
   if (rules.has(key) || rules.has(`_${key}`)) return false;
   return parseSpacingLabel(key) !== void 0 || parseSeamLabel(key) !== void 0 || parseFlankAddress(key) !== void 0;
 }
-function checkSpacingArm(at, arm2) {
-  if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
-  return arm2;
-}
-function checkDelimiterArm(at, arm2) {
-  if (!isDelimiterArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${DELIMITER_ARMS.join(", ")}`);
-  return arm2;
-}
-function checkWhitespaceArm(at, arm2) {
-  if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
-  return arm2;
-}
-function renderDefaultsOf(patches, rules) {
-  const sites = {};
-  const site = (kind, address, value) => {
-    const own = sites[kind] ?? {};
-    if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
-    own[address] = value;
-    sites[kind] = own;
-  };
-  for (const [key, entry] of Object.entries(patches)) {
-    if (!entry) continue;
+function assertNoSpacingAddressPatches(patches, rules) {
+  for (const key of Object.keys(patches)) {
+    if (!patches[key]) continue;
     if (isRetiredAddressKey(key, rules)) {
       throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
     }
-    for (const patchMap of patchSetsOf(entry)) {
-      for (const [slot, value] of Object.entries(patchMap)) {
-        if (!isSitePreferenceEntry(slot, value)) continue;
-        const { label, default: arm2 } = value;
-        if (label === void 0) throw new Error(`patches: ${key}.${slot} takes preference(label, default)`);
-        const seam = parseSeamLabel(slot);
-        if (seam !== void 0 && parseSeamLabel(label) === void 0) {
-          throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
-        }
-        const address = seam === void 0 ? siteKey(slot, label) : slot;
-        const checked = label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm2) : label === SEPARATOR_LABEL ? arm2 : seam !== void 0 ? checkWhitespaceArm(`${key}.${address}`, arm2) : checkSpacingArm(`${key}.${address}`, arm2);
-        site(key, address, { label, arm: checked });
-      }
-    }
   }
-  return Object.keys(sites).length === 0 ? void 0 : { labels: {}, sites };
-}
-function structuralPatchesOf(patches) {
-  const out = {};
-  for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry) continue;
-    const items = Array.isArray(entry) ? entry : [entry];
-    const kept = [];
-    for (const item of items) {
-      if (isPreference(item)) {
-        kept.push(item);
-        continue;
-      }
-      const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
-      if (Object.keys(structural).length > 0) kept.push(structural);
-    }
-    if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0] : kept;
-  }
-  return out;
 }
 function patchSetsOf(entry) {
   const items = Array.isArray(entry) ? entry : [entry];
@@ -3977,23 +3903,17 @@ function nestVariantsByPath(sets) {
     return changed ? out : set;
   });
 }
-function kindPreferencesOf(entry) {
-  const items = Array.isArray(entry) ? entry : [entry];
-  return items.filter(isPreference);
-}
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
   }
 }
-function buildPatchedParentFn(kind, patchSets, preferences, userFn, context) {
+function buildPatchedParentFn(kind, patchSets, userFn, context) {
   const isHidden = kind.startsWith("_");
   return function wiredPatchedParent($, original) {
     const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
-    let result = patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
-    for (const pref of preferences) result = applyPreference(result, pref, kind);
-    return result;
+    return patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
   };
 }
 function placeholderHiddenName(value, parentKind) {
@@ -4463,45 +4383,6 @@ function isGroupPlaceholder(v) {
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
-function armNamesOf(arm2) {
-  const node = arm2;
-  const names = [];
-  if (node.annotations?.variant !== void 0) names.push(node.annotations.variant);
-  if (node.type === "STRING" && typeof node.value === "string") names.push(node.value);
-  if (node.type === "ALIAS") {
-    const value = node.value;
-    const target = typeof value === "string" ? value : value?.name;
-    if (target !== void 0) names.push(target, target.replace(/^_+/, ""));
-    names.push(...armNamesOf(node.content));
-  }
-  if (node.type === "SYMBOL" && typeof node.name === "string") names.push(node.name, node.name.replace(/^_+/, ""));
-  if (isPrecWrapper(node)) names.push(...armNamesOf(node.content));
-  return names;
-}
-function applyPreference(rule, patch, kind) {
-  const node = rule;
-  if (node.type === "CHOICE" && Array.isArray(node.members)) {
-    let matched = false;
-    const members = node.members.map((arm2) => {
-      const isDefault = armNamesOf(arm2).includes(patch.default);
-      matched ||= isDefault;
-      return withAnnotations(arm2, { preference: patch.label, ...isDefault ? { default: true } : {} });
-    });
-    if (!matched) {
-      throw new Error(
-        `preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? "?").join(", ")})`
-      );
-    }
-    return { ...node, members };
-  }
-  if (node.content !== void 0 && node.content !== null && typeof node.content === "object") {
-    return {
-      ...node,
-      content: applyPreference(node.content, patch, kind)
-    };
-  }
-  throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
-}
 function withVariantAnnotation(rule, variantName, parentKind) {
   return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
@@ -4788,9 +4669,6 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isGroupPlaceholder(patch)) {
     return withAnnotations(originalMember, { hoisted: true });
-  }
-  if (isPreference(patch)) {
-    return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? "(unknown)");
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();

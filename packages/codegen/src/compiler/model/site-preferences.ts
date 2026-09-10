@@ -201,8 +201,8 @@ function withDeclaredArms(
 		const site = addressed[index]!;
 		if (!admits(site, arm)) continue;
 		if (site.siteIndex === undefined) {
-			const { kind, slot, address, label, arms } = site;
-			out.push({ kind, slot, address, label, arms, defaultArm: arm, source: 'choice' });
+			const { kind, slot, address, label, arms, path } = site;
+			out.push({ kind, slot, address, label, arms, path, defaultArm: arm, source: 'choice' });
 			continue;
 		}
 		out[site.siteIndex] = { ...sites[site.siteIndex]!, defaultArm: arm };

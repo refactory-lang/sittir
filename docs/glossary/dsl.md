@@ -6226,19 +6226,13 @@ inline literals no longer type-checked. One helper, one cast.
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::preference`
 
-```text
-/**
- * `preference(label, default)` — a user-facing choice, declared on the
- * choice-shaped kind it lives on. As a kind-level patch value it labels
- * every arm of the kind's choice and marks the arm spelled `default`
- * (literal text, alias target, symbol name or variant name) as the one
- * that applies when the user sets nothing; as a path-level patch value it
- * does the same for the choice at that position. The label is the option
- * key in the generated catalog, shared by every site that references the
- * kind. Distinct from `arm.default`, which is the semantic default a bare
- * construction takes and is never an option.
- */
-```
+A preference's arm: the value chosen at the site an `options:` key addresses.
+The key is the address, so the arm is all a preference carries.
+
+A choice is addressable because it is a choice, not because anything labelled
+it. What names a site for a reader is the `options:` key, and a binding maps
+one address onto another key, so a name never has to be stamped onto the arms
+themselves.
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::isPreference`
 

@@ -12,25 +12,21 @@ it('types every tier by kind id and rejects a wrong member at compile time', () 
 	const ok: Options = {
 		comma_separator_space_after: TSKindId.Newline,
 		empty_separator_space: TSKindId.Newline,
-		statement_terminator: TSKindId.Semi,
-		quote_style: TSKindId.StringSingle,
 		formal_parameters_elements: {
 			formal_parameter_separator_space_after: TSKindId.Space,
 			formal_parameter_delimiter: Delimiter.Trailing
 		},
-		statement: { terminator_statement_terminator: TSKindId.AutomaticSemicolon },
+		statement: { terminator: TSKindId.AutomaticSemicolon },
 		object_type_content: { content_separator: TSKindId.Semi, content_delimiter: Delimiter.Trailing },
 		enum_body_elements: { content_separator_space_after: TSKindId.Newline, content_delimiter: Delimiter.Trailing },
 		object_type_content_separator_space_after: TSKindId.Newline,
 		statements: { terminator: TSKindId.AutomaticSemicolon },
-		string: { content: { quote_style: TSKindId.StringSingle } },
+		string: { content: TSKindId.StringSingle },
 		indent: '\t'
 	};
 	const bad: Options = {
 		// @ts-expect-error a semicolon is not a whitespace kind
 		comma_separator_space_after: TSKindId.Semi,
-		// @ts-expect-error whitespace is not a terminator arm
-		statement_terminator: TSKindId.Space,
 		formal_parameters_elements: {
 			// @ts-expect-error the leading flank is fixed here
 			formal_parameter_delimiter: Delimiter.Leading
