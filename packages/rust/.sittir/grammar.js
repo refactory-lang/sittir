@@ -5197,6 +5197,10 @@ var grammar_sittir_default = grammar(
           "if:/after": preference("space"),
           "in:/after": preference("space")
         },
+        source_file: {
+          "statements:/(_)/after": preference("blankline"),
+          "statements:/(attribute_item)/after": preference("newline")
+        },
         block: { before: preference("space"), "statements:/end": preference("newline") },
         match_block: { before: preference("space") },
         declaration_list: { before: preference("space") },
@@ -5227,7 +5231,7 @@ var grammar_sittir_default = grammar(
       },
       patches: {
         empty_separator_space: preference("empty_separator_space", "newline"),
-        source_file: { statements: preference("empty_separator_space", "blankline") },
+        source_file: { statements: preference("empty_separator_space", "tight") },
         field_declaration_list_elements: [
           { element: preference("comma_separator_space_after", "newline") },
           { element: preference("delimiter", "Delimiter.Trailing") }

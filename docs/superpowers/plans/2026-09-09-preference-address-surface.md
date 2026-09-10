@@ -1347,6 +1347,8 @@ Expected: fixtures unchanged, every metric identical, suite green.
 
 Rust's spacing site count is 1149 at the start of this plan. Tasks 1-10 must not exceed that: they re-address sites, they do not mint them. A higher count here means a path decomposition split a site that used to be one. Task 11 mints deliberately and moves the ceiling with a recorded reason.
 
+Task 11 moved it to **1402 rust, 1228 typescript, 841 python**. The reason: a child's trailing edge now distinguishes the seat it sits in, so a per-child gap is declarable, and one site exists per (heterogeneous repeat slot, admitted child kind) so every such gap has an address. Task 10 must not exceed those.
+
 - [ ] **Step 5: Commit**
 
 ---

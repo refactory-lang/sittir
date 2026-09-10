@@ -3308,6 +3308,14 @@ the rule shape.
 carries it as a fact, a caller may name it, and a render option may set it
 over a declared `Trailing` default.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::RenderRules`
+
+The render rules, and the option arms they were resolved against. An ordinary
+site carries its declared arm inside the rule it is read back from, so the map
+is redundant for those; a seated site is minted from the rules rather than
+baked into one, and reads its declaration here. Absent until
+`resolveRenderRules` has an `options:` block to resolve.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::SeatedChild`
 
 The child a seated site belongs to: the kind that occupies the position, and
@@ -3334,6 +3342,12 @@ Each seated site takes the arm its child's global edge already resolves to.
 The parent fills unconditionally, so a seated site always decides the edge
 inside its slot; inheriting the arm is what lets the whole space be minted
 without moving a rendered byte.
+
+A declaration on a seated address overrides that inheritance. An ordinary site
+carries its declared arm because the arm is baked into the render rule the site
+is read back from; a seated site has no rule of its own, so the arms
+`resolveRenderRules` resolved ride with the rules (`RenderRules.declared`) and
+the minting reads them there.
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 

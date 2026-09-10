@@ -74,6 +74,7 @@ export interface SpacedSeparator {
 
 export interface RenderRules {
 	readonly rules: Readonly<Record<string, RenderRule>>;
+	readonly declared?: ReadonlyMap<string, string>;
 }
 
 export interface RenderRulesConfig {
@@ -731,7 +732,7 @@ export function resolveRenderRules(
 	if (declared === undefined) return { spaced, seamed };
 	const respaced = spaceRenderRules(config, declared);
 	stamp(respaced);
-	return { spaced: respaced, seamed: seamRenderRules(respaced, config, declared) };
+	return { spaced: respaced, seamed: { ...seamRenderRules(respaced, config, declared), declared } };
 }
 
 function declaredKey(kind: string, address: string): string {
@@ -802,7 +803,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 	};
 	for (const [kind, rule] of Object.entries(renderRules.rules)) visit(kind, rule);
 	const sites = [...out.values()];
-	return [...sites, ...seatedSites(seats, sites, nodeMap)];
+	return [...sites, ...seatedSites(seats, sites, nodeMap, renderRules.declared)];
 }
 
 interface Seat {
@@ -811,7 +812,12 @@ interface Seat {
 	readonly id: RuleId;
 }
 
-function seatedSites(seats: readonly Seat[], sites: readonly RuleSpacingSite[], nodeMap: NodeMap): RuleSpacingSite[] {
+function seatedSites(
+	seats: readonly Seat[],
+	sites: readonly RuleSpacingSite[],
+	nodeMap: NodeMap,
+	declared: ReadonlyMap<string, string> | undefined
+): RuleSpacingSite[] {
 	const edgeOf = new Map<string, RuleSpacingSite>();
 	for (const site of sites) {
 		const own = publicKindName(site.kind);
@@ -834,13 +840,18 @@ function seatedSites(seats: readonly Seat[], sites: readonly RuleSpacingSite[], 
 		for (const child of children) {
 			const edge = edgeOf.get(child);
 			if (edge === undefined) continue;
+			const address = `${seat.slot}_${edge.address}`;
+			const arm = declared?.get(declaredKey(seat.kind, address));
+			if (arm !== undefined && !isWhitespaceArm(arm)) {
+				throw new Error(`options: ${publicKindName(seat.kind)}.${address} is '${arm}', not a whitespace arm`);
+			}
 			out.push({
 				kind: seat.kind,
 				slot: seat.slot,
-				address: `${seat.slot}_${edge.address}`,
+				address,
 				label: edge.label,
 				side: edge.side,
-				defaultArm: edge.defaultArm,
+				defaultArm: arm === undefined ? edge.defaultArm : (arm as WhitespaceArm),
 				arms: edge.arms,
 				seat: { kind: child, field: edge.address },
 				path: [

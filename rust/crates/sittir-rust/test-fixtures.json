@@ -988,7 +988,7 @@
       },
       "$nodeHandle": 4294967296
     },
-    "expectedOutput": "futures.await;\n\nfutures.await?;\n\nfutures.await?.await?;\n\nfutures.await?.function().await?;"
+    "expectedOutput": "futures.await;futures.await?;futures.await?.await?;futures.await?.function().await?;"
   },
   {
     "kind": "roundtrip",
@@ -996,9 +996,9 @@
     "sourceIn": "futures.await;\nfutures.await?;\nfutures.await?.await?;\nfutures.await?.function().await?;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "futures.await;\n\nfutures.await?;\n\nfutures.await?.await?;\n\nfutures.await?.function().await?;",
+    "expectedSourceOut": "futures.await;futures.await?;futures.await?.await?;futures.await?.function().await?;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (await_expression expression: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (await_expression expression: (identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (await_expression expression: (try_expression value: (await_expression expression: (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (await_expression expression: (call_expression function: (field_expression value: (try_expression value: (await_expression expression: (identifier))) field: (field_identifier)) arguments: (arguments)))))))",
-    "wrappedText": "futures.await;\n\nfutures.await?;\n\nfutures.await?.await?;\n\nfutures.await?.function().await?;",
+    "wrappedText": "futures.await;futures.await?;futures.await?.await?;futures.await?.function().await?;",
     "wrappedOffset": 0
   },
   {
@@ -1925,7 +1925,7 @@
       },
       "$nodeHandle": 8589934592
     },
-    "expectedOutput": "async {}\n\nasync {\n    let x = 10;\n}\n\nasync move {}"
+    "expectedOutput": "async {}async {\n    let x = 10;\n}async move {}"
   },
   {
     "kind": "roundtrip",
@@ -1933,9 +1933,9 @@
     "sourceIn": "async {}\nasync { let x = 10; }\nasync move {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "async {}\n\nasync {\n    let x = 10;\n}\n\nasync move {}",
+    "expectedSourceOut": "async {}async {\n    let x = 10;\n}async move {}",
     "expectedReparseTree": "(source_file statements: (expression_statement (async_block body: (block))) statements: (expression_statement (async_block body: (block statements: (let_declaration pattern: (identifier) value: (integer_literal))))) statements: (expression_statement (async_block body: (block))))",
-    "wrappedText": "async {}\n\nasync {\n    let x = 10;\n}\n\nasync move {}",
+    "wrappedText": "async {}async {\n    let x = 10;\n}async move {}",
     "wrappedOffset": 0
   },
   {
@@ -3236,7 +3236,7 @@
       },
       "$nodeHandle": 25769803776
     },
-    "expectedOutput": "gen {}\n\ngen {\n    let x = 10;\n}\n\ngen {\n    yield();\n}\n\ngen move {}"
+    "expectedOutput": "gen {}gen {\n    let x = 10;\n}gen {\n    yield();\n}gen move {}"
   },
   {
     "kind": "roundtrip",
@@ -3244,9 +3244,9 @@
     "sourceIn": "gen {}\ngen { let x = 10; }\ngen { yield (); }\ngen move {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "gen {}\n\ngen {\n    let x = 10;\n}\n\ngen {\n    yield();\n}\n\ngen move {}",
+    "expectedSourceOut": "gen {}gen {\n    let x = 10;\n}gen {\n    yield();\n}gen move {}",
     "expectedReparseTree": "(source_file statements: (expression_statement (gen_block body: (block))) statements: (expression_statement (gen_block body: (block statements: (let_declaration pattern: (identifier) value: (integer_literal))))) statements: (expression_statement (gen_block body: (block statements: (expression_statement (expression_statement_with_semi expression: (yield_expression expression: (unit_expression))))))) statements: (expression_statement (gen_block body: (block))))",
-    "wrappedText": "gen {}\n\ngen {\n    let x = 10;\n}\n\ngen {\n    yield();\n}\n\ngen move {}",
+    "wrappedText": "gen {}gen {\n    let x = 10;\n}gen {\n    yield();\n}gen move {}",
     "wrappedOffset": 0
   },
   {
@@ -37879,7 +37879,7 @@
       },
       "$nodeHandle": 154618822656
     },
-    "expectedOutput": "#[test]\n\nfn test_foo() {}\n\n#[derive(Debug)]\n\nstruct Baz;\n\n#[derive(Debug, Eq, )]\n\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\n\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity= \"100\"]"
+    "expectedOutput": "#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq, )]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity= \"100\"]"
   },
   {
     "kind": "roundtrip",
@@ -37887,9 +37887,9 @@
     "sourceIn": "#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq,)]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity = \"100\"]",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "#[test]\n\nfn test_foo() {}\n\n#[derive(Debug)]\n\nstruct Baz;\n\n#[derive(Debug, Eq, )]\n\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\n\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity= \"100\"]",
+    "expectedSourceOut": "#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq, )]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity= \"100\"]",
     "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (struct_item name: (type_identifier) (struct_item_unit)) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (mod_item name: (identifier) (declaration_list)) statements: (inner_attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) input: (attribute_input value: (string_literal string_open: (string_open) elements: (string_content))))))",
-    "wrappedText": "#[test]\n\nfn test_foo() {}\n\n#[derive(Debug)]\n\nstruct Baz;\n\n#[derive(Debug, Eq, )]\n\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\n\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity= \"100\"]",
+    "wrappedText": "#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq, )]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity= \"100\"]",
     "wrappedOffset": 0
   },
   {
@@ -41502,7 +41502,7 @@
       },
       "$nodeHandle": 163208757248
     },
-    "expectedOutput": "#[doc= include_str!(\"foo-doc.md\")]\n\nfn foo() {}\n\n#[namespace= foo::bar]\n\nfn baz() {}"
+    "expectedOutput": "#[doc= include_str!(\"foo-doc.md\")]\nfn foo() {}\n\n#[namespace= foo::bar]\nfn baz() {}"
   },
   {
     "kind": "roundtrip",
@@ -41510,9 +41510,9 @@
     "sourceIn": "#[doc = include_str!(\"foo-doc.md\")]\nfn foo() {}\n\n#[namespace = foo::bar]\nfn baz() {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "#[doc= include_str!(\"foo-doc.md\")]\n\nfn foo() {}\n\n#[namespace= foo::bar]\n\nfn baz() {}",
+    "expectedSourceOut": "#[doc= include_str!(\"foo-doc.md\")]\nfn foo() {}\n\n#[namespace= foo::bar]\nfn baz() {}",
     "expectedReparseTree": "(source_file statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input value: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input value: (scoped_identifier path: (identifier) name: (identifier))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
-    "wrappedText": "#[doc= include_str!(\"foo-doc.md\")]\n\nfn foo() {}\n\n#[namespace= foo::bar]\n\nfn baz() {}",
+    "wrappedText": "#[doc= include_str!(\"foo-doc.md\")]\nfn foo() {}\n\n#[namespace= foo::bar]\nfn baz() {}",
     "wrappedOffset": 0
   },
   {
@@ -42632,7 +42632,7 @@
       },
       "$nodeHandle": 167503724544
     },
-    "expectedOutput": "foo(#[attr( => arbitrary tokens<=)]x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $/';()*()+.)]x);"
+    "expectedOutput": "foo(#[attr( => arbitrary tokens<=)]x, y);foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]x);"
   },
   {
     "kind": "roundtrip",
@@ -42640,9 +42640,9 @@
     "sourceIn": "foo(#[attr(=> arbitrary tokens <=)] x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "foo(#[attr( => arbitrary tokens<=)]x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $/';()*()+.)]x);",
+    "expectedSourceOut": "foo(#[attr( => arbitrary tokens<=)]x, y);foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]x);",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier)) element: (attributed_argument (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (token_tree (delim_token_tree_paren)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) (identifier))))))))",
-    "wrappedText": "foo(#[attr( => arbitrary tokens<=)]x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $/';()*()+.)]x);",
+    "wrappedText": "foo(#[attr( => arbitrary tokens<=)]x, y);foo(#[bar(some tokens are special in other contexts: $/';()*()+.)]x);",
     "wrappedOffset": 0
   },
   {
@@ -44836,7 +44836,7 @@
       },
       "$nodeHandle": 171798691840
     },
-    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\n\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}"
+    "expectedOutput": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}"
   },
   {
     "kind": "roundtrip",
@@ -44844,9 +44844,9 @@
     "sourceIn": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\n\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
+    "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
     "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal))))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier))))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
-    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\n\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
+    "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
     "wrappedOffset": 0
   },
   {
@@ -82523,7 +82523,7 @@
       },
       "$nodeHandle": 292057776128
     },
-    "expectedOutput": "-num;\n\n!bits;\n\n*boxed_thing;"
+    "expectedOutput": "-num; !bits; *boxed_thing;"
   },
   {
     "kind": "roundtrip",
@@ -82531,9 +82531,9 @@
     "sourceIn": "-num;\n!bits;\n*boxed_thing;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "-num;\n\n!bits;\n\n*boxed_thing;",
+    "expectedSourceOut": "-num; !bits; *boxed_thing;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (unary_expression operand: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (unary_expression operand: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (unary_expression operand: (identifier)))))",
-    "wrappedText": "-num;\n\n!bits;\n\n*boxed_thing;",
+    "wrappedText": "-num; !bits; *boxed_thing;",
     "wrappedOffset": 0
   },
   {
@@ -82858,7 +82858,7 @@
       },
       "$nodeHandle": 296352743424
     },
-    "expectedOutput": "&a;\n\n&mut self.name;\n\n&raw const b;\n\n&raw mut self.age;"
+    "expectedOutput": "&a;&mut self.name;&raw const b;&raw mut self.age;"
   },
   {
     "kind": "roundtrip",
@@ -82866,9 +82866,9 @@
     "sourceIn": "&a;\n&mut self.name;\n&raw const b;\n&raw mut self.age;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "&a;\n\n&mut self.name;\n\n&raw const b;\n\n&raw mut self.age;",
+    "expectedSourceOut": "&a;&mut self.name;&raw const b;&raw mut self.age;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (reference_expression value: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (reference_expression (mutable_specifier) value: (field_expression value: (self) field: (field_identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (reference_expression (reference_expression_raw_const) value: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (reference_expression (reference_expression_raw_mut (mutable_specifier)) value: (field_expression value: (self) field: (field_identifier))))))",
-    "wrappedText": "&a;\n\n&mut self.name;\n\n&raw const b;\n\n&raw mut self.age;",
+    "wrappedText": "&a;&mut self.name;&raw const b;&raw mut self.age;",
     "wrappedOffset": 0
   },
   {
@@ -83269,7 +83269,7 @@
       },
       "$nodeHandle": 300647710720
     },
-    "expectedOutput": "a.unwrap()?;\n\n&a?;"
+    "expectedOutput": "a.unwrap()?;&a?;"
   },
   {
     "kind": "roundtrip",
@@ -83277,9 +83277,9 @@
     "sourceIn": "a.unwrap()?;\n&a?;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a.unwrap()?;\n\n&a?;",
+    "expectedSourceOut": "a.unwrap()?;&a?;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (try_expression value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))) statements: (expression_statement (expression_statement_with_semi expression: (reference_expression value: (try_expression value: (identifier))))))",
-    "wrappedText": "a.unwrap()?;\n\n&a?;",
+    "wrappedText": "a.unwrap()?;&a?;",
     "wrappedOffset": 0
   },
   {
@@ -83975,7 +83975,7 @@
       },
       "$nodeHandle": 304942678016
     },
-    "expectedOutput": "a * b;\n\na / b;\n\na % b;\n\na + b;\n\na - b;\n\na >> b;\n\na << b;\n\na == b;\n\na && b;\n\na || b;"
+    "expectedOutput": "a * b;a / b;a % b;a + b;a - b;a >> b;a << b;a == b;a && b;a || b;"
   },
   {
     "kind": "roundtrip",
@@ -83983,9 +83983,9 @@
     "sourceIn": "a * b;\na / b;\na % b;\na + b;\na - b;\na >> b;\na << b;\na == b;\na && b;\na || b;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a * b;\n\na / b;\n\na % b;\n\na + b;\n\na - b;\n\na >> b;\n\na << b;\n\na == b;\n\na && b;\n\na || b;",
+    "expectedSourceOut": "a * b;a / b;a % b;a + b;a - b;a >> b;a << b;a == b;a && b;a || b;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (binary_expression left: (identifier) right: (identifier)))))",
-    "wrappedText": "a * b;\n\na / b;\n\na % b;\n\na + b;\n\na - b;\n\na >> b;\n\na << b;\n\na == b;\n\na && b;\n\na || b;",
+    "wrappedText": "a * b;a / b;a % b;a + b;a - b;a >> b;a << b;a == b;a && b;a || b;",
     "wrappedOffset": 0
   },
   {
@@ -84467,7 +84467,7 @@
       },
       "$nodeHandle": 309237645312
     },
-    "expectedOutput": "(0);\n\n(2 * (3 + 4));"
+    "expectedOutput": "(0);(2 * (3 + 4));"
   },
   {
     "kind": "roundtrip",
@@ -84475,9 +84475,9 @@
     "sourceIn": "(0);\n(2 * (3 + 4));",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "(0);\n\n(2 * (3 + 4));",
+    "expectedSourceOut": "(0);(2 * (3 + 4));",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (parenthesized_expression expression: (integer_literal)))) statements: (expression_statement (expression_statement_with_semi expression: (parenthesized_expression expression: (binary_expression left: (integer_literal) right: (parenthesized_expression expression: (binary_expression left: (integer_literal) right: (integer_literal))))))))",
-    "wrappedText": "(0);\n\n(2 * (3 + 4));",
+    "wrappedText": "(0);(2 * (3 + 4));",
     "wrappedOffset": 0
   },
   {
@@ -85376,7 +85376,7 @@
       },
       "$nodeHandle": 313532612608
     },
-    "expectedOutput": "1..2;\n\n3 .. ;\n\n..4;\n\n..;\n\n1..b;\n\na..b;\n\n1..(1);\n\n(1)..1;\n\n(1)..(1);\n\n1.. {\n    1\n};\n\nfor i in 1 .. {}"
+    "expectedOutput": "1..2;3 .. ; ..4;..;1..b;a..b;1..(1);(1)..1;(1)..(1);1.. {\n    1\n};for i in 1 .. {}"
   },
   {
     "kind": "roundtrip",
@@ -85384,9 +85384,9 @@
     "sourceIn": "1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{1};\nfor i in 1.. {\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "1..2;\n\n3 .. ;\n\n..4;\n\n..;\n\n1..b;\n\na..b;\n\n1..(1);\n\n(1)..1;\n\n(1)..(1);\n\n1.. {\n    1\n};\n\nfor i in 1 .. {}",
+    "expectedSourceOut": "1..2;3 .. ; ..4;..;1..b;a..b;1..(1);(1)..1;(1)..(1);1.. {\n    1\n};for i in 1 .. {}",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_postfix start: (integer_literal))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_prefix end: (integer_literal))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_bare)))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_binary start: (integer_literal) end: (identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_binary start: (identifier) end: (identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_binary start: (integer_literal) end: (parenthesized_expression expression: (integer_literal)))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_binary start: (parenthesized_expression expression: (integer_literal)) end: (integer_literal))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_binary start: (parenthesized_expression expression: (integer_literal)) end: (parenthesized_expression expression: (integer_literal)))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression (range_expression_binary start: (integer_literal) end: (block trailing_expression: (integer_literal)))))) statements: (expression_statement (for_expression pattern: (identifier) value: (range_expression (range_expression_postfix start: (integer_literal))) body: (block))))",
-    "wrappedText": "1..2;\n\n3 .. ;\n\n..4;\n\n..;\n\n1..b;\n\na..b;\n\n1..(1);\n\n(1)..1;\n\n(1)..(1);\n\n1.. {\n    1\n};\n\nfor i in 1 .. {}",
+    "wrappedText": "1..2;3 .. ; ..4;..;1..b;a..b;1..(1);(1)..1;(1)..(1);1.. {\n    1\n};for i in 1 .. {}",
     "wrappedOffset": 0
   },
   {
@@ -86375,7 +86375,7 @@
       },
       "$nodeHandle": 322122547200
     },
-    "expectedOutput": "x+=1;\n\nx+=y;"
+    "expectedOutput": "x+=1;x+=y;"
   },
   {
     "kind": "roundtrip",
@@ -86383,9 +86383,9 @@
     "sourceIn": "x += 1;\nx += y;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "x+=1;\n\nx+=y;",
+    "expectedSourceOut": "x+=1;x+=y;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (compound_assignment_expr left: (identifier) right: (integer_literal)))) statements: (expression_statement (expression_statement_with_semi expression: (compound_assignment_expr left: (identifier) right: (identifier)))))",
-    "wrappedText": "x+=1;\n\nx+=y;",
+    "wrappedText": "x+=1;x+=y;",
     "wrappedOffset": 0
   },
   {
@@ -86696,7 +86696,7 @@
       },
       "$nodeHandle": 326417514496
     },
-    "expectedOutput": "1000 as u8;\n\nlet character = integer as char;\n\nlet size: f64 = 1.0 + -len(values)as f64 + 1.0;"
+    "expectedOutput": "1000 as u8;let character = integer as char;\n\nlet size: f64 = 1.0 + -len(values)as f64 + 1.0;"
   },
   {
     "kind": "roundtrip",
@@ -86704,9 +86704,9 @@
     "sourceIn": "1000 as u8;\nlet character = integer as char;\nlet size: f64 = 1.0 + -len(values) as f64 + 1.0;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "1000 as u8;\n\nlet character = integer as char;\n\nlet size: f64 = 1.0 + -len(values)as f64 + 1.0;",
+    "expectedSourceOut": "1000 as u8;let character = integer as char;\n\nlet size: f64 = 1.0 + -len(values)as f64 + 1.0;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (integer_literal) type: (primitive_type)))) statements: (let_declaration pattern: (identifier) value: (type_cast_expression value: (identifier) type: (primitive_type))) statements: (let_declaration pattern: (identifier) type: (primitive_type) value: (binary_expression left: (binary_expression left: (float_literal) right: (type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))) type: (primitive_type))) right: (float_literal))))",
-    "wrappedText": "1000 as u8;\n\nlet character = integer as char;\n\nlet size: f64 = 1.0 + -len(values)as f64 + 1.0;",
+    "wrappedText": "1000 as u8;let character = integer as char;\n\nlet size: f64 = 1.0 + -len(values)as f64 + 1.0;",
     "wrappedOffset": 0
   },
   {
@@ -87813,7 +87813,7 @@
       },
       "$nodeHandle": 330712481792
     },
-    "expectedOutput": "foo();\n\nadd(1i32, 2i32);\n\nadd(1i32, 2i32,);"
+    "expectedOutput": "foo();add(1i32, 2i32);add(1i32, 2i32,);"
   },
   {
     "kind": "roundtrip",
@@ -87821,9 +87821,9 @@
     "sourceIn": "foo();\nadd(1i32, 2i32);\nadd(\n    1i32,\n    2i32,\n);",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "foo();\n\nadd(1i32, 2i32);\n\nadd(1i32, 2i32,);",
+    "expectedSourceOut": "foo();add(1i32, 2i32);add(1i32, 2i32,);",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal))))))))",
-    "wrappedText": "foo();\n\nadd(1i32, 2i32);\n\nadd(1i32, 2i32,);",
+    "wrappedText": "foo();add(1i32, 2i32);add(1i32, 2i32,);",
     "wrappedOffset": 0
   },
   {
@@ -88856,7 +88856,7 @@
       },
       "$nodeHandle": 335007449088
     },
-    "expectedOutput": "[];\n\n[1, 2, 3];\n\n[\"a\", \"b\", \"c\"];\n\n[0;128];\n\n[#[cfg(foo)]\"foo\", #[cfg(bar)]\"bar\",];"
+    "expectedOutput": "[];[1, 2, 3];[\"a\", \"b\", \"c\"];[0;128];[#[cfg(foo)]\"foo\", #[cfg(bar)]\"bar\",];"
   },
   {
     "kind": "roundtrip",
@@ -88864,9 +88864,9 @@
     "sourceIn": "[];\n[1, 2, 3];\n[\"a\", \"b\", \"c\"];\n[0; 128];\n[\n    #[cfg(foo)]\n    \"foo\",\n    #[cfg(bar)]\n    \"bar\",\n];",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "[];\n\n[1, 2, 3];\n\n[\"a\", \"b\", \"c\"];\n\n[0;128];\n\n[#[cfg(foo)]\"foo\", #[cfg(bar)]\"bar\",];",
+    "expectedSourceOut": "[];[1, 2, 3];[\"a\", \"b\", \"c\"];[0;128];[#[cfg(foo)]\"foo\", #[cfg(bar)]\"bar\",];",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list)))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content)))))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_semi element: (integer_literal) length: (integer_literal))))) statements: (expression_statement (expression_statement_with_semi expression: (array_expression (array_expression_list attributes: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (arguments_elements element: (attributed_argument (string_literal string_open: (string_open) elements: (string_content))) element: (attributed_argument (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) (string_literal string_open: (string_open) elements: (string_content)))))))))",
-    "wrappedText": "[];\n\n[1, 2, 3];\n\n[\"a\", \"b\", \"c\"];\n\n[0;128];\n\n[#[cfg(foo)]\"foo\", #[cfg(bar)]\"bar\",];",
+    "wrappedText": "[];[1, 2, 3];[\"a\", \"b\", \"c\"];[0;128];[#[cfg(foo)]\"foo\", #[cfg(bar)]\"bar\",];",
     "wrappedOffset": 0
   },
   {
@@ -90097,7 +90097,7 @@
       },
       "$nodeHandle": 339302416384
     },
-    "expectedOutput": "();\n\n(0,);\n\nlet(x, y, z) = (1, 2, 3);"
+    "expectedOutput": "();(0,);let(x, y, z) = (1, 2, 3);"
   },
   {
     "kind": "roundtrip",
@@ -90105,9 +90105,9 @@
     "sourceIn": "();\n(0,);\nlet (x, y, z) = (1, 2, 3);",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "();\n\n(0,);\n\nlet(x, y, z) = (1, 2, 3);",
+    "expectedSourceOut": "();(0,);let(x, y, z) = (1, 2, 3);",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (unit_expression))) statements: (expression_statement (expression_statement_with_semi expression: (tuple_expression (tuple_expression_elements element: (integer_literal))))) statements: (let_declaration pattern: (tuple_pattern elements: (tuple_pattern_elements element: (identifier) element: (identifier) element: (identifier))) value: (tuple_expression (tuple_expression_elements element: (integer_literal) element: (integer_literal) element: (integer_literal)))))",
-    "wrappedText": "();\n\n(0,);\n\nlet(x, y, z) = (1, 2, 3);",
+    "wrappedText": "();(0,);let(x, y, z) = (1, 2, 3);",
     "wrappedOffset": 0
   },
   {
@@ -90963,7 +90963,7 @@
       },
       "$nodeHandle": 343597383680
     },
-    "expectedOutput": "NothingInMe{};\n\nPoint { x: 10.0, y: 20.0 };\n\nlet a = SomeStruct { field1, field2: expression, field3, };\n\nlet u = game::User { name: \"Joe\", age: 35, score: 100_000 };\n\nlet i = Instant { 0: Duration::from_millis(0) };"
+    "expectedOutput": "NothingInMe{};Point { x: 10.0, y: 20.0 };let a = SomeStruct { field1, field2: expression, field3, };\n\nlet u = game::User { name: \"Joe\", age: 35, score: 100_000 };\n\nlet i = Instant { 0: Duration::from_millis(0) };"
   },
   {
     "kind": "roundtrip",
@@ -90971,9 +90971,9 @@
     "sourceIn": "NothingInMe {};\nPoint {x: 10.0, y: 20.0};\nlet a = SomeStruct { field1, field2: expression, field3, };\nlet u = game::User {name: \"Joe\", age: 35, score: 100_000};\nlet i = Instant { 0: Duration::from_millis(0) };",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "NothingInMe{};\n\nPoint { x: 10.0, y: 20.0 };\n\nlet a = SomeStruct { field1, field2: expression, field3, };\n\nlet u = game::User { name: \"Joe\", age: 35, score: 100_000 };\n\nlet i = Instant { 0: Duration::from_millis(0) };",
+    "expectedSourceOut": "NothingInMe{};Point { x: 10.0, y: 20.0 };let a = SomeStruct { field1, field2: expression, field3, };\n\nlet u = game::User { name: \"Joe\", age: 35, score: 100_000 };\n\nlet i = Instant { 0: Duration::from_millis(0) };",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (struct_expression name: (type_identifier) body: (field_initializer_list)))) statements: (expression_statement (expression_statement_with_semi expression: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer_list_elements element: (field_initializer field: (field_identifier) value: (float_literal)) element: (field_initializer field: (field_identifier) value: (float_literal))))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer_list_elements element: (shorthand_field_initializer name: (identifier)) element: (field_initializer field: (field_identifier) value: (identifier)) element: (shorthand_field_initializer name: (identifier)))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list initializers: (field_initializer_list_elements element: (field_initializer field: (field_identifier) value: (string_literal string_open: (string_open) elements: (string_content))) element: (field_initializer field: (field_identifier) value: (integer_literal)) element: (field_initializer field: (field_identifier) value: (integer_literal)))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer_list_elements element: (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))))))",
-    "wrappedText": "NothingInMe{};\n\nPoint { x: 10.0, y: 20.0 };\n\nlet a = SomeStruct { field1, field2: expression, field3, };\n\nlet u = game::User { name: \"Joe\", age: 35, score: 100_000 };\n\nlet i = Instant { 0: Duration::from_millis(0) };",
+    "wrappedText": "NothingInMe{};Point { x: 10.0, y: 20.0 };let a = SomeStruct { field1, field2: expression, field3, };\n\nlet u = game::User { name: \"Joe\", age: 35, score: 100_000 };\n\nlet i = Instant { 0: Duration::from_millis(0) };",
     "wrappedOffset": 0
   },
   {
@@ -93150,7 +93150,7 @@
       },
       "$nodeHandle": 352187318272
     },
-    "expectedOutput": "fn main() {\n    if n == 1 {}else if n == 2 {}else {}\n}\n\nlet y = if x == 5 {\n    10\n}else {\n    15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}"
+    "expectedOutput": "fn main() {\n    if n == 1 {}else if n == 2 {}else {}\n}\n\nlet y = if x == 5 {\n    10\n}else {\n    15\n};\n\nif foo && bar {}if foo && bar || baz {}"
   },
   {
     "kind": "roundtrip",
@@ -93158,9 +93158,9 @@
     "sourceIn": "fn main() {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}\n\nlet y = if x == 5 { 10 } else { 15 };\n\nif foo && bar {}\n\nif foo && bar || baz {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn main() {\n    if n == 1 {}else if n == 2 {}else {}\n}\n\nlet y = if x == 5 {\n    10\n}else {\n    15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}",
+    "expectedSourceOut": "fn main() {\n    if n == 1 {}else if n == 2 {}else {}\n}\n\nlet y = if x == 5 {\n    10\n}else {\n    15\n};\n\nif foo && bar {}if foo && bar || baz {}",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block) alternative: (else_clause (if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block) alternative: (else_clause (block)))))))) statements: (let_declaration pattern: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block trailing_expression: (integer_literal)) alternative: (else_clause (block trailing_expression: (integer_literal))))) statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (identifier)) consequence: (block))) statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (identifier)) right: (identifier)) consequence: (block))))",
-    "wrappedText": "fn main() {\n    if n == 1 {}else if n == 2 {}else {}\n}\n\nlet y = if x == 5 {\n    10\n}else {\n    15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}",
+    "wrappedText": "fn main() {\n    if n == 1 {}else if n == 2 {}else {}\n}\n\nlet y = if x == 5 {\n    10\n}else {\n    15\n};\n\nif foo && bar {}if foo && bar || baz {}",
     "wrappedOffset": 0
   },
   {
@@ -95652,7 +95652,7 @@
       },
       "$nodeHandle": 360777252864
     },
-    "expectedOutput": "if let(\"Bacon\", b) = dish {}\n\nif let Some(\"chained\") = a&&b && let(C, D) = e {}\n\nif foo&&let bar = ||baz && quux {}\n\nif a&&let b = ||c || d && e {}"
+    "expectedOutput": "if let(\"Bacon\", b) = dish {}if let Some(\"chained\") = a&&b && let(C, D) = e {}if foo&&let bar = ||baz && quux {}if a&&let b = ||c || d && e {}"
   },
   {
     "kind": "roundtrip",
@@ -95660,9 +95660,9 @@
     "sourceIn": "if let (\"Bacon\", b) = dish {\n}\n\nif let Some(\"chained\") = a && b && let (C, D) = e {\n}\n\nif foo && let bar = || baz && quux {}\n\nif a && let b = || c || d && e {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "if let(\"Bacon\", b) = dish {}\n\nif let Some(\"chained\") = a&&b && let(C, D) = e {}\n\nif foo&&let bar = ||baz && quux {}\n\nif a&&let b = ||c || d && e {}",
+    "expectedSourceOut": "if let(\"Bacon\", b) = dish {}if let Some(\"chained\") = a&&b && let(C, D) = e {}if foo&&let bar = ||baz && quux {}if a&&let b = ||c || d && e {}",
     "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_condition pattern: (tuple_pattern elements: (tuple_pattern_elements element: (string_literal string_open: (string_open) elements: (string_content)) element: (identifier))) value: (identifier)) consequence: (block))) statements: (expression_statement (if_expression condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (string_literal string_open: (string_open) elements: (string_content)))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_pattern elements: (tuple_pattern_elements element: (identifier) element: (identifier))) value: (identifier))) consequence: (block))) statements: (expression_statement (if_expression condition: (let_chain left: (identifier) right: (let_condition pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (binary_expression left: (identifier) right: (identifier)))))) consequence: (block))) statements: (expression_statement (if_expression condition: (let_chain left: (identifier) right: (let_condition pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (binary_expression left: (identifier) right: (binary_expression left: (identifier) right: (identifier))))))) consequence: (block))))",
-    "wrappedText": "if let(\"Bacon\", b) = dish {}\n\nif let Some(\"chained\") = a&&b && let(C, D) = e {}\n\nif foo&&let bar = ||baz && quux {}\n\nif a&&let b = ||c || d && e {}",
+    "wrappedText": "if let(\"Bacon\", b) = dish {}if let Some(\"chained\") = a&&b && let(C, D) = e {}if foo&&let bar = ||baz && quux {}if a&&let b = ||c || d && e {}",
     "wrappedOffset": 0
   },
   {
@@ -98505,7 +98505,7 @@
       },
       "$nodeHandle": 369367187456
     },
-    "expectedOutput": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1]3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0|1|10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo&&z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};"
+    "expectedOutput": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1]3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}let msg = match x {\n    0|1|10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo&&z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};"
   },
   {
     "kind": "roundtrip",
@@ -98513,9 +98513,9 @@
     "sourceIn": "match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1]3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0|1|10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo&&z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
+    "expectedSourceOut": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1]3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}let msg = match x {\n    0|1|10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo&&z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (integer_literal)) (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (integer_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm pattern: (match_pattern pattern: (negative_literal value: (float_literal))) (match_arm_with_comma value: (integer_literal))) (match_arm attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal)) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal)))))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))) statements: (let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)))) (match_arm_with_comma value: (string_literal string_open: (string_open) elements: (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))))",
-    "wrappedText": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1]3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0|1|10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo&&z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
+    "wrappedText": "match x {\n    1 => {\n        \"one\"\n    }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n    #[attr1]3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}let msg = match x {\n    0|1|10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 => if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo&&z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "wrappedOffset": 0
   },
   {
@@ -103584,7 +103584,7 @@
       },
       "$nodeHandle": 382252089344
     },
-    "expectedOutput": "for e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue'outer;\n        }\n        if y % 2 == 0 {\n            continue'inner;\n        }\n    }\n}"
+    "expectedOutput": "for e in v {\n    bar(e);\n}for i in 0..256 {\n    bar(i);\n}'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue'outer;\n        }\n        if y % 2 == 0 {\n            continue'inner;\n        }\n    }\n}"
   },
   {
     "kind": "roundtrip",
@@ -103592,9 +103592,9 @@
     "sourceIn": "for e in v {\n  bar(e);\n}\n\nfor i in 0..256 {\n  bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 { continue 'outer; }\n        if y % 2 == 0 { continue 'inner; }\n    }\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "for e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue'outer;\n        }\n        if y % 2 == 0 {\n            continue'inner;\n        }\n    }\n}",
+    "expectedSourceOut": "for e in v {\n    bar(e);\n}for i in 0..256 {\n    bar(i);\n}'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue'outer;\n        }\n        if y % 2 == 0 {\n            continue'inner;\n        }\n    }\n}",
     "expectedReparseTree": "(source_file statements: (expression_statement (for_expression pattern: (identifier) value: (identifier) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))))))) statements: (expression_statement (for_expression pattern: (identifier) value: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))))))) statements: (expression_statement (for_expression label: (label name: (identifier)) pattern: (identifier) value: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal))) body: (block statements: (expression_statement (for_expression label: (label name: (identifier)) pattern: (identifier) value: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal))) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (integer_literal)) right: (integer_literal)) consequence: (block statements: (expression_statement (expression_statement_with_semi expression: (continue_expression label: (label name: (identifier)))))))) statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (integer_literal)) right: (integer_literal)) consequence: (block statements: (expression_statement (expression_statement_with_semi expression: (continue_expression label: (label name: (identifier)))))))))))))))",
-    "wrappedText": "for e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue'outer;\n        }\n        if y % 2 == 0 {\n            continue'inner;\n        }\n    }\n}",
+    "wrappedText": "for e in v {\n    bar(e);\n}for i in 0..256 {\n    bar(i);\n}'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 {\n            continue'outer;\n        }\n        if y % 2 == 0 {\n            continue'inner;\n        }\n    }\n}",
     "wrappedOffset": 0
   },
   {
@@ -106954,7 +106954,7 @@
       },
       "$nodeHandle": 386547056640
     },
-    "expectedOutput": "mystruct.myfield;\n\nfoo().x;\n\nvalue.0.1.iter();\n\n1.max(2);"
+    "expectedOutput": "mystruct.myfield;foo().x;value.0.1.iter();1.max(2);"
   },
   {
     "kind": "roundtrip",
@@ -106962,9 +106962,9 @@
     "sourceIn": "mystruct.myfield;\nfoo().x;\nvalue.0.1.iter();\n1.max(2);",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "mystruct.myfield;\n\nfoo().x;\n\nvalue.0.1.iter();\n\n1.max(2);",
+    "expectedSourceOut": "mystruct.myfield;foo().x;value.0.1.iter();1.max(2);",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (field_expression value: (identifier) field: (field_identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (field_expression value: (field_expression value: (identifier) field: (integer_literal)) field: (integer_literal)) field: (field_identifier)) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal))))))))",
-    "wrappedText": "mystruct.myfield;\n\nfoo().x;\n\nvalue.0.1.iter();\n\n1.max(2);",
+    "wrappedText": "mystruct.myfield;foo().x;value.0.1.iter();1.max(2);",
     "wrappedOffset": 0
   },
   {
@@ -108056,7 +108056,7 @@
       },
       "$nodeHandle": 395136991232
     },
-    "expectedOutput": "([1, 2, 3, 4])[0];\n\narr[10];\n\narr[n];"
+    "expectedOutput": "([1, 2, 3, 4])[0];arr[10];arr[n];"
   },
   {
     "kind": "roundtrip",
@@ -108064,9 +108064,9 @@
     "sourceIn": "([1, 2, 3, 4])[0];\narr[10];\narr[n];",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "([1, 2, 3, 4])[0];\n\narr[10];\n\narr[n];",
+    "expectedSourceOut": "([1, 2, 3, 4])[0];arr[10];arr[n];",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (index_expression object: (parenthesized_expression expression: (array_expression (array_expression_list (arguments_elements element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)) element: (attributed_argument (integer_literal)))))) index: (integer_literal)))) statements: (expression_statement (expression_statement_with_semi expression: (index_expression object: (identifier) index: (integer_literal)))) statements: (expression_statement (expression_statement_with_semi expression: (index_expression object: (identifier) index: (identifier)))))",
-    "wrappedText": "([1, 2, 3, 4])[0];\n\narr[10];\n\narr[n];",
+    "wrappedText": "([1, 2, 3, 4])[0];arr[10];arr[n];",
     "wrappedOffset": 0
   },
   {
@@ -108855,7 +108855,7 @@
       },
       "$nodeHandle": 399431958528
     },
-    "expectedOutput": "a::b();\n\nC::<D>::e();\n\n::f();\n\n::g::h();"
+    "expectedOutput": "a::b();C::<D>::e();::f();::g::h();"
   },
   {
     "kind": "roundtrip",
@@ -108863,9 +108863,9 @@
     "sourceIn": "a::b();\nC::<D>::e();\n::f();\n::g::h();",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a::b();\n\nC::<D>::e();\n\n::f();\n\n::g::h();",
+    "expectedSourceOut": "a::b();C::<D>::e();::f();::g::h();",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier path: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier))))) name: (identifier)) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier name: (identifier)) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier path: (scoped_identifier name: (identifier)) name: (identifier)) arguments: (arguments)))))",
-    "wrappedText": "a::b();\n\nC::<D>::e();\n\n::f();\n\n::g::h();",
+    "wrappedText": "a::b();C::<D>::e();::f();::g::h();",
     "wrappedOffset": 0
   },
   {
@@ -110993,7 +110993,7 @@
       },
       "$nodeHandle": 416611827712
     },
-    "expectedOutput": "std::sizeof::<u32>();\n\nfoo::<8>();"
+    "expectedOutput": "std::sizeof::<u32>();foo::<8>();"
   },
   {
     "kind": "roundtrip",
@@ -111001,9 +111001,9 @@
     "sourceIn": "std::sizeof::<u32>();\nfoo::<8>();",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "std::sizeof::<u32>();\n\nfoo::<8>();",
+    "expectedSourceOut": "std::sizeof::<u32>();foo::<8>();",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (generic_function function: (scoped_identifier path: (identifier) name: (identifier)) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))) arguments: (arguments)))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (generic_function function: (identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (integer_literal))))) arguments: (arguments)))))",
-    "wrappedText": "std::sizeof::<u32>();\n\nfoo::<8>();",
+    "wrappedText": "std::sizeof::<u32>();foo::<8>();",
     "wrappedOffset": 0
   },
   {
@@ -112159,7 +112159,7 @@
       },
       "$nodeHandle": 420906795008
     },
-    "expectedOutput": "a.map(|(b, c)|b.push(c));\n\nd.map(move|mut e| {\n    f(e);\n    g(e)\n});\n\nh(|| -> i {\n    j\n});"
+    "expectedOutput": "a.map(|(b, c)|b.push(c));d.map(move|mut e| {\n    f(e);\n    g(e)\n});h(|| -> i {\n    j\n});"
   },
   {
     "kind": "roundtrip",
@@ -112167,9 +112167,9 @@
     "sourceIn": "a.map(|(b, c)| b.push(c));\nd.map(move |mut e| {\n    f(e);\n    g(e)\n});\nh(|| -> i { j });",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a.map(|(b, c)|b.push(c));\n\nd.map(move|mut e| {\n    f(e);\n    g(e)\n});\n\nh(|| -> i {\n    j\n});",
+    "expectedSourceOut": "a.map(|(b, c)|b.push(c));d.map(move|mut e| {\n    f(e);\n    g(e)\n});h(|| -> i {\n    j\n});",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (closure_expression parameters: (closure_parameters parameters: (tuple_pattern elements: (tuple_pattern_elements element: (identifier) element: (identifier)))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (closure_expression parameters: (closure_parameters parameters: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier))) (closure_expression_expr body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))))))))))) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (closure_expression parameters: (closure_parameters) (closure_expression_block return_type: (type_identifier) body: (block trailing_expression: (identifier)))))))))))",
-    "wrappedText": "a.map(|(b, c)|b.push(c));\n\nd.map(move|mut e| {\n    f(e);\n    g(e)\n});\n\nh(|| -> i {\n    j\n});",
+    "wrappedText": "a.map(|(b, c)|b.push(c));d.map(move|mut e| {\n    f(e);\n    g(e)\n});h(|| -> i {\n    j\n});",
     "wrappedOffset": 0
   },
   {
@@ -117648,7 +117648,7 @@
       },
       "$nodeHandle": 438086664192
     },
-    "expectedOutput": "const {\n    1 + 3\n}\n\n;\n\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\n\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];"
+    "expectedOutput": "const {\n    1 + 3\n};if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}let three_ranges = [const {\n    (0..=5).into_inner()\n};3];"
   },
   {
     "kind": "roundtrip",
@@ -117656,9 +117656,9 @@
     "sourceIn": "const { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "const {\n    1 + 3\n}\n\n;\n\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\n\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
+    "expectedSourceOut": "const {\n    1 + 3\n};if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}let three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
     "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal) right: (integer_literal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal)))))))))) alternative: (else_clause (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression (array_expression_semi element: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal)))))",
-    "wrappedText": "const {\n    1 + 3\n}\n\n;\n\nif *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}\n\nlet three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
+    "wrappedText": "const {\n    1 + 3\n};if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n}else {\n    x\n}let three_ranges = [const {\n    (0..=5).into_inner()\n};3];",
     "wrappedOffset": 0
   },
   {
@@ -120003,7 +120003,7 @@
       },
       "$nodeHandle": 442381631488
     },
-    "expectedOutput": "0;\n\n0___0;\n\n123;\n\n0usize;\n\n123i32;\n\n123u32;\n\n123_u32;\n\n0xff_u8;\n\n0o70_i16;\n\n0b1111_1111_1001_0000_i32;\n\n1u128;"
+    "expectedOutput": "0;0___0;123;0usize;123i32;123u32;123_u32;0xff_u8;0o70_i16;0b1111_1111_1001_0000_i32;1u128;"
   },
   {
     "kind": "roundtrip",
@@ -120011,9 +120011,9 @@
     "sourceIn": "0;\n0___0;\n123;\n0usize;\n123i32;\n123u32;\n123_u32;\n0xff_u8;\n0o70_i16;\n0b1111_1111_1001_0000_i32;\n1u128;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "0;\n\n0___0;\n\n123;\n\n0usize;\n\n123i32;\n\n123u32;\n\n123_u32;\n\n0xff_u8;\n\n0o70_i16;\n\n0b1111_1111_1001_0000_i32;\n\n1u128;",
+    "expectedSourceOut": "0;0___0;123;0usize;123i32;123u32;123_u32;0xff_u8;0o70_i16;0b1111_1111_1001_0000_i32;1u128;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))) statements: (expression_statement (expression_statement_with_semi expression: (integer_literal))))",
-    "wrappedText": "0;\n\n0___0;\n\n123;\n\n0usize;\n\n123i32;\n\n123u32;\n\n123_u32;\n\n0xff_u8;\n\n0o70_i16;\n\n0b1111_1111_1001_0000_i32;\n\n1u128;",
+    "wrappedText": "0;0___0;123;0usize;123i32;123u32;123_u32;0xff_u8;0o70_i16;0b1111_1111_1001_0000_i32;1u128;",
     "wrappedOffset": 0
   },
   {
@@ -120175,7 +120175,7 @@
       },
       "$nodeHandle": 446676598784
     },
-    "expectedOutput": "123.123;\n\n2.;\n\n123.0f64;\n\n0.1f64;\n\n0.1f32;\n\n12E+99_f64;"
+    "expectedOutput": "123.123;2.;123.0f64;0.1f64;0.1f32;12E+99_f64;"
   },
   {
     "kind": "roundtrip",
@@ -120183,9 +120183,9 @@
     "sourceIn": "123.123;\n2.;\n123.0f64;\n0.1f64;\n0.1f32;\n12E+99_f64;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "123.123;\n\n2.;\n\n123.0f64;\n\n0.1f64;\n\n0.1f32;\n\n12E+99_f64;",
+    "expectedSourceOut": "123.123;2.;123.0f64;0.1f64;0.1f32;12E+99_f64;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (float_literal))) statements: (expression_statement (expression_statement_with_semi expression: (float_literal))) statements: (expression_statement (expression_statement_with_semi expression: (float_literal))) statements: (expression_statement (expression_statement_with_semi expression: (float_literal))) statements: (expression_statement (expression_statement_with_semi expression: (float_literal))) statements: (expression_statement (expression_statement_with_semi expression: (float_literal))))",
-    "wrappedText": "123.123;\n\n2.;\n\n123.0f64;\n\n0.1f64;\n\n0.1f32;\n\n12E+99_f64;",
+    "wrappedText": "123.123;2.;123.0f64;0.1f64;0.1f32;12E+99_f64;",
     "wrappedOffset": 0
   },
   {
@@ -120619,7 +120619,7 @@
       },
       "$nodeHandle": 450971566080
     },
-    "expectedOutput": "\"\";\n\n\"abc\";\n\nc\"foo\";\n\nb\"foo\\n bar\";\n\n\"foo\\\n    bar\";\n\n\"\\\"foo\\\"\";\n\n\"/* foo bar */ foo bar\";\n\n\"foo\\x42\\x43 bar\";\n\n\"foo \\x42  \\x43 bar\";"
+    "expectedOutput": "\"\";\"abc\";c\"foo\";b\"foo\\n bar\";\"foo\\\n    bar\";\"\\\"foo\\\"\";\"/* foo bar */ foo bar\";\"foo\\x42\\x43 bar\";\"foo \\x42  \\x43 bar\";"
   },
   {
     "kind": "roundtrip",
@@ -120627,9 +120627,9 @@
     "sourceIn": "\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\nbar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43bar\";\n\"foo \\x42  \\x43 bar\";",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\"\";\n\n\"abc\";\n\nc\"foo\";\n\nb\"foo\\n bar\";\n\n\"foo\\\n    bar\";\n\n\"\\\"foo\\\"\";\n\n\"/* foo bar */ foo bar\";\n\n\"foo\\x42\\x43 bar\";\n\n\"foo \\x42  \\x43 bar\";",
+    "expectedSourceOut": "\"\";\"abc\";c\"foo\";b\"foo\\n bar\";\"foo\\\n    bar\";\"\\\"foo\\\"\";\"/* foo bar */ foo bar\";\"foo\\x42\\x43 bar\";\"foo \\x42  \\x43 bar\";",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (escape_sequence) elements: (string_content) elements: (escape_sequence)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence) elements: (escape_sequence) elements: (string_content)))) statements: (expression_statement (expression_statement_with_semi expression: (string_literal string_open: (string_open) elements: (string_content) elements: (escape_sequence) elements: (string_content) elements: (escape_sequence) elements: (string_content)))))",
-    "wrappedText": "\"\";\n\n\"abc\";\n\nc\"foo\";\n\nb\"foo\\n bar\";\n\n\"foo\\\n    bar\";\n\n\"\\\"foo\\\"\";\n\n\"/* foo bar */ foo bar\";\n\n\"foo\\x42\\x43 bar\";\n\n\"foo \\x42  \\x43 bar\";",
+    "wrappedText": "\"\";\"abc\";c\"foo\";b\"foo\\n bar\";\"foo\\\n    bar\";\"\\\"foo\\\"\";\"/* foo bar */ foo bar\";\"foo\\x42\\x43 bar\";\"foo \\x42  \\x43 bar\";",
     "wrappedOffset": 0
   },
   {
@@ -121205,7 +121205,7 @@
       },
       "$nodeHandle": 455266533376
     },
-    "expectedOutput": "r#\"abc\"#;\n\nr##\"ok\"##;\n\nr##\"foo #\"# bar\"##;\n\nr###\"foo ##\"## bar\"###;\n\nr######\"foo ##### bar\"######;"
+    "expectedOutput": "r#\"abc\"#;r##\"ok\"##;r##\"foo #\"# bar\"##;r###\"foo ##\"## bar\"###;r######\"foo ##### bar\"######;"
   },
   {
     "kind": "roundtrip",
@@ -121213,9 +121213,9 @@
     "sourceIn": "r#\"abc\"#; r##\"ok\"##;\nr##\"foo #\"# bar\"##;\nr###\"foo ##\"## bar\"###;\nr######\"foo ##### bar\"######;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "r#\"abc\"#;\n\nr##\"ok\"##;\n\nr##\"foo #\"# bar\"##;\n\nr###\"foo ##\"## bar\"###;\n\nr######\"foo ##### bar\"######;",
+    "expectedSourceOut": "r#\"abc\"#;r##\"ok\"##;r##\"foo #\"# bar\"##;r###\"foo ##\"## bar\"###;r######\"foo ##### bar\"######;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))))",
-    "wrappedText": "r#\"abc\"#;\n\nr##\"ok\"##;\n\nr##\"foo #\"# bar\"##;\n\nr###\"foo ##\"## bar\"###;\n\nr######\"foo ##### bar\"######;",
+    "wrappedText": "r#\"abc\"#;r##\"ok\"##;r##\"foo #\"# bar\"##;r###\"foo ##\"## bar\"###;r######\"foo ##### bar\"######;",
     "wrappedOffset": 0
   },
   {
@@ -121485,7 +121485,7 @@
       },
       "$nodeHandle": 459561500672
     },
-    "expectedOutput": "br#\"abc\"#;\n\nbr##\"abc\"##;"
+    "expectedOutput": "br#\"abc\"#;br##\"abc\"##;"
   },
   {
     "kind": "roundtrip",
@@ -121493,9 +121493,9 @@
     "sourceIn": "br#\"abc\"#;\nbr##\"abc\"##;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "br#\"abc\"#;\n\nbr##\"abc\"##;",
+    "expectedSourceOut": "br#\"abc\"#;br##\"abc\"##;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))))",
-    "wrappedText": "br#\"abc\"#;\n\nbr##\"abc\"##;",
+    "wrappedText": "br#\"abc\"#;br##\"abc\"##;",
     "wrappedOffset": 0
   },
   {
@@ -121663,7 +121663,7 @@
       },
       "$nodeHandle": 463856467968
     },
-    "expectedOutput": "cr#\"abc\"#;\n\ncr##\"abc\"##;"
+    "expectedOutput": "cr#\"abc\"#;cr##\"abc\"##;"
   },
   {
     "kind": "roundtrip",
@@ -121671,9 +121671,9 @@
     "sourceIn": "cr#\"abc\"#;\ncr##\"abc\"##;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "cr#\"abc\"#;\n\ncr##\"abc\"##;",
+    "expectedSourceOut": "cr#\"abc\"#;cr##\"abc\"##;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))) statements: (expression_statement (expression_statement_with_semi expression: (raw_string_literal raw_string_literal_start: (raw_string_literal_start) string_content: (string_content) raw_string_literal_end: (raw_string_literal_end)))))",
-    "wrappedText": "cr#\"abc\"#;\n\ncr##\"abc\"##;",
+    "wrappedText": "cr#\"abc\"#;cr##\"abc\"##;",
     "wrappedOffset": 0
   },
   {
@@ -121927,7 +121927,7 @@
       },
       "$nodeHandle": 468151435264
     },
-    "expectedOutput": "'a';\n\n'\\'';\n\n'\\0';\n\nb'x';\n\n'\\t';\n\n'\\xff';\n\n'\\\\';"
+    "expectedOutput": "'a';'\\'';'\\0';b'x';'\\t';'\\xff';'\\\\';"
   },
   {
     "kind": "roundtrip",
@@ -121935,9 +121935,9 @@
     "sourceIn": "'a';\n'\\'';\n'\\0';\nb'x';\n'\\t';\n'\\xff';\n'\\\\';",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "'a';\n\n'\\'';\n\n'\\0';\n\nb'x';\n\n'\\t';\n\n'\\xff';\n\n'\\\\';",
+    "expectedSourceOut": "'a';'\\'';'\\0';b'x';'\\t';'\\xff';'\\\\';",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (char_literal))) statements: (expression_statement (expression_statement_with_semi expression: (char_literal))) statements: (expression_statement (expression_statement_with_semi expression: (char_literal))) statements: (expression_statement (expression_statement_with_semi expression: (char_literal))) statements: (expression_statement (expression_statement_with_semi expression: (char_literal))) statements: (expression_statement (expression_statement_with_semi expression: (char_literal))) statements: (expression_statement (expression_statement_with_semi expression: (char_literal))))",
-    "wrappedText": "'a';\n\n'\\'';\n\n'\\0';\n\nb'x';\n\n'\\t';\n\n'\\xff';\n\n'\\\\';",
+    "wrappedText": "'a';'\\'';'\\0';b'x';'\\t';'\\xff';'\\\\';",
     "wrappedOffset": 0
   },
   {
@@ -122023,7 +122023,7 @@
       },
       "$nodeHandle": 472446402560
     },
-    "expectedOutput": "true;\n\nfalse;"
+    "expectedOutput": "true;false;"
   },
   {
     "kind": "roundtrip",
@@ -122031,9 +122031,9 @@
     "sourceIn": "true;\nfalse;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "true;\n\nfalse;",
+    "expectedSourceOut": "true;false;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (boolean_literal))) statements: (expression_statement (expression_statement_with_semi expression: (boolean_literal))))",
-    "wrappedText": "true;\n\nfalse;",
+    "wrappedText": "true;false;",
     "wrappedOffset": 0
   },
   {
@@ -122415,7 +122415,7 @@
       },
       "$nodeHandle": 476741369856
     },
-    "expectedOutput": "a!();\n\nb![];\n\nc!{};\n\nd::e!();\n\nf::g::h!{};"
+    "expectedOutput": "a!();b![];c!{};d::e!();f::g::h!{};"
   },
   {
     "kind": "roundtrip",
@@ -122423,9 +122423,9 @@
     "sourceIn": "a!();\nb![];\nc!{};\nd::e!();\nf::g::h!{};",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a!();\n\nb![];\n\nc!{};\n\nd::e!();\n\nf::g::h!{};",
+    "expectedSourceOut": "a!();b![];c!{};d::e!();f::g::h!{};",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_bracket))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_brace))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (scoped_identifier path: (identifier) name: (identifier)) arguments: (token_tree (delim_token_tree_paren))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) arguments: (token_tree (delim_token_tree_brace))))))",
-    "wrappedText": "a!();\n\nb![];\n\nc!{};\n\nd::e!();\n\nf::g::h!{};",
+    "wrappedText": "a!();b![];c!{};d::e!();f::g::h!{};",
     "wrappedOffset": 0
   },
   {
@@ -124313,7 +124313,7 @@
       },
       "$nodeHandle": 481036337152
     },
-    "expectedOutput": "a!(*a*);\n\na!(&a&);\n\na!(-a-);\n\na!(b+c++);\n\na!('a'..='z');\n\na!('\\u{0}'..='\\u{2}');\n\na!('lifetime)\n\ndefault!(a);\n\nunion!(a);\n\na!($);\n\na!($());\n\na!($a$);\n\na!(${$([a])});\n\na!($a$a: ident$($a);*);"
+    "expectedOutput": "a!(*a*);a!(&a&);a!(-a-);a!(b+c++);a!('a'..='z');a!('\\u{0}'..='\\u{2}');a!('lifetime)\n\ndefault!(a);union!(a);a!($);a!($());a!($a$);a!(${$([a])});a!($a$a: ident$($a);*);"
   },
   {
     "kind": "roundtrip",
@@ -124321,9 +124321,9 @@
     "sourceIn": "a!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($());\na!($ a $);\na!(${$([ a ])});\na!($a $a:ident $($a);*);",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a!(*a*);\n\na!(&a&);\n\na!(-a-);\n\na!(b+c++);\n\na!('a'..='z');\n\na!('\\u{0}'..='\\u{2}');\n\na!('lifetime)\n\ndefault!(a);\n\nunion!(a);\n\na!($);\n\na!($());\n\na!($a$);\n\na!(${$([a])});\n\na!($a$a: ident$($a);*);",
+    "expectedSourceOut": "a!(*a*);a!(&a&);a!(-a-);a!(b+c++);a!('a'..='z');a!('\\u{0}'..='\\u{2}');a!('lifetime)\n\ndefault!(a);union!(a);a!($);a!($());a!($a$);a!(${$([a])});a!($a$a: ident$($a);*);",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (char_literal)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (char_literal))))))) statements: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token) delim_tokens: (non_special_token (identifier))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (identifier))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation)))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_brace delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree (delim_token_tree_bracket delim_tokens: (non_special_token (identifier))))))))))))) statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (token_tree_punctuation) delim_tokens: (token_tree (delim_token_tree_paren delim_tokens: (token_tree_punctuation) delim_tokens: (non_special_token (identifier)))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation))))))))",
-    "wrappedText": "a!(*a*);\n\na!(&a&);\n\na!(-a-);\n\na!(b+c++);\n\na!('a'..='z');\n\na!('\\u{0}'..='\\u{2}');\n\na!('lifetime)\n\ndefault!(a);\n\nunion!(a);\n\na!($);\n\na!($());\n\na!($a$);\n\na!(${$([a])});\n\na!($a$a: ident$($a);*);",
+    "wrappedText": "a!(*a*);a!(&a&);a!(-a-);a!(b+c++);a!('a'..='z');a!('\\u{0}'..='\\u{2}');a!('lifetime)\n\ndefault!(a);union!(a);a!($);a!($());a!($a$);a!(${$([a])});a!($a$a: ident$($a);*);",
     "wrappedOffset": 0
   },
   {
@@ -132723,7 +132723,7 @@
       },
       "$nodeHandle": 502511173632
     },
-    "expectedOutput": "match x {\n    Person{name, age}if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}"
+    "expectedOutput": "match x {\n    Person{name, age}if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}match y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}"
   },
   {
     "kind": "roundtrip",
@@ -132731,9 +132731,9 @@
     "sourceIn": "match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "match x {\n    Person{name, age}if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
+    "expectedSourceOut": "match x {\n    Person{name, age}if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}match y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern (shorthand_field_identifier)) element: (field_pattern (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (tuple_expression (tuple_expression_elements element: (string_literal string_open: (string_open) elements: (string_content)) element: (identifier))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements element: (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) element: (field_pattern (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern)))))) value: (tuple_expression (tuple_expression_elements element: (string_literal string_open: (string_open) elements: (string_content)) element: (identifier)))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns pattern: (wildcard_pattern) pattern: (tuple_struct_pattern type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (primitive_type))))) (patterns pattern: (identifier)))))) value: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))))))))))))",
-    "wrappedText": "match x {\n    Person{name, age}if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
+    "wrappedText": "match x {\n    Person{name, age}if age < 5 => (\"toddler\", name),\n    Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}match y {\n    Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}",
     "wrappedOffset": 0
   },
   {
@@ -136654,7 +136654,7 @@
       },
       "$nodeHandle": 511101108224
     },
-    "expectedOutput": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}\n\nmatch name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}"
+    "expectedOutput": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}match name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}"
   },
   {
     "kind": "roundtrip",
@@ -136662,9 +136662,9 @@
     "sourceIn": "match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}\n\nmatch name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}",
+    "expectedSourceOut": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}match name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}",
     "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (remaining_field_pattern))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (range_pattern (range_pattern_with_left left: (integer_literal) (range_pattern_with_left_with_right right: (integer_literal))))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare)))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (range_pattern (range_pattern_prefix right: (identifier)))) (match_arm_with_comma value: (identifier))) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern (range_pattern_prefix right: (integer_literal))))) value: (identifier)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content)))) right: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma value: (boolean_literal))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))))",
-    "wrappedText": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}\n\nmatch name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}",
+    "wrappedText": "match x {\n    a@A(_)|b@B(..) => a,\n    a@1...5 => a,\n    Some(1...5) => a,\n    a@b...c => a,\n    a@b..=c => a,\n    d.. => a,\n    ..d => d,\n    a@..=5 => a\n}match name {\n    |\"IPV6_FLOWINFO\"|\"IPV6_FLOWLABEL_MGR\"|\"IPV6_FLOWINFO_SEND\" => true,\n    _ => false,\n}",
     "wrappedOffset": 0
   },
   {
@@ -141162,7 +141162,7 @@
       },
       "$nodeHandle": 515396075520
     },
-    "expectedOutput": "if let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index)|Err(index) = slice.binary_search(&x);\n\nfor ref a|b in c {}\n\nlet Ok(x)|Err(x) = binary_search(x);\n\nfor A|B|C in c {}\n\n|(Ok(x)|Err(x))|expr();\n\nlet ref mut x@(A|B|C);\n\nfn foo((1|2|3): u8) {}\n\nif let x!()|y!() = () {}"
+    "expectedOutput": "if let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}while let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}let Ok(index)|Err(index) = slice.binary_search(&x);\n\nfor ref a|b in c {}let Ok(x)|Err(x) = binary_search(x);\n\nfor A|B|C in c {}|(Ok(x)|Err(x))|expr();let ref mut x@(A|B|C);\n\nfn foo((1|2|3): u8) {}\n\nif let x!()|y!() = () {}"
   },
   {
     "kind": "roundtrip",
@@ -141170,9 +141170,9 @@
     "sourceIn": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index) | Err(index) = slice.binary_search(&x);\n\nfor ref a | b in c {}\n\nlet Ok(x) | Err(x) = binary_search(x);\n\nfor A | B | C in c {}\n\n|(Ok(x) | Err(x))| expr();\n\nlet ref mut x @ (A | B | C);\n\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "if let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index)|Err(index) = slice.binary_search(&x);\n\nfor ref a|b in c {}\n\nlet Ok(x)|Err(x) = binary_search(x);\n\nfor A|B|C in c {}\n\n|(Ok(x)|Err(x))|expr();\n\nlet ref mut x@(A|B|C);\n\nfn foo((1|2|3): u8) {}\n\nif let x!()|y!() = () {}",
+    "expectedSourceOut": "if let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}while let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}let Ok(index)|Err(index) = slice.binary_search(&x);\n\nfor ref a|b in c {}let Ok(x)|Err(x) = binary_search(x);\n\nfor A|B|C in c {}|(Ok(x)|Err(x))|expr();let ref mut x@(A|B|C);\n\nfn foo((1|2|3): u8) {}\n\nif let x!()|y!() = () {}",
     "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) right: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))))) value: (identifier)) consequence: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))))))) statements: (expression_statement (while_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) right: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))))) value: (identifier)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))))))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) right: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))))) value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (reference_expression value: (identifier))))))) statements: (expression_statement (for_expression pattern: (or_pattern (or_pattern_binary left: (ref_pattern pattern: (identifier)) right: (identifier))) value: (identifier) body: (block))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) right: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))))) value: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))) statements: (expression_statement (for_expression pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))) value: (identifier) body: (block))) statements: (expression_statement (expression_statement_with_semi expression: (closure_expression parameters: (closure_parameters parameters: (tuple_pattern elements: (tuple_pattern_elements element: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) right: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier)))))))) (closure_expression_expr body: (call_expression function: (identifier) arguments: (arguments)))))) statements: (let_declaration pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern name: (identifier) pattern: (tuple_pattern elements: (tuple_pattern_elements element: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (tuple_pattern elements: (tuple_pattern_elements element: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))) type: (primitive_type))))) body: (block)) statements: (expression_statement (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren))) right: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_paren))))) value: (unit_expression)) consequence: (block))))",
-    "wrappedText": "if let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index)|Err(index) = slice.binary_search(&x);\n\nfor ref a|b in c {}\n\nlet Ok(x)|Err(x) = binary_search(x);\n\nfor A|B|C in c {}\n\n|(Ok(x)|Err(x))|expr();\n\nlet ref mut x@(A|B|C);\n\nfn foo((1|2|3): u8) {}\n\nif let x!()|y!() = () {}",
+    "wrappedText": "if let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}while let A(x)|B(x) = expr {\n    do_stuff_with(x);\n}let Ok(index)|Err(index) = slice.binary_search(&x);\n\nfor ref a|b in c {}let Ok(x)|Err(x) = binary_search(x);\n\nfor A|B|C in c {}|(Ok(x)|Err(x))|expr();let ref mut x@(A|B|C);\n\nfn foo((1|2|3): u8) {}\n\nif let x!()|y!() = () {}",
     "wrappedOffset": 0
   },
   {
@@ -163353,7 +163353,7 @@
       },
       "$nodeHandle": 571230650368
     },
-    "expectedOutput": "a as B<C>;\n\nd as*mut E<<F as E>::G>;"
+    "expectedOutput": "a as B<C>;d as*mut E<<F as E>::G>;"
   },
   {
     "kind": "roundtrip",
@@ -163361,9 +163361,9 @@
     "sourceIn": "a as B<C>;\nd as *mut E<<F as E>::G>;",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a as B<C>;\n\nd as*mut E<<F as E>::G>;",
+    "expectedSourceOut": "a as B<C>;d as*mut E<<F as E>::G>;",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))))) statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (pointer_type (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))))))",
-    "wrappedText": "a as B<C>;\n\nd as*mut E<<F as E>::G>;",
+    "wrappedText": "a as B<C>;d as*mut E<<F as E>::G>;",
     "wrappedOffset": 0
   },
   {
