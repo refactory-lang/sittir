@@ -149,11 +149,11 @@ export interface ArrayExpressionListTransport {
   _arguments_elements?: SlotValue<ArgumentsElementsTransport>
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
   _lbrack_before?: number
   _lbrack_after?: number
   _rbrack_before?: number
   _rbrack_after?: number
-  _attributes_separator_space?: number
   _array_expression_list_before?: number
   _array_expression_list_after?: number
 }
@@ -171,13 +171,13 @@ export interface ArrayExpressionSemiTransport {
   _length: SlotValue<Box<ExpressionTransport>>
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
   _semi_before?: number
   _semi_after?: number
   _lbrack_before?: number
   _lbrack_after?: number
   _rbrack_before?: number
   _rbrack_after?: number
-  _attributes_separator_space?: number
   _array_expression_semi_before?: number
   _array_expression_semi_after?: number
 }
@@ -516,13 +516,13 @@ export interface BlockTransport {
   _trailing_expression?: SlotValue<Box<ExpressionTransport>>
   _statements_end?: number
   _statements_start?: number
+  _statements_separator_space?: number
   _colon_before?: number
   _colon_after?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _statements_separator_space?: number
   _block_before?: number
   _block_after?: number
 }
@@ -770,11 +770,11 @@ export interface DeclarationListTransport {
   _declarations?: Array<SlotValue<DeclarationStatementTransport>>
   _declarations_end?: number
   _declarations_start?: number
+  _declarations_separator_space?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _declarations_separator_space?: number
   _declaration_list_before?: number
   _declaration_list_after?: number
 }
@@ -790,11 +790,11 @@ export interface DelimTokenTreeBraceTransport {
   _delim_tokens?: Array<SlotValue<DelimTokenTreeBraceDelimTokensTransportSlot>>
   _delim_tokens_end?: number
   _delim_tokens_start?: number
+  _delim_tokens_separator_space?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _delim_tokens_separator_space?: number
   _delim_token_tree_brace_before?: number
   _delim_token_tree_brace_after?: number
 }
@@ -810,11 +810,11 @@ export interface DelimTokenTreeBracketTransport {
   _delim_tokens?: Array<SlotValue<DelimTokenTreeBracketDelimTokensTransportSlot>>
   _delim_tokens_end?: number
   _delim_tokens_start?: number
+  _delim_tokens_separator_space?: number
   _lbrack_before?: number
   _lbrack_after?: number
   _rbrack_before?: number
   _rbrack_after?: number
-  _delim_tokens_separator_space?: number
   _delim_token_tree_bracket_before?: number
   _delim_token_tree_bracket_after?: number
 }
@@ -830,11 +830,11 @@ export interface DelimTokenTreeParenTransport {
   _delim_tokens?: Array<SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>
   _delim_tokens_end?: number
   _delim_tokens_start?: number
+  _delim_tokens_separator_space?: number
   _lparen_before?: number
   _lparen_after?: number
   _rparen_before?: number
   _rparen_after?: number
-  _delim_tokens_separator_space?: number
   _delim_token_tree_paren_before?: number
   _delim_token_tree_paren_after?: number
 }
@@ -1139,9 +1139,9 @@ export interface FieldInitializerTransport {
   _attribute_item?: Array<SlotValue<AttributeItemTransport>>
   _attribute_item_end?: number
   _attribute_item_start?: number
+  _attribute_item_separator_space?: number
   _colon_before?: number
   _colon_after?: number
-  _attribute_item_separator_space?: number
   _field_initializer_before?: number
   _field_initializer_after?: number
 }
@@ -1584,11 +1584,11 @@ export interface LastMatchArmTransport {
   _comma?: boolean
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
   _comma_before?: number
   _comma_after?: number
   _eq_gt_before?: number
   _eq_gt_after?: number
-  _attributes_separator_space?: number
   _last_match_arm_before?: number
   _last_match_arm_after?: number
 }
@@ -1894,9 +1894,9 @@ export interface MatchArmTransport {
   _content: SlotValue<MatchArmContentTransportSlot>
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
   _eq_gt_before?: number
   _eq_gt_after?: number
-  _attributes_separator_space?: number
   _match_arm_before?: number
   _match_arm_after?: number
 }
@@ -2762,13 +2762,13 @@ export interface TokenRepetitionPatternTransport {
   _operator_after?: number
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
   _dollar_before?: number
   _dollar_after?: number
   _lparen_before?: number
   _lparen_after?: number
   _rparen_before?: number
   _rparen_after?: number
-  _token_patterns_separator_space?: number
   _token_repetition_pattern_before?: number
   _token_repetition_pattern_after?: number
 }
@@ -2788,13 +2788,13 @@ export interface TokenRepetitionTransport {
   _operator_after?: number
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
   _dollar_before?: number
   _dollar_after?: number
   _lparen_before?: number
   _lparen_after?: number
   _rparen_before?: number
   _rparen_after?: number
-  _tokens_separator_space?: number
   _token_repetition_before?: number
   _token_repetition_after?: number
 }
@@ -2810,11 +2810,11 @@ export interface TokenTreeBraceTransport {
   _tokens?: Array<SlotValue<TokenTreeBraceTokensTransportSlot>>
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _tokens_separator_space?: number
   _token_tree_brace_before?: number
   _token_tree_brace_after?: number
 }
@@ -2830,11 +2830,11 @@ export interface TokenTreeBracketTransport {
   _tokens?: Array<SlotValue<TokenTreeBracketTokensTransportSlot>>
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
   _lbrack_before?: number
   _lbrack_after?: number
   _rbrack_before?: number
   _rbrack_after?: number
-  _tokens_separator_space?: number
   _token_tree_bracket_before?: number
   _token_tree_bracket_after?: number
 }
@@ -2850,11 +2850,11 @@ export interface TokenTreeParenTransport {
   _tokens?: Array<SlotValue<TokenTreeParenTokensTransportSlot>>
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
   _lparen_before?: number
   _lparen_after?: number
   _rparen_before?: number
   _rparen_after?: number
-  _tokens_separator_space?: number
   _token_tree_paren_before?: number
   _token_tree_paren_after?: number
 }
@@ -2870,11 +2870,11 @@ export interface TokenTreePatternBraceTransport {
   _token_patterns?: Array<SlotValue<TokenTreePatternBraceTokenPatternsTransportSlot>>
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _token_patterns_separator_space?: number
   _token_tree_pattern_brace_before?: number
   _token_tree_pattern_brace_after?: number
 }
@@ -2890,11 +2890,11 @@ export interface TokenTreePatternBracketTransport {
   _token_patterns?: Array<SlotValue<TokenTreePatternBracketTokenPatternsTransportSlot>>
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
   _lbrack_before?: number
   _lbrack_after?: number
   _rbrack_before?: number
   _rbrack_after?: number
-  _token_patterns_separator_space?: number
   _token_tree_pattern_bracket_before?: number
   _token_tree_pattern_bracket_after?: number
 }
@@ -2910,11 +2910,11 @@ export interface TokenTreePatternParenTransport {
   _token_patterns?: Array<SlotValue<TokenTreePatternParenTokenPatternsTransportSlot>>
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
   _lparen_before?: number
   _lparen_after?: number
   _rparen_before?: number
   _rparen_after?: number
-  _token_patterns_separator_space?: number
   _token_tree_pattern_paren_before?: number
   _token_tree_pattern_paren_after?: number
 }
@@ -3041,11 +3041,11 @@ export interface TupleExpressionTransport {
   _tuple_expression_elements: SlotValue<TupleExpressionElementsTransport>
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
   _lparen_before?: number
   _lparen_after?: number
   _rparen_before?: number
   _rparen_after?: number
-  _attributes_separator_space?: number
   _tuple_expression_before?: number
   _tuple_expression_after?: number
 }

@@ -376,7 +376,8 @@ export function emitOptions(config: EmitOptionsConfig): string {
 		nodeMap: config.nodeMap,
 		kindEntries: config.kindEntries,
 		renderRules: config.renderRules,
-		defaults: config.renderDefaults
+		defaults: config.renderDefaults,
+		options: config.options
 	});
 	const supertypeMembers = buildSupertypeMembersMap(config.nodeMap);
 	const armType = kindIdArmType(config.kindEntries);

@@ -974,7 +974,7 @@ export interface AddressBranch {
 	readonly argument_list: '(' | ')' | 'after' | 'before';
 	readonly 'argument_list/(': 'after' | 'before';
 	readonly 'argument_list/)': 'after' | 'before';
-	readonly argument_list_elements: 'element' | 'element_delimiter';
+	readonly argument_list_elements: 'element';
 	readonly 'argument_list_elements/element':
 		| 'as_pattern'
 		| 'attribute'
@@ -985,6 +985,7 @@ export interface AddressBranch {
 		| 'comparison_operator'
 		| 'concatenated_string'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'dictionary'
 		| 'dictionary_comprehension'
 		| 'dictionary_splat'
@@ -1134,8 +1135,8 @@ export interface AddressBranch {
 	readonly case_list_pattern: '[' | ']' | 'after' | 'before';
 	readonly 'case_list_pattern/[': 'after' | 'before';
 	readonly 'case_list_pattern/]': 'after' | 'before';
-	readonly case_patterns: 'case_pattern' | 'case_pattern_delimiter';
-	readonly 'case_patterns/case_pattern': 'separator';
+	readonly case_patterns: 'case_pattern';
+	readonly 'case_patterns/case_pattern': 'delimiter' | 'separator';
 	readonly 'case_patterns/case_pattern/separator': ',';
 	readonly 'case_patterns/case_pattern/separator/,': 'after' | 'before';
 	readonly case_tuple_pattern: '(' | ')' | 'after' | 'before';
@@ -1149,7 +1150,7 @@ export interface AddressBranch {
 	readonly class_pattern: '(' | ')' | 'after' | 'before';
 	readonly 'class_pattern/(': 'after' | 'before';
 	readonly 'class_pattern/)': 'after' | 'before';
-	readonly collection_elements: 'element' | 'element_delimiter';
+	readonly collection_elements: 'element';
 	readonly 'collection_elements/element':
 		| 'as_pattern'
 		| 'attribute'
@@ -1160,6 +1161,7 @@ export interface AddressBranch {
 		| 'comparison_operator'
 		| 'concatenated_string'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'dictionary'
 		| 'dictionary_comprehension'
 		| 'generator_expression'
@@ -1242,8 +1244,8 @@ export interface AddressBranch {
 	readonly dict_pattern: 'after' | 'before' | '{' | '}';
 	readonly 'dict_pattern/{': 'after' | 'before';
 	readonly 'dict_pattern/}': 'after' | 'before';
-	readonly dict_pattern_elements: 'element' | 'element_delimiter';
-	readonly 'dict_pattern_elements/element': 'key_value_pattern' | 'separator' | 'splat_pattern';
+	readonly dict_pattern_elements: 'element';
+	readonly 'dict_pattern_elements/element': 'delimiter' | 'key_value_pattern' | 'separator' | 'splat_pattern';
 	readonly 'dict_pattern_elements/element/key_value_pattern': 'after';
 	readonly 'dict_pattern_elements/element/separator': ',';
 	readonly 'dict_pattern_elements/element/separator/,': 'after' | 'before';
@@ -1254,8 +1256,8 @@ export interface AddressBranch {
 	readonly dictionary_comprehension: 'after' | 'before' | '{' | '}';
 	readonly 'dictionary_comprehension/{': 'after' | 'before';
 	readonly 'dictionary_comprehension/}': 'after' | 'before';
-	readonly dictionary_elements: 'element' | 'element_delimiter';
-	readonly 'dictionary_elements/element': 'dictionary_splat' | 'pair' | 'separator';
+	readonly dictionary_elements: 'element';
+	readonly 'dictionary_elements/element': 'delimiter' | 'dictionary_splat' | 'pair' | 'separator';
 	readonly 'dictionary_elements/element/dictionary_splat': 'after';
 	readonly 'dictionary_elements/element/pair': 'after';
 	readonly 'dictionary_elements/element/separator': ',';
@@ -1323,12 +1325,13 @@ export interface AddressBranch {
 	readonly 'exec_statement/in_clause/separator': ',';
 	readonly 'exec_statement/in_clause/separator/,': 'after' | 'before';
 	readonly expression_list: 'after' | 'before';
-	readonly expression_list_expressions: 'expression' | 'expression_delimiter';
+	readonly expression_list_expressions: 'expression';
 	readonly 'expression_list_expressions/expression':
 		| 'as_pattern'
 		| 'boolean_operator'
 		| 'comparison_operator'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'lambda'
 		| 'named_expression'
 		| 'not_operator'
@@ -1342,12 +1345,13 @@ export interface AddressBranch {
 	readonly 'expression_list_expressions/expression/not_operator': 'after';
 	readonly 'expression_list_expressions/expression/separator': ',';
 	readonly 'expression_list_expressions/expression/separator/,': 'after' | 'before';
-	readonly expression_statement_tuple: 'expression' | 'expression_delimiter';
+	readonly expression_statement_tuple: 'expression';
 	readonly 'expression_statement_tuple/expression':
 		| 'as_pattern'
 		| 'boolean_operator'
 		| 'comparison_operator'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'lambda'
 		| 'named_expression'
 		| 'not_operator'
@@ -1461,8 +1465,8 @@ export interface AddressBranch {
 	readonly import_from_statement: 'after' | 'before' | 'from' | 'import';
 	readonly 'import_from_statement/from': 'after' | 'before';
 	readonly 'import_from_statement/import': 'after' | 'before';
-	readonly import_list: 'name' | 'name_delimiter';
-	readonly 'import_list/name': 'aliased_import' | 'separator';
+	readonly import_list: 'name';
+	readonly 'import_list/name': 'aliased_import' | 'delimiter' | 'separator';
 	readonly 'import_list/name/aliased_import': 'after';
 	readonly 'import_list/name/separator': ',';
 	readonly 'import_list/name/separator/,': 'after' | 'before';
@@ -1495,8 +1499,8 @@ export interface AddressBranch {
 	readonly list_pattern: '[' | ']' | 'after' | 'before';
 	readonly 'list_pattern/[': 'after' | 'before';
 	readonly 'list_pattern/]': 'after' | 'before';
-	readonly list_pattern_case_patterns: 'case_pattern' | 'case_pattern_delimiter';
-	readonly 'list_pattern_case_patterns/case_pattern': 'separator';
+	readonly list_pattern_case_patterns: 'case_pattern';
+	readonly 'list_pattern_case_patterns/case_pattern': 'delimiter' | 'separator';
 	readonly 'list_pattern_case_patterns/case_pattern/separator': ',';
 	readonly 'list_pattern_case_patterns/case_pattern/separator/,': 'after' | 'before';
 	readonly list_splat: '*' | 'after' | 'before';
@@ -1545,11 +1549,12 @@ export interface AddressBranch {
 	readonly 'not_operator/not': 'after' | 'before';
 	readonly pair: ':' | 'after' | 'before';
 	readonly 'pair/:': 'after' | 'before';
-	readonly parameters: '(' | ')' | 'after' | 'before' | 'parameter' | 'parameter_delimiter';
+	readonly parameters: '(' | ')' | 'after' | 'before' | 'parameter';
 	readonly 'parameters/(': 'after' | 'before';
 	readonly 'parameters/)': 'after' | 'before';
 	readonly 'parameters/parameter':
 		| 'default_parameter'
+		| 'delimiter'
 		| 'dictionary_splat_pattern'
 		| 'list_splat_pattern'
 		| 'separator'
@@ -1574,9 +1579,10 @@ export interface AddressBranch {
 	readonly 'parenthesized_list_splat/(': 'after' | 'before';
 	readonly 'parenthesized_list_splat/)': 'after' | 'before';
 	readonly pattern_list: 'after' | 'before';
-	readonly pattern_list_patterns: 'pattern' | 'pattern_delimiter';
+	readonly pattern_list_patterns: 'pattern';
 	readonly 'pattern_list_patterns/pattern':
 		| 'attribute'
+		| 'delimiter'
 		| 'list_pattern'
 		| 'list_splat_pattern'
 		| 'separator'
@@ -1589,9 +1595,10 @@ export interface AddressBranch {
 	readonly 'pattern_list_patterns/pattern/separator/,': 'after' | 'before';
 	readonly 'pattern_list_patterns/pattern/subscript': 'after';
 	readonly 'pattern_list_patterns/pattern/tuple_pattern': 'after';
-	readonly patterns: 'pattern' | 'pattern_delimiter';
+	readonly patterns: 'pattern';
 	readonly 'patterns/pattern':
 		| 'attribute'
+		| 'delimiter'
 		| 'list_pattern'
 		| 'list_splat_pattern'
 		| 'separator'
@@ -1604,12 +1611,13 @@ export interface AddressBranch {
 	readonly 'patterns/pattern/separator/,': 'after' | 'before';
 	readonly 'patterns/pattern/subscript': 'after';
 	readonly 'patterns/pattern/tuple_pattern': 'after';
-	readonly print_arguments: 'argument' | 'argument_delimiter';
+	readonly print_arguments: 'argument';
 	readonly 'print_arguments/argument':
 		| 'as_pattern'
 		| 'boolean_operator'
 		| 'comparison_operator'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'lambda'
 		| 'named_expression'
 		| 'not_operator'
@@ -1623,12 +1631,13 @@ export interface AddressBranch {
 	readonly 'print_arguments/argument/not_operator': 'after';
 	readonly 'print_arguments/argument/separator': ',';
 	readonly 'print_arguments/argument/separator/,': 'after' | 'before';
-	readonly print_chevron_arguments: 'argument' | 'argument_delimiter';
+	readonly print_chevron_arguments: 'argument';
 	readonly 'print_chevron_arguments/argument':
 		| 'as_pattern'
 		| 'boolean_operator'
 		| 'comparison_operator'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'lambda'
 		| 'named_expression'
 		| 'not_operator'
@@ -1661,10 +1670,11 @@ export interface AddressBranch {
 	readonly simple_pattern_negative: 'after' | 'before' | 'sign';
 	readonly 'simple_pattern_negative/sign': 'after' | 'before';
 	readonly simple_statements: 'after' | 'before';
-	readonly simple_statements_elements: 'simple_statement' | 'simple_statement_delimiter';
+	readonly simple_statements_elements: 'simple_statement';
 	readonly 'simple_statements_elements/simple_statement':
 		| 'assert_statement'
 		| 'delete_statement'
+		| 'delimiter'
 		| 'exec_statement'
 		| 'future_import_statement'
 		| 'global_statement'
@@ -1697,12 +1707,13 @@ export interface AddressBranch {
 	readonly splat_type: 'after' | 'before' | 'operator';
 	readonly 'splat_type/operator': 'after' | 'before';
 	readonly string: 'after' | 'before';
-	readonly subjects: 'subject' | 'subject_delimiter';
+	readonly subjects: 'subject';
 	readonly 'subjects/subject':
 		| 'as_pattern'
 		| 'boolean_operator'
 		| 'comparison_operator'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'lambda'
 		| 'named_expression'
 		| 'not_operator'
@@ -1719,7 +1730,7 @@ export interface AddressBranch {
 	readonly subscript: '[' | ']' | 'after' | 'before';
 	readonly 'subscript/[': 'after' | 'before';
 	readonly 'subscript/]': 'after' | 'before';
-	readonly subscripts: 'subscript' | 'subscript_delimiter';
+	readonly subscripts: 'subscript';
 	readonly 'subscripts/subscript':
 		| 'as_pattern'
 		| 'attribute'
@@ -1730,6 +1741,7 @@ export interface AddressBranch {
 		| 'comparison_operator'
 		| 'concatenated_string'
 		| 'conditional_expression'
+		| 'delimiter'
 		| 'dictionary'
 		| 'dictionary_comprehension'
 		| 'generator_expression'
@@ -1799,8 +1811,8 @@ export interface AddressBranch {
 	readonly 'typed_default_parameter/=': 'after' | 'before';
 	readonly typed_parameter: ':' | 'after' | 'before';
 	readonly 'typed_parameter/:': 'after' | 'before';
-	readonly types: 'type' | 'type_delimiter';
-	readonly 'types/type': 'separator';
+	readonly types: 'type';
+	readonly 'types/type': 'delimiter' | 'separator';
 	readonly 'types/type/separator': ',';
 	readonly 'types/type/separator/,': 'after' | 'before';
 	readonly unary_operator: 'after' | 'before';
@@ -1836,15 +1848,15 @@ export interface AddressBranch {
 	readonly while_statement: ':' | 'after' | 'before' | 'while';
 	readonly 'while_statement/:': 'after' | 'before';
 	readonly 'while_statement/while': 'after' | 'before';
-	readonly with_clause_bare: 'with_item' | 'with_item_delimiter';
-	readonly 'with_clause_bare/with_item': 'separator';
+	readonly with_clause_bare: 'with_item';
+	readonly 'with_clause_bare/with_item': 'delimiter' | 'separator';
 	readonly 'with_clause_bare/with_item/separator': ',';
 	readonly 'with_clause_bare/with_item/separator/,': 'after' | 'before';
 	readonly with_clause_paren: '(' | ')' | 'after' | 'before';
 	readonly 'with_clause_paren/(': 'after' | 'before';
 	readonly 'with_clause_paren/)': 'after' | 'before';
-	readonly with_clause_with_items: 'with_item' | 'with_item_delimiter';
-	readonly 'with_clause_with_items/with_item': 'separator';
+	readonly with_clause_with_items: 'with_item';
+	readonly 'with_clause_with_items/with_item': 'delimiter' | 'separator';
 	readonly 'with_clause_with_items/with_item/separator': ',';
 	readonly 'with_clause_with_items/with_item/separator/,': 'after' | 'before';
 	readonly with_statement: ':' | 'after' | 'before' | 'with';
@@ -1877,6 +1889,7 @@ export interface AddressLeaf {
 	readonly 'argument_list_elements/element/comparison_operator/after': Spacing;
 	readonly 'argument_list_elements/element/concatenated_string/after': Spacing;
 	readonly 'argument_list_elements/element/conditional_expression/after': Spacing;
+	readonly 'argument_list_elements/element/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'argument_list_elements/element/dictionary/after': Spacing;
 	readonly 'argument_list_elements/element/dictionary_comprehension/after': Spacing;
 	readonly 'argument_list_elements/element/dictionary_splat/after': Spacing;
@@ -1899,7 +1912,6 @@ export interface AddressLeaf {
 	readonly 'argument_list_elements/element/subscript/after': Spacing;
 	readonly 'argument_list_elements/element/tuple/after': Spacing;
 	readonly 'argument_list_elements/element/unary_operator/after': Spacing;
-	readonly 'argument_list_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'as_pattern/after': Spacing;
 	readonly 'as_pattern/as/after': Spacing;
 	readonly 'as_pattern/as/before': Spacing;
@@ -2006,9 +2018,9 @@ export interface AddressLeaf {
 	readonly 'case_list_pattern/]/before': Spacing;
 	readonly 'case_list_pattern/after': Spacing;
 	readonly 'case_list_pattern/before': Spacing;
+	readonly 'case_patterns/case_pattern/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'case_patterns/case_pattern/separator/,/after': Spacing;
 	readonly 'case_patterns/case_pattern/separator/,/before': Spacing;
-	readonly 'case_patterns/case_pattern_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'case_tuple_pattern/(/after': Spacing;
 	readonly 'case_tuple_pattern/(/before': Spacing;
 	readonly 'case_tuple_pattern/)/after': Spacing;
@@ -2040,6 +2052,7 @@ export interface AddressLeaf {
 	readonly 'collection_elements/element/comparison_operator/after': Spacing;
 	readonly 'collection_elements/element/concatenated_string/after': Spacing;
 	readonly 'collection_elements/element/conditional_expression/after': Spacing;
+	readonly 'collection_elements/element/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'collection_elements/element/dictionary/after': Spacing;
 	readonly 'collection_elements/element/dictionary_comprehension/after': Spacing;
 	readonly 'collection_elements/element/generator_expression/after': Spacing;
@@ -2061,7 +2074,6 @@ export interface AddressLeaf {
 	readonly 'collection_elements/element/tuple/after': Spacing;
 	readonly 'collection_elements/element/unary_operator/after': Spacing;
 	readonly 'collection_elements/element/yield/after': Spacing;
-	readonly 'collection_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'comparison_operator/after': Spacing;
 	readonly 'comparison_operator/before': Spacing;
 	readonly 'comparison_operator/comparators/comparison_operator_comparator/after': Spacing;
@@ -2115,11 +2127,11 @@ export interface AddressLeaf {
 	readonly 'dict_pattern/{/before': Spacing;
 	readonly 'dict_pattern/}/after': Spacing;
 	readonly 'dict_pattern/}/before': Spacing;
+	readonly 'dict_pattern_elements/element/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'dict_pattern_elements/element/key_value_pattern/after': Spacing;
 	readonly 'dict_pattern_elements/element/separator/,/after': Spacing;
 	readonly 'dict_pattern_elements/element/separator/,/before': Spacing;
 	readonly 'dict_pattern_elements/element/splat_pattern/after': Spacing;
-	readonly 'dict_pattern_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'dictionary/after': Spacing;
 	readonly 'dictionary/before': Spacing;
 	readonly 'dictionary/{/after': Spacing;
@@ -2132,11 +2144,11 @@ export interface AddressLeaf {
 	readonly 'dictionary_comprehension/{/before': Spacing;
 	readonly 'dictionary_comprehension/}/after': Spacing;
 	readonly 'dictionary_comprehension/}/before': Spacing;
+	readonly 'dictionary_elements/element/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'dictionary_elements/element/dictionary_splat/after': Spacing;
 	readonly 'dictionary_elements/element/pair/after': Spacing;
 	readonly 'dictionary_elements/element/separator/,/after': Spacing;
 	readonly 'dictionary_elements/element/separator/,/before': Spacing;
-	readonly 'dictionary_elements/element_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'dictionary_splat/**/after': Spacing;
 	readonly 'dictionary_splat/**/before': Spacing;
 	readonly 'dictionary_splat/after': Spacing;
@@ -2202,22 +2214,22 @@ export interface AddressLeaf {
 	readonly 'expression_list_expressions/expression/boolean_operator/after': Spacing;
 	readonly 'expression_list_expressions/expression/comparison_operator/after': Spacing;
 	readonly 'expression_list_expressions/expression/conditional_expression/after': Spacing;
+	readonly 'expression_list_expressions/expression/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'expression_list_expressions/expression/lambda/after': Spacing;
 	readonly 'expression_list_expressions/expression/named_expression/after': Spacing;
 	readonly 'expression_list_expressions/expression/not_operator/after': Spacing;
 	readonly 'expression_list_expressions/expression/separator/,/after': Spacing;
 	readonly 'expression_list_expressions/expression/separator/,/before': Spacing;
-	readonly 'expression_list_expressions/expression_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'expression_statement_tuple/expression/as_pattern/after': Spacing;
 	readonly 'expression_statement_tuple/expression/boolean_operator/after': Spacing;
 	readonly 'expression_statement_tuple/expression/comparison_operator/after': Spacing;
 	readonly 'expression_statement_tuple/expression/conditional_expression/after': Spacing;
+	readonly 'expression_statement_tuple/expression/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'expression_statement_tuple/expression/lambda/after': Spacing;
 	readonly 'expression_statement_tuple/expression/named_expression/after': Spacing;
 	readonly 'expression_statement_tuple/expression/not_operator/after': Spacing;
 	readonly 'expression_statement_tuple/expression/separator/,/after': Spacing;
 	readonly 'expression_statement_tuple/expression/separator/,/before': Spacing;
-	readonly 'expression_statement_tuple/expression_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'finally_clause/:/after': Spacing;
 	readonly 'finally_clause/:/before': Spacing;
 	readonly 'finally_clause/after': Spacing;
@@ -2325,9 +2337,9 @@ export interface AddressLeaf {
 	readonly 'import_from_statement/import/after': Spacing;
 	readonly 'import_from_statement/import/before': Spacing;
 	readonly 'import_list/name/aliased_import/after': Spacing;
+	readonly 'import_list/name/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'import_list/name/separator/,/after': Spacing;
 	readonly 'import_list/name/separator/,/before': Spacing;
-	readonly 'import_list/name_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'import_statement/after': Spacing;
 	readonly 'import_statement/before': Spacing;
 	readonly 'import_statement/import/after': Spacing;
@@ -2383,9 +2395,9 @@ export interface AddressLeaf {
 	readonly 'list_pattern/]/before': Spacing;
 	readonly 'list_pattern/after': Spacing;
 	readonly 'list_pattern/before': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'list_pattern_case_patterns/case_pattern/separator/,/after': Spacing;
 	readonly 'list_pattern_case_patterns/case_pattern/separator/,/before': Spacing;
-	readonly 'list_pattern_case_patterns/case_pattern_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'list_splat/*/after': Spacing;
 	readonly 'list_splat/*/before': Spacing;
 	readonly 'list_splat/after': Spacing;
@@ -2444,6 +2456,7 @@ export interface AddressLeaf {
 	readonly 'parameters/after': Spacing;
 	readonly 'parameters/before': Spacing;
 	readonly 'parameters/parameter/default_parameter/after': Spacing;
+	readonly 'parameters/parameter/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'parameters/parameter/dictionary_splat_pattern/after': Spacing;
 	readonly 'parameters/parameter/list_splat_pattern/after': Spacing;
 	readonly 'parameters/parameter/separator/,/after': Spacing;
@@ -2451,7 +2464,6 @@ export interface AddressLeaf {
 	readonly 'parameters/parameter/tuple_pattern/after': Spacing;
 	readonly 'parameters/parameter/typed_default_parameter/after': Spacing;
 	readonly 'parameters/parameter/typed_parameter/after': Spacing;
-	readonly 'parameters/parameter_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'parenthesized_expression/(/after': Spacing;
 	readonly 'parenthesized_expression/(/before': Spacing;
 	readonly 'parenthesized_expression/)/after': Spacing;
@@ -2473,41 +2485,41 @@ export interface AddressLeaf {
 	readonly 'pattern_list/after': Spacing;
 	readonly 'pattern_list/before': Spacing;
 	readonly 'pattern_list_patterns/pattern/attribute/after': Spacing;
+	readonly 'pattern_list_patterns/pattern/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'pattern_list_patterns/pattern/list_pattern/after': Spacing;
 	readonly 'pattern_list_patterns/pattern/list_splat_pattern/after': Spacing;
 	readonly 'pattern_list_patterns/pattern/separator/,/after': Spacing;
 	readonly 'pattern_list_patterns/pattern/separator/,/before': Spacing;
 	readonly 'pattern_list_patterns/pattern/subscript/after': Spacing;
 	readonly 'pattern_list_patterns/pattern/tuple_pattern/after': Spacing;
-	readonly 'pattern_list_patterns/pattern_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'patterns/pattern/attribute/after': Spacing;
+	readonly 'patterns/pattern/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'patterns/pattern/list_pattern/after': Spacing;
 	readonly 'patterns/pattern/list_splat_pattern/after': Spacing;
 	readonly 'patterns/pattern/separator/,/after': Spacing;
 	readonly 'patterns/pattern/separator/,/before': Spacing;
 	readonly 'patterns/pattern/subscript/after': Spacing;
 	readonly 'patterns/pattern/tuple_pattern/after': Spacing;
-	readonly 'patterns/pattern_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'print_arguments/argument/as_pattern/after': Spacing;
 	readonly 'print_arguments/argument/boolean_operator/after': Spacing;
 	readonly 'print_arguments/argument/comparison_operator/after': Spacing;
 	readonly 'print_arguments/argument/conditional_expression/after': Spacing;
+	readonly 'print_arguments/argument/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'print_arguments/argument/lambda/after': Spacing;
 	readonly 'print_arguments/argument/named_expression/after': Spacing;
 	readonly 'print_arguments/argument/not_operator/after': Spacing;
 	readonly 'print_arguments/argument/separator/,/after': Spacing;
 	readonly 'print_arguments/argument/separator/,/before': Spacing;
-	readonly 'print_arguments/argument_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'print_chevron_arguments/argument/as_pattern/after': Spacing;
 	readonly 'print_chevron_arguments/argument/boolean_operator/after': Spacing;
 	readonly 'print_chevron_arguments/argument/comparison_operator/after': Spacing;
 	readonly 'print_chevron_arguments/argument/conditional_expression/after': Spacing;
+	readonly 'print_chevron_arguments/argument/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'print_chevron_arguments/argument/lambda/after': Spacing;
 	readonly 'print_chevron_arguments/argument/named_expression/after': Spacing;
 	readonly 'print_chevron_arguments/argument/not_operator/after': Spacing;
 	readonly 'print_chevron_arguments/argument/separator/,/after': Spacing;
 	readonly 'print_chevron_arguments/argument/separator/,/before': Spacing;
-	readonly 'print_chevron_arguments/argument_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'print_statement_chevron/after': Spacing;
 	readonly 'print_statement_chevron/before': Spacing;
 	readonly 'print_statement_chevron/print/after': Spacing;
@@ -2548,6 +2560,7 @@ export interface AddressLeaf {
 	readonly 'simple_statements/before': Spacing;
 	readonly 'simple_statements_elements/simple_statement/assert_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/delete_statement/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'simple_statements_elements/simple_statement/exec_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/future_import_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/global_statement/after': Spacing;
@@ -2559,7 +2572,6 @@ export interface AddressLeaf {
 	readonly 'simple_statements_elements/simple_statement/separator/;/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/separator/;/before': Spacing;
 	readonly 'simple_statements_elements/simple_statement/type_alias_statement/after': Spacing;
-	readonly 'simple_statements_elements/simple_statement_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'slice/:/after': Spacing;
 	readonly 'slice/:/before': Spacing;
 	readonly 'slice/after': Spacing;
@@ -2582,12 +2594,12 @@ export interface AddressLeaf {
 	readonly 'subjects/subject/boolean_operator/after': Spacing;
 	readonly 'subjects/subject/comparison_operator/after': Spacing;
 	readonly 'subjects/subject/conditional_expression/after': Spacing;
+	readonly 'subjects/subject/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'subjects/subject/lambda/after': Spacing;
 	readonly 'subjects/subject/named_expression/after': Spacing;
 	readonly 'subjects/subject/not_operator/after': Spacing;
 	readonly 'subjects/subject/separator/,/after': Spacing;
 	readonly 'subjects/subject/separator/,/before': Spacing;
-	readonly 'subjects/subject_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'subscript/[/after': Spacing;
 	readonly 'subscript/[/before': Spacing;
 	readonly 'subscript/]/after': Spacing;
@@ -2603,6 +2615,7 @@ export interface AddressLeaf {
 	readonly 'subscripts/subscript/comparison_operator/after': Spacing;
 	readonly 'subscripts/subscript/concatenated_string/after': Spacing;
 	readonly 'subscripts/subscript/conditional_expression/after': Spacing;
+	readonly 'subscripts/subscript/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'subscripts/subscript/dictionary/after': Spacing;
 	readonly 'subscripts/subscript/dictionary_comprehension/after': Spacing;
 	readonly 'subscripts/subscript/generator_expression/after': Spacing;
@@ -2622,7 +2635,6 @@ export interface AddressLeaf {
 	readonly 'subscripts/subscript/subscript/after': Spacing;
 	readonly 'subscripts/subscript/tuple/after': Spacing;
 	readonly 'subscripts/subscript/unary_operator/after': Spacing;
-	readonly 'subscripts/subscript_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'suite_block/after': Spacing;
 	readonly 'suite_block/before': Spacing;
 	readonly 'try_statement/:/after': Spacing;
@@ -2667,9 +2679,9 @@ export interface AddressLeaf {
 	readonly 'typed_parameter/:/before': Spacing;
 	readonly 'typed_parameter/after': Spacing;
 	readonly 'typed_parameter/before': Spacing;
+	readonly 'types/type/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'types/type/separator/,/after': Spacing;
 	readonly 'types/type/separator/,/before': Spacing;
-	readonly 'types/type_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'unary_operator/after': Spacing;
 	readonly 'unary_operator/before': Spacing;
 	readonly 'unary_operator_operator/+/after': Spacing;
@@ -2699,18 +2711,18 @@ export interface AddressLeaf {
 	readonly 'while_statement/before': Spacing;
 	readonly 'while_statement/while/after': Spacing;
 	readonly 'while_statement/while/before': Spacing;
+	readonly 'with_clause_bare/with_item/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'with_clause_bare/with_item/separator/,/after': Spacing;
 	readonly 'with_clause_bare/with_item/separator/,/before': Spacing;
-	readonly 'with_clause_bare/with_item_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'with_clause_paren/(/after': Spacing;
 	readonly 'with_clause_paren/(/before': Spacing;
 	readonly 'with_clause_paren/)/after': Spacing;
 	readonly 'with_clause_paren/)/before': Spacing;
 	readonly 'with_clause_paren/after': Spacing;
 	readonly 'with_clause_paren/before': Spacing;
+	readonly 'with_clause_with_items/with_item/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'with_clause_with_items/with_item/separator/,/after': Spacing;
 	readonly 'with_clause_with_items/with_item/separator/,/before': Spacing;
-	readonly 'with_clause_with_items/with_item_delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'with_statement/:/after': Spacing;
 	readonly 'with_statement/:/before': Spacing;
 	readonly 'with_statement/after': Spacing;

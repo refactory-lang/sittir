@@ -152,6 +152,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					generatedIdTables,
 					renderRules,
 					renderDefaults,
+					options: optionsBlock,
 					visibleExternals
 				})
 			: undefined;

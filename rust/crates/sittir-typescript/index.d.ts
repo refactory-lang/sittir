@@ -101,9 +101,9 @@ export interface AbstractClassDeclarationTransport {
   _abstract_after?: number
   _decorator_end?: number
   _decorator_start?: number
+  _decorator_separator_space?: number
   _anon_class_before?: number
   _anon_class_after?: number
-  _decorator_separator_space?: number
   _abstract_class_declaration_before?: number
   _abstract_class_declaration_after?: number
 }
@@ -628,11 +628,11 @@ export interface ClassBodyTransport {
   _content?: Array<SlotValue<ClassBodyContentTransportSlot>>
   _content_end?: number
   _content_start?: number
+  _content_separator_space?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _content_separator_space?: number
   _class_body_before?: number
   _class_body_after?: number
 }
@@ -653,9 +653,9 @@ export interface ClassDeclarationTransport {
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
   _decorator_end?: number
   _decorator_start?: number
+  _decorator_separator_space?: number
   _anon_class_before?: number
   _anon_class_after?: number
-  _decorator_separator_space?: number
   _class_declaration_before?: number
   _class_declaration_after?: number
 }
@@ -716,9 +716,9 @@ export interface ClassTransport {
   _body: SlotValue<ClassBodyTransport>
   _decorator_end?: number
   _decorator_start?: number
+  _decorator_separator_space?: number
   _anon_class_before?: number
   _anon_class_after?: number
-  _decorator_separator_space?: number
   _class_before?: number
   _class_after?: number
 }
@@ -1127,9 +1127,9 @@ export interface ExportStatementDefaultDeclarationTransport {
   _content: SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>
   _decorator_end?: number
   _decorator_start?: number
+  _decorator_separator_space?: number
   _export_before?: number
   _export_after?: number
-  _decorator_separator_space?: number
   _export_statement_default_declaration_before?: number
   _export_statement_default_declaration_after?: number
 }
@@ -2446,11 +2446,11 @@ export interface OptionalParameterTransport {
   _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_end?: number
   _decorator_start?: number
+  _decorator_separator_space?: number
   _eq_before?: number
   _eq_after?: number
   _qmark_before?: number
   _qmark_after?: number
-  _decorator_separator_space?: number
   _optional_parameter_before?: number
   _optional_parameter_after?: number
 }
@@ -2630,11 +2630,11 @@ export interface PublicFieldDefinitionTransport {
   _accessibility_modifier_after?: number
   _decorator_end?: number
   _decorator_start?: number
+  _decorator_separator_space?: number
   _optionality_marker_before?: number
   _optionality_marker_after?: number
   _eq_before?: number
   _eq_after?: number
-  _decorator_separator_space?: number
   _public_field_definition_before?: number
   _public_field_definition_after?: number
 }
@@ -2687,9 +2687,9 @@ export interface RequiredParameterTransport {
   _override_modifier?: SlotValue<OverrideModifierTransport>
   _decorator_end?: number
   _decorator_start?: number
+  _decorator_separator_space?: number
   _eq_before?: number
   _eq_after?: number
-  _decorator_separator_space?: number
   _required_parameter_before?: number
   _required_parameter_after?: number
 }
@@ -2800,11 +2800,11 @@ export interface StatementBlockTransport {
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
   _statements_end?: number
   _statements_start?: number
+  _statements_separator_space?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _statements_separator_space?: number
   _statement_block_before?: number
   _statement_block_after?: number
 }
@@ -2880,11 +2880,11 @@ export interface SwitchBodyTransport {
   _cases?: Array<SlotValue<SwitchBodyCasesTransportSlot>>
   _cases_end?: number
   _cases_start?: number
+  _cases_separator_space?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
   _rbrace_after?: number
-  _cases_separator_space?: number
   _switch_body_before?: number
   _switch_body_after?: number
 }
@@ -2901,11 +2901,11 @@ export interface SwitchCaseTransport {
   _body?: Array<SlotValue<StatementTransport>>
   _body_end?: number
   _body_start?: number
+  _body_separator_space?: number
   _case_before?: number
   _case_after?: number
   _colon_before?: number
   _colon_after?: number
-  _body_separator_space?: number
   _switch_case_before?: number
   _switch_case_after?: number
 }
@@ -2921,11 +2921,11 @@ export interface SwitchDefaultTransport {
   _body?: Array<SlotValue<StatementTransport>>
   _body_end?: number
   _body_start?: number
+  _body_separator_space?: number
   _default_before?: number
   _default_after?: number
   _colon_before?: number
   _colon_after?: number
-  _body_separator_space?: number
   _switch_default_before?: number
   _switch_default_after?: number
 }

@@ -521,7 +521,7 @@ describe('the options block reaches a site', () => {
 		expect(armOf(viaOptions, 'lbrace_after')).toBe(armOf(viaPatches, 'lbrace_after'));
 	});
 
-	it('rejects an address that names no site', () => {
-		expect(() => resolved({ options: { block: { '"("/after': preference('newline') } } })).toThrow(/names no site/);
+	it('passes over an address no render-rule site answers, which a later site may', () => {
+		expect(() => resolved({ options: { block: { '"("/after': preference('newline') } } })).not.toThrow();
 	});
 });

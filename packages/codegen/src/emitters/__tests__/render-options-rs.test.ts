@@ -58,7 +58,7 @@ describe('planRenderOptions', () => {
 			'(call_expression)/"("/before',
 			'(formal_parameters)/elements:/separator/before',
 			'(formal_parameters)/elements:/separator/after',
-			'(return_statement)/terminator_statement_terminator',
+			'(return_statement)/terminator:/statement_terminator',
 			'(statement_block)/statements:/separator'
 		]);
 		expect(plan.sitePaths).toHaveLength(plan.spacingSites.length);

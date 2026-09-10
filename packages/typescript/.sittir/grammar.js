@@ -5364,6 +5364,11 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        object_type_content: [
+          { content: preference("separator", "semi") },
+          { content: preference("delimiter", "Delimiter.Trailing") }
+        ],
+        enum_body_elements: { content: preference("delimiter", "Delimiter.Trailing") },
         binary_expression: {
           24: variant("in")
         },
@@ -5387,11 +5392,6 @@ var grammar_sittir_default = grammar(
         },
         object_type: {},
         enum_body: {},
-        enum_body_elements: { content: preference("delimiter", "Delimiter.Trailing") },
-        object_type_content: [
-          { content: preference("separator", "semi") },
-          { content: preference("delimiter", "Delimiter.Trailing") }
-        ],
         jsx_expression: {
           1: field("expression")
         },

@@ -750,7 +750,7 @@ export function declaredOptionArms(
 	if (declarations.length === 0) return undefined;
 	const addressed = addressSites(sites, config.kindEntries);
 	const arms = new Map<string, string>();
-	for (const [index, arm] of resolveBindings(declarations, bindings, addressed)) {
+	for (const [index, arm] of resolveBindings(declarations, bindings, addressed, false)) {
 		const site = addressed[index]!;
 		arms.set(declaredKey(site.kind, site.address), arm);
 	}

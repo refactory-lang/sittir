@@ -72,6 +72,7 @@ import {
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import { publicKindName } from '../compiler/model/site-preferences.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
@@ -114,6 +115,7 @@ export interface RenderModuleBundle {
 export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
 	readonly renderDefaults?: RenderDefaults;
+	readonly options?: OptionsConfig;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
 }
 
@@ -941,7 +943,7 @@ function planRenderOptionsFor(
 ): RenderPlan {
 	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLAN;
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, defaults: inputs.renderDefaults });
+	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, defaults: inputs.renderDefaults, options: inputs.options });
 	return planRenderOptions(
 		sites,
 		kindEntries,

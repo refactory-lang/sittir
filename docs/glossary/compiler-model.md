@@ -3350,6 +3350,19 @@ is read back from; a seated site has no rule of its own, so the arms
 `resolveRenderRules` resolved ride with the rules (`RenderRules.declared`) and
 the minting reads them there.
 
+### `packages/codegen/src/compiler/model/site-preferences.ts::withDeclaredArms`
+
+The `options:` block resolved against every site, not only the ones the render
+rules hold. A delimiter, a separator's token, a quote style and a statement
+terminator are declared options with defaults like any other; they are simply
+collected here rather than injected into a rule, so this is the pass that can
+see them.
+
+A site whose arms do not admit a declared value is passed over, so one broad
+address may span sites of different arm spaces without failing on the ones it
+does not fit. An address that names sites and is admitted by none of them is
+refused — the arm is wrong, not merely inapplicable.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -3810,6 +3823,15 @@ stays contiguous.
 A site that was born knowing its path returns it unchanged. No decomposition
 branch produces a kind-match in the middle of a path, so a seated site could
 only be spelled flat to be parsed back — the address exists to be read.
+
+A declared preference is named by its label, which its address already spells
+as `<slot>_<label>` — a delimiter, a quote style, a statement terminator. Each
+addresses as `<slot>:/<label>`, so `content_quote_style` reads
+`content:/quote_style`. The separator is the one with children: the spacing
+around it nests as `<slot>:/separator/before` and `/after`, so the token it
+chooses takes the terminal `kind` rather than sitting where its own sides
+live.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::matchAddress`
 
 The sites an address names: itself and everything beneath it. A wildcard
@@ -3834,6 +3856,12 @@ decides only which key moves it, not what it starts as.
 An address naming no site is an error, so a typo cannot resolve to a silent
 no-op. The exception is a declaration that some binding names as its label: a
 label is a virtual kind and matches no site by construction.
+
+`requireHit` is what lets one block be resolved twice against different site
+sets. The render-rule pass sees only the sites the rules hold, so an address
+naming a delimiter or a separator token is passed over rather than refused;
+the pass that sees every site is the one that refuses an address naming
+nothing.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::addressSegments`
 

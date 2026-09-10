@@ -1,4 +1,4 @@
-import { EMPTY_SEPARATOR_TOKEN, parseSeamLabel, parseSpacingLabel, parseFlankAddress } from '../../dsl/primitives/spacing.ts';
+import { EMPTY_SEPARATOR_TOKEN, SEPARATOR_LABEL, parseSeamLabel, parseSpacingLabel, parseFlankAddress } from '../../dsl/primitives/spacing.ts';
 import {
 	comparePreferencePaths,
 	parsePreferencePath,
@@ -46,13 +46,21 @@ export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLi
 
 	const declared = parseSpacingLabel(site.label);
 	if (declared !== undefined) {
-		const text = declared.token === EMPTY_SEPARATOR_TOKEN ? undefined : anonTokenText(kindEntries, declared.token);
+		const text =
+			declared.token === EMPTY_SEPARATOR_TOKEN || declared.token === own ? undefined : anonTokenText(kindEntries, declared.token);
+		const token: readonly PreferenceSegment[] = text === undefined ? [] : [{ kind: 'literal', text }];
 		const separator: readonly PreferenceSegment[] = [
 			{ kind: 'fieldName', name: site.slot },
 			{ kind: 'name', name: 'separator' },
-			...(text === undefined ? [] : [{ kind: 'literal', text } as PreferenceSegment])
+			...token
 		];
 		return declared.side === undefined ? [kind, ...separator] : [kind, ...separator, { kind: 'name', name: declared.side }];
+	}
+
+	if (site.address === `${site.slot}_${site.label}`) {
+		const label: PreferenceSegment = { kind: 'name', name: site.label };
+		const slot: PreferenceSegment = { kind: 'fieldName', name: site.slot };
+		return site.label === SEPARATOR_LABEL ? [kind, slot, label, { kind: 'name', name: 'kind' }] : [kind, slot, label];
 	}
 
 	const flank = parseFlankAddress(site.address);
@@ -68,10 +76,10 @@ function anonTokenText(kindEntries: readonly KindEntryLike[], token: string): st
 	return entry?.anon === true ? entry.symbolName : undefined;
 }
 
-export function matchAddress(
+export function matchAddress<T extends SiteAddressInput>(
 	address: readonly PreferenceSegment[],
-	sites: readonly AddressedSite[]
-): AddressedSite[] {
+	sites: readonly AddressedSite<T>[]
+): AddressedSite<T>[] {
 	return sites.filter((site) => isPrefixOf(address, site.path));
 }
 
@@ -104,7 +112,8 @@ function segmentMatches(a: PreferenceSegment, b: PreferenceSegment): boolean {
 export function resolveBindings(
 	declarations: readonly PathDeclaration[],
 	bindings: readonly AddressBinding[],
-	sites: readonly AddressedSite[]
+	sites: readonly AddressedSite[],
+	requireHit: boolean = true
 ): Map<number, string> {
 	const indexOf = new Map(sites.map((site, i) => [site, i]));
 	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
@@ -119,14 +128,17 @@ export function resolveBindings(
 		const arm = armOfLabel.get(binding.label);
 		if (arm === undefined) throw new Error(`options: '${binding.address}' resolves to no arm`);
 		const hits = hitsOf(binding.address);
-		if (hits.size === 0) throw new Error(`options: '${binding.address}' names no site`);
+		if (hits.size === 0) {
+			if (!requireHit) continue;
+			throw new Error(`options: '${binding.address}' names no site`);
+		}
 		entries.push({ address: binding.address, arm, declared: false, hits });
 	}
 
 	for (const declaration of declarations) {
 		const hits = hitsOf(declaration.path);
 		if (hits.size === 0) {
-			if (labelled.has(declaration.path)) continue;
+			if (labelled.has(declaration.path) || !requireHit) continue;
 			throw new Error(`options: '${declaration.path}' names no site`);
 		}
 		entries.push({ address: declaration.path, arm: declaration.arm, declared: true, hits });

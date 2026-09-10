@@ -1164,11 +1164,11 @@ export interface IfStatementTransport {
   _condition: SlotValue<ExpressionTransport>
   _consequence: SlotValue<IfStatementConsequenceTransportSlot>
   _alternative?: Array<SlotValue<IfStatementAlternativeTransportSlot>>
+  _alternative_separator_space?: number
   _if_before?: number
   _if_after?: number
   _colon_before?: number
   _colon_after?: number
-  _alternative_separator_space?: number
   _if_statement_before?: number
   _if_statement_after?: number
 }
@@ -2067,11 +2067,11 @@ export interface TryStatementTransport {
   _except_clauses?: Array<SlotValue<ExceptClauseTransport>>
   _else_clause?: SlotValue<ElseClauseTransport>
   _finally_clause?: SlotValue<FinallyClauseTransport>
+  _except_clauses_separator_space?: number
   _try_before?: number
   _try_after?: number
   _colon_before?: number
   _colon_after?: number
-  _except_clauses_separator_space?: number
   _try_statement_before?: number
   _try_statement_after?: number
 }

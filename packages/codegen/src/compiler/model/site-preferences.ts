@@ -12,6 +12,8 @@ import {
 	type NodeOrTerminal
 } from './node-map.ts';
 import { publicKindName, spacingSitesOf, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
+import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
+import { addressSegments, addressSites, matchAddress, resolveBindings } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 
 export { publicKindName, type SpacingSide } from './render-rules.ts';
@@ -41,6 +43,7 @@ export interface SitePreferencesConfig {
 	readonly kindEntries: readonly KindEntryLike[];
 	readonly renderRules?: RenderRules;
 	readonly defaults?: RenderDefaults;
+	readonly options?: OptionsConfig;
 }
 
 export function collectSitePreferences(config: SitePreferencesConfig): SitePreference[] {
@@ -120,6 +123,39 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 	}
 	for (const key of declaredSeparators.keys()) {
 		if (!consumedSeparators.has(key)) throw new Error(`defaults: ${key.replace(' ', '.')} names no list with a choice separator`);
+	}
+	return withDeclaredArms(out, config);
+}
+
+function withDeclaredArms(sites: readonly SitePreference[], config: SitePreferencesConfig): SitePreference[] {
+	if (config.options === undefined) return [...sites];
+	const kinds = new Set([...config.nodeMap.nodes.keys()].map(publicKindName));
+	const { declarations, bindings } = readOptionsBlock(config.options, kinds);
+	if (declarations.length === 0) return [...sites];
+
+	const addressed = addressSites(sites, config.kindEntries);
+	const at = new Map(sites.map((site, i) => [`${site.kind}\u0000${site.address}`, i]));
+	const admits = (site: SitePreference, arm: string): boolean => site.arms.some((candidate) => candidate.value === arm);
+
+	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
+	for (const { address, arm } of [
+		...declarations.map((declaration) => ({ address: declaration.path, arm: declaration.arm })),
+		...bindings.map((binding) => ({ address: binding.address, arm: armOfLabel.get(binding.label)! }))
+	]) {
+		const hits = matchAddress(addressSegments(address), addressed);
+		if (hits.length > 0 && !hits.some((site) => admits(site, arm))) {
+			throw new Error(
+				`options: '${address}' is '${arm}', which no site it names admits (${[...new Set(hits.flatMap((site) => site.arms.map((a) => a.value)))].join(', ')})`
+			);
+		}
+	}
+
+	const out = [...sites];
+	for (const [index, arm] of resolveBindings(declarations, bindings, addressed)) {
+		const site = addressed[index]!;
+		if (!admits(site, arm)) continue;
+		const original = at.get(`${site.kind}\u0000${site.address}`);
+		if (original !== undefined) out[original] = { ...sites[original]!, defaultArm: arm };
 	}
 	return out;
 }
