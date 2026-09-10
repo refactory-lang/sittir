@@ -835,7 +835,6 @@ function seatedSites(
 	const out: RuleSpacingSite[] = [];
 	for (const seat of admitted.values()) {
 		const children = [...seat.children].sort();
-		if (children.length < 2) continue;
 		const parent = publicKindName(seat.kind);
 		for (const child of children) {
 			const edge = edgeOf.get(child);

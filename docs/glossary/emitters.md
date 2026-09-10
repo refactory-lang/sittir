@@ -283,15 +283,29 @@ read the third pass's rules.
 
 The seated child edges of one slot, keyed by the child kind each belongs to.
 
-### `packages/codegen/src/emitters/render-module.ts::sharedEnumSeatLoops`
+### `packages/codegen/src/emitters/render-module.ts::seatLoops`
 
-The seating for a repeat slot whose element type is a supertype transport
-enum. A per-slot enum belongs to exactly one seat, so its seating rides its
-own `fill_options` at no extra walk; a supertype enum is shared across seats
-and cannot carry a seat-specific arm, so the parent applies it here, looping
-its own slot before descending. The arms come from
-`collectEffectiveSupertypeTransportShape`, the same shape the enum was
-emitted from, so a suppressed kind is never named.
+The seating for every repeat slot the parent holds: one walk per slot that
+writes each element's seated arm into that element's own trailing-edge field
+before the fill descends into it.
+
+The walk skips the last element. A child's edge is written at the end of its
+own body and cannot know whether a sibling follows, so seating the final
+element would leak the gap past the end of the list — `extern"C"fn foo`
+became `extern"C"\nfn foo` when it did. Skipping it leaves that element's edge
+on the kind's own global arm, which is what a trailing edge should be, and
+makes "a sibling gap belongs to the child before it" literally true: element
+*i* is seated only when there is an *i+1*.
+
+The seating is applied here rather than inside the element enum's own
+`fill_options` because only the parent's walk knows an element's position.
+
+### `packages/codegen/src/emitters/render-module.ts::seatVariantArms`
+
+How one slot's elements are reached. A slot carrying a per-slot or supertype
+enum matches its variants, each named from the shape the enum was emitted
+from so a suppressed kind is never named; a slot with a single concrete
+element type has no enum and takes the assignment directly.
 
 ### `packages/codegen/src/emitters/shared.ts::emitsPlainBuiltAlias`
 
@@ -6064,6 +6078,9 @@ stops at any subtype holding its own transport type, so `Declaration` stays
 one variant rather than the fourteen declarations under it. Read by the enum
 emitters and by the model that mints seated sites, so an address always has
 a variant behind it.
+
+A slot whose element type is a single concrete kind yields that kind, so a
+homogeneous repeat can seat its one child like any other.
 
 ### `packages/codegen/src/emitters/transport-common.ts::supertypeTransportKinds`
 

@@ -3443,16 +3443,16 @@ pub enum ModuleStatementsTransportSlot {
 impl ::sittir_core::options::FillOptions for ModuleStatementsTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ModuleStatementsTransportSlot::SimpleStatements(t) => { t.simple_statements_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_SIMPLE_STATEMENTS_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_IF_STATEMENT_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_FOR_STATEMENT_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_WHILE_STATEMENT_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_TRY_STATEMENT_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_WITH_STATEMENT_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::FunctionDefinition(t) => { t.function_definition_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_FUNCTION_DEFINITION_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::ClassDefinition(t) => { t.class_definition_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_CLASS_DEFINITION_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::DecoratedDefinition(t) => { t.decorated_definition_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_DECORATED_DEFINITION_AFTER]); t.fill_options(table) },
-            ModuleStatementsTransportSlot::MatchStatement(t) => { t.match_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_MATCH_STATEMENT_AFTER]); t.fill_options(table) },
+            ModuleStatementsTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::IfStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::ForStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::WhileStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::TryStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::WithStatement(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::FunctionDefinition(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::ClassDefinition(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::DecoratedDefinition(t) => t.fill_options(table),
+            ModuleStatementsTransportSlot::MatchStatement(t) => t.fill_options(table),
         }
     }
 }
@@ -3934,7 +3934,7 @@ impl ::sittir_core::options::FillOptions for ImportListNameTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             ImportListNameTransportSlot::DottedName(t) => t.fill_options(table),
-            ImportListNameTransportSlot::AliasedImport(t) => { t.aliased_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_LIST_NAME_ALIASED_IMPORT_AFTER]); t.fill_options(table) },
+            ImportListNameTransportSlot::AliasedImport(t) => t.fill_options(table),
         }
     }
 }
@@ -6080,8 +6080,8 @@ pub enum IfStatementAlternativeTransportSlot {
 impl ::sittir_core::options::FillOptions for IfStatementAlternativeTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            IfStatementAlternativeTransportSlot::ElifClause(t) => { t.elif_clause_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_ELIF_CLAUSE_AFTER]); t.fill_options(table) },
-            IfStatementAlternativeTransportSlot::ElseClause(t) => { t.else_clause_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_ELSE_CLAUSE_AFTER]); t.fill_options(table) },
+            IfStatementAlternativeTransportSlot::ElifClause(t) => t.fill_options(table),
+            IfStatementAlternativeTransportSlot::ElseClause(t) => t.fill_options(table),
         }
     }
 }
@@ -9118,16 +9118,16 @@ pub enum BlockStatementsTransportSlot {
 impl ::sittir_core::options::FillOptions for BlockStatementsTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            BlockStatementsTransportSlot::SimpleStatements(t) => { t.simple_statements_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_SIMPLE_STATEMENTS_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_IF_STATEMENT_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_FOR_STATEMENT_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_WHILE_STATEMENT_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_TRY_STATEMENT_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_WITH_STATEMENT_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::FunctionDefinition(t) => { t.function_definition_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_FUNCTION_DEFINITION_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::ClassDefinition(t) => { t.class_definition_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_CLASS_DEFINITION_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::DecoratedDefinition(t) => { t.decorated_definition_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_DECORATED_DEFINITION_AFTER]); t.fill_options(table) },
-            BlockStatementsTransportSlot::MatchStatement(t) => { t.match_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_MATCH_STATEMENT_AFTER]); t.fill_options(table) },
+            BlockStatementsTransportSlot::SimpleStatements(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::IfStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::ForStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::WhileStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::TryStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::WithStatement(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::FunctionDefinition(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::ClassDefinition(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::DecoratedDefinition(t) => t.fill_options(table),
+            BlockStatementsTransportSlot::MatchStatement(t) => t.fill_options(table),
         }
     }
 }
@@ -9642,16 +9642,16 @@ pub enum UnionPatternPatternsTransportSlot {
 impl ::sittir_core::options::FillOptions for UnionPatternPatternsTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            UnionPatternPatternsTransportSlot::ClassPattern(t) => { t.class_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER]); t.fill_options(table) },
-            UnionPatternPatternsTransportSlot::SplatPattern(t) => { t.splat_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER]); t.fill_options(table) },
+            UnionPatternPatternsTransportSlot::ClassPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::SplatPattern(t) => t.fill_options(table),
             UnionPatternPatternsTransportSlot::UnionPattern(t) => t.fill_options(table),
-            UnionPatternPatternsTransportSlot::CaseListPattern(t) => { t.case_list_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER]); t.fill_options(table) },
-            UnionPatternPatternsTransportSlot::CaseTuplePattern(t) => { t.case_tuple_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER]); t.fill_options(table) },
-            UnionPatternPatternsTransportSlot::DictPattern(t) => { t.dict_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER]); t.fill_options(table) },
-            UnionPatternPatternsTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_STRING_AFTER]); t.fill_options(table) },
-            UnionPatternPatternsTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER]); t.fill_options(table) },
-            UnionPatternPatternsTransportSlot::SimplePatternNegative(t) => { t.simple_pattern_negative_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER]); t.fill_options(table) },
-            UnionPatternPatternsTransportSlot::ComplexPattern(t) => { t.complex_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER]); t.fill_options(table) },
+            UnionPatternPatternsTransportSlot::CaseListPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::CaseTuplePattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::DictPattern(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::String(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::ConcatenatedString(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::SimplePatternNegative(t) => t.fill_options(table),
+            UnionPatternPatternsTransportSlot::ComplexPattern(t) => t.fill_options(table),
             UnionPatternPatternsTransportSlot::DottedName(t) => t.fill_options(table),
             UnionPatternPatternsTransportSlot::Literal5_74_72_75_65 => {}
             UnionPatternPatternsTransportSlot::Literal6_66_61_6c_73_65 => {}
@@ -15299,41 +15299,41 @@ pub enum CollectionElementsElementTransportSlot {
 impl ::sittir_core::options::FillOptions for CollectionElementsElementTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            CollectionElementsElementTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_COMPARISON_OPERATOR_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_NOT_OPERATOR_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_BOOLEAN_OPERATOR_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LAMBDA_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_AWAIT_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_BINARY_OPERATOR_AFTER]); t.fill_options(table) },
+            CollectionElementsElementTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::NotOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Lambda(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Await(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::BinaryOperator(t) => t.fill_options(table),
             CollectionElementsElementTransportSlot::Identifier(t) => t.fill_options(table),
-            CollectionElementsElementTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_STRING_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_CONCATENATED_STRING_AFTER]); t.fill_options(table) },
+            CollectionElementsElementTransportSlot::String(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ConcatenatedString(t) => t.fill_options(table),
             CollectionElementsElementTransportSlot::Integer(t) => t.fill_options(table),
             CollectionElementsElementTransportSlot::Float(t) => t.fill_options(table),
             CollectionElementsElementTransportSlot::True(t) => t.fill_options(table),
             CollectionElementsElementTransportSlot::False(t) => t.fill_options(table),
             CollectionElementsElementTransportSlot::None(t) => t.fill_options(table),
-            CollectionElementsElementTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_UNARY_OPERATOR_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_ATTRIBUTE_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SUBSCRIPT_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_CALL_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_COMPREHENSION_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_DICTIONARY_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_DICTIONARY_COMPREHENSION_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SET_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SET_COMPREHENSION_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_TUPLE_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_PARENTHESIZED_EXPRESSION_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_GENERATOR_EXPRESSION_AFTER]); t.fill_options(table) },
+            CollectionElementsElementTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Attribute(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Subscript(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Call(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::List(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ListComprehension(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Dictionary(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Set(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::SetComprehension(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Tuple(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::GeneratorExpression(t) => t.fill_options(table),
             CollectionElementsElementTransportSlot::Ellipsis(t) => t.fill_options(table),
-            CollectionElementsElementTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_SPLAT_PATTERN_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_CONDITIONAL_EXPRESSION_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_NAMED_EXPRESSION_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_AS_PATTERN_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::Yield(t) => { t.yield_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_YIELD_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::ListSplat(t) => { t.list_splat_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_SPLAT_AFTER]); t.fill_options(table) },
-            CollectionElementsElementTransportSlot::ParenthesizedListSplat(t) => { t.parenthesized_list_splat_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_PARENTHESIZED_LIST_SPLAT_AFTER]); t.fill_options(table) },
+            CollectionElementsElementTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::NamedExpression(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::AsPattern(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::Yield(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ListSplat(t) => t.fill_options(table),
+            CollectionElementsElementTransportSlot::ParenthesizedListSplat(t) => t.fill_options(table),
         }
     }
 }
@@ -16044,39 +16044,39 @@ pub enum ForInClauseRightTransportSlot {
 impl ::sittir_core::options::FillOptions for ForInClauseRightTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ForInClauseRightTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_COMPARISON_OPERATOR_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_NOT_OPERATOR_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_BOOLEAN_OPERATOR_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_AWAIT_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_BINARY_OPERATOR_AFTER]); t.fill_options(table) },
+            ForInClauseRightTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::NotOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Lambda(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Await(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::BinaryOperator(t) => t.fill_options(table),
             ForInClauseRightTransportSlot::Identifier(t) => t.fill_options(table),
-            ForInClauseRightTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_STRING_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_CONCATENATED_STRING_AFTER]); t.fill_options(table) },
+            ForInClauseRightTransportSlot::String(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ConcatenatedString(t) => t.fill_options(table),
             ForInClauseRightTransportSlot::Integer(t) => t.fill_options(table),
             ForInClauseRightTransportSlot::Float(t) => t.fill_options(table),
             ForInClauseRightTransportSlot::True(t) => t.fill_options(table),
             ForInClauseRightTransportSlot::False(t) => t.fill_options(table),
             ForInClauseRightTransportSlot::None(t) => t.fill_options(table),
-            ForInClauseRightTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_UNARY_OPERATOR_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_ATTRIBUTE_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SUBSCRIPT_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_CALL_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LIST_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LIST_COMPREHENSION_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_DICTIONARY_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_DICTIONARY_COMPREHENSION_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SET_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SET_COMPREHENSION_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_TUPLE_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_PARENTHESIZED_EXPRESSION_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_GENERATOR_EXPRESSION_AFTER]); t.fill_options(table) },
+            ForInClauseRightTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Attribute(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Subscript(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Call(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::List(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Dictionary(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Set(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::Tuple(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::GeneratorExpression(t) => t.fill_options(table),
             ForInClauseRightTransportSlot::Ellipsis(t) => t.fill_options(table),
-            ForInClauseRightTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LIST_SPLAT_PATTERN_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_CONDITIONAL_EXPRESSION_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_NAMED_EXPRESSION_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_AS_PATTERN_AFTER]); t.fill_options(table) },
-            ForInClauseRightTransportSlot::LambdaWithinForInClause(t) => { t.lambda_within_for_in_clause_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER]); t.fill_options(table) },
+            ForInClauseRightTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::AsPattern(t) => t.fill_options(table),
+            ForInClauseRightTransportSlot::LambdaWithinForInClause(t) => t.fill_options(table),
         }
     }
 }
@@ -17468,42 +17468,42 @@ pub enum ArgumentListElementsElementTransportSlot {
 impl ::sittir_core::options::FillOptions for ArgumentListElementsElementTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ArgumentListElementsElementTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_COMPARISON_OPERATOR_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_NOT_OPERATOR_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_BOOLEAN_OPERATOR_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LAMBDA_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_AWAIT_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_BINARY_OPERATOR_AFTER]); t.fill_options(table) },
+            ArgumentListElementsElementTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::NotOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Lambda(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Await(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::BinaryOperator(t) => t.fill_options(table),
             ArgumentListElementsElementTransportSlot::Identifier(t) => t.fill_options(table),
-            ArgumentListElementsElementTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_STRING_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_CONCATENATED_STRING_AFTER]); t.fill_options(table) },
+            ArgumentListElementsElementTransportSlot::String(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ConcatenatedString(t) => t.fill_options(table),
             ArgumentListElementsElementTransportSlot::Integer(t) => t.fill_options(table),
             ArgumentListElementsElementTransportSlot::Float(t) => t.fill_options(table),
             ArgumentListElementsElementTransportSlot::True(t) => t.fill_options(table),
             ArgumentListElementsElementTransportSlot::False(t) => t.fill_options(table),
             ArgumentListElementsElementTransportSlot::None(t) => t.fill_options(table),
-            ArgumentListElementsElementTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_UNARY_OPERATOR_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_ATTRIBUTE_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SUBSCRIPT_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_CALL_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_COMPREHENSION_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_DICTIONARY_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_DICTIONARY_COMPREHENSION_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SET_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SET_COMPREHENSION_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_TUPLE_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_PARENTHESIZED_EXPRESSION_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_GENERATOR_EXPRESSION_AFTER]); t.fill_options(table) },
+            ArgumentListElementsElementTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Attribute(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Subscript(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Call(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::List(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ListComprehension(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Dictionary(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Set(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::SetComprehension(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::Tuple(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::GeneratorExpression(t) => t.fill_options(table),
             ArgumentListElementsElementTransportSlot::Ellipsis(t) => t.fill_options(table),
-            ArgumentListElementsElementTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_SPLAT_PATTERN_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_CONDITIONAL_EXPRESSION_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_NAMED_EXPRESSION_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_AS_PATTERN_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::ListSplat(t) => { t.list_splat_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_SPLAT_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::DictionarySplat(t) => { t.dictionary_splat_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_DICTIONARY_SPLAT_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::ParenthesizedListSplat(t) => { t.parenthesized_list_splat_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_PARENTHESIZED_LIST_SPLAT_AFTER]); t.fill_options(table) },
-            ArgumentListElementsElementTransportSlot::KeywordArgument(t) => { t.keyword_argument_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_KEYWORD_ARGUMENT_AFTER]); t.fill_options(table) },
+            ArgumentListElementsElementTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::NamedExpression(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::AsPattern(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ListSplat(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::DictionarySplat(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::ParenthesizedListSplat(t) => t.fill_options(table),
+            ArgumentListElementsElementTransportSlot::KeywordArgument(t) => t.fill_options(table),
         }
     }
 }
@@ -17913,8 +17913,8 @@ pub enum DictPatternElementsElementTransportSlot {
 impl ::sittir_core::options::FillOptions for DictPatternElementsElementTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            DictPatternElementsElementTransportSlot::KeyValuePattern(t) => { t.key_value_pattern_after.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_KEY_VALUE_PATTERN_AFTER]); t.fill_options(table) },
-            DictPatternElementsElementTransportSlot::SplatPattern(t) => { t.splat_pattern_after.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SPLAT_PATTERN_AFTER]); t.fill_options(table) },
+            DictPatternElementsElementTransportSlot::KeyValuePattern(t) => t.fill_options(table),
+            DictPatternElementsElementTransportSlot::SplatPattern(t) => t.fill_options(table),
         }
     }
 }
@@ -18047,39 +18047,39 @@ pub enum SubscriptsSubscriptTransportSlot {
 impl ::sittir_core::options::FillOptions for SubscriptsSubscriptTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            SubscriptsSubscriptTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_COMPARISON_OPERATOR_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_NOT_OPERATOR_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_BOOLEAN_OPERATOR_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LAMBDA_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_AWAIT_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_BINARY_OPERATOR_AFTER]); t.fill_options(table) },
+            SubscriptsSubscriptTransportSlot::ComparisonOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::NotOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::BooleanOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Lambda(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Await(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::BinaryOperator(t) => t.fill_options(table),
             SubscriptsSubscriptTransportSlot::Identifier(t) => t.fill_options(table),
-            SubscriptsSubscriptTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_STRING_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_CONCATENATED_STRING_AFTER]); t.fill_options(table) },
+            SubscriptsSubscriptTransportSlot::String(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ConcatenatedString(t) => t.fill_options(table),
             SubscriptsSubscriptTransportSlot::Integer(t) => t.fill_options(table),
             SubscriptsSubscriptTransportSlot::Float(t) => t.fill_options(table),
             SubscriptsSubscriptTransportSlot::True(t) => t.fill_options(table),
             SubscriptsSubscriptTransportSlot::False(t) => t.fill_options(table),
             SubscriptsSubscriptTransportSlot::None(t) => t.fill_options(table),
-            SubscriptsSubscriptTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_UNARY_OPERATOR_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_ATTRIBUTE_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SUBSCRIPT_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_CALL_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LIST_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LIST_COMPREHENSION_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_DICTIONARY_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_DICTIONARY_COMPREHENSION_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SET_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SET_COMPREHENSION_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_TUPLE_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_PARENTHESIZED_EXPRESSION_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_GENERATOR_EXPRESSION_AFTER]); t.fill_options(table) },
+            SubscriptsSubscriptTransportSlot::UnaryOperator(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Attribute(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Subscript(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Call(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::List(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ListComprehension(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Dictionary(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::DictionaryComprehension(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Set(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::SetComprehension(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Tuple(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ParenthesizedExpression(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::GeneratorExpression(t) => t.fill_options(table),
             SubscriptsSubscriptTransportSlot::Ellipsis(t) => t.fill_options(table),
-            SubscriptsSubscriptTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LIST_SPLAT_PATTERN_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_CONDITIONAL_EXPRESSION_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_NAMED_EXPRESSION_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_AS_PATTERN_AFTER]); t.fill_options(table) },
-            SubscriptsSubscriptTransportSlot::Slice(t) => { t.slice_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SLICE_AFTER]); t.fill_options(table) },
+            SubscriptsSubscriptTransportSlot::ListSplatPattern(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::ConditionalExpression(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::AsPattern(t) => t.fill_options(table),
+            SubscriptsSubscriptTransportSlot::Slice(t) => t.fill_options(table),
         }
     }
 }
@@ -18465,8 +18465,8 @@ pub enum DictionaryElementsElementTransportSlot {
 impl ::sittir_core::options::FillOptions for DictionaryElementsElementTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            DictionaryElementsElementTransportSlot::Pair(t) => { t.pair_after.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_PAIR_AFTER]); t.fill_options(table) },
-            DictionaryElementsElementTransportSlot::DictionarySplat(t) => { t.dictionary_splat_after.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_DICTIONARY_SPLAT_AFTER]); t.fill_options(table) },
+            DictionaryElementsElementTransportSlot::Pair(t) => t.fill_options(table),
+            DictionaryElementsElementTransportSlot::DictionarySplat(t) => t.fill_options(table),
         }
     }
 }
@@ -18568,8 +18568,8 @@ pub enum ComprehensionClausesContentTransportSlot {
 impl ::sittir_core::options::FillOptions for ComprehensionClausesContentTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            ComprehensionClausesContentTransportSlot::ForInClause(t) => { t.for_in_clause_after.get_or_insert(table.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_FOR_IN_CLAUSE_AFTER]); t.fill_options(table) },
-            ComprehensionClausesContentTransportSlot::IfClause(t) => { t.if_clause_after.get_or_insert(table.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_IF_CLAUSE_AFTER]); t.fill_options(table) },
+            ComprehensionClausesContentTransportSlot::ForInClause(t) => t.fill_options(table),
+            ComprehensionClausesContentTransportSlot::IfClause(t) => t.fill_options(table),
         }
     }
 }
@@ -20216,6 +20216,27 @@ impl ::std::fmt::Display for ModuleTransport {
 impl ::sittir_core::options::FillOptions for ModuleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.statements_separator_space.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE]);
+        if let Some(seated_items) = self.statements.as_mut() {
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ModuleStatementsTransportSlot::SimpleStatements(t) => { t.simple_statements_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_SIMPLE_STATEMENTS_AFTER]); }
+                        ModuleStatementsTransportSlot::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_IF_STATEMENT_AFTER]); }
+                        ModuleStatementsTransportSlot::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_FOR_STATEMENT_AFTER]); }
+                        ModuleStatementsTransportSlot::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_WHILE_STATEMENT_AFTER]); }
+                        ModuleStatementsTransportSlot::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_TRY_STATEMENT_AFTER]); }
+                        ModuleStatementsTransportSlot::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_WITH_STATEMENT_AFTER]); }
+                        ModuleStatementsTransportSlot::FunctionDefinition(t) => { t.function_definition_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_FUNCTION_DEFINITION_AFTER]); }
+                        ModuleStatementsTransportSlot::ClassDefinition(t) => { t.class_definition_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_CLASS_DEFINITION_AFTER]); }
+                        ModuleStatementsTransportSlot::DecoratedDefinition(t) => { t.decorated_definition_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_DECORATED_DEFINITION_AFTER]); }
+                        ModuleStatementsTransportSlot::MatchStatement(t) => { t.match_statement_after.get_or_insert(table.spacing[options::SITE_MODULE_STATEMENTS_MATCH_STATEMENT_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.statements.fill_options(table);
     }
 }
@@ -20719,6 +20740,19 @@ impl ::sittir_core::options::FillOptions for ImportListTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.name_separator_space_before.get_or_insert(table.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE]);
         self.name_separator_space_after.get_or_insert(table.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER]);
+        {
+            let seated_items = &mut self.name;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ImportListNameTransportSlot::AliasedImport(t) => { t.aliased_import_after.get_or_insert(table.spacing[options::SITE_IMPORT_LIST_NAME_ALIASED_IMPORT_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_IMPORT_LIST_NAME]);
         self.name.fill_options(table);
     }
@@ -21084,17 +21118,22 @@ impl ::sittir_core::options::FillOptions for AssertStatementTransport {
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER]);
         self.assert_statement_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_STATEMENT_BEFORE]);
         self.assert_statement_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_STATEMENT_AFTER]);
-        for item in self.expression.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_AS_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.expression;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -21822,6 +21861,19 @@ impl ::sittir_core::options::FillOptions for IfStatementTransport {
         self.alternative_separator_space.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE]);
         self.if_statement_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_BEFORE]);
         self.if_statement_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_AFTER]);
+        if let Some(seated_items) = self.alternative.as_mut() {
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        IfStatementAlternativeTransportSlot::ElifClause(t) => { t.elif_clause_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_ELIF_CLAUSE_AFTER]); }
+                        IfStatementAlternativeTransportSlot::ElseClause(t) => { t.else_clause_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_ELSE_CLAUSE_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.condition.fill_options(table);
         self.consequence.fill_options(table);
         self.alternative.fill_options(table);
@@ -22419,6 +22471,15 @@ impl ::sittir_core::options::FillOptions for TryStatementTransport {
         self.except_clauses_separator_space.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE]);
         self.try_statement_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_BEFORE]);
         self.try_statement_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER]);
+        if let Some(seated_items) = self.except_clauses.as_mut() {
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    seated.except_clause_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_EXCEPT_CLAUSE_AFTER]);
+                }
+            }
+        }
         self.body.fill_options(table);
         self.except_clauses.fill_options(table);
         self.else_clause.fill_options(table);
@@ -23332,17 +23393,21 @@ impl ::sittir_core::options::FillOptions for ExecStatementTransport {
         self.in_clause_separator_space_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER]);
         self.exec_statement_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_STATEMENT_BEFORE]);
         self.exec_statement_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_STATEMENT_AFTER]);
-        for item in self.in_clause.iter_mut().flatten() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_AS_PATTERN_AFTER]); }
-                    _ => {}
+        if let Some(seated_items) = self.in_clause.as_mut() {
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -23778,6 +23843,16 @@ impl ::sittir_core::options::FillOptions for DecoratedDefinitionTransport {
         self.decorator_separator_space.get_or_insert(table.spacing[options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE]);
         self.decorated_definition_before.get_or_insert(table.spacing[options::SITE_DECORATED_DEFINITION_DECORATED_DEFINITION_BEFORE]);
         self.decorated_definition_after.get_or_insert(table.spacing[options::SITE_DECORATED_DEFINITION_DECORATED_DEFINITION_AFTER]);
+        {
+            let seated_items = &mut self.decorator;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    seated.decorator_after.get_or_insert(table.spacing[options::SITE_DECORATED_DEFINITION_DECORATOR_DECORATOR_AFTER]);
+                }
+            }
+        }
         self.definition.fill_options(table);
         self.decorator.fill_options(table);
     }
@@ -23959,6 +24034,27 @@ impl ::sittir_core::options::FillOptions for BlockTransport {
         self.statements_separator_space.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
         self.block_before.get_or_insert(table.spacing[options::SITE_BLOCK_BLOCK_BEFORE]);
         self.block_after.get_or_insert(table.spacing[options::SITE_BLOCK_BLOCK_AFTER]);
+        if let Some(seated_items) = self.statements.as_mut() {
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        BlockStatementsTransportSlot::SimpleStatements(t) => { t.simple_statements_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_SIMPLE_STATEMENTS_AFTER]); }
+                        BlockStatementsTransportSlot::IfStatement(t) => { t.if_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_IF_STATEMENT_AFTER]); }
+                        BlockStatementsTransportSlot::ForStatement(t) => { t.for_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_FOR_STATEMENT_AFTER]); }
+                        BlockStatementsTransportSlot::WhileStatement(t) => { t.while_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_WHILE_STATEMENT_AFTER]); }
+                        BlockStatementsTransportSlot::TryStatement(t) => { t.try_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_TRY_STATEMENT_AFTER]); }
+                        BlockStatementsTransportSlot::WithStatement(t) => { t.with_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_WITH_STATEMENT_AFTER]); }
+                        BlockStatementsTransportSlot::FunctionDefinition(t) => { t.function_definition_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_FUNCTION_DEFINITION_AFTER]); }
+                        BlockStatementsTransportSlot::ClassDefinition(t) => { t.class_definition_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_CLASS_DEFINITION_AFTER]); }
+                        BlockStatementsTransportSlot::DecoratedDefinition(t) => { t.decorated_definition_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_DECORATED_DEFINITION_AFTER]); }
+                        BlockStatementsTransportSlot::MatchStatement(t) => { t.match_statement_after.get_or_insert(table.spacing[options::SITE_BLOCK_STATEMENTS_MATCH_STATEMENT_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.statements.fill_options(table);
     }
 }
@@ -24192,6 +24288,27 @@ impl ::sittir_core::options::FillOptions for UnionPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.patterns_separator_space_before.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE]);
         self.patterns_separator_space_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER]);
+        {
+            let seated_items = &mut self.patterns;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        UnionPatternPatternsTransportSlot::ClassPattern(t) => { t.class_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER]); }
+                        UnionPatternPatternsTransportSlot::SplatPattern(t) => { t.splat_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER]); }
+                        UnionPatternPatternsTransportSlot::CaseListPattern(t) => { t.case_list_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER]); }
+                        UnionPatternPatternsTransportSlot::CaseTuplePattern(t) => { t.case_tuple_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER]); }
+                        UnionPatternPatternsTransportSlot::DictPattern(t) => { t.dict_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER]); }
+                        UnionPatternPatternsTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_STRING_AFTER]); }
+                        UnionPatternPatternsTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER]); }
+                        UnionPatternPatternsTransportSlot::SimplePatternNegative(t) => { t.simple_pattern_negative_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER]); }
+                        UnionPatternPatternsTransportSlot::ComplexPattern(t) => { t.complex_pattern_after.get_or_insert(table.spacing[options::SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.patterns.fill_options(table);
     }
 }
@@ -24700,16 +24817,21 @@ impl ::sittir_core::options::FillOptions for _ParametersTransport {
         self.rparen_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_RPAREN_AFTER]);
         self.parameters_before.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETERS_BEFORE]);
         self.parameters_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETERS_AFTER]);
-        for item in self.parameter.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ParameterTransport::TypedParameter(t) => { t.typed_parameter_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_TYPED_PARAMETER_AFTER]); }
-                    ParameterTransport::DefaultParameter(t) => { t.default_parameter_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_DEFAULT_PARAMETER_AFTER]); }
-                    ParameterTransport::TypedDefaultParameter(t) => { t.typed_default_parameter_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER]); }
-                    ParameterTransport::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_LIST_SPLAT_PATTERN_AFTER]); }
-                    ParameterTransport::TuplePattern(t) => { t.tuple_pattern_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_TUPLE_PATTERN_AFTER]); }
-                    ParameterTransport::DictionarySplatPattern(t) => { t.dictionary_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_DICTIONARY_SPLAT_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.parameter;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ParameterTransport::TypedParameter(t) => { t.typed_parameter_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_TYPED_PARAMETER_AFTER]); }
+                        ParameterTransport::DefaultParameter(t) => { t.default_parameter_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_DEFAULT_PARAMETER_AFTER]); }
+                        ParameterTransport::TypedDefaultParameter(t) => { t.typed_default_parameter_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER]); }
+                        ParameterTransport::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_LIST_SPLAT_PATTERN_AFTER]); }
+                        ParameterTransport::TuplePattern(t) => { t.tuple_pattern_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_TUPLE_PATTERN_AFTER]); }
+                        ParameterTransport::DictionarySplatPattern(t) => { t.dictionary_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PARAMETERS_PARAMETER_DICTIONARY_SPLAT_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -24775,15 +24897,20 @@ impl ::sittir_core::options::FillOptions for PatternsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.pattern_separator_space_before.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE]);
         self.pattern_separator_space_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER]);
-        for item in self.pattern.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    PatternTransport::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SUBSCRIPT_AFTER]); }
-                    PatternTransport::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_ATTRIBUTE_AFTER]); }
-                    PatternTransport::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_LIST_SPLAT_PATTERN_AFTER]); }
-                    PatternTransport::TuplePattern(t) => { t.tuple_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_TUPLE_PATTERN_AFTER]); }
-                    PatternTransport::ListPattern(t) => { t.list_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_LIST_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.pattern;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        PatternTransport::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_SUBSCRIPT_AFTER]); }
+                        PatternTransport::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_ATTRIBUTE_AFTER]); }
+                        PatternTransport::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_LIST_SPLAT_PATTERN_AFTER]); }
+                        PatternTransport::TuplePattern(t) => { t.tuple_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_TUPLE_PATTERN_AFTER]); }
+                        PatternTransport::ListPattern(t) => { t.list_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERNS_PATTERN_LIST_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -25600,6 +25727,16 @@ impl ::sittir_core::options::FillOptions for ComparisonOperatorTransport {
         self.comparators_separator_space.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE]);
         self.comparison_operator_before.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARISON_OPERATOR_BEFORE]);
         self.comparison_operator_after.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARISON_OPERATOR_AFTER]);
+        {
+            let seated_items = &mut self.comparators;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    seated.comparison_operator_comparator_after.get_or_insert(table.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATORS_COMPARISON_OPERATOR_COMPARATOR_AFTER]);
+                }
+            }
+        }
         self.left.fill_options(table);
         self.comparators.fill_options(table);
     }
@@ -27688,6 +27825,46 @@ impl ::sittir_core::options::FillOptions for CollectionElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
+        {
+            let seated_items = &mut self.element;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        CollectionElementsElementTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_COMPARISON_OPERATOR_AFTER]); }
+                        CollectionElementsElementTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_NOT_OPERATOR_AFTER]); }
+                        CollectionElementsElementTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_BOOLEAN_OPERATOR_AFTER]); }
+                        CollectionElementsElementTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LAMBDA_AFTER]); }
+                        CollectionElementsElementTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_AWAIT_AFTER]); }
+                        CollectionElementsElementTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_BINARY_OPERATOR_AFTER]); }
+                        CollectionElementsElementTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_STRING_AFTER]); }
+                        CollectionElementsElementTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_CONCATENATED_STRING_AFTER]); }
+                        CollectionElementsElementTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_UNARY_OPERATOR_AFTER]); }
+                        CollectionElementsElementTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_ATTRIBUTE_AFTER]); }
+                        CollectionElementsElementTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SUBSCRIPT_AFTER]); }
+                        CollectionElementsElementTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_CALL_AFTER]); }
+                        CollectionElementsElementTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_AFTER]); }
+                        CollectionElementsElementTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_COMPREHENSION_AFTER]); }
+                        CollectionElementsElementTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_DICTIONARY_AFTER]); }
+                        CollectionElementsElementTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_DICTIONARY_COMPREHENSION_AFTER]); }
+                        CollectionElementsElementTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SET_AFTER]); }
+                        CollectionElementsElementTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_SET_COMPREHENSION_AFTER]); }
+                        CollectionElementsElementTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_TUPLE_AFTER]); }
+                        CollectionElementsElementTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_PARENTHESIZED_EXPRESSION_AFTER]); }
+                        CollectionElementsElementTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_GENERATOR_EXPRESSION_AFTER]); }
+                        CollectionElementsElementTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_SPLAT_PATTERN_AFTER]); }
+                        CollectionElementsElementTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_CONDITIONAL_EXPRESSION_AFTER]); }
+                        CollectionElementsElementTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_NAMED_EXPRESSION_AFTER]); }
+                        CollectionElementsElementTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_AS_PATTERN_AFTER]); }
+                        CollectionElementsElementTransportSlot::Yield(t) => { t.yield_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_YIELD_AFTER]); }
+                        CollectionElementsElementTransportSlot::ListSplat(t) => { t.list_splat_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_LIST_SPLAT_AFTER]); }
+                        CollectionElementsElementTransportSlot::ParenthesizedListSplat(t) => { t.parenthesized_list_splat_after.get_or_insert(table.spacing[options::SITE_COLLECTION_ELEMENTS_ELEMENT_PARENTHESIZED_LIST_SPLAT_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_COLLECTION_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
@@ -27778,6 +27955,44 @@ impl ::sittir_core::options::FillOptions for ForInClauseTransport {
         self.comma_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_AFTER]);
         self.for_in_clause_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_BEFORE]);
         self.for_in_clause_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_AFTER]);
+        {
+            let seated_items = &mut self.right;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ForInClauseRightTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_COMPARISON_OPERATOR_AFTER]); }
+                        ForInClauseRightTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_NOT_OPERATOR_AFTER]); }
+                        ForInClauseRightTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_BOOLEAN_OPERATOR_AFTER]); }
+                        ForInClauseRightTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_AFTER]); }
+                        ForInClauseRightTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_AWAIT_AFTER]); }
+                        ForInClauseRightTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_BINARY_OPERATOR_AFTER]); }
+                        ForInClauseRightTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_STRING_AFTER]); }
+                        ForInClauseRightTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_CONCATENATED_STRING_AFTER]); }
+                        ForInClauseRightTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_UNARY_OPERATOR_AFTER]); }
+                        ForInClauseRightTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_ATTRIBUTE_AFTER]); }
+                        ForInClauseRightTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SUBSCRIPT_AFTER]); }
+                        ForInClauseRightTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_CALL_AFTER]); }
+                        ForInClauseRightTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LIST_AFTER]); }
+                        ForInClauseRightTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LIST_COMPREHENSION_AFTER]); }
+                        ForInClauseRightTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_DICTIONARY_AFTER]); }
+                        ForInClauseRightTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_DICTIONARY_COMPREHENSION_AFTER]); }
+                        ForInClauseRightTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SET_AFTER]); }
+                        ForInClauseRightTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SET_COMPREHENSION_AFTER]); }
+                        ForInClauseRightTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_TUPLE_AFTER]); }
+                        ForInClauseRightTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_PARENTHESIZED_EXPRESSION_AFTER]); }
+                        ForInClauseRightTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_GENERATOR_EXPRESSION_AFTER]); }
+                        ForInClauseRightTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LIST_SPLAT_PATTERN_AFTER]); }
+                        ForInClauseRightTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ForInClauseRightTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_NAMED_EXPRESSION_AFTER]); }
+                        ForInClauseRightTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_AS_PATTERN_AFTER]); }
+                        ForInClauseRightTransportSlot::LambdaWithinForInClause(t) => { t.lambda_within_for_in_clause_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.async_marker.fill_options(table);
         self.left.fill_options(table);
         self.right.fill_options(table);
@@ -27985,6 +28200,16 @@ impl ::sittir_core::options::FillOptions for ConcatenatedStringTransport {
         self.string_separator_space.get_or_insert(table.spacing[options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE]);
         self.concatenated_string_before.get_or_insert(table.spacing[options::SITE_CONCATENATED_STRING_CONCATENATED_STRING_BEFORE]);
         self.concatenated_string_after.get_or_insert(table.spacing[options::SITE_CONCATENATED_STRING_CONCATENATED_STRING_AFTER]);
+        {
+            let seated_items = &mut self.string;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    seated.string_after.get_or_insert(table.spacing[options::SITE_CONCATENATED_STRING_STRING_STRING_AFTER]);
+                }
+            }
+        }
         self.string.fill_options(table);
     }
 }
@@ -29899,21 +30124,26 @@ impl ::sittir_core::options::FillOptions for SimpleStatementsElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.simple_statement_separator_space_before.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_BEFORE]);
         self.simple_statement_separator_space_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_SEPARATOR_SPACE_AFTER]);
-        for item in self.simple_statement.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    SimpleStatementTransport::FutureImportStatement(t) => { t.future_import_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_FUTURE_IMPORT_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::ImportStatement(t) => { t.import_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_IMPORT_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::ImportFromStatement(t) => { t.import_from_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_IMPORT_FROM_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::AssertStatement(t) => { t.assert_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSERT_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::ReturnStatement(t) => { t.return_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_RETURN_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::DeleteStatement(t) => { t.delete_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_DELETE_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::RaiseStatement(t) => { t.raise_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_RAISE_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::GlobalStatement(t) => { t.global_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_GLOBAL_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::NonlocalStatement(t) => { t.nonlocal_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_NONLOCAL_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::ExecStatement(t) => { t.exec_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_EXEC_STATEMENT_AFTER]); }
-                    SimpleStatementTransport::TypeAliasStatement(t) => { t.type_alias_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.simple_statement;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        SimpleStatementTransport::FutureImportStatement(t) => { t.future_import_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_FUTURE_IMPORT_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::ImportStatement(t) => { t.import_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_IMPORT_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::ImportFromStatement(t) => { t.import_from_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_IMPORT_FROM_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::AssertStatement(t) => { t.assert_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSERT_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::ReturnStatement(t) => { t.return_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_RETURN_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::DeleteStatement(t) => { t.delete_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_DELETE_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::RaiseStatement(t) => { t.raise_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_RAISE_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::GlobalStatement(t) => { t.global_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_GLOBAL_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::NonlocalStatement(t) => { t.nonlocal_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_NONLOCAL_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::ExecStatement(t) => { t.exec_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_EXEC_STATEMENT_AFTER]); }
+                        SimpleStatementTransport::TypeAliasStatement(t) => { t.type_alias_statement_after.get_or_insert(table.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -29979,17 +30209,22 @@ impl ::sittir_core::options::FillOptions for SubjectsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.subject_separator_space_before.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE]);
         self.subject_separator_space_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER]);
-        for item in self.subject.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_AS_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.subject;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_SUBJECTS_SUBJECT_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -30241,6 +30476,47 @@ impl ::sittir_core::options::FillOptions for ArgumentListElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
+        {
+            let seated_items = &mut self.element;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ArgumentListElementsElementTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_COMPARISON_OPERATOR_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_NOT_OPERATOR_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_BOOLEAN_OPERATOR_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LAMBDA_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_AWAIT_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_BINARY_OPERATOR_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_STRING_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_CONCATENATED_STRING_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_UNARY_OPERATOR_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_ATTRIBUTE_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SUBSCRIPT_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_CALL_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_COMPREHENSION_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_DICTIONARY_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_DICTIONARY_COMPREHENSION_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SET_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_SET_COMPREHENSION_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_TUPLE_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_PARENTHESIZED_EXPRESSION_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_GENERATOR_EXPRESSION_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_SPLAT_PATTERN_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_NAMED_EXPRESSION_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_AS_PATTERN_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::ListSplat(t) => { t.list_splat_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_LIST_SPLAT_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::DictionarySplat(t) => { t.dictionary_splat_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_DICTIONARY_SPLAT_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::ParenthesizedListSplat(t) => { t.parenthesized_list_splat_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_PARENTHESIZED_LIST_SPLAT_AFTER]); }
+                        ArgumentListElementsElementTransportSlot::KeywordArgument(t) => { t.keyword_argument_after.get_or_insert(table.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ELEMENT_KEYWORD_ARGUMENT_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
@@ -30303,17 +30579,22 @@ impl ::sittir_core::options::FillOptions for ExpressionListExpressionsTransport 
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_SEPARATOR_SPACE_AFTER]);
-        for item in self.expression.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_AS_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.expression;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -30441,6 +30722,20 @@ impl ::sittir_core::options::FillOptions for DictPatternElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
+        {
+            let seated_items = &mut self.element;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        DictPatternElementsElementTransportSlot::KeyValuePattern(t) => { t.key_value_pattern_after.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_KEY_VALUE_PATTERN_AFTER]); }
+                        DictPatternElementsElementTransportSlot::SplatPattern(t) => { t.splat_pattern_after.get_or_insert(table.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ELEMENT_SPLAT_PATTERN_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_DICT_PATTERN_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
@@ -30503,15 +30798,20 @@ impl ::sittir_core::options::FillOptions for PatternListPatternsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.pattern_separator_space_before.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE]);
         self.pattern_separator_space_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER]);
-        for item in self.pattern.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    PatternTransport::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SUBSCRIPT_AFTER]); }
-                    PatternTransport::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_ATTRIBUTE_AFTER]); }
-                    PatternTransport::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_LIST_SPLAT_PATTERN_AFTER]); }
-                    PatternTransport::TuplePattern(t) => { t.tuple_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_TUPLE_PATTERN_AFTER]); }
-                    PatternTransport::ListPattern(t) => { t.list_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_LIST_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.pattern;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        PatternTransport::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_SUBSCRIPT_AFTER]); }
+                        PatternTransport::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_ATTRIBUTE_AFTER]); }
+                        PatternTransport::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_LIST_SPLAT_PATTERN_AFTER]); }
+                        PatternTransport::TuplePattern(t) => { t.tuple_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_TUPLE_PATTERN_AFTER]); }
+                        PatternTransport::ListPattern(t) => { t.list_pattern_after.get_or_insert(table.spacing[options::SITE_PATTERN_LIST_PATTERNS_PATTERN_LIST_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -30577,6 +30877,44 @@ impl ::sittir_core::options::FillOptions for SubscriptsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.subscript_separator_space_before.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE]);
         self.subscript_separator_space_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER]);
+        {
+            let seated_items = &mut self.subscript;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        SubscriptsSubscriptTransportSlot::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_COMPARISON_OPERATOR_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_NOT_OPERATOR_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_BOOLEAN_OPERATOR_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LAMBDA_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Await(t) => { t.await_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_AWAIT_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::BinaryOperator(t) => { t.binary_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_BINARY_OPERATOR_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::String(t) => { t.string_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_STRING_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::ConcatenatedString(t) => { t.concatenated_string_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_CONCATENATED_STRING_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::UnaryOperator(t) => { t.unary_operator_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_UNARY_OPERATOR_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Attribute(t) => { t.attribute_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_ATTRIBUTE_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Subscript(t) => { t.subscript_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SUBSCRIPT_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Call(t) => { t.call_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_CALL_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::List(t) => { t.list_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LIST_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::ListComprehension(t) => { t.list_comprehension_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LIST_COMPREHENSION_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Dictionary(t) => { t.dictionary_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_DICTIONARY_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::DictionaryComprehension(t) => { t.dictionary_comprehension_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_DICTIONARY_COMPREHENSION_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Set(t) => { t.set_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SET_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::SetComprehension(t) => { t.set_comprehension_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SET_COMPREHENSION_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Tuple(t) => { t.tuple_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_TUPLE_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::ParenthesizedExpression(t) => { t.parenthesized_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_PARENTHESIZED_EXPRESSION_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::GeneratorExpression(t) => { t.generator_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_GENERATOR_EXPRESSION_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::ListSplatPattern(t) => { t.list_splat_pattern_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_LIST_SPLAT_PATTERN_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_CONDITIONAL_EXPRESSION_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_NAMED_EXPRESSION_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_AS_PATTERN_AFTER]); }
+                        SubscriptsSubscriptTransportSlot::Slice(t) => { t.slice_after.get_or_insert(table.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SLICE_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_SUBSCRIPTS_SUBSCRIPT]);
         self.subscript.fill_options(table);
     }
@@ -30639,6 +30977,20 @@ impl ::sittir_core::options::FillOptions for DictionaryElementsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.element_separator_space_before.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
         self.element_separator_space_after.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER]);
+        {
+            let seated_items = &mut self.element;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        DictionaryElementsElementTransportSlot::Pair(t) => { t.pair_after.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_PAIR_AFTER]); }
+                        DictionaryElementsElementTransportSlot::DictionarySplat(t) => { t.dictionary_splat_after.get_or_insert(table.spacing[options::SITE_DICTIONARY_ELEMENTS_ELEMENT_DICTIONARY_SPLAT_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.delimiter.get_or_insert(table.delimiter[options::DELIM_DICTIONARY_ELEMENTS_ELEMENT]);
         self.element.fill_options(table);
     }
@@ -31311,6 +31663,19 @@ impl ::std::fmt::Display for ComprehensionClausesTransport {
 impl ::sittir_core::options::FillOptions for ComprehensionClausesTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.content_separator_space.get_or_insert(table.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE]);
+        if let Some(seated_items) = self.content.as_mut() {
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ComprehensionClausesContentTransportSlot::ForInClause(t) => { t.for_in_clause_after.get_or_insert(table.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_FOR_IN_CLAUSE_AFTER]); }
+                        ComprehensionClausesContentTransportSlot::IfClause(t) => { t.if_clause_after.get_or_insert(table.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_IF_CLAUSE_AFTER]); }
+                        _ => {}
+                    }
+                }
+            }
+        }
         self.content.fill_options(table);
     }
 }
@@ -31443,17 +31808,22 @@ impl ::sittir_core::options::FillOptions for PrintArgumentsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.argument_separator_space_before.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE]);
         self.argument_separator_space_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER]);
-        for item in self.argument.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_AS_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.argument;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_PRINT_ARGUMENTS_ARGUMENT_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -31519,17 +31889,22 @@ impl ::sittir_core::options::FillOptions for PrintChevronArgumentsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.argument_separator_space_before.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_BEFORE]);
         self.argument_separator_space_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_SEPARATOR_SPACE_AFTER]);
-        for item in self.argument.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_AS_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.argument;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ARGUMENT_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -31901,17 +32276,22 @@ impl ::sittir_core::options::FillOptions for ExceptClauseExceptionListTransport 
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.value_separator_space_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE]);
         self.value_separator_space_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER]);
-        for item in self.value.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_AS_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.value;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -32233,17 +32613,22 @@ impl ::sittir_core::options::FillOptions for ExpressionStatementTupleTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_SEPARATOR_SPACE_AFTER]);
-        for item in self.expression.iter_mut() {
-            if let ::sittir_core::SlotValue::Node(seated) = item {
-                match seated {
-                    ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_COMPARISON_OPERATOR_AFTER]); }
-                    ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_NOT_OPERATOR_AFTER]); }
-                    ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_BOOLEAN_OPERATOR_AFTER]); }
-                    ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_LAMBDA_AFTER]); }
-                    ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]); }
-                    ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_NAMED_EXPRESSION_AFTER]); }
-                    ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_AS_PATTERN_AFTER]); }
-                    _ => {}
+        {
+            let seated_items = &mut self.expression;
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    match seated {
+                        ExpressionTransport::ComparisonOperator(t) => { t.comparison_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_COMPARISON_OPERATOR_AFTER]); }
+                        ExpressionTransport::NotOperator(t) => { t.not_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_NOT_OPERATOR_AFTER]); }
+                        ExpressionTransport::BooleanOperator(t) => { t.boolean_operator_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_BOOLEAN_OPERATOR_AFTER]); }
+                        ExpressionTransport::Lambda(t) => { t.lambda_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_LAMBDA_AFTER]); }
+                        ExpressionTransport::ConditionalExpression(t) => { t.conditional_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]); }
+                        ExpressionTransport::NamedExpression(t) => { t.named_expression_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_NAMED_EXPRESSION_AFTER]); }
+                        ExpressionTransport::AsPattern(t) => { t.as_pattern_after.get_or_insert(table.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_EXPRESSION_AS_PATTERN_AFTER]); }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -32443,6 +32828,15 @@ impl ::sittir_core::options::FillOptions for MatchBlockBlockTransport {
         self.alternative_separator_space.get_or_insert(table.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE]);
         self.match_block_block_before.get_or_insert(table.spacing[options::SITE_MATCH_BLOCK_BLOCK_MATCH_BLOCK_BLOCK_BEFORE]);
         self.match_block_block_after.get_or_insert(table.spacing[options::SITE_MATCH_BLOCK_BLOCK_MATCH_BLOCK_BLOCK_AFTER]);
+        if let Some(seated_items) = self.alternative.as_mut() {
+            let seated_last = seated_items.len().saturating_sub(1);
+            for (seated_at, item) in seated_items.iter_mut().enumerate() {
+                if seated_at == seated_last { continue; }
+                if let ::sittir_core::SlotValue::Node(seated) = item {
+                    seated.case_clause_after.get_or_insert(table.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_CASE_CLAUSE_AFTER]);
+                }
+            }
+        }
         self.alternative.fill_options(table);
     }
 }

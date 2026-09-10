@@ -458,8 +458,9 @@ describe('a seated child edge', () => {
 		expect(paths).toContain('(file)/statements:/(item)/after');
 	});
 
-	it('seats none where a slot admits one kind', () => {
-		expect(seat().filter((s) => s.seat !== undefined && s.slot === 'only')).toEqual([]);
+	it('seats the one child of a slot that admits a single kind', () => {
+		const only = seat().filter((s) => s.seat !== undefined && s.slot === 'only');
+		expect(only.map((s) => formatPreferencePath(s.path!))).toEqual(['(solo)/only:/(attr)/after']);
 	});
 
 	it('takes the arm the child edge already resolves to, so minting moves nothing', () => {

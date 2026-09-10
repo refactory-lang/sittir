@@ -3335,8 +3335,9 @@ Seats are grouped by (kind, slot) and their admitted kinds unioned, because
 more than one render rule can reach the same slot. The admitted kinds come
 from `slotElementKinds`, the same derivation the element enum is emitted
 from, so every seated site has a variant to seat it. A child with no
-trailing edge of its own — a leaf — takes none, and a slot resolving to one
-child kind keeps its global edge alone.
+trailing edge of its own — a leaf — takes none, and a slot admitting one
+child kind seats that child like any other, so every sibling gap in the
+grammar has an address.
 
 Each seated site takes the arm its child's global edge already resolves to.
 The parent fills unconditionally, so a seated site always decides the edge

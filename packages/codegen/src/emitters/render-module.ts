@@ -1053,7 +1053,7 @@ function renderTransportSupport(
 		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries, plan)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries)
 	);
 
 	return pruneUnreferencedBridges(
@@ -1931,8 +1931,7 @@ function emitPerSlotChildEnum(
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	nodeMap: NodeMap,
 	literalVariantByKey: ReadonlyMap<string, string>,
-	kindEntries?: readonly KindEnumEntry[],
-	plan: RenderPlan = EMPTY_PLAN
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
@@ -1960,17 +1959,9 @@ function emitPerSlotChildEnum(
 	}
 	lines.push(`}`);
 	lines.push(``);
-	const seats = seatedSitesOf(plan, entry.ownerKind, entry.fieldName);
 	lines.push(
 		...fillOptionsEnumImpl(enumName, [
-			...validKinds.map(({ kind, node }) => {
-				const seat = seats.get(publicKindName(kind));
-				return {
-					variant: rustTypeIdent(node.typeName),
-					payload: true,
-					...(seat === undefined ? {} : { seat: { field: seat.seat!.field, constName: seat.constName } })
-				};
-			}),
+			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
 			...literalVariants.map((variant) => ({ variant, payload: false }))
 		])
 	);
@@ -2415,26 +2406,17 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 
 const OPTIONS_MOD = '::sittir_core::options';
 
-interface FillArm {
-	readonly variant: string;
-	readonly payload: boolean;
-	readonly seat?: { readonly field: string; readonly constName: string };
-}
-
-function fillOptionsEnumImpl(enumName: string, arms: readonly FillArm[]): string[] {
-	const arm = (a: FillArm): string => {
-		if (!a.payload) return `            ${enumName}::${a.variant} => {}`;
-		if (a.seat === undefined) return `            ${enumName}::${a.variant}(t) => t.fill_options(table),`;
-		return (
-			`            ${enumName}::${a.variant}(t) => { t.${rustFieldIdent(a.seat.field)}` +
-			`.get_or_insert(table.spacing[options::${a.seat.constName}]); t.fill_options(table) },`
-		);
-	};
+function fillOptionsEnumImpl(
+	enumName: string,
+	arms: readonly { readonly variant: string; readonly payload: boolean }[]
+): string[] {
 	return [
 		`impl ${OPTIONS_MOD}::FillOptions for ${enumName} {`,
 		`    fn fill_options(&mut self, ${arms.some((a) => a.payload) ? 'table' : '_table'}: &${OPTIONS_MOD}::ResolvedOptions) {`,
 		`        match self {`,
-		...arms.map(arm),
+		...arms.map((a) =>
+			a.payload ? `            ${enumName}::${a.variant}(t) => t.fill_options(table),` : `            ${enumName}::${a.variant} => {}`
+		),
 		`        }`,
 		`    }`,
 		`}`,
@@ -2493,35 +2475,75 @@ function spacingFieldExprs(
 	};
 }
 
-function sharedEnumSeatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
+function seatVariantArms(
+	field: AssembledNonterminal,
+	seats: ReadonlyMap<string, SpacingSite>,
+	nodeMap: NodeMap,
+	ownerTypeName: string
+): { readonly arms: readonly string[]; readonly matched: boolean } | undefined {
+	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
+	if (cls.tag === 'concrete') {
+		const seat = seats.get(publicKindName(cls.kind));
+		if (seat === undefined) return undefined;
+		return {
+			matched: false,
+			arms: [
+				`                    seated.${rustFieldIdent(seat.seat!.field)}.get_or_insert(table.spacing[options::${seat.constName}]);`
+			]
+		};
+	}
+	const arm = (enumName: string, kind: string, node: AssembledNode): string | undefined => {
+		const seat = seats.get(publicKindName(kind));
+		if (seat === undefined) return undefined;
+		return (
+			`                        ${enumName}::${rustTypeIdent(node.typeName)}(t) => { t.${rustFieldIdent(seat.seat!.field)}` +
+			`.get_or_insert(table.spacing[options::${seat.constName}]); }`
+		);
+	};
+	if (cls.tag === 'supertype') {
+		const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+		const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
+		if (!(node instanceof AssembledSupertype)) return undefined;
+		const enumName = `${rustTypeIdent(cls.supertypeName)}Transport`;
+		const arms = collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.flatMap(
+			({ subKind, subNode }) => arm(enumName, subKind, subNode) ?? []
+		);
+		return arms.length === 0 ? undefined : { arms, matched: true };
+	}
+	if (cls.tag !== 'heterogeneous') return undefined;
+	const enumName = perSlotEnumName(ownerTypeName, field.name!);
+	const arms = expandConcreteTransportKinds(kindsOf(field), nodeMap).flatMap(
+		({ kind, node }) => arm(enumName, kind, node) ?? []
+	);
+	return arms.length === 0 ? undefined : { arms, matched: true };
+}
+
+function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
 	const slotModel = renderSlotModelOf(node);
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !isMultiple(field)) continue;
 		const seats = seatedSitesOf(plan, node.kind, field.name);
 		if (seats.size === 0) continue;
-		const cls = classifySlotForEmit(kindsOf(field), nodeMap);
-		if (cls.tag !== 'supertype') continue;
-		const supertypeNode = nodeMap.nodes.get(findSupertypeKindByTypeName(cls.supertypeName, nodeMap) ?? '');
-		if (!(supertypeNode instanceof AssembledSupertype)) continue;
-		const enumName = `${rustTypeIdent(cls.supertypeName)}Transport`;
-		const arms = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap)
-			.subtypes.flatMap(({ subKind, subNode }) => {
-				const seat = seats.get(publicKindName(subKind));
-				if (seat === undefined) return [];
-				return [
-					`                    ${enumName}::${rustTypeIdent(subNode.typeName)}(t) => { t.${rustFieldIdent(seat.seat!.field)}` +
-						`.get_or_insert(table.spacing[options::${seat.constName}]); }`
-				];
-			});
-		if (arms.length === 0) continue;
-		const flatten = `${isRequired(field) ? '' : '.flatten()'}${hasOptionalElements(field) ? '.flatten()' : ''}`;
+		const variants = seatVariantArms(field, seats, nodeMap, node.typeName);
+		if (variants === undefined) continue;
+		const ident = rustFieldIdent(field.name);
+		const open = isRequired(field)
+			? [`        {`, `            let seated_items = &mut self.${ident};`]
+			: [`        if let Some(seated_items) = self.${ident}.as_mut() {`];
+		const element = hasOptionalElements(field)
+			? [`                let Some(item) = item.as_mut() else { continue };`]
+			: [];
 		lines.push(
-			`        for item in self.${rustFieldIdent(field.name)}.iter_mut()${flatten} {`,
-			`            if let ::sittir_core::SlotValue::Node(seated) = item {`,
-			`                match seated {`,
-			...arms,
-			`                    _ => {}`,
+			...open,
+			`            let seated_last = seated_items.len().saturating_sub(1);`,
+			`            for (seated_at, item) in seated_items.iter_mut().enumerate() {`,
+			`                if seated_at == seated_last { continue; }`,
+			...element,
+			`                if let ::sittir_core::SlotValue::Node(seated) = item {`,
+			...(variants.matched ? [`                    match seated {`] : []),
+			...variants.arms,
+			...(variants.matched ? [`                        _ => {}`, `                    }`] : []),
 			`                }`,
 			`            }`,
 			`        }`
@@ -2543,7 +2565,7 @@ function fillOptionsStructImpl(
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(table.spacing[options::${site.constName}]);`);
 		}
-		body.push(...sharedEnumSeatLoops(plan, node, nodeMap));
+		body.push(...seatLoops(plan, node, nodeMap));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
 			body.push(`        self.delimiter.get_or_insert(table.delimiter[options::${delim.constName}]);`);

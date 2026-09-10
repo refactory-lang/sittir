@@ -258,6 +258,7 @@ export function slotElementKinds(slot: AssembledNonterminal, nodeMap: NodeMap): 
 		const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
 		return node instanceof AssembledSupertype ? [...supertypeTransportKinds(node, nodeMap).kinds] : [];
 	}
+	if (cls.tag === 'concrete') return [cls.kind];
 	if (cls.tag !== 'heterogeneous') return [];
 	const out: string[] = [];
 	for (const kind of kinds) for (const concrete of concreteKindsOf(kind, nodeMap)) {
