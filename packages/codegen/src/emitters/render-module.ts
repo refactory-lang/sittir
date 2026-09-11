@@ -75,7 +75,6 @@ import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type Spacin
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import { publicKindName } from '../compiler/model/site-preferences.ts';
-import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	escapeBraces,
@@ -949,7 +948,7 @@ export function emitHashFiles(
 
 type RenderPlan = RenderOptionsPlan;
 
-const EMPTY_PLAN: RenderPlan = { spacingSites: [], sitePaths: [], delimiterSites: [], depthSites: [], indentId: 0, dedentId: 0, labels: [], supertypes: [], whitespaceText: [] };
+const EMPTY_PLAN: RenderPlan = { spacingSites: [], sitePaths: [], delimiterSites: [], depthSites: [], indentId: 0, dedentId: 0, whitespaceText: [] };
 
 function planRenderOptionsFor(
 	nodeMap: NodeMap,
@@ -962,7 +961,6 @@ function planRenderOptionsFor(
 	return planRenderOptions(
 		sites,
 		kindEntries,
-		buildSupertypeMembersMap(nodeMap),
 		whitespaceTextOf(inputs.visibleExternals)
 	);
 }

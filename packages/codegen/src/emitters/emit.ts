@@ -14,7 +14,7 @@ import { FromEmitter } from './from.ts';
 import { WrapEmitter } from './wrap.ts';
 import { emitTypes } from './types.ts';
 import { emitConsts } from './consts.ts';
-import { EMPTY_OPTIONS, emitOptions, renderOptionsModule } from './options.ts';
+import { emitOptions, renderOptionsModule } from './options.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
@@ -175,7 +175,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults, options: optionsBlock, sites: sitePreferences }) : renderOptionsModule(EMPTY_OPTIONS);
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults, options: optionsBlock, sites: sitePreferences }) : renderOptionsModule();
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

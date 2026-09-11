@@ -7,25 +7,24 @@ it('the emitted Options type is pinned', () => {
 	expect(readFileSync(new URL('../src/options.ts', import.meta.url), 'utf8')).toMatchSnapshot();
 });
 
-it('types every tier by kind id and rejects a wrong member at compile time', () => {
+it('types every site by kind id at its address and rejects a wrong member at compile time', () => {
 	const ok: Options = {
-		comma_separator_space_after: TSKindId.Newline,
-		dot_separator_space_after: TSKindId.Tight,
-		empty_separator_space: TSKindId.Newline,
 		argument_list_elements: {
-			element_separator_space_after: TSKindId.Space,
-			element_delimiter: Delimiter.Trailing
+			element: { separator: { ',': { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
 		},
-		block: { statements_separator_space: TSKindId.Newline },
-		statement: { decorator_separator_space: TSKindId.Newline },
+		block: { statements: { separator: TSKindId.Newline } },
+		module: { statements: { separator: TSKindId.Newline } },
+		decorated_definition: { decorator: { separator: TSKindId.Newline, decorator: { after: TSKindId.Newline } } },
 		indent: '    '
 	};
 	const bad: Options = {
-		// @ts-expect-error a comma is not a whitespace kind
-		comma_separator_space_after: TSKindId.Comma,
 		argument_list_elements: {
-			// @ts-expect-error the leading flank is fixed here
-			element_delimiter: Delimiter.Leading
+			element: {
+				// @ts-expect-error a comma is not a whitespace kind
+				separator: { ',': { after: TSKindId.Comma } },
+				// @ts-expect-error the leading flank is fixed here
+				delimiter: Delimiter.Leading
+			}
 		}
 	};
 	expect(ok).toBeDefined();

@@ -8,51 +8,57 @@ it('the emitted Options type is pinned', () => {
 	expect(readFileSync(new URL('../src/options.ts', import.meta.url), 'utf8')).toMatchSnapshot();
 });
 
-it('types every tier by kind id and rejects a wrong member at compile time', () => {
+it('types every site by kind id at its address and rejects a wrong member at compile time', () => {
 	const ok: Options = {
-		comma_separator_space_after: TSKindId.Newline,
-		empty_separator_space: TSKindId.Newline,
+		array: { elements: { separator: { ',': { after: TSKindId.Newline } }, start: TSKindId.Tight, end: TSKindId.Tight } },
 		formal_parameters_elements: {
-			formal_parameter_separator_space_after: TSKindId.Space,
-			formal_parameter_delimiter: Delimiter.Trailing
+			formal_parameter: { separator: { ',': { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
 		},
-		statement: { terminator: TSKindId.AutomaticSemicolon },
-		object_type_content: { content_separator: TSKindId.Semi, content_delimiter: Delimiter.Trailing },
-		enum_body_elements: { content_separator_space_after: TSKindId.Newline, content_delimiter: Delimiter.Trailing },
-		object_type_content_separator_space_after: TSKindId.Newline,
+		object_type_content: {
+			content: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
+		},
+		enum_body_elements: { content: { separator: { ',': { after: TSKindId.Newline } }, delimiter: Delimiter.Trailing } },
 		statements: { terminator: TSKindId.AutomaticSemicolon },
-		string: { content: TSKindId.StringSingle },
+		quotes: { style: TSKindId.StringSingle },
+		class_body: { '{': { after: TSKindId.Indent }, '}': { before: TSKindId.Dedent } },
 		indent: '\t'
 	};
 	const bad: Options = {
 		// @ts-expect-error a semicolon is not a whitespace kind
-		comma_separator_space_after: TSKindId.Semi,
+		array: { elements: { separator: { ',': { after: TSKindId.Semi } } } },
 		formal_parameters_elements: {
 			// @ts-expect-error the leading flank is fixed here
-			formal_parameter_delimiter: Delimiter.Leading
+			formal_parameter: { delimiter: Delimiter.Leading }
 		},
 		// @ts-expect-error a separator is one of its literal kinds
-		object_type_content: { content_separator: TSKindId.Colon }
+		object_type_content: { content: { separator: { kind: TSKindId.Colon } } },
+		// @ts-expect-error a brace has no 'sideways' edge
+		class_body: { '{': { sideways: TSKindId.Space } }
 	};
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();
 });
 
 it('engine options set the spacing of a built list and per-call options override them', () => {
-	const tight = createEngine({ options: { comma_separator_space_after: TSKindId.Tight } });
-	const spaced = createEngine({ options: { comma_separator_space_after: TSKindId.Space } });
+	const tight = createEngine({ options: { array: { elements: { separator: { ',': { after: TSKindId.Tight } } } } } });
+	const spaced = createEngine({ options: { array: { elements: { separator: { ',': { after: TSKindId.Space } } } } } });
 	const list = ir.array({ elements: ['a', 'b'] });
 	expect(tight.render(list).toString()).toBe('[a,b]');
 	expect(spaced.render(list).toString()).toBe('[a, b]');
 	expect(
-		tight.render(list, { options: { array: { elements_separator_space_after: TSKindId.Newline } } }).toString()
+		tight.render(list, { options: { array: { elements: { separator: { ',': { after: TSKindId.Newline } } } } } }).toString()
 	).toBe('[a,\nb]');
 	expect(
-		spaced.render(list, { options: { array: { elements_separator_space_before: TSKindId.Space } } }).toString()
+		spaced.render(list, { options: { array: { elements: { separator: { ',': { before: TSKindId.Space } } } } } }).toString()
 	).toBe('[a , b]');
 });
 
-it('an unknown option key is refused at construction', () => {
-	expect(() => createEngine({ options: { nope: 1 } as never })).toThrow(/nope/);
+it('an unknown key, an address naming no site, and a value a site does not admit are refused at construction', () => {
+	expect(() => createEngine({ options: { nope: 1 } as never })).toThrow(/unknown key nope/);
+	expect(() => createEngine({ options: { array: { elements: { sideways: TSKindId.Space } } } as never })).toThrow(
+		/\(array\)\/elements:\/sideways names no site/
+	);
+	expect(() =>
+		createEngine({ options: { array: { elements: { separator: { ',': { after: TSKindId.Semi } } } } } as never })
+	).toThrow(/does not admit kind id/);
 });
-

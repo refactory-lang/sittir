@@ -14742,17 +14742,6 @@ through it (post-order).
 ride in the erased-helper block for the splice methods.
 
 
-### `packages/codegen/src/emitters/options.ts::OptionsShape`
-
-```text
-/**
- * The generated `Options` type before it is source text: top-level entries
- * (one per preference label), one group per kind that owns a configurable
- * slot, and one group per supertype whose members own one. Every entry is
- * a key and the type text of its value.
- */
-```
-
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
 ```text
@@ -14765,47 +14754,23 @@ ride in the erased-helper block for the splice methods.
  */
 ```
 
-### `packages/codegen/src/emitters/options.ts::deriveOptionsShape`
-
-```text
-/**
- * Groups site preferences into the Options shape, knowing nothing about
- * what a preference is for. Every non-delimiter label is a top-level key,
- * and every site must agree on the label's arms, otherwise the option
- * would mean different things at different sites; defaults may differ per
- * site, since a grammar declares them on the repeat, and live in the render
- * crate's site table. Every site is a site key (siteKey) under its kind's
- * visible name. A supertype's group holds the union, key by key, of what
- * its members declare. Top-level keys — `indent`, labels, kinds,
- * supertypes — share one namespace and a collision fails the build.
- * Everything is sorted so the emitted text is stable.
- */
-```
-
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
-Source text for `options.ts`: a catalog of the grammar's sites and the
-`Options` type mapped over it, plus the type-only import of the enums the
-arms name. `Spacing` is the three whitespace kind ids a separator admits;
-`Whitespace` the five a seam, edge or flank admits when the grammar
-renders indentation (the same three otherwise); `EdgeKind` the kinds whose
-`<kind>_before` / `<kind>_after` keys come from a template literal;
-`SpacingLabel` and `WhitespaceLabel` every other grammar-wide key of each
-type; `KindSpacing` and `KindWhitespace` the site keys under each kind
-beyond its edges; `OtherLabels` and `KindOther` the sites whose arms are
-neither (declared preferences, delimiters), spelled out; `Members`
-each supertype's site-bearing members, from which `SitesOf<Members[S]>`
-derives the supertype's keys as the union of its members' (`Merge` folds
-the members' spelled-out objects into one). Every key the flat interface
-used to list is still a key of `Options`, so the snapshot and the
-compile-time checks pin the same surface. There is no runtime catalog; the
-facts that resolve an options object live in the code that consumes them.
+Source text for `options.ts`: the type-only import of the enums the sites
+name, `Spacing` (the three whitespace kind ids a separator admits),
+`Whitespace` (the five a seam, edge or flank admits when the grammar
+renders indentation, the same three otherwise), the address tables and
+the `AddressedOptions` type mapped over them (`addressLines`), and
+`Options`, which is that mapped type plus `indent`. Every site is reached
+by its address alone, nested as the path is written; there is no flat
+key, no per-kind object and no runtime catalog — the facts that resolve
+an options object live in the render crate's path table.
 
 ### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
 
-What the mapped module needs beyond the shape: the spacing and whitespace
-arm types, so sites are grouped by which of the two their arms are, and
-the supertype member lists, so `Members` can be written.
+What the module is written from: the spacing and whitespace arm types, so
+a leaf whose arms are exactly one of them is written as `Spacing` or
+`Whitespace` rather than spelled out, and the address tables.
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 
@@ -14873,8 +14838,8 @@ delimiter site.
 
 ```text
 /** Everything `options.rs` is written from, in emission order: spacing and
- *  flank sites, the label→allowed-ids table, supertype membership, and the
- *  whitespace kinds' render text. */
+*  delimiter sites, the merged path table over both, the depth walk, and
+ *  the whitespace kinds' render text. */
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
@@ -14892,8 +14857,7 @@ at the end, the same walk the build runs over the declared defaults
  * Numbers the sites densely — kind, then slot, then label — so the constants
  * are stable across regenerations, resolves every arm to its kind id (a
  * missing id is a build error), and folds the delimiter arms into one
- * bitflag union. Labels, supertypes and whitespace text are sorted for the
- * same reason.
+ * bitflag union. Whitespace text is sorted for the same reason.
  */
 ```
 
@@ -14914,10 +14878,10 @@ the kind catalog is in hand, so the render emitter never re-derives it.
  * token seam) coalesces in the writer; the indent and dedent kinds keep
  * their own mark constants. A delimiter site row carries its default
  * bitflag, from the grammar's declared default or none, and `defaults()`
- * fills the delimiter vector from it. The resolver applies a label's
- * top-level value first, supertype entries second and kind entries last,
- * so the more specific tier overwrites; an unknown key or a value a site
- * does not admit is an error naming the key.
+ * fills the delimiter vector from it. The resolver reads `indent` and one
+ * address object per root kind, applying each leaf to the site it names and
+ * everything beneath it; an unknown key, an address naming no site, or a
+ * value a site does not admit is an error naming the key.
  */
 ```
 
@@ -15014,9 +14978,8 @@ literal tokens: the spacing-table row with `role: 'separator'`, if any.
 ### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite.address`
 
 ```text
-// The key the site answers to: under its kind for separator spacing, at the
-// top level (`<kind>_start` / `<kind>_end`, emitted in FLANK_SITES) for an
-// array flank. The transport field of a flank is `<slot>_start` / `_end`.
+// The key the site answers to under its kind, and the tail of the transport
+// field that carries it; an array flank's field is `<slot>_start` / `_end`.
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
@@ -15027,11 +14990,12 @@ so a scoped declaration resolves by binary search rather than a scan. The sort i
 in place, because the depth walk identifies its sites by object and reads their
 indices afterwards.
 
-`SITE_PATHS` is emitted parallel to `SPACING_SITES`, one formatted address per
-site, and is the table a prefix is looked up in.
-
-Delimiter sites keep their own kind-and-slot order: they are addressed by name,
-not by range.
+`SITE_PATHS` holds every site — spacing and delimiter — by its formatted
+address in canonical order, each entry a `SiteRef` naming the row it stands
+for in `SPACING_SITES` or `DELIMITER_SITES`, and is the table a prefix is
+looked up in. Delimiter rows keep kind-and-slot order among themselves so
+their constants are stable; a delimiter is reached by address like any other
+site, its path ending in `delimiter`.
 
 ### `render options: site_range` (emitted into `options.rs`)
 
@@ -15051,10 +15015,10 @@ A kind-keyed nested object applied by address. The nested object and the path
 are the same address in two layouts, so each nested key is matched against every
 spelling a segment has — a bare name, a quoted literal, or a field.
 
-It is all or nothing. A key that resolves to no site, or an object with any leaf
-that does not, leaves the table untouched and reports nothing applied, so the
-flat surface reads the key instead. Applying the half it understood would drop
-the rest in silence.
+It is all or nothing. A key that resolves to no site is an error naming the
+full address it was written at, raised before any leaf is applied, so the
+table is untouched. Applying the half it understood would drop the rest in
+silence.
 
 ### `packages/codegen/src/emitters/options.ts::deriveAddressTables`
 
@@ -15080,9 +15044,8 @@ descends through `AddressBranch` and bottoms out in `AddressLeaf`. It is
 unrolled rather than recursive, one level per depth the grammar has, so the
 checker never has to bound a recursion it cannot see the end of.
 
-It is intersected into `Options` beside the flat surface rather than replacing
-it. An excess-property check against an intersection admits a key known in any
-constituent, so a caller may write either face while both exist.
+It is the whole of `Options` beside `indent`: every site has exactly one
+spelling, its address, and an excess-property check refuses any other key.
 
 ### `packages/codegen/src/emitters/options.ts::deriveAddressTables` — supertype membership
 
@@ -15097,8 +15060,7 @@ bindings that name it: the sites those addresses match give it its type, and its
 path is nested like any other address, so `body/before` is emitted as `body`
 carrying `before`.
 
-Without this a migrated label would vanish. It leaves the flat surface when it
-stops being written at every site, and a table built from sites alone cannot put
-it back — a virtual kind has no site of its own. A consumer would lose the one
+Without this a label would vanish: a table built from sites alone cannot
+put it back — a virtual kind has no site of its own. A consumer would lose the one
 key that moves every address bound to it, which is the only reason the label
 exists.
