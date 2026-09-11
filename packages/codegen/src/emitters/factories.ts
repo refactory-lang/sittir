@@ -424,7 +424,12 @@ function slotStorageFromValueExpr(
 		case 'mixedEnum': {
 			if (!kindEntries) return valueExpr;
 			const elem = fieldElementType(f, nodeMap, kindEntries);
-			const storageType = isMultiple(f) && !storageInfo.collapsesMultiplicity ? `(${elem})[]` : elem;
+			const storageType =
+				isMultiple(f) && !storageInfo.collapsesMultiplicity
+					? isNonEmpty(f)
+						? `NonEmptyArray<${elem}>`
+						: `(${elem})[]`
+					: elem;
 			return `coerceMixedEnumStorage<${storageType}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`;
 		}
 		case 'verbatim':

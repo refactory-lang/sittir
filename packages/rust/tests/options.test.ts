@@ -17,7 +17,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 		parameters: { lparen: { after: TSKindId.Tight } },
 		body: { before: TSKindId.Indent, after: TSKindId.Dedent },
 		block: { lbrace: { after: TSKindId.Indent }, rbrace: { before: TSKindId.Dedent } },
-		abstract_type: { for: { before: TSKindId.Space } },
+		abstract_type: { for_keyword: { before: TSKindId.Space } },
 		token_tree_punctuation: { slash: { after: TSKindId.Tight }, colon_colon: { after: TSKindId.Tight } },
 		indent: '    '
 	};
@@ -33,7 +33,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 		// @ts-expect-error a brace has no 'sideways' edge
 		block: { lbrace: { sideways: TSKindId.Space } },
 		// @ts-expect-error a comma is not a whitespace kind
-		abstract_type: { for: { before: TSKindId.Comma } }
+		abstract_type: { for_keyword: { before: TSKindId.Comma } }
 	};
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();

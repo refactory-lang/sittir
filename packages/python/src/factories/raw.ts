@@ -325,7 +325,7 @@ export function buildPrintStatement(value: T.PrintStatementChevron | T.PrintStat
 }
 
 export function buildChevron(value: T.Expression): T.Chevron.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -334,7 +334,7 @@ export function buildChevron(value: T.Expression): T.Chevron.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildChevron(value)
+					expression: (value: NonNullable<T.Expression>) => buildChevron(value)
 				}
 			},
 			{
@@ -368,7 +368,9 @@ export function buildAssertStatement(...children: T.Expression[]): T.AssertState
 export function buildExpressionStatement(
 	value: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
 ): T.ExpressionStatement.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<
+		T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
+	>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -378,7 +380,9 @@ export function buildExpressionStatement(
 				_content,
 				$with: {
 					content: (
-						value: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
+						value: NonNullable<
+							T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
+						>
 					) => buildExpressionStatement(value)
 				}
 			},
@@ -392,7 +396,7 @@ export function buildExpressionStatement(
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Built {
 	const _name = config.name;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -403,7 +407,8 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 				_value,
 				$with: {
 					name: (value: T.Identifier) => buildNamedExpression({ ...config, name: value }),
-					value: (value: T.Expression) => buildNamedExpression({ ...config, value: value })
+					value: (value: NonNullable<T.NamedExpression.Config>['value']) =>
+						buildNamedExpression({ ...config, value: value })
 				}
 			},
 			{
@@ -416,7 +421,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 }
 
 export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T.ReturnStatement.Built {
-	const _expressions = value;
+	const _expressions = coerceMixedEnumStorage<T.Expression | T.ExpressionList>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -425,7 +430,7 @@ export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T
 				$named: true as const,
 				_expressions,
 				$with: {
-					expressions: (value?: T.Expression | T.ExpressionList) => buildReturnStatement(value)
+					expressions: (value?: NonNullable<T.Expression | T.ExpressionList>) => buildReturnStatement(value)
 				}
 			},
 			{
@@ -437,7 +442,7 @@ export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T
 }
 
 export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.DeleteStatement.Built {
-	const _expressions = value;
+	const _expressions = coerceMixedEnumStorage<T.Expression | T.ExpressionList>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -446,7 +451,7 @@ export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.
 				$named: true as const,
 				_expressions,
 				$with: {
-					expressions: (value: T.Expression | T.ExpressionList) => buildDeleteStatement(value)
+					expressions: (value: NonNullable<T.Expression | T.ExpressionList>) => buildDeleteStatement(value)
 				}
 			},
 			{
@@ -458,8 +463,8 @@ export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.
 }
 
 export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {}): T.RaiseStatement.Built {
-	const _expressions = config.expressions;
-	const _cause = config.cause;
+	const _expressions = coerceMixedEnumStorage<T.Expression | T.ExpressionList>(config.expressions, []);
+	const _cause = coerceMixedEnumStorage<T.Expression>(config.cause, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -469,9 +474,10 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 				_expressions,
 				_cause,
 				$with: {
-					expressions: (value?: T.Expression | T.ExpressionList) =>
+					expressions: (value?: NonNullable<T.RaiseStatement.Config>['expressions']) =>
 						buildRaiseStatement({ ...config, expressions: value }),
-					cause: (value?: T.Expression) => buildRaiseStatement({ ...config, cause: value })
+					cause: (value?: NonNullable<T.RaiseStatement.Config>['cause']) =>
+						buildRaiseStatement({ ...config, cause: value })
 				}
 			},
 			{
@@ -496,7 +502,7 @@ export function buildContinueStatement(): TSKindId.ContinueStatement {
 }
 
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Built {
-	const _condition = config.condition;
+	const _condition = coerceMixedEnumStorage<T.Expression>(config.condition, []);
 	const _consequence = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(
 		config.consequence,
 		[['\n', TSKindId._SuiteEmpty] as const]
@@ -512,7 +518,8 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bu
 				_consequence,
 				_alternative,
 				$with: {
-					condition: (value: T.Expression) => buildIfStatement({ ...config, condition: value }),
+					condition: (value: NonNullable<T.IfStatement.Config>['condition']) =>
+						buildIfStatement({ ...config, condition: value }),
 					consequence: (value: NonNullable<T.IfStatement.Config>['consequence']) =>
 						buildIfStatement({ ...config, consequence: value }),
 					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
@@ -530,7 +537,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bu
 }
 
 export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Built {
-	const _condition = config.condition;
+	const _condition = coerceMixedEnumStorage<T.Expression>(config.condition, []);
 	const _consequence = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(
 		config.consequence,
 		[['\n', TSKindId._SuiteEmpty] as const]
@@ -544,7 +551,8 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Built
 				_condition,
 				_consequence,
 				$with: {
-					condition: (value: T.Expression) => buildElifClause({ ...config, condition: value }),
+					condition: (value: NonNullable<T.ElifClause.Config>['condition']) =>
+						buildElifClause({ ...config, condition: value }),
 					consequence: (value: NonNullable<T.ElifClause.Config>['consequence']) =>
 						buildElifClause({ ...config, consequence: value })
 				}
@@ -665,7 +673,7 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Built
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _left = config.left;
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<T.Expression | T.ExpressionList>(config.right, []);
 	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
@@ -685,7 +693,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 					asyncMarker: (value?: NonNullable<T.ForStatement.Config>['asyncMarker']) =>
 						buildForStatement({ ...config, asyncMarker: value }),
 					left: (value: T.Pattern | T.PatternList) => buildForStatement({ ...config, left: value }),
-					right: (value: T.Expression | T.ExpressionList) => buildForStatement({ ...config, right: value }),
+					right: (value: NonNullable<T.ForStatement.Config>['right']) => buildForStatement({ ...config, right: value }),
 					body: (value: NonNullable<T.ForStatement.Config>['body']) => buildForStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildForStatement({ ...config, alternative: value })
 				}
@@ -703,7 +711,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 }
 
 export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileStatement.Built {
-	const _condition = config.condition;
+	const _condition = coerceMixedEnumStorage<T.Expression>(config.condition, []);
 	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
@@ -718,7 +726,8 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 				_body,
 				_alternative,
 				$with: {
-					condition: (value: T.Expression) => buildWhileStatement({ ...config, condition: value }),
+					condition: (value: NonNullable<T.WhileStatement.Config>['condition']) =>
+						buildWhileStatement({ ...config, condition: value }),
 					body: (value: NonNullable<T.WhileStatement.Config>['body']) =>
 						buildWhileStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildWhileStatement({ ...config, alternative: value })
@@ -881,7 +890,7 @@ export function buildWithClause(value: T.WithClauseBare | T.WithClauseParen): T.
 }
 
 export function buildWithItem(value: T.Expression): T.WithItem.Built {
-	const _value = value;
+	const _value = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -890,7 +899,7 @@ export function buildWithItem(value: T.Expression): T.WithItem.Built {
 				$named: true as const,
 				_value,
 				$with: {
-					value: (value: T.Expression) => buildWithItem(value)
+					value: (value: NonNullable<T.Expression>) => buildWithItem(value)
 				}
 			},
 			{
@@ -1029,7 +1038,7 @@ function _buildLambdaParameters(value: T._Parameters): T.LambdaParameters.Built 
 }
 
 export function buildListSplat(value: T.Expression): T.ListSplat.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1038,7 +1047,7 @@ export function buildListSplat(value: T.Expression): T.ListSplat.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildListSplat(value)
+					expression: (value: NonNullable<T.Expression>) => buildListSplat(value)
 				}
 			},
 			{
@@ -1050,7 +1059,7 @@ export function buildListSplat(value: T.Expression): T.ListSplat.Built {
 }
 
 export function buildDictionarySplat(value: T.Expression): T.DictionarySplat.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1059,7 +1068,7 @@ export function buildDictionarySplat(value: T.Expression): T.DictionarySplat.Bui
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildDictionarySplat(value)
+					expression: (value: NonNullable<T.Expression>) => buildDictionarySplat(value)
 				}
 			},
 			{
@@ -1112,7 +1121,7 @@ export function buildNonlocalStatement(...children: T.Identifier[]): T.NonlocalS
 
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Built {
 	const _code = config.code;
-	const _in_clause = config.inClause ?? [];
+	const _in_clause = coerceMixedEnumStorage<T.Expression[]>(config.inClause ?? [], []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1123,7 +1132,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 				_in_clause,
 				$with: {
 					code: (value: T.String | T.Identifier) => buildExecStatement({ ...config, code: value }),
-					inClauses: (...values: T.Expression[]) => buildExecStatement({ ...config, inClause: values })
+					inClauses: (value?: NonNullable<T.ExecStatement.Config>['inClause']) =>
+						buildExecStatement({ ...config, inClause: value })
 				}
 			},
 			{
@@ -1335,7 +1345,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 }
 
 export function buildDecorator(value: T.Expression): T.Decorator.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1344,7 +1354,7 @@ export function buildDecorator(value: T.Expression): T.Decorator.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildDecorator(value)
+					expression: (value: NonNullable<T.Expression>) => buildDecorator(value)
 				}
 			},
 			{
@@ -1375,7 +1385,7 @@ export function buildBlock(...children: (T.SimpleStatements | T.CompoundStatemen
 }
 
 export function buildExpressionList(config: T.ExpressionList.Config): T.ExpressionList.Built {
-	const _expression = config.expression;
+	const _expression = coerceMixedEnumStorage<T.Expression>(config.expression, []);
 	const _tail = coerceMixedEnumStorage<TSKindId.Comma | T.ExpressionListExpressions>(config.tail, [
 		[',', TSKindId.Comma] as const
 	]);
@@ -1388,7 +1398,8 @@ export function buildExpressionList(config: T.ExpressionList.Config): T.Expressi
 				_expression,
 				_tail,
 				$with: {
-					expression: (value: T.Expression) => buildExpressionList({ ...config, expression: value }),
+					expression: (value: NonNullable<T.ExpressionList.Config>['expression']) =>
+						buildExpressionList({ ...config, expression: value }),
 					tail: (value: NonNullable<T.ExpressionList.Config>['tail']) => buildExpressionList({ ...config, tail: value })
 				}
 			},
@@ -1702,8 +1713,8 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
-	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.Keyword>(config.name, [
-		['_', TSKindId.Keyword] as const
+	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.Underscore>(config.name, [
+		['_', TSKindId.Underscore] as const
 	]);
 	return withMethods(
 		withAccessors(
@@ -1963,7 +1974,7 @@ function _buildListPattern(value?: T.Patterns): T.ListPattern.Built {
 
 export function buildDefaultParameter(config: T.DefaultParameter.Config): T.DefaultParameter.Built {
 	const _name = config.name;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1974,7 +1985,8 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 				_value,
 				$with: {
 					name: (value: T.Identifier | T.TuplePattern) => buildDefaultParameter({ ...config, name: value }),
-					value: (value: T.Expression) => buildDefaultParameter({ ...config, value: value })
+					value: (value: NonNullable<T.DefaultParameter.Config>['value']) =>
+						buildDefaultParameter({ ...config, value: value })
 				}
 			},
 			{
@@ -1989,7 +2001,7 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Config): T.TypedDefaultParameter.Built {
 	const _name = config.name;
 	const _type = config.type;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2002,7 +2014,8 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 				$with: {
 					name: (value: T.Identifier) => buildTypedDefaultParameter({ ...config, name: value }),
 					type: (value: T.Type) => buildTypedDefaultParameter({ ...config, type: value }),
-					value: (value: T.Expression) => buildTypedDefaultParameter({ ...config, value: value })
+					value: (value: NonNullable<T.TypedDefaultParameter.Config>['value']) =>
+						buildTypedDefaultParameter({ ...config, value: value })
 				}
 			},
 			{
@@ -2060,8 +2073,8 @@ export function buildDictionarySplatPattern(
 }
 
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
-	const _expression = config.expression;
-	const _alias = config.alias;
+	const _expression = coerceMixedEnumStorage<T.Expression>(config.expression, []);
+	const _alias = coerceMixedEnumStorage<T.Expression>(config.alias, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2071,8 +2084,9 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 				_expression,
 				_alias,
 				$with: {
-					expression: (value: T.Expression) => buildAsPattern({ ...config, expression: value }),
-					alias: (value: T.Expression) => buildAsPattern({ ...config, alias: value })
+					expression: (value: NonNullable<T.AsPattern.Config>['expression']) =>
+						buildAsPattern({ ...config, expression: value }),
+					alias: (value: NonNullable<T.AsPattern.Config>['alias']) => buildAsPattern({ ...config, alias: value })
 				}
 			},
 			{
@@ -2085,7 +2099,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 }
 
 export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
-	const _argument = value;
+	const _argument = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2094,7 +2108,7 @@ export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
 				$named: true as const,
 				_argument,
 				$with: {
-					argument: (value: T.Expression) => buildNotOperator(value)
+					argument: (value: NonNullable<T.Expression>) => buildNotOperator(value)
 				}
 			},
 			{
@@ -2106,12 +2120,12 @@ export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
 }
 
 export function buildBooleanOperator(config: T.BooleanOperator.Config): T.BooleanOperator.Built {
-	const _left = config.left;
+	const _left = coerceMixedEnumStorage<T.Expression>(config.left, []);
 	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['and', TSKindId.AndKeyword] as const,
 		['or', TSKindId.OrKeyword] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<T.Expression>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2122,10 +2136,12 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 				_operator,
 				_right,
 				$with: {
-					left: (value: T.Expression) => buildBooleanOperator({ ...config, left: value }),
+					left: (value: NonNullable<T.BooleanOperator.Config>['left']) =>
+						buildBooleanOperator({ ...config, left: value }),
 					operator: (value: NonNullable<T.BooleanOperator.Config>['operator']) =>
 						buildBooleanOperator({ ...config, operator: value }),
-					right: (value: T.Expression) => buildBooleanOperator({ ...config, right: value })
+					right: (value: NonNullable<T.BooleanOperator.Config>['right']) =>
+						buildBooleanOperator({ ...config, right: value })
 				}
 			},
 			{
@@ -2139,7 +2155,7 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 }
 
 export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOperator.Built {
-	const _left = config.left;
+	const _left = coerceMixedEnumStorage<T.PrimaryExpression>(config.left, []);
 	const _operator = coerceKindEnumStorage<number>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
@@ -2155,7 +2171,7 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 		['<<', TSKindId.LtLt] as const,
 		['>>', TSKindId.GtGt] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<T.PrimaryExpression>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2166,10 +2182,12 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 				_operator,
 				_right,
 				$with: {
-					left: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, left: value }),
+					left: (value: NonNullable<T.BinaryOperator.Config>['left']) =>
+						buildBinaryOperator({ ...config, left: value }),
 					operator: (value: NonNullable<T.BinaryOperator.Config>['operator']) =>
 						buildBinaryOperator({ ...config, operator: value }),
-					right: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, right: value })
+					right: (value: NonNullable<T.BinaryOperator.Config>['right']) =>
+						buildBinaryOperator({ ...config, right: value })
 				}
 			},
 			{
@@ -2188,7 +2206,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 		['-', TSKindId.Dash] as const,
 		['~', TSKindId.Tilde] as const
 	]);
-	const _argument = config.argument;
+	const _argument = coerceMixedEnumStorage<T.PrimaryExpression>(config.argument, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2200,7 +2218,8 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 				$with: {
 					operator: (value: NonNullable<T.UnaryOperator.Config>['operator']) =>
 						buildUnaryOperator({ ...config, operator: value }),
-					argument: (value: T.PrimaryExpression) => buildUnaryOperator({ ...config, argument: value })
+					argument: (value: NonNullable<T.UnaryOperator.Config>['argument']) =>
+						buildUnaryOperator({ ...config, argument: value })
 				}
 			},
 			{
@@ -2213,7 +2232,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 }
 
 export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.ComparisonOperator.Built {
-	const _left = config.left;
+	const _left = coerceMixedEnumStorage<T.PrimaryExpression>(config.left, []);
 	const _comparators = config.comparators ?? [];
 	return withMethods(
 		withAccessors(
@@ -2224,7 +2243,8 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 				_left,
 				_comparators,
 				$with: {
-					left: (value: T.PrimaryExpression) => buildComparisonOperator({ ...config, left: value }),
+					left: (value: NonNullable<T.ComparisonOperator.Config>['left']) =>
+						buildComparisonOperator({ ...config, left: value }),
 					comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
 						buildComparisonOperator({ ...config, comparators: values })
 				}
@@ -2240,7 +2260,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 
 export function buildLambda(config: T.Lambda.Config): T.Lambda.Built {
 	const _parameters = config.parameters;
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<T.Expression>(config.body, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2251,7 +2271,7 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Built {
 				_body,
 				$with: {
 					parameters: (value?: T.LambdaParameters) => buildLambda({ ...config, parameters: value }),
-					body: (value: T.Expression) => buildLambda({ ...config, body: value })
+					body: (value: NonNullable<T.Lambda.Config>['body']) => buildLambda({ ...config, body: value })
 				}
 			},
 			{
@@ -2267,7 +2287,7 @@ export function buildLambdaWithinForInClause(
 	config: T.LambdaWithinForInClause.Config
 ): T.LambdaWithinForInClause.Built {
 	const _parameters = config.parameters;
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<T.Expression | T.LambdaWithinForInClause>(config.body, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2278,7 +2298,7 @@ export function buildLambdaWithinForInClause(
 				_body,
 				$with: {
 					parameters: (value?: T.LambdaParameters) => buildLambdaWithinForInClause({ ...config, parameters: value }),
-					body: (value: T.Expression | T.LambdaWithinForInClause) =>
+					body: (value: NonNullable<T.LambdaWithinForInClause.Config>['body']) =>
 						buildLambdaWithinForInClause({ ...config, body: value })
 				}
 			},
@@ -2334,7 +2354,9 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 		['^=', TSKindId.CaretEq] as const,
 		['|=', TSKindId.PipeEq] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<
+		T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+	>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2348,9 +2370,8 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 					left: (value: T.Pattern | T.PatternList) => buildAugmentedAssignment({ ...config, left: value }),
 					operator: (value: NonNullable<T.AugmentedAssignment.Config>['operator']) =>
 						buildAugmentedAssignment({ ...config, operator: value }),
-					right: (
-						value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-					) => buildAugmentedAssignment({ ...config, right: value })
+					right: (value: NonNullable<T.AugmentedAssignment.Config>['right']) =>
+						buildAugmentedAssignment({ ...config, right: value })
 				}
 			},
 			{
@@ -2391,7 +2412,7 @@ export function buildPatternList(config: T.PatternList.Config): T.PatternList.Bu
 }
 
 export function buildYield(value?: T.YieldFromClause | T.Expression | T.ExpressionList): T.Yield.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<T.YieldFromClause | T.Expression | T.ExpressionList>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2400,7 +2421,7 @@ export function buildYield(value?: T.YieldFromClause | T.Expression | T.Expressi
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value?: T.YieldFromClause | T.Expression | T.ExpressionList) => buildYield(value)
+					content: (value?: NonNullable<T.YieldFromClause | T.Expression | T.ExpressionList>) => buildYield(value)
 				}
 			},
 			{
@@ -2412,7 +2433,7 @@ export function buildYield(value?: T.YieldFromClause | T.Expression | T.Expressi
 }
 
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
-	const _object = config.object;
+	const _object = coerceMixedEnumStorage<T.PrimaryExpression>(config.object, []);
 	const _attribute = config.attribute;
 	return withMethods(
 		withAccessors(
@@ -2423,7 +2444,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 				_object,
 				_attribute,
 				$with: {
-					object: (value: T.PrimaryExpression) => buildAttribute({ ...config, object: value }),
+					object: (value: NonNullable<T.Attribute.Config>['object']) => buildAttribute({ ...config, object: value }),
 					attribute: (value: T.Identifier) => buildAttribute({ ...config, attribute: value })
 				}
 			},
@@ -2437,7 +2458,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 }
 
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<T.PrimaryExpression>(config.value, []);
 	const _subscripts = config.subscripts;
 	return withMethods(
 		withAccessors(
@@ -2448,7 +2469,7 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
 				_value,
 				_subscripts,
 				$with: {
-					value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }),
+					value: (value: NonNullable<T.Subscript.Config>['value']) => buildSubscript({ ...config, value: value }),
 					subscripts: (value: T.Subscripts) => buildSubscript({ ...config, subscripts: value })
 				}
 			},
@@ -2462,8 +2483,8 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
 }
 
 export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Built {
-	const _start = config.start;
-	const _stop = config.stop;
+	const _start = coerceMixedEnumStorage<T.Expression>(config.start, []);
+	const _stop = coerceMixedEnumStorage<T.Expression>(config.stop, []);
 	const _step = config.step;
 	return withMethods(
 		withAccessors(
@@ -2475,8 +2496,8 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Built 
 				_stop,
 				_step,
 				$with: {
-					start: (value?: T.Expression) => buildSlice({ ...config, start: value }),
-					stop: (value?: T.Expression) => buildSlice({ ...config, stop: value }),
+					start: (value?: NonNullable<T.Slice.Config>['start']) => buildSlice({ ...config, start: value }),
+					stop: (value?: NonNullable<T.Slice.Config>['stop']) => buildSlice({ ...config, stop: value }),
 					step: (value?: T.SliceGroup) => buildSlice({ ...config, step: value })
 				}
 			},
@@ -2495,7 +2516,7 @@ export function buildEllipsis(): TSKindId.Ellipsis {
 }
 
 export function buildCall(config: T.Call.Config): T.Call.Built {
-	const _function = config.function;
+	const _function = coerceMixedEnumStorage<T.PrimaryExpression>(config.function, []);
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
@@ -2506,7 +2527,7 @@ export function buildCall(config: T.Call.Config): T.Call.Built {
 				_function,
 				_arguments,
 				$with: {
-					function: (value: T.PrimaryExpression) => buildCall({ ...config, function: value }),
+					function: (value: NonNullable<T.Call.Config>['function']) => buildCall({ ...config, function: value }),
 					arguments: (value: T.GeneratorExpression | T.ArgumentList) => buildCall({ ...config, arguments: value })
 				}
 			},
@@ -2548,7 +2569,9 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 export function buildType(
 	value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
 ): T.Type.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<
+		T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
+	>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2558,7 +2581,9 @@ export function buildType(
 				_content,
 				$with: {
 					content: (
-						value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
+						value: NonNullable<
+							T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
+						>
 					) => buildType(value)
 				}
 			},
@@ -2703,7 +2728,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Built
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Built {
 	const _name = config.name;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2714,7 +2739,8 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 				_value,
 				$with: {
 					name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
-					value: (value: T.Expression) => buildKeywordArgument({ ...config, value: value })
+					value: (value: NonNullable<T.KeywordArgument.Config>['value']) =>
+						buildKeywordArgument({ ...config, value: value })
 				}
 			},
 			{
@@ -2895,8 +2921,8 @@ function _buildDictionary(value?: T.DictionaryElements): T.Dictionary.Built {
 }
 
 export function buildPair(config: T.Pair.Config): T.Pair.Built {
-	const _key = config.key;
-	const _value = config.value;
+	const _key = coerceMixedEnumStorage<T.Expression>(config.key, []);
+	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2906,8 +2932,8 @@ export function buildPair(config: T.Pair.Config): T.Pair.Built {
 				_key,
 				_value,
 				$with: {
-					key: (value: T.Expression) => buildPair({ ...config, key: value }),
-					value: (value: T.Expression) => buildPair({ ...config, value: value })
+					key: (value: NonNullable<T.Pair.Config>['key']) => buildPair({ ...config, key: value }),
+					value: (value: NonNullable<T.Pair.Config>['value']) => buildPair({ ...config, value: value })
 				}
 			},
 			{
@@ -2920,7 +2946,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Built {
 }
 
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Built {
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<T.Expression>(config.body, []);
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
 		withAccessors(
@@ -2931,7 +2957,8 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 				_body,
 				_comprehension_clauses,
 				$with: {
-					body: (value: T.Expression) => buildListComprehension({ ...config, body: value }),
+					body: (value: NonNullable<T.ListComprehension.Config>['body']) =>
+						buildListComprehension({ ...config, body: value }),
 					comprehensionClauses: (value: T.ComprehensionClauses) =>
 						buildListComprehension({ ...config, comprehensionClauses: value })
 				}
@@ -2974,7 +3001,7 @@ export function buildDictionaryComprehension(
 }
 
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Built {
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<T.Expression>(config.body, []);
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
 		withAccessors(
@@ -2985,7 +3012,8 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 				_body,
 				_comprehension_clauses,
 				$with: {
-					body: (value: T.Expression) => buildSetComprehension({ ...config, body: value }),
+					body: (value: NonNullable<T.SetComprehension.Config>['body']) =>
+						buildSetComprehension({ ...config, body: value }),
 					comprehensionClauses: (value: T.ComprehensionClauses) =>
 						buildSetComprehension({ ...config, comprehensionClauses: value })
 				}
@@ -3000,7 +3028,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 }
 
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Built {
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<T.Expression>(config.body, []);
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
 		withAccessors(
@@ -3011,7 +3039,8 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 				_body,
 				_comprehension_clauses,
 				$with: {
-					body: (value: T.Expression) => buildGeneratorExpression({ ...config, body: value }),
+					body: (value: NonNullable<T.GeneratorExpression.Config>['body']) =>
+						buildGeneratorExpression({ ...config, body: value }),
 					comprehensionClauses: (value: T.ComprehensionClauses) =>
 						buildGeneratorExpression({ ...config, comprehensionClauses: value })
 				}
@@ -3028,7 +3057,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 export function buildParenthesizedExpression(
 	value: T.Expression | T.Yield | T.ListSplat
 ): T.ParenthesizedExpression.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<T.Expression | T.Yield | T.ListSplat>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3037,7 +3066,7 @@ export function buildParenthesizedExpression(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Expression | T.Yield | T.ListSplat) => buildParenthesizedExpression(value)
+					content: (value: NonNullable<T.Expression | T.Yield | T.ListSplat>) => buildParenthesizedExpression(value)
 				}
 			},
 			{
@@ -3106,7 +3135,10 @@ function _buildCollectionElements(
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _left = config.left;
-	const _right = config.right ?? [];
+	const _right = coerceMixedEnumStorage<NonEmptyArray<T.Expression | T.LambdaWithinForInClause>>(
+		config.right ?? [],
+		[]
+	);
 	const _comma = coerceBooleanKeywordStorage(config.comma);
 	return withMethods(
 		withAccessors(
@@ -3122,8 +3154,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bu
 					asyncMarker: (value?: NonNullable<T.ForInClause.Config>['asyncMarker']) =>
 						buildForInClause({ ...config, asyncMarker: value }),
 					left: (value: T.Pattern | T.PatternList) => buildForInClause({ ...config, left: value }),
-					rights: (...values: NonEmptyArray<T.Expression | T.LambdaWithinForInClause>) =>
-						buildForInClause({ ...config, right: values }),
+					rights: (value: NonNullable<T.ForInClause.Config>['right']) => buildForInClause({ ...config, right: value }),
 					comma: (value?: NonNullable<T.ForInClause.Config>['comma']) => buildForInClause({ ...config, comma: value })
 				}
 			},
@@ -3139,7 +3170,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bu
 }
 
 export function buildIfClause(value: T.Expression): T.IfClause.Built {
-	const _condition = value;
+	const _condition = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3148,7 +3179,7 @@ export function buildIfClause(value: T.Expression): T.IfClause.Built {
 				$named: true as const,
 				_condition,
 				$with: {
-					condition: (value: T.Expression) => buildIfClause(value)
+					condition: (value: NonNullable<T.Expression>) => buildIfClause(value)
 				}
 			},
 			{
@@ -3160,9 +3191,9 @@ export function buildIfClause(value: T.Expression): T.IfClause.Built {
 }
 
 export function buildConditionalExpression(config: T.ConditionalExpression.Config): T.ConditionalExpression.Built {
-	const _body = config.body;
-	const _condition = config.condition;
-	const _alternative = config.alternative;
+	const _body = coerceMixedEnumStorage<T.Expression>(config.body, []);
+	const _condition = coerceMixedEnumStorage<T.Expression>(config.condition, []);
+	const _alternative = coerceMixedEnumStorage<T.Expression>(config.alternative, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3173,9 +3204,12 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 				_condition,
 				_alternative,
 				$with: {
-					body: (value: T.Expression) => buildConditionalExpression({ ...config, body: value }),
-					condition: (value: T.Expression) => buildConditionalExpression({ ...config, condition: value }),
-					alternative: (value: T.Expression) => buildConditionalExpression({ ...config, alternative: value })
+					body: (value: NonNullable<T.ConditionalExpression.Config>['body']) =>
+						buildConditionalExpression({ ...config, body: value }),
+					condition: (value: NonNullable<T.ConditionalExpression.Config>['condition']) =>
+						buildConditionalExpression({ ...config, condition: value }),
+					alternative: (value: NonNullable<T.ConditionalExpression.Config>['alternative']) =>
+						buildConditionalExpression({ ...config, alternative: value })
 				}
 			},
 			{
@@ -3263,7 +3297,10 @@ export function buildStringContent(
 }
 
 export function buildInterpolation(config: T.Interpolation.Config): T.Interpolation.Built {
-	const _expression = config.expression;
+	const _expression = coerceMixedEnumStorage<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(
+		config.expression,
+		[]
+	);
 	const _eq_marker = coerceBooleanKeywordStorage(config.eqMarker);
 	const _type_conversion = config.typeConversion;
 	const _format_specifier = config.formatSpecifier;
@@ -3278,7 +3315,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 				_type_conversion,
 				_format_specifier,
 				$with: {
-					expression: (value: T.Expression | T.ExpressionList | T.PatternList | T.Yield) =>
+					expression: (value: NonNullable<T.Interpolation.Config>['expression']) =>
 						buildInterpolation({ ...config, expression: value }),
 					eqMarker: (value?: NonNullable<T.Interpolation.Config>['eqMarker']) =>
 						buildInterpolation({ ...config, eqMarker: value }),
@@ -3403,7 +3440,7 @@ export function buildNone(): TSKindId.None {
 }
 
 export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<T.PrimaryExpression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3412,7 +3449,7 @@ export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.PrimaryExpression) => buildAwait(value)
+					expression: (value: NonNullable<T.PrimaryExpression>) => buildAwait(value)
 				}
 			},
 			{
@@ -4051,7 +4088,7 @@ function _buildDictionaryElements(
 }
 
 export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4060,7 +4097,7 @@ export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value?: T.Expression) => buildSliceGroup(value)
+					expression: (value?: NonNullable<T.Expression>) => buildSliceGroup(value)
 				}
 			},
 			{
@@ -4074,8 +4111,8 @@ export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
 export function buildExceptClauseExceptionAs(
 	config: T.ExceptClauseExceptionAs.Config
 ): T.ExceptClauseExceptionAs.Built {
-	const _value = config.value;
-	const _alias = config.alias;
+	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
+	const _alias = coerceMixedEnumStorage<T.Expression>(config.alias, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4085,8 +4122,10 @@ export function buildExceptClauseExceptionAs(
 				_value,
 				_alias,
 				$with: {
-					value: (value: T.Expression) => buildExceptClauseExceptionAs({ ...config, value: value }),
-					alias: (value?: T.Expression) => buildExceptClauseExceptionAs({ ...config, alias: value })
+					value: (value: NonNullable<T.ExceptClauseExceptionAs.Config>['value']) =>
+						buildExceptClauseExceptionAs({ ...config, value: value }),
+					alias: (value?: NonNullable<T.ExceptClauseExceptionAs.Config>['alias']) =>
+						buildExceptClauseExceptionAs({ ...config, alias: value })
 				}
 			},
 			{
@@ -4509,7 +4548,9 @@ export function buildExceptClauseException(
 export function buildAssignmentEq(
 	value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
 ): T.AssignmentEq.Built {
-	const _right = value;
+	const _right = coerceMixedEnumStorage<
+		T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+	>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4519,7 +4560,9 @@ export function buildAssignmentEq(
 				_right,
 				$with: {
 					right: (
-						value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+						value: NonNullable<
+							T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+						>
 					) => buildAssignmentEq(value)
 				}
 			},
@@ -4571,7 +4614,9 @@ function _buildAssignmentType(value: T.Type): T.AssignmentType.Built {
 
 export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.AssignmentTyped.Built {
 	const _type = config.type;
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<
+		T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+	>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4582,9 +4627,8 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 				_right,
 				$with: {
 					type: (value: T.Type) => buildAssignmentTyped({ ...config, type: value }),
-					right: (
-						value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-					) => buildAssignmentTyped({ ...config, right: value })
+					right: (value: NonNullable<T.AssignmentTyped.Config>['right']) =>
+						buildAssignmentTyped({ ...config, right: value })
 				}
 			},
 			{
@@ -4804,11 +4848,9 @@ export function buildComparisonOperatorComparator(
 		['>', TSKindId.Gt] as const,
 		['<>', TSKindId.LtGt] as const,
 		['in', TSKindId.InKeyword] as const,
-		['not in', TSKindId._NotIn] as const,
-		['is', TSKindId.IsKeyword] as const,
-		['is not', TSKindId._IsNot] as const
+		['is', TSKindId.IsKeyword] as const
 	]);
-	const _primary_expression = config.primaryExpression;
+	const _primary_expression = coerceMixedEnumStorage<T.PrimaryExpression>(config.primaryExpression, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4820,7 +4862,7 @@ export function buildComparisonOperatorComparator(
 				$with: {
 					operators: (value: NonNullable<T.ComparisonOperatorComparator.Config>['operators']) =>
 						buildComparisonOperatorComparator({ ...config, operators: value }),
-					primaryExpression: (value: T.PrimaryExpression) =>
+					primaryExpression: (value: NonNullable<T.ComparisonOperatorComparator.Config>['primaryExpression']) =>
 						buildComparisonOperatorComparator({ ...config, primaryExpression: value })
 				}
 			},
@@ -4834,7 +4876,7 @@ export function buildComparisonOperatorComparator(
 }
 
 export function buildYieldFromClause(value: T.Expression): T.YieldFromClause.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<T.Expression>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4843,7 +4885,7 @@ export function buildYieldFromClause(value: T.Expression): T.YieldFromClause.Bui
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildYieldFromClause(value)
+					expression: (value: NonNullable<T.Expression>) => buildYieldFromClause(value)
 				}
 			},
 			{

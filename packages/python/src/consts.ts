@@ -140,7 +140,6 @@ const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 const LEAF_KINDS = [
 	'__future___keyword',
-	'__keyword',
 	'_augmented_assignment_operator',
 	'_dedent',
 	'_indent',
@@ -202,6 +201,7 @@ const LEAF_KINDS = [
 	'try_keyword',
 	'type_conversion',
 	'type_keyword',
+	'underscore',
 	'while_keyword',
 	'wildcard_import',
 	'with_keyword',
@@ -214,7 +214,6 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
 	'__future___keyword',
-	'__keyword',
 	'_kw_async_marker',
 	'_wildcard_pattern',
 	'and_keyword',
@@ -260,6 +259,7 @@ export const KEYWORDS = [
 	'true',
 	'try_keyword',
 	'type_keyword',
+	'underscore',
 	'while_keyword',
 	'wildcard_import',
 	'with_keyword',
@@ -380,7 +380,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	pipe: 45,
 	lbrace: 46,
 	rbrace: 47,
-	__keyword: 48,
+	underscore: 48,
 	plus: 49,
 	dash: 50,
 	not_keyword: 51,
@@ -701,7 +701,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[45]: 'pipe',
 	[46]: 'lbrace',
 	[47]: 'rbrace',
-	[48]: '__keyword',
+	[48]: 'underscore',
 	[49]: 'plus',
 	[50]: 'dash',
 	[51]: 'not_keyword',
@@ -1022,7 +1022,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'pipe', id: 45, enumName: 'AnonPipe', cName: 'anon_sym_PIPE' },
 	{ name: 'lbrace', id: 46, enumName: 'AnonLbrace', cName: 'anon_sym_LBRACE' },
 	{ name: 'rbrace', id: 47, enumName: 'AnonRbrace', cName: 'anon_sym_RBRACE' },
-	{ name: '__keyword', id: 48, enumName: 'Anon', cName: 'anon_sym__' },
+	{ name: 'underscore', id: 48, enumName: 'Anon', cName: 'anon_sym__' },
 	{ name: 'plus', id: 49, enumName: 'AnonPlus', cName: 'anon_sym_PLUS' },
 	{ name: 'dash', id: 50, enumName: 'AnonDash', cName: 'anon_sym_DASH' },
 	{ name: 'not_keyword', id: 51, enumName: 'AnonNot', cName: 'anon_sym_not' },

@@ -129,4 +129,19 @@ describe('deriveAddressTables', () => {
 			'options: literal "\u00a4" has no kind name'
 		);
 	});
+
+	it('rejects a literal and a same-spelled name segment at the same position', () => {
+		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', symbolName: ',', anon: true }];
+		const literalSite: SitePreference = {
+			...site('block', 'lbrace', 'lbrace_after'),
+			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'literal', text: ',' }, { kind: 'name', name: 'after' }]
+		};
+		const nameSite: SitePreference = {
+			...site('block', 'lbrace', 'lbrace_after'),
+			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'name', name: 'comma' }, { kind: 'name', name: 'after' }]
+		};
+		expect(() => deriveAddressTables([literalSite, nameSite], entries, addressArm, new Map())).toThrow(
+			"options: address 'block/comma' names two segments"
+		);
+	});
 });

@@ -2824,23 +2824,23 @@ export function resolveWherePredicate_left(value: T.WherePredicate.LooseConfig['
 			>(value, _K22, _K23)
 		),
 		[
-			['u8', TSKindId.U8] as const,
-			['i8', TSKindId.I8] as const,
-			['u16', TSKindId.U16] as const,
-			['i16', TSKindId.I16] as const,
-			['u32', TSKindId.U32] as const,
-			['i32', TSKindId.I32] as const,
-			['u64', TSKindId.U64] as const,
-			['i64', TSKindId.I64] as const,
-			['u128', TSKindId.U128] as const,
-			['i128', TSKindId.I128] as const,
-			['isize', TSKindId.Isize] as const,
-			['usize', TSKindId.Usize] as const,
-			['f32', TSKindId.F32] as const,
-			['f64', TSKindId.F64] as const,
-			['bool', TSKindId.Bool] as const,
-			['str', TSKindId.Str] as const,
-			['char', TSKindId.Char] as const
+			['u8', TSKindId.U8Keyword] as const,
+			['i8', TSKindId.I8Keyword] as const,
+			['u16', TSKindId.U16Keyword] as const,
+			['i16', TSKindId.I16Keyword] as const,
+			['u32', TSKindId.U32Keyword] as const,
+			['i32', TSKindId.I32Keyword] as const,
+			['u64', TSKindId.U64Keyword] as const,
+			['i64', TSKindId.I64Keyword] as const,
+			['u128', TSKindId.U128Keyword] as const,
+			['i128', TSKindId.I128Keyword] as const,
+			['isize', TSKindId.IsizeKeyword] as const,
+			['usize', TSKindId.UsizeKeyword] as const,
+			['f32', TSKindId.F32Keyword] as const,
+			['f64', TSKindId.F64Keyword] as const,
+			['bool', TSKindId.BoolKeyword] as const,
+			['str', TSKindId.StrKeyword] as const,
+			['char', TSKindId.CharKeyword] as const
 		]
 	);
 }
@@ -6152,7 +6152,7 @@ export function coerceToParametersElements(
 	...input: readonly (
 		| T.ParametersElements.Loose
 		| LooseValue<
-				T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type,
+				T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -6171,13 +6171,13 @@ export function coerceToParametersElements(
 				})()
 			},
 			...(children as unknown as NonEmptyArray<
-				T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+				T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 			>)
 		);
 	}
 	return F.buildParametersElements(
 		...(input as unknown as NonEmptyArray<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 		>)
 	);
 }
@@ -6664,7 +6664,7 @@ export function resolveClosureExpressionExpr_body(
 ): T.ClosureExpressionExpr['_body'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | '_'>(value, _K15, _K16)),
-		[['_', TSKindId.Keyword] as const]
+		[['_', TSKindId.Underscore] as const]
 	);
 }
 
@@ -6687,7 +6687,7 @@ export function coerceToClosureExpressionExpr(
 							_K16
 						)
 				),
-				[['_', TSKindId.Keyword] as const]
+				[['_', TSKindId.Underscore] as const]
 			)
 		)
 	);
@@ -7774,7 +7774,7 @@ export function resolveAttributedParameter_content(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T.Type>(value, _K17, _K77)
 		),
-		[['_', TSKindId.Keyword] as const]
+		[['_', TSKindId.Underscore] as const]
 	);
 }
 

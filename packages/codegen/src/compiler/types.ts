@@ -59,6 +59,8 @@ export interface KindParserMetadata {
 	readonly cSymbol: string;
 	readonly parserName: string;
 	readonly symbolName?: string;
+	readonly aliasedSymbolName?: string;
+	readonly literalRule?: boolean;
 	readonly anon: boolean;
 	readonly aux: boolean;
 	readonly alias: boolean;

@@ -16,7 +16,9 @@ export interface KindEnumEntry {
 	readonly id: number;
 	readonly parseId?: number;
 	readonly symbolName?: string;
+	readonly alias?: string;
 	readonly anon?: boolean;
+	readonly literalRule?: boolean;
 }
 
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
@@ -47,10 +49,14 @@ export function collectKindEntries(
 			member = `${member}_${row.id}`;
 		}
 		seenMembers.set(member, kind);
+		const literalRule = row.parser?.literalRule || undefined;
 		const symbolName =
-			row.parser?.symbolName !== undefined && row.parser.symbolName !== kind ? row.parser.symbolName : undefined;
+			row.parser?.symbolName !== undefined && (row.parser.symbolName !== kind || literalRule === true)
+				? row.parser.symbolName
+				: undefined;
+		const alias = row.parser?.aliasedSymbolName;
 		const anon = row.parser?.anon ?? false;
-		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, anon: anon || undefined });
+		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, alias, anon: anon || undefined, literalRule });
 	}
 	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
 	return entries;
@@ -121,6 +127,8 @@ interface CatalogRow {
 		readonly cSymbol: string;
 		readonly parserName: string;
 		readonly symbolName?: string;
+		readonly aliasedSymbolName?: string;
+		readonly literalRule?: boolean;
 		readonly anon: boolean;
 		readonly aux: boolean;
 		readonly alias: boolean;

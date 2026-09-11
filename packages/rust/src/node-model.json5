@@ -3786,7 +3786,7 @@
           "_parameter",
           "_self_parameter",
           "_variadic_parameter",
-          "__keyword",
+          "_underscore",
           "_type_identifier",
           "_primitive_type",
           "_abstract_type",
@@ -3979,17 +3979,6 @@
     }
   },
   "nodes": [
-    {
-      "kind": "__keyword",
-      "modelType": "token",
-      "typeName": "Keyword",
-      "irKey": "keyword",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"_\" as const",
-      "word": true,
-      "text": "_"
-    },
     {
       "kind": "_arguments_elements",
       "modelType": "list",
@@ -4565,7 +4554,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "_",
-              "parseKind": "__keyword"
+              "parseKind": "underscore"
             },
             {
               "kind": "node-ref",
@@ -4864,7 +4853,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "_",
-              "parseKind": "__keyword"
+              "parseKind": "underscore"
             }
           ]
         }
@@ -9781,10 +9770,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "bool",
+      "kind": "bool_keyword",
       "modelType": "token",
-      "typeName": "Bool",
-      "irKey": "bool",
+      "typeName": "BoolKeyword",
+      "irKey": "boolKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"bool\" as const",
@@ -10447,10 +10436,10 @@
       "text": "^="
     },
     {
-      "kind": "char",
+      "kind": "char_keyword",
       "modelType": "token",
-      "typeName": "Char",
-      "irKey": "char",
+      "typeName": "CharKeyword",
+      "irKey": "charKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"char\" as const",
@@ -12045,10 +12034,10 @@
       ]
     },
     {
-      "kind": "f32",
+      "kind": "f32_keyword",
       "modelType": "token",
-      "typeName": "F32",
-      "irKey": "f32",
+      "typeName": "F32Keyword",
+      "irKey": "f32Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"f32\" as const",
@@ -12057,10 +12046,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "f64",
+      "kind": "f64_keyword",
       "modelType": "token",
-      "typeName": "F64",
-      "irKey": "f64",
+      "typeName": "F64Keyword",
+      "irKey": "f64Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"f64\" as const",
@@ -13767,10 +13756,10 @@
       ]
     },
     {
-      "kind": "i128",
+      "kind": "i128_keyword",
       "modelType": "token",
-      "typeName": "I128",
-      "irKey": "i128",
+      "typeName": "I128Keyword",
+      "irKey": "i128Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"i128\" as const",
@@ -13779,10 +13768,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "i16",
+      "kind": "i16_keyword",
       "modelType": "token",
-      "typeName": "I16",
-      "irKey": "i16",
+      "typeName": "I16Keyword",
+      "irKey": "i16Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"i16\" as const",
@@ -13791,10 +13780,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "i32",
+      "kind": "i32_keyword",
       "modelType": "token",
-      "typeName": "I32",
-      "irKey": "i32",
+      "typeName": "I32Keyword",
+      "irKey": "i32Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"i32\" as const",
@@ -13803,10 +13792,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "i64",
+      "kind": "i64_keyword",
       "modelType": "token",
-      "typeName": "I64",
-      "irKey": "i64",
+      "typeName": "I64Keyword",
+      "irKey": "i64Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"i64\" as const",
@@ -13815,10 +13804,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "i8",
+      "kind": "i8_keyword",
       "modelType": "token",
-      "typeName": "I8",
-      "irKey": "i8",
+      "typeName": "I8Keyword",
+      "irKey": "i8Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"i8\" as const",
@@ -14243,10 +14232,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "isize",
+      "kind": "isize_keyword",
       "modelType": "token",
-      "typeName": "Isize",
-      "irKey": "isize",
+      "typeName": "IsizeKeyword",
+      "irKey": "isizeKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"isize\" as const",
@@ -17894,10 +17883,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "str",
+      "kind": "str_keyword",
       "modelType": "token",
-      "typeName": "Str",
-      "irKey": "str",
+      "typeName": "StrKeyword",
+      "irKey": "strKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"str\" as const",
@@ -19730,10 +19719,10 @@
       ]
     },
     {
-      "kind": "u128",
+      "kind": "u128_keyword",
       "modelType": "token",
-      "typeName": "U128",
-      "irKey": "u128",
+      "typeName": "U128Keyword",
+      "irKey": "u128Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"u128\" as const",
@@ -19742,10 +19731,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "u16",
+      "kind": "u16_keyword",
       "modelType": "token",
-      "typeName": "U16",
-      "irKey": "u16",
+      "typeName": "U16Keyword",
+      "irKey": "u16Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"u16\" as const",
@@ -19754,10 +19743,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "u32",
+      "kind": "u32_keyword",
       "modelType": "token",
-      "typeName": "U32",
-      "irKey": "u32",
+      "typeName": "U32Keyword",
+      "irKey": "u32Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"u32\" as const",
@@ -19766,10 +19755,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "u64",
+      "kind": "u64_keyword",
       "modelType": "token",
-      "typeName": "U64",
-      "irKey": "u64",
+      "typeName": "U64Keyword",
+      "irKey": "u64Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"u64\" as const",
@@ -19778,10 +19767,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "u8",
+      "kind": "u8_keyword",
       "modelType": "token",
-      "typeName": "U8",
-      "irKey": "u8",
+      "typeName": "U8Keyword",
+      "irKey": "u8Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"u8\" as const",
@@ -19854,6 +19843,18 @@
         "operator",
         "operand"
       ]
+    },
+    {
+      "kind": "underscore",
+      "modelType": "token",
+      "typeName": "Underscore",
+      "irKey": "underscore",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"_\" as const",
+      "word": true,
+      "text": "_",
+      "factoryShape": "text"
     },
     {
       "kind": "union_item",
@@ -20450,10 +20451,10 @@
       ]
     },
     {
-      "kind": "usize",
+      "kind": "usize_keyword",
       "modelType": "token",
-      "typeName": "Usize",
-      "irKey": "usize",
+      "typeName": "UsizeKeyword",
+      "irKey": "usizeKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"usize\" as const",

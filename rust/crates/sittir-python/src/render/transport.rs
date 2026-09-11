@@ -290,7 +290,7 @@ pub enum AnyTransport {
     Comma(CommaTransport),
     Lbrace(LbraceTransport),
     Rbrace(RbraceTransport),
-    Keyword(KeywordTransport),
+    Underscore(UnderscoreTransport),
     Dash(DashTransport),
     Plus(PlusTransport),
     NotKeyword(NotKeywordTransport),
@@ -341,7 +341,7 @@ pub enum AnyTransport {
     Literal7_6e_6f_6e_65,
     Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
     Literal9_73_74_61_72_5f_73_74_61_72,
-    Literal10_5f_5f_6b_65_79_77_6f_72_64,
+    Literal10_75_6e_64_65_72_73_63_6f_72_65,
     Literal11_64_61_73_68,
     Literal12_70_6c_75_73,
     Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64,
@@ -381,9 +381,9 @@ pub enum AnyTransport {
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
     Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
-    Literal50_5f_6e_6f_74_5f_69_6e,
+    Literal50_6e_6f_74_20_69_6e,
     Literal51_69_73_5f_6b_65_79_77_6f_72_64,
-    Literal52_5f_69_73_5f_6e_6f_74,
+    Literal52_69_73_20_6e_6f_74,
 }
 
 impl ::sittir_core::options::FillOptions for AnyTransport {
@@ -613,7 +613,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Comma(t) => t.fill_options(table),
             AnyTransport::Lbrace(t) => t.fill_options(table),
             AnyTransport::Rbrace(t) => t.fill_options(table),
-            AnyTransport::Keyword(t) => t.fill_options(table),
+            AnyTransport::Underscore(t) => t.fill_options(table),
             AnyTransport::Dash(t) => t.fill_options(table),
             AnyTransport::Plus(t) => t.fill_options(table),
             AnyTransport::NotKeyword(t) => t.fill_options(table),
@@ -664,7 +664,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal7_6e_6f_6e_65 => {}
             AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
             AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => {}
-            AnyTransport::Literal10_5f_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal10_75_6e_64_65_72_73_63_6f_72_65 => {}
             AnyTransport::Literal11_64_61_73_68 => {}
             AnyTransport::Literal12_70_6c_75_73 => {}
             AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => {}
@@ -704,9 +704,9 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal47_67_74 => {}
             AnyTransport::Literal48_6c_74_5f_67_74 => {}
             AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
-            AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => {}
+            AnyTransport::Literal50_6e_6f_74_20_69_6e => {}
             AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
-            AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => {}
+            AnyTransport::Literal52_69_73_20_6e_6f_74 => {}
         }
     }
 }
@@ -1614,9 +1614,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 47 => Ok(AnyTransport::Rbrace(
                     RbraceTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: __keyword (__KEYWORD)
-                48 => Ok(AnyTransport::Keyword(
-                    KeywordTransport::from_napi_value(env, napi_val)?
+                // kind: underscore (UNDERSCORE)
+                48 => Ok(AnyTransport::Underscore(
+                    UnderscoreTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dash (DASH)
                 50 => Ok(AnyTransport::Dash(
@@ -1780,10 +1780,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 )),
                 // literal kind: _newline → "\n"
                 317 => Ok(AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65),
-                // literal kind: _not_in → "not in"
-                194 => Ok(AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e),
-                // literal kind: _is_not → "is not"
-                195 => Ok(AnyTransport::Literal52_5f_69_73_5f_6e_6f_74),
+                // literal kind: not in → "not in"
+                194 => Ok(AnyTransport::Literal50_6e_6f_74_20_69_6e),
+                // literal kind: is not → "is not"
+                195 => Ok(AnyTransport::Literal52_69_73_20_6e_6f_74),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in AnyTransport"
                 ))),
@@ -10377,14 +10377,14 @@ impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
 #[derive(Debug, Clone)]
 pub enum SplatPatternNameTransportSlot {
     Identifier(IdentifierTransport),
-    Literal10_5f_5f_6b_65_79_77_6f_72_64,
+    Literal10_75_6e_64_65_72_73_63_6f_72_65,
 }
 
 impl ::sittir_core::options::FillOptions for SplatPatternNameTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             SplatPatternNameTransportSlot::Identifier(t) => t.fill_options(table),
-            SplatPatternNameTransportSlot::Literal10_5f_5f_6b_65_79_77_6f_72_64 => {}
+            SplatPatternNameTransportSlot::Literal10_75_6e_64_65_72_73_63_6f_72_65 => {}
         }
     }
 }
@@ -10398,7 +10398,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    48 => Ok(Self::Literal10_5f_5f_6b_65_79_77_6f_72_64),
+                    48 => Ok(Self::Literal10_75_6e_64_65_72_73_63_6f_72_65),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10431,7 +10431,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in SplatPatternNameTransportSlot")
                 )?;
                 match kind_id {
-                    48 => Ok(Self::Literal10_5f_5f_6b_65_79_77_6f_72_64),
+                    48 => Ok(Self::Literal10_75_6e_64_65_72_73_63_6f_72_65),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10496,7 +10496,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternNameTransportSlot>
 fn splat_pattern_name_transport_slot_to_any(t: SplatPatternNameTransportSlot) -> AnyTransport {
     match t {
         SplatPatternNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SplatPatternNameTransportSlot::Literal10_5f_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal10_5f_5f_6b_65_79_77_6f_72_64,
+        SplatPatternNameTransportSlot::Literal10_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal10_75_6e_64_65_72_73_63_6f_72_65,
     }
 }
 
@@ -10504,7 +10504,7 @@ impl ::sittir_core::render::Render for SplatPatternNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             SplatPatternNameTransportSlot::Identifier(inner) => inner.render(w),
-            SplatPatternNameTransportSlot::Literal10_5f_5f_6b_65_79_77_6f_72_64 => w.text("_"),
+            SplatPatternNameTransportSlot::Literal10_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
         }
     }
 }
@@ -20052,9 +20052,9 @@ pub enum ComparisonOperatorComparatorOperatorsTransportSlot {
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
     Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
-    Literal50_5f_6e_6f_74_5f_69_6e,
+    Literal50_6e_6f_74_20_69_6e,
     Literal51_69_73_5f_6b_65_79_77_6f_72_64,
-    Literal52_5f_69_73_5f_6e_6f_74,
+    Literal52_69_73_20_6e_6f_74,
 }
 
 impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorOperatorsTransportSlot {
@@ -20068,9 +20068,9 @@ impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorOperato
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_6e_6f_74_20_69_6e => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_69_73_20_6e_6f_74 => {}
         }
     }
 }
@@ -20092,9 +20092,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
                     25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
-                    194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
+                    194 => Ok(Self::Literal50_6e_6f_74_20_69_6e),
                     61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
-                    195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
+                    195 => Ok(Self::Literal52_69_73_20_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -20114,9 +20114,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
                     25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
-                    194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
+                    194 => Ok(Self::Literal50_6e_6f_74_20_69_6e),
                     61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
-                    195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
+                    195 => Ok(Self::Literal52_69_73_20_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -20167,9 +20167,9 @@ fn comparison_operator_comparator_operators_transport_slot_to_any(t: ComparisonO
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => AnyTransport::Literal47_67_74,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => AnyTransport::Literal48_6c_74_5f_67_74,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_6e_6f_74_20_69_6e => AnyTransport::Literal50_6e_6f_74_20_69_6e,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => AnyTransport::Literal52_5f_69_73_5f_6e_6f_74,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_69_73_20_6e_6f_74 => AnyTransport::Literal52_69_73_20_6e_6f_74,
     }
 }
 
@@ -20184,9 +20184,9 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTran
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => w.text(">"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => w.text("<>"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_6e_6f_74_20_69_6e => w.text("not in"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_69_73_20_6e_6f_74 => w.text("is not"),
         }
     }
 }
@@ -40348,7 +40348,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RbraceTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct KeywordTransport {
+pub struct UnderscoreTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40358,19 +40358,19 @@ pub struct KeywordTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for KeywordTransport {
+impl ::sittir_core::render::Render for UnderscoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for KeywordTransport {
+impl ::sittir_core::options::FillOptions for UnderscoreTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40399,7 +40399,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40425,7 +40425,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for KeywordTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for UnderscoreTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40435,22 +40435,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for KeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UnderscoreTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+        UnderscoreTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UnderscoreTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        KeywordTransport::to_napi_value(env, *val)
+        UnderscoreTransport::to_napi_value(env, *val)
     }
 }
 
@@ -47413,7 +47413,7 @@ fn render_rbrace(t: &RbraceTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
-fn render_keyword(t: &KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_underscore(t: &UnderscoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47912,7 +47912,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Comma(t) => t.render(w),
             AnyTransport::Lbrace(t) => t.render(w),
             AnyTransport::Rbrace(t) => t.render(w),
-            AnyTransport::Keyword(t) => t.render(w),
+            AnyTransport::Underscore(t) => t.render(w),
             AnyTransport::Dash(t) => t.render(w),
             AnyTransport::Plus(t) => t.render(w),
             AnyTransport::NotKeyword(t) => t.render(w),
@@ -47963,7 +47963,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal7_6e_6f_6e_65 => w.text("None"),
             AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
             AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => w.text("**"),
-            AnyTransport::Literal10_5f_5f_6b_65_79_77_6f_72_64 => w.text("_"),
+            AnyTransport::Literal10_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
             AnyTransport::Literal11_64_61_73_68 => w.text("-"),
             AnyTransport::Literal12_70_6c_75_73 => w.text("+"),
             AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => w.text("and"),
@@ -48003,9 +48003,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal47_67_74 => w.text(">"),
             AnyTransport::Literal48_6c_74_5f_67_74 => w.text("<>"),
             AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
-            AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
+            AnyTransport::Literal50_6e_6f_74_20_69_6e => w.text("not in"),
             AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
-            AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
+            AnyTransport::Literal52_69_73_20_6e_6f_74 => w.text("is not"),
         }
     }
 }

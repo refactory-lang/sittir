@@ -12935,6 +12935,18 @@ candidate list.
 #### body
 
 ```text
+// A `many` slot with a separator fact whose separator the parser
+// field-tagged into the slot (e.g. a field wrapping `commaSep1(...)`,
+// python's `for_in_clause.right`): the field-tagged separator arrives in
+// the slot's own wire array alongside its elements, but the render body
+// re-joins the slot with its own separator, so `dropWireDelimiters` strips
+// it by id before normalization/projection — storage-kind independent,
+// unlike the retired `verbatim`-only `_filterWrapChildrenByKind` gate.
+```
+
+#### body
+
+```text
 // $other reclamation (option B): a kindEnum slot's value is a terminal
 // discriminant (operator / keyword). When that token is anonymous and
 // unfielded, read_node forwards it to `$other`, not `_<kind>` storage, so
@@ -13096,15 +13108,18 @@ candidate list.
 // kinds that fall in the second bucket — verified the hard way.
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::elidedSeparatorIdsExprOf`
+### `packages/codegen/src/emitters/wrap.ts::separatorIdsExprOf`
 
 ```text
 /**
- * Emitted `[<sep kind id>, …]` expression for an elidable separated-list
- * slot (`hasOptionalElements`), or undefined for every other slot. Throws
- * (via `kindDiscriminantExprForLiteral`) when the separator literal has no
- * catalog kind id — the splitter cannot recognize delimiters without one,
- * and silently falling back would collapse holes.
+ * Emitted `[<sep kind id>, …]` expression for any `many` slot carrying a
+ * separator fact. `elided` selects which values count: true restricts to
+ * `hasOptionalElements` positions (feeding `splitElidedWrapSlot`'s
+ * positional split), false takes every separator-bearing value (feeding
+ * `dropWireDelimiters`'s flat strip). Throws (via
+ * `kindDiscriminantExprForLiteral`) when the separator literal has no
+ * catalog kind id — neither consumer can recognize delimiters without one,
+ * and silently falling back would collapse holes or keep the delimiter.
  */
 ```
 
@@ -14949,7 +14964,7 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 
 ```text
 /** The generated struct name for an address's own segment list: each
- *  segment's resolved key (`resolvedKey`, never the field-escaped ident —
+ *  segment's nested key (`nestedKey`, never the field-escaped ident —
  *  Rust's field-keyword escaping is irrelevant to a type name), Pascal-cased
  *  and type-escaped (`rustTypeIdent`), concatenated and suffixed `Options`.
  *  The root's struct is named `Options` directly, bypassing this function

@@ -25,7 +25,7 @@ const kindEntries: readonly GeneratedKindEntry[] = [
 	{ kind: 'identifier', id: 1 },
 	// Named rule `type` and its anon keyword twin — the #129 collision pair.
 	{ kind: 'type', id: 2 },
-	{ kind: 'anon_type', id: 3, symbolName: 'type', anon: true },
+	{ kind: 'type_keyword', id: 3, symbolName: 'type', anon: true },
 	{ kind: 'lt', id: 4, symbolName: '<', anon: true },
 	{ kind: '_simple_statements', id: 5 },
 	{ kind: 'block', id: 6 }
@@ -68,7 +68,7 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 		const [v] = deriveValuesForRule(rule, ctx, 'single');
 		// resolvedKind is the anon token's kind — and the id is the anon id
 		// (3), NOT the named `type` rule's id (2).
-		expect(v).toMatchObject({ resolvedKind: 'anon_type', resolvedKindId: 3, parseKindId: 3 });
+		expect(v).toMatchObject({ resolvedKind: 'type_keyword', resolvedKindId: 3, parseKindId: 3 });
 	});
 
 	it('a STRING with no catalog entry mints an id-less terminal', () => {

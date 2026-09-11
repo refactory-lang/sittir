@@ -15,8 +15,8 @@ import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { classifyValueStorage, fieldTypeComponents, resolveFieldStorageInfo } from '../shared.ts';
 
 const kindEntries = [
-	{ id: 1, kind: 'u8', symbolName: 'anon_sym_u8', anon: false },
-	{ id: 2, kind: 'bool', symbolName: 'anon_sym_bool', anon: false }
+	{ id: 1, kind: 'u8', symbolName: 'u8', anon: true, alias: 'primitive_type' },
+	{ id: 2, kind: 'bool', symbolName: 'bool', anon: true, alias: 'primitive_type' }
 ];
 
 // parameter: seq(field('type', $._type)); _type is a supertype over a pattern and

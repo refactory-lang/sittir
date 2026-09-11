@@ -1186,41 +1186,41 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 		| T.TupleType
 		| T.ArrayType
 		| T.HigherRankedTraitBound
-		| TSKindId.U8
-		| TSKindId.I8
-		| TSKindId.U16
-		| TSKindId.I16
-		| TSKindId.U32
-		| TSKindId.I32
-		| TSKindId.U64
-		| TSKindId.I64
-		| TSKindId.U128
-		| TSKindId.I128
-		| TSKindId.Isize
-		| TSKindId.Usize
-		| TSKindId.F32
-		| TSKindId.F64
-		| TSKindId.Bool
-		| TSKindId.Str
-		| TSKindId.Char
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 	>(config.left, [
-		['u8', TSKindId.U8] as const,
-		['i8', TSKindId.I8] as const,
-		['u16', TSKindId.U16] as const,
-		['i16', TSKindId.I16] as const,
-		['u32', TSKindId.U32] as const,
-		['i32', TSKindId.I32] as const,
-		['u64', TSKindId.U64] as const,
-		['i64', TSKindId.I64] as const,
-		['u128', TSKindId.U128] as const,
-		['i128', TSKindId.I128] as const,
-		['isize', TSKindId.Isize] as const,
-		['usize', TSKindId.Usize] as const,
-		['f32', TSKindId.F32] as const,
-		['f64', TSKindId.F64] as const,
-		['bool', TSKindId.Bool] as const,
-		['str', TSKindId.Str] as const,
-		['char', TSKindId.Char] as const
+		['u8', TSKindId.U8Keyword] as const,
+		['i8', TSKindId.I8Keyword] as const,
+		['u16', TSKindId.U16Keyword] as const,
+		['i16', TSKindId.I16Keyword] as const,
+		['u32', TSKindId.U32Keyword] as const,
+		['i32', TSKindId.I32Keyword] as const,
+		['u64', TSKindId.U64Keyword] as const,
+		['i64', TSKindId.I64Keyword] as const,
+		['u128', TSKindId.U128Keyword] as const,
+		['i128', TSKindId.I128Keyword] as const,
+		['isize', TSKindId.IsizeKeyword] as const,
+		['usize', TSKindId.UsizeKeyword] as const,
+		['f32', TSKindId.F32Keyword] as const,
+		['f64', TSKindId.F64Keyword] as const,
+		['bool', TSKindId.BoolKeyword] as const,
+		['str', TSKindId.StrKeyword] as const,
+		['char', TSKindId.CharKeyword] as const
 	]);
 	const _bounds = config.bounds;
 	return withMethods(
@@ -1815,12 +1815,12 @@ export function buildParameters(value?: T.ParametersElements): ReturnType<typeof
 export function buildParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
@@ -5226,19 +5226,19 @@ function _buildUseClauses(
 
 export function buildParametersElements(
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type)
+		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type)
 	)[]
 ) {
 	const _optsFirst =
@@ -5249,13 +5249,13 @@ export function buildParametersElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 	>;
 	return _buildParametersElements(elements, options);
 }
 function _buildParametersElements(
 	elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ParametersElements.Built {
@@ -5280,7 +5280,7 @@ function _buildParametersElements(
 				$with: {
 					elements: (
 						...vs: NonEmptyArray<
-							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 						>
 					) => buildParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -6064,8 +6064,10 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 	);
 }
 
-export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Keyword): T.ClosureExpressionExpr.Built {
-	const _body = coerceMixedEnumStorage<T.Expression | TSKindId.Keyword>(value, [['_', TSKindId.Keyword] as const]);
+export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Underscore): T.ClosureExpressionExpr.Built {
+	const _body = coerceMixedEnumStorage<T.Expression | TSKindId.Underscore>(value, [
+		['_', TSKindId.Underscore] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6074,7 +6076,7 @@ export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Keywor
 				$named: true as const,
 				_body,
 				$with: {
-					body: (value: NonNullable<T.Expression | TSKindId.Keyword>) => buildClosureExpressionExpr(value)
+					body: (value: NonNullable<T.Expression | TSKindId.Underscore>) => buildClosureExpressionExpr(value)
 				}
 			},
 			{
@@ -7215,8 +7217,8 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 export function buildAttributedParameter(config: T.AttributedParameter.Config): T.AttributedParameter.Built {
 	const _attribute_item = config.attributeItem;
 	const _content = coerceMixedEnumStorage<
-		T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
-	>(config.content, [['_', TSKindId.Keyword] as const]);
+		T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
+	>(config.content, [['_', TSKindId.Underscore] as const]);
 	return withMethods(
 		withAccessors(
 			{

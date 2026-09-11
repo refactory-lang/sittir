@@ -219,25 +219,25 @@ export type LeafStringMap = {
 	[TSKindId.TrueKeyword]: 'true';
 	[TSKindId.FalseKeyword]: 'false';
 	[TSKindId.DefaultKeyword]: 'default';
-	[TSKindId.U8]: 'u8';
-	[TSKindId.I8]: 'i8';
-	[TSKindId.U16]: 'u16';
-	[TSKindId.I16]: 'i16';
-	[TSKindId.U32]: 'u32';
-	[TSKindId.I32]: 'i32';
-	[TSKindId.U64]: 'u64';
-	[TSKindId.I64]: 'i64';
-	[TSKindId.U128]: 'u128';
-	[TSKindId.I128]: 'i128';
-	[TSKindId.Isize]: 'isize';
-	[TSKindId.Usize]: 'usize';
-	[TSKindId.F32]: 'f32';
-	[TSKindId.F64]: 'f64';
-	[TSKindId.Bool]: 'bool';
-	[TSKindId.Str]: 'str';
-	[TSKindId.Char]: 'char';
+	[TSKindId.U8Keyword]: 'u8';
+	[TSKindId.I8Keyword]: 'i8';
+	[TSKindId.U16Keyword]: 'u16';
+	[TSKindId.I16Keyword]: 'i16';
+	[TSKindId.U32Keyword]: 'u32';
+	[TSKindId.I32Keyword]: 'i32';
+	[TSKindId.U64Keyword]: 'u64';
+	[TSKindId.I64Keyword]: 'i64';
+	[TSKindId.U128Keyword]: 'u128';
+	[TSKindId.I128Keyword]: 'i128';
+	[TSKindId.IsizeKeyword]: 'isize';
+	[TSKindId.UsizeKeyword]: 'usize';
+	[TSKindId.F32Keyword]: 'f32';
+	[TSKindId.F64Keyword]: 'f64';
+	[TSKindId.BoolKeyword]: 'bool';
+	[TSKindId.StrKeyword]: 'str';
+	[TSKindId.CharKeyword]: 'char';
 	[TSKindId.MoveKeyword]: 'move';
-	[TSKindId.Keyword]: '_';
+	[TSKindId.Underscore]: '_';
 	[TSKindId.PubKeyword]: 'pub';
 	[TSKindId.RawKeyword]: 'raw';
 };
@@ -270,23 +270,23 @@ export const enum TSKindId {
 	TtKeyword = 25,
 	TyKeyword = 26,
 	VisKeyword = 27,
-	U8 = 28,
-	I8 = 29,
-	U16 = 30,
-	I16 = 31,
-	U32 = 32,
-	I32 = 33,
-	U64 = 34,
-	I64 = 35,
-	U128 = 36,
-	I128 = 37,
-	Isize = 38,
-	Usize = 39,
-	F32 = 40,
-	F64 = 41,
-	Bool = 42,
-	Str = 43,
-	Char = 44,
+	U8Keyword = 28,
+	I8Keyword = 29,
+	U16Keyword = 30,
+	I16Keyword = 31,
+	U32Keyword = 32,
+	I32Keyword = 33,
+	U64Keyword = 34,
+	I64Keyword = 35,
+	U128Keyword = 36,
+	I128Keyword = 37,
+	IsizeKeyword = 38,
+	UsizeKeyword = 39,
+	F32Keyword = 40,
+	F64Keyword = 41,
+	BoolKeyword = 42,
+	StrKeyword = 43,
+	CharKeyword = 44,
 	Pound = 45,
 	Lbrack = 46,
 	Rbrack = 47,
@@ -381,7 +381,7 @@ export const enum TSKindId {
 	MoveKeyword = 136,
 	Comma = 137,
 	DashGt = 138,
-	Keyword = 139,
+	Underscore = 139,
 	DotDotEq = 140,
 	PubKeyword = 141,
 	StringLiteralOpen = 142,
@@ -722,23 +722,23 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[25, 'tt_keyword'],
 	[26, 'ty_keyword'],
 	[27, 'vis_keyword'],
-	[28, 'u8'],
-	[29, 'i8'],
-	[30, 'u16'],
-	[31, 'i16'],
-	[32, 'u32'],
-	[33, 'i32'],
-	[34, 'u64'],
-	[35, 'i64'],
-	[36, 'u128'],
-	[37, 'i128'],
-	[38, 'isize'],
-	[39, 'usize'],
-	[40, 'f32'],
-	[41, 'f64'],
-	[42, 'bool'],
-	[43, 'str'],
-	[44, 'char'],
+	[28, 'u8_keyword'],
+	[29, 'i8_keyword'],
+	[30, 'u16_keyword'],
+	[31, 'i16_keyword'],
+	[32, 'u32_keyword'],
+	[33, 'i32_keyword'],
+	[34, 'u64_keyword'],
+	[35, 'i64_keyword'],
+	[36, 'u128_keyword'],
+	[37, 'i128_keyword'],
+	[38, 'isize_keyword'],
+	[39, 'usize_keyword'],
+	[40, 'f32_keyword'],
+	[41, 'f64_keyword'],
+	[42, 'bool_keyword'],
+	[43, 'str_keyword'],
+	[44, 'char_keyword'],
 	[45, 'pound'],
 	[46, 'lbrack'],
 	[47, 'rbrack'],
@@ -833,7 +833,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[136, 'move_keyword'],
 	[137, 'comma'],
 	[138, 'dash_gt'],
-	[139, '__keyword'],
+	[139, 'underscore'],
 	[140, 'dot_dot_eq'],
 	[141, 'pub_keyword'],
 	[142, '_string_literal_open'],
@@ -1176,23 +1176,23 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[25, 'tt_keyword'],
 	[26, 'ty_keyword'],
 	[27, 'vis_keyword'],
-	[28, 'u8'],
-	[29, 'i8'],
-	[30, 'u16'],
-	[31, 'i16'],
-	[32, 'u32'],
-	[33, 'i32'],
-	[34, 'u64'],
-	[35, 'i64'],
-	[36, 'u128'],
-	[37, 'i128'],
-	[38, 'isize'],
-	[39, 'usize'],
-	[40, 'f32'],
-	[41, 'f64'],
-	[42, 'bool'],
-	[43, 'str'],
-	[44, 'char'],
+	[28, 'u8_keyword'],
+	[29, 'i8_keyword'],
+	[30, 'u16_keyword'],
+	[31, 'i16_keyword'],
+	[32, 'u32_keyword'],
+	[33, 'i32_keyword'],
+	[34, 'u64_keyword'],
+	[35, 'i64_keyword'],
+	[36, 'u128_keyword'],
+	[37, 'i128_keyword'],
+	[38, 'isize_keyword'],
+	[39, 'usize_keyword'],
+	[40, 'f32_keyword'],
+	[41, 'f64_keyword'],
+	[42, 'bool_keyword'],
+	[43, 'str_keyword'],
+	[44, 'char_keyword'],
 	[45, 'pound'],
 	[46, 'lbrack'],
 	[47, 'rbrack'],
@@ -1224,7 +1224,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[73, 'lt2'],
 	[74, 'amp'],
 	[75, 'dyn_keyword'],
-	[76, 'mutable_specifier'],
+	[76, 'mut'],
 	[77, 'dash'],
 	[78, 'amp_amp'],
 	[79, 'pipe_pipe'],
@@ -1287,7 +1287,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[136, 'move_keyword'],
 	[137, 'comma'],
 	[138, 'dash_gt'],
-	[139, '__keyword'],
+	[139, 'underscore'],
 	[140, 'dot_dot_eq'],
 	[141, 'pub_keyword'],
 	[142, 'string_open'],
@@ -1313,7 +1313,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[162, '_dedent'],
 	[163, 'source_file'],
 	[164, '_statement'],
-	[165, 'empty_statement'],
+	[165, ';'],
 	[166, 'expression_statement'],
 	[167, 'macro_definition'],
 	[168, 'macro_rule'],
@@ -1389,7 +1389,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[238, 'type_binding'],
 	[239, 'reference_type'],
 	[240, 'pointer_type'],
-	[241, 'never_type'],
+	[241, '!'],
 	[242, 'abstract_type'],
 	[243, 'dynamic_type'],
 	[244, '_expression_except_range'],
@@ -1457,7 +1457,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[305, 'tuple_struct_pattern'],
 	[306, 'struct_pattern'],
 	[307, 'field_pattern'],
-	[308, 'remaining_field_pattern'],
+	[308, '..'],
 	[309, 'mut_pattern'],
 	[310, 'range_pattern'],
 	[311, 'ref_pattern'],
@@ -1474,11 +1474,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[322, 'inner_doc_comment_marker'],
 	[323, 'outer_doc_comment_marker'],
 	[324, 'block_comment'],
-	[325, '_kw_ref_marker'],
-	[326, '_kw_unsafe_marker'],
-	[327, '_kw_static_marker'],
-	[328, '_kw_async_marker'],
-	[329, '_kw_move_marker'],
+	[325, 'ref'],
+	[326, 'unsafe'],
+	[327, 'static'],
+	[328, 'async'],
+	[329, 'move'],
 	[330, 'macro_rules'],
 	[331, 'enum_variant_list_elements'],
 	[332, 'field_declaration_list_elements'],
@@ -1496,22 +1496,22 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[344, 'patterns'],
 	[345, 'struct_pattern_elements'],
 	[346, 'visibility_modifier_group'],
-	[347, '_kw_async'],
-	[348, '_kw_default'],
-	[349, '_kw_const'],
-	[350, '_kw_unsafe'],
+	[347, 'async'],
+	[348, 'default'],
+	[349, 'const'],
+	[350, 'unsafe'],
 	[351, 'tuple_type_elements'],
 	[352, 'tuple_expression_elements'],
 	[353, 'token_tree_punctuation'],
 	[354, '_token_keywords'],
 	[355, '_use_wildcard_clause'],
-	[356, 'wildcard_pattern'],
-	[357, 'range_expression_bare'],
+	[356, '_'],
+	[357, '..'],
 	[358, 'reference_expression_raw_const'],
 	[359, 'reference_expression_raw_mut'],
-	[360, '_impl_item_unsafe_marker'],
+	[360, 'unsafe'],
 	[361, 'impl_item_body'],
-	[362, 'impl_item_semi'],
+	[362, ';'],
 	[363, 'impl_item_positive_clause'],
 	[364, 'impl_item_negative_clause'],
 	[365, 'array_expression_semi'],
@@ -1523,15 +1523,15 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[371, 'visibility_modifier_pub_in_path'],
 	[372, 'function_type_trait_form'],
 	[373, 'function_type_fn_form'],
-	[374, 'mod_item_external'],
+	[374, ';'],
 	[375, 'or_pattern_binary'],
 	[376, 'or_pattern_prefix'],
-	[377, 'pointer_type_const'],
+	[377, 'const'],
 	[378, 'range_expression_binary'],
 	[379, 'range_expression_postfix'],
 	[380, 'range_expression_prefix'],
 	[381, 'expression_statement_with_semi'],
-	[382, 'foreign_mod_item_semi'],
+	[382, ';'],
 	[383, 'match_arm_with_comma'],
 	[384, 'line_comment_regular_dslash'],
 	[385, 'line_comment_doc_outer'],
@@ -1553,11 +1553,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[401, 'macro_definition_brace'],
 	[402, 'range_pattern_prefix'],
 	[403, 'range_pattern_with_left_with_right'],
-	[404, 'range_pattern_with_left_bare'],
+	[404, '..'],
 	[405, 'range_pattern_with_left'],
 	[406, 'struct_item_brace'],
 	[407, 'struct_item_tuple'],
-	[408, 'struct_item_unit'],
+	[408, ';'],
 	[409, 'attributed_field_declaration'],
 	[410, 'attributed_enum_variant'],
 	[411, 'attributed_parameter'],
@@ -1660,40 +1660,40 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TyKeyword;
 		case 'vis_keyword':
 			return TSKindId.VisKeyword;
-		case 'u8':
-			return TSKindId.U8;
-		case 'i8':
-			return TSKindId.I8;
-		case 'u16':
-			return TSKindId.U16;
-		case 'i16':
-			return TSKindId.I16;
-		case 'u32':
-			return TSKindId.U32;
-		case 'i32':
-			return TSKindId.I32;
-		case 'u64':
-			return TSKindId.U64;
-		case 'i64':
-			return TSKindId.I64;
-		case 'u128':
-			return TSKindId.U128;
-		case 'i128':
-			return TSKindId.I128;
-		case 'isize':
-			return TSKindId.Isize;
-		case 'usize':
-			return TSKindId.Usize;
-		case 'f32':
-			return TSKindId.F32;
-		case 'f64':
-			return TSKindId.F64;
-		case 'bool':
-			return TSKindId.Bool;
-		case 'str':
-			return TSKindId.Str;
-		case 'char':
-			return TSKindId.Char;
+		case 'u8_keyword':
+			return TSKindId.U8Keyword;
+		case 'i8_keyword':
+			return TSKindId.I8Keyword;
+		case 'u16_keyword':
+			return TSKindId.U16Keyword;
+		case 'i16_keyword':
+			return TSKindId.I16Keyword;
+		case 'u32_keyword':
+			return TSKindId.U32Keyword;
+		case 'i32_keyword':
+			return TSKindId.I32Keyword;
+		case 'u64_keyword':
+			return TSKindId.U64Keyword;
+		case 'i64_keyword':
+			return TSKindId.I64Keyword;
+		case 'u128_keyword':
+			return TSKindId.U128Keyword;
+		case 'i128_keyword':
+			return TSKindId.I128Keyword;
+		case 'isize_keyword':
+			return TSKindId.IsizeKeyword;
+		case 'usize_keyword':
+			return TSKindId.UsizeKeyword;
+		case 'f32_keyword':
+			return TSKindId.F32Keyword;
+		case 'f64_keyword':
+			return TSKindId.F64Keyword;
+		case 'bool_keyword':
+			return TSKindId.BoolKeyword;
+		case 'str_keyword':
+			return TSKindId.StrKeyword;
+		case 'char_keyword':
+			return TSKindId.CharKeyword;
 		case 'pound':
 			return TSKindId.Pound;
 		case 'lbrack':
@@ -1882,8 +1882,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Comma;
 		case 'dash_gt':
 			return TSKindId.DashGt;
-		case '__keyword':
-			return TSKindId.Keyword;
+		case 'underscore':
+			return TSKindId.Underscore;
 		case 'dot_dot_eq':
 			return TSKindId.DotDotEq;
 		case 'pub_keyword':
@@ -2551,7 +2551,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'vis':
 			return TSKindId.VisKeyword;
 		case 'primitive_type':
-			return TSKindId.U8;
+			return TSKindId.U8Keyword;
 		case '#':
 			return TSKindId.Pound;
 		case '[':
@@ -2612,6 +2612,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Amp;
 		case 'dyn':
 			return TSKindId.DynKeyword;
+		case 'mut':
+			return TSKindId.MutableSpecifier;
 		case '-':
 			return TSKindId.Dash;
 		case '&&':
@@ -2717,7 +2719,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '->':
 			return TSKindId.DashGt;
 		case '_':
-			return TSKindId.Keyword;
+			return TSKindId.Underscore;
 		case '..=':
 			return TSKindId.DotDotEq;
 		case 'pub':
@@ -2782,18 +2784,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TupleExpressionElements;
 		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
-		case 'wildcard_pattern':
-			return TSKindId.WildcardPattern;
-		case 'range_expression_bare':
-			return TSKindId.RangeExpressionBare;
 		case 'reference_expression_raw_const':
 			return TSKindId.ReferenceExpressionRawConst;
 		case 'reference_expression_raw_mut':
 			return TSKindId.ReferenceExpressionRawMut;
 		case 'impl_item_body':
 			return TSKindId.ImplItemBody;
-		case 'impl_item_semi':
-			return TSKindId.ImplItemSemi;
 		case 'impl_item_positive_clause':
 			return TSKindId.ImplItemPositiveClause;
 		case 'impl_item_negative_clause':
@@ -2816,14 +2812,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FunctionTypeTraitForm;
 		case 'function_type_fn_form':
 			return TSKindId.FunctionTypeFnForm;
-		case 'mod_item_external':
-			return TSKindId.ModItemExternal;
 		case 'or_pattern_binary':
 			return TSKindId.OrPatternBinary;
 		case 'or_pattern_prefix':
 			return TSKindId.OrPatternPrefix;
-		case 'pointer_type_const':
-			return TSKindId.PointerTypeConst;
 		case 'range_expression_binary':
 			return TSKindId.RangeExpressionBinary;
 		case 'range_expression_postfix':
@@ -2832,8 +2824,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RangeExpressionPrefix;
 		case 'expression_statement_with_semi':
 			return TSKindId.ExpressionStatementWithSemi;
-		case 'foreign_mod_item_semi':
-			return TSKindId.ForeignModItemSemi;
 		case 'match_arm_with_comma':
 			return TSKindId.MatchArmWithComma;
 		case 'line_comment_regular_dslash':
@@ -2876,16 +2866,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RangePatternPrefix;
 		case 'range_pattern_with_left_with_right':
 			return TSKindId.RangePatternWithLeftWithRight;
-		case 'range_pattern_with_left_bare':
-			return TSKindId.RangePatternWithLeftBare;
 		case 'range_pattern_with_left':
 			return TSKindId.RangePatternWithLeft;
 		case 'struct_item_brace':
 			return TSKindId.StructItemBrace;
 		case 'struct_item_tuple':
 			return TSKindId.StructItemTuple;
-		case 'struct_item_unit':
-			return TSKindId.StructItemUnit;
 		case 'attributed_field_declaration':
 			return TSKindId.AttributedFieldDeclaration;
 		case 'attributed_enum_variant':
@@ -3429,6 +3415,7 @@ export interface TokenRepetitionPattern {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -3525,26 +3512,27 @@ export interface TokenRepetitionPattern {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -3576,7 +3564,7 @@ export interface TokenRepetitionPattern {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -3668,6 +3656,7 @@ export interface TokenRepetition {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -3764,26 +3753,27 @@ export interface TokenRepetition {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -3815,7 +3805,7 @@ export interface TokenRepetition {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -4065,23 +4055,23 @@ export interface FieldDeclaration {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -4143,23 +4133,23 @@ export interface ConstItem {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 		readonly value?:
@@ -4207,23 +4197,23 @@ export interface StaticItem {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 		readonly value?:
@@ -4273,23 +4263,23 @@ export interface TypeItem {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -4339,23 +4329,23 @@ export interface FunctionItem {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -4407,23 +4397,23 @@ export interface FunctionSignatureItem {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -4483,23 +4473,23 @@ export interface WherePredicate {
 		| TupleType
 		| ArrayType
 		| HigherRankedTraitBound
-		| TSKindId.U8
-		| TSKindId.I8
-		| TSKindId.U16
-		| TSKindId.I16
-		| TSKindId.U32
-		| TSKindId.I32
-		| TSKindId.U64
-		| TSKindId.I64
-		| TSKindId.U128
-		| TSKindId.I128
-		| TSKindId.Isize
-		| TSKindId.Usize
-		| TSKindId.F32
-		| TSKindId.F64
-		| TSKindId.Bool
-		| TSKindId.Str
-		| TSKindId.Char;
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword;
 	readonly _bounds: TraitBounds;
 	readonly __inputHints__?: {
 		readonly left:
@@ -4521,23 +4511,23 @@ export interface WherePredicate {
 					| 'bool'
 					| 'str'
 					| 'char',
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Lifetime
 			| Identifier
@@ -4562,23 +4552,23 @@ export interface WherePredicate {
 		| TupleType
 		| ArrayType
 		| HigherRankedTraitBound
-		| TSKindId.U8
-		| TSKindId.I8
-		| TSKindId.U16
-		| TSKindId.I16
-		| TSKindId.U32
-		| TSKindId.I32
-		| TSKindId.U64
-		| TSKindId.I64
-		| TSKindId.U128
-		| TSKindId.I128
-		| TSKindId.Isize
-		| TSKindId.Usize
-		| TSKindId.F32
-		| TSKindId.F64
-		| TSKindId.Bool
-		| TSKindId.Str
-		| TSKindId.Char;
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword;
 	bounds(): TraitBounds;
 }
 
@@ -4613,23 +4603,23 @@ export interface ImplItem {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 		readonly content: KindEnum<';', TSKindId.ImplItemSemi | TSKindId.Semi> | ImplItemBody;
@@ -4718,23 +4708,23 @@ export interface TraitBounds {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type
 			| Lifetime
@@ -4770,23 +4760,23 @@ export interface HigherRankedTraitBound {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -4822,23 +4812,23 @@ export interface RemovedTraitBound {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -4881,23 +4871,23 @@ export interface ConstParameter {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 		readonly value?:
@@ -4939,23 +4929,23 @@ export interface TypeParameter {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -4990,7 +4980,7 @@ export interface LetDeclaration {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 		readonly type?:
@@ -5014,23 +5004,23 @@ export interface LetDeclaration {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 		readonly value?:
@@ -5201,7 +5191,7 @@ export interface VariadicParameter {
 		readonly pattern?:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -5222,7 +5212,7 @@ export interface Parameter {
 		readonly name:
 			| KindEnum<
 					'true' | 'false' | '..' | '_' | 'self',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword | TSKindId.Self
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore | TSKindId.Self
 			  >
 			| Pattern;
 		readonly type:
@@ -5246,23 +5236,23 @@ export interface Parameter {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -5314,23 +5304,23 @@ export interface BracketedType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type
 			| QualifiedType;
@@ -5364,23 +5354,23 @@ export interface QualifiedType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 		readonly alias:
@@ -5404,23 +5394,23 @@ export interface QualifiedType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -5460,23 +5450,23 @@ export interface ArrayType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 		readonly length?:
@@ -5524,23 +5514,23 @@ export interface FunctionType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -5622,23 +5612,23 @@ export interface BoundedType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Lifetime
 			| Type
@@ -5664,23 +5654,23 @@ export interface BoundedType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Lifetime
 			| Type
@@ -5735,23 +5725,23 @@ export interface TypeBinding {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -5791,23 +5781,23 @@ export interface ReferenceType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -5849,23 +5839,23 @@ export interface PointerType {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -6190,23 +6180,23 @@ export interface TypeCastExpression {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -6488,7 +6478,7 @@ export interface LetCondition {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 		readonly value:
@@ -6607,7 +6597,7 @@ export interface MatchPattern {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 		readonly condition?:
@@ -6655,7 +6645,7 @@ export interface ForExpression {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 		readonly value:
@@ -6706,7 +6696,7 @@ export interface ClosureParameters {
 		readonly parameters?: readonly (
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern
 			| Parameter
@@ -6912,7 +6902,7 @@ export interface MutPattern {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -6932,7 +6922,7 @@ export interface RefPattern {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -6947,7 +6937,7 @@ export interface CapturedPattern {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -6964,7 +6954,7 @@ export interface ReferencePattern {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -7100,7 +7090,7 @@ export interface ParametersElements {
 	readonly _element: NonEmptyArray<AttributedParameter>;
 	readonly __inputHints__?: {
 		readonly element: NonEmptyArray<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 		>;
 	};
 	elements(): NonEmptyArray<AttributedParameter>;
@@ -7279,23 +7269,23 @@ export interface ClosureExpressionBlock {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -7305,16 +7295,16 @@ export interface ClosureExpressionBlock {
 
 export interface ClosureExpressionExpr {
 	readonly $type: TSKindId.ClosureExpressionExpr;
-	readonly _body: Expression | TSKindId.Keyword;
+	readonly _body: Expression | TSKindId.Underscore;
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<
 					'true' | 'false' | 'self' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Underscore
 			  >
 			| Expression;
 	};
-	body(): Expression | TSKindId.Keyword;
+	body(): Expression | TSKindId.Underscore;
 }
 
 export interface VisibilityModifierPub {
@@ -7367,13 +7357,13 @@ export interface OrPatternBinary {
 		readonly left:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -7388,7 +7378,7 @@ export interface OrPatternPrefix {
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -7496,6 +7486,7 @@ export interface TokenTreePatternParen {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -7592,26 +7583,27 @@ export interface TokenTreePatternParen {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -7643,7 +7635,7 @@ export interface TokenTreePatternParen {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -7717,6 +7709,7 @@ export interface TokenTreePatternBracket {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -7813,26 +7806,27 @@ export interface TokenTreePatternBracket {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -7864,7 +7858,7 @@ export interface TokenTreePatternBracket {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -7938,6 +7932,7 @@ export interface TokenTreePatternBrace {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -8034,26 +8029,27 @@ export interface TokenTreePatternBrace {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -8085,7 +8081,7 @@ export interface TokenTreePatternBrace {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8153,6 +8149,7 @@ export interface TokenTreeParen {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -8249,26 +8246,27 @@ export interface TokenTreeParen {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -8300,7 +8298,7 @@ export interface TokenTreeParen {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8361,6 +8359,7 @@ export interface TokenTreeBracket {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -8457,26 +8456,27 @@ export interface TokenTreeBracket {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -8508,7 +8508,7 @@ export interface TokenTreeBracket {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8569,6 +8569,7 @@ export interface TokenTreeBrace {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -8665,26 +8666,27 @@ export interface TokenTreeBrace {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -8716,7 +8718,7 @@ export interface TokenTreeBrace {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8777,6 +8779,7 @@ export interface DelimTokenTreeParen {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -8873,26 +8876,27 @@ export interface DelimTokenTreeParen {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -8924,7 +8928,7 @@ export interface DelimTokenTreeParen {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8983,6 +8987,7 @@ export interface DelimTokenTreeBracket {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -9079,26 +9084,27 @@ export interface DelimTokenTreeBracket {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -9130,7 +9136,7 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -9189,6 +9195,7 @@ export interface DelimTokenTreeBrace {
 			| KindEnum<
 					| 'true'
 					| 'false'
+					| 'mut'
 					| 'self'
 					| 'super'
 					| 'crate'
@@ -9285,26 +9292,27 @@ export interface DelimTokenTreeBrace {
 					| 'while',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
+					| TSKindId.MutableSpecifier
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.Plus
 					| TSKindId.Dash
 					| TSKindId.Star
@@ -9336,7 +9344,7 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -9395,7 +9403,7 @@ export interface FieldPatternNamed {
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
 			  >
 			| Pattern;
 	};
@@ -9577,7 +9585,7 @@ export interface AttributedEnumVariant {
 export interface AttributedParameter {
 	readonly $type: TSKindId.AttributedParameter;
 	readonly _attribute_item?: AttributeItem;
-	readonly _content: Parameter | SelfParameter | VariadicParameter | TSKindId.Keyword | Type;
+	readonly _content: Parameter | SelfParameter | VariadicParameter | TSKindId.Underscore | Type;
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<
@@ -9600,25 +9608,25 @@ export interface AttributedParameter {
 					| 'bool'
 					| 'str'
 					| 'char',
-					| TSKindId.Keyword
+					| TSKindId.Underscore
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Parameter
 			| SelfParameter
@@ -9629,7 +9637,7 @@ export interface AttributedParameter {
 		readonly attribute_item?: readonly ('self' | Identifier | Metavariable | 'super' | 'crate' | ScopedIdentifier)[];
 	};
 	attributeItem(): AttributeItem | undefined;
-	content(): Parameter | SelfParameter | VariadicParameter | TSKindId.Keyword | Type;
+	content(): Parameter | SelfParameter | VariadicParameter | TSKindId.Underscore | Type;
 }
 
 export interface AttributedTypeParameter {
@@ -9680,23 +9688,23 @@ export interface AttributedOrderedField {
 					| 'str'
 					| 'char',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 			  >
 			| Type;
 	};
@@ -9736,23 +9744,23 @@ export interface TypeArgument {
 					| 'true'
 					| 'false',
 					| TSKindId.Bang
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
 			  >
@@ -9813,23 +9821,23 @@ export type Super = TSKindId.Super;
 export type Crate = TSKindId.Crate;
 export type Metavariable = Terminal<TSKindId.Metavariable, string>;
 export type PrimitiveType =
-	| TSKindId.U8
-	| TSKindId.I8
-	| TSKindId.U16
-	| TSKindId.I16
-	| TSKindId.U32
-	| TSKindId.I32
-	| TSKindId.U64
-	| TSKindId.I64
-	| TSKindId.U128
-	| TSKindId.I128
-	| TSKindId.Isize
-	| TSKindId.Usize
-	| TSKindId.F32
-	| TSKindId.F64
-	| TSKindId.Bool
-	| TSKindId.Str
-	| TSKindId.Char;
+	| TSKindId.U8Keyword
+	| TSKindId.I8Keyword
+	| TSKindId.U16Keyword
+	| TSKindId.I16Keyword
+	| TSKindId.U32Keyword
+	| TSKindId.I32Keyword
+	| TSKindId.U64Keyword
+	| TSKindId.I64Keyword
+	| TSKindId.U128Keyword
+	| TSKindId.I128Keyword
+	| TSKindId.IsizeKeyword
+	| TSKindId.UsizeKeyword
+	| TSKindId.F32Keyword
+	| TSKindId.F64Keyword
+	| TSKindId.BoolKeyword
+	| TSKindId.StrKeyword
+	| TSKindId.CharKeyword;
 export type KwRefMarker = TSKindId.KwRefMarker;
 export type KwUnsafeMarker = TSKindId.KwUnsafeMarker;
 export type KwStaticMarker = TSKindId.KwStaticMarker;
@@ -9882,7 +9890,7 @@ export type TokenTreePunctuation =
 	| TSKindId.GtEq
 	| TSKindId.LtEq
 	| TSKindId.At
-	| TSKindId.Keyword
+	| TSKindId.Underscore
 	| TSKindId.Dot
 	| TSKindId.DotDot
 	| TSKindId.DotDotDot
@@ -10569,62 +10577,62 @@ export interface FalseKeywordTree extends AnyTreeNode {
 export interface DefaultKeywordTree extends AnyTreeNode {
 	readonly type: 'default_keyword';
 }
-export interface U8Tree extends AnyTreeNode {
-	readonly type: 'u8';
+export interface U8KeywordTree extends AnyTreeNode {
+	readonly type: 'u8_keyword';
 }
-export interface I8Tree extends AnyTreeNode {
-	readonly type: 'i8';
+export interface I8KeywordTree extends AnyTreeNode {
+	readonly type: 'i8_keyword';
 }
-export interface U16Tree extends AnyTreeNode {
-	readonly type: 'u16';
+export interface U16KeywordTree extends AnyTreeNode {
+	readonly type: 'u16_keyword';
 }
-export interface I16Tree extends AnyTreeNode {
-	readonly type: 'i16';
+export interface I16KeywordTree extends AnyTreeNode {
+	readonly type: 'i16_keyword';
 }
-export interface U32Tree extends AnyTreeNode {
-	readonly type: 'u32';
+export interface U32KeywordTree extends AnyTreeNode {
+	readonly type: 'u32_keyword';
 }
-export interface I32Tree extends AnyTreeNode {
-	readonly type: 'i32';
+export interface I32KeywordTree extends AnyTreeNode {
+	readonly type: 'i32_keyword';
 }
-export interface U64Tree extends AnyTreeNode {
-	readonly type: 'u64';
+export interface U64KeywordTree extends AnyTreeNode {
+	readonly type: 'u64_keyword';
 }
-export interface I64Tree extends AnyTreeNode {
-	readonly type: 'i64';
+export interface I64KeywordTree extends AnyTreeNode {
+	readonly type: 'i64_keyword';
 }
-export interface U128Tree extends AnyTreeNode {
-	readonly type: 'u128';
+export interface U128KeywordTree extends AnyTreeNode {
+	readonly type: 'u128_keyword';
 }
-export interface I128Tree extends AnyTreeNode {
-	readonly type: 'i128';
+export interface I128KeywordTree extends AnyTreeNode {
+	readonly type: 'i128_keyword';
 }
-export interface IsizeTree extends AnyTreeNode {
-	readonly type: 'isize';
+export interface IsizeKeywordTree extends AnyTreeNode {
+	readonly type: 'isize_keyword';
 }
-export interface UsizeTree extends AnyTreeNode {
-	readonly type: 'usize';
+export interface UsizeKeywordTree extends AnyTreeNode {
+	readonly type: 'usize_keyword';
 }
-export interface F32Tree extends AnyTreeNode {
-	readonly type: 'f32';
+export interface F32KeywordTree extends AnyTreeNode {
+	readonly type: 'f32_keyword';
 }
-export interface F64Tree extends AnyTreeNode {
-	readonly type: 'f64';
+export interface F64KeywordTree extends AnyTreeNode {
+	readonly type: 'f64_keyword';
 }
-export interface BoolTree extends AnyTreeNode {
-	readonly type: 'bool';
+export interface BoolKeywordTree extends AnyTreeNode {
+	readonly type: 'bool_keyword';
 }
-export interface StrTree extends AnyTreeNode {
-	readonly type: 'str';
+export interface StrKeywordTree extends AnyTreeNode {
+	readonly type: 'str_keyword';
 }
-export interface CharTree extends AnyTreeNode {
-	readonly type: 'char';
+export interface CharKeywordTree extends AnyTreeNode {
+	readonly type: 'char_keyword';
 }
 export interface MoveKeywordTree extends AnyTreeNode {
 	readonly type: 'move_keyword';
 }
-export interface KeywordTree extends AnyTreeNode {
-	readonly type: '__keyword';
+export interface UnderscoreTree extends AnyTreeNode {
+	readonly type: 'underscore';
 }
 export interface PubKeywordTree extends AnyTreeNode {
 	readonly type: 'pub_keyword';
@@ -17689,7 +17697,7 @@ export namespace ParametersElements {
 		readonly $with: {
 			elements(
 				...vs: NonEmptyArray<
-					T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+					T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
 				>
 			): T.ParametersElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ParametersElements.Built;
@@ -17698,25 +17706,25 @@ export namespace ParametersElements {
 	export type Loose = LooseFor<TSKindId.ParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParametersElements>;
 	export type BuildArgs = [
-		element: T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type,
+		element: T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 		...elements: (
 			| T.AttributedParameter
 			| T.Parameter
 			| T.SelfParameter
 			| T.VariadicParameter
-			| TSKindId.Keyword
+			| TSKindId.Underscore
 			| T.Type
 		)[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type,
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
 		>,
 		...elements: LooseValue<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type,
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -18175,14 +18183,14 @@ export namespace ClosureExpressionExpr {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			body(value: NonNullable<T.Expression | TSKindId.Keyword>): T.ClosureExpressionExpr.Built;
+			body(value: NonNullable<T.Expression | TSKindId.Underscore>): T.ClosureExpressionExpr.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ClosureExpressionExpr>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClosureExpressionExpr>;
-	export type BuildArgs = [value: T.Expression | TSKindId.Keyword];
+	export type BuildArgs = [value: T.Expression | TSKindId.Underscore];
 	export type LooseArgs = [
-		value: LooseValue<T.Expression | TSKindId.Keyword, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<T.Expression | TSKindId.Underscore, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
 	export type Tree = TreeFor<TSKindId.ClosureExpressionExpr>;
 	export type Kind = '_closure_expression_expr';

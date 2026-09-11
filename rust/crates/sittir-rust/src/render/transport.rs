@@ -435,23 +435,23 @@ pub enum AnyTransport {
     SlashStar(SlashStarTransport),
     StarSlash(StarSlashTransport),
     DefaultKeyword(DefaultKeywordTransport),
-    U8(U8Transport),
-    I8(I8Transport),
-    U16(U16Transport),
-    I16(I16Transport),
-    U32(U32Transport),
-    I32(I32Transport),
-    U64(U64Transport),
-    I64(I64Transport),
-    U128(U128Transport),
-    I128(I128Transport),
-    Isize(IsizeTransport),
-    Usize(UsizeTransport),
-    F32(F32Transport),
-    F64(F64Transport),
-    Bool(BoolTransport),
-    Str(StrTransport),
-    Char(CharTransport),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     MoveKeyword(MoveKeywordTransport),
     PlusEq(PlusEqTransport),
     DashEq(DashEqTransport),
@@ -463,7 +463,7 @@ pub enum AnyTransport {
     CaretEq(CaretEqTransport),
     LtLtEq(LtLtEqTransport),
     GtGtEq(GtGtEqTransport),
-    Keyword(KeywordTransport),
+    Underscore(UnderscoreTransport),
     DotDotEq(DotDotEqTransport),
     PubKeyword(PubKeywordTransport),
     RawKeyword(RawKeywordTransport),
@@ -498,23 +498,23 @@ pub enum AnyTransport {
     Literal28_5f_6b_77_5f_64_65_66_61_75_6c_74,
     Literal29_5f_6b_77_5f_63_6f_6e_73_74,
     Literal30_5f_6b_77_5f_75_6e_73_61_66_65,
-    Literal31_75_38,
-    Literal32_69_38,
-    Literal33_75_31_36,
-    Literal34_69_31_36,
-    Literal35_75_33_32,
-    Literal36_69_33_32,
-    Literal37_75_36_34,
-    Literal38_69_36_34,
-    Literal39_75_31_32_38,
-    Literal40_69_31_32_38,
-    Literal41_69_73_69_7a_65,
-    Literal42_75_73_69_7a_65,
-    Literal43_66_33_32,
-    Literal44_66_36_34,
-    Literal45_62_6f_6f_6c,
-    Literal46_73_74_72,
-    Literal47_63_68_61_72,
+    Literal31_75_38_5f_6b_65_79_77_6f_72_64,
+    Literal32_69_38_5f_6b_65_79_77_6f_72_64,
+    Literal33_75_31_36_5f_6b_65_79_77_6f_72_64,
+    Literal34_69_31_36_5f_6b_65_79_77_6f_72_64,
+    Literal35_75_33_32_5f_6b_65_79_77_6f_72_64,
+    Literal36_69_33_32_5f_6b_65_79_77_6f_72_64,
+    Literal37_75_36_34_5f_6b_65_79_77_6f_72_64,
+    Literal38_69_36_34_5f_6b_65_79_77_6f_72_64,
+    Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64,
+    Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64,
+    Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+    Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+    Literal43_66_33_32_5f_6b_65_79_77_6f_72_64,
+    Literal44_66_36_34_5f_6b_65_79_77_6f_72_64,
+    Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64,
+    Literal46_73_74_72_5f_6b_65_79_77_6f_72_64,
+    Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64,
     Literal48_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72,
     Literal49_5f_69_6d_70_6c_5f_69_74_65_6d_5f_73_65_6d_69,
     Literal50_5f_6b_77_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72,
@@ -554,7 +554,7 @@ pub enum AnyTransport {
     Literal84_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     Literal85_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72,
     Literal86_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e,
-    Literal87_5f_5f_6b_65_79_77_6f_72_64,
+    Literal87_75_6e_64_65_72_73_63_6f_72_65,
     Literal88_64_6f_74_5f_64_6f_74,
     Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74,
     Literal90_64_6f_74_5f_64_6f_74_5f_65_71,
@@ -934,23 +934,23 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::SlashStar(t) => t.fill_options(table),
             AnyTransport::StarSlash(t) => t.fill_options(table),
             AnyTransport::DefaultKeyword(t) => t.fill_options(table),
-            AnyTransport::U8(t) => t.fill_options(table),
-            AnyTransport::I8(t) => t.fill_options(table),
-            AnyTransport::U16(t) => t.fill_options(table),
-            AnyTransport::I16(t) => t.fill_options(table),
-            AnyTransport::U32(t) => t.fill_options(table),
-            AnyTransport::I32(t) => t.fill_options(table),
-            AnyTransport::U64(t) => t.fill_options(table),
-            AnyTransport::I64(t) => t.fill_options(table),
-            AnyTransport::U128(t) => t.fill_options(table),
-            AnyTransport::I128(t) => t.fill_options(table),
-            AnyTransport::Isize(t) => t.fill_options(table),
-            AnyTransport::Usize(t) => t.fill_options(table),
-            AnyTransport::F32(t) => t.fill_options(table),
-            AnyTransport::F64(t) => t.fill_options(table),
-            AnyTransport::Bool(t) => t.fill_options(table),
-            AnyTransport::Str(t) => t.fill_options(table),
-            AnyTransport::Char(t) => t.fill_options(table),
+            AnyTransport::U8Keyword(t) => t.fill_options(table),
+            AnyTransport::I8Keyword(t) => t.fill_options(table),
+            AnyTransport::U16Keyword(t) => t.fill_options(table),
+            AnyTransport::I16Keyword(t) => t.fill_options(table),
+            AnyTransport::U32Keyword(t) => t.fill_options(table),
+            AnyTransport::I32Keyword(t) => t.fill_options(table),
+            AnyTransport::U64Keyword(t) => t.fill_options(table),
+            AnyTransport::I64Keyword(t) => t.fill_options(table),
+            AnyTransport::U128Keyword(t) => t.fill_options(table),
+            AnyTransport::I128Keyword(t) => t.fill_options(table),
+            AnyTransport::IsizeKeyword(t) => t.fill_options(table),
+            AnyTransport::UsizeKeyword(t) => t.fill_options(table),
+            AnyTransport::F32Keyword(t) => t.fill_options(table),
+            AnyTransport::F64Keyword(t) => t.fill_options(table),
+            AnyTransport::BoolKeyword(t) => t.fill_options(table),
+            AnyTransport::StrKeyword(t) => t.fill_options(table),
+            AnyTransport::CharKeyword(t) => t.fill_options(table),
             AnyTransport::MoveKeyword(t) => t.fill_options(table),
             AnyTransport::PlusEq(t) => t.fill_options(table),
             AnyTransport::DashEq(t) => t.fill_options(table),
@@ -962,7 +962,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::CaretEq(t) => t.fill_options(table),
             AnyTransport::LtLtEq(t) => t.fill_options(table),
             AnyTransport::GtGtEq(t) => t.fill_options(table),
-            AnyTransport::Keyword(t) => t.fill_options(table),
+            AnyTransport::Underscore(t) => t.fill_options(table),
             AnyTransport::DotDotEq(t) => t.fill_options(table),
             AnyTransport::PubKeyword(t) => t.fill_options(table),
             AnyTransport::RawKeyword(t) => t.fill_options(table),
@@ -997,23 +997,23 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal28_5f_6b_77_5f_64_65_66_61_75_6c_74 => {}
             AnyTransport::Literal29_5f_6b_77_5f_63_6f_6e_73_74 => {}
             AnyTransport::Literal30_5f_6b_77_5f_75_6e_73_61_66_65 => {}
-            AnyTransport::Literal31_75_38 => {}
-            AnyTransport::Literal32_69_38 => {}
-            AnyTransport::Literal33_75_31_36 => {}
-            AnyTransport::Literal34_69_31_36 => {}
-            AnyTransport::Literal35_75_33_32 => {}
-            AnyTransport::Literal36_69_33_32 => {}
-            AnyTransport::Literal37_75_36_34 => {}
-            AnyTransport::Literal38_69_36_34 => {}
-            AnyTransport::Literal39_75_31_32_38 => {}
-            AnyTransport::Literal40_69_31_32_38 => {}
-            AnyTransport::Literal41_69_73_69_7a_65 => {}
-            AnyTransport::Literal42_75_73_69_7a_65 => {}
-            AnyTransport::Literal43_66_33_32 => {}
-            AnyTransport::Literal44_66_36_34 => {}
-            AnyTransport::Literal45_62_6f_6f_6c => {}
-            AnyTransport::Literal46_73_74_72 => {}
-            AnyTransport::Literal47_63_68_61_72 => {}
+            AnyTransport::Literal31_75_38_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal32_69_38_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal48_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => {}
             AnyTransport::Literal49_5f_69_6d_70_6c_5f_69_74_65_6d_5f_73_65_6d_69 => {}
             AnyTransport::Literal50_5f_6b_77_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => {}
@@ -1053,7 +1053,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal84_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
             AnyTransport::Literal85_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => {}
             AnyTransport::Literal86_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => {}
-            AnyTransport::Literal87_5f_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal87_75_6e_64_65_72_73_63_6f_72_65 => {}
             AnyTransport::Literal88_64_6f_74_5f_64_6f_74 => {}
             AnyTransport::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => {}
             AnyTransport::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => {}
@@ -2542,73 +2542,73 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 131 => Ok(AnyTransport::DefaultKeyword(
                     DefaultKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: u8 (U8)
-                28 => Ok(AnyTransport::U8(
-                    U8Transport::from_napi_value(env, napi_val)?
+                // kind: u8_keyword (U8_KEYWORD)
+                28 => Ok(AnyTransport::U8Keyword(
+                    U8KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: i8 (I8)
-                29 => Ok(AnyTransport::I8(
-                    I8Transport::from_napi_value(env, napi_val)?
+                // kind: i8_keyword (I8_KEYWORD)
+                29 => Ok(AnyTransport::I8Keyword(
+                    I8KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: u16 (U16)
-                30 => Ok(AnyTransport::U16(
-                    U16Transport::from_napi_value(env, napi_val)?
+                // kind: u16_keyword (U16_KEYWORD)
+                30 => Ok(AnyTransport::U16Keyword(
+                    U16KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: i16 (I16)
-                31 => Ok(AnyTransport::I16(
-                    I16Transport::from_napi_value(env, napi_val)?
+                // kind: i16_keyword (I16_KEYWORD)
+                31 => Ok(AnyTransport::I16Keyword(
+                    I16KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: u32 (U32)
-                32 => Ok(AnyTransport::U32(
-                    U32Transport::from_napi_value(env, napi_val)?
+                // kind: u32_keyword (U32_KEYWORD)
+                32 => Ok(AnyTransport::U32Keyword(
+                    U32KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: i32 (I32)
-                33 => Ok(AnyTransport::I32(
-                    I32Transport::from_napi_value(env, napi_val)?
+                // kind: i32_keyword (I32_KEYWORD)
+                33 => Ok(AnyTransport::I32Keyword(
+                    I32KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: u64 (U64)
-                34 => Ok(AnyTransport::U64(
-                    U64Transport::from_napi_value(env, napi_val)?
+                // kind: u64_keyword (U64_KEYWORD)
+                34 => Ok(AnyTransport::U64Keyword(
+                    U64KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: i64 (I64)
-                35 => Ok(AnyTransport::I64(
-                    I64Transport::from_napi_value(env, napi_val)?
+                // kind: i64_keyword (I64_KEYWORD)
+                35 => Ok(AnyTransport::I64Keyword(
+                    I64KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: u128 (U128)
-                36 => Ok(AnyTransport::U128(
-                    U128Transport::from_napi_value(env, napi_val)?
+                // kind: u128_keyword (U128_KEYWORD)
+                36 => Ok(AnyTransport::U128Keyword(
+                    U128KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: i128 (I128)
-                37 => Ok(AnyTransport::I128(
-                    I128Transport::from_napi_value(env, napi_val)?
+                // kind: i128_keyword (I128_KEYWORD)
+                37 => Ok(AnyTransport::I128Keyword(
+                    I128KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: isize (ISIZE)
-                38 => Ok(AnyTransport::Isize(
-                    IsizeTransport::from_napi_value(env, napi_val)?
+                // kind: isize_keyword (ISIZE_KEYWORD)
+                38 => Ok(AnyTransport::IsizeKeyword(
+                    IsizeKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: usize (USIZE)
-                39 => Ok(AnyTransport::Usize(
-                    UsizeTransport::from_napi_value(env, napi_val)?
+                // kind: usize_keyword (USIZE_KEYWORD)
+                39 => Ok(AnyTransport::UsizeKeyword(
+                    UsizeKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: f32 (F32)
-                40 => Ok(AnyTransport::F32(
-                    F32Transport::from_napi_value(env, napi_val)?
+                // kind: f32_keyword (F32_KEYWORD)
+                40 => Ok(AnyTransport::F32Keyword(
+                    F32KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: f64 (F64)
-                41 => Ok(AnyTransport::F64(
-                    F64Transport::from_napi_value(env, napi_val)?
+                // kind: f64_keyword (F64_KEYWORD)
+                41 => Ok(AnyTransport::F64Keyword(
+                    F64KeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: bool (BOOL)
-                42 => Ok(AnyTransport::Bool(
-                    BoolTransport::from_napi_value(env, napi_val)?
+                // kind: bool_keyword (BOOL_KEYWORD)
+                42 => Ok(AnyTransport::BoolKeyword(
+                    BoolKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: str (STR)
-                43 => Ok(AnyTransport::Str(
-                    StrTransport::from_napi_value(env, napi_val)?
+                // kind: str_keyword (STR_KEYWORD)
+                43 => Ok(AnyTransport::StrKeyword(
+                    StrKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: char (CHAR)
-                44 => Ok(AnyTransport::Char(
-                    CharTransport::from_napi_value(env, napi_val)?
+                // kind: char_keyword (CHAR_KEYWORD)
+                44 => Ok(AnyTransport::CharKeyword(
+                    CharKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: move_keyword (MOVE_KEYWORD)
                 136 => Ok(AnyTransport::MoveKeyword(
@@ -2654,9 +2654,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 99 => Ok(AnyTransport::GtGtEq(
                     GtGtEqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: __keyword (__KEYWORD)
-                139 => Ok(AnyTransport::Keyword(
-                    KeywordTransport::from_napi_value(env, napi_val)?
+                // kind: underscore (UNDERSCORE)
+                139 => Ok(AnyTransport::Underscore(
+                    UnderscoreTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dot_dot_eq (DOT_DOT_EQ)
                 140 => Ok(AnyTransport::DotDotEq(
@@ -9965,23 +9965,23 @@ pub enum WherePredicateLeftTransportSlot {
     TupleType(TupleTypeTransport),
     ArrayType(ArrayTypeTransport),
     HigherRankedTraitBound(HigherRankedTraitBoundTransport),
-    Literal31_75_38,
-    Literal32_69_38,
-    Literal33_75_31_36,
-    Literal34_69_31_36,
-    Literal35_75_33_32,
-    Literal36_69_33_32,
-    Literal37_75_36_34,
-    Literal38_69_36_34,
-    Literal39_75_31_32_38,
-    Literal40_69_31_32_38,
-    Literal41_69_73_69_7a_65,
-    Literal42_75_73_69_7a_65,
-    Literal43_66_33_32,
-    Literal44_66_36_34,
-    Literal45_62_6f_6f_6c,
-    Literal46_73_74_72,
-    Literal47_63_68_61_72,
+    Literal31_75_38_5f_6b_65_79_77_6f_72_64,
+    Literal32_69_38_5f_6b_65_79_77_6f_72_64,
+    Literal33_75_31_36_5f_6b_65_79_77_6f_72_64,
+    Literal34_69_31_36_5f_6b_65_79_77_6f_72_64,
+    Literal35_75_33_32_5f_6b_65_79_77_6f_72_64,
+    Literal36_69_33_32_5f_6b_65_79_77_6f_72_64,
+    Literal37_75_36_34_5f_6b_65_79_77_6f_72_64,
+    Literal38_69_36_34_5f_6b_65_79_77_6f_72_64,
+    Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64,
+    Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64,
+    Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+    Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+    Literal43_66_33_32_5f_6b_65_79_77_6f_72_64,
+    Literal44_66_36_34_5f_6b_65_79_77_6f_72_64,
+    Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64,
+    Literal46_73_74_72_5f_6b_65_79_77_6f_72_64,
+    Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::options::FillOptions for WherePredicateLeftTransportSlot {
@@ -9996,23 +9996,23 @@ impl ::sittir_core::options::FillOptions for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::TupleType(t) => t.fill_options(table),
             WherePredicateLeftTransportSlot::ArrayType(t) => t.fill_options(table),
             WherePredicateLeftTransportSlot::HigherRankedTraitBound(t) => t.fill_options(table),
-            WherePredicateLeftTransportSlot::Literal31_75_38 => {}
-            WherePredicateLeftTransportSlot::Literal32_69_38 => {}
-            WherePredicateLeftTransportSlot::Literal33_75_31_36 => {}
-            WherePredicateLeftTransportSlot::Literal34_69_31_36 => {}
-            WherePredicateLeftTransportSlot::Literal35_75_33_32 => {}
-            WherePredicateLeftTransportSlot::Literal36_69_33_32 => {}
-            WherePredicateLeftTransportSlot::Literal37_75_36_34 => {}
-            WherePredicateLeftTransportSlot::Literal38_69_36_34 => {}
-            WherePredicateLeftTransportSlot::Literal39_75_31_32_38 => {}
-            WherePredicateLeftTransportSlot::Literal40_69_31_32_38 => {}
-            WherePredicateLeftTransportSlot::Literal41_69_73_69_7a_65 => {}
-            WherePredicateLeftTransportSlot::Literal42_75_73_69_7a_65 => {}
-            WherePredicateLeftTransportSlot::Literal43_66_33_32 => {}
-            WherePredicateLeftTransportSlot::Literal44_66_36_34 => {}
-            WherePredicateLeftTransportSlot::Literal45_62_6f_6f_6c => {}
-            WherePredicateLeftTransportSlot::Literal46_73_74_72 => {}
-            WherePredicateLeftTransportSlot::Literal47_63_68_61_72 => {}
+            WherePredicateLeftTransportSlot::Literal31_75_38_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal32_69_38_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64 => {}
+            WherePredicateLeftTransportSlot::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64 => {}
         }
     }
 }
@@ -10026,23 +10026,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for WherePredicateLeftTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    28 => Ok(Self::Literal31_75_38),
-                    29 => Ok(Self::Literal32_69_38),
-                    30 => Ok(Self::Literal33_75_31_36),
-                    31 => Ok(Self::Literal34_69_31_36),
-                    32 => Ok(Self::Literal35_75_33_32),
-                    33 => Ok(Self::Literal36_69_33_32),
-                    34 => Ok(Self::Literal37_75_36_34),
-                    35 => Ok(Self::Literal38_69_36_34),
-                    36 => Ok(Self::Literal39_75_31_32_38),
-                    37 => Ok(Self::Literal40_69_31_32_38),
-                    38 => Ok(Self::Literal41_69_73_69_7a_65),
-                    39 => Ok(Self::Literal42_75_73_69_7a_65),
-                    40 => Ok(Self::Literal43_66_33_32),
-                    41 => Ok(Self::Literal44_66_36_34),
-                    42 => Ok(Self::Literal45_62_6f_6f_6c),
-                    43 => Ok(Self::Literal46_73_74_72),
-                    44 => Ok(Self::Literal47_63_68_61_72),
+                    28 => Ok(Self::Literal31_75_38_5f_6b_65_79_77_6f_72_64),
+                    29 => Ok(Self::Literal32_69_38_5f_6b_65_79_77_6f_72_64),
+                    30 => Ok(Self::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64),
+                    31 => Ok(Self::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64),
+                    32 => Ok(Self::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64),
+                    33 => Ok(Self::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64),
+                    34 => Ok(Self::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64),
+                    35 => Ok(Self::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64),
+                    36 => Ok(Self::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64),
+                    37 => Ok(Self::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64),
+                    38 => Ok(Self::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64),
+                    39 => Ok(Self::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64),
+                    40 => Ok(Self::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64),
+                    41 => Ok(Self::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64),
+                    42 => Ok(Self::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64),
+                    43 => Ok(Self::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64),
+                    44 => Ok(Self::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64),
                     226 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10093,23 +10093,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for WherePredicateLeftTransportSlot 
                     ::napi::Error::from_reason("$type property missing in WherePredicateLeftTransportSlot")
                 )?;
                 match kind_id {
-                    28 => Ok(Self::Literal31_75_38),
-                    29 => Ok(Self::Literal32_69_38),
-                    30 => Ok(Self::Literal33_75_31_36),
-                    31 => Ok(Self::Literal34_69_31_36),
-                    32 => Ok(Self::Literal35_75_33_32),
-                    33 => Ok(Self::Literal36_69_33_32),
-                    34 => Ok(Self::Literal37_75_36_34),
-                    35 => Ok(Self::Literal38_69_36_34),
-                    36 => Ok(Self::Literal39_75_31_32_38),
-                    37 => Ok(Self::Literal40_69_31_32_38),
-                    38 => Ok(Self::Literal41_69_73_69_7a_65),
-                    39 => Ok(Self::Literal42_75_73_69_7a_65),
-                    40 => Ok(Self::Literal43_66_33_32),
-                    41 => Ok(Self::Literal44_66_36_34),
-                    42 => Ok(Self::Literal45_62_6f_6f_6c),
-                    43 => Ok(Self::Literal46_73_74_72),
-                    44 => Ok(Self::Literal47_63_68_61_72),
+                    28 => Ok(Self::Literal31_75_38_5f_6b_65_79_77_6f_72_64),
+                    29 => Ok(Self::Literal32_69_38_5f_6b_65_79_77_6f_72_64),
+                    30 => Ok(Self::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64),
+                    31 => Ok(Self::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64),
+                    32 => Ok(Self::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64),
+                    33 => Ok(Self::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64),
+                    34 => Ok(Self::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64),
+                    35 => Ok(Self::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64),
+                    36 => Ok(Self::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64),
+                    37 => Ok(Self::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64),
+                    38 => Ok(Self::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64),
+                    39 => Ok(Self::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64),
+                    40 => Ok(Self::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64),
+                    41 => Ok(Self::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64),
+                    42 => Ok(Self::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64),
+                    43 => Ok(Self::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64),
+                    44 => Ok(Self::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64),
                     226 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10200,23 +10200,23 @@ fn where_predicate_left_transport_slot_to_any(t: WherePredicateLeftTransportSlot
         WherePredicateLeftTransportSlot::TupleType(inner) => AnyTransport::TupleType(inner),
         WherePredicateLeftTransportSlot::ArrayType(inner) => AnyTransport::ArrayType(inner),
         WherePredicateLeftTransportSlot::HigherRankedTraitBound(inner) => AnyTransport::HigherRankedTraitBound(inner),
-        WherePredicateLeftTransportSlot::Literal31_75_38 => AnyTransport::Literal31_75_38,
-        WherePredicateLeftTransportSlot::Literal32_69_38 => AnyTransport::Literal32_69_38,
-        WherePredicateLeftTransportSlot::Literal33_75_31_36 => AnyTransport::Literal33_75_31_36,
-        WherePredicateLeftTransportSlot::Literal34_69_31_36 => AnyTransport::Literal34_69_31_36,
-        WherePredicateLeftTransportSlot::Literal35_75_33_32 => AnyTransport::Literal35_75_33_32,
-        WherePredicateLeftTransportSlot::Literal36_69_33_32 => AnyTransport::Literal36_69_33_32,
-        WherePredicateLeftTransportSlot::Literal37_75_36_34 => AnyTransport::Literal37_75_36_34,
-        WherePredicateLeftTransportSlot::Literal38_69_36_34 => AnyTransport::Literal38_69_36_34,
-        WherePredicateLeftTransportSlot::Literal39_75_31_32_38 => AnyTransport::Literal39_75_31_32_38,
-        WherePredicateLeftTransportSlot::Literal40_69_31_32_38 => AnyTransport::Literal40_69_31_32_38,
-        WherePredicateLeftTransportSlot::Literal41_69_73_69_7a_65 => AnyTransport::Literal41_69_73_69_7a_65,
-        WherePredicateLeftTransportSlot::Literal42_75_73_69_7a_65 => AnyTransport::Literal42_75_73_69_7a_65,
-        WherePredicateLeftTransportSlot::Literal43_66_33_32 => AnyTransport::Literal43_66_33_32,
-        WherePredicateLeftTransportSlot::Literal44_66_36_34 => AnyTransport::Literal44_66_36_34,
-        WherePredicateLeftTransportSlot::Literal45_62_6f_6f_6c => AnyTransport::Literal45_62_6f_6f_6c,
-        WherePredicateLeftTransportSlot::Literal46_73_74_72 => AnyTransport::Literal46_73_74_72,
-        WherePredicateLeftTransportSlot::Literal47_63_68_61_72 => AnyTransport::Literal47_63_68_61_72,
+        WherePredicateLeftTransportSlot::Literal31_75_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal31_75_38_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal32_69_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal32_69_38_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64,
+        WherePredicateLeftTransportSlot::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64,
     }
 }
 
@@ -10232,23 +10232,23 @@ impl ::sittir_core::render::Render for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::TupleType(inner) => inner.render(w),
             WherePredicateLeftTransportSlot::ArrayType(inner) => inner.render(w),
             WherePredicateLeftTransportSlot::HigherRankedTraitBound(inner) => inner.render(w),
-            WherePredicateLeftTransportSlot::Literal31_75_38 => w.text("u8"),
-            WherePredicateLeftTransportSlot::Literal32_69_38 => w.text("i8"),
-            WherePredicateLeftTransportSlot::Literal33_75_31_36 => w.text("u16"),
-            WherePredicateLeftTransportSlot::Literal34_69_31_36 => w.text("i16"),
-            WherePredicateLeftTransportSlot::Literal35_75_33_32 => w.text("u32"),
-            WherePredicateLeftTransportSlot::Literal36_69_33_32 => w.text("i32"),
-            WherePredicateLeftTransportSlot::Literal37_75_36_34 => w.text("u64"),
-            WherePredicateLeftTransportSlot::Literal38_69_36_34 => w.text("i64"),
-            WherePredicateLeftTransportSlot::Literal39_75_31_32_38 => w.text("u128"),
-            WherePredicateLeftTransportSlot::Literal40_69_31_32_38 => w.text("i128"),
-            WherePredicateLeftTransportSlot::Literal41_69_73_69_7a_65 => w.text("isize"),
-            WherePredicateLeftTransportSlot::Literal42_75_73_69_7a_65 => w.text("usize"),
-            WherePredicateLeftTransportSlot::Literal43_66_33_32 => w.text("f32"),
-            WherePredicateLeftTransportSlot::Literal44_66_36_34 => w.text("f64"),
-            WherePredicateLeftTransportSlot::Literal45_62_6f_6f_6c => w.text("bool"),
-            WherePredicateLeftTransportSlot::Literal46_73_74_72 => w.text("str"),
-            WherePredicateLeftTransportSlot::Literal47_63_68_61_72 => w.text("char"),
+            WherePredicateLeftTransportSlot::Literal31_75_38_5f_6b_65_79_77_6f_72_64 => w.text("u8"),
+            WherePredicateLeftTransportSlot::Literal32_69_38_5f_6b_65_79_77_6f_72_64 => w.text("i8"),
+            WherePredicateLeftTransportSlot::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64 => w.text("u16"),
+            WherePredicateLeftTransportSlot::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64 => w.text("i16"),
+            WherePredicateLeftTransportSlot::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64 => w.text("u32"),
+            WherePredicateLeftTransportSlot::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64 => w.text("i32"),
+            WherePredicateLeftTransportSlot::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64 => w.text("u64"),
+            WherePredicateLeftTransportSlot::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64 => w.text("i64"),
+            WherePredicateLeftTransportSlot::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("u128"),
+            WherePredicateLeftTransportSlot::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("i128"),
+            WherePredicateLeftTransportSlot::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("isize"),
+            WherePredicateLeftTransportSlot::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("usize"),
+            WherePredicateLeftTransportSlot::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64 => w.text("f32"),
+            WherePredicateLeftTransportSlot::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64 => w.text("f64"),
+            WherePredicateLeftTransportSlot::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("bool"),
+            WherePredicateLeftTransportSlot::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64 => w.text("str"),
+            WherePredicateLeftTransportSlot::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64 => w.text("char"),
         }
     }
 }
@@ -28561,7 +28561,7 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     ForExpression(ForExpressionTransport),
     ConstBlock(ConstBlockTransport),
     RangeExpression(RangeExpressionTransport),
-    Literal87_5f_5f_6b_65_79_77_6f_72_64,
+    Literal87_75_6e_64_65_72_73_63_6f_72_65,
 }
 
 impl ::sittir_core::options::FillOptions for ClosureExpressionExprBodyTransportSlot {
@@ -28612,7 +28612,7 @@ impl ::sittir_core::options::FillOptions for ClosureExpressionExprBodyTransportS
             ClosureExpressionExprBodyTransportSlot::ForExpression(t) => t.fill_options(table),
             ClosureExpressionExprBodyTransportSlot::ConstBlock(t) => t.fill_options(table),
             ClosureExpressionExprBodyTransportSlot::RangeExpression(t) => t.fill_options(table),
-            ClosureExpressionExprBodyTransportSlot::Literal87_5f_5f_6b_65_79_77_6f_72_64 => {}
+            ClosureExpressionExprBodyTransportSlot::Literal87_75_6e_64_65_72_73_63_6f_72_65 => {}
         }
     }
 }
@@ -28626,7 +28626,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionExprBodyTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    139 => Ok(Self::Literal87_5f_5f_6b_65_79_77_6f_72_64),
+                    139 => Ok(Self::Literal87_75_6e_64_65_72_73_63_6f_72_65),
                     320 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -28839,7 +28839,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionExprBodyTranspo
                     ::napi::Error::from_reason("$type property missing in ClosureExpressionExprBodyTransportSlot")
                 )?;
                 match kind_id {
-                    139 => Ok(Self::Literal87_5f_5f_6b_65_79_77_6f_72_64),
+                    139 => Ok(Self::Literal87_75_6e_64_65_72_73_63_6f_72_65),
                     320 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -29128,7 +29128,7 @@ fn closure_expression_expr_body_transport_slot_to_any(t: ClosureExpressionExprBo
         ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => AnyTransport::ForExpression(inner),
         ClosureExpressionExprBodyTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
         ClosureExpressionExprBodyTransportSlot::RangeExpression(inner) => AnyTransport::RangeExpression(inner),
-        ClosureExpressionExprBodyTransportSlot::Literal87_5f_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal87_5f_5f_6b_65_79_77_6f_72_64,
+        ClosureExpressionExprBodyTransportSlot::Literal87_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal87_75_6e_64_65_72_73_63_6f_72_65,
     }
 }
 
@@ -29180,7 +29180,7 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyTransportSlot {
             ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::ConstBlock(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::RangeExpression(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::Literal87_5f_5f_6b_65_79_77_6f_72_64 => w.text("_"),
+            ClosureExpressionExprBodyTransportSlot::Literal87_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
         }
     }
 }
@@ -38801,7 +38801,7 @@ pub enum AttributedParameterContentTransportSlot {
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
     PrimitiveType(PrimitiveTypeEnum),
-    Literal87_5f_5f_6b_65_79_77_6f_72_64,
+    Literal87_75_6e_64_65_72_73_63_6f_72_65,
 }
 
 impl ::sittir_core::options::FillOptions for AttributedParameterContentTransportSlot {
@@ -38827,7 +38827,7 @@ impl ::sittir_core::options::FillOptions for AttributedParameterContentTransport
             AttributedParameterContentTransportSlot::BoundedType(t) => t.fill_options(table),
             AttributedParameterContentTransportSlot::RemovedTraitBound(t) => t.fill_options(table),
             AttributedParameterContentTransportSlot::PrimitiveType(t) => t.fill_options(table),
-            AttributedParameterContentTransportSlot::Literal87_5f_5f_6b_65_79_77_6f_72_64 => {}
+            AttributedParameterContentTransportSlot::Literal87_75_6e_64_65_72_73_63_6f_72_65 => {}
         }
     }
 }
@@ -38841,7 +38841,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    139 => Ok(Self::Literal87_5f_5f_6b_65_79_77_6f_72_64),
+                    139 => Ok(Self::Literal87_75_6e_64_65_72_73_63_6f_72_65),
                     231 => Ok(Self::UnitType(
                         UnitTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -38970,7 +38970,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     ::napi::Error::from_reason("$type property missing in AttributedParameterContentTransportSlot")
                 )?;
                 match kind_id {
-                    139 => Ok(Self::Literal87_5f_5f_6b_65_79_77_6f_72_64),
+                    139 => Ok(Self::Literal87_75_6e_64_65_72_73_63_6f_72_65),
                     231 => Ok(Self::UnitType(
                         UnitTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -39150,7 +39150,7 @@ fn attributed_parameter_content_transport_slot_to_any(t: AttributedParameterCont
         AttributedParameterContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
         AttributedParameterContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
-        AttributedParameterContentTransportSlot::Literal87_5f_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal87_5f_5f_6b_65_79_77_6f_72_64,
+        AttributedParameterContentTransportSlot::Literal87_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal87_75_6e_64_65_72_73_63_6f_72_65,
     }
 }
 
@@ -39177,7 +39177,7 @@ impl ::sittir_core::render::Render for AttributedParameterContentTransportSlot {
             AttributedParameterContentTransportSlot::BoundedType(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::PrimitiveType(inner) => inner.render(w),
-            AttributedParameterContentTransportSlot::Literal87_5f_5f_6b_65_79_77_6f_72_64 => w.text("_"),
+            AttributedParameterContentTransportSlot::Literal87_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
         }
     }
 }
@@ -74345,7 +74345,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DefaultKeywordTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct U8Transport {
+pub struct U8KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -74355,19 +74355,19 @@ pub struct U8Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for U8Transport {
+impl ::sittir_core::render::Render for U8KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for U8Transport {
+impl ::sittir_core::options::FillOptions for U8KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U8Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U8KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74396,7 +74396,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U8Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U8Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U8KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74422,7 +74422,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U8Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U8Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for U8KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -74432,27 +74432,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for U8Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U8Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U8KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        U8Transport::from_napi_value(env, napi_val).map(Box::new)
+        U8KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U8Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U8KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        U8Transport::to_napi_value(env, *val)
+        U8KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct I8Transport {
+pub struct I8KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -74462,19 +74462,19 @@ pub struct I8Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for I8Transport {
+impl ::sittir_core::render::Render for I8KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for I8Transport {
+impl ::sittir_core::options::FillOptions for I8KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I8Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I8KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74503,7 +74503,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I8Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I8Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I8KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74529,7 +74529,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I8Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I8Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for I8KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -74539,27 +74539,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for I8Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I8Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I8KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        I8Transport::from_napi_value(env, napi_val).map(Box::new)
+        I8KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I8Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I8KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        I8Transport::to_napi_value(env, *val)
+        I8KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct U16Transport {
+pub struct U16KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -74569,19 +74569,19 @@ pub struct U16Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for U16Transport {
+impl ::sittir_core::render::Render for U16KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for U16Transport {
+impl ::sittir_core::options::FillOptions for U16KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U16Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U16KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74610,7 +74610,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U16Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U16Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U16KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74636,7 +74636,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U16Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U16Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for U16KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -74646,27 +74646,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for U16Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U16Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U16KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        U16Transport::from_napi_value(env, napi_val).map(Box::new)
+        U16KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U16Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U16KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        U16Transport::to_napi_value(env, *val)
+        U16KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct I16Transport {
+pub struct I16KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -74676,19 +74676,19 @@ pub struct I16Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for I16Transport {
+impl ::sittir_core::render::Render for I16KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for I16Transport {
+impl ::sittir_core::options::FillOptions for I16KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I16Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I16KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74717,7 +74717,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I16Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I16Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I16KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74743,7 +74743,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I16Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I16Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for I16KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -74753,27 +74753,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for I16Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I16Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I16KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        I16Transport::from_napi_value(env, napi_val).map(Box::new)
+        I16KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I16Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I16KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        I16Transport::to_napi_value(env, *val)
+        I16KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct U32Transport {
+pub struct U32KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -74783,19 +74783,19 @@ pub struct U32Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for U32Transport {
+impl ::sittir_core::render::Render for U32KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for U32Transport {
+impl ::sittir_core::options::FillOptions for U32KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U32Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U32KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74824,7 +74824,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U32Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U32Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U32KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74850,7 +74850,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U32Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U32Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for U32KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -74860,27 +74860,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for U32Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U32Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U32KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        U32Transport::from_napi_value(env, napi_val).map(Box::new)
+        U32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U32Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U32KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        U32Transport::to_napi_value(env, *val)
+        U32KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct I32Transport {
+pub struct I32KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -74890,19 +74890,19 @@ pub struct I32Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for I32Transport {
+impl ::sittir_core::render::Render for I32KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for I32Transport {
+impl ::sittir_core::options::FillOptions for I32KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I32Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I32KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74931,7 +74931,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I32Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I32Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I32KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -74957,7 +74957,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I32Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I32Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for I32KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -74967,27 +74967,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for I32Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I32Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I32KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        I32Transport::from_napi_value(env, napi_val).map(Box::new)
+        I32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I32Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I32KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        I32Transport::to_napi_value(env, *val)
+        I32KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct U64Transport {
+pub struct U64KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -74997,19 +74997,19 @@ pub struct U64Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for U64Transport {
+impl ::sittir_core::render::Render for U64KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for U64Transport {
+impl ::sittir_core::options::FillOptions for U64KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U64Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U64KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75038,7 +75038,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U64Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U64Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U64KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75064,7 +75064,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U64Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U64Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for U64KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75074,27 +75074,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for U64Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U64Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U64KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        U64Transport::from_napi_value(env, napi_val).map(Box::new)
+        U64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U64Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U64KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        U64Transport::to_napi_value(env, *val)
+        U64KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct I64Transport {
+pub struct I64KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75104,19 +75104,19 @@ pub struct I64Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for I64Transport {
+impl ::sittir_core::render::Render for I64KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for I64Transport {
+impl ::sittir_core::options::FillOptions for I64KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I64Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I64KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75145,7 +75145,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I64Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I64Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I64KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75171,7 +75171,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I64Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I64Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for I64KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75181,27 +75181,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for I64Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I64Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I64KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        I64Transport::from_napi_value(env, napi_val).map(Box::new)
+        I64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I64Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I64KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        I64Transport::to_napi_value(env, *val)
+        I64KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct U128Transport {
+pub struct U128KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75211,19 +75211,19 @@ pub struct U128Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for U128Transport {
+impl ::sittir_core::render::Render for U128KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for U128Transport {
+impl ::sittir_core::options::FillOptions for U128KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U128Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U128KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75252,7 +75252,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U128Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U128Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for U128KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75278,7 +75278,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for U128Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U128Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for U128KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75288,27 +75288,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for U128Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U128Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U128KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        U128Transport::from_napi_value(env, napi_val).map(Box::new)
+        U128KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U128Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U128KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        U128Transport::to_napi_value(env, *val)
+        U128KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct I128Transport {
+pub struct I128KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75318,19 +75318,19 @@ pub struct I128Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for I128Transport {
+impl ::sittir_core::render::Render for I128KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for I128Transport {
+impl ::sittir_core::options::FillOptions for I128KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I128Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I128KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75359,7 +75359,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I128Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I128Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for I128KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75385,7 +75385,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for I128Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I128Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for I128KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75395,27 +75395,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for I128Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I128Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I128KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        I128Transport::from_napi_value(env, napi_val).map(Box::new)
+        I128KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I128Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I128KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        I128Transport::to_napi_value(env, *val)
+        I128KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct IsizeTransport {
+pub struct IsizeKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75425,19 +75425,19 @@ pub struct IsizeTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for IsizeTransport {
+impl ::sittir_core::render::Render for IsizeKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for IsizeTransport {
+impl ::sittir_core::options::FillOptions for IsizeKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsizeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IsizeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75466,7 +75466,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsizeTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsizeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IsizeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75492,7 +75492,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsizeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IsizeTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for IsizeKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75502,27 +75502,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for IsizeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IsizeTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IsizeKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        IsizeTransport::from_napi_value(env, napi_val).map(Box::new)
+        IsizeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IsizeTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IsizeKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        IsizeTransport::to_napi_value(env, *val)
+        IsizeKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct UsizeTransport {
+pub struct UsizeKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75532,19 +75532,19 @@ pub struct UsizeTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for UsizeTransport {
+impl ::sittir_core::render::Render for UsizeKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for UsizeTransport {
+impl ::sittir_core::options::FillOptions for UsizeKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for UsizeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UsizeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75573,7 +75573,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsizeTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for UsizeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UsizeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75599,7 +75599,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsizeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UsizeTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for UsizeKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75609,27 +75609,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for UsizeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UsizeTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UsizeKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        UsizeTransport::from_napi_value(env, napi_val).map(Box::new)
+        UsizeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UsizeTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UsizeKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        UsizeTransport::to_napi_value(env, *val)
+        UsizeKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct F32Transport {
+pub struct F32KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75639,19 +75639,19 @@ pub struct F32Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for F32Transport {
+impl ::sittir_core::render::Render for F32KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for F32Transport {
+impl ::sittir_core::options::FillOptions for F32KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for F32Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for F32KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75680,7 +75680,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for F32Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for F32Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for F32KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75706,7 +75706,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for F32Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for F32Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for F32KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75716,27 +75716,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for F32Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<F32Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<F32KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        F32Transport::from_napi_value(env, napi_val).map(Box::new)
+        F32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<F32Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<F32KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        F32Transport::to_napi_value(env, *val)
+        F32KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct F64Transport {
+pub struct F64KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75746,19 +75746,19 @@ pub struct F64Transport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for F64Transport {
+impl ::sittir_core::render::Render for F64KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for F64Transport {
+impl ::sittir_core::options::FillOptions for F64KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for F64Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for F64KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75787,7 +75787,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for F64Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for F64Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for F64KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75813,7 +75813,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for F64Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for F64Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for F64KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75823,27 +75823,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for F64Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<F64Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<F64KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        F64Transport::from_napi_value(env, napi_val).map(Box::new)
+        F64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<F64Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<F64KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        F64Transport::to_napi_value(env, *val)
+        F64KeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct BoolTransport {
+pub struct BoolKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75853,19 +75853,19 @@ pub struct BoolTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for BoolTransport {
+impl ::sittir_core::render::Render for BoolKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for BoolTransport {
+impl ::sittir_core::options::FillOptions for BoolKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for BoolTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for BoolKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75894,7 +75894,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoolTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BoolTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for BoolKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -75920,7 +75920,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoolTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BoolTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for BoolKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -75930,27 +75930,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for BoolTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BoolTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BoolKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BoolTransport::from_napi_value(env, napi_val).map(Box::new)
+        BoolKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BoolTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BoolKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BoolTransport::to_napi_value(env, *val)
+        BoolKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct StrTransport {
+pub struct StrKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -75960,19 +75960,19 @@ pub struct StrTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for StrTransport {
+impl ::sittir_core::render::Render for StrKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for StrTransport {
+impl ::sittir_core::options::FillOptions for StrKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for StrTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for StrKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -76001,7 +76001,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StrTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for StrTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for StrKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -76027,7 +76027,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StrTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StrTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for StrKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -76037,27 +76037,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for StrTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StrTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StrKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StrTransport::from_napi_value(env, napi_val).map(Box::new)
+        StrKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StrTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StrKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StrTransport::to_napi_value(env, *val)
+        StrKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct CharTransport {
+pub struct CharKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -76067,19 +76067,19 @@ pub struct CharTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for CharTransport {
+impl ::sittir_core::render::Render for CharKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for CharTransport {
+impl ::sittir_core::options::FillOptions for CharKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for CharKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -76108,7 +76108,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for CharKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -76134,7 +76134,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CharTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for CharKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -76144,22 +76144,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for CharTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CharKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        CharTransport::from_napi_value(env, napi_val).map(Box::new)
+        CharKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CharKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharTransport::to_napi_value(env, *val)
+        CharKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -77341,7 +77341,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GtGtEqTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct KeywordTransport {
+pub struct UnderscoreTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -77351,19 +77351,19 @@ pub struct KeywordTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for KeywordTransport {
+impl ::sittir_core::render::Render for UnderscoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for KeywordTransport {
+impl ::sittir_core::options::FillOptions for UnderscoreTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -77392,7 +77392,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -77418,7 +77418,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for KeywordTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for UnderscoreTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -77428,22 +77428,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for KeywordTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UnderscoreTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+        UnderscoreTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UnderscoreTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        KeywordTransport::to_napi_value(env, *val)
+        UnderscoreTransport::to_napi_value(env, *val)
     }
 }
 
@@ -82010,71 +82010,71 @@ fn render_default_keyword(t: &DefaultKeywordTransport, w: &mut dyn ::sittir_core
     w.text(&t.text)
 }
 
-fn render_u8(t: &U8Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_u8_keyword(t: &U8KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_i8(t: &I8Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_i8_keyword(t: &I8KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_u16(t: &U16Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_u16_keyword(t: &U16KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_i16(t: &I16Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_i16_keyword(t: &I16KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_u32(t: &U32Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_u32_keyword(t: &U32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_i32(t: &I32Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_i32_keyword(t: &I32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_u64(t: &U64Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_u64_keyword(t: &U64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_i64(t: &I64Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_i64_keyword(t: &I64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_u128(t: &U128Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_u128_keyword(t: &U128KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_i128(t: &I128Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_i128_keyword(t: &I128KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_isize(t: &IsizeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_isize_keyword(t: &IsizeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_usize(t: &UsizeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_usize_keyword(t: &UsizeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_f32(t: &F32Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_f32_keyword(t: &F32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_f64(t: &F64Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_f64_keyword(t: &F64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_bool(t: &BoolTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_bool_keyword(t: &BoolKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_str(t: &StrTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_str_keyword(t: &StrKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_char(t: &CharTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_char_keyword(t: &CharKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -82122,7 +82122,7 @@ fn render_gt_gt_eq(t: &GtGtEqTransport, w: &mut dyn ::sittir_core::render::Rende
     w.text(&t.text)
 }
 
-fn render_keyword(t: &KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_underscore(t: &UnderscoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -82669,23 +82669,23 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::SlashStar(t) => t.render(w),
             AnyTransport::StarSlash(t) => t.render(w),
             AnyTransport::DefaultKeyword(t) => t.render(w),
-            AnyTransport::U8(t) => t.render(w),
-            AnyTransport::I8(t) => t.render(w),
-            AnyTransport::U16(t) => t.render(w),
-            AnyTransport::I16(t) => t.render(w),
-            AnyTransport::U32(t) => t.render(w),
-            AnyTransport::I32(t) => t.render(w),
-            AnyTransport::U64(t) => t.render(w),
-            AnyTransport::I64(t) => t.render(w),
-            AnyTransport::U128(t) => t.render(w),
-            AnyTransport::I128(t) => t.render(w),
-            AnyTransport::Isize(t) => t.render(w),
-            AnyTransport::Usize(t) => t.render(w),
-            AnyTransport::F32(t) => t.render(w),
-            AnyTransport::F64(t) => t.render(w),
-            AnyTransport::Bool(t) => t.render(w),
-            AnyTransport::Str(t) => t.render(w),
-            AnyTransport::Char(t) => t.render(w),
+            AnyTransport::U8Keyword(t) => t.render(w),
+            AnyTransport::I8Keyword(t) => t.render(w),
+            AnyTransport::U16Keyword(t) => t.render(w),
+            AnyTransport::I16Keyword(t) => t.render(w),
+            AnyTransport::U32Keyword(t) => t.render(w),
+            AnyTransport::I32Keyword(t) => t.render(w),
+            AnyTransport::U64Keyword(t) => t.render(w),
+            AnyTransport::I64Keyword(t) => t.render(w),
+            AnyTransport::U128Keyword(t) => t.render(w),
+            AnyTransport::I128Keyword(t) => t.render(w),
+            AnyTransport::IsizeKeyword(t) => t.render(w),
+            AnyTransport::UsizeKeyword(t) => t.render(w),
+            AnyTransport::F32Keyword(t) => t.render(w),
+            AnyTransport::F64Keyword(t) => t.render(w),
+            AnyTransport::BoolKeyword(t) => t.render(w),
+            AnyTransport::StrKeyword(t) => t.render(w),
+            AnyTransport::CharKeyword(t) => t.render(w),
             AnyTransport::MoveKeyword(t) => t.render(w),
             AnyTransport::PlusEq(t) => t.render(w),
             AnyTransport::DashEq(t) => t.render(w),
@@ -82697,7 +82697,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::CaretEq(t) => t.render(w),
             AnyTransport::LtLtEq(t) => t.render(w),
             AnyTransport::GtGtEq(t) => t.render(w),
-            AnyTransport::Keyword(t) => t.render(w),
+            AnyTransport::Underscore(t) => t.render(w),
             AnyTransport::DotDotEq(t) => t.render(w),
             AnyTransport::PubKeyword(t) => t.render(w),
             AnyTransport::RawKeyword(t) => t.render(w),
@@ -82732,23 +82732,23 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal28_5f_6b_77_5f_64_65_66_61_75_6c_74 => w.text("default"),
             AnyTransport::Literal29_5f_6b_77_5f_63_6f_6e_73_74 => w.text("const"),
             AnyTransport::Literal30_5f_6b_77_5f_75_6e_73_61_66_65 => w.text("unsafe"),
-            AnyTransport::Literal31_75_38 => w.text("u8"),
-            AnyTransport::Literal32_69_38 => w.text("i8"),
-            AnyTransport::Literal33_75_31_36 => w.text("u16"),
-            AnyTransport::Literal34_69_31_36 => w.text("i16"),
-            AnyTransport::Literal35_75_33_32 => w.text("u32"),
-            AnyTransport::Literal36_69_33_32 => w.text("i32"),
-            AnyTransport::Literal37_75_36_34 => w.text("u64"),
-            AnyTransport::Literal38_69_36_34 => w.text("i64"),
-            AnyTransport::Literal39_75_31_32_38 => w.text("u128"),
-            AnyTransport::Literal40_69_31_32_38 => w.text("i128"),
-            AnyTransport::Literal41_69_73_69_7a_65 => w.text("isize"),
-            AnyTransport::Literal42_75_73_69_7a_65 => w.text("usize"),
-            AnyTransport::Literal43_66_33_32 => w.text("f32"),
-            AnyTransport::Literal44_66_36_34 => w.text("f64"),
-            AnyTransport::Literal45_62_6f_6f_6c => w.text("bool"),
-            AnyTransport::Literal46_73_74_72 => w.text("str"),
-            AnyTransport::Literal47_63_68_61_72 => w.text("char"),
+            AnyTransport::Literal31_75_38_5f_6b_65_79_77_6f_72_64 => w.text("u8"),
+            AnyTransport::Literal32_69_38_5f_6b_65_79_77_6f_72_64 => w.text("i8"),
+            AnyTransport::Literal33_75_31_36_5f_6b_65_79_77_6f_72_64 => w.text("u16"),
+            AnyTransport::Literal34_69_31_36_5f_6b_65_79_77_6f_72_64 => w.text("i16"),
+            AnyTransport::Literal35_75_33_32_5f_6b_65_79_77_6f_72_64 => w.text("u32"),
+            AnyTransport::Literal36_69_33_32_5f_6b_65_79_77_6f_72_64 => w.text("i32"),
+            AnyTransport::Literal37_75_36_34_5f_6b_65_79_77_6f_72_64 => w.text("u64"),
+            AnyTransport::Literal38_69_36_34_5f_6b_65_79_77_6f_72_64 => w.text("i64"),
+            AnyTransport::Literal39_75_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("u128"),
+            AnyTransport::Literal40_69_31_32_38_5f_6b_65_79_77_6f_72_64 => w.text("i128"),
+            AnyTransport::Literal41_69_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("isize"),
+            AnyTransport::Literal42_75_73_69_7a_65_5f_6b_65_79_77_6f_72_64 => w.text("usize"),
+            AnyTransport::Literal43_66_33_32_5f_6b_65_79_77_6f_72_64 => w.text("f32"),
+            AnyTransport::Literal44_66_36_34_5f_6b_65_79_77_6f_72_64 => w.text("f64"),
+            AnyTransport::Literal45_62_6f_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("bool"),
+            AnyTransport::Literal46_73_74_72_5f_6b_65_79_77_6f_72_64 => w.text("str"),
+            AnyTransport::Literal47_63_68_61_72_5f_6b_65_79_77_6f_72_64 => w.text("char"),
             AnyTransport::Literal48_5f_69_6d_70_6c_5f_69_74_65_6d_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => w.text("unsafe"),
             AnyTransport::Literal49_5f_69_6d_70_6c_5f_69_74_65_6d_5f_73_65_6d_69 => w.text(";"),
             AnyTransport::Literal50_5f_6b_77_5f_75_6e_73_61_66_65_5f_6d_61_72_6b_65_72 => w.text("unsafe"),
@@ -82788,7 +82788,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal84_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
             AnyTransport::Literal85_5f_6b_77_5f_6d_6f_76_65_5f_6d_61_72_6b_65_72 => w.text("move"),
             AnyTransport::Literal86_72_65_6d_61_69_6e_69_6e_67_5f_66_69_65_6c_64_5f_70_61_74_74_65_72_6e => w.text(".."),
-            AnyTransport::Literal87_5f_5f_6b_65_79_77_6f_72_64 => w.text("_"),
+            AnyTransport::Literal87_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
             AnyTransport::Literal88_64_6f_74_5f_64_6f_74 => w.text(".."),
             AnyTransport::Literal89_64_6f_74_5f_64_6f_74_5f_64_6f_74 => w.text("..."),
             AnyTransport::Literal90_64_6f_74_5f_64_6f_74_5f_65_71 => w.text("..="),

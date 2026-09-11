@@ -5784,7 +5784,7 @@ describe('closure_expression sub-factories', () => {
 	it('expr builds the parent', () => {
 		const node = ir.closureExpression.expr({
 			parameters: { $type: TSKindId.ClosureParameters, $text: 'test', $source: 2, $named: true } as any,
-			content: [{ $type: TSKindId.Keyword, $text: '_', $source: 2, $named: true } as any]
+			content: [{ $type: TSKindId.Underscore, $text: '_', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ClosureExpression);
 		expect((node as any).content()?.$type).toBe(TSKindId.ClosureExpressionExpr);

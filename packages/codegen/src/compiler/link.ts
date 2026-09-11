@@ -465,7 +465,7 @@ export function canonicalizeRuleLiterals(
 		}
 		case PATTERN: {
 			if (!stampable || kindEntries.length === 0) return rule;
-			const patternEntry = findEntryForLiteralText(kindEntries, rule.value);
+			const patternEntry = findEntryForLiteralText(kindEntries, rule.value) ?? findEntryForKindName(kindEntries, rule.value);
 			return patternEntry === undefined ? rule : { ...rule, resolvedKindId: patternEntry.id };
 		}
 		default:

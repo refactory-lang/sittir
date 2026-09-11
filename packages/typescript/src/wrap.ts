@@ -1191,16 +1191,41 @@ function _filterWrapChildrenByKind<T>(
 	});
 }
 
-// Elidable separated-list positions (array elision, `[a, , b]`): the
-// raw wire array interleaves element entries with the separator token —
-// either as its bare numeric kind id (text-collapsed contexts) or as an
-// anonymous node stub `{ $type: <id>, $named: false }` (node-stub
-// contexts). Segment on those delimiters — each segment is one position
-// holding 0-or-1 element; an empty position stores `undefined`.
-// Idempotent over already-positional storage (a `$with` re-wrap carries
-// no delimiters): with no delimiter present every entry is its own
-// position, `undefined` holes intact.
+// A wire delimiter is a field-tagged separator token: either its bare
+// numeric kind id (text-collapsed contexts) or an anonymous node stub
+// `{ $type: <id>, $named: false }` (node-stub contexts).
 type _WireDelimiter = number | { readonly $type: number; readonly $named: false };
+function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {
+	if (typeof e === 'number') return separatorKindIds.includes(e);
+	if (typeof e === 'object' && e !== null) {
+		const stub = e as { $type?: unknown; $named?: unknown };
+		return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
+	}
+	return false;
+}
+
+// A `many` slot with a separator fact whose separator the parser
+// field-tagged into the slot: the render body re-joins the slot
+// with its own separator, so the wire delimiter is dropped rather
+// than stored.
+// Assumes T itself is never an array type — slot elements are node unions.
+function dropWireDelimiters<T>(
+	value: T | readonly (T | _WireDelimiter)[] | undefined,
+	separatorKindIds: readonly number[]
+): T | readonly T[] | undefined {
+	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
+	if (value == null) return undefined;
+	if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;
+	return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));
+}
+
+// Elidable separated-list positions (array elision, `[a, , b]`): the
+// raw wire array interleaves element entries with the separator token.
+// Segment on those delimiters — each segment is one position holding
+// 0-or-1 element; an empty position stores `undefined`. Idempotent over
+// already-positional storage (a `$with` re-wrap carries no delimiters):
+// with no delimiter present every entry is its own position, `undefined`
+// holes intact.
 function splitElidedWrapSlot<T>(
 	value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,
 	separatorKindIds: readonly number[],
@@ -1212,14 +1237,7 @@ function splitElidedWrapSlot<T>(
 	): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);
 	const items: readonly (T | _WireDelimiter | undefined)[] = value == null ? [] : isSlotList(value) ? value : [value];
 	if (items.length === 0) return [];
-	const isDelimiter = (e: unknown): e is _WireDelimiter => {
-		if (typeof e === 'number') return separatorKindIds.includes(e);
-		if (typeof e === 'object' && e !== null) {
-			const stub = e as { $type?: unknown; $named?: unknown };
-			return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
-		}
-		return false;
-	};
+	const isDelimiter = (e: unknown): e is _WireDelimiter => _isWireDelimiter(e, separatorKindIds);
 	const keepFirst = (seg: readonly (T | undefined)[]): T | undefined => {
 		const present = seg.filter((e): e is T => e !== undefined);
 		const kept = allowedKinds === undefined ? present : _filterWrapChildrenByKind(present, allowedKinds);
@@ -1981,7 +1999,7 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 			...data,
 			$type: TSKindId.VariableDeclaration as const,
 			_declarators: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._declarators, ['variable_declarator']),
+				dropWireDelimiters(data._declarators, [TSKindId.Comma]),
 				true,
 				'declarators',
 				{ tree, nodeType: data.$type, slotName: 'declarators', span: (data as _NodeData).$span }
@@ -2034,7 +2052,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 				{ let: 126, const: 129 }
 			),
 			_declarators: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._declarators, ['variable_declarator']),
+				dropWireDelimiters(data._declarators, [TSKindId.Comma]),
 				true,
 				'declarators',
 				{ tree, nodeType: data.$type, slotName: 'declarators', span: (data as _NodeData).$span }
@@ -5945,7 +5963,7 @@ export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHan
 			...data,
 			$type: TSKindId.SequenceExpression as const,
 			_expression: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._expression, true, 'expression', {
+				normalizeRepeatedWrapSlot(dropWireDelimiters(data._expression, [TSKindId.Comma]), true, 'expression', {
 					tree,
 					nodeType: data.$type,
 					slotName: 'expression',
@@ -8635,7 +8653,7 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.ExtendsClause as const,
 			_extends_clause_single: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._extends_clause_single, ['_extends_clause_single', 'extends_clause_single']),
+				dropWireDelimiters(data._extends_clause_single, [TSKindId.Comma]),
 				true,
 				'extends_clause_single',
 				{ tree, nodeType: data.$type, slotName: 'extends_clause_single', span: (data as _NodeData).$span }
@@ -8733,7 +8751,7 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 			...data,
 			$type: TSKindId.ImplementsClause as const,
 			_type: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._type, true, 'type', {
+				normalizeRepeatedWrapSlot(dropWireDelimiters(data._type, [TSKindId.Comma]), true, 'type', {
 					tree,
 					nodeType: data.$type,
 					slotName: 'type',
@@ -9159,17 +9177,12 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 		{
 			...data,
 			$type: TSKindId.ExtendsTypeClause as const,
-			_type: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type, [
-					'identifier',
-					'nested_type_identifier',
-					'generic_type',
-					'type_identifier'
-				]),
-				true,
-				'type',
-				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
-			),
+			_type: normalizeRepeatedWrapSlot(dropWireDelimiters(data._type, [TSKindId.Comma]), true, 'type', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'type',
+				span: (data as _NodeData).$span
+			}),
 
 			types() {
 				return drillInAll<T.Identifier | T.NestedTypeIdentifier | T.GenericType>(

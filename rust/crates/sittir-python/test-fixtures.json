@@ -7039,7 +7039,7 @@
                                     "string_end"
                                   ]
                                 },
-                                "_value": "None",
+                                "_value": 76,
                                 "$other": [
                                   19
                                 ],
@@ -7368,7 +7368,7 @@
                           "string_end"
                         ]
                       },
-                      "_value": "None",
+                      "_value": 76,
                       "$other": [
                         19
                       ],
@@ -7652,7 +7652,7 @@
                         "string_end"
                       ]
                     },
-                    "_value": "None",
+                    "_value": 76,
                     "$other": [
                       19
                     ],
@@ -7920,7 +7920,7 @@
                       "string_end"
                     ]
                   },
-                  "_value": "None",
+                  "_value": 76,
                   "$other": [
                     19
                   ],
@@ -8266,7 +8266,7 @@
                 "string_end"
               ]
             },
-            "_value": "None",
+            "_value": 76,
             "$other": [
               19
             ],
@@ -15250,7 +15250,7 @@
                       "$type": 277,
                       "$source": 0,
                       "$named": true,
-                      "_operators": 194,
+                      "_operators": "not in",
                       "$span": {
                         "start": 48,
                         "end": 56
@@ -15320,7 +15320,7 @@
                       "$type": 277,
                       "$source": 0,
                       "$named": true,
-                      "_operators": 195,
+                      "_operators": "is not",
                       "$span": {
                         "start": 59,
                         "end": 67
@@ -15841,7 +15841,7 @@
             "$type": 277,
             "$source": 0,
             "$named": true,
-            "_operators": 194,
+            "_operators": "not in",
             "$span": {
               "start": 48,
               "end": 56
@@ -15900,7 +15900,7 @@
             "$type": 277,
             "$source": 0,
             "$named": true,
-            "_operators": 195,
+            "_operators": "is not",
             "$span": {
               "start": 59,
               "end": 67
@@ -16332,7 +16332,7 @@
           "$type": 277,
           "$source": 0,
           "$named": true,
-          "_operators": 194,
+          "_operators": "not in",
           "$span": {
             "start": 48,
             "end": 56
@@ -16381,7 +16381,7 @@
           "$type": 277,
           "$source": 0,
           "$named": true,
-          "_operators": 195,
+          "_operators": "is not",
           "$span": {
             "start": 59,
             "end": 67
@@ -27793,7 +27793,7 @@
                   "$type": 197,
                   "$source": 0,
                   "$named": true,
-                  "_body": "True",
+                  "_body": 74,
                   "$other": [
                     62,
                     19
@@ -28296,7 +28296,7 @@
         "$type": 197,
         "$source": 0,
         "$named": true,
-        "_body": "True",
+        "_body": 74,
         "$other": [
           62,
           19
@@ -28733,7 +28733,7 @@
       "$type": 197,
       "$source": 0,
       "$named": true,
-      "_body": "True",
+      "_body": 74,
       "$other": [
         62,
         19
@@ -44031,7 +44031,7 @@
                                     "string_end"
                                   ]
                                 },
-                                "_condition": "True",
+                                "_condition": 74,
                                 "_alternative": {
                                   "$type": 231,
                                   "$source": 0,
@@ -46613,7 +46613,7 @@
                 "string_end"
               ]
             },
-            "_condition": "True",
+            "_condition": 74,
             "_alternative": {
               "$type": 231,
               "$source": 0,
@@ -47554,7 +47554,7 @@
                                 "string_end"
                               ]
                             },
-                            "_condition": "True",
+                            "_condition": 74,
                             "_alternative": {
                               "$type": 231,
                               "$source": 0,
@@ -48062,7 +48062,7 @@
           "string_end"
         ]
       },
-      "_condition": "True",
+      "_condition": 74,
       "_alternative": {
         "$type": 231,
         "$source": 0,
@@ -52301,7 +52301,7 @@
                   "end": 4
                 },
                 "$nodeHandle": 180388626446,
-                "_content": "True"
+                "_content": 74
               }
             ],
             "$span": {
@@ -52339,7 +52339,7 @@
                   "end": 10
                 },
                 "$nodeHandle": 180388626448,
-                "_content": "False"
+                "_content": 75
               }
             ],
             "$span": {
@@ -52377,7 +52377,7 @@
                   "end": 15
                 },
                 "$nodeHandle": 180388626450,
-                "_content": "None"
+                "_content": 76
               }
             ],
             "$span": {
@@ -52429,7 +52429,7 @@
         "end": 4
       },
       "$nodeHandle": 180388626437,
-      "_content": "True"
+      "_content": 74
     },
     "expectedOutput": "True"
   },
@@ -52456,7 +52456,7 @@
         "end": 10
       },
       "$nodeHandle": 180388626439,
-      "_content": "False"
+      "_content": 75
     },
     "expectedOutput": "False"
   },
@@ -52483,7 +52483,7 @@
         "end": 15
       },
       "$nodeHandle": 180388626441,
-      "_content": "None"
+      "_content": 76
     },
     "expectedOutput": "None"
   },
@@ -57294,7 +57294,7 @@
                         "$type": 228,
                         "$source": 0,
                         "$named": true,
-                        "_condition": "True",
+                        "_condition": 74,
                         "$other": [
                           18
                         ],
@@ -57382,7 +57382,7 @@
                             "$type": 198,
                             "$source": 0,
                             "$named": true,
-                            "_body": "True",
+                            "_body": 74,
                             "$other": [
                               62,
                               19
@@ -57397,7 +57397,7 @@
                             "$type": 198,
                             "$source": 0,
                             "$named": true,
-                            "_body": "False",
+                            "_body": 75,
                             "$other": [
                               62,
                               19
@@ -57919,7 +57919,7 @@
               "$type": 228,
               "$source": 0,
               "$named": true,
-              "_condition": "True",
+              "_condition": 74,
               "$other": [
                 18
               ],
@@ -57996,7 +57996,7 @@
                   "$type": 198,
                   "$source": 0,
                   "$named": true,
-                  "_body": "True",
+                  "_body": 74,
                   "$other": [
                     62,
                     19
@@ -58011,7 +58011,7 @@
                   "$type": 198,
                   "$source": 0,
                   "$named": true,
-                  "_body": "False",
+                  "_body": 75,
                   "$other": [
                     62,
                     19
@@ -58479,7 +58479,7 @@
             "$type": 228,
             "$source": 0,
             "$named": true,
-            "_condition": "True",
+            "_condition": 74,
             "$other": [
               18
             ],
@@ -58546,7 +58546,7 @@
                 "$type": 198,
                 "$source": 0,
                 "$named": true,
-                "_body": "True",
+                "_body": 74,
                 "$other": [
                   62,
                   19
@@ -58561,7 +58561,7 @@
                 "$type": 198,
                 "$source": 0,
                 "$named": true,
-                "_body": "False",
+                "_body": 75,
                 "$other": [
                   62,
                   19
@@ -71636,7 +71636,7 @@
                             "end": 61
                           },
                           "$nodeHandle": 240518168655,
-                          "_content": "..."
+                          "_content": 64
                         }
                       ],
                       "$span": {
@@ -72632,7 +72632,7 @@
         "end": 61
       },
       "$nodeHandle": 240518168597,
-      "_content": "..."
+      "_content": 64
     },
     "expectedOutput": "..."
   },
@@ -80454,7 +80454,7 @@
                               "$source": 0,
                               "$named": true,
                               "_name": "case",
-                              "_value": "True",
+                              "_value": 74,
                               "$other": [
                                 40
                               ],
@@ -80758,7 +80758,7 @@
                     "$source": 0,
                     "$named": true,
                     "_name": "case",
-                    "_value": "True",
+                    "_value": 74,
                     "$other": [
                       40
                     ],
@@ -81008,7 +81008,7 @@
                   "$source": 0,
                   "$named": true,
                   "_name": "case",
-                  "_value": "True",
+                  "_value": 74,
                   "$other": [
                     40
                   ],
@@ -81183,7 +81183,7 @@
               "$source": 0,
               "$named": true,
               "_name": "case",
-              "_value": "True",
+              "_value": 74,
               "$other": [
                 40
               ],
@@ -81255,7 +81255,7 @@
             "$source": 0,
             "$named": true,
             "_name": "case",
-            "_value": "True",
+            "_value": 74,
             "$other": [
               40
             ],
@@ -81382,7 +81382,7 @@
                     "$type": 228,
                     "$source": 0,
                     "$named": true,
-                    "_condition": "False",
+                    "_condition": 75,
                     "$other": [
                       18
                     ],
@@ -81437,7 +81437,7 @@
                                     "$type": 269,
                                     "$source": 0,
                                     "$named": true,
-                                    "_right": "False",
+                                    "_right": 75,
                                     "$other": [
                                       40
                                     ],
@@ -81537,7 +81537,7 @@
                     "$type": 228,
                     "$source": 0,
                     "$named": true,
-                    "_condition": "True",
+                    "_condition": 74,
                     "$other": [
                       18
                     ],
@@ -81592,7 +81592,7 @@
                                     "$type": 269,
                                     "$source": 0,
                                     "$named": true,
-                                    "_right": "True",
+                                    "_right": 74,
                                     "$other": [
                                       40
                                     ],
@@ -81722,7 +81722,7 @@
           "$type": 269,
           "$source": 0,
           "$named": true,
-          "_right": "False",
+          "_right": 75,
           "$other": [
             40
           ],
@@ -81777,7 +81777,7 @@
           "$type": 269,
           "$source": 0,
           "$named": true,
-          "_right": "True",
+          "_right": 74,
           "$other": [
             40
           ],
@@ -81823,7 +81823,7 @@
         "$type": 269,
         "$source": 0,
         "$named": true,
-        "_right": "False",
+        "_right": 75,
         "$other": [
           40
         ],
@@ -81868,7 +81868,7 @@
         "$type": 269,
         "$source": 0,
         "$named": true,
-        "_right": "True",
+        "_right": 74,
         "$other": [
           40
         ],
@@ -86808,7 +86808,7 @@
                                   "end": 219
                                 },
                                 "$nodeHandle": 304942678185,
-                                "_content": "..."
+                                "_content": 64
                               }
                             ],
                             "$span": {
@@ -88376,7 +88376,7 @@
         "end": 219
       },
       "$nodeHandle": 304942678089,
-      "_content": "..."
+      "_content": 64
     },
     "expectedOutput": "..."
   },
@@ -104589,7 +104589,7 @@
                         "$type": 190,
                         "$source": 0,
                         "$named": true,
-                        "_argument": "True",
+                        "_argument": 74,
                         "$other": [
                           51
                         ],
@@ -104764,7 +104764,7 @@
       "$type": 190,
       "$source": 0,
       "$named": true,
-      "_argument": "True",
+      "_argument": 74,
       "$other": [
         51
       ],
@@ -113429,7 +113429,7 @@
               "end": 219
             },
             "$nodeHandle": 412316860588,
-            "_content": "None"
+            "_content": 76
           },
           "_body": {
             "$type": 276,
@@ -113461,7 +113461,7 @@
                           "end": 234
                         },
                         "$nodeHandle": 412316860593,
-                        "_expressions": "None"
+                        "_expressions": 76
                       }
                     ],
                     "$span": {
@@ -113639,7 +113639,7 @@
               "end": 277
             },
             "$nodeHandle": 412316860601,
-            "_content": "None"
+            "_content": 76
           },
           "_body": {
             "$type": 276,
@@ -113671,7 +113671,7 @@
                           "end": 292
                         },
                         "$nodeHandle": 412316860606,
-                        "_expressions": "None"
+                        "_expressions": 76
                       }
                     ],
                     "$span": {
@@ -114905,7 +114905,7 @@
           "end": 219
         },
         "$nodeHandle": 412316860674,
-        "_content": "None"
+        "_content": 76
       },
       "_body": {
         "$type": 276,
@@ -114937,7 +114937,7 @@
                       "end": 234
                     },
                     "$nodeHandle": 412316860679,
-                    "_expressions": "None"
+                    "_expressions": 76
                   }
                 ],
                 "$span": {
@@ -115131,7 +115131,7 @@
           "end": 277
         },
         "$nodeHandle": 412316860687,
-        "_content": "None"
+        "_content": 76
       },
       "_body": {
         "$type": 276,
@@ -115163,7 +115163,7 @@
                       "end": 292
                     },
                     "$nodeHandle": 412316860692,
-                    "_expressions": "None"
+                    "_expressions": 76
                   }
                 ],
                 "$span": {
@@ -116925,7 +116925,7 @@
         "end": 219
       },
       "$nodeHandle": 412316860493,
-      "_content": "None"
+      "_content": 76
     },
     "expectedOutput": "None"
   },
@@ -116979,7 +116979,7 @@
         "end": 277
       },
       "$nodeHandle": 412316860506,
-      "_content": "None"
+      "_content": 76
     },
     "expectedOutput": "None"
   },
@@ -124400,7 +124400,7 @@
                             "end": 130
                           },
                           "$nodeHandle": 433791696990,
-                          "_content": "..."
+                          "_content": 64
                         }
                       ],
                       "$span": {
@@ -125349,7 +125349,7 @@
                       "end": 130
                     },
                     "$nodeHandle": 433791697217,
-                    "_content": "..."
+                    "_content": 64
                   }
                 ],
                 "$span": {
@@ -125557,7 +125557,7 @@
         "end": 130
       },
       "$nodeHandle": 433791696943,
-      "_content": "..."
+      "_content": 64
     },
     "expectedOutput": "..."
   },
@@ -128249,7 +128249,7 @@
                   ]
                 },
                 "_in_clause": [
-                  "None"
+                  76
                 ],
                 "$other": [
                   38,

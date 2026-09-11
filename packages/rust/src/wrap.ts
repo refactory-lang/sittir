@@ -443,23 +443,23 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'crate',
 		'_primitive_type',
 		'primitive_type',
-		'u8',
-		'i8',
-		'u16',
-		'i16',
-		'u32',
-		'i32',
-		'u64',
-		'i64',
-		'u128',
-		'i128',
-		'isize',
-		'usize',
-		'f32',
-		'f64',
-		'bool',
-		'str',
-		'char',
+		'u8_keyword',
+		'i8_keyword',
+		'u16_keyword',
+		'i16_keyword',
+		'u32_keyword',
+		'i32_keyword',
+		'u64_keyword',
+		'i64_keyword',
+		'u128_keyword',
+		'i128_keyword',
+		'isize_keyword',
+		'usize_keyword',
+		'f32_keyword',
+		'f64_keyword',
+		'bool_keyword',
+		'str_keyword',
+		'char_keyword',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
 		'plus',
@@ -493,9 +493,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'__keyword',
-		'_keyword',
-		'keyword',
+		'underscore',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -564,23 +562,23 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'crate',
 		'_primitive_type',
 		'primitive_type',
-		'u8',
-		'i8',
-		'u16',
-		'i16',
-		'u32',
-		'i32',
-		'u64',
-		'i64',
-		'u128',
-		'i128',
-		'isize',
-		'usize',
-		'f32',
-		'f64',
-		'bool',
-		'str',
-		'char',
+		'u8_keyword',
+		'i8_keyword',
+		'u16_keyword',
+		'i16_keyword',
+		'u32_keyword',
+		'i32_keyword',
+		'u64_keyword',
+		'i64_keyword',
+		'u128_keyword',
+		'i128_keyword',
+		'isize_keyword',
+		'usize_keyword',
+		'f32_keyword',
+		'f64_keyword',
+		'bool_keyword',
+		'str_keyword',
+		'char_keyword',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
 		'plus',
@@ -614,9 +612,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'__keyword',
-		'_keyword',
-		'keyword',
+		'underscore',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -680,23 +676,23 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'crate',
 		'_primitive_type',
 		'primitive_type',
-		'u8',
-		'i8',
-		'u16',
-		'i16',
-		'u32',
-		'i32',
-		'u64',
-		'i64',
-		'u128',
-		'i128',
-		'isize',
-		'usize',
-		'f32',
-		'f64',
-		'bool',
-		'str',
-		'char',
+		'u8_keyword',
+		'i8_keyword',
+		'u16_keyword',
+		'i16_keyword',
+		'u32_keyword',
+		'i32_keyword',
+		'u64_keyword',
+		'i64_keyword',
+		'u128_keyword',
+		'i128_keyword',
+		'isize_keyword',
+		'usize_keyword',
+		'f32_keyword',
+		'f64_keyword',
+		'bool_keyword',
+		'str_keyword',
+		'char_keyword',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
 		'plus',
@@ -730,8 +726,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'__keyword',
-		'_keyword',
+		'underscore',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -808,23 +803,23 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'removed_trait_bound',
 		'_primitive_type',
 		'primitive_type',
-		'u8',
-		'i8',
-		'u16',
-		'i16',
-		'u32',
-		'i32',
-		'u64',
-		'i64',
-		'u128',
-		'i128',
-		'isize',
-		'usize',
-		'f32',
-		'f64',
-		'bool',
-		'str',
-		'char'
+		'u8_keyword',
+		'i8_keyword',
+		'u16_keyword',
+		'i16_keyword',
+		'u32_keyword',
+		'i32_keyword',
+		'u64_keyword',
+		'i64_keyword',
+		'u128_keyword',
+		'i128_keyword',
+		'isize_keyword',
+		'usize_keyword',
+		'f32_keyword',
+		'f64_keyword',
+		'bool_keyword',
+		'str_keyword',
+		'char_keyword'
 	]),
 	_expression_except_range: new Set([
 		'unary_expression',
@@ -960,23 +955,23 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'crate',
 		'_primitive_type',
 		'primitive_type',
-		'u8',
-		'i8',
-		'u16',
-		'i16',
-		'u32',
-		'i32',
-		'u64',
-		'i64',
-		'u128',
-		'i128',
-		'isize',
-		'usize',
-		'f32',
-		'f64',
-		'bool',
-		'str',
-		'char',
+		'u8_keyword',
+		'i8_keyword',
+		'u16_keyword',
+		'i16_keyword',
+		'u32_keyword',
+		'i32_keyword',
+		'u64_keyword',
+		'i64_keyword',
+		'u128_keyword',
+		'i128_keyword',
+		'isize_keyword',
+		'usize_keyword',
+		'f32_keyword',
+		'f64_keyword',
+		'bool_keyword',
+		'str_keyword',
+		'char_keyword',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
 		'plus',
@@ -1010,9 +1005,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'__keyword',
-		'_keyword',
-		'keyword',
+		'underscore',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -1079,23 +1072,23 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'crate',
 		'_primitive_type',
 		'primitive_type',
-		'u8',
-		'i8',
-		'u16',
-		'i16',
-		'u32',
-		'i32',
-		'u64',
-		'i64',
-		'u128',
-		'i128',
-		'isize',
-		'usize',
-		'f32',
-		'f64',
-		'bool',
-		'str',
-		'char',
+		'u8_keyword',
+		'i8_keyword',
+		'u16_keyword',
+		'i16_keyword',
+		'u32_keyword',
+		'i32_keyword',
+		'u64_keyword',
+		'i64_keyword',
+		'u128_keyword',
+		'i128_keyword',
+		'isize_keyword',
+		'usize_keyword',
+		'f32_keyword',
+		'f64_keyword',
+		'bool_keyword',
+		'str_keyword',
+		'char_keyword',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
 		'plus',
@@ -1129,9 +1122,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'__keyword',
-		'_keyword',
-		'keyword',
+		'underscore',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -1318,23 +1309,23 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'crate',
 		'_primitive_type',
 		'primitive_type',
-		'u8',
-		'i8',
-		'u16',
-		'i16',
-		'u32',
-		'i32',
-		'u64',
-		'i64',
-		'u128',
-		'i128',
-		'isize',
-		'usize',
-		'f32',
-		'f64',
-		'bool',
-		'str',
-		'char',
+		'u8_keyword',
+		'i8_keyword',
+		'u16_keyword',
+		'i16_keyword',
+		'u32_keyword',
+		'i32_keyword',
+		'u64_keyword',
+		'i64_keyword',
+		'u128_keyword',
+		'i128_keyword',
+		'isize_keyword',
+		'usize_keyword',
+		'f32_keyword',
+		'f64_keyword',
+		'bool_keyword',
+		'str_keyword',
+		'char_keyword',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
 		'plus',
@@ -1368,8 +1359,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'__keyword',
-		'_keyword',
+		'underscore',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -1496,6 +1486,34 @@ function _filterWrapChildrenByKind<T>(
 		if (kind === undefined) return false;
 		return _matchesAllowedWrapKind(kind, allowedKinds);
 	});
+}
+
+// A wire delimiter is a field-tagged separator token: either its bare
+// numeric kind id (text-collapsed contexts) or an anonymous node stub
+// `{ $type: <id>, $named: false }` (node-stub contexts).
+type _WireDelimiter = number | { readonly $type: number; readonly $named: false };
+function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {
+	if (typeof e === 'number') return separatorKindIds.includes(e);
+	if (typeof e === 'object' && e !== null) {
+		const stub = e as { $type?: unknown; $named?: unknown };
+		return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
+	}
+	return false;
+}
+
+// A `many` slot with a separator fact whose separator the parser
+// field-tagged into the slot: the render body re-joins the slot
+// with its own separator, so the wire delimiter is dropped rather
+// than stored.
+// Assumes T itself is never an array type — slot elements are node unions.
+function dropWireDelimiters<T>(
+	value: T | readonly (T | _WireDelimiter)[] | undefined,
+	separatorKindIds: readonly number[]
+): T | readonly T[] | undefined {
+	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
+	if (value == null) return undefined;
+	if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;
+	return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));
 }
 
 export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle) {
@@ -2150,6 +2168,7 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -2419,6 +2438,7 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -4075,23 +4095,23 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
 					| T.TupleType
 					| T.ArrayType
 					| T.HigherRankedTraitBound
-					| TSKindId.U8
-					| TSKindId.I8
-					| TSKindId.U16
-					| TSKindId.I16
-					| TSKindId.U32
-					| TSKindId.I32
-					| TSKindId.U64
-					| TSKindId.I64
-					| TSKindId.U128
-					| TSKindId.I128
-					| TSKindId.Isize
-					| TSKindId.Usize
-					| TSKindId.F32
-					| TSKindId.F64
-					| TSKindId.Bool
-					| TSKindId.Str
-					| TSKindId.Char
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 				>(this._left, tree);
 			},
 			bounds() {
@@ -4398,7 +4418,7 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.TraitBounds as const,
 			_bounds: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._bounds, true, 'bounds', {
+				normalizeRepeatedWrapSlot(dropWireDelimiters(data._bounds, [TSKindId.Plus]), true, 'bounds', {
 					tree,
 					nodeType: data.$type,
 					slotName: 'bounds',
@@ -8117,7 +8137,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 				{ true: 123, false: 124, self: 132 }
 			),
 			_right: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._right, false, 'right', {
+				normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.AmpAmp]), false, 'right', {
 					tree,
 					nodeType: data.$type,
 					slotName: 'right',
@@ -9072,7 +9092,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 			...data,
 			$type: TSKindId.ClosureParameters as const,
 			_parameters: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._parameters, false, 'parameters', {
+				normalizeRepeatedWrapSlot(dropWireDelimiters(data._parameters, [TSKindId.Comma]), false, 'parameters', {
 					tree,
 					nodeType: data.$type,
 					slotName: 'parameters',
@@ -11503,7 +11523,7 @@ export function wrapClosureExpressionExpr(data: T.ClosureExpressionExpr, tree: T
 			),
 
 			body() {
-				return drillIn<T.Expression | TSKindId.Keyword>(this._body, tree);
+				return drillIn<T.Expression | TSKindId.Underscore>(this._body, tree);
 			},
 			$with: {
 				body: (v: NonNullable<T.ClosureExpressionExpr['_body']>) =>
@@ -12056,6 +12076,7 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -12195,6 +12216,7 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -12334,6 +12356,7 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -12473,6 +12496,7 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle) {
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -12604,6 +12628,7 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -12735,6 +12760,7 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle) {
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -12868,6 +12894,7 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -12999,6 +13026,7 @@ export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: T
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -13130,6 +13158,7 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 				{
 					true: 123,
 					false: 124,
+					mut: 76,
 					self: 132,
 					super: 133,
 					crate: 134,
@@ -13700,28 +13729,33 @@ export function wrapAttributedEnumVariant(data: T.AttributedEnumVariant, tree: T
 
 export function wrapAttributedParameter(
 	data: T.AttributedParameter & {
-		readonly _parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _self_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _variadic_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly __keyword?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _type_identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _primitive_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _abstract_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _reference_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _metavariable?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _pointer_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _generic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _scoped_type_identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _tuple_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _unit_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _array_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _function_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _macro_invocation?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _never_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _dynamic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _bounded_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
-		readonly _removed_trait_bound?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _self_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _variadic_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _underscore?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _type_identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _primitive_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _abstract_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _reference_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _metavariable?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _pointer_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _generic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _scoped_type_identifier?:
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type;
+		readonly _tuple_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _unit_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _array_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _function_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _macro_invocation?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _never_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _dynamic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _bounded_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _removed_trait_bound?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 	},
 	tree: TreeHandle
 ) {
@@ -13731,7 +13765,7 @@ export function wrapAttributedParameter(
 		'_parameter',
 		'_self_parameter',
 		'_variadic_parameter',
-		'__keyword',
+		'_underscore',
 		'_type_identifier',
 		'_primitive_type',
 		'_abstract_type',
@@ -13756,7 +13790,6 @@ export function wrapAttributedParameter(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'__keyword',
 				'_abstract_type',
 				'_array_type',
 				'_bounded_type',
@@ -13776,6 +13809,7 @@ export function wrapAttributedParameter(
 				'_self_parameter',
 				'_tuple_type',
 				'_type_identifier',
+				'_underscore',
 				'_unit_type',
 				'_variadic_parameter'
 			]),
@@ -13792,7 +13826,7 @@ export function wrapAttributedParameter(
 						data._parameter ??
 						data._self_parameter ??
 						data._variadic_parameter ??
-						data.__keyword ??
+						data._underscore ??
 						data._type_identifier ??
 						data._primitive_type ??
 						data._abstract_type ??
@@ -13843,7 +13877,7 @@ export function wrapAttributedParameter(
 				return drillIn<T.AttributeItem | undefined>(this._attribute_item, tree);
 			},
 			content() {
-				return drillIn<T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type>(
+				return drillIn<T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(
 					this._content,
 					tree
 				);

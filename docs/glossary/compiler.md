@@ -10325,19 +10325,25 @@ A keyword is not detected by a regex or a word-shape test on the runtime
 name; parser.c already names it that way. An anonymous symbol's own C name
 is `anon_sym_` followed by its literal text verbatim exactly when
 tree-sitter minted that symbol from an identifier-shaped keyword — `class`,
-`_`, `expr_2021` — since a symbolic token instead goes through per-character
+`expr_2021` — since a symbolic token instead goes through per-character
 name substitution (`anon_sym_COMMA` for `,`, `anon_sym_macro_rules_BANG` for
 `macro_rules!`), which never reproduces the literal text after the
 `anon_sym_` prefix. That exact match (`cName === 'anon_sym_' + symbolName`)
 is the one predicate: every keyword token gets the `_keyword` suffix,
 collision with a same-named kind or not — `fn_keyword`, `class_keyword`,
-`u8_keyword`, `tt_keyword`, `__keyword` for `_` — and a symbolic token keeps
-its plain derived name (`comma`, `macro_rules_bang`). This is the ONE
-derivation of a keyword's runtime name: the `TSKindId` member, the kind
-string, factories, and the nested option key `nestedKey` derives all follow
-from it. If a `_keyword`-suffixed name still collides with an existing key,
-`joinIdNames` throws naming both symbols — there is no second, id-suffixed
-fallback.
+`u8_keyword`, `tt_keyword`. `_` is punctuation, not a keyword, even though
+its C name matches the exact-text predicate: text made of nothing but
+underscores derives `underscore` (`underscore2` for `__`, one more
+underscore character per further doubling, mirroring tree-sitter's own `LT2`
+convention for a doubled symbolic character) rather than `__keyword` —
+underscore is the one identifier-class character tree-sitter never escapes
+to a symbolic name, so this is the symbolic name it omitted, sitting beside
+`comma`/`lparen`. A symbolic token keeps its plain derived name (`comma`,
+`macro_rules_bang`). This is the ONE derivation of a keyword's runtime name:
+the `TSKindId` member, the kind string, factories, and the nested option key
+`nestedKey` derives all follow from it. If a suffixed name still collides
+with an existing key, `joinIdNames` throws naming both symbols — there is no
+second, id-suffixed fallback.
 
 #### body
 

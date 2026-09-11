@@ -1906,7 +1906,10 @@ export function coerceToExpressionStatement(
 export function resolveVariableDeclaration_declarators(
 	value: T.VariableDeclaration.LooseConfig['declarators']
 ): T.VariableDeclaration['_declarators'] {
-	const resolved = _resolveManyBranch<T.VariableDeclarator>(value, 'variable_declarator');
+	const resolved: readonly T.VariableDeclaration['_declarators'][number][] = _resolveManyBranch<T.VariableDeclarator>(
+		value,
+		'variable_declarator'
+	);
 	_assertNonEmpty(resolved, 'variable_declaration.declarators');
 	return resolved;
 }
@@ -1951,7 +1954,10 @@ export function resolveLexicalDeclaration_kind(
 export function resolveLexicalDeclaration_declarators(
 	value: T.LexicalDeclaration.LooseConfig['declarators']
 ): T.LexicalDeclaration['_declarators'] {
-	const resolved = _resolveManyBranch<T.VariableDeclarator>(value, 'variable_declarator');
+	const resolved: readonly T.LexicalDeclaration['_declarators'][number][] = _resolveManyBranch<T.VariableDeclarator>(
+		value,
+		'variable_declarator'
+	);
 	_assertNonEmpty(resolved, 'lexical_declaration.declarators');
 	return resolved;
 }
