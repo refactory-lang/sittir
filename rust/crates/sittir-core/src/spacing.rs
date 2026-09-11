@@ -343,14 +343,12 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.adjacent_next = true;
     }
 
-    /// A site's arm: no arm at all for 0 (the position is directly
-    /// adjacent, the same as [`RenderSink::adjacent`]), a depth move plus
-    /// its line break for the depth arms, otherwise the arm's text as a
-    /// seam. A writer with no table attached treats every other kind as
-    /// unknown and writes nothing.
+    /// A site's arm: 0 is no arm — nothing is written and nothing changes —
+    /// a depth move plus its line break for the depth arms, otherwise the
+    /// arm's text as a seam. A writer with no table attached treats every
+    /// other kind as unknown and writes nothing.
     fn site(&mut self, kind: u16) {
         if kind == 0 {
-            self.adjacent_next = true;
             return;
         }
         let Some(table) = self.table else {
@@ -805,7 +803,7 @@ mod sink_tests {
     #[test]
     fn a_tight_site_holds_a_seam_that_still_gets_the_lexical_space() {
         assert_eq!(run(|w| { w.text("let").unwrap(); w.site(TIGHT); w.text("x").unwrap(); }), "let x");
-        assert_eq!(run(|w| { w.text("a").unwrap(); w.site(0); w.text("b").unwrap(); }), "ab");
+        assert_eq!(run(|w| { w.text("a").unwrap(); w.site(0); w.text("b").unwrap(); }), "a b");
     }
 
     #[test]
