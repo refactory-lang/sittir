@@ -86,7 +86,9 @@ pub fn render_to_string(
     indent: &str,
 ) -> Result<String, RenderError> {
     let mut out = String::new();
-    let mut w = SpacingWriter::new(&mut out, word).with_table(table).with_indent(indent);
+    let mut w = SpacingWriter::new(&mut out, word)
+        .with_table(table)
+        .with_indent(indent);
     value.render(&mut w)?;
     w.finish()?;
     Ok(out)

@@ -40,7 +40,10 @@ impl WordMatcher {
         }
     }
 
-    pub const fn with_literal_merge_pairs(mut self, literal_merge_pairs: &'static [(u8, u8)]) -> Self {
+    pub const fn with_literal_merge_pairs(
+        mut self,
+        literal_merge_pairs: &'static [(u8, u8)],
+    ) -> Self {
         self.literal_merge_pairs = literal_merge_pairs;
         self
     }
@@ -50,7 +53,8 @@ impl WordMatcher {
     /// tables derived from the Link-pinned `wordMatcher` can replace this
     /// via `WordMatcher::new` without touching call sites.
     pub fn default_ident() -> &'static WordMatcher {
-        static DEFAULT: WordMatcher = WordMatcher::new(default_ascii_table(), char::is_alphanumeric);
+        static DEFAULT: WordMatcher =
+            WordMatcher::new(default_ascii_table(), char::is_alphanumeric);
         &DEFAULT
     }
 
@@ -69,7 +73,9 @@ impl WordMatcher {
             return false;
         }
         let (l, r) = (left as u8, right as u8);
-        self.literal_merge_pairs.iter().any(|&(a, b)| a == l && b == r)
+        self.literal_merge_pairs
+            .iter()
+            .any(|&(a, b)| a == l && b == r)
     }
 }
 
@@ -77,7 +83,10 @@ const fn default_ascii_table() -> [bool; 128] {
     let mut t = [false; 128];
     let mut i = 0u8;
     while i < 128 {
-        t[i as usize] = (i >= b'a' && i <= b'z') || (i >= b'A' && i <= b'Z') || (i >= b'0' && i <= b'9') || i == b'_';
+        t[i as usize] = (i >= b'a' && i <= b'z')
+            || (i >= b'A' && i <= b'Z')
+            || (i >= b'0' && i <= b'9')
+            || i == b'_';
         i += 1;
     }
     t
@@ -198,10 +207,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self
     }
 
-    /// The grammar's whitespace vocabulary for [`RenderSink::site`]. A
-    /// writer with none attached treats every site kind as unknown and
-    /// writes nothing for it; every root render (`render_to_string`)
-    /// attaches one.
+    /// The grammar's whitespace vocabulary for [`crate::render::RenderSink::site`].
+    /// A render that resolves sites must attach one; a writer with none
+    /// attached is a debug-mode bug, not a supported no-table mode.
     pub fn with_table(mut self, table: &'a crate::render::WhitespaceTable) -> Self {
         self.table = Some(table);
         self
@@ -351,19 +359,19 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if kind == 0 {
             return;
         }
+        debug_assert!(
+            self.table.is_some(),
+            "a render that resolves sites must attach a whitespace table"
+        );
         let Some(table) = self.table else {
             return;
         };
         if kind == table.indent {
             self.indent();
-            self.merge_seam("\n");
-        } else if kind == table.dedent {
-            if self.dedent_keeps_payload() {
-                self.merge_seam("\n");
-            }
-        } else {
-            self.merge_seam((table.text_of)(kind));
+        } else if kind == table.dedent && !self.dedent_keeps_payload() {
+            return;
         }
+        self.merge_seam((table.text_of)(kind));
     }
 
     fn seam(&mut self, text: &str) {
@@ -412,10 +420,12 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
             let mark = rest[i..].chars().next().expect("a mark was found");
             rest = &rest[i + mark.len_utf8()..];
             if mark == ADJACENT {
-                self.adjacent_next = true;
+                crate::render::RenderSink::adjacent(self);
                 continue;
             }
-            let end = rest.find(|c: char| !c.is_whitespace()).unwrap_or(rest.len());
+            let end = rest
+                .find(|c: char| !c.is_whitespace())
+                .unwrap_or(rest.len());
             let payload = &rest[..end];
             rest = &rest[end..];
             match mark {
@@ -429,9 +439,10 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
                 }
                 _ => {}
             }
-            self.merge_seam(payload);
             if mark == TOKEN_SEAM {
-                self.seam_is_token = true;
+                crate::render::RenderSink::token_seam(self, payload);
+            } else {
+                self.merge_seam(payload);
             }
         }
         self.write_chunk(rest)
@@ -663,7 +674,6 @@ mod adjacent_tests {
         assert_eq!(out, "x\n    y");
         assert!(!out.contains(INDENT) && !out.contains(DEDENT));
     }
-
 }
 
 #[cfg(test)]
@@ -728,15 +738,35 @@ mod seam_tests {
 
     #[test]
     fn a_space_seam_beside_an_indent_flank_keeps_the_indent_and_the_depth() {
-        assert_eq!(run(&["{", "\u{FDD2} ", INDENT_NEWLINE, "a", DEDENT_NEWLINE, "\u{FDD2} ", "}"]), "{\n    a\n}");
+        assert_eq!(
+            run(&[
+                "{",
+                "\u{FDD2} ",
+                INDENT_NEWLINE,
+                "a",
+                DEDENT_NEWLINE,
+                "\u{FDD2} ",
+                "}"
+            ]),
+            "{\n    a\n}"
+        );
     }
 
     #[test]
     fn an_indent_dedented_before_any_text_leaves_an_empty_body_bare() {
         assert_eq!(run(&["{", INDENT_NEWLINE, DEDENT_NEWLINE, "}"]), "{}");
-        assert_eq!(run(&["{", INDENT_NEWLINE, "\u{FDD2} ", DEDENT_NEWLINE, "}"]), "{}");
-        assert_eq!(run(&["{", INDENT_NEWLINE, "a", DEDENT_NEWLINE, "}"]), "{\n    a\n}");
-        assert_eq!(run(&["{", INDENT_NEWLINE, DEDENT_NEWLINE, "}", "\u{FDD2}\n", "x"]), "{}\nx");
+        assert_eq!(
+            run(&["{", INDENT_NEWLINE, "\u{FDD2} ", DEDENT_NEWLINE, "}"]),
+            "{}"
+        );
+        assert_eq!(
+            run(&["{", INDENT_NEWLINE, "a", DEDENT_NEWLINE, "}"]),
+            "{\n    a\n}"
+        );
+        assert_eq!(
+            run(&["{", INDENT_NEWLINE, DEDENT_NEWLINE, "}", "\u{FDD2}\n", "x"]),
+            "{}\nx"
+        );
     }
 
     #[test]
@@ -761,7 +791,7 @@ mod seam_tests {
 #[cfg(test)]
 mod sink_tests {
     use super::*;
-    use crate::render::{RenderSink, WhitespaceTable};
+    use crate::render::{Render, RenderSink, WhitespaceTable};
 
     const TIGHT: u16 = 1;
     const SPACE: u16 = 2;
@@ -770,13 +800,26 @@ mod sink_tests {
     const INDENT: u16 = 5;
     const DEDENT: u16 = 6;
     fn text_of(kind: u16) -> &'static str {
-        match kind { TIGHT => "", SPACE => " ", NEWLINE => "\n", BLANK => "\n\n", INDENT | DEDENT => "\n", _ => "" }
+        match kind {
+            TIGHT => "",
+            SPACE => " ",
+            NEWLINE => "\n",
+            BLANK | INDENT => "\n\n",
+            DEDENT => "\n",
+            _ => "",
+        }
     }
-    const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: INDENT, dedent: DEDENT };
+    const TABLE: WhitespaceTable = WhitespaceTable {
+        text_of,
+        indent: INDENT,
+        dedent: DEDENT,
+    };
 
     fn run(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
         let mut s = String::new();
-        let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_table(&TABLE).with_indent("  ");
+        let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident())
+            .with_table(&TABLE)
+            .with_indent("  ");
         f(&mut w);
         w.finish().unwrap();
         s
@@ -784,33 +827,136 @@ mod sink_tests {
 
     #[test]
     fn a_word_hazard_gets_a_space_and_adjacent_suppresses_it() {
-        assert_eq!(run(|w| { w.text("let").unwrap(); w.text("x").unwrap(); }), "let x");
-        assert_eq!(run(|w| { w.text("let").unwrap(); w.adjacent(); w.text("x").unwrap(); }), "letx");
+        assert_eq!(
+            run(|w| {
+                w.text("let").unwrap();
+                w.text("x").unwrap();
+            }),
+            "let x"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("let").unwrap();
+                w.adjacent();
+                w.text("x").unwrap();
+            }),
+            "letx"
+        );
     }
 
     #[test]
     fn seams_coalesce_to_the_widest_and_drop_at_the_edges() {
-        assert_eq!(run(|w| { w.site(NEWLINE); w.text("a").unwrap(); w.site(SPACE); w.site(BLANK); w.text("b").unwrap(); w.site(NEWLINE); }), "a\n\nb");
-        assert_eq!(run(|w| { w.text("a").unwrap(); w.seam("\n"); w.seam(" "); w.text("b").unwrap(); }), "a\nb");
+        assert_eq!(
+            run(|w| {
+                w.site(NEWLINE);
+                w.text("a").unwrap();
+                w.site(SPACE);
+                w.site(BLANK);
+                w.text("b").unwrap();
+                w.site(NEWLINE);
+            }),
+            "a\n\nb"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam("\n");
+                w.seam(" ");
+                w.text("b").unwrap();
+            }),
+            "a\nb"
+        );
     }
 
     #[test]
     fn a_token_seam_coalesces_but_survives_the_end() {
-        assert_eq!(run(|w| { w.text("pass").unwrap(); w.token_seam("\n"); w.site(NEWLINE); }), "pass\n");
-        assert_eq!(run(|w| { w.token_seam("\n"); w.text("a").unwrap(); }), "\na");
+        assert_eq!(
+            run(|w| {
+                w.text("pass").unwrap();
+                w.token_seam("\n");
+                w.site(NEWLINE);
+            }),
+            "pass\n"
+        );
+        assert_eq!(
+            run(|w| {
+                w.token_seam("\n");
+                w.text("a").unwrap();
+            }),
+            "\na"
+        );
     }
 
     #[test]
     fn a_tight_site_holds_a_seam_that_still_gets_the_lexical_space() {
-        assert_eq!(run(|w| { w.text("let").unwrap(); w.site(TIGHT); w.text("x").unwrap(); }), "let x");
-        assert_eq!(run(|w| { w.text("a").unwrap(); w.site(0); w.text("b").unwrap(); }), "a b");
+        assert_eq!(
+            run(|w| {
+                w.text("let").unwrap();
+                w.site(TIGHT);
+                w.text("x").unwrap();
+            }),
+            "let x"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.site(0);
+                w.text("b").unwrap();
+            }),
+            "a b"
+        );
     }
 
     #[test]
     fn a_depth_site_indents_and_a_dedent_before_any_text_leaves_a_body_bare() {
-        assert_eq!(run(|w| { w.text("{").unwrap(); w.site(INDENT); w.text("a").unwrap(); w.site(DEDENT); w.text("}").unwrap(); }), "{\n  a\n}");
-        assert_eq!(run(|w| { w.text("{").unwrap(); w.site(INDENT); w.site(DEDENT); w.text("}").unwrap(); }), "{}");
-        assert_eq!(run(|w| { w.text("{").unwrap(); w.indent(); w.seam("\n"); w.text("a").unwrap(); w.dedent(); w.seam("\n"); w.text("}").unwrap(); }), "{\n  a\n}");
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.site(INDENT);
+                w.text("a").unwrap();
+                w.site(DEDENT);
+                w.text("}").unwrap();
+            }),
+            "{\n\n  a\n}"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.site(INDENT);
+                w.site(DEDENT);
+                w.text("}").unwrap();
+            }),
+            "{}"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.indent();
+                w.seam("\n");
+                w.text("a").unwrap();
+                w.dedent();
+                w.seam("\n");
+                w.text("}").unwrap();
+            }),
+            "{\n  a\n}"
+        );
+    }
+
+    #[test]
+    fn a_verbatim_slot_renders_through_the_sink_and_keeps_its_adjacency() {
+        struct LetX;
+        impl Render for LetX {
+            fn render(&self, w: &mut dyn RenderSink) -> crate::render::RenderResult {
+                w.text("let")?;
+                let slot: crate::slot::SlotValue<&str, true> =
+                    crate::slot::SlotValue::Verbatim("x".to_owned());
+                slot.render(w)
+            }
+        }
+        let out =
+            crate::render::render_to_string(&LetX, WordMatcher::default_ident(), &TABLE, "  ")
+                .unwrap();
+        assert_eq!(out, "letx");
     }
 
     #[test]

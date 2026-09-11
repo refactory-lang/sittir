@@ -54,8 +54,11 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     }
 }
 
-/// The one derivation of "emit slot text", shared by `Display` and
+/// The mark-path derivation of "emit slot text", shared by `Display` and
 /// `node_or_write` so both honour the position's adjacency the same way.
+/// The `Render` impl below states the identical rule as sink calls
+/// (`w.adjacent()` then `w.text(text)`) rather than through this function;
+/// the mark path retires once nothing calls it.
 fn write_verbatim<const ADJACENT: bool>(
     text: &str,
     dest: &mut dyn std::fmt::Write,
@@ -75,7 +78,9 @@ impl<T: std::fmt::Display, const ADJACENT: bool> std::fmt::Display for SlotValue
     }
 }
 
-impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render for SlotValue<T, ADJACENT> {
+impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
+    for SlotValue<T, ADJACENT>
+{
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
             Self::Node(node) => node.render(w),

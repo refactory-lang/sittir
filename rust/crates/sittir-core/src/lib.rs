@@ -29,9 +29,12 @@ pub mod view;
 // runtime migration design, callers reach this as `sittir_core::KindId`
 // rather than the longer `sittir_core::types::KindId`.
 pub use types::KindId;
-// Flat re-export for the typed render sink — every generated render
-// function and the `Render` impls it calls reach these here.
-pub use render::{Render, RenderError, RenderResult, RenderSink, WhitespaceTable};
+// Flat re-export for the typed render sink: the sink a render writes into,
+// the trait a rendered value implements against it, and the one-writer
+// one-render root call.
+pub use render::{
+    render_to_string, Render, RenderError, RenderResult, RenderSink, WhitespaceTable,
+};
 // Flat re-export for the transport slot carrier — generated transport
 // structs name it at every slot position.
 pub use slot::SlotValue;
