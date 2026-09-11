@@ -53,3 +53,28 @@ it('engine options set the spacing of a built separated list and per-call option
 			.toString()
 	).toBe('(a,\nb)');
 });
+
+it('a kind-scoped separator override applies only to its own kind, leaving an unconfigured kind at the engine default', () => {
+	const args = ir.arguments(ir.argumentsElements(ir.identifier('a'), ir.identifier('b')));
+	const lifetimes = ir.lifetimes(ir.lifetime('a'), ir.lifetime('b'));
+	const engine = createEngine({
+		options: { lifetimes: { lifetime: { separator: { ',': { after: TSKindId.Tight } } } } }
+	});
+	expect(engine.render(lifetimes).toString()).toBe("'a,'b");
+	expect(engine.render(args).toString()).toBe('(a, b)');
+});
+
+it('two adjacent seam requests at the same gap coalesce to a single line break', () => {
+	const args = ir.arguments(ir.argumentsElements(ir.identifier('a'), ir.identifier('b')));
+	const engine = createEngine({
+		options: {
+			arguments_elements: {
+				element: {
+					attributed_argument: { after: TSKindId.Newline },
+					separator: { ',': { before: TSKindId.Newline } }
+				}
+			}
+		}
+	});
+	expect(engine.render(args).toString()).toBe('(a\n, b)');
+});
