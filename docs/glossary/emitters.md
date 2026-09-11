@@ -11,6 +11,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 
 
+
 ### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
@@ -14801,6 +14802,20 @@ off the grammar's `_whitespace` supertype, so a leaf whose arms are exactly
 one of them is written as `SpacingArm` or `WhitespaceArm` rather than spelled
 out, and the address tables.
 
+### `packages/codegen/src/emitters/options.ts::addressTablesFor`
+
+```text
+/** The one place that assembles `deriveAddressTables`'s remaining inputs —
+ *  the declared `options:` block read against the grammar's public kind
+ *  names, and the supertype-membership map — from a node map, kind catalog
+ *  and already-collected sites. `emit.ts` calls this once per grammar and
+ *  threads the resulting `AddressTables` into both `emitOptions` and
+ *  `emitRenderModule`, so the TypeScript `AddressedOptions` type and the
+ *  generated Rust structs are never derived from two independent builds of
+ *  the same inputs. A caller with no `AddressTables` in hand yet (a test)
+ *  may call this directly; production has exactly one call site. */
+```
+
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 
 ```text
@@ -14809,6 +14824,9 @@ out, and the address tables.
  * the model and the spaced render rules (collectSitePreferences), the
  * supertype members map and the kind catalog. The catalog is required:
  * option values are typed by kind id and there is no fallback spelling.
+ * `config.addresses`, when the caller already built one (`addressTablesFor`
+ * in `emit.ts`), is used as-is; otherwise it is derived here through the
+ * same helper.
  */
 ```
 
@@ -14919,7 +14937,10 @@ the kind catalog is in hand, so the render emitter never re-derives it.
  * the resolver walks every leaf's field-access chain and applies its value
  * to the site(s) its `canonical` entries name — an unknown key, an address
  * naming no site, or a value a site does not admit is an error naming the
- * address.
+ * address. A leaf's own field type (`Option<u16>`/`Option<u8>`) is the
+ * TypeScript-checked guard on shape; a value that is not a number at all
+ * surfaces as napi's own conversion error naming the property, never the
+ * old `options: <address> must be a kind id` message.
  */
 ```
 
@@ -14937,24 +14958,178 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 
 ```text
 /** The generated struct name for an address's own segment list: each
- *  segment's field identifier, Pascal-cased and sanitized, concatenated and
- *  suffixed `Options`. The root's struct is named `Options` directly,
- *  bypassing this function (its segment list is empty). */
+ *  segment's resolved key (`resolvedKey`, never the field-escaped ident —
+ *  Rust's field-keyword escaping is irrelevant to a type name), Pascal-cased
+ *  and type-escaped (`rustTypeIdent`), concatenated and suffixed `Options`.
+ *  The root's struct is named `Options` directly, bypassing this function
+ *  (its segment list is empty). */
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::siteRefsOf`
 
 ```text
-/** The site(s) a leaf's `canonical` entries name in `plan.sitePaths` — one
+/** The site(s) a leaf's `canonical` entries name, looked up in a `SiteIndex`
+ *  (`siteIndexOf`) built once per emit and keyed by each site's own
+ *  canonical address; a hash-bucket hit is confirmed with `segmentsEq`
+ *  before it is trusted, never by comparing formatted strings. One entry
  *  for an ordinary site, every bound site for a declaration reached through
  *  bindings. A canonical entry naming no site is a codegen-time error. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::segmentEq`
+
+```text
+/** Structural equality of two address segments — same `kind`, and same
+ *  `text`/`value`/`name` for the segment kinds that carry one. A `wildcard`
+ *  segment always matches, mirroring the DSL's own wildcard semantics. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::segmentsEq`
+
+```text
+/** Structural equality of two segment lists: same length, `segmentEq` at
+ *  every position. The only correct way to compare two addresses — the
+ *  joined `nestedKey` string and the canonical string are both lossy when a
+ *  literal segment's own text contains the path separator. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SiteIndex`
+
+```text
+/** `plan.sitePaths` bucketed by each site's own canonical address, built
+ *  once per emit so `siteRefsOf` is a hash lookup instead of a scan over
+ *  every site for every leaf. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::DirectChild`
+
+```text
+/** One address one segment below some prefix: the JS property key it is
+ *  reached by, and whichever of `branch`/`leaf` it actually is. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::directChildrenOf`
+
+```text
+/** Every branch/leaf whose own address is exactly one segment below
+ *  `prefix`, read from a `ChildIndex` (`childIndexOf`) built once per emit
+ *  and keyed by each entry's own parent address — a struct's fields resolve
+ *  by one lookup instead of a scan over every branch and leaf in the
+ *  grammar. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::AddressField`
+
+```text
+/** One generated struct field: its JS property key, its Rust field
+ *  identifier, and its Rust type (`Option<StructName>` for a branch,
+ *  `Option<u16>`/`Option<u8>` for a spacing/delimiter leaf). */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::fieldsOf`
+
+```text
+/** The fields of the struct at `prefix`, in the branch's own child order:
+ *  a child that is itself a branch nests that branch's struct; a leaf
+ *  child's field width comes from whether every site its `canonical`
+ *  entries name is a delimiter site. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::emitOptionsStructs`
+
+```text
+/** One `#[derive(Debug, Clone, Default)]` struct, `FromNapiValue` and
+ *  `ToNapiValue` impl per address branch — root plus every
+ *  `AddressBranchEntry` — sharing one `ChildIndex`/`SiteIndex` pair built
+ *  once for the whole emit. `FromNapiValue` refuses an unknown key via
+ *  `reject_unknown_keys`; `ToNapiValue` exists only because `EngineOptions`
+ *  is a `#[napi(object)]` struct, whose derive requires every field type to
+ *  support both directions even though these structs are only ever an
+ *  engine input. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::chainOf`
+
+```text
+/** The resolver's field-access expression for one leaf's own segment list:
+ *  `options.a.as_ref().and_then(|o| o.b.as_ref())…and_then(|o| o.z)` down to
+ *  the leaf's own `Copy` value. A single-segment list (a root-level leaf)
+ *  is just `options.a` — there is no branch to borrow through. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::literalOf`
+
+```text
+/** An `Options` struct literal setting one leaf's own segment chain to a
+ *  given value, `..Default::default()` elsewhere at every level — used only
+ *  by the generated `resolve_tests`, which know both the leaf's address and
+ *  the id/bits they are asserting against. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::resolverBody`
+
+```text
+/** One `if let Some(v) = <chainOf> { set_spacing/set_delimiter(…)? }` block
+ *  per leaf, one `set_spacing`/`set_delimiter` call per site the leaf's
+ *  `canonical` entries name — a leaf bound to several sites through a
+ *  declaration fans the same value out to all of them. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::resolveTests`
+
+```text
+/** The generated `#[cfg(test)] mod resolve_tests`: `resolve` over an empty
+ *  `Options` is a no-op, and setting the first leaf that admits an id/bits
+ *  other than its own site's default resolves to a table that differs from
+ *  `defaults()` at exactly that site's index and nowhere else. A grammar
+ *  where every site's only admitted value is its own default emits only the
+ *  first assertion. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::differingArmOf`
+
+```text
+/** The first id (spacing) or bit pattern (delimiter) a site admits other
+ *  than its own default, or `undefined` when the default is the site's only
+ *  admitted value. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::RESOLVER_HELPERS`
+
+```text
+/** `spacing_id`/`set_spacing`/`set_delimiter`: the resolver's per-site
+ *  admission check and table write, shared by every generated
+ *  `if let Some(v) = …` block in `resolve`. Takes the already-typed
+ *  `u16`/`u8` value napi produced — there is no JSON value to parse here. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
 
 ```text
 /** The facts the render module needs beside the node map: the spaced render
- *  rules and the visible externals' bodies. */
+ *  rules and the visible externals' bodies, and — when the caller already
+ *  built them (`emit.ts`, the only production caller) — the kind catalog,
+ *  the collected site preferences and the address tables, so
+ *  `planRenderOptionsFor` never re-collects or re-derives what the caller
+ *  already has. Absent, each is computed the same way a caller without one
+ *  in hand would (tests on fixture node maps). */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::PlannedRenderOptions`
+
+```text
+/** The three things `planRenderOptionsFor` produces together: the site
+ *  table plan, the address tables, and the kind catalog they were both
+ *  built from — kept together because `renderOptionsRs` needs all three and
+ *  they must be the one build, not three independent ones. */
+```
+
+### `packages/codegen/src/emitters/render-module.ts::EMPTY_PLANNED_OPTIONS`
+
+```text
+/** What `planRenderOptionsFor` returns when there is no kind catalog or no
+ *  spaced render rules — an emitter test on a fixture node map, never the
+ *  real pipeline. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::planRenderOptionsFor`
@@ -14962,11 +15137,12 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 ```text
 /**
  * The render-options plan, address tables and kind catalog for one grammar,
- * or the empty triple when there is no kind catalog or no spaced render
- * rules. The empty triple is what emitter tests on fixture node maps get;
- * the real pipeline always has all three. `declared` is read exactly as
- * `emitOptions` reads it, so the TypeScript `AddressedOptions` type and the
- * generated Rust structs derive from the same address tables.
+ * or `EMPTY_PLANNED_OPTIONS` when there is no kind catalog or no spaced
+ * render rules. Uses `inputs.kindEntries`/`inputs.sites`/`inputs.addresses`
+ * as-is when the caller supplied them (`emit.ts`, via `addressTablesFor`);
+ * otherwise collects/derives each the same way `emitOptions` does, through
+ * the same `addressTablesFor` helper — there is one derivation, never two
+ * independent ones building the same `AddressTables` from the same inputs.
  */
 ```
 
@@ -15153,6 +15329,16 @@ exists.
 /// seam's own text) rather than ordinary text.
 ```
 
+### `packages/codegen/src/emitters/options.ts::nestedKey`
+
+```text
+/** One address segment's JS property key / raw field key: a literal
+ *  segment's own text, an index segment's number as a string, `_` for a
+ *  wildcard, otherwise the segment's name. This is the join `path` is built
+ *  from — never split back apart, since a literal segment's own text can
+ *  contain the `/` join character (TypeScript's `/=` and `/`). */
+```
+
 ### `packages/codegen/src/emitters/options.ts::AddressBranchEntry.segments`
 
 ```text
@@ -15168,8 +15354,18 @@ exists.
 ### `packages/codegen/src/emitters/options.ts::AddressLeafEntry.canonical`
 
 ```text
-/** The canonical path string(s) (`formatPreferencePath`) of every site this
- *  leaf sets: one for an ordinary site, every bound site's own path for a
- *  declaration reached through bindings. Matched against `plan.sitePaths`
- *  by `siteRefsOf` to find the site(s) a leaf's value applies to. */
+/** The typed segment list(s) of every site this leaf sets: one for an
+ *  ordinary site, every bound site's own path for a declaration reached
+ *  through bindings. Kept as segments, not a formatted string, so
+ *  `siteRefsOf` can match structurally (`segmentsEq`) against
+ *  `plan.sitePaths` rather than by string; the formatted form is produced
+ *  only where a message or an `at` prefix needs one. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::childIndexOf`
+
+```text
+/// Every branch/leaf bucketed by its own parent's canonical address, so a
+/// struct's fields resolve by one lookup instead of a scan over every
+/// branch and leaf in the grammar.
 ```

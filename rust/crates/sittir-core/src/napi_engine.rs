@@ -24,14 +24,21 @@
 ///
 /// - `$grammar` — the crate's [`EngineGrammar`](crate::engine::EngineGrammar) adapter.
 /// - `$render_root` — the generated transport root type accepted by `render`.
+/// - `$options` — the generated per-grammar options struct (`render::options::Options`), the napi-typed shape `EngineOptions.options` and `render`/`render_to_file` accept.
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
 /// - `$abi` — the render transport ABI version this crate was generated against.
+/// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
+/// - `$resolve` — `fn(&$options, &ResolvedOptions) -> Result<ResolvedOptions, String>`, applying an options object over a base table.
 #[macro_export]
 macro_rules! napi_engine {
     ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
         #[::napi_derive::napi(object)]
         pub struct EngineOptions {
             pub format: Option<String>,
+            /// Resolved once here against the grammar's site table at
+            /// construction; only the resolved ids are kept. A `render` call
+            /// carrying its own options resolves again, per call, over the
+            /// engine's table — the engine's own table never changes.
             pub options: Option<$options>,
         }
 

@@ -64,8 +64,8 @@ describe('planRenderOptions', () => {
 			'(statement_block)/statements:/separator'
 		]);
 		expect(plan.sitePaths).toHaveLength(plan.spacingSites.length + plan.delimiterSites.length);
-		expect(plan.sitePaths[1]).toEqual({ path: '(formal_parameters)/elements:/delimiter', site: 'delimiter', index: 0 });
-		expect(plan.sitePaths[2]).toEqual({ path: '(formal_parameters)/elements:/separator/before', site: 'spacing', index: 1 });
+		expect(plan.sitePaths[1]).toMatchObject({ path: '(formal_parameters)/elements:/delimiter', site: 'delimiter', index: 0 });
+		expect(plan.sitePaths[2]).toMatchObject({ path: '(formal_parameters)/elements:/separator/before', site: 'spacing', index: 1 });
 	});
 
 	it("orders a kind's own sides after everything nested beneath them", () => {

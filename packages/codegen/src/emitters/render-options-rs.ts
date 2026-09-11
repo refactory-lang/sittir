@@ -9,7 +9,7 @@ import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } 
 import { toPascal } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { rustStringLiteral } from './render-body.ts';
-import { RUST_KEYWORDS, rustTypeIdent } from './transport-common.ts';
+import { rustFieldIdent, rustTypeIdent } from './transport-common.ts';
 import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type AddressTables } from './options.ts';
 
 export interface SpacingSite {
@@ -44,6 +44,7 @@ export interface DepthSites {
 
 export interface SitePath {
 	readonly path: string;
+	readonly segments: readonly PreferenceSegment[];
 	readonly site: 'spacing' | 'delimiter';
 	readonly index: number;
 }
@@ -158,7 +159,7 @@ export function planRenderOptions(
 			...delimiters.map((site, index) => ({ path: delimiterPaths.get(site)!, site: 'delimiter' as const, index }))
 		]
 			.sort((a, b) => comparePreferencePaths(a.path, b.path))
-			.map(({ path, site, index }) => ({ path: formatPreferencePath(path), site, index })),
+			.map(({ path, site, index }) => ({ path: formatPreferencePath(path), segments: path, site, index })),
 		delimiterSites: delimiters,
 		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
 		indentId: idOfText(INDENT_TEXT),
@@ -171,27 +172,19 @@ export function planRenderOptions(
 
 const q = (s: string): string => JSON.stringify(s);
 
-function rustFieldIdent(id: string): string {
-	return RUST_KEYWORDS.has(id) ? `${id}_` : id;
+function resolvedKey(key: string, kindEntries: readonly KindEntryLike[]): string {
+	if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) return key;
+	const entry = findEntryForLiteralText(kindEntries, key);
+	if (entry === undefined) throw new Error(`options.rs: address segment ${JSON.stringify(key)} has no kind name to become a field`);
+	return entry.kind;
 }
 
 function segmentIdent(key: string, kindEntries: readonly KindEntryLike[]): string {
-	if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) return rustFieldIdent(key);
-	const entry = findEntryForLiteralText(kindEntries, key);
-	if (entry === undefined) throw new Error(`options.rs: address segment ${JSON.stringify(key)} has no kind name to become a field`);
-	return rustFieldIdent(entry.kind);
+	return rustFieldIdent(resolvedKey(key, kindEntries));
 }
 
 function structNameOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
-	return `${segments.map((segment) => rustTypeIdent(toPascal(segmentIdent(nestedKey(segment), kindEntries)))).join('')}Options`;
-}
-
-function siteRefsOf(leaf: AddressLeafEntry, plan: RenderOptionsPlan): SitePath[] {
-	return leaf.canonical.map((path) => {
-		const site = plan.sitePaths.find((p) => p.path === path);
-		if (site === undefined) throw new Error(`options.rs: address '${leaf.path}' names '${path}', which is no site`);
-		return site;
-	});
+	return `${segments.map((segment) => rustTypeIdent(toPascal(resolvedKey(nestedKey(segment), kindEntries)))).join('')}Options`;
 }
 
 function segmentEq(a: PreferenceSegment, b: PreferenceSegment): boolean {
@@ -212,19 +205,51 @@ function segmentsEq(a: readonly PreferenceSegment[], b: readonly PreferenceSegme
 	return a.length === b.length && a.every((s, i) => segmentEq(s, b[i]!));
 }
 
+type SiteIndex = ReadonlyMap<string, readonly SitePath[]>;
+
+function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
+	const index = new Map<string, SitePath[]>();
+	for (const p of plan.sitePaths) {
+		const key = formatPreferencePath(p.segments);
+		const bucket = index.get(key);
+		if (bucket === undefined) index.set(key, [p]);
+		else bucket.push(p);
+	}
+	return index;
+}
+
+function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
+	return leaf.canonical.map((segments) => {
+		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
+		const site = bucket.find((p) => segmentsEq(p.segments, segments));
+		if (site === undefined) throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is no site`);
+		return site;
+	});
+}
+
 interface DirectChild {
 	readonly key: string;
 	readonly branch?: AddressBranchEntry;
 	readonly leaf?: AddressLeafEntry;
 }
 
-function directChildrenOf(prefix: readonly PreferenceSegment[], addresses: AddressTables): DirectChild[] {
-	const under = (own: readonly PreferenceSegment[]): boolean =>
-		own.length === prefix.length + 1 && segmentsEq(own.slice(0, prefix.length), prefix);
-	return [
-		...addresses.branches.filter((b) => under(b.segments)).map((b) => ({ key: nestedKey(b.segments[b.segments.length - 1]!), branch: b })),
-		...addresses.leaves.filter((l) => under(l.segments)).map((l) => ({ key: nestedKey(l.segments[l.segments.length - 1]!), leaf: l }))
-	];
+type ChildIndex = ReadonlyMap<string, readonly DirectChild[]>;
+
+function childIndexOf(addresses: AddressTables): ChildIndex {
+	const index = new Map<string, DirectChild[]>();
+	const add = (parent: readonly PreferenceSegment[], child: DirectChild): void => {
+		const key = formatPreferencePath(parent);
+		const bucket = index.get(key);
+		if (bucket === undefined) index.set(key, [child]);
+		else bucket.push(child);
+	};
+	for (const b of addresses.branches) add(b.segments.slice(0, -1), { key: nestedKey(b.segments[b.segments.length - 1]!), branch: b });
+	for (const l of addresses.leaves) add(l.segments.slice(0, -1), { key: nestedKey(l.segments[l.segments.length - 1]!), leaf: l });
+	return index;
+}
+
+function directChildrenOf(prefix: readonly PreferenceSegment[], childIndex: ChildIndex): readonly DirectChild[] {
+	return childIndex.get(formatPreferencePath(prefix)) ?? [];
 }
 
 interface AddressField {
@@ -236,30 +261,31 @@ interface AddressField {
 function fieldsOf(
 	prefix: readonly PreferenceSegment[],
 	children: readonly string[],
-	addresses: AddressTables,
-	plan: RenderOptionsPlan,
+	childIndex: ChildIndex,
+	siteIndex: SiteIndex,
 	kindEntries: readonly KindEntryLike[]
 ): AddressField[] {
-	const direct = directChildrenOf(prefix, addresses);
+	const direct = directChildrenOf(prefix, childIndex);
 	return children.map((key) => {
 		const child = direct.find((c) => c.key === key);
 		if (child === undefined) throw new Error(`options.rs: address '${key}' beneath '${formatPreferencePath(prefix)}' is neither a site nor a path`);
 		const ident = segmentIdent(key, kindEntries);
 		if (child.branch !== undefined) return { key, ident, type: `Option<${structNameOf(child.branch.segments, kindEntries)}>` };
-		const refs = siteRefsOf(child.leaf!, plan);
+		const refs = siteRefsOf(child.leaf!, siteIndex);
 		const isDelimiter = refs.length > 0 && refs.every((r) => r.site === 'delimiter');
 		return { key, ident, type: isDelimiter ? 'Option<u8>' : 'Option<u16>' };
 	});
 }
 
-function emitOptionsStructs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly KindEntryLike[]): string[] {
+function emitOptionsStructs(plan: RenderOptionsPlan, addresses: AddressTables, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): string[] {
 	const L: string[] = [];
+	const childIndex = childIndexOf(addresses);
 	const structsOf = [
 		{ segments: [] as readonly PreferenceSegment[], name: 'Options', children: [...addresses.roots] },
 		...addresses.branches.map((b) => ({ segments: b.segments, name: structNameOf(b.segments, kindEntries), children: b.children }))
 	];
 	for (const s of structsOf) {
-		const fields = fieldsOf(s.segments, s.children, addresses, plan, kindEntries);
+		const fields = fieldsOf(s.segments, s.children, childIndex, siteIndex, kindEntries);
 		const isRoot = s.segments.length === 0;
 		L.push('#[derive(Debug, Clone, Default)]');
 		L.push(`pub struct ${s.name} {`);
@@ -294,6 +320,7 @@ function emitOptionsStructs(plan: RenderOptionsPlan, addresses: AddressTables, k
 
 function chainOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
 	const idents = segments.map((segment) => segmentIdent(nestedKey(segment), kindEntries));
+	if (idents.length === 1) return `options.${idents[0]}`;
 	const last = idents[idents.length - 1]!;
 	const middle = idents.slice(1, -1);
 	let expr = `options.${idents[0]}.as_ref()`;
@@ -312,10 +339,10 @@ function literalOf(segments: readonly PreferenceSegment[], value: number, kindEn
 	return `Options { ${idents[0]}: ${inner}, ..::std::default::Default::default() }`;
 }
 
-function resolverBody(addresses: AddressTables, plan: RenderOptionsPlan, kindEntries: readonly KindEntryLike[]): string[] {
+function resolverBody(addresses: AddressTables, plan: RenderOptionsPlan, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): string[] {
 	const L: string[] = [];
 	for (const leaf of addresses.leaves) {
-		const refs = siteRefsOf(leaf, plan);
+		const refs = siteRefsOf(leaf, siteIndex);
 		L.push(`    if let Some(v) = ${chainOf(leaf.segments, kindEntries)} {`);
 		for (const ref of refs) {
 			if (ref.site === 'spacing') {
@@ -331,11 +358,16 @@ function resolverBody(addresses: AddressTables, plan: RenderOptionsPlan, kindEnt
 	return L;
 }
 
-function resolveTests(addresses: AddressTables, plan: RenderOptionsPlan, kindEntries: readonly KindEntryLike[]): string[] {
-	const spacingLeaf = addresses.leaves.find((leaf) => {
-		const refs = siteRefsOf(leaf, plan);
-		return refs.length === 1 && refs[0]!.site === 'spacing';
-	});
+function differingArmOf(ref: SitePath, plan: RenderOptionsPlan): number | undefined {
+	if (ref.site === 'spacing') {
+		const site = plan.spacingSites[ref.index]!;
+		return site.allowedIds.find((id) => id !== site.defaultId);
+	}
+	const site = plan.delimiterSites[ref.index]!;
+	return site.allowed !== site.defaultBits ? site.allowed : undefined;
+}
+
+function resolveTests(addresses: AddressTables, plan: RenderOptionsPlan, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): string[] {
 	const L: string[] = [
 		'#[cfg(test)]',
 		'mod resolve_tests {',
@@ -346,14 +378,33 @@ function resolveTests(addresses: AddressTables, plan: RenderOptionsPlan, kindEnt
 		'        assert_eq!(resolve(&Options::default(), &defaults()).unwrap(), defaults());',
 		'    }'
 	];
-	if (spacingLeaf !== undefined) {
-		const site = plan.spacingSites[siteRefsOf(spacingLeaf, plan)[0]!.index]!;
+	const differing = addresses.leaves
+		.map((leaf) => ({ leaf, refs: siteRefsOf(leaf, siteIndex) }))
+		.find(({ refs }) => refs.length === 1 && differingArmOf(refs[0]!, plan) !== undefined);
+	if (differing !== undefined) {
+		const ref = differing.refs[0]!;
+		const value = differingArmOf(ref, plan)!;
+		const table = ref.site === 'spacing' ? 'spacing' : 'delimiter';
+		const constName = ref.site === 'spacing' ? plan.spacingSites[ref.index]!.constName : plan.delimiterSites[ref.index]!.constName;
 		L.push(
 			'',
 			'    #[test]',
-			'    fn a_sites_own_default_id_leaves_the_defaults() {',
-			`        let options = ${literalOf(spacingLeaf.segments, site.defaultId, kindEntries)};`,
-			'        assert_eq!(resolve(&options, &defaults()).unwrap(), defaults());',
+			'    fn a_differing_admitted_value_changes_only_its_own_site() {',
+			`        let options = ${literalOf(differing.leaf.segments, value, kindEntries)};`,
+			'        let table = resolve(&options, &defaults()).unwrap();',
+			'        let expected = defaults();',
+			`        assert_eq!(table.${table}[${constName}], ${value});`,
+			'        for i in 0..table.spacing.len() {',
+			table === 'spacing'
+				? `            if i != ${constName} { assert_eq!(table.spacing[i], expected.spacing[i]); }`
+				: '            assert_eq!(table.spacing[i], expected.spacing[i]);',
+			'        }',
+			'        for i in 0..table.delimiter.len() {',
+			table === 'delimiter'
+				? `            if i != ${constName} { assert_eq!(table.delimiter[i], expected.delimiter[i]); }`
+				: '            assert_eq!(table.delimiter[i], expected.delimiter[i]);',
+			'        }',
+			'        assert_eq!(table.indent, expected.indent);',
 			'    }'
 		);
 	}
@@ -363,6 +414,7 @@ function resolveTests(addresses: AddressTables, plan: RenderOptionsPlan, kindEnt
 
 export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly KindEntryLike[]): string {
 	const L: string[] = [];
+	const siteIndex = siteIndexOf(plan);
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
 	L.push('use ::sittir_core::options::ResolvedOptions;', '');
 	L.push(`pub const SPACING_SITE_COUNT: usize = ${plan.spacingSites.length};`);
@@ -405,7 +457,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
-	L.push(...emitOptionsStructs(plan, addresses, kindEntries));
+	L.push(...emitOptionsStructs(plan, addresses, siteIndex, kindEntries));
 	L.push(...RESOLVER_HELPERS);
 	L.push('/// Resolve an options object over `base`: `indent` and every address that');
 	L.push('/// names a site. A value a site does not admit is an error naming the address.');
@@ -414,7 +466,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('    if let Some(indent) = options.indent.as_ref() {');
 	L.push('        table.indent = indent.clone();');
 	L.push('    }');
-	L.push(...resolverBody(addresses, plan, kindEntries));
+	L.push(...resolverBody(addresses, plan, siteIndex, kindEntries));
 	L.push('    for (kind, sites) in DEPTH_SITES {');
 	L.push('        let mut depth = 0usize;');
 	L.push('        for site in sites.iter() {');
@@ -434,7 +486,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('    }');
 	L.push('    Ok(table)');
 	L.push('}', '');
-	L.push(...resolveTests(addresses, plan, kindEntries));
+	L.push(...resolveTests(addresses, plan, siteIndex, kindEntries));
 	return L.join('\n') + '\n';
 }
 

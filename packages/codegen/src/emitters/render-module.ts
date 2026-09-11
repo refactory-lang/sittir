@@ -45,6 +45,7 @@ import {
 	classifySlotForEmit,
 	findSupertypeKindByTypeName,
 	isReservedSupertypeTransportNode,
+	rustFieldIdent,
 	rustTypeIdent,
 	slotElementKinds,
 	supertypeTransportKinds,
@@ -72,11 +73,9 @@ import {
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
-import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
-import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.ts';
-import { publicKindName } from '../compiler/model/site-preferences.ts';
-import { deriveAddressTables, kindIdArmType, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
-import { supertypeMembersByPublicName } from '../compiler/model/supertype-members.ts';
+import { collectSitePreferences, publicKindName, type SitePreference } from '../compiler/model/site-preferences.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	escapeBraces,
@@ -119,6 +118,9 @@ export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
 	readonly options?: OptionsConfig;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly kindEntries?: readonly KindEnumEntry[];
+	readonly sites?: readonly SitePreference[];
+	readonly addresses?: AddressTables;
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -135,9 +137,9 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals, options } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals, options, kindEntries, sites, addresses } = config;
 	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals, options })
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals, options, kindEntries, sites, addresses })
 	};
 }
 
@@ -154,7 +156,10 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#options = {
 			renderRules: config.renderRules,
 			visibleExternals: config.visibleExternals,
-			options: config.options
+			options: config.options,
+			kindEntries: config.kindEntries,
+			sites: config.sites,
+			addresses: config.addresses
 		};
 	}
 
@@ -247,11 +252,6 @@ function collectEffectiveSupertypeTransportShape(
 		subtypes.push({ subKind, subNode });
 	}
 	return { subtypes, suppressedKinds: walk.suppressed, parseNames: walk.parseNames };
-}
-
-export function rustFieldIdent(id: string): string {
-	if (RUST_KEYWORDS.has(id)) return `${id}_`;
-	return id;
 }
 
 interface EmittedField {
@@ -985,14 +985,10 @@ function planRenderOptionsFor(
 	inputs: RenderOptionsInputs
 ): PlannedRenderOptions {
 	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLANNED_OPTIONS;
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
+	const kindEntries = inputs.kindEntries ?? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const sites = inputs.sites ?? collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
 	const plan = planRenderOptions(sites, kindEntries, whitespaceTextOf(inputs.visibleExternals, nodeMap));
-	const declared =
-		inputs.options === undefined
-			? undefined
-			: readOptionsBlock(inputs.options, new Set([...nodeMap.nodes.keys()].map(publicKindName)));
-	const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries), supertypeMembersByPublicName(nodeMap), declared);
+	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
 }
 

@@ -11,7 +11,7 @@ import {
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-arms.ts';
 import { addressSegments, addressSites, matchAddress } from '../compiler/model/site-addresses.ts';
-import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
 
 export { publicKindName } from '../compiler/model/site-preferences.ts';
@@ -40,7 +40,7 @@ export interface AddressBranchEntry {
 export interface AddressLeafEntry {
 	readonly path: string;
 	readonly type: string;
-	readonly canonical: readonly string[];
+	readonly canonical: readonly (readonly PreferenceSegment[])[];
 	readonly segments: readonly PreferenceSegment[];
 }
 
@@ -75,7 +75,7 @@ export function deriveAddressTables(
 ): AddressTables {
 	const branches = new Map<string, Set<string>>();
 	const branchSegments = new Map<string, readonly PreferenceSegment[]>();
-	const leaves = new Map<string, { type: string; canonical: string[]; segments: readonly PreferenceSegment[] }>();
+	const leaves = new Map<string, { type: string; canonical: (readonly PreferenceSegment[])[]; segments: readonly PreferenceSegment[] }>();
 	const roots = new Set<string>();
 	let depth = 0;
 	for (const site of addressSites(sites, kindEntries)) {
@@ -93,7 +93,7 @@ export function deriveAddressTables(
 		const path = keys.join('/');
 		const prior = leaves.get(path);
 		if (prior !== undefined && prior.type !== type) throw new Error(`options: address '${path}' resolves to two types`);
-		leaves.set(path, { type, canonical: [formatPreferencePath(site.path)], segments: site.path });
+		leaves.set(path, { type, canonical: [site.path], segments: site.path });
 	}
 	if (declared !== undefined) {
 		const addressed = addressSites(sites, kindEntries);
@@ -119,7 +119,7 @@ export function deriveAddressTables(
 			}
 			leaves.set(keys.join('/'), {
 				type: unionOf(bound.map((site) => site.arms.map(armType).join(' | '))),
-				canonical: bound.map((site) => formatPreferencePath((site as unknown as { readonly path: readonly PreferenceSegment[] }).path)),
+				canonical: bound.map((site) => (site as unknown as { readonly path: readonly PreferenceSegment[] }).path),
 				segments: declaredSegments
 			});
 		}
@@ -200,12 +200,24 @@ function addressLines(addresses: AddressTables, alias: (type: string) => string)
 	return L;
 }
 
+export function addressTablesFor(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
+	sites: readonly SitePreference[],
+	optionsBlock?: OptionsConfig
+): AddressTables {
+	const declared =
+		optionsBlock === undefined ? undefined : readOptionsBlock(optionsBlock, new Set([...nodeMap.nodes.keys()].map(publicKindName)));
+	return deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries), supertypeMembersByPublicName(nodeMap), declared);
+}
+
 export interface EmitOptionsConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly renderRules: RenderRules;
 	readonly options?: OptionsConfig;
 	readonly sites?: readonly SitePreference[];
+	readonly addresses?: AddressTables;
 }
 
 export function emitOptions(config: EmitOptionsConfig): string {
@@ -217,15 +229,10 @@ export function emitOptions(config: EmitOptionsConfig): string {
 			renderRules: config.renderRules,
 			options: config.options
 		});
-	const supertypeMembers = supertypeMembersByPublicName(config.nodeMap);
 	const armType = kindIdArmType(config.kindEntries);
 	const typeOf = (arms: readonly string[]): string => arms.map((arm) => armType({ value: arm, kind: arm })).join(' | ');
 	const spacingType = typeOf(spacingArmsOf(config.nodeMap));
 	const whitespaceType = sites.some((s) => admitsDepth({ arms: s.arms.map((arm) => arm.value) })) ? typeOf(whitespaceArmsOf(config.nodeMap)) : undefined;
-	const declared =
-		config.options === undefined
-			? undefined
-			: readOptionsBlock(config.options, new Set([...config.nodeMap.nodes.keys()].map(publicKindName)));
-	const addresses = deriveAddressTables(sites, config.kindEntries, armType, supertypeMembers, declared);
+	const addresses = config.addresses ?? addressTablesFor(config.nodeMap, config.kindEntries, sites, config.options);
 	return renderOptionsModule({ spacingType, whitespaceType, addresses });
 }

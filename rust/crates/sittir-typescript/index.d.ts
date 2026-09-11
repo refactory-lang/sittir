@@ -959,6 +959,12 @@ export interface ElseClauseTransport {
 
 export interface EngineOptions {
   format?: string
+  /**
+   * Resolved once here against the grammar's site table at
+   * construction; only the resolved ids are kept. A `render` call
+   * carrying its own options resolves again, per call, over the
+   * engine's table — the engine's own table never changes.
+   */
   options?: Options
 }
 
