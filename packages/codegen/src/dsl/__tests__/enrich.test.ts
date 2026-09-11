@@ -239,10 +239,6 @@ describe('enrich()', () => {
 		});
 
 		it('leaves a separated list alone when its element may be absent, so the span field keeps the holes', () => {
-			// typescript `array: seq('[', commaSep(optional(choice(expression, spread_element))), ']')`:
-			// `[, a, , b]` has holes that only the separators show. A field on
-			// each element would mark the present ones only; the override's
-			// field over the whole span keeps the commas as field children.
 			const element = (): Rule<'evaluate'> =>
 				({
 					type: OPTIONAL,

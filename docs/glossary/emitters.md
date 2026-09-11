@@ -3019,8 +3019,10 @@ actually names; `kindIdByKind` lets a list kind with a nonterminal
 separator resolve each candidate arm's numeric id for the
 `separator_kind` match (see `buildSeparatorKindMatchLines`).
 
-After the transport is written, the entry calls the writer's `finish`, so
-a seam payload still held at the very end of the tree reaches the sink.
+After the transport is written, the entry calls the writer's `finish`,
+which flushes only a whitespace-token payload; a plain seam payload still
+held at the end of the tree is dropped, so a root node gains no edge
+whitespace.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
 

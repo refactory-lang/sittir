@@ -30,7 +30,7 @@ esac
 # planning artifacts themselves (docs/superpowers: specs, plans, handoffs)
 # necessarily cite each other and are excluded.
 paths=(
-  -- '*.ts' '*.mts' '*.cts' '*.rs' 'docs/*.md' 'docs/glossary/*.md'
+  -- '*.ts' '*.mts' '*.cts' '*.rs' 'docs/*.md' 'docs/glossary/*.md' 'scripts/*.sh'
   ':!packages/rust/src' ':!packages/typescript/src' ':!packages/python/src'
   ':!packages/*/.sittir' ':!packages/*/tests'
   ':!rust/crates/sittir-rust' ':!rust/crates/sittir-typescript' ':!rust/crates/sittir-python'

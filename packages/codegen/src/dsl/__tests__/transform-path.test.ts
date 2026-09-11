@@ -223,11 +223,6 @@ describe('applyPath()', () => {
 		});
 
 		it('an override field applied through a field wrapper replaces it instead of nesting', () => {
-			// enrich minted `field('elements', repeat1(choice(...)))`; the author's
-			// `_: field('modifier')` lands on the repeat. The rebuilt wrapper must
-			// be the override field alone — tree-sitter keeps only the innermost
-			// field, so the minted one would be dead and the model would still
-			// read its name.
 			const rule = fld('elements', { type: 'REPEAT1', content: choice(sym('a'), sym('b')) });
 			const result = applyPath(rule, [{ kind: 'wildcard' }], (m) => fld('modifier', m));
 			expect(result).toMatchObject({ type: 'FIELD', name: 'modifier', content: { type: 'REPEAT1' } });
@@ -607,11 +602,6 @@ describe('applyPath() — a patch preserves the wrappers it descends through', (
 	});
 
 	it('rebuilds through the runtime constructor rather than spreading the original', () => {
-		// The constructor call is load-bearing: the evaluate-side
-		// `field()` stamps `fieldName` on the refs beneath its content.
-		// A reconstruction that spread the original would produce the
-		// right shape with none of that, so pin that the runtime's own
-		// `field()` is what produced the result.
 		installFakeDsl({
 			field: (name: string, content: unknown) => ({ type: 'FIELD', name, content, builtByRuntime: true })
 		});

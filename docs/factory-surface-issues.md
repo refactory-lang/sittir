@@ -208,18 +208,15 @@ expected to behave alike (unverified).
 
 ### L2 — List options are honoured only in first argument position
 
-The variadic signature admits the options object anywhere, the runtime reads it
-only first.
+A public strict list wrapper pins the options object to the first parameter;
+the elements-only overload takes no options object at all. Passing options in
+last position is a compile-time overload-resolution error, not a runtime
+throw.
 
 ```ts
 ir.enumVariantList.strict({ delimiter: Delimiter.Trailing }, variantA)  // → "{A,}"
-ir.enumVariantList.strict(variantA, { delimiter: Delimiter.Trailing })  // throws
+ir.enumVariantList.strict(variantA, { delimiter: Delimiter.Trailing })  // type error
 ```
-
-In last position the object is treated as an element and the transport rejects
-it (`Missing field _name`). It is also an internal inconsistency: 45 list
-builders emit an overload pinning options to the first parameter, 16 emit the
-permissive one. Conforming the 16 to the majority shape fixes both halves.
 
 Affects rust, typescript, python.
 

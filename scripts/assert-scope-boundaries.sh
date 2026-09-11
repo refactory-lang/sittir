@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Spec 012 T064 — scope-boundary enforcement.
+# scope-boundary enforcement.
 #
 # Fails the build if any of the following slip into the MVP:
 #   (a) WASM artifacts in any package — `*.wasm` files leaked from
 #       a deferred US3 implementation.
 #   (b) `cargo publish` lurking in any workflow file — sittir-core is
-#       NOT crates.io-published in the MVP (FR-018).
+#       not published to crates.io.
 #   (c) Non-source files inside grammar-owned render artifacts —
 #       generated render modules contain ONLY `*.rs` plus the
-#       parity-test data file `test-fixtures.json` (FR-019).
+#       parity-test data file `test-fixtures.json`.
 #   (d) Disallowed derive-macro / proc-macro crates in the Rust
-#       workspace dep graph (FR-013 — only `napi-derive`,
-#       `serde_derive`, and tree-sitter internals are allowed).
+#       workspace dep graph (only `napi-derive`, `serde_derive`, and
+#       tree-sitter internals are allowed).
 #
 # Run as a CI step under the `rust` job. Exits non-zero on the first
 # violation; the message names the offending file or crate so the

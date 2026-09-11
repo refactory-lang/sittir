@@ -28,7 +28,7 @@ describe('python type_alias_statement collision', () => {
 	it('renders the keyword from the template, not from storage', () => {
 		const text = ir.typeAlias({ left: typeNode('Foo'), right: typeNode('u64') }).$render!();
 		// The seam writer must insert the lexically-required space between the
-		// `type` keyword and the identifier (and none around `=`).
+		// `type` keyword and the identifier, and the declared default spaces around `=`.
 		expect(text).toBe('type Foo = u64');
 	});
 

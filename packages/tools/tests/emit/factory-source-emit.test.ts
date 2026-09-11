@@ -11,7 +11,6 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 		expect(source).toContain('parameters: ir.parameters.strict()');
 		expect(source).not.toContain('.coerce(');
 	});
-	// A comment rides the FOLLOWING node's `$_trivia` in the read data, and
 	// A comment rides the FOLLOWING node's trivia; construction carries it onto
 	// the built node, as the `$with` setters do, since trivia is not config.
 	it('prints a leading comment as verbatim trivia', async () => {
