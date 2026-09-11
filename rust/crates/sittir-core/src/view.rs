@@ -4,9 +4,9 @@
 //! scalar slot shape; `ListView` covers a repeated slot and owns the separator
 //! parts, the head and tail spacing, and the list's own surrounding text.
 //!
-//! A view template uses the `write!` vocabulary: `{}` is the slot, `{{` and
-//! `}}` are literal braces. A template with no `{}` is written whole when the
-//! slot is present, which is how a boolean primitive renders its keyword.
+//! A view template's `{}` is the slot; `{{` and `}}` are literal braces. A
+//! template with no `{}` is written whole when the slot is present, which is
+//! how a boolean primitive renders its keyword.
 
 use crate::render::{Render, RenderResult, RenderSink};
 use crate::slot::SlotValue;

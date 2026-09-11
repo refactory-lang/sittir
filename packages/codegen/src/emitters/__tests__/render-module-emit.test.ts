@@ -446,9 +446,19 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).not.toContain('impl ::std::fmt::Display for');
 		// The depth arms' stamped model identity (dsl/primitives/spacing.ts
 		// INDENT_TEXT/DEDENT_TEXT) legitimately keeps these code points as a
-		// read-path FromNapiValue default \$text, unrelated to rendering; strip
-		// those known literals before checking that no mark reaches a render.
-		const withoutStampedIdentityDefaults = transportRs.replaceAll(JSON.stringify('\u{FDD0}\n'), '""').replaceAll(JSON.stringify('\u{FDD1}\n'), '""');
+		// read-path FromNapiValue default \$text, unrelated to rendering. Strip
+		// only on the lines that ARE that default (the \`unwrap_or_else\`/
+		// \`ValueType::Number\` fallback lines), so a mark reaching a render call
+		// on any other line still fails this assertion.
+		const depthDefaultLine = /unwrap_or_else\(\|\||ValueType::Number =>/;
+		const withoutStampedIdentityDefaults = transportRs
+			.split('\n')
+			.map((line) =>
+				depthDefaultLine.test(line)
+					? line.replaceAll(JSON.stringify('\u{FDD0}\n'), '""').replaceAll(JSON.stringify('\u{FDD1}\n'), '""')
+					: line
+			)
+			.join('\n');
 		expect(withoutStampedIdentityDefaults).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
 		expect(transportRs).not.toContain('mark_adjacent');
 		expect(transportRs).toContain('impl ::sittir_core::render::Render for FunctionItemTransport {');

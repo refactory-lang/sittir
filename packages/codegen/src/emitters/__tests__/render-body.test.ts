@@ -115,6 +115,13 @@ describe('liftGates', () => {
 		expect(lifted.flanks.size).toBe(0);
 	});
 
+	it('moves literal flanks of an optional or list slot onto the view, through a doubled gate', () => {
+		const body = concat(slot('name'), gate('type', concat(text('->'), gate('type', slot('type')))));
+		const lifted = liftGates(body, viewOf);
+		expect(lifted.body).toEqual(concat(slot('name'), slot('type')));
+		expect(lifted.flanks.get('type')).toEqual({ prefix: '->', suffix: '' });
+	});
+
 	it('does not lift a gate whose only-arm literal edge carries an adjacency call: a flank is a plain string, with no sink call of its own', () => {
 		const body = concat(slot('name'), gate('type', concat(text('->'), ADJACENT, gate('type', slot('type')))));
 		const lifted = liftGates(body, viewOf);

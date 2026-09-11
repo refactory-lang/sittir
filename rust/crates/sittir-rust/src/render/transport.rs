@@ -82243,10 +82243,6 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// second place the root seam policy could drift.
 pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
-    // only where a word-class char would collide with a word-class char
-    // across write seams, per this grammar's own word class. Wrap ONCE
-    // here — never per level.
     let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent);
     transport.render(&mut w)?;
     w.finish()?;

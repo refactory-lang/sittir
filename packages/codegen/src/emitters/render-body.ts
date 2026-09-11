@@ -1,3 +1,5 @@
+import { isDepthText, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
+
 export function isWhitespaceOnly(text: string): boolean {
 	return text.trim() === '';
 }
@@ -73,6 +75,11 @@ export function text(value: string): Body {
 
 export function tokenSeam(text: string): Body {
 	return [{ kind: 'tokenSeam', text }];
+}
+
+export function literalBody(value: string): Body {
+	if (isDepthText(value)) return value === INDENT_TEXT ? INDENT : DEDENT;
+	return isWhitespaceOnly(value) ? tokenSeam(value) : text(value);
 }
 
 export function slot(name: string): Body {
@@ -436,6 +443,8 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 		lines.push(`${pad}w.text(${rustStringLiteral(literal)})?;`);
 		literal = '';
 	};
+	let pendingText: string | undefined;
+	let hasPendingText = false;
 	for (let i = 0; i < body.length; i++) {
 		const node = body[i]!;
 		const next = body[i + 1];
@@ -444,14 +453,17 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 			const split = splitLeadingWhitespace(next.text);
 			if (split.run !== '') {
 				payload = split.run;
-				const rest = split.rest;
-				body = [...body.slice(0, i + 1), ...(rest === '' ? [] : [{ kind: 'text', text: rest } as const]), ...body.slice(i + 2)];
+				pendingText = split.rest;
+				hasPendingText = true;
 			}
 		}
 		switch (node.kind) {
-			case 'text':
-				literal += node.text;
+			case 'text': {
+				const text = hasPendingText ? pendingText! : node.text;
+				hasPendingText = false;
+				literal += text;
 				break;
+			}
 			case 'space':
 				literal += ' ';
 				break;
@@ -474,8 +486,11 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 				break;
 			case 'dedent':
 				flush();
-				lines.push(`${pad}w.dedent();`);
-				if (payload !== '') lines.push(`${pad}w.seam(${rustStringLiteral(payload)});`);
+				if (payload !== '') {
+					lines.push(`${pad}if w.dedent() { w.seam(${rustStringLiteral(payload)}); }`);
+				} else {
+					lines.push(`${pad}w.dedent();`);
+				}
 				break;
 			case 'tokenSeam':
 				flush();

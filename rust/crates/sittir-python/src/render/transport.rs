@@ -6074,7 +6074,7 @@ impl ::sittir_core::render::Render for IfStatementConsequenceTransportSlot {
         match self {
             IfStatementConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
             IfStatementConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
-            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6292,7 +6292,7 @@ impl ::sittir_core::render::Render for ElifClauseConsequenceTransportSlot {
         match self {
             ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
             ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6407,7 +6407,7 @@ impl ::sittir_core::render::Render for ElseClauseBodyTransportSlot {
         match self {
             ElseClauseBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
             ElseClauseBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6506,7 +6506,7 @@ impl ::sittir_core::render::Render for MatchBlockContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             MatchBlockContentTransportSlot::MatchBlockBlock(inner) => inner.render(w),
-            MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6621,7 +6621,7 @@ impl ::sittir_core::render::Render for CaseClauseConsequenceTransportSlot {
         match self {
             CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
             CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
-            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7463,7 +7463,7 @@ impl ::sittir_core::render::Render for ForStatementBodyTransportSlot {
         match self {
             ForStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
             ForStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7578,7 +7578,7 @@ impl ::sittir_core::render::Render for WhileStatementBodyTransportSlot {
         match self {
             WhileStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
             WhileStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7693,7 +7693,7 @@ impl ::sittir_core::render::Render for TryStatementBodyTransportSlot {
         match self {
             TryStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
             TryStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7897,7 +7897,7 @@ impl ::sittir_core::render::Render for ExceptClauseSuiteTransportSlot {
         match self {
             ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => inner.render(w),
             ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8012,7 +8012,7 @@ impl ::sittir_core::render::Render for FinallyClauseBlockTransportSlot {
         match self {
             FinallyClauseBlockTransportSlot::SimpleStatements(inner) => inner.render(w),
             FinallyClauseBlockTransportSlot::SuiteBlock(inner) => inner.render(w),
-            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8216,7 +8216,7 @@ impl ::sittir_core::render::Render for WithStatementBodyTransportSlot {
         match self {
             WithStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
             WithStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8523,7 +8523,7 @@ impl ::sittir_core::render::Render for FunctionDefinitionBodyTransportSlot {
         match self {
             FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
             FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8777,7 +8777,7 @@ impl ::sittir_core::render::Render for ClassDefinitionBodyTransportSlot {
         match self {
             ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
             ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -9104,7 +9104,7 @@ impl ::sittir_core::render::Render for SuiteContentTransportSlot {
         match self {
             SuiteContentTransportSlot::SimpleStatements(inner) => inner.render(w),
             SuiteContentTransportSlot::SuiteBlock(inner) => inner.render(w),
-            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -47677,10 +47677,6 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// second place the root seam policy could drift.
 pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
-    // only where a word-class char would collide with a word-class char
-    // across write seams, per this grammar's own word class. Wrap ONCE
-    // here — never per level.
     let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent);
     transport.render(&mut w)?;
     w.finish()?;
@@ -47956,7 +47952,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::LtGt(t) => t.render(w),
             AnyTransport::Is(t) => t.render(w),
             AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => w.text("*"),
-            AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok(()) },
+            AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
             AnyTransport::Literal3_73_74_61_72 => w.text("*"),
             AnyTransport::Literal4_63_6f_6d_6d_61 => w.text(","),

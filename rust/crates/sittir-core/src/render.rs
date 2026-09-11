@@ -46,7 +46,9 @@ pub trait RenderSink {
     fn seam(&mut self, text: &str);
     fn token_seam(&mut self, text: &str);
     fn indent(&mut self);
-    fn dedent(&mut self);
+    /// Shallows the depth; returns whether a payload may still follow (the
+    /// indent it closes had text written).
+    fn dedent(&mut self) -> bool;
     fn ends_line(&self) -> bool;
 }
 

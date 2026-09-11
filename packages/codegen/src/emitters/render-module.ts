@@ -518,15 +518,20 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 }
 
 
-function literalWriteTail(text: string): string {
-	if (isDepthText(text)) {
-		return text === INDENT_TEXT ? `{ w.indent(); w.seam("\\n"); Ok(()) }` : `{ w.dedent(); Ok(()) }`;
+function literalWrite(valueExpr: string, fixed: string | undefined): string {
+	if (fixed !== undefined && isDepthText(fixed)) {
+		return fixed === INDENT_TEXT
+			? `{ w.indent(); w.seam("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }`
+			: `{ w.dedent(); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
 	}
-	return isWhitespaceOnly(text) ? `{ w.token_seam(${JSON.stringify(text)}); Ok(()) }` : `w.text(${JSON.stringify(text)})`;
+	if (fixed !== undefined && isWhitespaceOnly(fixed)) {
+		return `{ w.token_seam(${valueExpr}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+	}
+	return `w.text(${valueExpr})`;
 }
 
 function literalWriteArm(text: string, immediate: boolean): string {
-	const tail = literalWriteTail(text);
+	const tail = literalWrite(rustStringLiteral(text), text);
 	return immediate ? `{ w.adjacent(); ${tail} }` : tail;
 }
 
@@ -593,10 +598,6 @@ function renderTypedDispatch(
 		`pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {`
 	);
 	lines.push(`    let mut s = String::new();`);
-	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
-	lines.push(`    // only where a word-class char would collide with a word-class char`);
-	lines.push(`    // across write seams, per this grammar's own word class. Wrap ONCE`);
-	lines.push(`    // here — never per level.`);
 	lines.push(
 		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent);`
 	);
@@ -617,7 +618,7 @@ function renderTypedDispatch(
 	}
 	for (const [index, literal] of literals.entries()) {
 		const variant = rustLiteralTransportVariantName(literal, index);
-		lines.push(`            AnyTransport::${variant} => ${literalWriteTail(literal.text)},`);
+		lines.push(`            AnyTransport::${variant} => ${literalWrite(rustStringLiteral(literal.text), literal.text)},`);
 	}
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -716,15 +717,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 }
 
 function leafTextWrite(node: AssembledNode, on: string): string {
-	const fixed = fixedTextOfKind(node);
-	if (fixed !== undefined && isDepthText(fixed)) {
-		return fixed === INDENT_TEXT
-			? `{ w.indent(); w.seam("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }`
-			: `{ w.dedent(); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
-	}
-	return fixed !== undefined && isWhitespaceOnly(fixed)
-		? `{ w.token_seam(&${on}.text); Ok::<(), ::sittir_core::render::RenderError>(()) }`
-		: `w.text(&${on}.text)`;
+	return literalWrite(`&${on}.text`, fixedTextOfKind(node));
 }
 
 function renderTypedLeafFn(node: AssembledNode): string[] {

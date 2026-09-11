@@ -14,7 +14,8 @@
 //! a character in the text stream: `site` resolves an id through the
 //! attached `WhitespaceTable`, `seam`/`token_seam` hold a payload that
 //! coalesces to the widest of what a run of calls asks for, and
-//! `indent`/`dedent` move the depth the next line is paid at.
+//! `indent`/`dedent` move the depth the next line is paid at. Literal text
+//! is never part of this coalescing, even when it is itself whitespace.
 //!
 //! Wrap the destination ONCE at the root render call. Wrapping per
 //! nesting level instead monomorphizes recursive render paths into an
@@ -281,21 +282,6 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
         Ok(())
     }
-
-    /// Shallows the depth. A dedent that arrives while the indent before it
-    /// has had no text written cancels it and its held payload, so an empty
-    /// body renders as its bare delimiters; the caller then writes no
-    /// payload of its own. Returns whether the dedent's own seam should
-    /// still be merged in.
-    fn dedent_keeps_payload(&mut self) -> bool {
-        self.depth = self.depth.saturating_sub(1);
-        if std::mem::replace(&mut self.indent_armed, false) {
-            self.seam = None;
-            self.seam_text.clear();
-            return false;
-        }
-        true
-    }
 }
 
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
@@ -325,7 +311,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         };
         if kind == table.indent {
             self.indent();
-        } else if kind == table.dedent && !self.dedent_keeps_payload() {
+        } else if kind == table.dedent && !self.dedent() {
             return;
         }
         self.merge_seam((table.text_of)(kind));
@@ -345,8 +331,21 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.indent_armed = true;
     }
 
-    fn dedent(&mut self) {
-        self.dedent_keeps_payload();
+    /// Shallows the depth. A dedent that arrives while the indent before it
+    /// has had no text written cancels it and its held payload, so an empty
+    /// body renders as its bare delimiters; the caller then writes no
+    /// payload of its own. Returns whether a payload may still follow (the
+    /// indent it closes had text written) — the printer's own seam call for
+    /// this dedent is conditioned on it, since a cancelled indent drops any
+    /// payload the mark path would have dropped too.
+    fn dedent(&mut self) -> bool {
+        self.depth = self.depth.saturating_sub(1);
+        if std::mem::replace(&mut self.indent_armed, false) {
+            self.seam = None;
+            self.seam_text.clear();
+            return false;
+        }
+        true
     }
 
     fn ends_line(&self) -> bool {
@@ -660,5 +659,130 @@ mod sink_tests {
         assert!(!w.ends_line());
         w.text("\n").unwrap();
         assert!(w.ends_line());
+    }
+
+    #[test]
+    fn a_cancelled_indent_drops_the_dedent_seam_that_follows_it() {
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.indent();
+                w.seam("\n");
+                if w.dedent() {
+                    w.seam("\n");
+                }
+                w.text("}").unwrap();
+            }),
+            "{}"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("{").unwrap();
+                w.indent();
+                w.seam("\n");
+                w.text("a").unwrap();
+                if w.dedent() {
+                    w.seam("\n");
+                }
+                w.text("}").unwrap();
+            }),
+            "{\n  a\n}"
+        );
+    }
+
+    #[test]
+    fn literal_whitespace_is_never_coalesced() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam(" ");
+                w.text("  b").unwrap();
+            }),
+            "a   b"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.text(" ").unwrap();
+                w.seam(" ");
+                w.text("b").unwrap();
+            }),
+            "a  b"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam(" ");
+                w.text("x").unwrap();
+                w.text("(").unwrap();
+            }),
+            "a x("
+        );
+    }
+
+    #[test]
+    fn a_bare_dedent_never_drops_a_following_seam() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.dedent();
+                w.seam("\n");
+                w.text("b").unwrap();
+            }),
+            "a\nb"
+        );
+    }
+
+    #[test]
+    fn an_adjacency_mark_survives_a_tight_seam() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.adjacent();
+                w.seam("");
+                w.text("b").unwrap();
+            }),
+            "ab"
+        );
+    }
+
+    #[test]
+    fn an_adjacency_call_survives_an_empty_write() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.adjacent();
+                w.text("").unwrap();
+                w.text("b").unwrap();
+            }),
+            "ab"
+        );
+    }
+
+    #[test]
+    fn a_seam_after_an_adjacent_run_is_computed_against_its_true_last_char() {
+        assert_eq!(
+            run(|w| {
+                w.text("(").unwrap();
+                w.adjacent();
+                w.text("d").unwrap();
+                w.text("if").unwrap();
+            }),
+            "(d if"
+        );
+    }
+
+    #[test]
+    fn a_dedent_below_zero_saturates() {
+        let mut s = String::new();
+        let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_indent("  ");
+        if w.dedent() {
+            w.seam("\n");
+        }
+        w.text("x").unwrap();
+        w.indent();
+        w.seam("\n");
+        w.text("y").unwrap();
+        assert_eq!(s, "x\n  y");
     }
 }

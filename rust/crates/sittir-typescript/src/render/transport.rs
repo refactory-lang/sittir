@@ -7313,7 +7313,7 @@ fn import_statement_terminator_transport_slot_to_any(t: ImportStatementTerminato
 impl ::sittir_core::render::Render for ImportStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ImportStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ImportStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -8425,7 +8425,7 @@ fn expression_statement_terminator_transport_slot_to_any(t: ExpressionStatementT
 impl ::sittir_core::render::Render for ExpressionStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExpressionStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ExpressionStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ExpressionStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -8520,7 +8520,7 @@ fn variable_declaration_terminator_transport_slot_to_any(t: VariableDeclarationT
 impl ::sittir_core::render::Render for VariableDeclarationTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            VariableDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            VariableDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             VariableDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -8710,7 +8710,7 @@ fn lexical_declaration_terminator_transport_slot_to_any(t: LexicalDeclarationTer
 impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LexicalDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            LexicalDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             LexicalDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -8903,7 +8903,7 @@ fn statement_block_automatic_semicolon_transport_slot_to_any(t: StatementBlockAu
 impl ::sittir_core::render::Render for StatementBlockAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StatementBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            StatementBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -11746,7 +11746,7 @@ fn do_statement_terminator_transport_slot_to_any(t: DoStatementTerminatorTranspo
 impl ::sittir_core::render::Render for DoStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DoStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            DoStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             DoStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -11841,7 +11841,7 @@ fn break_statement_terminator_transport_slot_to_any(t: BreakStatementTerminatorT
 impl ::sittir_core::render::Render for BreakStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BreakStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            BreakStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             BreakStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -11936,7 +11936,7 @@ fn continue_statement_terminator_transport_slot_to_any(t: ContinueStatementTermi
 impl ::sittir_core::render::Render for ContinueStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ContinueStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ContinueStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ContinueStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -12031,7 +12031,7 @@ fn debugger_statement_terminator_transport_slot_to_any(t: DebuggerStatementTermi
 impl ::sittir_core::render::Render for DebuggerStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DebuggerStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            DebuggerStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             DebuggerStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -12731,7 +12731,7 @@ fn return_statement_terminator_transport_slot_to_any(t: ReturnStatementTerminato
 impl ::sittir_core::render::Render for ReturnStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ReturnStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ReturnStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ReturnStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -13431,7 +13431,7 @@ fn throw_statement_terminator_transport_slot_to_any(t: ThrowStatementTerminatorT
 impl ::sittir_core::render::Render for ThrowStatementTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ThrowStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ThrowStatementTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ThrowStatementTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -16338,7 +16338,7 @@ fn class_declaration_automatic_semicolon_transport_slot_to_any(t: ClassDeclarati
 impl ::sittir_core::render::Render for ClassDeclarationAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClassDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ClassDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -16934,7 +16934,7 @@ fn function_declaration_automatic_semicolon_transport_slot_to_any(t: FunctionDec
 impl ::sittir_core::render::Render for FunctionDeclarationAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            FunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -17427,7 +17427,7 @@ fn generator_function_declaration_automatic_semicolon_transport_slot_to_any(t: G
 impl ::sittir_core::render::Render for GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -23876,7 +23876,7 @@ fn class_static_block_automatic_semicolon_transport_slot_to_any(t: ClassStaticBl
 impl ::sittir_core::render::Render for ClassStaticBlockAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClassStaticBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ClassStaticBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -29406,9 +29406,9 @@ fn function_signature_terminator_transport_slot_to_any(t: FunctionSignatureTermi
 impl ::sittir_core::render::Render for FunctionSignatureTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionSignatureTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            FunctionSignatureTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             FunctionSignatureTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
-            FunctionSignatureTerminatorTransportSlot::Literal89_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            FunctionSignatureTerminatorTransportSlot::Literal89_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -30628,7 +30628,7 @@ fn import_alias_terminator_transport_slot_to_any(t: ImportAliasTerminatorTranspo
 impl ::sittir_core::render::Render for ImportAliasTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportAliasTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ImportAliasTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ImportAliasTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -31355,7 +31355,7 @@ fn type_alias_declaration_terminator_transport_slot_to_any(t: TypeAliasDeclarati
 impl ::sittir_core::render::Render for TypeAliasDeclarationTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TypeAliasDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            TypeAliasDeclarationTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             TypeAliasDeclarationTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -38714,7 +38714,7 @@ fn ambient_declaration_module_terminator_transport_slot_to_any(t: AmbientDeclara
 impl ::sittir_core::render::Render for AmbientDeclarationModuleTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AmbientDeclarationModuleTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            AmbientDeclarationModuleTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             AmbientDeclarationModuleTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -39055,7 +39055,7 @@ fn export_statement_namespace_export_terminator_transport_slot_to_any(t: ExportS
 impl ::sittir_core::render::Render for ExportStatementNamespaceExportTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementNamespaceExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ExportStatementNamespaceExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ExportStatementNamespaceExportTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -39150,7 +39150,7 @@ fn export_statement_type_export_terminator_transport_slot_to_any(t: ExportStatem
 impl ::sittir_core::render::Render for ExportStatementTypeExportTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementTypeExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ExportStatementTypeExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ExportStatementTypeExportTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -39245,7 +39245,7 @@ fn export_statement_equals_export_terminator_transport_slot_to_any(t: ExportStat
 impl ::sittir_core::render::Render for ExportStatementEqualsExportTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementEqualsExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ExportStatementEqualsExportTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ExportStatementEqualsExportTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -39945,7 +39945,7 @@ fn class_body_method_terminator_transport_slot_to_any(t: ClassBodyMethodTerminat
 impl ::sittir_core::render::Render for ClassBodyMethodTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClassBodyMethodTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ClassBodyMethodTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ClassBodyMethodTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -40040,7 +40040,7 @@ fn class_body_method_sig_terminator_transport_slot_to_any(t: ClassBodyMethodSigT
 impl ::sittir_core::render::Render for ClassBodyMethodSigTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClassBodyMethodSigTerminatorTransportSlot::Literal89_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ClassBodyMethodSigTerminatorTransportSlot::Literal89_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ClassBodyMethodSigTerminatorTransportSlot::Literal105_63_6f_6d_6d_61 => w.text(","),
         }
     }
@@ -40140,7 +40140,7 @@ fn class_body_member_terminator_transport_slot_to_any(t: ClassBodyMemberTerminat
 impl ::sittir_core::render::Render for ClassBodyMemberTerminatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClassBodyMemberTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ClassBodyMemberTerminatorTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ClassBodyMemberTerminatorTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
             ClassBodyMemberTerminatorTransportSlot::Literal105_63_6f_6d_6d_61 => w.text(","),
         }
@@ -42701,7 +42701,7 @@ fn export_statement_default_from_automatic_semicolon_transport_slot_to_any(t: Ex
 impl ::sittir_core::render::Render for ExportStatementDefaultFromAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementDefaultFromAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ExportStatementDefaultFromAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ExportStatementDefaultFromAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -43262,7 +43262,7 @@ fn export_statement_default_declaration_default_kw_value_automatic_semicolon_tra
 impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot::Literal3_73_65_6d_69 => w.text(";"),
         }
     }
@@ -44145,7 +44145,7 @@ fn for_header_let_const_kind_automatic_semicolon_transport_slot_to_any(t: ForHea
 impl ::sittir_core::render::Render for ForHeaderLetConstKindAutomaticSemicolonTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForHeaderLetConstKindAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            ForHeaderLetConstKindAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -86073,10 +86073,6 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// second place the root seam policy could drift.
 pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
-    // only where a word-class char would collide with a word-class char
-    // across write seams, per this grammar's own word class. Wrap ONCE
-    // here — never per level.
     let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent);
     transport.render(&mut w)?;
     w.finish()?;
@@ -86488,7 +86484,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Meta(t) => t.render(w),
             AnyTransport::Literal0_61_6e_6f_6e_5f_74_79_70_65 => w.text("type"),
             AnyTransport::Literal1_74_79_70_65_6f_66 => w.text("typeof"),
-            AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             AnyTransport::Literal3_73_65_6d_69 => w.text(";"),
             AnyTransport::Literal4_77_69_74_68 => w.text("with"),
             AnyTransport::Literal5_61_73_73_65_72_74 => w.text("assert"),
@@ -86575,7 +86571,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal86_5f_6b_77_5f_64_65_63_6c_61_72_65_5f_6d_61_72_6b_65_72 => w.text("declare"),
             AnyTransport::Literal87_5f_6b_77_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => w.text("abstract"),
             AnyTransport::Literal88_5f_6b_77_5f_61_63_63_65_73_73_6f_72_5f_6d_61_72_6b_65_72 => w.text("accessor"),
-            AnyTransport::Literal89_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok(()) },
+            AnyTransport::Literal89_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             AnyTransport::Literal90_5f_6b_77_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => w.text("const"),
             AnyTransport::Literal91_74_68_69_73 => w.text("this"),
             AnyTransport::Literal92_75_6e_69_71_75_65 => w.text("unique symbol"),

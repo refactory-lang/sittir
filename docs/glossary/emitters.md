@@ -10,8 +10,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
-
-
 ### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
@@ -3055,18 +3053,38 @@ The render function for a compound kind that has no body: each slot is
 written in declaration order through `buildSlotWriteCall`, or, when there
 are no slots, the transport's captured text.
 
-### `packages/codegen/src/emitters/render-module.ts::leafTextWrite`
+### `packages/codegen/src/emitters/render-module.ts::literalWrite`
 
-The write of a leaf transport's `text`, shared by the typed render function
-and the transport's `Display`. A kind whose fixed text is nothing but
-whitespace — the automatic-semicolon externals, a newline terminator —
-writes it behind the writer's whitespace-token mark in one `write_str`, so
-the text is a payload the writer holds and coalesces with the seams around
-it rather than literal text it copies through: the newline gap after a
-statement absorbs the terminator's break, a blank-line gap outranks it,
-and the break still renders when no gap follows, at the end of the render
-included. Every
-other leaf writes its text as it is.
+The one classification every literal-render call site shares, whether the
+value is known at codegen time (`valueExpr` a Rust string literal) or read
+at runtime (`valueExpr` a field reference): `fixed` is always the
+codegen-known text, used only to classify. The depth arms' stamped
+identity (`isDepthText`) moves the writer's depth (`w.indent()`/
+`w.dedent()`, never a written byte); a whitespace-only value is a token
+seam (`w.token_seam(valueExpr)` — coalesces with the seams around it but,
+unlike a seam, is never dropped, since it is a token the source holds);
+anything else writes `valueExpr` as plain text. `leafTextWrite` (a leaf
+transport's own `text`, shared by the typed render function and the
+transport's `Render`) and every literal-transport-variant arm
+(`literalWriteArm`, `AnyTransport`'s literal match arm) go through this,
+so a newline terminator renders the same whether it arrived as a kind id
+or as a node.
+
+```text
+/// The one classification a literal's render call makes, whether the value
+/// is known at codegen time (`valueExpr` a Rust string literal) or read at
+/// runtime (`valueExpr` a field reference) — `fixed` is always the
+/// codegen-known text, used only to classify: the depth arms' stamped
+/// identity moves the writer's depth, a whitespace-only value is a token
+/// seam (survives a render's end, unlike a seam), and anything else writes
+/// `valueExpr` as plain text.
+```
+
+### `packages/codegen/src/emitters/render-module.ts::literalWriteArm`
+
+`literalWrite` plus the immediate case: an immediate literal calls
+`w.adjacent()` before its tail. Used by every enum whose variants include
+literal-transport arms (a per-slot children enum, a supertype enum).
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedLeafFn`
 
@@ -5017,44 +5035,32 @@ braces in either.
 
 ### `packages/codegen/src/emitters/render-body.ts::Body`
 
-`text` is literal token text; adjacent texts merge in `concat`.
-`whitespace` is structural whitespace — a NEWLINE rule's line break, an
-INDENT rule's `INDENT_NEWLINE` mark string, a DEDENT rule's bare `DEDENT_MARK`,
-or the fixed text of a hidden kind that is nothing but whitespace (the
-newline external); it never merges with text and reads as an expression at
-a seam. The marks mirror `sittir_core::spacing`: the writer strips them,
-moves its depth, and pays depth × the `indent` option after every newline
-when the next text arrives, so the scanner's indent token ("break, then one
-level deeper") and its dedent token (which follows the line's own newline)
-render through the same depth counter as the virtual flanks.
+`text` is literal token text; adjacent texts merge in `concat`. `indent`
+and `dedent` are a NEWLINE-carrying depth move — an INDENT/DEDENT rule, or
+the fixed text of a hidden kind that is exactly the depth arms' stamped
+identity (`isDepthText`) — printed as `w.indent()`/`w.dedent()` sink calls,
+never as text; `printStatements`'s payload rule folds a following literal's
+leading whitespace into the call. `tokenSeam` is the fixed text of a
+hidden kind that is nothing but whitespace and not depth text (the newline
+external): printed as `w.token_seam(...)`, which coalesces like a seam but
+is never dropped, since it is a token the source holds. None of the three
+merge with `text`, and all read as an expression at a seam.
 `slot` references a slot by storage name. `space` is a statically resolved
-spaced seam. `adjacent` is the U+FFFE mark written before an expression at
-a glued seam, which `SpacingWriter` strips and reads as "no seam space
-here". `seam` names a token seam site (`lparen_before`) whose whitespace is
-a transport field resolved at render time; it prints as an interpolated
-local and, like `slot`, reads as an expression at a seam. `if` tests its
-arms for presence in order and takes the literal `fallback` when none
-holds.
+spaced seam. `adjacent` prints as `w.adjacent()` before the next sink call,
+which reads it as "no seam space here". `seam` names a token seam site
+(`lparen_before`) whose whitespace is a transport field resolved at render
+time; it prints directly as `w.site(node.<field>.unwrap_or(0))` — no local
+is bound for it — and, like `slot`, reads as an expression at a seam. `if`
+tests its arms for presence in order and takes the literal `fallback` when
+none holds.
 
 ### `packages/codegen/src/emitters/render-body.ts::SeamNode`
 
 A token seam site in a body, named by its transport field
-(`lparen_before`); `seam()` builds one. It carries no text of its own: the
-render function binds a local of the same name to the site's resolved
-whitespace, and the format string interpolates it.
-
-### `packages/codegen/src/emitters/render-body.ts::SEAM_MARK`
-
-U+FDD2, the core writer's seam mark, mirrored here so the options emitter
-can prefix each whitespace kind's text with it.
-
-### `packages/codegen/src/emitters/render-body.ts::TOKEN_SEAM_MARK`
-
-U+FDD3, the core writer's whitespace-token mark, mirrored here for
-`seamMarked`. A payload behind it coalesces with the seams around it like a
-seam payload, but the writer never drops it: it is a token the source
-holds, so one still held when the render ends is written out, where a seam
-held there is not.
+(`lparen_before`); `seam()` builds one. It carries no text of its own:
+`printStatements` prints it directly as `w.site(node.<field>.unwrap_or(0))`,
+resolved from the transport field at render time — no local is ever bound
+for it.
 
 ### `packages/codegen/src/emitters/render-body.ts::isWhitespaceOnly`
 
@@ -5062,16 +5068,21 @@ Whether a fixed text is nothing but whitespace: the one predicate behind
 every site that decides a text is structural whitespace rather than
 token text.
 
-### `packages/codegen/src/emitters/render-body.ts::seamMarked`
+### `packages/codegen/src/emitters/render-body.ts::literalBody`
 
-The text a fixed literal is written as. A whitespace-only text takes the
-whitespace-token mark in front so the writer holds it as a payload and
-coalesces it with the seams around it without ever dropping it; any other
-text is returned as it is. Every
-emitter that writes a kind's fixed text — an inlined reference in a body,
-a literal arm of a slot or `AnyTransport` enum, a leaf transport's own
-`text` — goes through this or `isWhitespaceOnly`, so a newline terminator
-renders the same whether it arrived as a kind id or as a node.
+The one classification every render-body site with a literal grammar
+string in hand shares: the depth arms' stamped identity (`isDepthText`)
+becomes `INDENT`/`DEDENT`, a whitespace-only value becomes a `tokenSeam`,
+and anything else is plain `text`. `emitRule`'s `STRING` case and
+`emitSymbol`'s two literal-returning branches all call this instead of
+each re-deriving the same three-way split.
+
+```text
+/// A literal value's one body: the depth arms' stamped identity becomes its
+/// own depth node, a whitespace-only value becomes a token seam, and
+/// anything else is plain text. The single classification every render-body
+/// site with a literal grammar string in hand shares.
+```
 
 ### `packages/codegen/src/emitters/render-body.ts::concat`
 
@@ -5187,16 +5198,20 @@ sink-call node. The payload rule: when an `indent`, `dedent` or `tokenSeam`
 node is immediately followed by a `text` node beginning with whitespace,
 that leading run is split off and becomes the node's own payload — a
 `w.seam(...)` call right after `w.indent()`/`w.dedent()`, or folded into a
-`tokenSeam`'s own text — rather than ordinary literal text. This is the
-printed shape a mark's coalescing payload took before the mark path
-existed: a depth move or a token's whitespace text absorbing the run that
-used to sit next to it in the same literal.
+`tokenSeam`'s own text — rather than ordinary literal text.
+
+A `dedent`'s own `w.seam(...)` call is conditioned on `w.dedent()`'s return:
+`if w.dedent() { w.seam(<run>); }` when a payload run follows, a bare
+`w.dedent();` otherwise. `dedent()` returns whether the indent it closes
+had text written — false cancels an empty body's payload along with its
+own, so `{}` stays bare rather than gaining a stray blank line.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
-Doubles `{` and `}` so literal text can sit in a format string. The one
-escaping shared by the kind template (`printRustBody`) and the view
-template (`templateOf`), which is what makes the two vocabularies the same.
+Doubles `{` and `}` so literal text can sit in a view template
+(`templateOf`), which `View`'s `write_literal` unescapes at render time.
+`printRustBody`'s own literal runs are plain `w.text(...)` calls and need
+no escaping — a literal brace is just a byte in the string.
 
 ### `packages/codegen/src/emitters/render-body.ts::templateOf`
 
@@ -10429,14 +10444,14 @@ the edge of what the seam sits beside.
 
 ```text
 // INDENT and DEDENT are the scanner's depth tokens, which tree-sitter
-// gives no bytes to. They render as the writer marks the virtual
-// flanks use: INDENT as `INDENT_NEWLINE`, because the scanner emits the
-// indent token in place of the line break that precedes a deeper line;
-// DEDENT as the bare `DEDENT_MARK`, because the dedent token follows the
-// closing line's own newline token, so a newline of its own would
-// duplicate it. The writer pays the depth after the newline when the
-// next text arrives, so a `DEDENT` between that newline and the next
-// statement puts the statement at the outer depth.
+// gives no bytes to. They print as their own `indent`/`dedent` body
+// nodes — `w.indent()`/`w.dedent()` sink calls, never text — because the
+// scanner emits the indent token in place of the line break that
+// precedes a deeper line, and the dedent token follows the closing
+// line's own newline token, so a newline of its own would duplicate it.
+// The writer pays the depth after the newline when the next text
+// arrives, so a `DEDENT` between that newline and the next statement
+// puts the statement at the outer depth.
 ```
 
 #### body
@@ -15081,7 +15096,7 @@ exists.
 ```text
 /// Internal-only edge sentinel for an `adjacent` node's boundary character
 /// at compile-time seq classification (`classifySeqBoundary`): never reaches
-/// generated Rust source, unlike the deleted runtime writer mark it replaces.
+/// generated Rust source.
 ```
 
 ### `packages/codegen/src/emitters/render-body.ts::literalOf`
@@ -15100,8 +15115,7 @@ exists.
 /// Splits off the whitespace run that immediately follows a depth move or a
 /// token seam in the SAME literal, so it becomes that node's payload
 /// (`w.seam(...)` right after the depth call, or folded into the token
-/// seam's own text) rather than ordinary text — the printed shape a coalescing
-/// mark's payload took before the mark path existed.
+/// seam's own text) rather than ordinary text.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::literalWriteTail`

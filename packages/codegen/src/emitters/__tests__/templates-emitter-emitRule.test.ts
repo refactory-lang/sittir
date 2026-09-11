@@ -135,11 +135,28 @@ describe('emitRule — seq', () => {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
-				{ type: STRING, value: ' ' },
 				{ type: STRING, value: 'main' }
 			]
 		};
 		expect(shown(rule, makeCtx())).toBe('fn main');
+	});
+
+	it('a whitespace-only STRING member is a token seam, glued to the literal before it with an adjacency call', () => {
+		// literalBody classifies a whitespace-only literal as a tokenSeam
+		// regardless of which render-body site produced it (STRING, SYMBOL's
+		// own literal, or a hidden kind's fixed text) — no real grammar's
+		// STRING/SYMBOL literal is ever whitespace-only in practice (its
+		// spacing comes from the static-spacing pass, not a literal member),
+		// so this exercises the classification itself, not a real shape.
+		const rule: SeqRule = {
+			type: SEQ,
+			members: [
+				{ type: STRING, value: 'fn' },
+				{ type: STRING, value: ' ' },
+				{ type: STRING, value: 'main' }
+			]
+		};
+		expect(shown(rule, makeCtx())).toBe('fn⟨adjacent⟩⟨tokenSeam " "⟩main');
 	});
 
 	it('recurses into nested seqs, inserting a word-boundary space between adjacent word literals', () => {

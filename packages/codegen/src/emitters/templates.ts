@@ -10,7 +10,6 @@ import {
 	SYMBOL,
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
-import { isDepthText, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AbstractAssembledCompound,
@@ -59,12 +58,11 @@ import {
 	opensAsTag,
 	refersTo,
 	duplicateSlots,
+	literalBody,
 	seam,
 	slot as slotRef,
 	text,
 	weight,
-	tokenSeam,
-	isWhitespaceOnly,
 	type Body
 } from './render-body.ts';
 
@@ -460,8 +458,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
 			}
-			if (isDepthText(rule.value)) return rule.value === INDENT_TEXT ? INDENT_BODY : DEDENT_BODY;
-			return text(rule.value);
+			return literalBody(rule.value);
 		}
 
 		case PATTERN: {
@@ -802,15 +799,13 @@ function emitFieldNameSlot(slotName: string, rule: RenderRule, ctx: EmitCtx): Bo
 function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx): Body {
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
-		if (isDepthText(rule.literal)) return rule.literal === INDENT_TEXT ? INDENT_BODY : DEDENT_BODY;
-		return text(rule.literal);
+		return literalBody(rule.literal);
 	}
 	if (rule.nonterminal === false) {
 		const fixed = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
 		if (fixed === undefined)
 			throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
-		if (isDepthText(fixed)) return fixed === INDENT_TEXT ? INDENT_BODY : DEDENT_BODY;
-		return isWhitespaceOnly(fixed) ? tokenSeam(fixed) : text(fixed);
+		return literalBody(fixed);
 	}
 
 	const isInlineableHiddenHelper =

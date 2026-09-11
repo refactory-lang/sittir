@@ -146,6 +146,10 @@ fn between_items_writes_before_token_after() {
     // "a"/"b"/"c" are each their own token with no separator: the writer
     // still inserts the lexically required space at that word/word seam.
     assert_eq!(rt(&list(&items, TIGHT, "", TIGHT, false, false)), "a b c");
+    // Punctuation items have no word-hazard, so a wrongly-spaced TIGHT
+    // separator would show up as "( )" instead of "()".
+    let punct = [node("("), node(")")];
+    assert_eq!(rt(&list(&punct, TIGHT, "", TIGHT, false, false)), "()");
 }
 
 #[test]
