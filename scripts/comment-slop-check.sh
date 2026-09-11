@@ -34,7 +34,7 @@ paths=(
   ':!packages/rust/src' ':!packages/typescript/src' ':!packages/python/src'
   ':!packages/*/.sittir' ':!packages/*/tests'
   ':!rust/crates/sittir-rust' ':!rust/crates/sittir-typescript' ':!rust/crates/sittir-python'
-  ':!node_modules'
+  ':!docs/superpowers' ':!node_modules'
 )
 
 # Patterns, matched against lowercased comment text (portable ERE — no \b,
