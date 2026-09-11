@@ -242,11 +242,11 @@ function collectNameTable(parser: CParser, source: string, marker: string): Map<
 function joinIdNames(
 	ids: ReadonlyMap<string, CEnumEntry>,
 	names: ReadonlyMap<string, string>,
-	fallbackName: (cName: string) => string
+	fallbackName: (cName: string, symbolName: string | undefined) => string
 ): Map<string, GeneratedIdEntry> {
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
-		const key = fallbackName(entry.cName);
+		const key = fallbackName(entry.cName, names.get(entry.cName));
 		const parser = createParserMetadata(entry, key, names);
 		const existing = result.get(key);
 		if (!existing || !existing.parser) {
@@ -258,29 +258,11 @@ function joinIdNames(
 			continue;
 		}
 		if (existing.parser.anon !== parser.anon) {
-			if (existing.parser.anon) {
-				const anonKey = disambiguateAnonKey(key, result, existing.id ?? entry.id);
-				result.set(anonKey, {
-					id: existing.id,
-					parser: {
-						...existing.parser,
-						parserName: anonKey,
-						hidden: anonKey.startsWith('_')
-					}
-				});
-				result.set(key, { id: entry.id, parser });
-			} else {
-				const anonKey = disambiguateAnonKey(key, result, entry.id);
-				result.set(anonKey, {
-					id: entry.id,
-					parser: {
-						...parser,
-						parserName: anonKey,
-						hidden: anonKey.startsWith('_')
-					}
-				});
-			}
-			continue;
+			const anonSide = existing.parser.anon ? existing.parser : parser;
+			const namedSide = existing.parser.anon ? parser : existing.parser;
+			throw new Error(
+				`generated-metadata: key '${key}' names both anonymous token ${JSON.stringify(anonSide.symbolName)} (${anonSide.cSymbol}) and kind '${key}' (${namedSide.cSymbol})`
+			);
 		}
 		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
 			if (parser.alias && parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
@@ -313,28 +295,23 @@ function createParserMetadata(
 	};
 }
 
-function disambiguateAnonKey(baseKey: string, existing: ReadonlyMap<string, GeneratedIdEntry>, id: number): string {
-	const preferred = `anon_${baseKey}`;
-	if (!existing.has(preferred)) return preferred;
-	return `${preferred}_${id}`;
-}
-
 function shouldReplaceSymbol(existingCName: string | undefined, nextCName: string): boolean {
 	if (!existingCName) return true;
 	return existingCName.startsWith('anon_sym_') && !nextCName.startsWith('anon_sym_');
 }
 
-function deriveSymbolRuntimeName(cName: string): string {
+function deriveSymbolRuntimeName(cName: string, symbolName: string | undefined): string {
 	if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
 	if (cName.startsWith('anon_sym_')) {
-		return cName.slice('anon_sym_'.length).toLowerCase();
+		const base = cName.slice('anon_sym_'.length).toLowerCase();
+		return cName === `anon_sym_${symbolName}` ? `${base}_keyword` : base;
 	}
 	if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
 	if (cName.startsWith('alias_sym_')) return `_${cName.slice('alias_sym_'.length)}`;
 	return cName;
 }
 
-function deriveFieldRuntimeName(cName: string): string {
+function deriveFieldRuntimeName(cName: string, _symbolName: string | undefined): string {
 	return cName.startsWith('field_') ? cName.slice('field_'.length) : cName;
 }
 

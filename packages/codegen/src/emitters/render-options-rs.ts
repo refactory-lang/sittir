@@ -1,5 +1,5 @@
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { admitsDepth } from '../compiler/model/render-rules.ts';
@@ -172,19 +172,8 @@ export function planRenderOptions(
 
 const q = (s: string): string => JSON.stringify(s);
 
-function resolvedKey(key: string, kindEntries: readonly KindEntryLike[]): string {
-	if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) return key;
-	const entry = findEntryForLiteralText(kindEntries, key);
-	if (entry === undefined) throw new Error(`options.rs: address segment ${JSON.stringify(key)} has no kind name to become a field`);
-	return entry.kind;
-}
-
-function segmentIdent(key: string, kindEntries: readonly KindEntryLike[]): string {
-	return rustFieldIdent(resolvedKey(key, kindEntries));
-}
-
 function structNameOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
-	return `${segments.map((segment) => rustTypeIdent(toPascal(resolvedKey(nestedKey(segment), kindEntries)))).join('')}Options`;
+	return `${segments.map((segment) => rustTypeIdent(toPascal(nestedKey(segment, kindEntries)))).join('')}Options`;
 }
 
 function segmentEq(a: PreferenceSegment, b: PreferenceSegment): boolean {
@@ -235,7 +224,7 @@ interface DirectChild {
 
 type ChildIndex = ReadonlyMap<string, readonly DirectChild[]>;
 
-function childIndexOf(addresses: AddressTables): ChildIndex {
+function childIndexOf(addresses: AddressTables, kindEntries: readonly KindEntryLike[]): ChildIndex {
 	const index = new Map<string, DirectChild[]>();
 	const add = (parent: readonly PreferenceSegment[], child: DirectChild): void => {
 		const key = formatPreferencePath(parent);
@@ -243,8 +232,8 @@ function childIndexOf(addresses: AddressTables): ChildIndex {
 		if (bucket === undefined) index.set(key, [child]);
 		else bucket.push(child);
 	};
-	for (const b of addresses.branches) add(b.segments.slice(0, -1), { key: nestedKey(b.segments[b.segments.length - 1]!), branch: b });
-	for (const l of addresses.leaves) add(l.segments.slice(0, -1), { key: nestedKey(l.segments[l.segments.length - 1]!), leaf: l });
+	for (const b of addresses.branches) add(b.segments.slice(0, -1), { key: nestedKey(b.segments[b.segments.length - 1]!, kindEntries), branch: b });
+	for (const l of addresses.leaves) add(l.segments.slice(0, -1), { key: nestedKey(l.segments[l.segments.length - 1]!, kindEntries), leaf: l });
 	return index;
 }
 
@@ -269,7 +258,7 @@ function fieldsOf(
 	return children.map((key) => {
 		const child = direct.find((c) => c.key === key);
 		if (child === undefined) throw new Error(`options.rs: address '${key}' beneath '${formatPreferencePath(prefix)}' is neither a site nor a path`);
-		const ident = segmentIdent(key, kindEntries);
+		const ident = rustFieldIdent(key);
 		if (child.branch !== undefined) return { key, ident, type: `Option<${structNameOf(child.branch.segments, kindEntries)}>` };
 		const refs = siteRefsOf(child.leaf!, siteIndex);
 		const isDelimiter = refs.length > 0 && refs.every((r) => r.site === 'delimiter');
@@ -279,7 +268,7 @@ function fieldsOf(
 
 function emitOptionsStructs(plan: RenderOptionsPlan, addresses: AddressTables, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): string[] {
 	const L: string[] = [];
-	const childIndex = childIndexOf(addresses);
+	const childIndex = childIndexOf(addresses, kindEntries);
 	const structsOf = [
 		{ segments: [] as readonly PreferenceSegment[], name: 'Options', children: [...addresses.roots] },
 		...addresses.branches.map((b) => ({ segments: b.segments, name: structNameOf(b.segments, kindEntries), children: b.children }))
@@ -319,7 +308,7 @@ function emitOptionsStructs(plan: RenderOptionsPlan, addresses: AddressTables, s
 }
 
 function chainOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
-	const idents = segments.map((segment) => segmentIdent(nestedKey(segment), kindEntries));
+	const idents = segments.map((segment) => rustFieldIdent(nestedKey(segment, kindEntries)));
 	if (idents.length === 1) return `options.${idents[0]}`;
 	const last = idents[idents.length - 1]!;
 	const middle = idents.slice(1, -1);
@@ -330,7 +319,7 @@ function chainOf(segments: readonly PreferenceSegment[], kindEntries: readonly K
 }
 
 function literalOf(segments: readonly PreferenceSegment[], value: number, kindEntries: readonly KindEntryLike[]): string {
-	const idents = segments.map((segment) => segmentIdent(nestedKey(segment), kindEntries));
+	const idents = segments.map((segment) => rustFieldIdent(nestedKey(segment, kindEntries)));
 	let inner = `Some(${value})`;
 	for (let i = idents.length - 1; i >= 1; i--) {
 		const structName = structNameOf(segments.slice(0, i), kindEntries);

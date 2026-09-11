@@ -60,100 +60,101 @@ export type LeafStringMap = {
 		| '^='
 		| '|=';
 	[TSKindId.WildcardPattern]: '_';
-	[TSKindId.Import]: 'import';
-	[TSKindId.From]: 'from';
-	[TSKindId.FutureU]: '__future__';
-	[TSKindId.As]: 'as';
-	[TSKindId.Assert]: 'assert';
-	[TSKindId.Return]: 'return';
-	[TSKindId.Del]: 'del';
-	[TSKindId.Raise]: 'raise';
-	[TSKindId.Pass]: 'pass';
-	[TSKindId.Break]: 'break';
-	[TSKindId.Continue]: 'continue';
-	[TSKindId.If]: 'if';
-	[TSKindId.Elif]: 'elif';
-	[TSKindId.Else]: 'else';
-	[TSKindId.Match]: 'match';
-	[TSKindId.Case]: 'case';
-	[TSKindId.For]: 'for';
-	[TSKindId.In]: 'in';
-	[TSKindId.While]: 'while';
-	[TSKindId.Try]: 'try';
-	[TSKindId.Finally]: 'finally';
-	[TSKindId.With]: 'with';
-	[TSKindId.Def]: 'def';
-	[TSKindId.Global]: 'global';
-	[TSKindId.Nonlocal]: 'nonlocal';
-	[TSKindId.Exec]: 'exec';
-	[TSKindId.AnonType]: 'type';
-	[TSKindId.Class]: 'class';
-	[TSKindId.Anonymous]: '_';
-	[TSKindId.Not]: 'not';
-	[TSKindId.And]: 'and';
-	[TSKindId.Or]: 'or';
-	[TSKindId.AnonLambda]: 'lambda';
-	[TSKindId.AnonYield]: 'yield';
-	[TSKindId.AnonAwait]: 'await';
-	[TSKindId.Async]: 'async';
-	[TSKindId.Print]: 'print';
-	[TSKindId.Is]: 'is';
+	[TSKindId.ImportKeyword]: 'import';
+	[TSKindId.FromKeyword]: 'from';
+	[TSKindId.FutureUKeyword]: '__future__';
+	[TSKindId.AsKeyword]: 'as';
+	[TSKindId.AssertKeyword]: 'assert';
+	[TSKindId.ReturnKeyword]: 'return';
+	[TSKindId.DelKeyword]: 'del';
+	[TSKindId.RaiseKeyword]: 'raise';
+	[TSKindId.PassKeyword]: 'pass';
+	[TSKindId.BreakKeyword]: 'break';
+	[TSKindId.ContinueKeyword]: 'continue';
+	[TSKindId.IfKeyword]: 'if';
+	[TSKindId.ElifKeyword]: 'elif';
+	[TSKindId.ElseKeyword]: 'else';
+	[TSKindId.MatchKeyword]: 'match';
+	[TSKindId.CaseKeyword]: 'case';
+	[TSKindId.ForKeyword]: 'for';
+	[TSKindId.InKeyword]: 'in';
+	[TSKindId.WhileKeyword]: 'while';
+	[TSKindId.TryKeyword]: 'try';
+	[TSKindId.ExceptKeyword]: 'except';
+	[TSKindId.FinallyKeyword]: 'finally';
+	[TSKindId.WithKeyword]: 'with';
+	[TSKindId.DefKeyword]: 'def';
+	[TSKindId.GlobalKeyword]: 'global';
+	[TSKindId.NonlocalKeyword]: 'nonlocal';
+	[TSKindId.ExecKeyword]: 'exec';
+	[TSKindId.TypeKeyword]: 'type';
+	[TSKindId.ClassKeyword]: 'class';
+	[TSKindId.Keyword]: '_';
+	[TSKindId.NotKeyword]: 'not';
+	[TSKindId.AndKeyword]: 'and';
+	[TSKindId.OrKeyword]: 'or';
+	[TSKindId.LambdaKeyword]: 'lambda';
+	[TSKindId.YieldKeyword]: 'yield';
+	[TSKindId.AwaitKeyword]: 'await';
+	[TSKindId.AsyncKeyword]: 'async';
+	[TSKindId.PrintKeyword]: 'print';
+	[TSKindId.IsKeyword]: 'is';
 };
 
 export const enum TSKindId {
 	Identifier = 1,
-	Import = 2,
+	ImportKeyword = 2,
 	Dot = 3,
-	From = 4,
-	FutureU = 5,
+	FromKeyword = 4,
+	FutureUKeyword = 5,
 	Comma = 6,
-	As = 7,
+	AsKeyword = 7,
 	Star = 8,
 	GtGt = 9,
-	Assert = 10,
+	AssertKeyword = 10,
 	ColonEq = 11,
-	Return = 12,
-	Del = 13,
-	Raise = 14,
-	Pass = 15,
-	Break = 16,
-	Continue = 17,
-	If = 18,
+	ReturnKeyword = 12,
+	DelKeyword = 13,
+	RaiseKeyword = 14,
+	PassKeyword = 15,
+	BreakKeyword = 16,
+	ContinueKeyword = 17,
+	IfKeyword = 18,
 	Colon = 19,
-	Elif = 20,
-	Else = 21,
-	Match = 22,
-	Case = 23,
-	For = 24,
-	In = 25,
-	While = 26,
-	Try = 27,
-	Except = 28,
+	ElifKeyword = 20,
+	ElseKeyword = 21,
+	MatchKeyword = 22,
+	CaseKeyword = 23,
+	ForKeyword = 24,
+	InKeyword = 25,
+	WhileKeyword = 26,
+	TryKeyword = 27,
+	ExceptKeyword = 28,
 	Star2 = 29,
-	Finally = 30,
-	With = 31,
-	Def = 32,
+	FinallyKeyword = 30,
+	WithKeyword = 31,
+	DefKeyword = 32,
 	Lparen = 33,
 	Rparen = 34,
 	StarStar = 35,
-	Global = 36,
-	Nonlocal = 37,
-	Exec = 38,
-	AnonType = 39,
+	GlobalKeyword = 36,
+	NonlocalKeyword = 37,
+	ExecKeyword = 38,
+	TypeKeyword = 39,
 	Eq = 40,
-	Class = 41,
+	ClassKeyword = 41,
 	Lbrack = 42,
 	Rbrack = 43,
 	At = 44,
 	Pipe = 45,
 	Lbrace = 46,
 	Rbrace = 47,
-	Anonymous = 48,
+	Keyword = 48,
 	Plus = 49,
 	Dash = 50,
-	Not = 51,
-	And = 52,
-	Or = 53,
+	NotKeyword = 51,
+	AndKeyword = 52,
+	OrKeyword = 53,
 	Slash = 54,
 	Percent = 55,
 	SlashSlash = 56,
@@ -161,9 +162,9 @@ export const enum TSKindId {
 	Caret = 58,
 	LtLt = 59,
 	Tilde = 60,
-	Is = 61,
-	AnonLambda = 62,
-	AnonYield = 63,
+	IsKeyword = 61,
+	LambdaKeyword = 62,
+	YieldKeyword = 63,
 	Ellipsis = 64,
 	EscapeSequence = 65,
 	Bslash = 66,
@@ -171,9 +172,9 @@ export const enum TSKindId {
 	TypeConversion = 68,
 	Integer = 69,
 	Float = 70,
-	Print = 71,
-	Async = 72,
-	AnonAwait = 73,
+	PrintKeyword = 71,
+	AsyncKeyword = 72,
+	AwaitKeyword = 73,
 	True = 74,
 	False = 75,
 	None = 76,
@@ -423,58 +424,58 @@ export const enum TSKindId {
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
-	[2, 'import'],
+	[2, 'import_keyword'],
 	[3, 'dot'],
-	[4, 'from'],
-	[5, '__future__'],
+	[4, 'from_keyword'],
+	[5, '__future___keyword'],
 	[6, 'comma'],
-	[7, 'as'],
+	[7, 'as_keyword'],
 	[8, 'star'],
 	[9, 'gt_gt'],
-	[10, 'assert'],
+	[10, 'assert_keyword'],
 	[11, 'colon_eq'],
-	[12, 'return'],
-	[13, 'del'],
-	[14, 'raise'],
-	[15, 'pass'],
-	[16, 'break'],
-	[17, 'continue'],
-	[18, 'if'],
+	[12, 'return_keyword'],
+	[13, 'del_keyword'],
+	[14, 'raise_keyword'],
+	[15, 'pass_keyword'],
+	[16, 'break_keyword'],
+	[17, 'continue_keyword'],
+	[18, 'if_keyword'],
 	[19, 'colon'],
-	[20, 'elif'],
-	[21, 'else'],
-	[22, 'match'],
-	[23, 'case'],
-	[24, 'for'],
-	[25, 'in'],
-	[26, 'while'],
-	[27, 'try'],
-	[28, 'except'],
+	[20, 'elif_keyword'],
+	[21, 'else_keyword'],
+	[22, 'match_keyword'],
+	[23, 'case_keyword'],
+	[24, 'for_keyword'],
+	[25, 'in_keyword'],
+	[26, 'while_keyword'],
+	[27, 'try_keyword'],
+	[28, 'except_keyword'],
 	[29, 'star2'],
-	[30, 'finally'],
-	[31, 'with'],
-	[32, 'def'],
+	[30, 'finally_keyword'],
+	[31, 'with_keyword'],
+	[32, 'def_keyword'],
 	[33, 'lparen'],
 	[34, 'rparen'],
 	[35, 'star_star'],
-	[36, 'global'],
-	[37, 'nonlocal'],
-	[38, 'exec'],
-	[39, 'anon_type'],
+	[36, 'global_keyword'],
+	[37, 'nonlocal_keyword'],
+	[38, 'exec_keyword'],
+	[39, 'type_keyword'],
 	[40, 'eq'],
-	[41, 'class'],
+	[41, 'class_keyword'],
 	[42, 'lbrack'],
 	[43, 'rbrack'],
 	[44, 'at'],
 	[45, 'pipe'],
 	[46, 'lbrace'],
 	[47, 'rbrace'],
-	[48, '_'],
+	[48, '__keyword'],
 	[49, 'plus'],
 	[50, 'dash'],
-	[51, 'not'],
-	[52, 'and'],
-	[53, 'or'],
+	[51, 'not_keyword'],
+	[52, 'and_keyword'],
+	[53, 'or_keyword'],
 	[54, 'slash'],
 	[55, 'percent'],
 	[56, 'slash_slash'],
@@ -482,9 +483,9 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[58, 'caret'],
 	[59, 'lt_lt'],
 	[60, 'tilde'],
-	[61, 'is'],
-	[62, 'anon_lambda'],
-	[63, 'anon_yield'],
+	[61, 'is_keyword'],
+	[62, 'lambda_keyword'],
+	[63, 'yield_keyword'],
 	[64, 'ellipsis'],
 	[65, 'escape_sequence'],
 	[66, 'bslash'],
@@ -492,9 +493,9 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[68, 'type_conversion'],
 	[69, 'integer'],
 	[70, 'float'],
-	[71, 'print'],
-	[72, 'async'],
-	[73, 'anon_await'],
+	[71, 'print_keyword'],
+	[72, 'async_keyword'],
+	[73, 'await_keyword'],
 	[74, 'true'],
 	[75, 'false'],
 	[76, 'none'],
@@ -745,58 +746,58 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
-	[2, 'import'],
+	[2, 'import_keyword'],
 	[3, 'dot'],
-	[4, 'from'],
-	[5, '__future__'],
+	[4, 'from_keyword'],
+	[5, '__future___keyword'],
 	[6, 'comma'],
-	[7, 'as'],
+	[7, 'as_keyword'],
 	[8, 'star'],
 	[9, 'gt_gt'],
-	[10, 'assert'],
+	[10, 'assert_keyword'],
 	[11, 'colon_eq'],
-	[12, 'return'],
-	[13, 'del'],
-	[14, 'raise'],
-	[15, 'pass'],
-	[16, 'break'],
-	[17, 'continue'],
-	[18, 'if'],
+	[12, 'return_keyword'],
+	[13, 'del_keyword'],
+	[14, 'raise_keyword'],
+	[15, 'pass_keyword'],
+	[16, 'break_keyword'],
+	[17, 'continue_keyword'],
+	[18, 'if_keyword'],
 	[19, 'colon'],
-	[20, 'elif'],
-	[21, 'else'],
-	[22, 'match'],
-	[23, 'case'],
-	[24, 'for'],
-	[25, 'in'],
-	[26, 'while'],
-	[27, 'try'],
-	[28, 'except'],
+	[20, 'elif_keyword'],
+	[21, 'else_keyword'],
+	[22, 'match_keyword'],
+	[23, 'case_keyword'],
+	[24, 'for_keyword'],
+	[25, 'in_keyword'],
+	[26, 'while_keyword'],
+	[27, 'try_keyword'],
+	[28, 'except_keyword'],
 	[29, 'star2'],
-	[30, 'finally'],
-	[31, 'with'],
-	[32, 'def'],
+	[30, 'finally_keyword'],
+	[31, 'with_keyword'],
+	[32, 'def_keyword'],
 	[33, 'lparen'],
 	[34, 'rparen'],
 	[35, 'star_star'],
-	[36, 'global'],
-	[37, 'nonlocal'],
-	[38, 'exec'],
-	[39, 'anon_type'],
+	[36, 'global_keyword'],
+	[37, 'nonlocal_keyword'],
+	[38, 'exec_keyword'],
+	[39, 'type_keyword'],
 	[40, 'eq'],
-	[41, 'class'],
+	[41, 'class_keyword'],
 	[42, 'lbrack'],
 	[43, 'rbrack'],
 	[44, 'at'],
 	[45, 'pipe'],
 	[46, 'lbrace'],
 	[47, 'rbrace'],
-	[48, '_'],
+	[48, '__keyword'],
 	[49, 'plus'],
 	[50, 'dash'],
-	[51, 'not'],
-	[52, 'and'],
-	[53, 'or'],
+	[51, 'not_keyword'],
+	[52, 'and_keyword'],
+	[53, 'or_keyword'],
 	[54, 'slash'],
 	[55, 'percent'],
 	[56, 'slash_slash'],
@@ -804,9 +805,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[58, 'caret'],
 	[59, 'lt_lt'],
 	[60, 'tilde'],
-	[61, 'is'],
-	[62, 'anon_lambda'],
-	[63, 'anon_yield'],
+	[61, 'is_keyword'],
+	[62, 'lambda_keyword'],
+	[63, 'yield_keyword'],
 	[64, 'ellipsis'],
 	[65, 'escape_sequence'],
 	[66, 'bslash'],
@@ -814,9 +815,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[68, 'type_conversion'],
 	[69, 'integer'],
 	[70, 'float'],
-	[71, 'print'],
-	[72, 'async'],
-	[73, 'anon_await'],
+	[71, 'print_keyword'],
+	[72, 'async_keyword'],
+	[73, 'await_keyword'],
 	[74, 'true'],
 	[75, 'false'],
 	[76, 'none'],
@@ -1071,86 +1072,86 @@ export function kindIdFromName(kindName: string): TSKindId {
 	switch (kindName) {
 		case 'identifier':
 			return TSKindId.Identifier;
-		case 'import':
-			return TSKindId.Import;
+		case 'import_keyword':
+			return TSKindId.ImportKeyword;
 		case 'dot':
 			return TSKindId.Dot;
-		case 'from':
-			return TSKindId.From;
-		case '__future__':
-			return TSKindId.FutureU;
+		case 'from_keyword':
+			return TSKindId.FromKeyword;
+		case '__future___keyword':
+			return TSKindId.FutureUKeyword;
 		case 'comma':
 			return TSKindId.Comma;
-		case 'as':
-			return TSKindId.As;
+		case 'as_keyword':
+			return TSKindId.AsKeyword;
 		case 'star':
 			return TSKindId.Star;
 		case 'gt_gt':
 			return TSKindId.GtGt;
-		case 'assert':
-			return TSKindId.Assert;
+		case 'assert_keyword':
+			return TSKindId.AssertKeyword;
 		case 'colon_eq':
 			return TSKindId.ColonEq;
-		case 'return':
-			return TSKindId.Return;
-		case 'del':
-			return TSKindId.Del;
-		case 'raise':
-			return TSKindId.Raise;
-		case 'pass':
-			return TSKindId.Pass;
-		case 'break':
-			return TSKindId.Break;
-		case 'continue':
-			return TSKindId.Continue;
-		case 'if':
-			return TSKindId.If;
+		case 'return_keyword':
+			return TSKindId.ReturnKeyword;
+		case 'del_keyword':
+			return TSKindId.DelKeyword;
+		case 'raise_keyword':
+			return TSKindId.RaiseKeyword;
+		case 'pass_keyword':
+			return TSKindId.PassKeyword;
+		case 'break_keyword':
+			return TSKindId.BreakKeyword;
+		case 'continue_keyword':
+			return TSKindId.ContinueKeyword;
+		case 'if_keyword':
+			return TSKindId.IfKeyword;
 		case 'colon':
 			return TSKindId.Colon;
-		case 'elif':
-			return TSKindId.Elif;
-		case 'else':
-			return TSKindId.Else;
-		case 'match':
-			return TSKindId.Match;
-		case 'case':
-			return TSKindId.Case;
-		case 'for':
-			return TSKindId.For;
-		case 'in':
-			return TSKindId.In;
-		case 'while':
-			return TSKindId.While;
-		case 'try':
-			return TSKindId.Try;
-		case 'except':
-			return TSKindId.Except;
+		case 'elif_keyword':
+			return TSKindId.ElifKeyword;
+		case 'else_keyword':
+			return TSKindId.ElseKeyword;
+		case 'match_keyword':
+			return TSKindId.MatchKeyword;
+		case 'case_keyword':
+			return TSKindId.CaseKeyword;
+		case 'for_keyword':
+			return TSKindId.ForKeyword;
+		case 'in_keyword':
+			return TSKindId.InKeyword;
+		case 'while_keyword':
+			return TSKindId.WhileKeyword;
+		case 'try_keyword':
+			return TSKindId.TryKeyword;
+		case 'except_keyword':
+			return TSKindId.ExceptKeyword;
 		case 'star2':
 			return TSKindId.Star2;
-		case 'finally':
-			return TSKindId.Finally;
-		case 'with':
-			return TSKindId.With;
-		case 'def':
-			return TSKindId.Def;
+		case 'finally_keyword':
+			return TSKindId.FinallyKeyword;
+		case 'with_keyword':
+			return TSKindId.WithKeyword;
+		case 'def_keyword':
+			return TSKindId.DefKeyword;
 		case 'lparen':
 			return TSKindId.Lparen;
 		case 'rparen':
 			return TSKindId.Rparen;
 		case 'star_star':
 			return TSKindId.StarStar;
-		case 'global':
-			return TSKindId.Global;
-		case 'nonlocal':
-			return TSKindId.Nonlocal;
-		case 'exec':
-			return TSKindId.Exec;
-		case 'anon_type':
-			return TSKindId.AnonType;
+		case 'global_keyword':
+			return TSKindId.GlobalKeyword;
+		case 'nonlocal_keyword':
+			return TSKindId.NonlocalKeyword;
+		case 'exec_keyword':
+			return TSKindId.ExecKeyword;
+		case 'type_keyword':
+			return TSKindId.TypeKeyword;
 		case 'eq':
 			return TSKindId.Eq;
-		case 'class':
-			return TSKindId.Class;
+		case 'class_keyword':
+			return TSKindId.ClassKeyword;
 		case 'lbrack':
 			return TSKindId.Lbrack;
 		case 'rbrack':
@@ -1163,18 +1164,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lbrace;
 		case 'rbrace':
 			return TSKindId.Rbrace;
-		case '_':
-			return TSKindId.Anonymous;
+		case '__keyword':
+			return TSKindId.Keyword;
 		case 'plus':
 			return TSKindId.Plus;
 		case 'dash':
 			return TSKindId.Dash;
-		case 'not':
-			return TSKindId.Not;
-		case 'and':
-			return TSKindId.And;
-		case 'or':
-			return TSKindId.Or;
+		case 'not_keyword':
+			return TSKindId.NotKeyword;
+		case 'and_keyword':
+			return TSKindId.AndKeyword;
+		case 'or_keyword':
+			return TSKindId.OrKeyword;
 		case 'slash':
 			return TSKindId.Slash;
 		case 'percent':
@@ -1189,12 +1190,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtLt;
 		case 'tilde':
 			return TSKindId.Tilde;
-		case 'is':
-			return TSKindId.Is;
-		case 'anon_lambda':
-			return TSKindId.AnonLambda;
-		case 'anon_yield':
-			return TSKindId.AnonYield;
+		case 'is_keyword':
+			return TSKindId.IsKeyword;
+		case 'lambda_keyword':
+			return TSKindId.LambdaKeyword;
+		case 'yield_keyword':
+			return TSKindId.YieldKeyword;
 		case 'ellipsis':
 			return TSKindId.Ellipsis;
 		case 'escape_sequence':
@@ -1209,12 +1210,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Integer;
 		case 'float':
 			return TSKindId.Float;
-		case 'print':
-			return TSKindId.Print;
-		case 'async':
-			return TSKindId.Async;
-		case 'anon_await':
-			return TSKindId.AnonAwait;
+		case 'print_keyword':
+			return TSKindId.PrintKeyword;
+		case 'async_keyword':
+			return TSKindId.AsyncKeyword;
+		case 'await_keyword':
+			return TSKindId.AwaitKeyword;
 		case 'true':
 			return TSKindId.True;
 		case 'false':
@@ -1705,26 +1706,82 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._SuiteEmpty;
 		case '_suite_inline':
 			return TSKindId._SuiteInline;
+		case 'import':
+			return TSKindId.ImportKeyword;
 		case '.':
 			return TSKindId.Dot;
+		case 'from':
+			return TSKindId.FromKeyword;
+		case '__future__':
+			return TSKindId.FutureUKeyword;
 		case ',':
 			return TSKindId.Comma;
+		case 'as':
+			return TSKindId.AsKeyword;
 		case '*':
 			return TSKindId.Star;
 		case '>>':
 			return TSKindId.GtGt;
+		case 'assert':
+			return TSKindId.AssertKeyword;
 		case ':=':
 			return TSKindId.ColonEq;
+		case 'return':
+			return TSKindId.ReturnKeyword;
+		case 'del':
+			return TSKindId.DelKeyword;
+		case 'raise':
+			return TSKindId.RaiseKeyword;
+		case 'pass':
+			return TSKindId.PassKeyword;
+		case 'break':
+			return TSKindId.BreakKeyword;
+		case 'continue':
+			return TSKindId.ContinueKeyword;
+		case 'if':
+			return TSKindId.IfKeyword;
 		case ':':
 			return TSKindId.Colon;
+		case 'elif':
+			return TSKindId.ElifKeyword;
+		case 'else':
+			return TSKindId.ElseKeyword;
+		case 'match':
+			return TSKindId.MatchKeyword;
+		case 'case':
+			return TSKindId.CaseKeyword;
+		case 'for':
+			return TSKindId.ForKeyword;
+		case 'in':
+			return TSKindId.InKeyword;
+		case 'while':
+			return TSKindId.WhileKeyword;
+		case 'try':
+			return TSKindId.TryKeyword;
+		case 'except':
+			return TSKindId.ExceptKeyword;
+		case 'finally':
+			return TSKindId.FinallyKeyword;
+		case 'with':
+			return TSKindId.WithKeyword;
+		case 'def':
+			return TSKindId.DefKeyword;
 		case '(':
 			return TSKindId.Lparen;
 		case ')':
 			return TSKindId.Rparen;
 		case '**':
 			return TSKindId.StarStar;
+		case 'global':
+			return TSKindId.GlobalKeyword;
+		case 'nonlocal':
+			return TSKindId.NonlocalKeyword;
+		case 'exec':
+			return TSKindId.ExecKeyword;
 		case '=':
 			return TSKindId.Eq;
+		case 'class':
+			return TSKindId.ClassKeyword;
 		case '[':
 			return TSKindId.Lbrack;
 		case ']':
@@ -1737,10 +1794,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lbrace;
 		case '}':
 			return TSKindId.Rbrace;
+		case '_':
+			return TSKindId.Keyword;
 		case '+':
 			return TSKindId.Plus;
 		case '-':
 			return TSKindId.Dash;
+		case 'not':
+			return TSKindId.NotKeyword;
+		case 'and':
+			return TSKindId.AndKeyword;
+		case 'or':
+			return TSKindId.OrKeyword;
 		case '/':
 			return TSKindId.Slash;
 		case '%':
@@ -1755,8 +1820,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtLt;
 		case '~':
 			return TSKindId.Tilde;
+		case 'is':
+			return TSKindId.IsKeyword;
 		case '\\':
 			return TSKindId.Bslash;
+		case 'print':
+			return TSKindId.PrintKeyword;
+		case 'async':
+			return TSKindId.AsyncKeyword;
 		case ';':
 			return TSKindId.Semi;
 		case '->':
@@ -2602,7 +2673,7 @@ export interface CasePattern {
 		readonly content:
 			| KindEnum<
 					'True' | 'False' | 'None' | '_',
-					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Keyword
 			  >
 			| CaseAsPattern
 			| KeywordPattern
@@ -2661,7 +2732,7 @@ export interface UnionPattern {
 		readonly patterns: NonEmptyArray<
 			| KindEnum<
 					'True' | 'False' | 'None' | '_',
-					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Keyword
 			  >
 			| ClassPattern
 			| SplatPattern
@@ -2727,7 +2798,7 @@ export interface KeyValuePattern {
 		readonly key:
 			| KindEnum<
 					'True' | 'False' | 'None' | '_',
-					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Keyword
 			  >
 			| ClassPattern
 			| SplatPattern
@@ -2810,7 +2881,7 @@ export interface KeywordPattern {
 		readonly value:
 			| KindEnum<
 					'True' | 'False' | 'None' | '_',
-					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Anonymous
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Keyword
 			  >
 			| ClassPattern
 			| SplatPattern
@@ -2846,13 +2917,13 @@ export interface KeywordPattern {
 export interface SplatPattern {
 	readonly $type: TSKindId.SplatPattern;
 	readonly _operator: number;
-	readonly _name: Identifier | TSKindId.Anonymous;
+	readonly _name: Identifier | TSKindId.Keyword;
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
-		readonly name: KindEnum<'_', TSKindId.Anonymous> | Identifier;
+		readonly name: KindEnum<'_', TSKindId.Keyword> | Identifier;
 	};
 	operator(): number;
-	name(): Identifier | TSKindId.Anonymous;
+	name(): Identifier | TSKindId.Keyword;
 }
 
 export interface ClassPattern {
@@ -2966,7 +3037,7 @@ export interface BooleanOperator {
 	readonly _operator: number;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
-		readonly operator: KindEnum<'and' | 'or', TSKindId.And | TSKindId.Or>;
+		readonly operator: KindEnum<'and' | 'or', TSKindId.AndKeyword | TSKindId.OrKeyword>;
 	};
 	left(): Expression;
 	operator(): number;
@@ -3168,15 +3239,15 @@ export interface SplatType {
 
 export interface GenericType {
 	readonly $type: TSKindId.GenericType;
-	readonly _name: Identifier | TSKindId.AnonType;
+	readonly _name: Identifier | TSKindId.TypeKeyword;
 	readonly _type_parameter: TypeParameter;
 	readonly __inputHints__?: {
-		readonly name: KindEnum<'type', TSKindId.AnonType> | Identifier;
+		readonly name: KindEnum<'type', TSKindId.TypeKeyword> | Identifier;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameter: readonly Type[];
 	};
-	name(): Identifier | TSKindId.AnonType;
+	name(): Identifier | TSKindId.TypeKeyword;
 	typeParameter(): TypeParameter;
 }
 
@@ -3713,9 +3784,9 @@ export interface ComparisonOperatorComparator {
 			| TSKindId.GtEq
 			| TSKindId.Gt
 			| TSKindId.LtGt
-			| TSKindId.In
+			| TSKindId.InKeyword
 			| TSKindId._NotIn
-			| TSKindId.Is
+			| TSKindId.IsKeyword
 			| TSKindId._IsNot
 		>;
 	};
@@ -3771,7 +3842,6 @@ export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
-export type Except = Terminal<TSKindId.Except, string>;
 
 // Tree types
 export interface ModuleTree extends TreeNode<'module'> {}
@@ -4057,122 +4127,122 @@ export interface IndentTree extends AnyTreeNode {
 export interface DedentTree extends AnyTreeNode {
 	readonly type: '_dedent';
 }
-export interface ExceptTree extends AnyTreeNode {
-	readonly type: 'except';
+export interface ImportKeywordTree extends AnyTreeNode {
+	readonly type: 'import_keyword';
 }
-export interface ImportTree extends AnyTreeNode {
-	readonly type: 'import';
+export interface FromKeywordTree extends AnyTreeNode {
+	readonly type: 'from_keyword';
 }
-export interface FromTree extends AnyTreeNode {
-	readonly type: 'from';
+export interface FutureUKeywordTree extends AnyTreeNode {
+	readonly type: '__future___keyword';
 }
-export interface FutureUTree extends AnyTreeNode {
-	readonly type: '__future__';
+export interface AsKeywordTree extends AnyTreeNode {
+	readonly type: 'as_keyword';
 }
-export interface AsTree extends AnyTreeNode {
-	readonly type: 'as';
+export interface AssertKeywordTree extends AnyTreeNode {
+	readonly type: 'assert_keyword';
 }
-export interface AssertTree extends AnyTreeNode {
-	readonly type: 'assert';
+export interface ReturnKeywordTree extends AnyTreeNode {
+	readonly type: 'return_keyword';
 }
-export interface ReturnTree extends AnyTreeNode {
-	readonly type: 'return';
+export interface DelKeywordTree extends AnyTreeNode {
+	readonly type: 'del_keyword';
 }
-export interface DelTree extends AnyTreeNode {
-	readonly type: 'del';
+export interface RaiseKeywordTree extends AnyTreeNode {
+	readonly type: 'raise_keyword';
 }
-export interface RaiseTree extends AnyTreeNode {
-	readonly type: 'raise';
+export interface PassKeywordTree extends AnyTreeNode {
+	readonly type: 'pass_keyword';
 }
-export interface PassTree extends AnyTreeNode {
-	readonly type: 'pass';
+export interface BreakKeywordTree extends AnyTreeNode {
+	readonly type: 'break_keyword';
 }
-export interface BreakTree extends AnyTreeNode {
-	readonly type: 'break';
+export interface ContinueKeywordTree extends AnyTreeNode {
+	readonly type: 'continue_keyword';
 }
-export interface ContinueTree extends AnyTreeNode {
-	readonly type: 'continue';
+export interface IfKeywordTree extends AnyTreeNode {
+	readonly type: 'if_keyword';
 }
-export interface IfTree extends AnyTreeNode {
-	readonly type: 'if';
+export interface ElifKeywordTree extends AnyTreeNode {
+	readonly type: 'elif_keyword';
 }
-export interface ElifTree extends AnyTreeNode {
-	readonly type: 'elif';
+export interface ElseKeywordTree extends AnyTreeNode {
+	readonly type: 'else_keyword';
 }
-export interface ElseTree extends AnyTreeNode {
-	readonly type: 'else';
+export interface MatchKeywordTree extends AnyTreeNode {
+	readonly type: 'match_keyword';
 }
-export interface MatchTree extends AnyTreeNode {
-	readonly type: 'match';
+export interface CaseKeywordTree extends AnyTreeNode {
+	readonly type: 'case_keyword';
 }
-export interface CaseTree extends AnyTreeNode {
-	readonly type: 'case';
+export interface ForKeywordTree extends AnyTreeNode {
+	readonly type: 'for_keyword';
 }
-export interface ForTree extends AnyTreeNode {
-	readonly type: 'for';
+export interface InKeywordTree extends AnyTreeNode {
+	readonly type: 'in_keyword';
 }
-export interface InTree extends AnyTreeNode {
-	readonly type: 'in';
+export interface WhileKeywordTree extends AnyTreeNode {
+	readonly type: 'while_keyword';
 }
-export interface WhileTree extends AnyTreeNode {
-	readonly type: 'while';
+export interface TryKeywordTree extends AnyTreeNode {
+	readonly type: 'try_keyword';
 }
-export interface TryTree extends AnyTreeNode {
-	readonly type: 'try';
+export interface ExceptKeywordTree extends AnyTreeNode {
+	readonly type: 'except_keyword';
 }
-export interface FinallyTree extends AnyTreeNode {
-	readonly type: 'finally';
+export interface FinallyKeywordTree extends AnyTreeNode {
+	readonly type: 'finally_keyword';
 }
-export interface WithTree extends AnyTreeNode {
-	readonly type: 'with';
+export interface WithKeywordTree extends AnyTreeNode {
+	readonly type: 'with_keyword';
 }
-export interface DefTree extends AnyTreeNode {
-	readonly type: 'def';
+export interface DefKeywordTree extends AnyTreeNode {
+	readonly type: 'def_keyword';
 }
-export interface GlobalTree extends AnyTreeNode {
-	readonly type: 'global';
+export interface GlobalKeywordTree extends AnyTreeNode {
+	readonly type: 'global_keyword';
 }
-export interface NonlocalTree extends AnyTreeNode {
-	readonly type: 'nonlocal';
+export interface NonlocalKeywordTree extends AnyTreeNode {
+	readonly type: 'nonlocal_keyword';
 }
-export interface ExecTree extends AnyTreeNode {
-	readonly type: 'exec';
+export interface ExecKeywordTree extends AnyTreeNode {
+	readonly type: 'exec_keyword';
 }
-export interface AnonTypeTree extends AnyTreeNode {
-	readonly type: 'anon_type';
+export interface TypeKeywordTree extends AnyTreeNode {
+	readonly type: 'type_keyword';
 }
-export interface ClassTree extends AnyTreeNode {
-	readonly type: 'class';
+export interface ClassKeywordTree extends AnyTreeNode {
+	readonly type: 'class_keyword';
 }
-export interface AnonymousTree extends AnyTreeNode {
-	readonly type: '_';
+export interface KeywordTree extends AnyTreeNode {
+	readonly type: '__keyword';
 }
-export interface NotTree extends AnyTreeNode {
-	readonly type: 'not';
+export interface NotKeywordTree extends AnyTreeNode {
+	readonly type: 'not_keyword';
 }
-export interface AndTree extends AnyTreeNode {
-	readonly type: 'and';
+export interface AndKeywordTree extends AnyTreeNode {
+	readonly type: 'and_keyword';
 }
-export interface OrTree extends AnyTreeNode {
-	readonly type: 'or';
+export interface OrKeywordTree extends AnyTreeNode {
+	readonly type: 'or_keyword';
 }
-export interface AnonLambdaTree extends AnyTreeNode {
-	readonly type: 'anon_lambda';
+export interface LambdaKeywordTree extends AnyTreeNode {
+	readonly type: 'lambda_keyword';
 }
-export interface AnonYieldTree extends AnyTreeNode {
-	readonly type: 'anon_yield';
+export interface YieldKeywordTree extends AnyTreeNode {
+	readonly type: 'yield_keyword';
 }
-export interface AnonAwaitTree extends AnyTreeNode {
-	readonly type: 'anon_await';
+export interface AwaitKeywordTree extends AnyTreeNode {
+	readonly type: 'await_keyword';
 }
-export interface AsyncTree extends AnyTreeNode {
-	readonly type: 'async';
+export interface AsyncKeywordTree extends AnyTreeNode {
+	readonly type: 'async_keyword';
 }
-export interface PrintTree extends AnyTreeNode {
-	readonly type: 'print';
+export interface PrintKeywordTree extends AnyTreeNode {
+	readonly type: 'print_keyword';
 }
-export interface IsTree extends AnyTreeNode {
-	readonly type: 'is';
+export interface IsKeywordTree extends AnyTreeNode {
+	readonly type: 'is_keyword';
 }
 
 // Supertype unions
@@ -4780,7 +4850,6 @@ export interface KindMap {
 	string_end: StringEnd;
 	_indent: Indent;
 	_dedent: Dedent;
-	except: Except;
 }
 
 // Per-kind namespace interfaces — one computed base per kind
@@ -6476,7 +6545,6 @@ export interface EscapeInterpolationNs extends LeafNs<
 export interface StringEndNs extends LeafNs<StringEnd, string, StringEnd.Built, StringEndTree, 'string_end'> {}
 export interface IndentNs extends LeafNs<Indent, string, Indent.Built, IndentTree, '_indent'> {}
 export interface DedentNs extends LeafNs<Dedent, string, Dedent.Built, DedentTree, '_dedent'> {}
-export interface ExceptNs extends LeafNs<Except, string, Except.Built, ExceptTree, 'except'> {}
 
 export interface NamespaceMap {
 	[TSKindId.Module]: ModuleNs;
@@ -6649,7 +6717,6 @@ export interface NamespaceMap {
 	[TSKindId.StringEnd]: StringEndNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
-	[TSKindId.Except]: ExceptNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -9925,19 +9992,4 @@ export namespace Dedent {
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Tree = DedentNs['Tree'];
 	export type Kind = '_dedent';
-}
-export namespace Except {
-	export type Config = ExceptNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Except;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = ExceptNs['Loose'];
-	export type LooseConfig = ExceptNs['LooseConfig'];
-	export type BuildArgs = ExceptNs['BuildArgs'];
-	export type LooseArgs = ExceptNs['LooseArgs'];
-	export type Tree = ExceptNs['Tree'];
-	export type Kind = 'except';
 }

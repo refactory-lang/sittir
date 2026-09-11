@@ -5056,8 +5056,8 @@ var grammar_sittir_default = grammar(
           '"=>"/after': preference("space"),
           "operator:/before": preference("space"),
           "operator:/after": preference("space"),
-          "if:/after": preference("space"),
-          "in:/after": preference("space")
+          '"if"/after': preference("space"),
+          '"in"/after': preference("space")
         },
         source_file: {
           "statements:/separator": preference("tight"),

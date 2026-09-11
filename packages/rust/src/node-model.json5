@@ -3786,7 +3786,7 @@
           "_parameter",
           "_self_parameter",
           "_variadic_parameter",
-          "_",
+          "__keyword",
           "_type_identifier",
           "_primitive_type",
           "_abstract_type",
@@ -3980,10 +3980,10 @@
   },
   "nodes": [
     {
-      "kind": "_",
+      "kind": "__keyword",
       "modelType": "token",
-      "typeName": "Anonymous",
-      "irKey": "anonymous",
+      "typeName": "Keyword",
+      "irKey": "keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
@@ -4565,7 +4565,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "_",
-              "parseKind": "_"
+              "parseKind": "__keyword"
             },
             {
               "kind": "node-ref",
@@ -4864,7 +4864,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "_",
-              "parseKind": "_"
+              "parseKind": "__keyword"
             }
           ]
         }
@@ -6131,7 +6131,7 @@
     {
       "kind": "_literal",
       "modelType": "supertype",
-      "typeName": "_Literal",
+      "typeName": "Literal",
       "irKey": "literal",
       "hidden": true,
       "transparent": true,
@@ -6646,7 +6646,7 @@
     {
       "kind": "_path",
       "modelType": "supertype",
-      "typeName": "_Path",
+      "typeName": "Path",
       "irKey": "path",
       "hidden": true,
       "transparent": true,
@@ -8178,7 +8178,7 @@
     {
       "kind": "_type",
       "modelType": "supertype",
-      "typeName": "_Type",
+      "typeName": "Type",
       "irKey": "type",
       "hidden": true,
       "transparent": true,
@@ -8806,30 +8806,6 @@
       "text": "&="
     },
     {
-      "kind": "anon_block",
-      "modelType": "token",
-      "typeName": "AnonBlock",
-      "irKey": "anonBlock",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"block\" as const",
-      "word": true,
-      "text": "block",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_lifetime",
-      "modelType": "token",
-      "typeName": "AnonLifetime",
-      "irKey": "anonLifetime",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"lifetime\" as const",
-      "word": true,
-      "text": "lifetime",
-      "factoryShape": "text"
-    },
-    {
       "kind": "arguments",
       "modelType": "envelope",
       "typeName": "Arguments",
@@ -8976,10 +8952,10 @@
       ]
     },
     {
-      "kind": "as",
+      "kind": "as_keyword",
       "modelType": "token",
-      "typeName": "As",
-      "irKey": "as",
+      "typeName": "AsKeyword",
+      "irKey": "asKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"as\" as const",
@@ -9146,18 +9122,6 @@
       ]
     },
     {
-      "kind": "async",
-      "modelType": "token",
-      "typeName": "Async",
-      "irKey": "async",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "word": true,
-      "text": "async",
-      "factoryShape": "text"
-    },
-    {
       "kind": "async_block",
       "modelType": "branch",
       "typeName": "AsyncBlock",
@@ -9213,6 +9177,18 @@
         "move_marker",
         "body"
       ]
+    },
+    {
+      "kind": "async_keyword",
+      "modelType": "token",
+      "typeName": "AsyncKeyword",
+      "irKey": "asyncKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "word": true,
+      "text": "async",
+      "factoryShape": "text"
     },
     {
       "kind": "at",
@@ -9363,18 +9339,6 @@
       ]
     },
     {
-      "kind": "await",
-      "modelType": "token",
-      "typeName": "Await",
-      "irKey": "await",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"await\" as const",
-      "word": true,
-      "text": "await",
-      "factoryShape": "text"
-    },
-    {
       "kind": "await_expression",
       "modelType": "envelope",
       "typeName": "AwaitExpression",
@@ -9408,6 +9372,18 @@
       "factoryFields": [
         "expression"
       ]
+    },
+    {
+      "kind": "await_keyword",
+      "modelType": "token",
+      "typeName": "AwaitKeyword",
+      "irKey": "awaitKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"await\" as const",
+      "word": true,
+      "text": "await",
+      "factoryShape": "text"
     },
     {
       "kind": "bang",
@@ -9793,6 +9769,18 @@
       ]
     },
     {
+      "kind": "block_keyword",
+      "modelType": "token",
+      "typeName": "BlockKeyword",
+      "irKey": "blockKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"block\" as const",
+      "word": true,
+      "text": "block",
+      "factoryShape": "text"
+    },
+    {
       "kind": "bool",
       "modelType": "token",
       "typeName": "Bool",
@@ -9950,18 +9938,6 @@
       ]
     },
     {
-      "kind": "break",
-      "modelType": "token",
-      "typeName": "Break",
-      "irKey": "break",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"break\" as const",
-      "word": true,
-      "text": "break",
-      "factoryShape": "text"
-    },
-    {
       "kind": "break_expression",
       "modelType": "branch",
       "typeName": "BreakExpression",
@@ -10017,6 +9993,18 @@
         "label",
         "expression"
       ]
+    },
+    {
+      "kind": "break_keyword",
+      "modelType": "token",
+      "typeName": "BreakKeyword",
+      "irKey": "breakKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"break\" as const",
+      "word": true,
+      "text": "break",
+      "factoryShape": "text"
     },
     {
       "kind": "call_expression",
@@ -10776,18 +10764,6 @@
       ]
     },
     {
-      "kind": "const",
-      "modelType": "token",
-      "typeName": "Const",
-      "irKey": "const",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"const\" as const",
-      "word": true,
-      "text": "const",
-      "factoryShape": "text"
-    },
-    {
       "kind": "const_block",
       "modelType": "envelope",
       "typeName": "ConstBlock",
@@ -10925,6 +10901,18 @@
       ]
     },
     {
+      "kind": "const_keyword",
+      "modelType": "token",
+      "typeName": "ConstKeyword",
+      "irKey": "constKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"const\" as const",
+      "word": true,
+      "text": "const",
+      "factoryShape": "text"
+    },
+    {
       "kind": "const_parameter",
       "modelType": "branch",
       "typeName": "ConstParameter",
@@ -11028,18 +11016,6 @@
       ]
     },
     {
-      "kind": "continue",
-      "modelType": "token",
-      "typeName": "Continue",
-      "irKey": "continue",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"continue\" as const",
-      "word": true,
-      "text": "continue",
-      "factoryShape": "text"
-    },
-    {
       "kind": "continue_expression",
       "modelType": "envelope",
       "typeName": "ContinueExpression",
@@ -11074,6 +11050,18 @@
       "factoryFields": [
         "label"
       ]
+    },
+    {
+      "kind": "continue_keyword",
+      "modelType": "token",
+      "typeName": "ContinueKeyword",
+      "irKey": "continueKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"continue\" as const",
+      "word": true,
+      "text": "continue",
+      "factoryShape": "text"
     },
     {
       "kind": "crate",
@@ -11157,10 +11145,10 @@
       ]
     },
     {
-      "kind": "default",
+      "kind": "default_keyword",
       "modelType": "token",
-      "typeName": "Default",
-      "irKey": "default",
+      "typeName": "DefaultKeyword",
+      "irKey": "defaultKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
@@ -11301,10 +11289,10 @@
       "text": "\""
     },
     {
-      "kind": "dyn",
+      "kind": "dyn_keyword",
       "modelType": "token",
-      "typeName": "Dyn",
-      "irKey": "dyn",
+      "typeName": "DynKeyword",
+      "irKey": "dynKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"dyn\" as const",
@@ -11388,18 +11376,6 @@
       ]
     },
     {
-      "kind": "else",
-      "modelType": "token",
-      "typeName": "Else",
-      "irKey": "else",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"else\" as const",
-      "word": true,
-      "text": "else",
-      "factoryShape": "text"
-    },
-    {
       "kind": "else_clause",
       "modelType": "polymorph",
       "typeName": "ElseClause",
@@ -11443,6 +11419,18 @@
       ]
     },
     {
+      "kind": "else_keyword",
+      "modelType": "token",
+      "typeName": "ElseKeyword",
+      "irKey": "elseKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"else\" as const",
+      "word": true,
+      "text": "else",
+      "factoryShape": "text"
+    },
+    {
       "kind": "empty_statement",
       "modelType": "token",
       "typeName": "EmptyStatement",
@@ -11453,18 +11441,6 @@
       "stampExpression": "\";\" as const",
       "word": false,
       "text": ";",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "enum",
-      "modelType": "token",
-      "typeName": "Enum",
-      "irKey": "enum",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"enum\" as const",
-      "word": true,
-      "text": "enum",
       "factoryShape": "text"
     },
     {
@@ -11589,6 +11565,18 @@
         "where_clause",
         "body"
       ]
+    },
+    {
+      "kind": "enum_keyword",
+      "modelType": "token",
+      "typeName": "EnumKeyword",
+      "irKey": "enumKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"enum\" as const",
+      "word": true,
+      "text": "enum",
+      "factoryShape": "text"
     },
     {
       "kind": "enum_variant",
@@ -11778,27 +11766,27 @@
       "factoryShape": "text"
     },
     {
-      "kind": "expr",
+      "kind": "expr_2021_keyword",
       "modelType": "token",
-      "typeName": "Expr",
-      "irKey": "expr",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"expr\" as const",
-      "word": true,
-      "text": "expr",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "expr_2021",
-      "modelType": "token",
-      "typeName": "Expr2021",
-      "irKey": "expr2021",
+      "typeName": "Expr2021Keyword",
+      "irKey": "expr2021Keyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"expr_2021\" as const",
       "word": true,
       "text": "expr_2021",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "expr_keyword",
+      "modelType": "token",
+      "typeName": "ExprKeyword",
+      "irKey": "exprKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"expr\" as const",
+      "word": true,
+      "text": "expr",
       "factoryShape": "text"
     },
     {
@@ -11930,18 +11918,6 @@
       ]
     },
     {
-      "kind": "extern",
-      "modelType": "token",
-      "typeName": "Extern",
-      "irKey": "extern",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"extern\" as const",
-      "word": true,
-      "text": "extern",
-      "factoryShape": "text"
-    },
-    {
       "kind": "extern_crate_declaration",
       "modelType": "branch",
       "typeName": "ExternCrateDeclaration",
@@ -12021,6 +11997,18 @@
       ]
     },
     {
+      "kind": "extern_keyword",
+      "modelType": "token",
+      "typeName": "ExternKeyword",
+      "irKey": "externKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"extern\" as const",
+      "word": true,
+      "text": "extern",
+      "factoryShape": "text"
+    },
+    {
       "kind": "extern_modifier",
       "modelType": "envelope",
       "typeName": "ExternModifier",
@@ -12081,10 +12069,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "false",
+      "kind": "false_keyword",
       "modelType": "token",
-      "typeName": "False",
-      "irKey": "false",
+      "typeName": "FalseKeyword",
+      "irKey": "falseKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"false\" as const",
@@ -12497,27 +12485,15 @@
       "factoryShape": "text"
     },
     {
-      "kind": "fn",
+      "kind": "fn_keyword",
       "modelType": "token",
-      "typeName": "Fn",
-      "irKey": "fn",
+      "typeName": "FnKeyword",
+      "irKey": "fnKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"fn\" as const",
       "word": true,
       "text": "fn",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "for",
-      "modelType": "token",
-      "typeName": "For",
-      "irKey": "for",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"for\" as const",
-      "word": true,
-      "text": "for",
       "factoryShape": "text"
     },
     {
@@ -12620,6 +12596,18 @@
         "value",
         "body"
       ]
+    },
+    {
+      "kind": "for_keyword",
+      "modelType": "token",
+      "typeName": "ForKeyword",
+      "irKey": "forKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"for\" as const",
+      "word": true,
+      "text": "for",
+      "factoryShape": "text"
     },
     {
       "kind": "for_lifetimes",
@@ -13334,18 +13322,6 @@
       ]
     },
     {
-      "kind": "gen",
-      "modelType": "token",
-      "typeName": "Gen",
-      "irKey": "gen",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"gen\" as const",
-      "word": true,
-      "text": "gen",
-      "factoryShape": "text"
-    },
-    {
       "kind": "gen_block",
       "modelType": "branch",
       "typeName": "GenBlock",
@@ -13401,6 +13377,18 @@
         "move_marker",
         "body"
       ]
+    },
+    {
+      "kind": "gen_keyword",
+      "modelType": "token",
+      "typeName": "GenKeyword",
+      "irKey": "genKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"gen\" as const",
+      "word": true,
+      "text": "gen",
+      "factoryShape": "text"
     },
     {
       "kind": "generic_function",
@@ -13839,10 +13827,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "ident",
+      "kind": "ident_keyword",
       "modelType": "token",
-      "typeName": "Ident",
-      "irKey": "ident",
+      "typeName": "IdentKeyword",
+      "irKey": "identKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"ident\" as const",
@@ -13858,18 +13846,6 @@
       "irKey": "identifier",
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "if",
-      "modelType": "token",
-      "typeName": "If",
-      "irKey": "if",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"if\" as const",
-      "word": true,
-      "text": "if",
       "factoryShape": "text"
     },
     {
@@ -13968,15 +13944,15 @@
       ]
     },
     {
-      "kind": "impl",
+      "kind": "if_keyword",
       "modelType": "token",
-      "typeName": "Impl",
-      "irKey": "impl",
+      "typeName": "IfKeyword",
+      "irKey": "ifKeyword",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"impl\" as const",
+      "stampExpression": "\"if\" as const",
       "word": true,
-      "text": "impl",
+      "text": "if",
       "factoryShape": "text"
     },
     {
@@ -14141,10 +14117,22 @@
       ]
     },
     {
-      "kind": "in",
+      "kind": "impl_keyword",
       "modelType": "token",
-      "typeName": "In",
-      "irKey": "in",
+      "typeName": "ImplKeyword",
+      "irKey": "implKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"impl\" as const",
+      "word": true,
+      "text": "impl",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "in_keyword",
+      "modelType": "token",
+      "typeName": "InKeyword",
+      "irKey": "inKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
@@ -14267,10 +14255,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "item",
+      "kind": "item_keyword",
       "modelType": "token",
-      "typeName": "Item",
-      "irKey": "item",
+      "typeName": "ItemKeyword",
+      "irKey": "itemKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"item\" as const",
@@ -14441,18 +14429,6 @@
       "stampExpression": "\"[\" as const",
       "word": false,
       "text": "["
-    },
-    {
-      "kind": "let",
-      "modelType": "token",
-      "typeName": "Let",
-      "irKey": "let",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"let\" as const",
-      "word": true,
-      "text": "let",
-      "factoryShape": "text"
     },
     {
       "kind": "let_condition",
@@ -14635,6 +14611,18 @@
       ]
     },
     {
+      "kind": "let_keyword",
+      "modelType": "token",
+      "typeName": "LetKeyword",
+      "irKey": "letKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"let\" as const",
+      "word": true,
+      "text": "let",
+      "factoryShape": "text"
+    },
+    {
       "kind": "lifetime",
       "modelType": "envelope",
       "typeName": "Lifetime",
@@ -14669,6 +14657,18 @@
       "factoryFields": [
         "name"
       ]
+    },
+    {
+      "kind": "lifetime_keyword",
+      "modelType": "token",
+      "typeName": "LifetimeKeyword",
+      "irKey": "lifetimeKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"lifetime\" as const",
+      "word": true,
+      "text": "lifetime",
+      "factoryShape": "text"
     },
     {
       "kind": "lifetime_parameter",
@@ -14807,27 +14807,15 @@
       ]
     },
     {
-      "kind": "literal",
+      "kind": "literal_keyword",
       "modelType": "token",
-      "typeName": "Literal",
-      "irKey": "literal",
+      "typeName": "LiteralKeyword",
+      "irKey": "literalKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"literal\" as const",
       "word": true,
       "text": "literal",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "loop",
-      "modelType": "token",
-      "typeName": "Loop",
-      "irKey": "loop",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"loop\" as const",
-      "word": true,
-      "text": "loop",
       "factoryShape": "text"
     },
     {
@@ -14886,6 +14874,18 @@
         "label",
         "body"
       ]
+    },
+    {
+      "kind": "loop_keyword",
+      "modelType": "token",
+      "typeName": "LoopKeyword",
+      "irKey": "loopKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"loop\" as const",
+      "word": true,
+      "text": "loop",
+      "factoryShape": "text"
     },
     {
       "kind": "lparen",
@@ -15162,18 +15162,6 @@
       "stampExpression": "\"macro_rules!\" as const",
       "word": false,
       "text": "macro_rules!"
-    },
-    {
-      "kind": "match",
-      "modelType": "token",
-      "typeName": "Match",
-      "irKey": "match",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"match\" as const",
-      "word": true,
-      "text": "match",
-      "factoryShape": "text"
     },
     {
       "kind": "match_arm",
@@ -15453,6 +15441,18 @@
       ]
     },
     {
+      "kind": "match_keyword",
+      "modelType": "token",
+      "typeName": "MatchKeyword",
+      "irKey": "matchKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"match\" as const",
+      "word": true,
+      "text": "match",
+      "factoryShape": "text"
+    },
+    {
       "kind": "match_pattern",
       "modelType": "branch",
       "typeName": "MatchPattern",
@@ -15526,10 +15526,10 @@
       ]
     },
     {
-      "kind": "meta",
+      "kind": "meta_keyword",
       "modelType": "token",
-      "typeName": "Meta",
-      "irKey": "meta",
+      "typeName": "MetaKeyword",
+      "irKey": "metaKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"meta\" as const",
@@ -15545,18 +15545,6 @@
       "irKey": "metavariable",
       "hidden": false,
       "pattern": "\\$[a-zA-Z_]\\w*",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "mod",
-      "modelType": "token",
-      "typeName": "Mod",
-      "irKey": "mod",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"mod\" as const",
-      "word": true,
-      "text": "mod",
       "factoryShape": "text"
     },
     {
@@ -15652,10 +15640,22 @@
       ]
     },
     {
-      "kind": "move",
+      "kind": "mod_keyword",
       "modelType": "token",
-      "typeName": "Move",
-      "irKey": "move",
+      "typeName": "ModKeyword",
+      "irKey": "modKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"mod\" as const",
+      "word": true,
+      "text": "mod",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "move_keyword",
+      "modelType": "token",
+      "typeName": "MoveKeyword",
+      "irKey": "moveKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"move\" as const",
@@ -16040,10 +16040,10 @@
       ]
     },
     {
-      "kind": "pat",
+      "kind": "pat_keyword",
       "modelType": "token",
-      "typeName": "Pat",
-      "irKey": "pat",
+      "typeName": "PatKeyword",
+      "irKey": "patKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"pat\" as const",
@@ -16052,10 +16052,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "pat_param",
+      "kind": "pat_param_keyword",
       "modelType": "token",
-      "typeName": "PatParam",
-      "irKey": "patParam",
+      "typeName": "PatParamKeyword",
+      "irKey": "patParamKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"pat_param\" as const",
@@ -16064,10 +16064,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "path",
+      "kind": "path_keyword",
       "modelType": "token",
-      "typeName": "Path",
-      "irKey": "path",
+      "typeName": "PathKeyword",
+      "irKey": "pathKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"path\" as const",
@@ -16234,10 +16234,10 @@
       "text": "#"
     },
     {
-      "kind": "pub",
+      "kind": "pub_keyword",
       "modelType": "token",
-      "typeName": "Pub",
-      "irKey": "pub",
+      "typeName": "PubKeyword",
+      "irKey": "pubKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"pub\" as const",
@@ -16441,10 +16441,10 @@
       ]
     },
     {
-      "kind": "raw",
+      "kind": "raw_keyword",
       "modelType": "token",
-      "typeName": "Raw",
-      "irKey": "raw",
+      "typeName": "RawKeyword",
+      "irKey": "rawKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"raw\" as const",
@@ -16563,10 +16563,10 @@
       "text": "]"
     },
     {
-      "kind": "ref",
+      "kind": "ref_keyword",
       "modelType": "token",
-      "typeName": "Ref",
-      "irKey": "ref",
+      "typeName": "RefKeyword",
+      "irKey": "refKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"ref\" as const",
@@ -16867,18 +16867,6 @@
       ]
     },
     {
-      "kind": "return",
-      "modelType": "token",
-      "typeName": "Return",
-      "irKey": "return",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"return\" as const",
-      "word": true,
-      "text": "return",
-      "factoryShape": "text"
-    },
-    {
       "kind": "return_expression",
       "modelType": "envelope",
       "typeName": "ReturnExpression",
@@ -16912,6 +16900,18 @@
       "factoryFields": [
         "expression"
       ]
+    },
+    {
+      "kind": "return_keyword",
+      "modelType": "token",
+      "typeName": "ReturnKeyword",
+      "irKey": "returnKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"return\" as const",
+      "word": true,
+      "text": "return",
+      "factoryShape": "text"
     },
     {
       "kind": "rparen",
@@ -17725,18 +17725,6 @@
       "text": "*/"
     },
     {
-      "kind": "static",
-      "modelType": "token",
-      "typeName": "Static",
-      "irKey": "static",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"static\" as const",
-      "word": true,
-      "text": "static",
-      "factoryShape": "text"
-    },
-    {
       "kind": "static_item",
       "modelType": "branch",
       "typeName": "StaticItem",
@@ -17882,10 +17870,22 @@
       ]
     },
     {
-      "kind": "stmt",
+      "kind": "static_keyword",
       "modelType": "token",
-      "typeName": "Stmt",
-      "irKey": "stmt",
+      "typeName": "StaticKeyword",
+      "irKey": "staticKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"static\" as const",
+      "word": true,
+      "text": "static",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "stmt_keyword",
+      "modelType": "token",
+      "typeName": "StmtKeyword",
+      "irKey": "stmtKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"stmt\" as const",
@@ -17978,18 +17978,6 @@
         "string_open",
         "elements"
       ]
-    },
-    {
-      "kind": "struct",
-      "modelType": "token",
-      "typeName": "Struct",
-      "irKey": "struct",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"struct\" as const",
-      "word": true,
-      "text": "struct",
-      "factoryShape": "text"
     },
     {
       "kind": "struct_expression",
@@ -18195,6 +18183,18 @@
         "type_parameters",
         "content"
       ]
+    },
+    {
+      "kind": "struct_keyword",
+      "modelType": "token",
+      "typeName": "StructKeyword",
+      "irKey": "structKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"struct\" as const",
+      "word": true,
+      "text": "struct",
+      "factoryShape": "text"
     },
     {
       "kind": "struct_pattern",
@@ -18731,18 +18731,6 @@
       ]
     },
     {
-      "kind": "trait",
-      "modelType": "token",
-      "typeName": "Trait",
-      "irKey": "trait",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"trait\" as const",
-      "word": true,
-      "text": "trait",
-      "factoryShape": "text"
-    },
-    {
       "kind": "trait_bounds",
       "modelType": "envelope",
       "typeName": "TraitBounds",
@@ -18961,27 +18949,27 @@
       ]
     },
     {
-      "kind": "true",
+      "kind": "trait_keyword",
       "modelType": "token",
-      "typeName": "True",
-      "irKey": "true",
+      "typeName": "TraitKeyword",
+      "irKey": "traitKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"trait\" as const",
+      "word": true,
+      "text": "trait",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "true_keyword",
+      "modelType": "token",
+      "typeName": "TrueKeyword",
+      "irKey": "trueKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"true\" as const",
       "word": true,
       "text": "true",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "try",
-      "modelType": "token",
-      "typeName": "Try",
-      "irKey": "try",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"try\" as const",
-      "word": true,
-      "text": "try",
       "factoryShape": "text"
     },
     {
@@ -19056,10 +19044,22 @@
       ]
     },
     {
-      "kind": "tt",
+      "kind": "try_keyword",
       "modelType": "token",
-      "typeName": "Tt",
-      "irKey": "tt",
+      "typeName": "TryKeyword",
+      "irKey": "tryKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"try\" as const",
+      "word": true,
+      "text": "try",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "tt_keyword",
+      "modelType": "token",
+      "typeName": "TtKeyword",
+      "irKey": "ttKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"tt\" as const",
@@ -19274,27 +19274,15 @@
       ]
     },
     {
-      "kind": "ty",
+      "kind": "ty_keyword",
       "modelType": "token",
-      "typeName": "Ty",
-      "irKey": "ty",
+      "typeName": "TyKeyword",
+      "irKey": "tyKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"ty\" as const",
       "word": true,
       "text": "ty",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "type",
-      "modelType": "token",
-      "typeName": "Type",
-      "irKey": "type",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"type\" as const",
-      "word": true,
-      "text": "type",
       "factoryShape": "text"
     },
     {
@@ -19615,6 +19603,18 @@
       ]
     },
     {
+      "kind": "type_keyword",
+      "modelType": "token",
+      "typeName": "TypeKeyword",
+      "irKey": "typeKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
+      "word": true,
+      "text": "type",
+      "factoryShape": "text"
+    },
+    {
       "kind": "type_parameter",
       "modelType": "branch",
       "typeName": "TypeParameter",
@@ -19856,18 +19856,6 @@
       ]
     },
     {
-      "kind": "union",
-      "modelType": "token",
-      "typeName": "Union",
-      "irKey": "union",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"union\" as const",
-      "word": true,
-      "text": "union",
-      "factoryShape": "text"
-    },
-    {
       "kind": "union_item",
       "modelType": "branch",
       "typeName": "UnionItem",
@@ -19991,6 +19979,18 @@
       ]
     },
     {
+      "kind": "union_keyword",
+      "modelType": "token",
+      "typeName": "UnionKeyword",
+      "irKey": "unionKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"union\" as const",
+      "word": true,
+      "text": "union",
+      "factoryShape": "text"
+    },
+    {
       "kind": "unit_expression",
       "modelType": "token",
       "typeName": "UnitExpression",
@@ -20014,18 +20014,6 @@
       "stampExpression": "\"( )\" as const",
       "word": false,
       "text": "( )",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "unsafe",
-      "modelType": "token",
-      "typeName": "Unsafe",
-      "irKey": "unsafe",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"unsafe\" as const",
-      "word": true,
-      "text": "unsafe",
       "factoryShape": "text"
     },
     {
@@ -20065,15 +20053,15 @@
       ]
     },
     {
-      "kind": "use",
+      "kind": "unsafe_keyword",
       "modelType": "token",
-      "typeName": "Use",
-      "irKey": "use",
+      "typeName": "UnsafeKeyword",
+      "irKey": "unsafeKeyword",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"use\" as const",
+      "stampExpression": "\"unsafe\" as const",
       "word": true,
-      "text": "use",
+      "text": "unsafe",
       "factoryShape": "text"
     },
     {
@@ -20339,6 +20327,18 @@
       ]
     },
     {
+      "kind": "use_keyword",
+      "modelType": "token",
+      "typeName": "UseKeyword",
+      "irKey": "useKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"use\" as const",
+      "word": true,
+      "text": "use",
+      "factoryShape": "text"
+    },
+    {
       "kind": "use_list",
       "modelType": "envelope",
       "typeName": "UseList",
@@ -20519,10 +20519,10 @@
       ]
     },
     {
-      "kind": "vis",
+      "kind": "vis_keyword",
       "modelType": "token",
-      "typeName": "Vis",
-      "irKey": "vis",
+      "typeName": "VisKeyword",
+      "irKey": "visKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"vis\" as const",
@@ -20579,18 +20579,6 @@
       ]
     },
     {
-      "kind": "where",
-      "modelType": "token",
-      "typeName": "Where",
-      "irKey": "where",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"where\" as const",
-      "word": true,
-      "text": "where",
-      "factoryShape": "text"
-    },
-    {
       "kind": "where_clause",
       "modelType": "envelope",
       "typeName": "WhereClause",
@@ -20625,6 +20613,18 @@
       "factoryFields": [
         "where_predicates"
       ]
+    },
+    {
+      "kind": "where_keyword",
+      "modelType": "token",
+      "typeName": "WhereKeyword",
+      "irKey": "whereKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"where\" as const",
+      "word": true,
+      "text": "where",
+      "factoryShape": "text"
     },
     {
       "kind": "where_predicate",
@@ -20756,18 +20756,6 @@
       ]
     },
     {
-      "kind": "while",
-      "modelType": "token",
-      "typeName": "While",
-      "irKey": "while",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"while\" as const",
-      "word": true,
-      "text": "while",
-      "factoryShape": "text"
-    },
-    {
       "kind": "while_expression",
       "modelType": "branch",
       "typeName": "WhileExpression",
@@ -20863,15 +20851,15 @@
       ]
     },
     {
-      "kind": "yield",
+      "kind": "while_keyword",
       "modelType": "token",
-      "typeName": "Yield",
-      "irKey": "yield",
+      "typeName": "WhileKeyword",
+      "irKey": "whileKeyword",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"yield\" as const",
+      "stampExpression": "\"while\" as const",
       "word": true,
-      "text": "yield",
+      "text": "while",
       "factoryShape": "text"
     },
     {
@@ -20908,6 +20896,18 @@
       "factoryFields": [
         "expression"
       ]
+    },
+    {
+      "kind": "yield_keyword",
+      "modelType": "token",
+      "typeName": "YieldKeyword",
+      "irKey": "yieldKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"yield\" as const",
+      "word": true,
+      "text": "yield",
+      "factoryShape": "text"
     }
   ]
 }

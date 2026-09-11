@@ -24,7 +24,7 @@ import { ir, TSKindId } from '@sittir/typescript';
 //     fragment (`ir.string.single.strict({ elements: [fragment] })`), where
 //     the coercer takes the quoted text whole.
 //   - A determined slot takes the stamped enum member on the strict surface
-//     (`TSKindId.AnonType`), where the coercer takes its text (`'type'`).
+//     (`TSKindId.TypeKeyword`), where the coercer takes its text (`'type'`).
 //   - An ALIAS form yields its own kind rather than the parent's:
 //     `ir.importStatement.clauseFrom.strict(…)` builds the arm, and the caller seats
 //     it in `import_statement`'s `fromClause`. Rendered alone it carries
@@ -38,7 +38,7 @@ const ann = (type: string) => ir.typeAnnotation.strict(id(type));
 /** `import type { FormatRecord, FormatTrivia } from '@sittir/types';` */
 export function importTypesStrict() {
 	return ir.importStatement.strict({
-		importClause: TSKindId.AnonType,
+		importClause: TSKindId.TypeKeyword,
 		fromClause: ir.importStatement.clauseFrom.strict({
 			importClause: ir.importClause.namedImports(
 				ir.namedImports.strict(

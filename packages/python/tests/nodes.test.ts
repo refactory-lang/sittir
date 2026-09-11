@@ -2807,7 +2807,7 @@ describe('boolean_operator sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.BooleanOperator);
 		const seated = (node as any).operator();
-		expect(seated?.$text ?? seated).toBe(TSKindId.And);
+		expect(seated?.$text ?? seated).toBe(TSKindId.AndKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('or builds the parent', () => {
@@ -2817,7 +2817,7 @@ describe('boolean_operator sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.BooleanOperator);
 		const seated = (node as any).operator();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Or);
+		expect(seated?.$text ?? seated).toBe(TSKindId.OrKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3896,7 +3896,7 @@ describe('generic_type sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.GenericType);
 		const seated = (node as any).name();
-		expect(seated?.$text ?? seated).toBe(TSKindId.AnonType);
+		expect(seated?.$text ?? seated).toBe(TSKindId.TypeKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4666,14 +4666,5 @@ describe('print_statement_plain', () => {
 		} as any);
 		expect(node.$type).toBe(TSKindId.PrintStatementPlain);
 		expect(node.$source).toBe(2);
-	});
-});
-
-describe('except', () => {
-	it('factory produces correct type', () => {
-		const node = ir.except('test');
-		expect(node.$type).toBe(TSKindId.Except);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
 	});
 });

@@ -245,57 +245,57 @@ pub enum AnyTransport {
     Space(SpaceTransport),
     Indent(IndentTransport),
     Dedent(DedentTransport),
-    Except(ExceptTransport),
-    Import(ImportTransport),
+    ImportKeyword(ImportKeywordTransport),
     Dot(DotTransport),
-    From(FromTransport),
-    FutureU(FutureUTransport),
-    As(AsTransport),
+    FromKeyword(FromKeywordTransport),
+    FutureUKeyword(FutureUKeywordTransport),
+    AsKeyword(AsKeywordTransport),
     Star(StarTransport),
     GtGt(GtGtTransport),
-    Assert(AssertTransport),
+    AssertKeyword(AssertKeywordTransport),
     ColonEq(ColonEqTransport),
-    Return(ReturnTransport),
-    Del(DelTransport),
-    Raise(RaiseTransport),
-    Pass(PassTransport),
-    Break(BreakTransport),
-    Continue(ContinueTransport),
-    If(IfTransport),
+    ReturnKeyword(ReturnKeywordTransport),
+    DelKeyword(DelKeywordTransport),
+    RaiseKeyword(RaiseKeywordTransport),
+    PassKeyword(PassKeywordTransport),
+    BreakKeyword(BreakKeywordTransport),
+    ContinueKeyword(ContinueKeywordTransport),
+    IfKeyword(IfKeywordTransport),
     Colon(ColonTransport),
-    Elif(ElifTransport),
-    Else(ElseTransport),
-    Match(MatchTransport),
-    Case(CaseTransport),
-    For(ForTransport),
-    In(InTransport),
-    While(WhileTransport),
-    Try(TryTransport),
-    Finally(FinallyTransport),
-    With(WithTransport),
-    Def(DefTransport),
+    ElifKeyword(ElifKeywordTransport),
+    ElseKeyword(ElseKeywordTransport),
+    MatchKeyword(MatchKeywordTransport),
+    CaseKeyword(CaseKeywordTransport),
+    ForKeyword(ForKeywordTransport),
+    InKeyword(InKeywordTransport),
+    WhileKeyword(WhileKeywordTransport),
+    TryKeyword(TryKeywordTransport),
+    ExceptKeyword(ExceptKeywordTransport),
+    FinallyKeyword(FinallyKeywordTransport),
+    WithKeyword(WithKeywordTransport),
+    DefKeyword(DefKeywordTransport),
     DashGt(DashGtTransport),
     Lparen(LparenTransport),
     Rparen(RparenTransport),
     StarStar(StarStarTransport),
-    Global(GlobalTransport),
-    Nonlocal(NonlocalTransport),
-    Exec(ExecTransport),
-    AnonType(AnonTypeTransport),
+    GlobalKeyword(GlobalKeywordTransport),
+    NonlocalKeyword(NonlocalKeywordTransport),
+    ExecKeyword(ExecKeywordTransport),
+    TypeKeyword(TypeKeywordTransport),
     Eq(EqTransport),
-    Class(ClassTransport),
+    ClassKeyword(ClassKeywordTransport),
     Lbrack(LbrackTransport),
     Rbrack(RbrackTransport),
     At(AtTransport),
     Comma(CommaTransport),
     Lbrace(LbraceTransport),
     Rbrace(RbraceTransport),
-    Anonymous(AnonymousTransport),
+    Keyword(KeywordTransport),
     Dash(DashTransport),
     Plus(PlusTransport),
-    Not(NotTransport),
-    And(AndTransport),
-    Or(OrTransport),
+    NotKeyword(NotKeywordTransport),
+    AndKeyword(AndKeywordTransport),
+    OrKeyword(OrKeywordTransport),
     Slash(SlashTransport),
     Percent(PercentTransport),
     SlashSlash(SlashSlashTransport),
@@ -303,11 +303,11 @@ pub enum AnyTransport {
     Amp(AmpTransport),
     Caret(CaretTransport),
     LtLt(LtLtTransport),
-    AnonLambda(AnonLambdaTransport),
-    AnonYield(AnonYieldTransport),
+    LambdaKeyword(LambdaKeywordTransport),
+    YieldKeyword(YieldKeywordTransport),
     Bslash(BslashTransport),
-    AnonAwait(AnonAwaitTransport),
-    Async(AsyncTransport),
+    AwaitKeyword(AwaitKeywordTransport),
+    AsyncKeyword(AsyncKeywordTransport),
     Tilde(TildeTransport),
     PlusEq(PlusEqTransport),
     DashEq(DashEqTransport),
@@ -322,7 +322,7 @@ pub enum AnyTransport {
     AmpEq(AmpEqTransport),
     CaretEq(CaretEqTransport),
     PipeEq(PipeEqTransport),
-    Print(PrintTransport),
+    PrintKeyword(PrintKeywordTransport),
     Lt(LtTransport),
     LtEq(LtEqTransport),
     EqEq(EqEqTransport),
@@ -330,7 +330,7 @@ pub enum AnyTransport {
     GtEq(GtEqTransport),
     Gt(GtTransport),
     LtGt(LtGtTransport),
-    Is(IsTransport),
+    IsKeyword(IsKeywordTransport),
     Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
     Literal1_5f_6e_65_77_6c_69_6e_65,
     Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
@@ -341,11 +341,11 @@ pub enum AnyTransport {
     Literal7_6e_6f_6e_65,
     Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
     Literal9_73_74_61_72_5f_73_74_61_72,
-    Literal10_5f,
+    Literal10_5f_5f_6b_65_79_77_6f_72_64,
     Literal11_64_61_73_68,
     Literal12_70_6c_75_73,
-    Literal13_61_6e_64,
-    Literal14_6f_72,
+    Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64,
+    Literal14_6f_72_5f_6b_65_79_77_6f_72_64,
     Literal15_61_74,
     Literal16_73_6c_61_73_68,
     Literal17_70_65_72_63_65_6e_74,
@@ -369,7 +369,7 @@ pub enum AnyTransport {
     Literal35_61_6d_70_5f_65_71,
     Literal36_63_61_72_65_74_5f_65_71,
     Literal37_70_69_70_65_5f_65_71,
-    Literal38_61_6e_6f_6e_5f_74_79_70_65,
+    Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64,
     Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65,
     Literal40_65_71,
     Literal41_5b_5e_7b_7d_5c_6e_5d_2b,
@@ -380,9 +380,9 @@ pub enum AnyTransport {
     Literal46_67_74_5f_65_71,
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
-    Literal49_69_6e,
+    Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
     Literal50_5f_6e_6f_74_5f_69_6e,
-    Literal51_69_73,
+    Literal51_69_73_5f_6b_65_79_77_6f_72_64,
     Literal52_5f_69_73_5f_6e_6f_74,
 }
 
@@ -568,57 +568,57 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Space(t) => t.fill_options(table),
             AnyTransport::Indent(t) => t.fill_options(table),
             AnyTransport::Dedent(t) => t.fill_options(table),
-            AnyTransport::Except(t) => t.fill_options(table),
-            AnyTransport::Import(t) => t.fill_options(table),
+            AnyTransport::ImportKeyword(t) => t.fill_options(table),
             AnyTransport::Dot(t) => t.fill_options(table),
-            AnyTransport::From(t) => t.fill_options(table),
-            AnyTransport::FutureU(t) => t.fill_options(table),
-            AnyTransport::As(t) => t.fill_options(table),
+            AnyTransport::FromKeyword(t) => t.fill_options(table),
+            AnyTransport::FutureUKeyword(t) => t.fill_options(table),
+            AnyTransport::AsKeyword(t) => t.fill_options(table),
             AnyTransport::Star(t) => t.fill_options(table),
             AnyTransport::GtGt(t) => t.fill_options(table),
-            AnyTransport::Assert(t) => t.fill_options(table),
+            AnyTransport::AssertKeyword(t) => t.fill_options(table),
             AnyTransport::ColonEq(t) => t.fill_options(table),
-            AnyTransport::Return(t) => t.fill_options(table),
-            AnyTransport::Del(t) => t.fill_options(table),
-            AnyTransport::Raise(t) => t.fill_options(table),
-            AnyTransport::Pass(t) => t.fill_options(table),
-            AnyTransport::Break(t) => t.fill_options(table),
-            AnyTransport::Continue(t) => t.fill_options(table),
-            AnyTransport::If(t) => t.fill_options(table),
+            AnyTransport::ReturnKeyword(t) => t.fill_options(table),
+            AnyTransport::DelKeyword(t) => t.fill_options(table),
+            AnyTransport::RaiseKeyword(t) => t.fill_options(table),
+            AnyTransport::PassKeyword(t) => t.fill_options(table),
+            AnyTransport::BreakKeyword(t) => t.fill_options(table),
+            AnyTransport::ContinueKeyword(t) => t.fill_options(table),
+            AnyTransport::IfKeyword(t) => t.fill_options(table),
             AnyTransport::Colon(t) => t.fill_options(table),
-            AnyTransport::Elif(t) => t.fill_options(table),
-            AnyTransport::Else(t) => t.fill_options(table),
-            AnyTransport::Match(t) => t.fill_options(table),
-            AnyTransport::Case(t) => t.fill_options(table),
-            AnyTransport::For(t) => t.fill_options(table),
-            AnyTransport::In(t) => t.fill_options(table),
-            AnyTransport::While(t) => t.fill_options(table),
-            AnyTransport::Try(t) => t.fill_options(table),
-            AnyTransport::Finally(t) => t.fill_options(table),
-            AnyTransport::With(t) => t.fill_options(table),
-            AnyTransport::Def(t) => t.fill_options(table),
+            AnyTransport::ElifKeyword(t) => t.fill_options(table),
+            AnyTransport::ElseKeyword(t) => t.fill_options(table),
+            AnyTransport::MatchKeyword(t) => t.fill_options(table),
+            AnyTransport::CaseKeyword(t) => t.fill_options(table),
+            AnyTransport::ForKeyword(t) => t.fill_options(table),
+            AnyTransport::InKeyword(t) => t.fill_options(table),
+            AnyTransport::WhileKeyword(t) => t.fill_options(table),
+            AnyTransport::TryKeyword(t) => t.fill_options(table),
+            AnyTransport::ExceptKeyword(t) => t.fill_options(table),
+            AnyTransport::FinallyKeyword(t) => t.fill_options(table),
+            AnyTransport::WithKeyword(t) => t.fill_options(table),
+            AnyTransport::DefKeyword(t) => t.fill_options(table),
             AnyTransport::DashGt(t) => t.fill_options(table),
             AnyTransport::Lparen(t) => t.fill_options(table),
             AnyTransport::Rparen(t) => t.fill_options(table),
             AnyTransport::StarStar(t) => t.fill_options(table),
-            AnyTransport::Global(t) => t.fill_options(table),
-            AnyTransport::Nonlocal(t) => t.fill_options(table),
-            AnyTransport::Exec(t) => t.fill_options(table),
-            AnyTransport::AnonType(t) => t.fill_options(table),
+            AnyTransport::GlobalKeyword(t) => t.fill_options(table),
+            AnyTransport::NonlocalKeyword(t) => t.fill_options(table),
+            AnyTransport::ExecKeyword(t) => t.fill_options(table),
+            AnyTransport::TypeKeyword(t) => t.fill_options(table),
             AnyTransport::Eq(t) => t.fill_options(table),
-            AnyTransport::Class(t) => t.fill_options(table),
+            AnyTransport::ClassKeyword(t) => t.fill_options(table),
             AnyTransport::Lbrack(t) => t.fill_options(table),
             AnyTransport::Rbrack(t) => t.fill_options(table),
             AnyTransport::At(t) => t.fill_options(table),
             AnyTransport::Comma(t) => t.fill_options(table),
             AnyTransport::Lbrace(t) => t.fill_options(table),
             AnyTransport::Rbrace(t) => t.fill_options(table),
-            AnyTransport::Anonymous(t) => t.fill_options(table),
+            AnyTransport::Keyword(t) => t.fill_options(table),
             AnyTransport::Dash(t) => t.fill_options(table),
             AnyTransport::Plus(t) => t.fill_options(table),
-            AnyTransport::Not(t) => t.fill_options(table),
-            AnyTransport::And(t) => t.fill_options(table),
-            AnyTransport::Or(t) => t.fill_options(table),
+            AnyTransport::NotKeyword(t) => t.fill_options(table),
+            AnyTransport::AndKeyword(t) => t.fill_options(table),
+            AnyTransport::OrKeyword(t) => t.fill_options(table),
             AnyTransport::Slash(t) => t.fill_options(table),
             AnyTransport::Percent(t) => t.fill_options(table),
             AnyTransport::SlashSlash(t) => t.fill_options(table),
@@ -626,11 +626,11 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Amp(t) => t.fill_options(table),
             AnyTransport::Caret(t) => t.fill_options(table),
             AnyTransport::LtLt(t) => t.fill_options(table),
-            AnyTransport::AnonLambda(t) => t.fill_options(table),
-            AnyTransport::AnonYield(t) => t.fill_options(table),
+            AnyTransport::LambdaKeyword(t) => t.fill_options(table),
+            AnyTransport::YieldKeyword(t) => t.fill_options(table),
             AnyTransport::Bslash(t) => t.fill_options(table),
-            AnyTransport::AnonAwait(t) => t.fill_options(table),
-            AnyTransport::Async(t) => t.fill_options(table),
+            AnyTransport::AwaitKeyword(t) => t.fill_options(table),
+            AnyTransport::AsyncKeyword(t) => t.fill_options(table),
             AnyTransport::Tilde(t) => t.fill_options(table),
             AnyTransport::PlusEq(t) => t.fill_options(table),
             AnyTransport::DashEq(t) => t.fill_options(table),
@@ -645,7 +645,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::AmpEq(t) => t.fill_options(table),
             AnyTransport::CaretEq(t) => t.fill_options(table),
             AnyTransport::PipeEq(t) => t.fill_options(table),
-            AnyTransport::Print(t) => t.fill_options(table),
+            AnyTransport::PrintKeyword(t) => t.fill_options(table),
             AnyTransport::Lt(t) => t.fill_options(table),
             AnyTransport::LtEq(t) => t.fill_options(table),
             AnyTransport::EqEq(t) => t.fill_options(table),
@@ -653,7 +653,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::GtEq(t) => t.fill_options(table),
             AnyTransport::Gt(t) => t.fill_options(table),
             AnyTransport::LtGt(t) => t.fill_options(table),
-            AnyTransport::Is(t) => t.fill_options(table),
+            AnyTransport::IsKeyword(t) => t.fill_options(table),
             AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => {}
             AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
             AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
@@ -664,11 +664,11 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal7_6e_6f_6e_65 => {}
             AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
             AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => {}
-            AnyTransport::Literal10_5f => {}
+            AnyTransport::Literal10_5f_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal11_64_61_73_68 => {}
             AnyTransport::Literal12_70_6c_75_73 => {}
-            AnyTransport::Literal13_61_6e_64 => {}
-            AnyTransport::Literal14_6f_72 => {}
+            AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal15_61_74 => {}
             AnyTransport::Literal16_73_6c_61_73_68 => {}
             AnyTransport::Literal17_70_65_72_63_65_6e_74 => {}
@@ -692,7 +692,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal35_61_6d_70_5f_65_71 => {}
             AnyTransport::Literal36_63_61_72_65_74_5f_65_71 => {}
             AnyTransport::Literal37_70_69_70_65_5f_65_71 => {}
-            AnyTransport::Literal38_61_6e_6f_6e_5f_74_79_70_65 => {}
+            AnyTransport::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => {}
             AnyTransport::Literal40_65_71 => {}
             AnyTransport::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => {}
@@ -703,9 +703,9 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal46_67_74_5f_65_71 => {}
             AnyTransport::Literal47_67_74 => {}
             AnyTransport::Literal48_6c_74_5f_67_74 => {}
-            AnyTransport::Literal49_69_6e => {}
+            AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => {}
-            AnyTransport::Literal51_69_73 => {}
+            AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => {}
         }
     }
@@ -1434,29 +1434,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 103 => Ok(AnyTransport::Dedent(
                     DedentTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: except (EXCEPT)
-                28 => Ok(AnyTransport::Except(
-                    ExceptTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: import (IMPORT)
-                2 => Ok(AnyTransport::Import(
-                    ImportTransport::from_napi_value(env, napi_val)?
+                // kind: import_keyword (IMPORT_KEYWORD)
+                2 => Ok(AnyTransport::ImportKeyword(
+                    ImportKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dot (DOT)
                 3 => Ok(AnyTransport::Dot(
                     DotTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: from (FROM)
-                4 => Ok(AnyTransport::From(
-                    FromTransport::from_napi_value(env, napi_val)?
+                // kind: from_keyword (FROM_KEYWORD)
+                4 => Ok(AnyTransport::FromKeyword(
+                    FromKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: __future__ (__FUTURE_U)
-                5 => Ok(AnyTransport::FutureU(
-                    FutureUTransport::from_napi_value(env, napi_val)?
+                // kind: __future___keyword (__FUTURE_U_KEYWORD)
+                5 => Ok(AnyTransport::FutureUKeyword(
+                    FutureUKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: as (AS)
-                7 => Ok(AnyTransport::As(
-                    AsTransport::from_napi_value(env, napi_val)?
+                // kind: as_keyword (AS_KEYWORD)
+                7 => Ok(AnyTransport::AsKeyword(
+                    AsKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: star (STAR)
                 8 => Ok(AnyTransport::Star(
@@ -1466,89 +1462,93 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 9 => Ok(AnyTransport::GtGt(
                     GtGtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: assert (ASSERT)
-                10 => Ok(AnyTransport::Assert(
-                    AssertTransport::from_napi_value(env, napi_val)?
+                // kind: assert_keyword (ASSERT_KEYWORD)
+                10 => Ok(AnyTransport::AssertKeyword(
+                    AssertKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: colon_eq (COLON_EQ)
                 11 => Ok(AnyTransport::ColonEq(
                     ColonEqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: return (RETURN)
-                12 => Ok(AnyTransport::Return(
-                    ReturnTransport::from_napi_value(env, napi_val)?
+                // kind: return_keyword (RETURN_KEYWORD)
+                12 => Ok(AnyTransport::ReturnKeyword(
+                    ReturnKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: del (DEL)
-                13 => Ok(AnyTransport::Del(
-                    DelTransport::from_napi_value(env, napi_val)?
+                // kind: del_keyword (DEL_KEYWORD)
+                13 => Ok(AnyTransport::DelKeyword(
+                    DelKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: raise (RAISE)
-                14 => Ok(AnyTransport::Raise(
-                    RaiseTransport::from_napi_value(env, napi_val)?
+                // kind: raise_keyword (RAISE_KEYWORD)
+                14 => Ok(AnyTransport::RaiseKeyword(
+                    RaiseKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: pass (PASS)
-                15 => Ok(AnyTransport::Pass(
-                    PassTransport::from_napi_value(env, napi_val)?
+                // kind: pass_keyword (PASS_KEYWORD)
+                15 => Ok(AnyTransport::PassKeyword(
+                    PassKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: break (BREAK)
-                16 => Ok(AnyTransport::Break(
-                    BreakTransport::from_napi_value(env, napi_val)?
+                // kind: break_keyword (BREAK_KEYWORD)
+                16 => Ok(AnyTransport::BreakKeyword(
+                    BreakKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: continue (CONTINUE)
-                17 => Ok(AnyTransport::Continue(
-                    ContinueTransport::from_napi_value(env, napi_val)?
+                // kind: continue_keyword (CONTINUE_KEYWORD)
+                17 => Ok(AnyTransport::ContinueKeyword(
+                    ContinueKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: if (IF)
-                18 => Ok(AnyTransport::If(
-                    IfTransport::from_napi_value(env, napi_val)?
+                // kind: if_keyword (IF_KEYWORD)
+                18 => Ok(AnyTransport::IfKeyword(
+                    IfKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: colon (COLON)
                 19 => Ok(AnyTransport::Colon(
                     ColonTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: elif (ELIF)
-                20 => Ok(AnyTransport::Elif(
-                    ElifTransport::from_napi_value(env, napi_val)?
+                // kind: elif_keyword (ELIF_KEYWORD)
+                20 => Ok(AnyTransport::ElifKeyword(
+                    ElifKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: else (ELSE)
-                21 => Ok(AnyTransport::Else(
-                    ElseTransport::from_napi_value(env, napi_val)?
+                // kind: else_keyword (ELSE_KEYWORD)
+                21 => Ok(AnyTransport::ElseKeyword(
+                    ElseKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: match (MATCH)
-                22 => Ok(AnyTransport::Match(
-                    MatchTransport::from_napi_value(env, napi_val)?
+                // kind: match_keyword (MATCH_KEYWORD)
+                22 => Ok(AnyTransport::MatchKeyword(
+                    MatchKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: case (CASE)
-                23 => Ok(AnyTransport::Case(
-                    CaseTransport::from_napi_value(env, napi_val)?
+                // kind: case_keyword (CASE_KEYWORD)
+                23 => Ok(AnyTransport::CaseKeyword(
+                    CaseKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: for (FOR)
-                24 => Ok(AnyTransport::For(
-                    ForTransport::from_napi_value(env, napi_val)?
+                // kind: for_keyword (FOR_KEYWORD)
+                24 => Ok(AnyTransport::ForKeyword(
+                    ForKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: in (IN)
-                25 => Ok(AnyTransport::In(
-                    InTransport::from_napi_value(env, napi_val)?
+                // kind: in_keyword (IN_KEYWORD)
+                25 => Ok(AnyTransport::InKeyword(
+                    InKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: while (WHILE)
-                26 => Ok(AnyTransport::While(
-                    WhileTransport::from_napi_value(env, napi_val)?
+                // kind: while_keyword (WHILE_KEYWORD)
+                26 => Ok(AnyTransport::WhileKeyword(
+                    WhileKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: try (TRY)
-                27 => Ok(AnyTransport::Try(
-                    TryTransport::from_napi_value(env, napi_val)?
+                // kind: try_keyword (TRY_KEYWORD)
+                27 => Ok(AnyTransport::TryKeyword(
+                    TryKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: finally (FINALLY)
-                30 => Ok(AnyTransport::Finally(
-                    FinallyTransport::from_napi_value(env, napi_val)?
+                // kind: except_keyword (EXCEPT_KEYWORD)
+                28 => Ok(AnyTransport::ExceptKeyword(
+                    ExceptKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: with (WITH)
-                31 => Ok(AnyTransport::With(
-                    WithTransport::from_napi_value(env, napi_val)?
+                // kind: finally_keyword (FINALLY_KEYWORD)
+                30 => Ok(AnyTransport::FinallyKeyword(
+                    FinallyKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: def (DEF)
-                32 => Ok(AnyTransport::Def(
-                    DefTransport::from_napi_value(env, napi_val)?
+                // kind: with_keyword (WITH_KEYWORD)
+                31 => Ok(AnyTransport::WithKeyword(
+                    WithKeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: def_keyword (DEF_KEYWORD)
+                32 => Ok(AnyTransport::DefKeyword(
+                    DefKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dash_gt (DASH_GT)
                 80 => Ok(AnyTransport::DashGt(
@@ -1566,29 +1566,29 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 35 => Ok(AnyTransport::StarStar(
                     StarStarTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: global (GLOBAL)
-                36 => Ok(AnyTransport::Global(
-                    GlobalTransport::from_napi_value(env, napi_val)?
+                // kind: global_keyword (GLOBAL_KEYWORD)
+                36 => Ok(AnyTransport::GlobalKeyword(
+                    GlobalKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: nonlocal (NONLOCAL)
-                37 => Ok(AnyTransport::Nonlocal(
-                    NonlocalTransport::from_napi_value(env, napi_val)?
+                // kind: nonlocal_keyword (NONLOCAL_KEYWORD)
+                37 => Ok(AnyTransport::NonlocalKeyword(
+                    NonlocalKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: exec (EXEC)
-                38 => Ok(AnyTransport::Exec(
-                    ExecTransport::from_napi_value(env, napi_val)?
+                // kind: exec_keyword (EXEC_KEYWORD)
+                38 => Ok(AnyTransport::ExecKeyword(
+                    ExecKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_type (ANON_TYPE)
-                39 => Ok(AnyTransport::AnonType(
-                    AnonTypeTransport::from_napi_value(env, napi_val)?
+                // kind: type_keyword (TYPE_KEYWORD)
+                39 => Ok(AnyTransport::TypeKeyword(
+                    TypeKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: eq (EQ)
                 40 => Ok(AnyTransport::Eq(
                     EqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: class (CLASS)
-                41 => Ok(AnyTransport::Class(
-                    ClassTransport::from_napi_value(env, napi_val)?
+                // kind: class_keyword (CLASS_KEYWORD)
+                41 => Ok(AnyTransport::ClassKeyword(
+                    ClassKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lbrack (LBRACK)
                 42 => Ok(AnyTransport::Lbrack(
@@ -1614,9 +1614,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 47 => Ok(AnyTransport::Rbrace(
                     RbraceTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _ (_ANONYMOUS)
-                48 => Ok(AnyTransport::Anonymous(
-                    AnonymousTransport::from_napi_value(env, napi_val)?
+                // kind: __keyword (__KEYWORD)
+                48 => Ok(AnyTransport::Keyword(
+                    KeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dash (DASH)
                 50 => Ok(AnyTransport::Dash(
@@ -1626,17 +1626,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 49 => Ok(AnyTransport::Plus(
                     PlusTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: not (NOT)
-                51 => Ok(AnyTransport::Not(
-                    NotTransport::from_napi_value(env, napi_val)?
+                // kind: not_keyword (NOT_KEYWORD)
+                51 => Ok(AnyTransport::NotKeyword(
+                    NotKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: and (AND)
-                52 => Ok(AnyTransport::And(
-                    AndTransport::from_napi_value(env, napi_val)?
+                // kind: and_keyword (AND_KEYWORD)
+                52 => Ok(AnyTransport::AndKeyword(
+                    AndKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: or (OR)
-                53 => Ok(AnyTransport::Or(
-                    OrTransport::from_napi_value(env, napi_val)?
+                // kind: or_keyword (OR_KEYWORD)
+                53 => Ok(AnyTransport::OrKeyword(
+                    OrKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: slash (SLASH)
                 54 => Ok(AnyTransport::Slash(
@@ -1666,25 +1666,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 59 => Ok(AnyTransport::LtLt(
                     LtLtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_lambda (ANON_LAMBDA)
-                62 => Ok(AnyTransport::AnonLambda(
-                    AnonLambdaTransport::from_napi_value(env, napi_val)?
+                // kind: lambda_keyword (LAMBDA_KEYWORD)
+                62 => Ok(AnyTransport::LambdaKeyword(
+                    LambdaKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_yield (ANON_YIELD)
-                63 => Ok(AnyTransport::AnonYield(
-                    AnonYieldTransport::from_napi_value(env, napi_val)?
+                // kind: yield_keyword (YIELD_KEYWORD)
+                63 => Ok(AnyTransport::YieldKeyword(
+                    YieldKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: bslash (BSLASH)
                 66 => Ok(AnyTransport::Bslash(
                     BslashTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_await (ANON_AWAIT)
-                73 => Ok(AnyTransport::AnonAwait(
-                    AnonAwaitTransport::from_napi_value(env, napi_val)?
+                // kind: await_keyword (AWAIT_KEYWORD)
+                73 => Ok(AnyTransport::AwaitKeyword(
+                    AwaitKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: async (ASYNC)
-                72 => Ok(AnyTransport::Async(
-                    AsyncTransport::from_napi_value(env, napi_val)?
+                // kind: async_keyword (ASYNC_KEYWORD)
+                72 => Ok(AnyTransport::AsyncKeyword(
+                    AsyncKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: tilde (TILDE)
                 60 => Ok(AnyTransport::Tilde(
@@ -1742,9 +1742,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 93 => Ok(AnyTransport::PipeEq(
                     PipeEqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: print (PRINT)
-                71 => Ok(AnyTransport::Print(
-                    PrintTransport::from_napi_value(env, napi_val)?
+                // kind: print_keyword (PRINT_KEYWORD)
+                71 => Ok(AnyTransport::PrintKeyword(
+                    PrintKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lt (LT)
                 94 => Ok(AnyTransport::Lt(
@@ -1774,9 +1774,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 100 => Ok(AnyTransport::LtGt(
                     LtGtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: is (IS)
-                61 => Ok(AnyTransport::Is(
-                    IsTransport::from_napi_value(env, napi_val)?
+                // kind: is_keyword (IS_KEYWORD)
+                61 => Ok(AnyTransport::IsKeyword(
+                    IsKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // literal kind: _newline → "\n"
                 317 => Ok(AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65),
@@ -10377,14 +10377,14 @@ impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
 #[derive(Debug, Clone)]
 pub enum SplatPatternNameTransportSlot {
     Identifier(IdentifierTransport),
-    Literal10_5f,
+    Literal10_5f_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::options::FillOptions for SplatPatternNameTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             SplatPatternNameTransportSlot::Identifier(t) => t.fill_options(table),
-            SplatPatternNameTransportSlot::Literal10_5f => {}
+            SplatPatternNameTransportSlot::Literal10_5f_5f_6b_65_79_77_6f_72_64 => {}
         }
     }
 }
@@ -10398,7 +10398,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    48 => Ok(Self::Literal10_5f),
+                    48 => Ok(Self::Literal10_5f_5f_6b_65_79_77_6f_72_64),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10431,7 +10431,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in SplatPatternNameTransportSlot")
                 )?;
                 match kind_id {
-                    48 => Ok(Self::Literal10_5f),
+                    48 => Ok(Self::Literal10_5f_5f_6b_65_79_77_6f_72_64),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10496,7 +10496,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternNameTransportSlot>
 fn splat_pattern_name_transport_slot_to_any(t: SplatPatternNameTransportSlot) -> AnyTransport {
     match t {
         SplatPatternNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SplatPatternNameTransportSlot::Literal10_5f => AnyTransport::Literal10_5f,
+        SplatPatternNameTransportSlot::Literal10_5f_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal10_5f_5f_6b_65_79_77_6f_72_64,
     }
 }
 
@@ -10504,7 +10504,7 @@ impl ::sittir_core::render::Render for SplatPatternNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             SplatPatternNameTransportSlot::Identifier(inner) => inner.render(w),
-            SplatPatternNameTransportSlot::Literal10_5f => w.text("_"),
+            SplatPatternNameTransportSlot::Literal10_5f_5f_6b_65_79_77_6f_72_64 => w.text("_"),
         }
     }
 }
@@ -11338,15 +11338,15 @@ impl ::sittir_core::render::Render for DictionarySplatPatternContentTransportSlo
 
 #[derive(Debug, Clone)]
 pub enum BooleanOperatorOperatorTransportSlot {
-    Literal13_61_6e_64,
-    Literal14_6f_72,
+    Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64,
+    Literal14_6f_72_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::options::FillOptions for BooleanOperatorOperatorTransportSlot {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => {}
-            BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => {}
+            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => {}
+            BooleanOperatorOperatorTransportSlot::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => {}
         }
     }
 }
@@ -11360,8 +11360,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    52 => Ok(Self::Literal13_61_6e_64),
-                    53 => Ok(Self::Literal14_6f_72),
+                    52 => Ok(Self::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64),
+                    53 => Ok(Self::Literal14_6f_72_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
                     ))),
@@ -11373,8 +11373,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransport
                     ::napi::Error::from_reason("$type property missing in BooleanOperatorOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    52 => Ok(Self::Literal13_61_6e_64),
-                    53 => Ok(Self::Literal14_6f_72),
+                    52 => Ok(Self::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64),
+                    53 => Ok(Self::Literal14_6f_72_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
                     ))),
@@ -11417,16 +11417,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BooleanOperatorOperatorTranspo
 
 fn boolean_operator_operator_transport_slot_to_any(t: BooleanOperatorOperatorTransportSlot) -> AnyTransport {
     match t {
-        BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => AnyTransport::Literal13_61_6e_64,
-        BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => AnyTransport::Literal14_6f_72,
+        BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64,
+        BooleanOperatorOperatorTransportSlot::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal14_6f_72_5f_6b_65_79_77_6f_72_64,
     }
 }
 
 impl ::sittir_core::render::Render for BooleanOperatorOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => w.text("and"),
-            BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => w.text("or"),
+            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => w.text("and"),
+            BooleanOperatorOperatorTransportSlot::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => w.text("or"),
         }
     }
 }
@@ -14680,14 +14680,14 @@ impl ::sittir_core::render::Render for SplatTypeOperatorTransportSlot {
 #[derive(Debug, Clone)]
 pub enum GenericTypeNameTransportSlot {
     Identifier(IdentifierTransport),
-    Literal38_61_6e_6f_6e_5f_74_79_70_65,
+    Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::options::FillOptions for GenericTypeNameTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             GenericTypeNameTransportSlot::Identifier(t) => t.fill_options(table),
-            GenericTypeNameTransportSlot::Literal38_61_6e_6f_6e_5f_74_79_70_65 => {}
+            GenericTypeNameTransportSlot::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => {}
         }
     }
 }
@@ -14701,7 +14701,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    39 => Ok(Self::Literal38_61_6e_6f_6e_5f_74_79_70_65),
+                    39 => Ok(Self::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14731,7 +14731,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in GenericTypeNameTransportSlot")
                 )?;
                 match kind_id {
-                    39 => Ok(Self::Literal38_61_6e_6f_6e_5f_74_79_70_65),
+                    39 => Ok(Self::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14793,7 +14793,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GenericTypeNameTransportSlot> 
 fn generic_type_name_transport_slot_to_any(t: GenericTypeNameTransportSlot) -> AnyTransport {
     match t {
         GenericTypeNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        GenericTypeNameTransportSlot::Literal38_61_6e_6f_6e_5f_74_79_70_65 => AnyTransport::Literal38_61_6e_6f_6e_5f_74_79_70_65,
+        GenericTypeNameTransportSlot::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64,
     }
 }
 
@@ -14801,7 +14801,7 @@ impl ::sittir_core::render::Render for GenericTypeNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             GenericTypeNameTransportSlot::Identifier(inner) => inner.render(w),
-            GenericTypeNameTransportSlot::Literal38_61_6e_6f_6e_5f_74_79_70_65 => w.text("type"),
+            GenericTypeNameTransportSlot::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
         }
     }
 }
@@ -20051,9 +20051,9 @@ pub enum ComparisonOperatorComparatorOperatorsTransportSlot {
     Literal46_67_74_5f_65_71,
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
-    Literal49_69_6e,
+    Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
     Literal50_5f_6e_6f_74_5f_69_6e,
-    Literal51_69_73,
+    Literal51_69_73_5f_6b_65_79_77_6f_72_64,
     Literal52_5f_69_73_5f_6e_6f_74,
 }
 
@@ -20067,9 +20067,9 @@ impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorOperato
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal46_67_74_5f_65_71 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => {}
         }
     }
@@ -20091,9 +20091,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     98 => Ok(Self::Literal46_67_74_5f_65_71),
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
-                    25 => Ok(Self::Literal49_69_6e),
+                    25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
                     194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
-                    61 => Ok(Self::Literal51_69_73),
+                    61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
                     195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
@@ -20113,9 +20113,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     98 => Ok(Self::Literal46_67_74_5f_65_71),
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
-                    25 => Ok(Self::Literal49_69_6e),
+                    25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
                     194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
-                    61 => Ok(Self::Literal51_69_73),
+                    61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
                     195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
@@ -20166,9 +20166,9 @@ fn comparison_operator_comparator_operators_transport_slot_to_any(t: ComparisonO
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal46_67_74_5f_65_71 => AnyTransport::Literal46_67_74_5f_65_71,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => AnyTransport::Literal47_67_74,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => AnyTransport::Literal48_6c_74_5f_67_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e => AnyTransport::Literal49_69_6e,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73 => AnyTransport::Literal51_69_73,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => AnyTransport::Literal52_5f_69_73_5f_6e_6f_74,
     }
 }
@@ -20183,9 +20183,9 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTran
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal46_67_74_5f_65_71 => w.text(">="),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => w.text(">"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => w.text("<>"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e => w.text("in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73 => w.text("is"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
         }
     }
@@ -20369,10 +20369,10 @@ pub struct ImportStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ::sittir_core::SlotValue<ImportListTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_before"))]
-    pub import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_after"))]
-    pub import_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
+    pub import_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
+    pub import_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_before"))]
     pub import_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_after"))]
@@ -20387,8 +20387,8 @@ impl ::sittir_core::render::Render for ImportStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ImportStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.import_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_BEFORE]);
-        self.import_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_AFTER]);
+        self.import_keyword_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE]);
+        self.import_keyword_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.import_statement_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_BEFORE]);
         self.import_statement_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_AFTER]);
         self.import_list.fill_options(table);
@@ -20601,18 +20601,18 @@ pub struct FutureImportStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<FutureImportStatementContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___before"))]
-    pub future___before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___after"))]
-    pub future___after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_before"))]
-    pub import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_after"))]
-    pub import_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___keyword_before"))]
+    pub future___keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___keyword_after"))]
+    pub future___keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
+    pub import_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
+    pub import_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future_import_statement_before"))]
     pub future_import_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future_import_statement_after"))]
@@ -20627,12 +20627,12 @@ impl ::sittir_core::render::Render for FutureImportStatementTransport {
 
 impl ::sittir_core::options::FillOptions for FutureImportStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_AFTER]);
-        self.future___before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___BEFORE]);
-        self.future___after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___AFTER]);
-        self.import_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_BEFORE]);
-        self.import_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_AFTER]);
+        self.future___keyword_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE]);
+        self.future___keyword_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER]);
+        self.import_keyword_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE]);
+        self.import_keyword_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.future_import_statement_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE_IMPORT_STATEMENT_BEFORE]);
         self.future_import_statement_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE_IMPORT_STATEMENT_AFTER]);
         self.content.fill_options(table);
@@ -20680,14 +20680,14 @@ pub struct ImportFromStatementTransport {
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportFromStatementContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_before"))]
-    pub import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_after"))]
-    pub import_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
+    pub import_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
+    pub import_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_from_statement_before"))]
     pub import_from_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_from_statement_after"))]
@@ -20702,10 +20702,10 @@ impl ::sittir_core::render::Render for ImportFromStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ImportFromStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_AFTER]);
-        self.import_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_BEFORE]);
-        self.import_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER]);
+        self.import_keyword_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE]);
+        self.import_keyword_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.import_from_statement_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_FROM_STATEMENT_BEFORE]);
         self.import_from_statement_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_FROM_STATEMENT_AFTER]);
         self.module_name.fill_options(table);
@@ -20833,10 +20833,10 @@ pub struct AliasedImportTransport {
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_aliased_import_before"))]
     pub aliased_import_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_aliased_import_after"))]
@@ -20851,8 +20851,8 @@ impl ::sittir_core::render::Render for AliasedImportTransport {
 
 impl ::sittir_core::options::FillOptions for AliasedImportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER]);
         self.aliased_import_before.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_ALIASED_IMPORT_BEFORE]);
         self.aliased_import_after.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_ALIASED_IMPORT_AFTER]);
         self.name.fill_options(table);
@@ -21124,14 +21124,14 @@ pub struct AssertStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_before"))]
-    pub assert_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_after"))]
-    pub assert_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
     pub expression_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
     pub expression_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_keyword_before"))]
+    pub assert_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_keyword_after"))]
+    pub assert_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_statement_before"))]
     pub assert_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_statement_after"))]
@@ -21146,10 +21146,10 @@ impl ::sittir_core::render::Render for AssertStatementTransport {
 
 impl ::sittir_core::options::FillOptions for AssertStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.assert_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_BEFORE]);
-        self.assert_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_AFTER]);
         self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER]);
+        self.assert_keyword_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_BEFORE]);
+        self.assert_keyword_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER]);
         self.assert_statement_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_STATEMENT_BEFORE]);
         self.assert_statement_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_STATEMENT_AFTER]);
         {
@@ -21411,10 +21411,10 @@ pub struct ReturnStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_before"))]
-    pub return_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_after"))]
-    pub return_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_keyword_before"))]
+    pub return_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_keyword_after"))]
+    pub return_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_statement_before"))]
     pub return_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_statement_after"))]
@@ -21429,8 +21429,8 @@ impl ::sittir_core::render::Render for ReturnStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ReturnStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.return_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_BEFORE]);
-        self.return_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_AFTER]);
+        self.return_keyword_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_BEFORE]);
+        self.return_keyword_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER]);
         self.return_statement_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_STATEMENT_BEFORE]);
         self.return_statement_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_STATEMENT_AFTER]);
         self.expressions.fill_options(table);
@@ -21476,10 +21476,10 @@ pub struct DeleteStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: ::sittir_core::SlotValue<DeleteStatementExpressionsTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_before"))]
-    pub del_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_after"))]
-    pub del_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_keyword_before"))]
+    pub del_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_keyword_after"))]
+    pub del_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delete_statement_before"))]
     pub delete_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delete_statement_after"))]
@@ -21494,8 +21494,8 @@ impl ::sittir_core::render::Render for DeleteStatementTransport {
 
 impl ::sittir_core::options::FillOptions for DeleteStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.del_before.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_BEFORE]);
-        self.del_after.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_AFTER]);
+        self.del_keyword_before.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_KEYWORD_BEFORE]);
+        self.del_keyword_after.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER]);
         self.delete_statement_before.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DELETE_STATEMENT_BEFORE]);
         self.delete_statement_after.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DELETE_STATEMENT_AFTER]);
         self.expressions.fill_options(table);
@@ -21543,14 +21543,14 @@ pub struct RaiseStatementTransport {
     pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<RaiseStatementExpressionsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_before"))]
-    pub raise_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_after"))]
-    pub raise_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_keyword_before"))]
+    pub raise_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_keyword_after"))]
+    pub raise_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_statement_before"))]
     pub raise_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_statement_after"))]
@@ -21565,10 +21565,10 @@ impl ::sittir_core::render::Render for RaiseStatementTransport {
 
 impl ::sittir_core::options::FillOptions for RaiseStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_AFTER]);
-        self.raise_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_BEFORE]);
-        self.raise_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER]);
+        self.raise_keyword_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_BEFORE]);
+        self.raise_keyword_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER]);
         self.raise_statement_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_STATEMENT_BEFORE]);
         self.raise_statement_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_STATEMENT_AFTER]);
         self.cause.fill_options(table);
@@ -21942,14 +21942,14 @@ pub struct IfStatementTransport {
     pub alternative: Option<Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative_separator_space"))]
     pub alternative_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_before"))]
-    pub if_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
-    pub if_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_before"))]
+    pub if_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
+    pub if_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_statement_before"))]
     pub if_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_statement_after"))]
@@ -21965,10 +21965,10 @@ impl ::sittir_core::render::Render for IfStatementTransport {
 impl ::sittir_core::options::FillOptions for IfStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.alternative_separator_space.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE]);
-        self.if_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_BEFORE]);
-        self.if_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_COLON_AFTER]);
+        self.if_keyword_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_KEYWORD_BEFORE]);
+        self.if_keyword_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER]);
         self.if_statement_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_BEFORE]);
         self.if_statement_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_AFTER]);
         if let Some(seated_items) = self.alternative.as_mut() {
@@ -22037,14 +22037,14 @@ pub struct ElifClauseTransport {
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
     pub consequence: ::sittir_core::SlotValue<ElifClauseConsequenceTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_before"))]
-    pub elif_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_after"))]
-    pub elif_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_keyword_before"))]
+    pub elif_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_keyword_after"))]
+    pub elif_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_clause_before"))]
     pub elif_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_clause_after"))]
@@ -22059,10 +22059,10 @@ impl ::sittir_core::render::Render for ElifClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ElifClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.elif_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_BEFORE]);
-        self.elif_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_COLON_AFTER]);
+        self.elif_keyword_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_BEFORE]);
+        self.elif_keyword_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER]);
         self.elif_clause_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_CLAUSE_BEFORE]);
         self.elif_clause_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_CLAUSE_AFTER]);
         self.condition.fill_options(table);
@@ -22109,14 +22109,14 @@ pub struct ElseClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ElseClauseBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_before"))]
-    pub else_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_after"))]
-    pub else_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_before"))]
+    pub else_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_after"))]
+    pub else_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_before"))]
     pub else_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_after"))]
@@ -22131,10 +22131,10 @@ impl ::sittir_core::render::Render for ElseClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ElseClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.else_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_BEFORE]);
-        self.else_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_COLON_AFTER]);
+        self.else_keyword_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_BEFORE]);
+        self.else_keyword_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER]);
         self.else_clause_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_CLAUSE_BEFORE]);
         self.else_clause_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_CLAUSE_AFTER]);
         self.body.fill_options(table);
@@ -22182,14 +22182,14 @@ pub struct MatchStatementTransport {
     pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subjects"))]
     pub subjects: ::sittir_core::SlotValue<SubjectsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_before"))]
-    pub match_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_after"))]
-    pub match_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_keyword_before"))]
+    pub match_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_keyword_after"))]
+    pub match_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_statement_before"))]
     pub match_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_statement_after"))]
@@ -22204,10 +22204,10 @@ impl ::sittir_core::render::Render for MatchStatementTransport {
 
 impl ::sittir_core::options::FillOptions for MatchStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.match_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_BEFORE]);
-        self.match_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_COLON_AFTER]);
+        self.match_keyword_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_BEFORE]);
+        self.match_keyword_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER]);
         self.match_statement_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_STATEMENT_BEFORE]);
         self.match_statement_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_STATEMENT_AFTER]);
         self.body.fill_options(table);
@@ -22311,14 +22311,14 @@ pub struct CaseClauseTransport {
     pub consequence: ::sittir_core::SlotValue<CaseClauseConsequenceTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_patterns"))]
     pub case_patterns: ::sittir_core::SlotValue<CasePatternsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_before"))]
-    pub case_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_after"))]
-    pub case_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_keyword_before"))]
+    pub case_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_keyword_after"))]
+    pub case_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_clause_before"))]
     pub case_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_clause_after"))]
@@ -22333,10 +22333,10 @@ impl ::sittir_core::render::Render for CaseClauseTransport {
 
 impl ::sittir_core::options::FillOptions for CaseClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.case_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_BEFORE]);
-        self.case_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_COLON_AFTER]);
+        self.case_keyword_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_KEYWORD_BEFORE]);
+        self.case_keyword_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER]);
         self.case_clause_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_CLAUSE_BEFORE]);
         self.case_clause_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_CLAUSE_AFTER]);
         self.guard.fill_options(table);
@@ -22392,18 +22392,18 @@ pub struct ForStatementTransport {
     pub body: ::sittir_core::SlotValue<ForStatementBodyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_before"))]
-    pub for_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
-    pub for_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_before"))]
-    pub in_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_before"))]
+    pub for_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_after"))]
+    pub for_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
+    pub in_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
+    pub in_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_before"))]
     pub for_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_after"))]
@@ -22418,12 +22418,12 @@ impl ::sittir_core::render::Render for ForStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ForStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.for_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_BEFORE]);
-        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_AFTER]);
-        self.in_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_BEFORE]);
-        self.in_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_COLON_AFTER]);
+        self.for_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_KEYWORD_BEFORE]);
+        self.for_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER]);
+        self.in_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_KEYWORD_BEFORE]);
+        self.in_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_KEYWORD_AFTER]);
         self.for_statement_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_BEFORE]);
         self.for_statement_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_AFTER]);
         self.async_marker.fill_options(table);
@@ -22477,14 +22477,14 @@ pub struct WhileStatementTransport {
     pub body: ::sittir_core::SlotValue<WhileStatementBodyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_before"))]
-    pub while_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_after"))]
-    pub while_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_keyword_before"))]
+    pub while_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_keyword_after"))]
+    pub while_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_statement_before"))]
     pub while_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_statement_after"))]
@@ -22499,10 +22499,10 @@ impl ::sittir_core::render::Render for WhileStatementTransport {
 
 impl ::sittir_core::options::FillOptions for WhileStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.while_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_BEFORE]);
-        self.while_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_COLON_AFTER]);
+        self.while_keyword_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_BEFORE]);
+        self.while_keyword_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER]);
         self.while_statement_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE]);
         self.while_statement_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER]);
         self.condition.fill_options(table);
@@ -22558,14 +22558,14 @@ pub struct TryStatementTransport {
     pub finally_clause: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses_separator_space"))]
     pub except_clauses_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_before"))]
-    pub try_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_after"))]
-    pub try_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_keyword_before"))]
+    pub try_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_keyword_after"))]
+    pub try_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_before"))]
     pub try_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_after"))]
@@ -22581,10 +22581,10 @@ impl ::sittir_core::render::Render for TryStatementTransport {
 impl ::sittir_core::options::FillOptions for TryStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.except_clauses_separator_space.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE]);
-        self.try_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_BEFORE]);
-        self.try_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_COLON_AFTER]);
+        self.try_keyword_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_KEYWORD_BEFORE]);
+        self.try_keyword_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER]);
         self.try_statement_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_BEFORE]);
         self.try_statement_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER]);
         if let Some(seated_items) = self.except_clauses.as_mut() {
@@ -22647,10 +22647,6 @@ pub struct ExceptClauseTransport {
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite"))]
     pub suite: ::sittir_core::SlotValue<ExceptClauseSuiteTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_before"))]
-    pub except_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_after"))]
-    pub except_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_before"))]
     pub star_marker_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_after"))]
@@ -22659,6 +22655,10 @@ pub struct ExceptClauseTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_keyword_before"))]
+    pub except_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_keyword_after"))]
+    pub except_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_before"))]
     pub except_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_after"))]
@@ -22673,12 +22673,12 @@ impl ::sittir_core::render::Render for ExceptClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ExceptClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.except_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_BEFORE]);
-        self.except_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_AFTER]);
         self.star_marker_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE]);
         self.star_marker_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_COLON_AFTER]);
+        self.except_keyword_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_BEFORE]);
+        self.except_keyword_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER]);
         self.except_clause_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_BEFORE]);
         self.except_clause_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_AFTER]);
         self.star_marker.fill_options(table);
@@ -22726,14 +22726,14 @@ pub struct FinallyClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
     pub block: ::sittir_core::SlotValue<FinallyClauseBlockTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_before"))]
-    pub finally_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_after"))]
-    pub finally_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_keyword_before"))]
+    pub finally_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_keyword_after"))]
+    pub finally_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_before"))]
     pub finally_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_after"))]
@@ -22748,10 +22748,10 @@ impl ::sittir_core::render::Render for FinallyClauseTransport {
 
 impl ::sittir_core::options::FillOptions for FinallyClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.finally_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_BEFORE]);
-        self.finally_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_COLON_AFTER]);
+        self.finally_keyword_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_BEFORE]);
+        self.finally_keyword_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER]);
         self.finally_clause_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_BEFORE]);
         self.finally_clause_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_AFTER]);
         self.block.fill_options(table);
@@ -22801,14 +22801,14 @@ pub struct WithStatementTransport {
     pub with_clause: ::sittir_core::SlotValue<WithClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<WithStatementBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_before"))]
-    pub with_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_after"))]
-    pub with_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_keyword_before"))]
+    pub with_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_keyword_after"))]
+    pub with_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_statement_before"))]
     pub with_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_statement_after"))]
@@ -22823,10 +22823,10 @@ impl ::sittir_core::render::Render for WithStatementTransport {
 
 impl ::sittir_core::options::FillOptions for WithStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.with_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_BEFORE]);
-        self.with_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_COLON_AFTER]);
+        self.with_keyword_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE]);
+        self.with_keyword_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER]);
         self.with_statement_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE]);
         self.with_statement_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER]);
         self.async_marker.fill_options(table);
@@ -22990,10 +22990,6 @@ pub struct FunctionDefinitionTransport {
     pub return_type: Option<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<FunctionDefinitionBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_before"))]
-    pub def_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_after"))]
-    pub def_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
     pub dash_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
@@ -23002,6 +22998,10 @@ pub struct FunctionDefinitionTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_keyword_before"))]
+    pub def_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_keyword_after"))]
+    pub def_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_definition_before"))]
     pub function_definition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_definition_after"))]
@@ -23016,12 +23016,12 @@ impl ::sittir_core::render::Render for FunctionDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for FunctionDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.def_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_BEFORE]);
-        self.def_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_AFTER]);
         self.dash_gt_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_BEFORE]);
         self.dash_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_COLON_AFTER]);
+        self.def_keyword_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_BEFORE]);
+        self.def_keyword_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_AFTER]);
         self.function_definition_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_FUNCTION_DEFINITION_BEFORE]);
         self.function_definition_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_FUNCTION_DEFINITION_AFTER]);
         self.async_marker.fill_options(table);
@@ -23332,14 +23332,14 @@ pub struct GlobalStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_before"))]
-    pub global_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_after"))]
-    pub global_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
     pub names_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_after"))]
     pub names_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_before"))]
+    pub global_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_after"))]
+    pub global_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_statement_before"))]
     pub global_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_statement_after"))]
@@ -23354,10 +23354,10 @@ impl ::sittir_core::render::Render for GlobalStatementTransport {
 
 impl ::sittir_core::options::FillOptions for GlobalStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.global_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_BEFORE]);
-        self.global_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_AFTER]);
         self.names_separator_space_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE]);
         self.names_separator_space_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER]);
+        self.global_keyword_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_BEFORE]);
+        self.global_keyword_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER]);
         self.global_statement_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_STATEMENT_BEFORE]);
         self.global_statement_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_STATEMENT_AFTER]);
         self.names.fill_options(table);
@@ -23407,10 +23407,10 @@ pub struct NonlocalStatementTransport {
     pub names_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_after"))]
     pub names_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_before"))]
-    pub nonlocal_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_after"))]
-    pub nonlocal_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_keyword_before"))]
+    pub nonlocal_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_keyword_after"))]
+    pub nonlocal_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_statement_before"))]
     pub nonlocal_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_statement_after"))]
@@ -23427,8 +23427,8 @@ impl ::sittir_core::options::FillOptions for NonlocalStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.names_separator_space_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE]);
         self.names_separator_space_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER]);
-        self.nonlocal_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_BEFORE]);
-        self.nonlocal_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_AFTER]);
+        self.nonlocal_keyword_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_BEFORE]);
+        self.nonlocal_keyword_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER]);
         self.nonlocal_statement_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_STATEMENT_BEFORE]);
         self.nonlocal_statement_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_STATEMENT_AFTER]);
         self.names.fill_options(table);
@@ -23476,18 +23476,18 @@ pub struct ExecStatementTransport {
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause"))]
     pub in_clause: Option<Vec<::sittir_core::SlotValue<ExpressionTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_before"))]
-    pub exec_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_after"))]
-    pub exec_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_before"))]
-    pub in_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause_separator_space_before"))]
     pub in_clause_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause_separator_space_after"))]
     pub in_clause_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_keyword_before"))]
+    pub exec_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_keyword_after"))]
+    pub exec_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
+    pub in_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
+    pub in_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_statement_before"))]
     pub exec_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_statement_after"))]
@@ -23502,12 +23502,12 @@ impl ::sittir_core::render::Render for ExecStatementTransport {
 
 impl ::sittir_core::options::FillOptions for ExecStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.exec_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_BEFORE]);
-        self.exec_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_AFTER]);
-        self.in_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_BEFORE]);
-        self.in_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_AFTER]);
         self.in_clause_separator_space_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE]);
         self.in_clause_separator_space_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER]);
+        self.exec_keyword_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_BEFORE]);
+        self.exec_keyword_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER]);
+        self.in_keyword_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_KEYWORD_BEFORE]);
+        self.in_keyword_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER]);
         self.exec_statement_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_STATEMENT_BEFORE]);
         self.exec_statement_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_STATEMENT_AFTER]);
         if let Some(seated_items) = self.in_clause.as_mut() {
@@ -23654,10 +23654,10 @@ pub struct TypeAliasStatementTransport {
     pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_before"))]
-    pub anon_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_after"))]
-    pub anon_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_keyword_before"))]
+    pub type_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_keyword_after"))]
+    pub type_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_alias_statement_before"))]
     pub type_alias_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_alias_statement_after"))]
@@ -23674,8 +23674,8 @@ impl ::sittir_core::options::FillOptions for TypeAliasStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.eq_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER]);
-        self.anon_type_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_ANON_TYPE_BEFORE]);
-        self.anon_type_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_ANON_TYPE_AFTER]);
+        self.type_keyword_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_BEFORE]);
+        self.type_keyword_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER]);
         self.type_alias_statement_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_BEFORE]);
         self.type_alias_statement_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER]);
         self.left.fill_options(table);
@@ -23728,14 +23728,14 @@ pub struct ClassDefinitionTransport {
     pub superclasses: Option<::sittir_core::SlotValue<ArgumentListTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ClassDefinitionBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_before"))]
-    pub class_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_after"))]
-    pub class_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_keyword_before"))]
+    pub class_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_keyword_after"))]
+    pub class_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_definition_before"))]
     pub class_definition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_definition_after"))]
@@ -23750,10 +23750,10 @@ impl ::sittir_core::render::Render for ClassDefinitionTransport {
 
 impl ::sittir_core::options::FillOptions for ClassDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_BEFORE]);
-        self.class_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_COLON_AFTER]);
+        self.class_keyword_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_BEFORE]);
+        self.class_keyword_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER]);
         self.class_definition_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_DEFINITION_BEFORE]);
         self.class_definition_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_DEFINITION_AFTER]);
         self.name.fill_options(table);
@@ -25639,10 +25639,10 @@ pub struct AsPatternTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_pattern_before"))]
     pub as_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_pattern_after"))]
@@ -25657,8 +25657,8 @@ impl ::sittir_core::render::Render for AsPatternTransport {
 
 impl ::sittir_core::options::FillOptions for AsPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_KEYWORD_AFTER]);
         self.as_pattern_before.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_PATTERN_BEFORE]);
         self.as_pattern_after.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_PATTERN_AFTER]);
         self.expression.fill_options(table);
@@ -25705,10 +25705,10 @@ pub struct NotOperatorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_before"))]
-    pub not_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_after"))]
-    pub not_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_keyword_before"))]
+    pub not_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_keyword_after"))]
+    pub not_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_operator_before"))]
     pub not_operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_operator_after"))]
@@ -25723,8 +25723,8 @@ impl ::sittir_core::render::Render for NotOperatorTransport {
 
 impl ::sittir_core::options::FillOptions for NotOperatorTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.not_before.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_BEFORE]);
-        self.not_after.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_AFTER]);
+        self.not_keyword_before.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_KEYWORD_BEFORE]);
+        self.not_keyword_after.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER]);
         self.not_operator_before.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_OPERATOR_BEFORE]);
         self.not_operator_after.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_OPERATOR_AFTER]);
         self.argument.fill_options(table);
@@ -26050,10 +26050,10 @@ pub struct LambdaTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_before"))]
-    pub anon_lambda_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_after"))]
-    pub anon_lambda_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_before"))]
+    pub lambda_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_after"))]
+    pub lambda_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_before"))]
     pub lambda_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_after"))]
@@ -26070,8 +26070,8 @@ impl ::sittir_core::options::FillOptions for LambdaTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.colon_before.get_or_insert(table.spacing[options::SITE_LAMBDA_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_LAMBDA_COLON_AFTER]);
-        self.anon_lambda_before.get_or_insert(table.spacing[options::SITE_LAMBDA_ANON_LAMBDA_BEFORE]);
-        self.anon_lambda_after.get_or_insert(table.spacing[options::SITE_LAMBDA_ANON_LAMBDA_AFTER]);
+        self.lambda_keyword_before.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_KEYWORD_BEFORE]);
+        self.lambda_keyword_after.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER]);
         self.lambda_before.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_BEFORE]);
         self.lambda_after.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_AFTER]);
         self.parameters.fill_options(table);
@@ -26124,10 +26124,10 @@ pub struct LambdaWithinForInClauseTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_before"))]
-    pub anon_lambda_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_after"))]
-    pub anon_lambda_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_before"))]
+    pub lambda_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_after"))]
+    pub lambda_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_within_for_in_clause_before"))]
     pub lambda_within_for_in_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_within_for_in_clause_after"))]
@@ -26144,8 +26144,8 @@ impl ::sittir_core::options::FillOptions for LambdaWithinForInClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.colon_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER]);
-        self.anon_lambda_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_ANON_LAMBDA_BEFORE]);
-        self.anon_lambda_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_ANON_LAMBDA_AFTER]);
+        self.lambda_keyword_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_BEFORE]);
+        self.lambda_keyword_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER]);
         self.lambda_within_for_in_clause_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_BEFORE]);
         self.lambda_within_for_in_clause_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER]);
         self.parameters.fill_options(table);
@@ -26381,10 +26381,10 @@ pub struct YieldTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<::sittir_core::SlotValue<Box<YieldContentTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_yield_before"))]
-    pub anon_yield_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_yield_after"))]
-    pub anon_yield_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_keyword_before"))]
+    pub yield_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_keyword_after"))]
+    pub yield_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_before"))]
     pub yield_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_after"))]
@@ -26399,8 +26399,8 @@ impl ::sittir_core::render::Render for YieldTransport {
 
 impl ::sittir_core::options::FillOptions for YieldTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_yield_before.get_or_insert(table.spacing[options::SITE_YIELD_ANON_YIELD_BEFORE]);
-        self.anon_yield_after.get_or_insert(table.spacing[options::SITE_YIELD_ANON_YIELD_AFTER]);
+        self.yield_keyword_before.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_KEYWORD_BEFORE]);
+        self.yield_keyword_after.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_KEYWORD_AFTER]);
         self.yield_before.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_BEFORE]);
         self.yield_after.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_AFTER]);
         self.content.fill_options(table);
@@ -28236,14 +28236,6 @@ pub struct ForInClauseTransport {
     pub right: Vec<::sittir_core::SlotValue<ForInClauseRightTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma"))]
     pub comma: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_before"))]
-    pub for_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
-    pub for_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_before"))]
-    pub in_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_separator_space_before"))]
     pub right_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_separator_space_after"))]
@@ -28252,6 +28244,14 @@ pub struct ForInClauseTransport {
     pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_after"))]
     pub comma_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_before"))]
+    pub for_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_after"))]
+    pub for_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
+    pub in_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
+    pub in_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_clause_before"))]
     pub for_in_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_clause_after"))]
@@ -28266,14 +28266,14 @@ impl ::sittir_core::render::Render for ForInClauseTransport {
 
 impl ::sittir_core::options::FillOptions for ForInClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.for_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_BEFORE]);
-        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_AFTER]);
-        self.in_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_BEFORE]);
-        self.in_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_AFTER]);
         self.right_separator_space_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE]);
         self.right_separator_space_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER]);
         self.comma_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE]);
         self.comma_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_AFTER]);
+        self.for_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_BEFORE]);
+        self.for_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_AFTER]);
+        self.in_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_BEFORE]);
+        self.in_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_AFTER]);
         self.for_in_clause_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_BEFORE]);
         self.for_in_clause_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_AFTER]);
         {
@@ -28414,10 +28414,10 @@ pub struct IfClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_before"))]
-    pub if_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
-    pub if_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_before"))]
+    pub if_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
+    pub if_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_clause_before"))]
     pub if_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_clause_after"))]
@@ -28432,8 +28432,8 @@ impl ::sittir_core::render::Render for IfClauseTransport {
 
 impl ::sittir_core::options::FillOptions for IfClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.if_before.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_BEFORE]);
-        self.if_after.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_AFTER]);
+        self.if_keyword_before.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_KEYWORD_BEFORE]);
+        self.if_keyword_after.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER]);
         self.if_clause_before.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_CLAUSE_BEFORE]);
         self.if_clause_after.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_CLAUSE_AFTER]);
         self.condition.fill_options(table);
@@ -28483,14 +28483,14 @@ pub struct ConditionalExpressionTransport {
     pub condition: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_before"))]
-    pub else_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_after"))]
-    pub else_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_before"))]
-    pub if_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
-    pub if_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_before"))]
+    pub else_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_after"))]
+    pub else_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_before"))]
+    pub if_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
+    pub if_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_expression_before"))]
     pub conditional_expression_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_expression_after"))]
@@ -28505,10 +28505,10 @@ impl ::sittir_core::render::Render for ConditionalExpressionTransport {
 
 impl ::sittir_core::options::FillOptions for ConditionalExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.else_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_BEFORE]);
-        self.else_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_AFTER]);
-        self.if_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_BEFORE]);
-        self.if_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_AFTER]);
+        self.else_keyword_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_BEFORE]);
+        self.else_keyword_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER]);
+        self.if_keyword_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE]);
+        self.if_keyword_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_AFTER]);
         self.conditional_expression_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_CONDITIONAL_EXPRESSION_BEFORE]);
         self.conditional_expression_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]);
         self.body.fill_options(table);
@@ -29851,10 +29851,10 @@ pub struct AwaitTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_await_before"))]
-    pub anon_await_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_await_after"))]
-    pub anon_await_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_keyword_before"))]
+    pub await_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_keyword_after"))]
+    pub await_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_before"))]
     pub await_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_after"))]
@@ -29869,8 +29869,8 @@ impl ::sittir_core::render::Render for AwaitTransport {
 
 impl ::sittir_core::options::FillOptions for AwaitTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_await_before.get_or_insert(table.spacing[options::SITE_AWAIT_ANON_AWAIT_BEFORE]);
-        self.anon_await_after.get_or_insert(table.spacing[options::SITE_AWAIT_ANON_AWAIT_AFTER]);
+        self.await_keyword_before.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_KEYWORD_BEFORE]);
+        self.await_keyword_after.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_KEYWORD_AFTER]);
         self.await_before.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_BEFORE]);
         self.await_after.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_AFTER]);
         self.expression.fill_options(table);
@@ -32379,10 +32379,10 @@ pub struct ExceptClauseExceptionAsTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_exception_as_before"))]
     pub except_clause_exception_as_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_exception_as_after"))]
@@ -32397,8 +32397,8 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
 
 impl ::sittir_core::options::FillOptions for ExceptClauseExceptionAsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER]);
         self.except_clause_exception_as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_BEFORE]);
         self.except_clause_exception_as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_AFTER]);
         self.value.fill_options(table);
@@ -32589,10 +32589,10 @@ pub struct CaseAsPatternTransport {
     pub case_pattern: ::sittir_core::SlotValue<Box<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_as_pattern_before"))]
     pub case_as_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_as_pattern_after"))]
@@ -32607,8 +32607,8 @@ impl ::sittir_core::render::Render for CaseAsPatternTransport {
 
 impl ::sittir_core::options::FillOptions for CaseAsPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER]);
         self.case_as_pattern_before.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_CASE_AS_PATTERN_BEFORE]);
         self.case_as_pattern_after.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_CASE_AS_PATTERN_AFTER]);
         self.case_pattern.fill_options(table);
@@ -33117,10 +33117,10 @@ pub struct PrintStatementChevronTransport {
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
     pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_before"))]
-    pub print_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_after"))]
-    pub print_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_before"))]
+    pub print_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_after"))]
+    pub print_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_chevron_before"))]
     pub print_statement_chevron_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_chevron_after"))]
@@ -33135,8 +33135,8 @@ impl ::sittir_core::render::Render for PrintStatementChevronTransport {
 
 impl ::sittir_core::options::FillOptions for PrintStatementChevronTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.print_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_BEFORE]);
-        self.print_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_AFTER]);
+        self.print_keyword_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_BEFORE]);
+        self.print_keyword_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER]);
         self.print_statement_chevron_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_STATEMENT_CHEVRON_BEFORE]);
         self.print_statement_chevron_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_STATEMENT_CHEVRON_AFTER]);
         self.chevron.fill_options(table);
@@ -33183,10 +33183,10 @@ pub struct PrintStatementPlainTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_arguments"))]
     pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_before"))]
-    pub print_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_after"))]
-    pub print_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_before"))]
+    pub print_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_after"))]
+    pub print_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_plain_before"))]
     pub print_statement_plain_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_plain_after"))]
@@ -33201,8 +33201,8 @@ impl ::sittir_core::render::Render for PrintStatementPlainTransport {
 
 impl ::sittir_core::options::FillOptions for PrintStatementPlainTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.print_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_BEFORE]);
-        self.print_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_AFTER]);
+        self.print_keyword_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_BEFORE]);
+        self.print_keyword_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER]);
         self.print_statement_plain_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_STATEMENT_PLAIN_BEFORE]);
         self.print_statement_plain_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_STATEMENT_PLAIN_AFTER]);
         self.print_arguments.fill_options(table);
@@ -34323,10 +34323,10 @@ pub struct YieldFromClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_from_clause_before"))]
     pub yield_from_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_from_clause_after"))]
@@ -34341,8 +34341,8 @@ impl ::sittir_core::render::Render for YieldFromClauseTransport {
 
 impl ::sittir_core::options::FillOptions for YieldFromClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER]);
         self.yield_from_clause_before.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE]);
         self.yield_from_clause_after.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER]);
         self.expression.fill_options(table);
@@ -35533,7 +35533,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ExceptTransport {
+pub struct ImportKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -35543,124 +35543,19 @@ pub struct ExceptTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ExceptTransport {
+impl ::sittir_core::render::Render for ImportKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExceptTransport {
+impl ::sittir_core::options::FillOptions for ImportKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExceptTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExceptTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct ImportTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::render::Render for ImportTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for ImportTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35689,7 +35584,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35715,7 +35610,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImportTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ImportKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -35725,22 +35620,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for ImportTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ImportTransport::from_napi_value(env, napi_val).map(Box::new)
+        ImportKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImportTransport::to_napi_value(env, *val)
+        ImportKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -35852,7 +35747,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DotTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct FromTransport {
+pub struct FromKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -35862,19 +35757,19 @@ pub struct FromTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for FromTransport {
+impl ::sittir_core::render::Render for FromKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for FromTransport {
+impl ::sittir_core::options::FillOptions for FromKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35903,7 +35798,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35929,7 +35824,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FromTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for FromKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -35939,27 +35834,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for FromTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FromTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FromKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FromTransport::from_napi_value(env, napi_val).map(Box::new)
+        FromKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FromTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FromKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FromTransport::to_napi_value(env, *val)
+        FromKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct FutureUTransport {
+pub struct FutureUKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -35969,19 +35864,19 @@ pub struct FutureUTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for FutureUTransport {
+impl ::sittir_core::render::Render for FutureUKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for FutureUTransport {
+impl ::sittir_core::options::FillOptions for FutureUKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36010,7 +35905,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36036,7 +35931,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FutureUTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for FutureUKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36046,27 +35941,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for FutureUTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FutureUTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FutureUKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FutureUTransport::from_napi_value(env, napi_val).map(Box::new)
+        FutureUKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureUTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureUKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FutureUTransport::to_napi_value(env, *val)
+        FutureUKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AsTransport {
+pub struct AsKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36076,19 +35971,19 @@ pub struct AsTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AsTransport {
+impl ::sittir_core::render::Render for AsKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AsTransport {
+impl ::sittir_core::options::FillOptions for AsKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36117,7 +36012,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36143,7 +36038,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AsKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36153,22 +36048,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AsKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AsTransport::from_napi_value(env, napi_val).map(Box::new)
+        AsKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AsKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsTransport::to_napi_value(env, *val)
+        AsKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -36387,7 +36282,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GtGtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AssertTransport {
+pub struct AssertKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36397,19 +36292,19 @@ pub struct AssertTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AssertTransport {
+impl ::sittir_core::render::Render for AssertKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AssertTransport {
+impl ::sittir_core::options::FillOptions for AssertKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36438,7 +36333,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36464,7 +36359,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AssertTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AssertKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36474,22 +36369,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AssertTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AssertTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AssertKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AssertTransport::from_napi_value(env, napi_val).map(Box::new)
+        AssertKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AssertTransport::to_napi_value(env, *val)
+        AssertKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -36601,7 +36496,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonEqTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ReturnTransport {
+pub struct ReturnKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36611,19 +36506,19 @@ pub struct ReturnTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ReturnTransport {
+impl ::sittir_core::render::Render for ReturnKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ReturnTransport {
+impl ::sittir_core::options::FillOptions for ReturnKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36652,7 +36547,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36678,7 +36573,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReturnTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ReturnKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36688,27 +36583,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ReturnTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ReturnTransport::from_napi_value(env, napi_val).map(Box::new)
+        ReturnKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ReturnTransport::to_napi_value(env, *val)
+        ReturnKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct DelTransport {
+pub struct DelKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36718,19 +36613,19 @@ pub struct DelTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for DelTransport {
+impl ::sittir_core::render::Render for DelKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for DelTransport {
+impl ::sittir_core::options::FillOptions for DelKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36759,7 +36654,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36785,7 +36680,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DelTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DelKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36795,27 +36690,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for DelTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DelTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DelKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DelTransport::from_napi_value(env, napi_val).map(Box::new)
+        DelKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DelTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DelKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DelTransport::to_napi_value(env, *val)
+        DelKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct RaiseTransport {
+pub struct RaiseKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36825,19 +36720,19 @@ pub struct RaiseTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for RaiseTransport {
+impl ::sittir_core::render::Render for RaiseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for RaiseTransport {
+impl ::sittir_core::options::FillOptions for RaiseKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36866,7 +36761,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36892,7 +36787,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RaiseTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for RaiseKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36902,27 +36797,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for RaiseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RaiseTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RaiseKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        RaiseTransport::from_napi_value(env, napi_val).map(Box::new)
+        RaiseKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RaiseTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RaiseKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        RaiseTransport::to_napi_value(env, *val)
+        RaiseKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct PassTransport {
+pub struct PassKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36932,19 +36827,19 @@ pub struct PassTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for PassTransport {
+impl ::sittir_core::render::Render for PassKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for PassTransport {
+impl ::sittir_core::options::FillOptions for PassKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36973,7 +36868,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36999,7 +36894,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PassTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for PassKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37009,27 +36904,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for PassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PassTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PassKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PassTransport::from_napi_value(env, napi_val).map(Box::new)
+        PassKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PassTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PassKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PassTransport::to_napi_value(env, *val)
+        PassKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct BreakTransport {
+pub struct BreakKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37039,19 +36934,19 @@ pub struct BreakTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for BreakTransport {
+impl ::sittir_core::render::Render for BreakKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for BreakTransport {
+impl ::sittir_core::options::FillOptions for BreakKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37080,7 +36975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37106,7 +37001,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BreakTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for BreakKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37116,27 +37011,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for BreakTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BreakTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BreakKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BreakTransport::from_napi_value(env, napi_val).map(Box::new)
+        BreakKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BreakTransport::to_napi_value(env, *val)
+        BreakKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ContinueTransport {
+pub struct ContinueKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37146,19 +37041,19 @@ pub struct ContinueTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ContinueTransport {
+impl ::sittir_core::render::Render for ContinueKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ContinueTransport {
+impl ::sittir_core::options::FillOptions for ContinueKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37187,7 +37082,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37213,7 +37108,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ContinueTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ContinueKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37223,27 +37118,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ContinueTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ContinueTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ContinueKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ContinueTransport::from_napi_value(env, napi_val).map(Box::new)
+        ContinueKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ContinueTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ContinueKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ContinueTransport::to_napi_value(env, *val)
+        ContinueKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct IfTransport {
+pub struct IfKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37253,19 +37148,19 @@ pub struct IfTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for IfTransport {
+impl ::sittir_core::render::Render for IfKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for IfTransport {
+impl ::sittir_core::options::FillOptions for IfKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37294,7 +37189,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37320,7 +37215,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IfTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for IfKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37330,22 +37225,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for IfTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IfTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IfKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        IfTransport::from_napi_value(env, napi_val).map(Box::new)
+        IfKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IfTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IfKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        IfTransport::to_napi_value(env, *val)
+        IfKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -37457,7 +37352,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ElifTransport {
+pub struct ElifKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37467,19 +37362,19 @@ pub struct ElifTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ElifTransport {
+impl ::sittir_core::render::Render for ElifKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ElifTransport {
+impl ::sittir_core::options::FillOptions for ElifKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37508,7 +37403,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37534,7 +37429,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ElifTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ElifKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37544,27 +37439,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ElifTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ElifTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ElifKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ElifTransport::from_napi_value(env, napi_val).map(Box::new)
+        ElifKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ElifTransport::to_napi_value(env, *val)
+        ElifKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ElseTransport {
+pub struct ElseKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37574,19 +37469,19 @@ pub struct ElseTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ElseTransport {
+impl ::sittir_core::render::Render for ElseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ElseTransport {
+impl ::sittir_core::options::FillOptions for ElseKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37615,7 +37510,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37641,7 +37536,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ElseTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ElseKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37651,27 +37546,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ElseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ElseTransport::from_napi_value(env, napi_val).map(Box::new)
+        ElseKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ElseTransport::to_napi_value(env, *val)
+        ElseKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct MatchTransport {
+pub struct MatchKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37681,19 +37576,19 @@ pub struct MatchTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for MatchTransport {
+impl ::sittir_core::render::Render for MatchKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for MatchTransport {
+impl ::sittir_core::options::FillOptions for MatchKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37722,7 +37617,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37748,7 +37643,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MatchTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for MatchKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37758,27 +37653,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for MatchTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MatchTransport::from_napi_value(env, napi_val).map(Box::new)
+        MatchKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MatchTransport::to_napi_value(env, *val)
+        MatchKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct CaseTransport {
+pub struct CaseKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37788,19 +37683,19 @@ pub struct CaseTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for CaseTransport {
+impl ::sittir_core::render::Render for CaseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for CaseTransport {
+impl ::sittir_core::options::FillOptions for CaseKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37829,7 +37724,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37855,7 +37750,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CaseTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for CaseKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37865,27 +37760,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for CaseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        CaseTransport::from_napi_value(env, napi_val).map(Box::new)
+        CaseKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        CaseTransport::to_napi_value(env, *val)
+        CaseKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ForTransport {
+pub struct ForKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37895,19 +37790,19 @@ pub struct ForTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ForTransport {
+impl ::sittir_core::render::Render for ForKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ForTransport {
+impl ::sittir_core::options::FillOptions for ForKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37936,7 +37831,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37962,7 +37857,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ForKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37972,27 +37867,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ForTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ForTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ForTransport::from_napi_value(env, napi_val).map(Box::new)
+        ForKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ForTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ForTransport::to_napi_value(env, *val)
+        ForKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct InTransport {
+pub struct InKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38002,19 +37897,19 @@ pub struct InTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for InTransport {
+impl ::sittir_core::render::Render for InKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for InTransport {
+impl ::sittir_core::options::FillOptions for InKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38043,7 +37938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38069,7 +37964,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for InTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for InKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38079,27 +37974,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for InTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<InKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        InTransport::from_napi_value(env, napi_val).map(Box::new)
+        InKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<InKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        InTransport::to_napi_value(env, *val)
+        InKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct WhileTransport {
+pub struct WhileKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38109,19 +38004,19 @@ pub struct WhileTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for WhileTransport {
+impl ::sittir_core::render::Render for WhileKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for WhileTransport {
+impl ::sittir_core::options::FillOptions for WhileKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38150,7 +38045,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38176,7 +38071,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WhileTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for WhileKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38186,27 +38081,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for WhileTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        WhileTransport::from_napi_value(env, napi_val).map(Box::new)
+        WhileKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        WhileTransport::to_napi_value(env, *val)
+        WhileKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct TryTransport {
+pub struct TryKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38216,19 +38111,19 @@ pub struct TryTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for TryTransport {
+impl ::sittir_core::render::Render for TryKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for TryTransport {
+impl ::sittir_core::options::FillOptions for TryKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38257,7 +38152,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38283,7 +38178,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TryTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for TryKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38293,27 +38188,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for TryTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TryTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TryKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TryTransport::from_napi_value(env, napi_val).map(Box::new)
+        TryKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TryTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TryKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TryTransport::to_napi_value(env, *val)
+        TryKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct FinallyTransport {
+pub struct ExceptKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38323,19 +38218,126 @@ pub struct FinallyTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for FinallyTransport {
+impl ::sittir_core::render::Render for ExceptKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for FinallyTransport {
+impl ::sittir_core::options::FillOptions for ExceptKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "except".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "except".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "except".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct FinallyKeywordTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::render::Render for FinallyKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for FinallyKeywordTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38364,7 +38366,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38390,7 +38392,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FinallyTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for FinallyKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38400,27 +38402,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for FinallyTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FinallyTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FinallyKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FinallyTransport::from_napi_value(env, napi_val).map(Box::new)
+        FinallyKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FinallyTransport::to_napi_value(env, *val)
+        FinallyKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct WithTransport {
+pub struct WithKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38430,19 +38432,19 @@ pub struct WithTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for WithTransport {
+impl ::sittir_core::render::Render for WithKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for WithTransport {
+impl ::sittir_core::options::FillOptions for WithKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38471,7 +38473,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38497,7 +38499,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WithTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for WithKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38507,27 +38509,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for WithTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WithTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WithKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        WithTransport::from_napi_value(env, napi_val).map(Box::new)
+        WithKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WithTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WithKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        WithTransport::to_napi_value(env, *val)
+        WithKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct DefTransport {
+pub struct DefKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38537,19 +38539,19 @@ pub struct DefTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for DefTransport {
+impl ::sittir_core::render::Render for DefKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for DefTransport {
+impl ::sittir_core::options::FillOptions for DefKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38578,7 +38580,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38604,7 +38606,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DefTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DefKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38614,22 +38616,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for DefTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DefTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DefKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DefTransport::from_napi_value(env, napi_val).map(Box::new)
+        DefKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DefTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DefKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DefTransport::to_napi_value(env, *val)
+        DefKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -39062,7 +39064,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StarStarTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct GlobalTransport {
+pub struct GlobalKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39072,19 +39074,19 @@ pub struct GlobalTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for GlobalTransport {
+impl ::sittir_core::render::Render for GlobalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for GlobalTransport {
+impl ::sittir_core::options::FillOptions for GlobalKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39113,7 +39115,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39139,7 +39141,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GlobalTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for GlobalKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39149,27 +39151,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for GlobalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<GlobalTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GlobalKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        GlobalTransport::from_napi_value(env, napi_val).map(Box::new)
+        GlobalKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<GlobalTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GlobalKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        GlobalTransport::to_napi_value(env, *val)
+        GlobalKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct NonlocalTransport {
+pub struct NonlocalKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39179,19 +39181,19 @@ pub struct NonlocalTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for NonlocalTransport {
+impl ::sittir_core::render::Render for NonlocalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for NonlocalTransport {
+impl ::sittir_core::options::FillOptions for NonlocalKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39220,7 +39222,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39246,7 +39248,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NonlocalTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for NonlocalKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39256,27 +39258,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for NonlocalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NonlocalTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NonlocalKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NonlocalTransport::from_napi_value(env, napi_val).map(Box::new)
+        NonlocalKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NonlocalTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NonlocalKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NonlocalTransport::to_napi_value(env, *val)
+        NonlocalKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ExecTransport {
+pub struct ExecKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39286,19 +39288,19 @@ pub struct ExecTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ExecTransport {
+impl ::sittir_core::render::Render for ExecKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExecTransport {
+impl ::sittir_core::options::FillOptions for ExecKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39327,7 +39329,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39353,7 +39355,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExecTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ExecKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39363,27 +39365,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ExecTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExecTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExecKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExecTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExecKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExecTransport::to_napi_value(env, *val)
+        ExecKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonTypeTransport {
+pub struct TypeKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39393,19 +39395,19 @@ pub struct AnonTypeTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AnonTypeTransport {
+impl ::sittir_core::render::Render for TypeKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonTypeTransport {
+impl ::sittir_core::options::FillOptions for TypeKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39434,7 +39436,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39460,7 +39462,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonTypeTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for TypeKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39470,22 +39472,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonTypeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonTypeTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonTypeTransport::from_napi_value(env, napi_val).map(Box::new)
+        TypeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonTypeTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonTypeTransport::to_napi_value(env, *val)
+        TypeKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -39597,7 +39599,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EqTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ClassTransport {
+pub struct ClassKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39607,19 +39609,19 @@ pub struct ClassTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for ClassTransport {
+impl ::sittir_core::render::Render for ClassKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ClassTransport {
+impl ::sittir_core::options::FillOptions for ClassKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39648,7 +39650,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39674,7 +39676,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClassTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ClassKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39684,22 +39686,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for ClassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ClassTransport::from_napi_value(env, napi_val).map(Box::new)
+        ClassKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassTransport::to_napi_value(env, *val)
+        ClassKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -40346,7 +40348,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RbraceTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonymousTransport {
+pub struct KeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40356,19 +40358,19 @@ pub struct AnonymousTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AnonymousTransport {
+impl ::sittir_core::render::Render for KeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonymousTransport {
+impl ::sittir_core::options::FillOptions for KeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40397,7 +40399,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for KeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40423,7 +40425,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for KeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40433,22 +40435,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonymousTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonymousTransport::from_napi_value(env, napi_val).map(Box::new)
+        KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonymousTransport::to_napi_value(env, *val)
+        KeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -40667,7 +40669,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct NotTransport {
+pub struct NotKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40677,19 +40679,19 @@ pub struct NotTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for NotTransport {
+impl ::sittir_core::render::Render for NotKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for NotTransport {
+impl ::sittir_core::options::FillOptions for NotKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40718,7 +40720,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40744,7 +40746,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NotTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for NotKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40754,27 +40756,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for NotTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NotTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NotKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NotTransport::from_napi_value(env, napi_val).map(Box::new)
+        NotKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NotTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NotKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NotTransport::to_napi_value(env, *val)
+        NotKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AndTransport {
+pub struct AndKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40784,19 +40786,19 @@ pub struct AndTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AndTransport {
+impl ::sittir_core::render::Render for AndKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AndTransport {
+impl ::sittir_core::options::FillOptions for AndKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40825,7 +40827,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40851,7 +40853,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AndTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AndKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40861,27 +40863,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AndTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AndTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AndKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AndTransport::from_napi_value(env, napi_val).map(Box::new)
+        AndKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AndTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AndKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AndTransport::to_napi_value(env, *val)
+        AndKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct OrTransport {
+pub struct OrKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40891,19 +40893,19 @@ pub struct OrTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for OrTransport {
+impl ::sittir_core::render::Render for OrKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for OrTransport {
+impl ::sittir_core::options::FillOptions for OrKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40932,7 +40934,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40958,7 +40960,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OrTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for OrKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40968,22 +40970,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for OrTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OrTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<OrKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        OrTransport::from_napi_value(env, napi_val).map(Box::new)
+        OrKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OrTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<OrKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        OrTransport::to_napi_value(env, *val)
+        OrKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -41737,7 +41739,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtLtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonLambdaTransport {
+pub struct LambdaKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -41747,19 +41749,19 @@ pub struct AnonLambdaTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AnonLambdaTransport {
+impl ::sittir_core::render::Render for LambdaKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonLambdaTransport {
+impl ::sittir_core::options::FillOptions for LambdaKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41788,7 +41790,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41814,7 +41816,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonLambdaTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LambdaKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -41824,27 +41826,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonLambdaTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonLambdaTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LambdaKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonLambdaTransport::from_napi_value(env, napi_val).map(Box::new)
+        LambdaKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonLambdaTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LambdaKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonLambdaTransport::to_napi_value(env, *val)
+        LambdaKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonYieldTransport {
+pub struct YieldKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -41854,19 +41856,19 @@ pub struct AnonYieldTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AnonYieldTransport {
+impl ::sittir_core::render::Render for YieldKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonYieldTransport {
+impl ::sittir_core::options::FillOptions for YieldKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41895,7 +41897,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41921,7 +41923,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonYieldTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for YieldKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -41931,22 +41933,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonYieldTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonYieldTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<YieldKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonYieldTransport::from_napi_value(env, napi_val).map(Box::new)
+        YieldKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonYieldTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonYieldTransport::to_napi_value(env, *val)
+        YieldKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -42058,7 +42060,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonAwaitTransport {
+pub struct AwaitKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -42068,19 +42070,19 @@ pub struct AnonAwaitTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AnonAwaitTransport {
+impl ::sittir_core::render::Render for AwaitKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonAwaitTransport {
+impl ::sittir_core::options::FillOptions for AwaitKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42109,7 +42111,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42135,7 +42137,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonAwaitTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AwaitKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -42145,27 +42147,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonAwaitTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonAwaitTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AwaitKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonAwaitTransport::from_napi_value(env, napi_val).map(Box::new)
+        AwaitKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonAwaitTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AwaitKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonAwaitTransport::to_napi_value(env, *val)
+        AwaitKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AsyncTransport {
+pub struct AsyncKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -42175,19 +42177,19 @@ pub struct AsyncTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for AsyncTransport {
+impl ::sittir_core::render::Render for AsyncKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AsyncTransport {
+impl ::sittir_core::options::FillOptions for AsyncKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42216,7 +42218,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42242,7 +42244,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AsyncKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -42252,22 +42254,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AsyncTransport::from_napi_value(env, napi_val).map(Box::new)
+        AsyncKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsyncTransport::to_napi_value(env, *val)
+        AsyncKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -43770,7 +43772,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PipeEqTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct PrintTransport {
+pub struct PrintKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -43780,19 +43782,19 @@ pub struct PrintTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for PrintTransport {
+impl ::sittir_core::render::Render for PrintKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for PrintTransport {
+impl ::sittir_core::options::FillOptions for PrintKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -43821,7 +43823,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -43847,7 +43849,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PrintTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for PrintKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -43857,22 +43859,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for PrintTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PrintTransport::from_napi_value(env, napi_val).map(Box::new)
+        PrintKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PrintTransport::to_napi_value(env, *val)
+        PrintKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -44626,7 +44628,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtGtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct IsTransport {
+pub struct IsKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -44636,19 +44638,19 @@ pub struct IsTransport {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for IsTransport {
+impl ::sittir_core::render::Render for IsKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for IsTransport {
+impl ::sittir_core::options::FillOptions for IsKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44677,7 +44679,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44703,7 +44705,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IsTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for IsKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -44713,22 +44715,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for IsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IsTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IsKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        IsTransport::from_napi_value(env, napi_val).map(Box::new)
+        IsKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IsTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IsKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        IsTransport::to_napi_value(env, *val)
+        IsKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -44767,9 +44769,9 @@ fn render_simple_statements(node: &SimpleStatementsTransport, w: &mut dyn ::sitt
 fn render_import_statement(node: &ImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let import_list = &node.import_list;
     w.site(node.import_statement_before.unwrap_or(0));
-    w.site(node.import_before.unwrap_or(0));
+    w.site(node.import_keyword_before.unwrap_or(0));
     w.text("import")?;
-    w.site(node.import_after.unwrap_or(0));
+    w.site(node.import_keyword_after.unwrap_or(0));
     import_list.render(w)?;
     w.site(node.import_statement_after.unwrap_or(0));
     Ok(())
@@ -44792,15 +44794,15 @@ fn render_relative_import(node: &RelativeImportTransport, w: &mut dyn ::sittir_c
 fn render_future_import_statement(node: &FutureImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.site(node.future_import_statement_before.unwrap_or(0));
-    w.site(node.from_before.unwrap_or(0));
+    w.site(node.from_keyword_before.unwrap_or(0));
     w.text("from")?;
-    w.site(node.from_after.unwrap_or(0));
-    w.site(node.future___before.unwrap_or(0));
+    w.site(node.from_keyword_after.unwrap_or(0));
+    w.site(node.future___keyword_before.unwrap_or(0));
     w.text("__future__")?;
-    w.site(node.future___after.unwrap_or(0));
-    w.site(node.import_before.unwrap_or(0));
+    w.site(node.future___keyword_after.unwrap_or(0));
+    w.site(node.import_keyword_before.unwrap_or(0));
     w.text("import")?;
-    w.site(node.import_after.unwrap_or(0));
+    w.site(node.import_keyword_after.unwrap_or(0));
     content.render(w)?;
     w.site(node.future_import_statement_after.unwrap_or(0));
     Ok(())
@@ -44810,13 +44812,13 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, w: &mut dyn
     let content = &node.content;
     let module_name = &node.module_name;
     w.site(node.import_from_statement_before.unwrap_or(0));
-    w.site(node.from_before.unwrap_or(0));
+    w.site(node.from_keyword_before.unwrap_or(0));
     w.text("from")?;
-    w.site(node.from_after.unwrap_or(0));
+    w.site(node.from_keyword_after.unwrap_or(0));
     module_name.render(w)?;
-    w.site(node.import_before.unwrap_or(0));
+    w.site(node.import_keyword_before.unwrap_or(0));
     w.text("import")?;
-    w.site(node.import_after.unwrap_or(0));
+    w.site(node.import_keyword_after.unwrap_or(0));
     content.render(w)?;
     w.site(node.import_from_statement_after.unwrap_or(0));
     Ok(())
@@ -44848,9 +44850,9 @@ fn render_aliased_import(node: &AliasedImportTransport, w: &mut dyn ::sittir_cor
     let name = &node.name;
     w.site(node.aliased_import_before.unwrap_or(0));
     name.render(w)?;
-    w.site(node.as_before.unwrap_or(0));
+    w.site(node.as_keyword_before.unwrap_or(0));
     w.text("as")?;
-    w.site(node.as_after.unwrap_or(0));
+    w.site(node.as_keyword_after.unwrap_or(0));
     alias.render(w)?;
     w.site(node.aliased_import_after.unwrap_or(0));
     Ok(())
@@ -44895,9 +44897,9 @@ fn render_assert_statement(node: &AssertStatementTransport, w: &mut dyn ::sittir
         tail: 0,
     };
     w.site(node.assert_statement_before.unwrap_or(0));
-    w.site(node.assert_before.unwrap_or(0));
+    w.site(node.assert_keyword_before.unwrap_or(0));
     w.text("assert")?;
-    w.site(node.assert_after.unwrap_or(0));
+    w.site(node.assert_keyword_after.unwrap_or(0));
     expression.render(w)?;
     w.site(node.assert_statement_after.unwrap_or(0));
     Ok(())
@@ -44930,9 +44932,9 @@ fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir
     }
     let expressions = View::new(&node.expressions, "{}");
     w.site(node.return_statement_before.unwrap_or(0));
-    w.site(node.return_before.unwrap_or(0));
+    w.site(node.return_keyword_before.unwrap_or(0));
     w.text("return")?;
-    w.site(node.return_after.unwrap_or(0));
+    w.site(node.return_keyword_after.unwrap_or(0));
     expressions.render(w)?;
     w.site(node.return_statement_after.unwrap_or(0));
     Ok(())
@@ -44941,9 +44943,9 @@ fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir
 fn render_delete_statement(node: &DeleteStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expressions = &node.expressions;
     w.site(node.delete_statement_before.unwrap_or(0));
-    w.site(node.del_before.unwrap_or(0));
+    w.site(node.del_keyword_before.unwrap_or(0));
     w.text("del")?;
-    w.site(node.del_after.unwrap_or(0));
+    w.site(node.del_keyword_after.unwrap_or(0));
     expressions.render(w)?;
     w.site(node.delete_statement_after.unwrap_or(0));
     Ok(())
@@ -44958,14 +44960,14 @@ fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_c
     let cause = View::new(&node.cause, "{}");
     let expressions = View::new(&node.expressions, "{}");
     w.site(node.raise_statement_before.unwrap_or(0));
-    w.site(node.raise_before.unwrap_or(0));
+    w.site(node.raise_keyword_before.unwrap_or(0));
     w.text("raise")?;
-    w.site(node.raise_after.unwrap_or(0));
+    w.site(node.raise_keyword_after.unwrap_or(0));
     expressions.render(w)?;
     if cause.is_present() {
-        w.site(node.from_before.unwrap_or(0));
+        w.site(node.from_keyword_before.unwrap_or(0));
         w.text("from")?;
-        w.site(node.from_after.unwrap_or(0));
+        w.site(node.from_keyword_after.unwrap_or(0));
         cause.render(w)?;
     }
     w.site(node.raise_statement_after.unwrap_or(0));
@@ -44999,9 +45001,9 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
     let condition = &node.condition;
     let consequence = &node.consequence;
     w.site(node.if_statement_before.unwrap_or(0));
-    w.site(node.if_before.unwrap_or(0));
+    w.site(node.if_keyword_before.unwrap_or(0));
     w.text("if")?;
-    w.site(node.if_after.unwrap_or(0));
+    w.site(node.if_keyword_after.unwrap_or(0));
     condition.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45016,9 +45018,9 @@ fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::ren
     let condition = &node.condition;
     let consequence = &node.consequence;
     w.site(node.elif_clause_before.unwrap_or(0));
-    w.site(node.elif_before.unwrap_or(0));
+    w.site(node.elif_keyword_before.unwrap_or(0));
     w.text("elif")?;
-    w.site(node.elif_after.unwrap_or(0));
+    w.site(node.elif_keyword_after.unwrap_or(0));
     condition.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45031,9 +45033,9 @@ fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::ren
 fn render_else_clause(node: &ElseClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     w.site(node.else_clause_before.unwrap_or(0));
-    w.site(node.else_before.unwrap_or(0));
+    w.site(node.else_keyword_before.unwrap_or(0));
     w.text("else")?;
-    w.site(node.else_after.unwrap_or(0));
+    w.site(node.else_keyword_after.unwrap_or(0));
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
     w.site(node.colon_after.unwrap_or(0));
@@ -45046,9 +45048,9 @@ fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_c
     let body = &node.body;
     let subjects = &node.subjects;
     w.site(node.match_statement_before.unwrap_or(0));
-    w.site(node.match_before.unwrap_or(0));
+    w.site(node.match_keyword_before.unwrap_or(0));
     w.text("match")?;
-    w.site(node.match_after.unwrap_or(0));
+    w.site(node.match_keyword_after.unwrap_or(0));
     subjects.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45069,9 +45071,9 @@ fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::ren
     let consequence = &node.consequence;
     let guard = View::new(&node.guard, "{}");
     w.site(node.case_clause_before.unwrap_or(0));
-    w.site(node.case_before.unwrap_or(0));
+    w.site(node.case_keyword_before.unwrap_or(0));
     w.text("case")?;
-    w.site(node.case_after.unwrap_or(0));
+    w.site(node.case_keyword_after.unwrap_or(0));
     case_patterns.render(w)?;
     guard.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
@@ -45090,13 +45092,13 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
     let right = &node.right;
     w.site(node.for_statement_before.unwrap_or(0));
     async_marker.render(w)?;
-    w.site(node.for_before.unwrap_or(0));
+    w.site(node.for_keyword_before.unwrap_or(0));
     w.text("for")?;
-    w.site(node.for_after.unwrap_or(0));
+    w.site(node.for_keyword_after.unwrap_or(0));
     left.render(w)?;
-    w.site(node.in_before.unwrap_or(0));
+    w.site(node.in_keyword_before.unwrap_or(0));
     w.text("in")?;
-    w.site(node.in_after.unwrap_or(0));
+    w.site(node.in_keyword_after.unwrap_or(0));
     right.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45112,9 +45114,9 @@ fn render_while_statement(node: &WhileStatementTransport, w: &mut dyn ::sittir_c
     let body = &node.body;
     let condition = &node.condition;
     w.site(node.while_statement_before.unwrap_or(0));
-    w.site(node.while_before.unwrap_or(0));
+    w.site(node.while_keyword_before.unwrap_or(0));
     w.text("while")?;
-    w.site(node.while_after.unwrap_or(0));
+    w.site(node.while_keyword_after.unwrap_or(0));
     condition.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45141,9 +45143,9 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
     };
     let finally_clause = View::new(&node.finally_clause, "{}");
     w.site(node.try_statement_before.unwrap_or(0));
-    w.site(node.try_before.unwrap_or(0));
+    w.site(node.try_keyword_before.unwrap_or(0));
     w.text("try")?;
-    w.site(node.try_after.unwrap_or(0));
+    w.site(node.try_keyword_after.unwrap_or(0));
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
     w.site(node.colon_after.unwrap_or(0));
@@ -45160,9 +45162,9 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     let star_marker = View::new(&node.star_marker, "*");
     let suite = &node.suite;
     w.site(node.except_clause_before.unwrap_or(0));
-    w.site(node.except_before.unwrap_or(0));
+    w.site(node.except_keyword_before.unwrap_or(0));
     w.text("except")?;
-    w.site(node.except_after.unwrap_or(0));
+    w.site(node.except_keyword_after.unwrap_or(0));
     w.site(node.star_marker_before.unwrap_or(0));
     star_marker.render(w)?;
     w.site(node.star_marker_after.unwrap_or(0));
@@ -45178,9 +45180,9 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
 fn render_finally_clause(node: &FinallyClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
     w.site(node.finally_clause_before.unwrap_or(0));
-    w.site(node.finally_before.unwrap_or(0));
+    w.site(node.finally_keyword_before.unwrap_or(0));
     w.text("finally")?;
-    w.site(node.finally_after.unwrap_or(0));
+    w.site(node.finally_keyword_after.unwrap_or(0));
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
     w.site(node.colon_after.unwrap_or(0));
@@ -45195,9 +45197,9 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
     let with_clause = &node.with_clause;
     w.site(node.with_statement_before.unwrap_or(0));
     async_marker.render(w)?;
-    w.site(node.with_before.unwrap_or(0));
+    w.site(node.with_keyword_before.unwrap_or(0));
     w.text("with")?;
-    w.site(node.with_after.unwrap_or(0));
+    w.site(node.with_keyword_after.unwrap_or(0));
     with_clause.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45228,9 +45230,9 @@ fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::
     let type_parameters = View::new(&node.type_parameters, "{}");
     w.site(node.function_definition_before.unwrap_or(0));
     async_marker.render(w)?;
-    w.site(node.def_before.unwrap_or(0));
+    w.site(node.def_keyword_before.unwrap_or(0));
     w.text("def")?;
-    w.site(node.def_after.unwrap_or(0));
+    w.site(node.def_keyword_after.unwrap_or(0));
     name.render(w)?;
     type_parameters.render(w)?;
     parameters.render(w)?;
@@ -45313,9 +45315,9 @@ fn render_global_statement(node: &GlobalStatementTransport, w: &mut dyn ::sittir
         tail: 0,
     };
     w.site(node.global_statement_before.unwrap_or(0));
-    w.site(node.global_before.unwrap_or(0));
+    w.site(node.global_keyword_before.unwrap_or(0));
     w.text("global")?;
-    w.site(node.global_after.unwrap_or(0));
+    w.site(node.global_keyword_after.unwrap_or(0));
     names.render(w)?;
     w.site(node.global_statement_after.unwrap_or(0));
     Ok(())
@@ -45339,9 +45341,9 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
         tail: 0,
     };
     w.site(node.nonlocal_statement_before.unwrap_or(0));
-    w.site(node.nonlocal_before.unwrap_or(0));
+    w.site(node.nonlocal_keyword_before.unwrap_or(0));
     w.text("nonlocal")?;
-    w.site(node.nonlocal_after.unwrap_or(0));
+    w.site(node.nonlocal_keyword_after.unwrap_or(0));
     names.render(w)?;
     w.site(node.nonlocal_statement_after.unwrap_or(0));
     Ok(())
@@ -45361,14 +45363,14 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
         tail: 0,
     };
     w.site(node.exec_statement_before.unwrap_or(0));
-    w.site(node.exec_before.unwrap_or(0));
+    w.site(node.exec_keyword_before.unwrap_or(0));
     w.text("exec")?;
-    w.site(node.exec_after.unwrap_or(0));
+    w.site(node.exec_keyword_after.unwrap_or(0));
     code.render(w)?;
     if in_clause.is_present() {
-        w.site(node.in_before.unwrap_or(0));
+        w.site(node.in_keyword_before.unwrap_or(0));
         w.text("in")?;
-        w.site(node.in_after.unwrap_or(0));
+        w.site(node.in_keyword_after.unwrap_or(0));
         in_clause.render(w)?;
     }
     w.site(node.exec_statement_after.unwrap_or(0));
@@ -45379,9 +45381,9 @@ fn render_type_alias_statement(node: &TypeAliasStatementTransport, w: &mut dyn :
     let left = &node.left;
     let right = &node.right;
     w.site(node.type_alias_statement_before.unwrap_or(0));
-    w.site(node.anon_type_before.unwrap_or(0));
+    w.site(node.type_keyword_before.unwrap_or(0));
     w.text("type")?;
-    w.site(node.anon_type_after.unwrap_or(0));
+    w.site(node.type_keyword_after.unwrap_or(0));
     left.render(w)?;
     w.site(node.eq_before.unwrap_or(0));
     w.text("=")?;
@@ -45397,9 +45399,9 @@ fn render_class_definition(node: &ClassDefinitionTransport, w: &mut dyn ::sittir
     let superclasses = View::new(&node.superclasses, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
     w.site(node.class_definition_before.unwrap_or(0));
-    w.site(node.class_before.unwrap_or(0));
+    w.site(node.class_keyword_before.unwrap_or(0));
     w.text("class")?;
-    w.site(node.class_after.unwrap_or(0));
+    w.site(node.class_keyword_after.unwrap_or(0));
     name.render(w)?;
     type_parameters.render(w)?;
     superclasses.render(w)?;
@@ -45806,9 +45808,9 @@ fn render_as_pattern(node: &AsPatternTransport, w: &mut dyn ::sittir_core::rende
     let expression = &node.expression;
     w.site(node.as_pattern_before.unwrap_or(0));
     expression.render(w)?;
-    w.site(node.as_before.unwrap_or(0));
+    w.site(node.as_keyword_before.unwrap_or(0));
     w.text("as")?;
-    w.site(node.as_after.unwrap_or(0));
+    w.site(node.as_keyword_after.unwrap_or(0));
     alias.render(w)?;
     w.site(node.as_pattern_after.unwrap_or(0));
     Ok(())
@@ -45817,9 +45819,9 @@ fn render_as_pattern(node: &AsPatternTransport, w: &mut dyn ::sittir_core::rende
 fn render_not_operator(node: &NotOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
     w.site(node.not_operator_before.unwrap_or(0));
-    w.site(node.not_before.unwrap_or(0));
+    w.site(node.not_keyword_before.unwrap_or(0));
     w.text("not")?;
-    w.site(node.not_after.unwrap_or(0));
+    w.site(node.not_keyword_after.unwrap_or(0));
     argument.render(w)?;
     w.site(node.not_operator_after.unwrap_or(0));
     Ok(())
@@ -45885,9 +45887,9 @@ fn render_lambda(node: &LambdaTransport, w: &mut dyn ::sittir_core::render::Rend
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
     w.site(node.lambda_before.unwrap_or(0));
-    w.site(node.anon_lambda_before.unwrap_or(0));
+    w.site(node.lambda_keyword_before.unwrap_or(0));
     w.text("lambda")?;
-    w.site(node.anon_lambda_after.unwrap_or(0));
+    w.site(node.lambda_keyword_after.unwrap_or(0));
     parameters.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45901,9 +45903,9 @@ fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
     w.site(node.lambda_within_for_in_clause_before.unwrap_or(0));
-    w.site(node.anon_lambda_before.unwrap_or(0));
+    w.site(node.lambda_keyword_before.unwrap_or(0));
     w.text("lambda")?;
-    w.site(node.anon_lambda_after.unwrap_or(0));
+    w.site(node.lambda_keyword_after.unwrap_or(0));
     parameters.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
@@ -45953,9 +45955,9 @@ fn render_yield(node: &YieldTransport, w: &mut dyn ::sittir_core::render::Render
     }
     let content = View::new(&node.content, "{}");
     w.site(node.yield_before.unwrap_or(0));
-    w.site(node.anon_yield_before.unwrap_or(0));
+    w.site(node.yield_keyword_before.unwrap_or(0));
     w.text("yield")?;
-    w.site(node.anon_yield_after.unwrap_or(0));
+    w.site(node.yield_keyword_after.unwrap_or(0));
     content.render(w)?;
     w.site(node.yield_after.unwrap_or(0));
     Ok(())
@@ -46317,13 +46319,13 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
     };
     w.site(node.for_in_clause_before.unwrap_or(0));
     async_marker.render(w)?;
-    w.site(node.for_before.unwrap_or(0));
+    w.site(node.for_keyword_before.unwrap_or(0));
     w.text("for")?;
-    w.site(node.for_after.unwrap_or(0));
+    w.site(node.for_keyword_after.unwrap_or(0));
     left.render(w)?;
-    w.site(node.in_before.unwrap_or(0));
+    w.site(node.in_keyword_before.unwrap_or(0));
     w.text("in")?;
-    w.site(node.in_after.unwrap_or(0));
+    w.site(node.in_keyword_after.unwrap_or(0));
     right.render(w)?;
     w.site(node.comma_before.unwrap_or(0));
     comma.render(w)?;
@@ -46335,9 +46337,9 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
 fn render_if_clause(node: &IfClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let condition = &node.condition;
     w.site(node.if_clause_before.unwrap_or(0));
-    w.site(node.if_before.unwrap_or(0));
+    w.site(node.if_keyword_before.unwrap_or(0));
     w.text("if")?;
-    w.site(node.if_after.unwrap_or(0));
+    w.site(node.if_keyword_after.unwrap_or(0));
     condition.render(w)?;
     w.site(node.if_clause_after.unwrap_or(0));
     Ok(())
@@ -46349,13 +46351,13 @@ fn render_conditional_expression(node: &ConditionalExpressionTransport, w: &mut 
     let condition = &node.condition;
     w.site(node.conditional_expression_before.unwrap_or(0));
     body.render(w)?;
-    w.site(node.if_before.unwrap_or(0));
+    w.site(node.if_keyword_before.unwrap_or(0));
     w.text("if")?;
-    w.site(node.if_after.unwrap_or(0));
+    w.site(node.if_keyword_after.unwrap_or(0));
     condition.render(w)?;
-    w.site(node.else_before.unwrap_or(0));
+    w.site(node.else_keyword_before.unwrap_or(0));
     w.text("else")?;
-    w.site(node.else_after.unwrap_or(0));
+    w.site(node.else_keyword_after.unwrap_or(0));
     alternative.render(w)?;
     w.site(node.conditional_expression_after.unwrap_or(0));
     Ok(())
@@ -46516,9 +46518,9 @@ fn render_none(t: &NoneTransport, w: &mut dyn ::sittir_core::render::RenderSink)
 fn render_await(node: &AwaitTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
     w.site(node.await_before.unwrap_or(0));
-    w.site(node.anon_await_before.unwrap_or(0));
+    w.site(node.await_keyword_before.unwrap_or(0));
     w.text("await")?;
-    w.site(node.anon_await_after.unwrap_or(0));
+    w.site(node.await_keyword_after.unwrap_or(0));
     expression.render(w)?;
     w.site(node.await_after.unwrap_or(0));
     Ok(())
@@ -46826,9 +46828,9 @@ fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w:
     w.site(node.except_clause_exception_as_before.unwrap_or(0));
     value.render(w)?;
     if alias.is_present() {
-        w.site(node.as_before.unwrap_or(0));
+        w.site(node.as_keyword_before.unwrap_or(0));
         w.text("as")?;
-        w.site(node.as_after.unwrap_or(0));
+        w.site(node.as_keyword_after.unwrap_or(0));
         alias.render(w)?;
     }
     w.site(node.except_clause_exception_as_after.unwrap_or(0));
@@ -46878,9 +46880,9 @@ fn render_case_as_pattern(node: &CaseAsPatternTransport, w: &mut dyn ::sittir_co
     let identifier = &node.identifier;
     w.site(node.case_as_pattern_before.unwrap_or(0));
     case_pattern.render(w)?;
-    w.site(node.as_before.unwrap_or(0));
+    w.site(node.as_keyword_before.unwrap_or(0));
     w.text("as")?;
-    w.site(node.as_after.unwrap_or(0));
+    w.site(node.as_keyword_after.unwrap_or(0));
     identifier.render(w)?;
     w.site(node.case_as_pattern_after.unwrap_or(0));
     Ok(())
@@ -46967,10 +46969,10 @@ fn render_print_statement_chevron(node: &PrintStatementChevronTransport, w: &mut
     let chevron = &node.chevron;
     let print_chevron_arguments = View::new(&node.print_chevron_arguments, "{}");
     w.site(node.print_statement_chevron_before.unwrap_or(0));
-    w.site(node.print_before.unwrap_or(0));
+    w.site(node.print_keyword_before.unwrap_or(0));
     w.text("print")?;
     w.adjacent();
-    w.site(node.print_after.unwrap_or(0));
+    w.site(node.print_keyword_after.unwrap_or(0));
     chevron.render(w)?;
     print_chevron_arguments.render(w)?;
     w.site(node.print_statement_chevron_after.unwrap_or(0));
@@ -46980,9 +46982,9 @@ fn render_print_statement_chevron(node: &PrintStatementChevronTransport, w: &mut
 fn render_print_statement_plain(node: &PrintStatementPlainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let print_arguments = &node.print_arguments;
     w.site(node.print_statement_plain_before.unwrap_or(0));
-    w.site(node.print_before.unwrap_or(0));
+    w.site(node.print_keyword_before.unwrap_or(0));
     w.text("print")?;
-    w.site(node.print_after.unwrap_or(0));
+    w.site(node.print_keyword_after.unwrap_or(0));
     print_arguments.render(w)?;
     w.site(node.print_statement_plain_after.unwrap_or(0));
     Ok(())
@@ -47176,9 +47178,9 @@ fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTran
 fn render_yield_from_clause(node: &YieldFromClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
     w.site(node.yield_from_clause_before.unwrap_or(0));
-    w.site(node.from_before.unwrap_or(0));
+    w.site(node.from_keyword_before.unwrap_or(0));
     w.text("from")?;
-    w.site(node.from_after.unwrap_or(0));
+    w.site(node.from_keyword_after.unwrap_or(0));
     expression.render(w)?;
     w.site(node.yield_from_clause_after.unwrap_or(0));
     Ok(())
@@ -47231,11 +47233,7 @@ fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
-fn render_except(t: &ExceptTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_import(t: &ImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_import_keyword(t: &ImportKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47243,15 +47241,15 @@ fn render_dot(t: &DotTransport, w: &mut dyn ::sittir_core::render::RenderSink) -
     w.text(&t.text)
 }
 
-fn render_from(t: &FromTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_from_keyword(t: &FromKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_future_u(t: &FutureUTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_future_ukeyword(t: &FutureUKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_as(t: &AsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_as_keyword(t: &AsKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47263,7 +47261,7 @@ fn render_gt_gt(t: &GtGtTransport, w: &mut dyn ::sittir_core::render::RenderSink
     w.text(&t.text)
 }
 
-fn render_assert(t: &AssertTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_assert_keyword(t: &AssertKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47271,31 +47269,31 @@ fn render_colon_eq(t: &ColonEqTransport, w: &mut dyn ::sittir_core::render::Rend
     w.text(&t.text)
 }
 
-fn render_return(t: &ReturnTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_return_keyword(t: &ReturnKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_del(t: &DelTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_del_keyword(t: &DelKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_raise(t: &RaiseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_raise_keyword(t: &RaiseKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_pass(t: &PassTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_pass_keyword(t: &PassKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_break(t: &BreakTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_break_keyword(t: &BreakKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_continue(t: &ContinueTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_continue_keyword(t: &ContinueKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_if(t: &IfTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_if_keyword(t: &IfKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47303,47 +47301,51 @@ fn render_colon(t: &ColonTransport, w: &mut dyn ::sittir_core::render::RenderSin
     w.text(&t.text)
 }
 
-fn render_elif(t: &ElifTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_elif_keyword(t: &ElifKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_else(t: &ElseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_else_keyword(t: &ElseKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_match(t: &MatchTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_match_keyword(t: &MatchKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_case(t: &CaseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_case_keyword(t: &CaseKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_for(t: &ForTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_for_keyword(t: &ForKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_in(t: &InTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_in_keyword(t: &InKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_while(t: &WhileTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_while_keyword(t: &WhileKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_try(t: &TryTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_try_keyword(t: &TryKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_finally(t: &FinallyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_except_keyword(t: &ExceptKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_with(t: &WithTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_finally_keyword(t: &FinallyKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_def(t: &DefTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_with_keyword(t: &WithKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_def_keyword(t: &DefKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47363,19 +47365,19 @@ fn render_star_star(t: &StarStarTransport, w: &mut dyn ::sittir_core::render::Re
     w.text(&t.text)
 }
 
-fn render_global(t: &GlobalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_global_keyword(t: &GlobalKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_nonlocal(t: &NonlocalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_nonlocal_keyword(t: &NonlocalKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_exec(t: &ExecTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_exec_keyword(t: &ExecKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_anon_type(t: &AnonTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_type_keyword(t: &TypeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47383,7 +47385,7 @@ fn render_eq(t: &EqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> 
     w.text(&t.text)
 }
 
-fn render_class(t: &ClassTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_class_keyword(t: &ClassKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47411,7 +47413,7 @@ fn render_rbrace(t: &RbraceTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
-fn render_anonymous(t: &AnonymousTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_keyword(t: &KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47423,15 +47425,15 @@ fn render_plus(t: &PlusTransport, w: &mut dyn ::sittir_core::render::RenderSink)
     w.text(&t.text)
 }
 
-fn render_not(t: &NotTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_not_keyword(t: &NotKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_and(t: &AndTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_and_keyword(t: &AndKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_or(t: &OrTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_or_keyword(t: &OrKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47463,11 +47465,11 @@ fn render_lt_lt(t: &LtLtTransport, w: &mut dyn ::sittir_core::render::RenderSink
     w.text(&t.text)
 }
 
-fn render_anon_lambda(t: &AnonLambdaTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lambda_keyword(t: &LambdaKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_anon_yield(t: &AnonYieldTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_yield_keyword(t: &YieldKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47475,11 +47477,11 @@ fn render_bslash(t: &BslashTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
-fn render_anon_await(t: &AnonAwaitTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_await_keyword(t: &AwaitKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_async(t: &AsyncTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_async_keyword(t: &AsyncKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47539,7 +47541,7 @@ fn render_pipe_eq(t: &PipeEqTransport, w: &mut dyn ::sittir_core::render::Render
     w.text(&t.text)
 }
 
-fn render_print(t: &PrintTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_print_keyword(t: &PrintKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47571,7 +47573,7 @@ fn render_lt_gt(t: &LtGtTransport, w: &mut dyn ::sittir_core::render::RenderSink
     w.text(&t.text)
 }
 
-fn render_is(t: &IsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_is_keyword(t: &IsKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -47865,57 +47867,57 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Space(t) => t.render(w),
             AnyTransport::Indent(t) => t.render(w),
             AnyTransport::Dedent(t) => t.render(w),
-            AnyTransport::Except(t) => t.render(w),
-            AnyTransport::Import(t) => t.render(w),
+            AnyTransport::ImportKeyword(t) => t.render(w),
             AnyTransport::Dot(t) => t.render(w),
-            AnyTransport::From(t) => t.render(w),
-            AnyTransport::FutureU(t) => t.render(w),
-            AnyTransport::As(t) => t.render(w),
+            AnyTransport::FromKeyword(t) => t.render(w),
+            AnyTransport::FutureUKeyword(t) => t.render(w),
+            AnyTransport::AsKeyword(t) => t.render(w),
             AnyTransport::Star(t) => t.render(w),
             AnyTransport::GtGt(t) => t.render(w),
-            AnyTransport::Assert(t) => t.render(w),
+            AnyTransport::AssertKeyword(t) => t.render(w),
             AnyTransport::ColonEq(t) => t.render(w),
-            AnyTransport::Return(t) => t.render(w),
-            AnyTransport::Del(t) => t.render(w),
-            AnyTransport::Raise(t) => t.render(w),
-            AnyTransport::Pass(t) => t.render(w),
-            AnyTransport::Break(t) => t.render(w),
-            AnyTransport::Continue(t) => t.render(w),
-            AnyTransport::If(t) => t.render(w),
+            AnyTransport::ReturnKeyword(t) => t.render(w),
+            AnyTransport::DelKeyword(t) => t.render(w),
+            AnyTransport::RaiseKeyword(t) => t.render(w),
+            AnyTransport::PassKeyword(t) => t.render(w),
+            AnyTransport::BreakKeyword(t) => t.render(w),
+            AnyTransport::ContinueKeyword(t) => t.render(w),
+            AnyTransport::IfKeyword(t) => t.render(w),
             AnyTransport::Colon(t) => t.render(w),
-            AnyTransport::Elif(t) => t.render(w),
-            AnyTransport::Else(t) => t.render(w),
-            AnyTransport::Match(t) => t.render(w),
-            AnyTransport::Case(t) => t.render(w),
-            AnyTransport::For(t) => t.render(w),
-            AnyTransport::In(t) => t.render(w),
-            AnyTransport::While(t) => t.render(w),
-            AnyTransport::Try(t) => t.render(w),
-            AnyTransport::Finally(t) => t.render(w),
-            AnyTransport::With(t) => t.render(w),
-            AnyTransport::Def(t) => t.render(w),
+            AnyTransport::ElifKeyword(t) => t.render(w),
+            AnyTransport::ElseKeyword(t) => t.render(w),
+            AnyTransport::MatchKeyword(t) => t.render(w),
+            AnyTransport::CaseKeyword(t) => t.render(w),
+            AnyTransport::ForKeyword(t) => t.render(w),
+            AnyTransport::InKeyword(t) => t.render(w),
+            AnyTransport::WhileKeyword(t) => t.render(w),
+            AnyTransport::TryKeyword(t) => t.render(w),
+            AnyTransport::ExceptKeyword(t) => t.render(w),
+            AnyTransport::FinallyKeyword(t) => t.render(w),
+            AnyTransport::WithKeyword(t) => t.render(w),
+            AnyTransport::DefKeyword(t) => t.render(w),
             AnyTransport::DashGt(t) => t.render(w),
             AnyTransport::Lparen(t) => t.render(w),
             AnyTransport::Rparen(t) => t.render(w),
             AnyTransport::StarStar(t) => t.render(w),
-            AnyTransport::Global(t) => t.render(w),
-            AnyTransport::Nonlocal(t) => t.render(w),
-            AnyTransport::Exec(t) => t.render(w),
-            AnyTransport::AnonType(t) => t.render(w),
+            AnyTransport::GlobalKeyword(t) => t.render(w),
+            AnyTransport::NonlocalKeyword(t) => t.render(w),
+            AnyTransport::ExecKeyword(t) => t.render(w),
+            AnyTransport::TypeKeyword(t) => t.render(w),
             AnyTransport::Eq(t) => t.render(w),
-            AnyTransport::Class(t) => t.render(w),
+            AnyTransport::ClassKeyword(t) => t.render(w),
             AnyTransport::Lbrack(t) => t.render(w),
             AnyTransport::Rbrack(t) => t.render(w),
             AnyTransport::At(t) => t.render(w),
             AnyTransport::Comma(t) => t.render(w),
             AnyTransport::Lbrace(t) => t.render(w),
             AnyTransport::Rbrace(t) => t.render(w),
-            AnyTransport::Anonymous(t) => t.render(w),
+            AnyTransport::Keyword(t) => t.render(w),
             AnyTransport::Dash(t) => t.render(w),
             AnyTransport::Plus(t) => t.render(w),
-            AnyTransport::Not(t) => t.render(w),
-            AnyTransport::And(t) => t.render(w),
-            AnyTransport::Or(t) => t.render(w),
+            AnyTransport::NotKeyword(t) => t.render(w),
+            AnyTransport::AndKeyword(t) => t.render(w),
+            AnyTransport::OrKeyword(t) => t.render(w),
             AnyTransport::Slash(t) => t.render(w),
             AnyTransport::Percent(t) => t.render(w),
             AnyTransport::SlashSlash(t) => t.render(w),
@@ -47923,11 +47925,11 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Amp(t) => t.render(w),
             AnyTransport::Caret(t) => t.render(w),
             AnyTransport::LtLt(t) => t.render(w),
-            AnyTransport::AnonLambda(t) => t.render(w),
-            AnyTransport::AnonYield(t) => t.render(w),
+            AnyTransport::LambdaKeyword(t) => t.render(w),
+            AnyTransport::YieldKeyword(t) => t.render(w),
             AnyTransport::Bslash(t) => t.render(w),
-            AnyTransport::AnonAwait(t) => t.render(w),
-            AnyTransport::Async(t) => t.render(w),
+            AnyTransport::AwaitKeyword(t) => t.render(w),
+            AnyTransport::AsyncKeyword(t) => t.render(w),
             AnyTransport::Tilde(t) => t.render(w),
             AnyTransport::PlusEq(t) => t.render(w),
             AnyTransport::DashEq(t) => t.render(w),
@@ -47942,7 +47944,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::AmpEq(t) => t.render(w),
             AnyTransport::CaretEq(t) => t.render(w),
             AnyTransport::PipeEq(t) => t.render(w),
-            AnyTransport::Print(t) => t.render(w),
+            AnyTransport::PrintKeyword(t) => t.render(w),
             AnyTransport::Lt(t) => t.render(w),
             AnyTransport::LtEq(t) => t.render(w),
             AnyTransport::EqEq(t) => t.render(w),
@@ -47950,7 +47952,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::GtEq(t) => t.render(w),
             AnyTransport::Gt(t) => t.render(w),
             AnyTransport::LtGt(t) => t.render(w),
-            AnyTransport::Is(t) => t.render(w),
+            AnyTransport::IsKeyword(t) => t.render(w),
             AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => w.text("*"),
             AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
             AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
@@ -47961,11 +47963,11 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal7_6e_6f_6e_65 => w.text("None"),
             AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
             AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => w.text("**"),
-            AnyTransport::Literal10_5f => w.text("_"),
+            AnyTransport::Literal10_5f_5f_6b_65_79_77_6f_72_64 => w.text("_"),
             AnyTransport::Literal11_64_61_73_68 => w.text("-"),
             AnyTransport::Literal12_70_6c_75_73 => w.text("+"),
-            AnyTransport::Literal13_61_6e_64 => w.text("and"),
-            AnyTransport::Literal14_6f_72 => w.text("or"),
+            AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => w.text("and"),
+            AnyTransport::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => w.text("or"),
             AnyTransport::Literal15_61_74 => w.text("@"),
             AnyTransport::Literal16_73_6c_61_73_68 => w.text("/"),
             AnyTransport::Literal17_70_65_72_63_65_6e_74 => w.text("%"),
@@ -47989,7 +47991,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal35_61_6d_70_5f_65_71 => w.text("&="),
             AnyTransport::Literal36_63_61_72_65_74_5f_65_71 => w.text("^="),
             AnyTransport::Literal37_70_69_70_65_5f_65_71 => w.text("|="),
-            AnyTransport::Literal38_61_6e_6f_6e_5f_74_79_70_65 => w.text("type"),
+            AnyTransport::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
             AnyTransport::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => w.text("\\"),
             AnyTransport::Literal40_65_71 => w.text("="),
             AnyTransport::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => w.text("[^{}\\n]+"),
@@ -48000,9 +48002,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal46_67_74_5f_65_71 => w.text(">="),
             AnyTransport::Literal47_67_74 => w.text(">"),
             AnyTransport::Literal48_6c_74_5f_67_74 => w.text("<>"),
-            AnyTransport::Literal49_69_6e => w.text("in"),
+            AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
             AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
-            AnyTransport::Literal51_69_73 => w.text("is"),
+            AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
             AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
         }
     }

@@ -168,57 +168,57 @@ export type LeafStringMap = {
 	[TSKindId.WildcardPattern]: '_';
 	[TSKindId.ImplItemUnsafeMarker]: 'unsafe';
 	[TSKindId.PointerTypeConst]: 'const';
-	[TSKindId.AnonBlock]: 'block';
-	[TSKindId.Expr]: 'expr';
-	[TSKindId.Expr2021]: 'expr_2021';
-	[TSKindId.Ident]: 'ident';
-	[TSKindId.Item]: 'item';
-	[TSKindId.AnonLifetime]: 'lifetime';
-	[TSKindId.Literal]: 'literal';
-	[TSKindId.Meta]: 'meta';
-	[TSKindId.Pat]: 'pat';
-	[TSKindId.PatParam]: 'pat_param';
-	[TSKindId.Path]: 'path';
-	[TSKindId.Stmt]: 'stmt';
-	[TSKindId.Tt]: 'tt';
-	[TSKindId.Ty]: 'ty';
-	[TSKindId.Vis]: 'vis';
-	[TSKindId.Mod]: 'mod';
-	[TSKindId.Struct]: 'struct';
-	[TSKindId.Union]: 'union';
-	[TSKindId.Enum]: 'enum';
-	[TSKindId.Extern]: 'extern';
-	[TSKindId.As]: 'as';
-	[TSKindId.Const]: 'const';
-	[TSKindId.Static]: 'static';
-	[TSKindId.Type]: 'type';
-	[TSKindId.Fn]: 'fn';
-	[TSKindId.Where]: 'where';
-	[TSKindId.Impl]: 'impl';
-	[TSKindId.Trait]: 'trait';
-	[TSKindId.For]: 'for';
-	[TSKindId.Let]: 'let';
-	[TSKindId.Else]: 'else';
-	[TSKindId.Use]: 'use';
-	[TSKindId.Dyn]: 'dyn';
-	[TSKindId.Return]: 'return';
-	[TSKindId.Yield]: 'yield';
-	[TSKindId.If]: 'if';
-	[TSKindId.Match]: 'match';
-	[TSKindId.While]: 'while';
-	[TSKindId.Loop]: 'loop';
-	[TSKindId.In]: 'in';
-	[TSKindId.Break]: 'break';
-	[TSKindId.Continue]: 'continue';
-	[TSKindId.Await]: 'await';
-	[TSKindId.Unsafe]: 'unsafe';
-	[TSKindId.Async]: 'async';
-	[TSKindId.Gen]: 'gen';
-	[TSKindId.Try]: 'try';
-	[TSKindId.Ref]: 'ref';
-	[TSKindId.True]: 'true';
-	[TSKindId.False]: 'false';
-	[TSKindId.Default]: 'default';
+	[TSKindId.BlockKeyword]: 'block';
+	[TSKindId.ExprKeyword]: 'expr';
+	[TSKindId.Expr2021Keyword]: 'expr_2021';
+	[TSKindId.IdentKeyword]: 'ident';
+	[TSKindId.ItemKeyword]: 'item';
+	[TSKindId.LifetimeKeyword]: 'lifetime';
+	[TSKindId.LiteralKeyword]: 'literal';
+	[TSKindId.MetaKeyword]: 'meta';
+	[TSKindId.PatKeyword]: 'pat';
+	[TSKindId.PatParamKeyword]: 'pat_param';
+	[TSKindId.PathKeyword]: 'path';
+	[TSKindId.StmtKeyword]: 'stmt';
+	[TSKindId.TtKeyword]: 'tt';
+	[TSKindId.TyKeyword]: 'ty';
+	[TSKindId.VisKeyword]: 'vis';
+	[TSKindId.ModKeyword]: 'mod';
+	[TSKindId.StructKeyword]: 'struct';
+	[TSKindId.UnionKeyword]: 'union';
+	[TSKindId.EnumKeyword]: 'enum';
+	[TSKindId.ExternKeyword]: 'extern';
+	[TSKindId.AsKeyword]: 'as';
+	[TSKindId.ConstKeyword]: 'const';
+	[TSKindId.StaticKeyword]: 'static';
+	[TSKindId.TypeKeyword]: 'type';
+	[TSKindId.FnKeyword]: 'fn';
+	[TSKindId.WhereKeyword]: 'where';
+	[TSKindId.ImplKeyword]: 'impl';
+	[TSKindId.TraitKeyword]: 'trait';
+	[TSKindId.ForKeyword]: 'for';
+	[TSKindId.LetKeyword]: 'let';
+	[TSKindId.ElseKeyword]: 'else';
+	[TSKindId.UseKeyword]: 'use';
+	[TSKindId.DynKeyword]: 'dyn';
+	[TSKindId.ReturnKeyword]: 'return';
+	[TSKindId.YieldKeyword]: 'yield';
+	[TSKindId.IfKeyword]: 'if';
+	[TSKindId.MatchKeyword]: 'match';
+	[TSKindId.WhileKeyword]: 'while';
+	[TSKindId.LoopKeyword]: 'loop';
+	[TSKindId.InKeyword]: 'in';
+	[TSKindId.BreakKeyword]: 'break';
+	[TSKindId.ContinueKeyword]: 'continue';
+	[TSKindId.AwaitKeyword]: 'await';
+	[TSKindId.UnsafeKeyword]: 'unsafe';
+	[TSKindId.AsyncKeyword]: 'async';
+	[TSKindId.GenKeyword]: 'gen';
+	[TSKindId.TryKeyword]: 'try';
+	[TSKindId.RefKeyword]: 'ref';
+	[TSKindId.TrueKeyword]: 'true';
+	[TSKindId.FalseKeyword]: 'false';
+	[TSKindId.DefaultKeyword]: 'default';
 	[TSKindId.U8]: 'u8';
 	[TSKindId.I8]: 'i8';
 	[TSKindId.U16]: 'u16';
@@ -236,10 +236,10 @@ export type LeafStringMap = {
 	[TSKindId.Bool]: 'bool';
 	[TSKindId.Str]: 'str';
 	[TSKindId.Char]: 'char';
-	[TSKindId.Move]: 'move';
-	[TSKindId.Anonymous]: '_';
-	[TSKindId.Pub]: 'pub';
-	[TSKindId.Raw]: 'raw';
+	[TSKindId.MoveKeyword]: 'move';
+	[TSKindId.Keyword]: '_';
+	[TSKindId.PubKeyword]: 'pub';
+	[TSKindId.RawKeyword]: 'raw';
 };
 
 export const enum TSKindId {
@@ -255,21 +255,21 @@ export const enum TSKindId {
 	Plus = 10,
 	Star = 11,
 	Qmark = 12,
-	AnonBlock = 13,
-	Expr = 14,
-	Expr2021 = 15,
-	Ident = 16,
-	Item = 17,
-	AnonLifetime = 18,
-	Literal = 19,
-	Meta = 20,
-	Pat = 21,
-	PatParam = 22,
-	Path = 23,
-	Stmt = 24,
-	Tt = 25,
-	Ty = 26,
-	Vis = 27,
+	BlockKeyword = 13,
+	ExprKeyword = 14,
+	Expr2021Keyword = 15,
+	IdentKeyword = 16,
+	ItemKeyword = 17,
+	LifetimeKeyword = 18,
+	LiteralKeyword = 19,
+	MetaKeyword = 20,
+	PatKeyword = 21,
+	PatParamKeyword = 22,
+	PathKeyword = 23,
+	StmtKeyword = 24,
+	TtKeyword = 25,
+	TyKeyword = 26,
+	VisKeyword = 27,
 	U8 = 28,
 	I8 = 29,
 	U16 = 30,
@@ -291,33 +291,33 @@ export const enum TSKindId {
 	Lbrack = 46,
 	Rbrack = 47,
 	Bang = 48,
-	Mod = 49,
+	ModKeyword = 49,
 	Lbrace = 50,
 	Rbrace = 51,
-	Struct = 52,
-	Union = 53,
-	Enum = 54,
-	Extern = 55,
-	Const = 56,
-	Static = 57,
-	Type = 58,
+	StructKeyword = 52,
+	UnionKeyword = 53,
+	EnumKeyword = 54,
+	ExternKeyword = 55,
+	ConstKeyword = 56,
+	StaticKeyword = 57,
+	TypeKeyword = 58,
 	Eq = 59,
-	Fn = 60,
-	Where = 61,
-	Impl = 62,
-	Trait = 63,
-	For = 64,
+	FnKeyword = 60,
+	WhereKeyword = 61,
+	ImplKeyword = 62,
+	TraitKeyword = 63,
+	ForKeyword = 64,
 	Lt = 65,
 	Gt = 66,
-	Let = 67,
-	Use = 68,
+	LetKeyword = 67,
+	UseKeyword = 68,
 	ColonColon = 69,
-	As = 70,
+	AsKeyword = 70,
 	DotDotDot = 71,
 	Squote = 72,
 	Lt2 = 73,
 	Amp = 74,
-	Dyn = 75,
+	DynKeyword = 75,
 	MutableSpecifier = 76,
 	Dash = 77,
 	AmpAmp = 78,
@@ -342,50 +342,50 @@ export const enum TSKindId {
 	CaretEq = 97,
 	LtLtEq = 98,
 	GtGtEq = 99,
-	Return = 100,
-	Yield = 101,
+	ReturnKeyword = 100,
+	YieldKeyword = 101,
 	DotDot = 102,
-	If = 103,
-	Else = 104,
-	Match = 105,
-	While = 106,
-	Loop = 107,
-	In = 108,
-	Break = 109,
-	Continue = 110,
+	IfKeyword = 103,
+	ElseKeyword = 104,
+	MatchKeyword = 105,
+	WhileKeyword = 106,
+	LoopKeyword = 107,
+	InKeyword = 108,
+	BreakKeyword = 109,
+	ContinueKeyword = 110,
 	Dot = 111,
-	Await = 112,
-	Unsafe = 113,
-	Async = 114,
-	Gen = 115,
-	Try = 116,
-	Ref = 117,
+	AwaitKeyword = 112,
+	UnsafeKeyword = 113,
+	AsyncKeyword = 114,
+	GenKeyword = 115,
+	TryKeyword = 116,
+	RefKeyword = 117,
 	At = 118,
 	IntegerLiteral = 119,
 	Dquote = 120,
 	CharLiteral = 121,
 	EscapeSequence = 122,
-	True = 123,
-	False = 124,
+	TrueKeyword = 123,
+	FalseKeyword = 124,
 	SlashSlash = 125,
 	Bang2 = 126,
 	Slash2 = 127,
 	SlashStar = 128,
 	StarSlash = 129,
 	Shebang = 130,
-	Default = 131,
+	DefaultKeyword = 131,
 	Self = 132,
 	Super = 133,
 	Crate = 134,
 	Metavariable = 135,
-	Move = 136,
+	MoveKeyword = 136,
 	Comma = 137,
 	DashGt = 138,
-	Anonymous = 139,
+	Keyword = 139,
 	DotDotEq = 140,
-	Pub = 141,
+	PubKeyword = 141,
 	StringLiteralOpen = 142,
-	Raw = 143,
+	RawKeyword = 143,
 	_LineCommentRegularDslashToken1 = 144,
 	_LineCommentRegularDslashToken2 = 145,
 	LineCommentContent = 146,
@@ -465,7 +465,7 @@ export const enum TSKindId {
 	Parameter = 220,
 	ExternModifier = 221,
 	VisibilityModifier = 222,
-	_Type = 223,
+	Type = 223,
 	BracketedType = 224,
 	QualifiedType = 225,
 	Lifetime = 226,
@@ -557,7 +557,7 @@ export const enum TSKindId {
 	CapturedPattern = 312,
 	ReferencePattern = 313,
 	OrPattern = 314,
-	_Literal = 315,
+	Literal = 315,
 	LiteralPattern = 316,
 	NegativeLiteral = 317,
 	StringLiteral = 318,
@@ -707,21 +707,21 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[10, 'plus'],
 	[11, 'star'],
 	[12, 'qmark'],
-	[13, 'anon_block'],
-	[14, 'expr'],
-	[15, 'expr_2021'],
-	[16, 'ident'],
-	[17, 'item'],
-	[18, 'anon_lifetime'],
-	[19, 'literal'],
-	[20, 'meta'],
-	[21, 'pat'],
-	[22, 'pat_param'],
-	[23, 'path'],
-	[24, 'stmt'],
-	[25, 'tt'],
-	[26, 'ty'],
-	[27, 'vis'],
+	[13, 'block_keyword'],
+	[14, 'expr_keyword'],
+	[15, 'expr_2021_keyword'],
+	[16, 'ident_keyword'],
+	[17, 'item_keyword'],
+	[18, 'lifetime_keyword'],
+	[19, 'literal_keyword'],
+	[20, 'meta_keyword'],
+	[21, 'pat_keyword'],
+	[22, 'pat_param_keyword'],
+	[23, 'path_keyword'],
+	[24, 'stmt_keyword'],
+	[25, 'tt_keyword'],
+	[26, 'ty_keyword'],
+	[27, 'vis_keyword'],
 	[28, 'u8'],
 	[29, 'i8'],
 	[30, 'u16'],
@@ -743,33 +743,33 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[46, 'lbrack'],
 	[47, 'rbrack'],
 	[48, 'bang'],
-	[49, 'mod'],
+	[49, 'mod_keyword'],
 	[50, 'lbrace'],
 	[51, 'rbrace'],
-	[52, 'struct'],
-	[53, 'union'],
-	[54, 'enum'],
-	[55, 'extern'],
-	[56, 'const'],
-	[57, 'static'],
-	[58, 'type'],
+	[52, 'struct_keyword'],
+	[53, 'union_keyword'],
+	[54, 'enum_keyword'],
+	[55, 'extern_keyword'],
+	[56, 'const_keyword'],
+	[57, 'static_keyword'],
+	[58, 'type_keyword'],
 	[59, 'eq'],
-	[60, 'fn'],
-	[61, 'where'],
-	[62, 'impl'],
-	[63, 'trait'],
-	[64, 'for'],
+	[60, 'fn_keyword'],
+	[61, 'where_keyword'],
+	[62, 'impl_keyword'],
+	[63, 'trait_keyword'],
+	[64, 'for_keyword'],
 	[65, 'lt'],
 	[66, 'gt'],
-	[67, 'let'],
-	[68, 'use'],
+	[67, 'let_keyword'],
+	[68, 'use_keyword'],
 	[69, 'colon_colon'],
-	[70, 'as'],
+	[70, 'as_keyword'],
 	[71, 'dot_dot_dot'],
 	[72, 'squote'],
 	[73, 'lt2'],
 	[74, 'amp'],
-	[75, 'dyn'],
+	[75, 'dyn_keyword'],
 	[76, 'mutable_specifier'],
 	[77, 'dash'],
 	[78, 'amp_amp'],
@@ -794,50 +794,50 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[97, 'caret_eq'],
 	[98, 'lt_lt_eq'],
 	[99, 'gt_gt_eq'],
-	[100, 'return'],
-	[101, 'yield'],
+	[100, 'return_keyword'],
+	[101, 'yield_keyword'],
 	[102, 'dot_dot'],
-	[103, 'if'],
-	[104, 'else'],
-	[105, 'match'],
-	[106, 'while'],
-	[107, 'loop'],
-	[108, 'in'],
-	[109, 'break'],
-	[110, 'continue'],
+	[103, 'if_keyword'],
+	[104, 'else_keyword'],
+	[105, 'match_keyword'],
+	[106, 'while_keyword'],
+	[107, 'loop_keyword'],
+	[108, 'in_keyword'],
+	[109, 'break_keyword'],
+	[110, 'continue_keyword'],
 	[111, 'dot'],
-	[112, 'await'],
-	[113, 'unsafe'],
-	[114, 'async'],
-	[115, 'gen'],
-	[116, 'try'],
-	[117, 'ref'],
+	[112, 'await_keyword'],
+	[113, 'unsafe_keyword'],
+	[114, 'async_keyword'],
+	[115, 'gen_keyword'],
+	[116, 'try_keyword'],
+	[117, 'ref_keyword'],
 	[118, 'at'],
 	[119, 'integer_literal'],
 	[120, 'dquote'],
 	[121, 'char_literal'],
 	[122, 'escape_sequence'],
-	[123, 'true'],
-	[124, 'false'],
+	[123, 'true_keyword'],
+	[124, 'false_keyword'],
 	[125, 'slash_slash'],
 	[126, 'bang2'],
 	[127, 'slash2'],
 	[128, 'slash_star'],
 	[129, 'star_slash'],
 	[130, 'shebang'],
-	[131, 'default'],
+	[131, 'default_keyword'],
 	[132, 'self'],
 	[133, 'super'],
 	[134, 'crate'],
 	[135, 'metavariable'],
-	[136, 'move'],
+	[136, 'move_keyword'],
 	[137, 'comma'],
 	[138, 'dash_gt'],
-	[139, '_'],
+	[139, '__keyword'],
 	[140, 'dot_dot_eq'],
-	[141, 'pub'],
+	[141, 'pub_keyword'],
 	[142, '_string_literal_open'],
-	[143, 'raw'],
+	[143, 'raw_keyword'],
 	[144, '_line_comment_regular_dslash_token1'],
 	[145, '_line_comment_regular_dslash_token2'],
 	[146, '_line_comment_content'],
@@ -1161,21 +1161,21 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[10, 'plus'],
 	[11, 'star'],
 	[12, 'qmark'],
-	[13, 'anon_block'],
-	[14, 'expr'],
-	[15, 'expr_2021'],
-	[16, 'ident'],
-	[17, 'item'],
-	[18, 'anon_lifetime'],
-	[19, 'literal'],
-	[20, 'meta'],
-	[21, 'pat'],
-	[22, 'pat_param'],
-	[23, 'path'],
-	[24, 'stmt'],
-	[25, 'tt'],
-	[26, 'ty'],
-	[27, 'vis'],
+	[13, 'block_keyword'],
+	[14, 'expr_keyword'],
+	[15, 'expr_2021_keyword'],
+	[16, 'ident_keyword'],
+	[17, 'item_keyword'],
+	[18, 'lifetime_keyword'],
+	[19, 'literal_keyword'],
+	[20, 'meta_keyword'],
+	[21, 'pat_keyword'],
+	[22, 'pat_param_keyword'],
+	[23, 'path_keyword'],
+	[24, 'stmt_keyword'],
+	[25, 'tt_keyword'],
+	[26, 'ty_keyword'],
+	[27, 'vis_keyword'],
 	[28, 'u8'],
 	[29, 'i8'],
 	[30, 'u16'],
@@ -1197,33 +1197,33 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[46, 'lbrack'],
 	[47, 'rbrack'],
 	[48, 'bang'],
-	[49, 'mod'],
+	[49, 'mod_keyword'],
 	[50, 'lbrace'],
 	[51, 'rbrace'],
-	[52, 'struct'],
-	[53, 'union'],
-	[54, 'enum'],
-	[55, 'extern'],
-	[56, 'const'],
-	[57, 'static'],
-	[58, 'type'],
+	[52, 'struct_keyword'],
+	[53, 'union_keyword'],
+	[54, 'enum_keyword'],
+	[55, 'extern_keyword'],
+	[56, 'const_keyword'],
+	[57, 'static_keyword'],
+	[58, 'type_keyword'],
 	[59, 'eq'],
-	[60, 'fn'],
-	[61, 'where'],
-	[62, 'impl'],
-	[63, 'trait'],
-	[64, 'for'],
+	[60, 'fn_keyword'],
+	[61, 'where_keyword'],
+	[62, 'impl_keyword'],
+	[63, 'trait_keyword'],
+	[64, 'for_keyword'],
 	[65, 'lt'],
 	[66, 'gt'],
-	[67, 'let'],
-	[68, 'use'],
+	[67, 'let_keyword'],
+	[68, 'use_keyword'],
 	[69, 'colon_colon'],
-	[70, 'as'],
+	[70, 'as_keyword'],
 	[71, 'dot_dot_dot'],
 	[72, 'squote'],
 	[73, 'lt2'],
 	[74, 'amp'],
-	[75, 'dyn'],
+	[75, 'dyn_keyword'],
 	[76, 'mutable_specifier'],
 	[77, 'dash'],
 	[78, 'amp_amp'],
@@ -1248,50 +1248,50 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[97, 'caret_eq'],
 	[98, 'lt_lt_eq'],
 	[99, 'gt_gt_eq'],
-	[100, 'return'],
-	[101, 'yield'],
+	[100, 'return_keyword'],
+	[101, 'yield_keyword'],
 	[102, 'dot_dot'],
-	[103, 'if'],
-	[104, 'else'],
-	[105, 'match'],
-	[106, 'while'],
-	[107, 'loop'],
-	[108, 'in'],
-	[109, 'break'],
-	[110, 'continue'],
+	[103, 'if_keyword'],
+	[104, 'else_keyword'],
+	[105, 'match_keyword'],
+	[106, 'while_keyword'],
+	[107, 'loop_keyword'],
+	[108, 'in_keyword'],
+	[109, 'break_keyword'],
+	[110, 'continue_keyword'],
 	[111, 'dot'],
-	[112, 'await'],
-	[113, 'unsafe'],
-	[114, 'async'],
-	[115, 'gen'],
-	[116, 'try'],
-	[117, 'ref'],
+	[112, 'await_keyword'],
+	[113, 'unsafe_keyword'],
+	[114, 'async_keyword'],
+	[115, 'gen_keyword'],
+	[116, 'try_keyword'],
+	[117, 'ref_keyword'],
 	[118, 'at'],
 	[119, 'integer_literal'],
 	[120, 'dquote'],
 	[121, 'char_literal'],
 	[122, 'escape_sequence'],
-	[123, 'true'],
-	[124, 'false'],
+	[123, 'true_keyword'],
+	[124, 'false_keyword'],
 	[125, 'slash_slash'],
 	[126, 'bang2'],
 	[127, 'slash2'],
 	[128, 'slash_star'],
 	[129, 'star_slash'],
 	[130, 'shebang'],
-	[131, 'default'],
+	[131, 'default_keyword'],
 	[132, 'self'],
 	[133, 'super'],
 	[134, 'crate'],
 	[135, 'metavariable'],
-	[136, 'move'],
+	[136, 'move_keyword'],
 	[137, 'comma'],
 	[138, 'dash_gt'],
-	[139, '_'],
+	[139, '__keyword'],
 	[140, 'dot_dot_eq'],
-	[141, 'pub'],
+	[141, 'pub_keyword'],
 	[142, 'string_open'],
-	[143, 'raw'],
+	[143, 'raw_keyword'],
 	[144, '_line_comment_regular_dslash_token1'],
 	[145, '_line_comment_regular_dslash_token2'],
 	[146, 'line_comment_content'],
@@ -1630,36 +1630,36 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Star;
 		case 'qmark':
 			return TSKindId.Qmark;
-		case 'anon_block':
-			return TSKindId.AnonBlock;
-		case 'expr':
-			return TSKindId.Expr;
-		case 'expr_2021':
-			return TSKindId.Expr2021;
-		case 'ident':
-			return TSKindId.Ident;
-		case 'item':
-			return TSKindId.Item;
-		case 'anon_lifetime':
-			return TSKindId.AnonLifetime;
-		case 'literal':
-			return TSKindId.Literal;
-		case 'meta':
-			return TSKindId.Meta;
-		case 'pat':
-			return TSKindId.Pat;
-		case 'pat_param':
-			return TSKindId.PatParam;
-		case 'path':
-			return TSKindId.Path;
-		case 'stmt':
-			return TSKindId.Stmt;
-		case 'tt':
-			return TSKindId.Tt;
-		case 'ty':
-			return TSKindId.Ty;
-		case 'vis':
-			return TSKindId.Vis;
+		case 'block_keyword':
+			return TSKindId.BlockKeyword;
+		case 'expr_keyword':
+			return TSKindId.ExprKeyword;
+		case 'expr_2021_keyword':
+			return TSKindId.Expr2021Keyword;
+		case 'ident_keyword':
+			return TSKindId.IdentKeyword;
+		case 'item_keyword':
+			return TSKindId.ItemKeyword;
+		case 'lifetime_keyword':
+			return TSKindId.LifetimeKeyword;
+		case 'literal_keyword':
+			return TSKindId.LiteralKeyword;
+		case 'meta_keyword':
+			return TSKindId.MetaKeyword;
+		case 'pat_keyword':
+			return TSKindId.PatKeyword;
+		case 'pat_param_keyword':
+			return TSKindId.PatParamKeyword;
+		case 'path_keyword':
+			return TSKindId.PathKeyword;
+		case 'stmt_keyword':
+			return TSKindId.StmtKeyword;
+		case 'tt_keyword':
+			return TSKindId.TtKeyword;
+		case 'ty_keyword':
+			return TSKindId.TyKeyword;
+		case 'vis_keyword':
+			return TSKindId.VisKeyword;
 		case 'u8':
 			return TSKindId.U8;
 		case 'i8':
@@ -1702,50 +1702,50 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Rbrack;
 		case 'bang':
 			return TSKindId.Bang;
-		case 'mod':
-			return TSKindId.Mod;
+		case 'mod_keyword':
+			return TSKindId.ModKeyword;
 		case 'lbrace':
 			return TSKindId.Lbrace;
 		case 'rbrace':
 			return TSKindId.Rbrace;
-		case 'struct':
-			return TSKindId.Struct;
-		case 'union':
-			return TSKindId.Union;
-		case 'enum':
-			return TSKindId.Enum;
-		case 'extern':
-			return TSKindId.Extern;
-		case 'const':
-			return TSKindId.Const;
-		case 'static':
-			return TSKindId.Static;
-		case 'type':
-			return TSKindId.Type;
+		case 'struct_keyword':
+			return TSKindId.StructKeyword;
+		case 'union_keyword':
+			return TSKindId.UnionKeyword;
+		case 'enum_keyword':
+			return TSKindId.EnumKeyword;
+		case 'extern_keyword':
+			return TSKindId.ExternKeyword;
+		case 'const_keyword':
+			return TSKindId.ConstKeyword;
+		case 'static_keyword':
+			return TSKindId.StaticKeyword;
+		case 'type_keyword':
+			return TSKindId.TypeKeyword;
 		case 'eq':
 			return TSKindId.Eq;
-		case 'fn':
-			return TSKindId.Fn;
-		case 'where':
-			return TSKindId.Where;
-		case 'impl':
-			return TSKindId.Impl;
-		case 'trait':
-			return TSKindId.Trait;
-		case 'for':
-			return TSKindId.For;
+		case 'fn_keyword':
+			return TSKindId.FnKeyword;
+		case 'where_keyword':
+			return TSKindId.WhereKeyword;
+		case 'impl_keyword':
+			return TSKindId.ImplKeyword;
+		case 'trait_keyword':
+			return TSKindId.TraitKeyword;
+		case 'for_keyword':
+			return TSKindId.ForKeyword;
 		case 'lt':
 			return TSKindId.Lt;
 		case 'gt':
 			return TSKindId.Gt;
-		case 'let':
-			return TSKindId.Let;
-		case 'use':
-			return TSKindId.Use;
+		case 'let_keyword':
+			return TSKindId.LetKeyword;
+		case 'use_keyword':
+			return TSKindId.UseKeyword;
 		case 'colon_colon':
 			return TSKindId.ColonColon;
-		case 'as':
-			return TSKindId.As;
+		case 'as_keyword':
+			return TSKindId.AsKeyword;
 		case 'dot_dot_dot':
 			return TSKindId.DotDotDot;
 		case 'squote':
@@ -1754,8 +1754,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lt2;
 		case 'amp':
 			return TSKindId.Amp;
-		case 'dyn':
-			return TSKindId.Dyn;
+		case 'dyn_keyword':
+			return TSKindId.DynKeyword;
 		case 'mutable_specifier':
 			return TSKindId.MutableSpecifier;
 		case 'dash':
@@ -1804,42 +1804,42 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtLtEq;
 		case 'gt_gt_eq':
 			return TSKindId.GtGtEq;
-		case 'return':
-			return TSKindId.Return;
-		case 'yield':
-			return TSKindId.Yield;
+		case 'return_keyword':
+			return TSKindId.ReturnKeyword;
+		case 'yield_keyword':
+			return TSKindId.YieldKeyword;
 		case 'dot_dot':
 			return TSKindId.DotDot;
-		case 'if':
-			return TSKindId.If;
-		case 'else':
-			return TSKindId.Else;
-		case 'match':
-			return TSKindId.Match;
-		case 'while':
-			return TSKindId.While;
-		case 'loop':
-			return TSKindId.Loop;
-		case 'in':
-			return TSKindId.In;
-		case 'break':
-			return TSKindId.Break;
-		case 'continue':
-			return TSKindId.Continue;
+		case 'if_keyword':
+			return TSKindId.IfKeyword;
+		case 'else_keyword':
+			return TSKindId.ElseKeyword;
+		case 'match_keyword':
+			return TSKindId.MatchKeyword;
+		case 'while_keyword':
+			return TSKindId.WhileKeyword;
+		case 'loop_keyword':
+			return TSKindId.LoopKeyword;
+		case 'in_keyword':
+			return TSKindId.InKeyword;
+		case 'break_keyword':
+			return TSKindId.BreakKeyword;
+		case 'continue_keyword':
+			return TSKindId.ContinueKeyword;
 		case 'dot':
 			return TSKindId.Dot;
-		case 'await':
-			return TSKindId.Await;
-		case 'unsafe':
-			return TSKindId.Unsafe;
-		case 'async':
-			return TSKindId.Async;
-		case 'gen':
-			return TSKindId.Gen;
-		case 'try':
-			return TSKindId.Try;
-		case 'ref':
-			return TSKindId.Ref;
+		case 'await_keyword':
+			return TSKindId.AwaitKeyword;
+		case 'unsafe_keyword':
+			return TSKindId.UnsafeKeyword;
+		case 'async_keyword':
+			return TSKindId.AsyncKeyword;
+		case 'gen_keyword':
+			return TSKindId.GenKeyword;
+		case 'try_keyword':
+			return TSKindId.TryKeyword;
+		case 'ref_keyword':
+			return TSKindId.RefKeyword;
 		case 'at':
 			return TSKindId.At;
 		case 'integer_literal':
@@ -1850,10 +1850,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CharLiteral;
 		case 'escape_sequence':
 			return TSKindId.EscapeSequence;
-		case 'true':
-			return TSKindId.True;
-		case 'false':
-			return TSKindId.False;
+		case 'true_keyword':
+			return TSKindId.TrueKeyword;
+		case 'false_keyword':
+			return TSKindId.FalseKeyword;
 		case 'slash_slash':
 			return TSKindId.SlashSlash;
 		case 'bang2':
@@ -1866,8 +1866,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StarSlash;
 		case 'shebang':
 			return TSKindId.Shebang;
-		case 'default':
-			return TSKindId.Default;
+		case 'default_keyword':
+			return TSKindId.DefaultKeyword;
 		case 'self':
 			return TSKindId.Self;
 		case 'super':
@@ -1876,22 +1876,22 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Crate;
 		case 'metavariable':
 			return TSKindId.Metavariable;
-		case 'move':
-			return TSKindId.Move;
+		case 'move_keyword':
+			return TSKindId.MoveKeyword;
 		case 'comma':
 			return TSKindId.Comma;
 		case 'dash_gt':
 			return TSKindId.DashGt;
-		case '_':
-			return TSKindId.Anonymous;
+		case '__keyword':
+			return TSKindId.Keyword;
 		case 'dot_dot_eq':
 			return TSKindId.DotDotEq;
-		case 'pub':
-			return TSKindId.Pub;
+		case 'pub_keyword':
+			return TSKindId.PubKeyword;
 		case '_string_literal_open':
 			return TSKindId.StringLiteralOpen;
-		case 'raw':
-			return TSKindId.Raw;
+		case 'raw_keyword':
+			return TSKindId.RawKeyword;
 		case '_line_comment_regular_dslash_token1':
 			return TSKindId._LineCommentRegularDslashToken1;
 		case '_line_comment_regular_dslash_token2':
@@ -2051,7 +2051,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'visibility_modifier':
 			return TSKindId.VisibilityModifier;
 		case '_type':
-			return TSKindId._Type;
+			return TSKindId.Type;
 		case 'bracketed_type':
 			return TSKindId.BracketedType;
 		case 'qualified_type':
@@ -2235,7 +2235,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'or_pattern':
 			return TSKindId.OrPattern;
 		case '_literal':
-			return TSKindId._Literal;
+			return TSKindId.Literal;
 		case '_literal_pattern':
 			return TSKindId.LiteralPattern;
 		case 'negative_literal':
@@ -2524,6 +2524,32 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Star;
 		case '?':
 			return TSKindId.Qmark;
+		case 'expr':
+			return TSKindId.ExprKeyword;
+		case 'expr_2021':
+			return TSKindId.Expr2021Keyword;
+		case 'ident':
+			return TSKindId.IdentKeyword;
+		case 'item':
+			return TSKindId.ItemKeyword;
+		case 'literal':
+			return TSKindId.LiteralKeyword;
+		case 'meta':
+			return TSKindId.MetaKeyword;
+		case 'pat':
+			return TSKindId.PatKeyword;
+		case 'pat_param':
+			return TSKindId.PatParamKeyword;
+		case 'path':
+			return TSKindId.PathKeyword;
+		case 'stmt':
+			return TSKindId.StmtKeyword;
+		case 'tt':
+			return TSKindId.TtKeyword;
+		case 'ty':
+			return TSKindId.TyKeyword;
+		case 'vis':
+			return TSKindId.VisKeyword;
 		case 'primitive_type':
 			return TSKindId.U8;
 		case '#':
@@ -2534,24 +2560,58 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Rbrack;
 		case '!':
 			return TSKindId.Bang;
+		case 'mod':
+			return TSKindId.ModKeyword;
 		case '{':
 			return TSKindId.Lbrace;
 		case '}':
 			return TSKindId.Rbrace;
+		case 'struct':
+			return TSKindId.StructKeyword;
+		case 'union':
+			return TSKindId.UnionKeyword;
+		case 'enum':
+			return TSKindId.EnumKeyword;
+		case 'extern':
+			return TSKindId.ExternKeyword;
+		case 'const':
+			return TSKindId.ConstKeyword;
+		case 'static':
+			return TSKindId.StaticKeyword;
+		case 'type':
+			return TSKindId.TypeKeyword;
 		case '=':
 			return TSKindId.Eq;
+		case 'fn':
+			return TSKindId.FnKeyword;
+		case 'where':
+			return TSKindId.WhereKeyword;
+		case 'impl':
+			return TSKindId.ImplKeyword;
+		case 'trait':
+			return TSKindId.TraitKeyword;
+		case 'for':
+			return TSKindId.ForKeyword;
 		case '<':
 			return TSKindId.Lt;
 		case '>':
 			return TSKindId.Gt;
+		case 'let':
+			return TSKindId.LetKeyword;
+		case 'use':
+			return TSKindId.UseKeyword;
 		case '::':
 			return TSKindId.ColonColon;
+		case 'as':
+			return TSKindId.AsKeyword;
 		case '...':
 			return TSKindId.DotDotDot;
 		case "'":
 			return TSKindId.Squote;
 		case '&':
 			return TSKindId.Amp;
+		case 'dyn':
+			return TSKindId.DynKeyword;
 		case '-':
 			return TSKindId.Dash;
 		case '&&':
@@ -2598,28 +2658,74 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtLtEq;
 		case '>>=':
 			return TSKindId.GtGtEq;
+		case 'return':
+			return TSKindId.ReturnKeyword;
+		case 'yield':
+			return TSKindId.YieldKeyword;
 		case '..':
 			return TSKindId.DotDot;
+		case 'if':
+			return TSKindId.IfKeyword;
+		case 'else':
+			return TSKindId.ElseKeyword;
+		case 'match':
+			return TSKindId.MatchKeyword;
+		case 'while':
+			return TSKindId.WhileKeyword;
+		case 'loop':
+			return TSKindId.LoopKeyword;
+		case 'in':
+			return TSKindId.InKeyword;
+		case 'break':
+			return TSKindId.BreakKeyword;
+		case 'continue':
+			return TSKindId.ContinueKeyword;
 		case '.':
 			return TSKindId.Dot;
+		case 'await':
+			return TSKindId.AwaitKeyword;
+		case 'unsafe':
+			return TSKindId.UnsafeKeyword;
+		case 'async':
+			return TSKindId.AsyncKeyword;
+		case 'gen':
+			return TSKindId.GenKeyword;
+		case 'try':
+			return TSKindId.TryKeyword;
+		case 'ref':
+			return TSKindId.RefKeyword;
 		case '@':
 			return TSKindId.At;
 		case '"':
 			return TSKindId.Dquote;
+		case 'true':
+			return TSKindId.TrueKeyword;
+		case 'false':
+			return TSKindId.FalseKeyword;
 		case '//':
 			return TSKindId.SlashSlash;
 		case '/*':
 			return TSKindId.SlashStar;
 		case '*/':
 			return TSKindId.StarSlash;
+		case 'default':
+			return TSKindId.DefaultKeyword;
+		case 'move':
+			return TSKindId.MoveKeyword;
 		case ',':
 			return TSKindId.Comma;
 		case '->':
 			return TSKindId.DashGt;
+		case '_':
+			return TSKindId.Keyword;
 		case '..=':
 			return TSKindId.DotDotEq;
+		case 'pub':
+			return TSKindId.PubKeyword;
 		case 'string_open':
 			return TSKindId.StringLiteralOpen;
+		case 'raw':
+			return TSKindId.RawKeyword;
 		case 'line_comment_content':
 			return TSKindId.LineCommentContent;
 		case 'raw_string_literal_start':
@@ -2883,7 +2989,7 @@ export const enum TokensKind {
 }
 
 export const enum _NonSpecialTokenKind {
-	_Literal = '_literal',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -2913,7 +3019,7 @@ export const enum UseClauseKind {
 	UseWildcard = 'use_wildcard'
 }
 
-export const enum _TypeKind {
+export const enum TypeKind {
 	AbstractType = 'abstract_type',
 	ReferenceType = 'reference_type',
 	Metavariable = 'metavariable',
@@ -2944,7 +3050,7 @@ export const enum ExpressionExceptRangeKind {
 	CallExpression = 'call_expression',
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
-	_Literal = '_literal',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -2992,7 +3098,7 @@ export const enum ExpressionKind {
 	CallExpression = 'call_expression',
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
-	_Literal = '_literal',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3067,7 +3173,7 @@ export const enum ConditionKind {
 	CallExpression = 'call_expression',
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
-	_Literal = '_literal',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3135,7 +3241,7 @@ export const enum PatternKind {
 	WildcardPattern = '_wildcard_pattern'
 }
 
-export const enum _LiteralKind {
+export const enum LiteralKind {
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3154,7 +3260,7 @@ export const enum LiteralPatternKind {
 	NegativeLiteral = 'negative_literal'
 }
 
-export const enum _PathKind {
+export const enum PathKind {
 	Self = 'self',
 	Identifier = 'identifier',
 	Metavariable = 'metavariable',
@@ -3173,7 +3279,7 @@ export const enum WhitespaceKind {
 }
 
 export const enum NonSpecialTokenKind {
-	_Literal = '_literal',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3286,21 +3392,21 @@ export interface TokenBindingPattern {
 			| 'tt'
 			| 'ty'
 			| 'vis',
-			| TSKindId.AnonBlock
-			| TSKindId.Expr
-			| TSKindId.Expr2021
-			| TSKindId.Ident
-			| TSKindId.Item
-			| TSKindId.AnonLifetime
-			| TSKindId.Literal
-			| TSKindId.Meta
-			| TSKindId.Pat
-			| TSKindId.PatParam
-			| TSKindId.Path
-			| TSKindId.Stmt
-			| TSKindId.Tt
-			| TSKindId.Ty
-			| TSKindId.Vis
+			| TSKindId.BlockKeyword
+			| TSKindId.ExprKeyword
+			| TSKindId.Expr2021Keyword
+			| TSKindId.IdentKeyword
+			| TSKindId.ItemKeyword
+			| TSKindId.LifetimeKeyword
+			| TSKindId.LiteralKeyword
+			| TSKindId.MetaKeyword
+			| TSKindId.PatKeyword
+			| TSKindId.PatParamKeyword
+			| TSKindId.PathKeyword
+			| TSKindId.StmtKeyword
+			| TSKindId.TtKeyword
+			| TSKindId.TyKeyword
+			| TSKindId.VisKeyword
 		>;
 	};
 	name(): Metavariable;
@@ -3417,8 +3523,8 @@ export interface TokenRepetitionPattern {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -3470,7 +3576,7 @@ export interface TokenRepetitionPattern {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -3485,34 +3591,34 @@ export interface TokenRepetitionPattern {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTreePattern
 			| TokenRepetitionPattern
@@ -3656,8 +3762,8 @@ export interface TokenRepetition {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -3709,7 +3815,7 @@ export interface TokenRepetition {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -3724,34 +3830,34 @@ export interface TokenRepetition {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTree
 			| TokenRepetition
@@ -3910,7 +4016,9 @@ export interface EnumVariant {
 	readonly _body?: FieldDeclarationList | OrderedFieldDeclarationList;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
-		readonly value?: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value?:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
@@ -3934,7 +4042,7 @@ export interface FieldDeclaration {
 	readonly $type: TSKindId.FieldDeclaration;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _name: Identifier;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -3975,14 +4083,14 @@ export interface FieldDeclaration {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface OrderedFieldDeclarationList {
@@ -4011,7 +4119,7 @@ export interface ConstItem {
 	readonly $type: TSKindId.ConstItem;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _name: Identifier;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
 		readonly type:
@@ -4053,15 +4161,17 @@ export interface ConstItem {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
-		readonly value?: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+			| Type;
+		readonly value?:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): Identifier;
-	type(): _Type;
+	type(): Type;
 	value(): Expression | undefined;
 }
 
@@ -4071,7 +4181,7 @@ export interface StaticItem {
 	readonly _ref_marker?: boolean;
 	readonly _mutable_specifier?: boolean;
 	readonly _name: Identifier;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
 		readonly ref_marker?: BooleanKeyword<'ref'>;
@@ -4115,8 +4225,10 @@ export interface StaticItem {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
-		readonly value?: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+			| Type;
+		readonly value?:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
@@ -4127,7 +4239,7 @@ export interface StaticItem {
 	refMarker(): boolean | undefined;
 	mutableSpecifier(): boolean | undefined;
 	name(): Identifier;
-	type(): _Type;
+	type(): Type;
 	value(): Expression | undefined;
 }
 
@@ -4137,7 +4249,7 @@ export interface TypeItem {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _where_clause?: WhereClause;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly _trailing_where_clause?: WhereClause;
 	readonly __inputHints__?: {
 		readonly type:
@@ -4179,7 +4291,7 @@ export interface TypeItem {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
@@ -4191,7 +4303,7 @@ export interface TypeItem {
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	whereClause(): WhereClause | undefined;
-	type(): _Type;
+	type(): Type;
 	trailingWhereClause(): WhereClause | undefined;
 }
 
@@ -4202,7 +4314,7 @@ export interface FunctionItem {
 	readonly _name: Identifier | Metavariable;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: Parameters;
-	readonly _return_type?: _Type;
+	readonly _return_type?: Type;
 	readonly _where_clause?: WhereClause;
 	readonly _body: Block;
 	readonly __inputHints__?: {
@@ -4245,7 +4357,7 @@ export interface FunctionItem {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
@@ -4259,7 +4371,7 @@ export interface FunctionItem {
 	name(): Identifier | Metavariable;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): Parameters;
-	returnType(): _Type | undefined;
+	returnType(): Type | undefined;
 	whereClause(): WhereClause | undefined;
 	body(): Block;
 }
@@ -4271,7 +4383,7 @@ export interface FunctionSignatureItem {
 	readonly _name: Identifier | Metavariable;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: Parameters;
-	readonly _return_type?: _Type;
+	readonly _return_type?: Type;
 	readonly _where_clause?: WhereClause;
 	readonly __inputHints__?: {
 		readonly return_type?:
@@ -4313,7 +4425,7 @@ export interface FunctionSignatureItem {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
@@ -4327,25 +4439,27 @@ export interface FunctionSignatureItem {
 	name(): Identifier | Metavariable;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): Parameters;
-	returnType(): _Type | undefined;
+	returnType(): Type | undefined;
 	whereClause(): WhereClause | undefined;
 }
 
 export interface FunctionModifiers {
 	readonly $type: TSKindId.FunctionModifiers;
 	readonly _modifier: NonEmptyArray<
-		TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | ExternModifier
+		TSKindId.AsyncKeyword | TSKindId.DefaultKeyword | TSKindId.ConstKeyword | TSKindId.UnsafeKeyword | ExternModifier
 	>;
 	readonly __inputHints__?: {
 		readonly modifier: NonEmptyArray<
 			| KindEnum<
 					'async' | 'default' | 'const' | 'unsafe',
-					TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe
+					TSKindId.AsyncKeyword | TSKindId.DefaultKeyword | TSKindId.ConstKeyword | TSKindId.UnsafeKeyword
 			  >
 			| ExternModifier
 		>;
 	};
-	modifiers(): NonEmptyArray<TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | ExternModifier>;
+	modifiers(): NonEmptyArray<
+		TSKindId.AsyncKeyword | TSKindId.DefaultKeyword | TSKindId.ConstKeyword | TSKindId.UnsafeKeyword | ExternModifier
+	>;
 }
 
 export interface WhereClause {
@@ -4436,7 +4550,7 @@ export interface WherePredicate {
 			| HigherRankedTraitBound;
 	};
 	readonly __looseHints__?: {
-		readonly bounds: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+		readonly bounds: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 	};
 	left():
 		| Lifetime
@@ -4473,7 +4587,7 @@ export interface ImplItem {
 	readonly _unsafe_marker?: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly _where_clause?: WhereClause;
 	readonly _content: ImplItemBody | TSKindId.ImplItemSemi;
 	readonly __inputHints__?: {
@@ -4517,7 +4631,7 @@ export interface ImplItem {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 		readonly content: KindEnum<';', TSKindId.ImplItemSemi | TSKindId.Semi> | ImplItemBody;
 	};
 	readonly __looseHints__?: {
@@ -4528,7 +4642,7 @@ export interface ImplItem {
 	unsafeMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
-	type(): _Type;
+	type(): Type;
 	whereClause(): WhereClause | undefined;
 	content(): ImplItemBody | TSKindId.ImplItemSemi;
 }
@@ -4549,7 +4663,7 @@ export interface TraitItem {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly unsafe_marker?: 'unsafe' | 'unsafe';
 		readonly type_parameters?: readonly AttributedTypeParameter[];
-		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly body: readonly DeclarationStatement[];
 	};
@@ -4570,7 +4684,7 @@ export interface AssociatedType {
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly AttributedTypeParameter[];
-		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	name(): Identifier;
@@ -4581,7 +4695,7 @@ export interface AssociatedType {
 
 export interface TraitBounds {
 	readonly $type: TSKindId.TraitBounds;
-	readonly _bounds: NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
+	readonly _bounds: NonEmptyArray<Type | Lifetime | HigherRankedTraitBound>;
 	readonly __inputHints__?: {
 		readonly bounds: NonEmptyArray<
 			| KindEnum<
@@ -4622,18 +4736,18 @@ export interface TraitBounds {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type
+			| Type
 			| Lifetime
 			| HigherRankedTraitBound
 		>;
 	};
-	bounds(): NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
+	bounds(): NonEmptyArray<Type | Lifetime | HigherRankedTraitBound>;
 }
 
 export interface HigherRankedTraitBound {
 	readonly $type: TSKindId.HigherRankedTraitBound;
 	readonly _type_parameters: TypeParameters;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -4674,18 +4788,18 @@ export interface HigherRankedTraitBound {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly type_parameters: readonly AttributedTypeParameter[];
 	};
 	typeParameters(): TypeParameters;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface RemovedTraitBound {
 	readonly $type: TSKindId.RemovedTraitBound;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -4726,9 +4840,9 @@ export interface RemovedTraitBound {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
-	type(): _Type;
+	type(): Type;
 }
 
 export interface TypeParameters {
@@ -4743,8 +4857,8 @@ export interface TypeParameters {
 export interface ConstParameter {
 	readonly $type: TSKindId.ConstParameter;
 	readonly _name: Identifier;
-	readonly _type: _Type;
-	readonly _value?: Block | Identifier | _Literal | NegativeLiteral;
+	readonly _type: Type;
+	readonly _value?: Block | Identifier | Literal | NegativeLiteral;
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -4785,24 +4899,24 @@ export interface ConstParameter {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 		readonly value?:
-			| KindEnum<'true' | 'false', TSKindId.True | TSKindId.False>
+			| KindEnum<'true' | 'false', TSKindId.TrueKeyword | TSKindId.FalseKeyword>
 			| Block
 			| Identifier
-			| _Literal
+			| Literal
 			| NegativeLiteral;
 	};
 	name(): Identifier;
-	type(): _Type;
-	value(): Block | Identifier | _Literal | NegativeLiteral | undefined;
+	type(): Type;
+	value(): Block | Identifier | Literal | NegativeLiteral | undefined;
 }
 
 export interface TypeParameter {
 	readonly $type: TSKindId.TypeParameter;
 	readonly _name: Identifier;
 	readonly _bounds?: TraitBounds;
-	readonly _default_type?: _Type;
+	readonly _default_type?: Type;
 	readonly __inputHints__?: {
 		readonly default_type?:
 			| KindEnum<
@@ -4843,14 +4957,14 @@ export interface TypeParameter {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 	};
 	name(): Identifier;
 	bounds(): TraitBounds | undefined;
-	defaultType(): _Type | undefined;
+	defaultType(): Type | undefined;
 }
 
 export interface LifetimeParameter {
@@ -4858,7 +4972,7 @@ export interface LifetimeParameter {
 	readonly _name: Lifetime;
 	readonly _bounds?: TraitBounds;
 	readonly __looseHints__?: {
-		readonly bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 	};
 	name(): Lifetime;
 	bounds(): TraitBounds | undefined;
@@ -4868,13 +4982,16 @@ export interface LetDeclaration {
 	readonly $type: TSKindId.LetDeclaration;
 	readonly _mutable_specifier?: boolean;
 	readonly _pattern: Pattern;
-	readonly _type?: _Type;
+	readonly _type?: Type;
 	readonly _value?: Expression;
 	readonly _alternative?: Block;
 	readonly __inputHints__?: {
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 		readonly type?:
 			| KindEnum<
@@ -4915,15 +5032,17 @@ export interface LetDeclaration {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
-		readonly value?: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+			| Type;
+		readonly value?:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	readonly __looseHints__?: {
 		readonly mutable_specifier?: 'mut' | 'mut';
 	};
 	mutableSpecifier(): boolean | undefined;
 	pattern(): Pattern;
-	type(): _Type | undefined;
+	type(): Type | undefined;
 	value(): Expression | undefined;
 	alternative(): Block | undefined;
 }
@@ -5080,7 +5199,10 @@ export interface VariadicParameter {
 	readonly __inputHints__?: {
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
 		readonly pattern?:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	readonly __looseHints__?: {
@@ -5094,13 +5216,13 @@ export interface Parameter {
 	readonly $type: TSKindId.Parameter;
 	readonly _mutable_specifier?: boolean;
 	readonly _name: Pattern | TSKindId.Self;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
 		readonly name:
 			| KindEnum<
 					'true' | 'false' | '..' | '_' | 'self',
-					TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous | TSKindId.Self
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword | TSKindId.Self
 			  >
 			| Pattern;
 		readonly type:
@@ -5142,14 +5264,14 @@ export interface Parameter {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly mutable_specifier?: 'mut' | 'mut';
 	};
 	mutableSpecifier(): boolean | undefined;
 	name(): Pattern | TSKindId.Self;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface ExternModifier {
@@ -5169,7 +5291,7 @@ export interface VisibilityModifier {
 
 export interface BracketedType {
 	readonly $type: TSKindId.BracketedType;
-	readonly _content: _Type | QualifiedType;
+	readonly _content: Type | QualifiedType;
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<
@@ -5210,16 +5332,16 @@ export interface BracketedType {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type
+			| Type
 			| QualifiedType;
 	};
-	content(): _Type | QualifiedType;
+	content(): Type | QualifiedType;
 }
 
 export interface QualifiedType {
 	readonly $type: TSKindId.QualifiedType;
-	readonly _type: _Type;
-	readonly _alias: _Type;
+	readonly _type: Type;
+	readonly _alias: Type;
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5260,7 +5382,7 @@ export interface QualifiedType {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 		readonly alias:
 			| KindEnum<
 					| '!'
@@ -5300,10 +5422,10 @@ export interface QualifiedType {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
-	type(): _Type;
-	alias(): _Type;
+	type(): Type;
+	alias(): Type;
 }
 
 export interface Lifetime {
@@ -5314,7 +5436,7 @@ export interface Lifetime {
 
 export interface ArrayType {
 	readonly $type: TSKindId.ArrayType;
-	readonly _element: _Type;
+	readonly _element: Type;
 	readonly _length?: Expression;
 	readonly __inputHints__?: {
 		readonly element:
@@ -5356,10 +5478,12 @@ export interface ArrayType {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
-		readonly length?: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+			| Type;
+		readonly length?:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
-	element(): _Type;
+	element(): Type;
 	length(): Expression | undefined;
 }
 
@@ -5377,7 +5501,7 @@ export interface FunctionType {
 	readonly _for_lifetimes?: ForLifetimes;
 	readonly _content: FunctionTypeTraitForm | FunctionTypeFnForm;
 	readonly _parameters: Parameters;
-	readonly _return_type?: _Type;
+	readonly _return_type?: Type;
 	readonly __inputHints__?: {
 		readonly return_type?:
 			| KindEnum<
@@ -5418,7 +5542,7 @@ export interface FunctionType {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly for_lifetimes?: readonly Lifetime[];
@@ -5427,14 +5551,14 @@ export interface FunctionType {
 	forLifetimes(): ForLifetimes | undefined;
 	content(): FunctionTypeTraitForm | FunctionTypeFnForm;
 	parameters(): Parameters;
-	returnType(): _Type | undefined;
+	returnType(): Type | undefined;
 }
 
 export interface TupleType {
 	readonly $type: TSKindId.TupleType;
 	readonly _tuple_type_elements: TupleTypeElements;
 	readonly __looseHints__?: {
-		readonly tuple_type_elements: readonly _Type[];
+		readonly tuple_type_elements: readonly Type[];
 	};
 	tupleTypeElements(): TupleTypeElements;
 }
@@ -5474,8 +5598,8 @@ export interface GenericTypeWithTurbofish {
 
 export interface BoundedType {
 	readonly $type: TSKindId.BoundedType;
-	readonly _left: Lifetime | _Type | UseBounds;
-	readonly _right: Lifetime | _Type | UseBounds;
+	readonly _left: Lifetime | Type | UseBounds;
+	readonly _right: Lifetime | Type | UseBounds;
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<
@@ -5517,7 +5641,7 @@ export interface BoundedType {
 					| TSKindId.Char
 			  >
 			| Lifetime
-			| _Type
+			| Type
 			| UseBounds;
 		readonly right:
 			| KindEnum<
@@ -5559,11 +5683,11 @@ export interface BoundedType {
 					| TSKindId.Char
 			  >
 			| Lifetime
-			| _Type
+			| Type
 			| UseBounds;
 	};
-	left(): Lifetime | _Type | UseBounds;
-	right(): Lifetime | _Type | UseBounds;
+	left(): Lifetime | Type | UseBounds;
+	right(): Lifetime | Type | UseBounds;
 }
 
 export interface UseBounds {
@@ -5588,7 +5712,7 @@ export interface TypeBinding {
 	readonly $type: TSKindId.TypeBinding;
 	readonly _name: Identifier;
 	readonly _type_arguments?: TypeArguments;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5629,21 +5753,21 @@ export interface TypeBinding {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly TypeArgument[];
 	};
 	name(): Identifier;
 	typeArguments(): TypeArguments | undefined;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface ReferenceType {
 	readonly $type: TSKindId.ReferenceType;
 	readonly _lifetime?: Lifetime;
 	readonly _mutable_specifier?: boolean;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
 		readonly type:
@@ -5685,22 +5809,25 @@ export interface ReferenceType {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly mutable_specifier?: 'mut' | 'mut';
 	};
 	lifetime(): Lifetime | undefined;
 	mutableSpecifier(): boolean | undefined;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface PointerType {
 	readonly $type: TSKindId.PointerType;
 	readonly _content: number;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'const' | 'mut', TSKindId.PointerTypeConst | TSKindId.MutableSpecifier | TSKindId.Const>;
+		readonly content: KindEnum<
+			'const' | 'mut',
+			TSKindId.PointerTypeConst | TSKindId.MutableSpecifier | TSKindId.ConstKeyword
+		>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -5740,10 +5867,10 @@ export interface PointerType {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	content(): number;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface AbstractType {
@@ -5913,7 +6040,9 @@ export interface UnaryExpression {
 	readonly _operand: Expression;
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'-' | '*' | '!', TSKindId.Dash | TSKindId.Star | TSKindId.Bang>;
-		readonly operand: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly operand:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	operator(): number;
 	operand(): Expression;
@@ -5923,7 +6052,9 @@ export interface TryExpression {
 	readonly $type: TSKindId.TryExpression;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	value(): Expression;
 }
@@ -5936,7 +6067,9 @@ export interface ReferenceExpression {
 		readonly content?:
 			| KindEnum<'raw const' | 'mut', TSKindId.ReferenceExpressionRawConst | TSKindId.MutableSpecifier>
 			| ReferenceExpressionRawMut;
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	content(): TSKindId.ReferenceExpressionRawConst | ReferenceExpressionRawMut | TSKindId.MutableSpecifier | undefined;
 	value(): Expression;
@@ -5948,7 +6081,9 @@ export interface BinaryExpression {
 	readonly _operator: number;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
-		readonly left: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly left:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 		readonly operator: KindEnum<
 			'&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%',
 			| TSKindId.AmpAmp
@@ -5970,7 +6105,9 @@ export interface BinaryExpression {
 			| TSKindId.Slash
 			| TSKindId.Percent
 		>;
-		readonly right: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly right:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	left(): Expression;
 	operator(): number;
@@ -5982,8 +6119,12 @@ export interface AssignmentExpression {
 	readonly _left: Expression;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
-		readonly left: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
-		readonly right: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly left:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
+		readonly right:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	left(): Expression;
 	right(): Expression;
@@ -5995,7 +6136,9 @@ export interface CompoundAssignmentExpr {
 	readonly _operator: number;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
-		readonly left: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly left:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 		readonly operator: KindEnum<
 			'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=',
 			| TSKindId.PlusEq
@@ -6009,7 +6152,9 @@ export interface CompoundAssignmentExpr {
 			| TSKindId.LtLtEq
 			| TSKindId.GtGtEq
 		>;
-		readonly right: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly right:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	left(): Expression;
 	operator(): number;
@@ -6019,9 +6164,11 @@ export interface CompoundAssignmentExpr {
 export interface TypeCastExpression {
 	readonly $type: TSKindId.TypeCastExpression;
 	readonly _value: Expression;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -6061,10 +6208,10 @@ export interface TypeCastExpression {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	value(): Expression;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface ReturnExpression {
@@ -6072,7 +6219,7 @@ export interface ReturnExpression {
 	readonly _expression?: Expression;
 	readonly __inputHints__?: {
 		readonly expression?:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	expression(): Expression | undefined;
@@ -6083,7 +6230,7 @@ export interface YieldExpression {
 	readonly _expression?: Expression;
 	readonly __inputHints__?: {
 		readonly expression?:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	expression(): Expression | undefined;
@@ -6102,7 +6249,7 @@ export interface CallExpression {
 		| CallExpression
 		| ReturnExpression
 		| YieldExpression
-		| _Literal
+		| Literal
 		| Identifier
 		| TSKindId.Self
 		| ScopedIdentifier
@@ -6136,7 +6283,7 @@ export interface CallExpression {
 		readonly function:
 			| KindEnum<
 					'true' | 'false' | 'self' | '( )',
-					TSKindId.True | TSKindId.False | TSKindId.Self | TSKindId.UnitExpression
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.UnitExpression
 			  >
 			| UnaryExpression
 			| ReferenceExpression
@@ -6148,7 +6295,7 @@ export interface CallExpression {
 			| CallExpression
 			| ReturnExpression
 			| YieldExpression
-			| _Literal
+			| Literal
 			| Identifier
 			| ScopedIdentifier
 			| GenericFunction
@@ -6190,7 +6337,7 @@ export interface CallExpression {
 		| CallExpression
 		| ReturnExpression
 		| YieldExpression
-		| _Literal
+		| Literal
 		| Identifier
 		| TSKindId.Self
 		| ScopedIdentifier
@@ -6242,7 +6389,7 @@ export interface ParenthesizedExpression {
 	readonly _expression: Expression;
 	readonly __inputHints__?: {
 		readonly expression:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	expression(): Expression;
@@ -6293,7 +6440,9 @@ export interface FieldInitializer {
 	readonly _field: Identifier | IntegerLiteral;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	attributeItems(): readonly AttributeItem[];
 	field(): Identifier | IntegerLiteral;
@@ -6304,7 +6453,9 @@ export interface BaseFieldInitializer {
 	readonly $type: TSKindId.BaseFieldInitializer;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	value(): Expression;
 }
@@ -6316,7 +6467,7 @@ export interface IfExpression {
 	readonly _alternative?: ElseClause;
 	readonly __inputHints__?: {
 		readonly condition:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression
 			| LetCondition
 			| LetChain;
@@ -6335,9 +6486,14 @@ export interface LetCondition {
 	readonly _value: Expression;
 	readonly __inputHints__?: {
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	pattern(): Pattern;
 	value(): Expression;
@@ -6349,12 +6505,12 @@ export interface LetChain {
 	readonly _right?: readonly (LetCondition | Expression)[];
 	readonly __inputHints__?: {
 		readonly left?:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| LetChain
 			| LetCondition
 			| Expression;
 		readonly right?: readonly (
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| LetCondition
 			| Expression
 		)[];
@@ -6374,7 +6530,9 @@ export interface MatchExpression {
 	readonly _value: Expression;
 	readonly _body: MatchBlock;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	readonly __looseHints__?: {
 		readonly body: readonly MatchArm[];
@@ -6430,7 +6588,9 @@ export interface LastMatchArm {
 	readonly _value: Expression;
 	readonly _comma?: boolean;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 		readonly comma?: BooleanKeyword<','>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
@@ -6445,10 +6605,13 @@ export interface MatchPattern {
 	readonly _condition?: Expression | LetCondition | LetChain;
 	readonly __inputHints__?: {
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 		readonly condition?:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression
 			| LetCondition
 			| LetChain;
@@ -6464,7 +6627,7 @@ export interface WhileExpression {
 	readonly _body: Block;
 	readonly __inputHints__?: {
 		readonly condition:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression
 			| LetCondition
 			| LetChain;
@@ -6490,9 +6653,14 @@ export interface ForExpression {
 	readonly _body: Block;
 	readonly __inputHints__?: {
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	label(): Label | undefined;
 	pattern(): Pattern;
@@ -6536,7 +6704,10 @@ export interface ClosureParameters {
 	readonly _parameters?: readonly (Pattern | Parameter)[];
 	readonly __inputHints__?: {
 		readonly parameters?: readonly (
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern
 			| Parameter
 		)[];
@@ -6556,7 +6727,7 @@ export interface BreakExpression {
 	readonly _expression?: Expression;
 	readonly __inputHints__?: {
 		readonly expression?:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	label(): Label | undefined;
@@ -6574,8 +6745,12 @@ export interface IndexExpression {
 	readonly _object: Expression;
 	readonly _index: Expression;
 	readonly __inputHints__?: {
-		readonly object: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
-		readonly index: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly object:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
+		readonly index:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	object(): Expression;
 	index(): Expression;
@@ -6586,7 +6761,7 @@ export interface AwaitExpression {
 	readonly _expression: Expression;
 	readonly __inputHints__?: {
 		readonly expression:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	expression(): Expression;
@@ -6597,7 +6772,9 @@ export interface FieldExpression {
 	readonly _value: Expression;
 	readonly _field: Identifier | IntegerLiteral;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	value(): Expression;
 	field(): Identifier | IntegerLiteral;
@@ -6651,7 +6828,7 @@ export interface Block {
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | ExpressionStatement | DeclarationStatement)[];
 		readonly trailing_expression?:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	label(): Label | undefined;
@@ -6733,7 +6910,10 @@ export interface MutPattern {
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	pattern(): Pattern;
@@ -6750,7 +6930,10 @@ export interface RefPattern {
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	pattern(): Pattern;
@@ -6762,7 +6945,10 @@ export interface CapturedPattern {
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	name(): Identifier;
@@ -6776,7 +6962,10 @@ export interface ReferencePattern {
 	readonly __inputHints__?: {
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	readonly __looseHints__?: {
@@ -6856,7 +7045,7 @@ export interface OrderedFieldDeclarationListElements {
 	readonly $type: TSKindId.OrderedFieldDeclarationListElements;
 	readonly _element: NonEmptyArray<AttributedOrderedField>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.AttributedOrderedField | T._Type>;
+		readonly element: NonEmptyArray<T.AttributedOrderedField | T.Type>;
 	};
 	elements(): NonEmptyArray<AttributedOrderedField>;
 }
@@ -6911,7 +7100,7 @@ export interface ParametersElements {
 	readonly _element: NonEmptyArray<AttributedParameter>;
 	readonly __inputHints__?: {
 		readonly element: NonEmptyArray<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 		>;
 	};
 	elements(): NonEmptyArray<AttributedParameter>;
@@ -6933,7 +7122,7 @@ export interface TypeArgumentsElements {
 	readonly $type: TSKindId.TypeArgumentsElements;
 	readonly _element: NonEmptyArray<TypeArgument>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>;
+		readonly element: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>;
 	};
 	elements(): NonEmptyArray<TypeArgument>;
 }
@@ -6984,8 +7173,8 @@ export interface VisibilityModifierGroup {
 
 export interface TupleTypeElements {
 	readonly $type: TSKindId.TupleTypeElements;
-	readonly _type: NonEmptyArray<_Type>;
-	types(): NonEmptyArray<_Type>;
+	readonly _type: NonEmptyArray<Type>;
+	types(): NonEmptyArray<Type>;
 }
 
 export interface TupleExpressionElements {
@@ -7025,8 +7214,12 @@ export interface ArrayExpressionSemi {
 	readonly _element: Expression;
 	readonly _length: Expression;
 	readonly __inputHints__?: {
-		readonly element: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
-		readonly length: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly element:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
+		readonly length:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	attributes(): readonly AttributeItem[];
 	element(): Expression;
@@ -7049,7 +7242,9 @@ export interface AttributeInput {
 	readonly _value?: Expression;
 	readonly _arguments?: DelimTokenTree;
 	readonly __inputHints__?: {
-		readonly value?: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value?:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	readonly __looseHints__?: {
 		readonly arguments?: readonly (DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace)[];
@@ -7060,7 +7255,7 @@ export interface AttributeInput {
 
 export interface ClosureExpressionBlock {
 	readonly $type: TSKindId.ClosureExpressionBlock;
-	readonly _return_type?: _Type;
+	readonly _return_type?: Type;
 	readonly _body: Block;
 	readonly __inputHints__?: {
 		readonly return_type?:
@@ -7102,21 +7297,24 @@ export interface ClosureExpressionBlock {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
-	returnType(): _Type | undefined;
+	returnType(): Type | undefined;
 	body(): Block;
 }
 
 export interface ClosureExpressionExpr {
 	readonly $type: TSKindId.ClosureExpressionExpr;
-	readonly _body: Expression | TSKindId.Anonymous;
+	readonly _body: Expression | TSKindId.Keyword;
 	readonly __inputHints__?: {
 		readonly body:
-			| KindEnum<'true' | 'false' | 'self' | '_', TSKindId.True | TSKindId.False | TSKindId.Self | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | 'self' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Keyword
+			  >
 			| Expression;
 	};
-	body(): Expression | TSKindId.Anonymous;
+	body(): Expression | TSKindId.Keyword;
 }
 
 export interface VisibilityModifierPub {
@@ -7167,10 +7365,16 @@ export interface OrPatternBinary {
 	readonly _right: Pattern;
 	readonly __inputHints__?: {
 		readonly left:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 		readonly right:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	left(): Pattern;
@@ -7182,7 +7386,10 @@ export interface OrPatternPrefix {
 	readonly _right: Pattern;
 	readonly __inputHints__?: {
 		readonly right:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	right(): Pattern;
@@ -7194,9 +7401,13 @@ export interface RangeExpressionBinary {
 	readonly _operator: number;
 	readonly _end: Expression;
 	readonly __inputHints__?: {
-		readonly start: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly start:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 		readonly operator: KindEnum<'..' | '...' | '..=', TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq>;
-		readonly end: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly end:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	start(): Expression;
 	operator(): number;
@@ -7207,7 +7418,9 @@ export interface RangeExpressionPostfix {
 	readonly $type: TSKindId.RangeExpressionPostfix;
 	readonly _start: Expression;
 	readonly __inputHints__?: {
-		readonly start: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly start:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	start(): Expression;
 }
@@ -7216,7 +7429,9 @@ export interface RangeExpressionPrefix {
 	readonly $type: TSKindId.RangeExpressionPrefix;
 	readonly _end: Expression;
 	readonly __inputHints__?: {
-		readonly end: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly end:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	end(): Expression;
 }
@@ -7226,7 +7441,7 @@ export interface ExpressionStatementWithSemi {
 	readonly _expression: Expression;
 	readonly __inputHints__?: {
 		readonly expression:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	expression(): Expression;
@@ -7236,7 +7451,9 @@ export interface MatchArmWithComma {
 	readonly $type: TSKindId.MatchArmWithComma;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
-		readonly value: KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self> | Expression;
+		readonly value:
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
+			| Expression;
 	};
 	value(): Expression;
 }
@@ -7373,8 +7590,8 @@ export interface TokenTreePatternParen {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -7426,7 +7643,7 @@ export interface TokenTreePatternParen {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -7441,34 +7658,34 @@ export interface TokenTreePatternParen {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTreePattern
 			| TokenRepetitionPattern
@@ -7594,8 +7811,8 @@ export interface TokenTreePatternBracket {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -7647,7 +7864,7 @@ export interface TokenTreePatternBracket {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -7662,34 +7879,34 @@ export interface TokenTreePatternBracket {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTreePattern
 			| TokenRepetitionPattern
@@ -7815,8 +8032,8 @@ export interface TokenTreePatternBrace {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -7868,7 +8085,7 @@ export interface TokenTreePatternBrace {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -7883,34 +8100,34 @@ export interface TokenTreePatternBrace {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTreePattern
 			| TokenRepetitionPattern
@@ -8030,8 +8247,8 @@ export interface TokenTreeParen {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -8083,7 +8300,7 @@ export interface TokenTreeParen {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8098,34 +8315,34 @@ export interface TokenTreeParen {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTree
 			| TokenRepetition
@@ -8238,8 +8455,8 @@ export interface TokenTreeBracket {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -8291,7 +8508,7 @@ export interface TokenTreeBracket {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8306,34 +8523,34 @@ export interface TokenTreeBracket {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTree
 			| TokenRepetition
@@ -8446,8 +8663,8 @@ export interface TokenTreeBrace {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -8499,7 +8716,7 @@ export interface TokenTreeBrace {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8514,34 +8731,34 @@ export interface TokenTreeBrace {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| TokenTree
 			| TokenRepetition
@@ -8654,8 +8871,8 @@ export interface DelimTokenTreeParen {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -8707,7 +8924,7 @@ export interface DelimTokenTreeParen {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8722,34 +8939,34 @@ export interface DelimTokenTreeParen {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -8860,8 +9077,8 @@ export interface DelimTokenTreeBracket {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -8913,7 +9130,7 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -8928,34 +9145,34 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9066,8 +9283,8 @@ export interface DelimTokenTreeBrace {
 					| 'use'
 					| 'where'
 					| 'while',
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 					| TSKindId.Self
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -9119,7 +9336,7 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.GtEq
 					| TSKindId.LtEq
 					| TSKindId.At
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Dot
 					| TSKindId.DotDot
 					| TSKindId.DotDotDot
@@ -9134,34 +9351,34 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.Qmark
 					| TSKindId.Dollar
 					| TSKindId.Squote
-					| TSKindId.As
-					| TSKindId.Async
-					| TSKindId.Await
-					| TSKindId.Break
-					| TSKindId.Const
-					| TSKindId.Continue
-					| TSKindId.Default
-					| TSKindId.Enum
-					| TSKindId.Fn
-					| TSKindId.For
-					| TSKindId.Gen
-					| TSKindId.If
-					| TSKindId.Impl
-					| TSKindId.Let
-					| TSKindId.Loop
-					| TSKindId.Match
-					| TSKindId.Mod
-					| TSKindId.Pub
-					| TSKindId.Return
-					| TSKindId.Static
-					| TSKindId.Struct
-					| TSKindId.Trait
-					| TSKindId.Type
-					| TSKindId.Union
-					| TSKindId.Unsafe
-					| TSKindId.Use
-					| TSKindId.Where
-					| TSKindId.While
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9176,7 +9393,10 @@ export interface FieldPatternNamed {
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
 		readonly pattern:
-			| KindEnum<'true' | 'false' | '..' | '_', TSKindId.True | TSKindId.False | TSKindId.DotDot | TSKindId.Anonymous>
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Keyword
+			  >
 			| Pattern;
 	};
 	name(): Identifier;
@@ -9226,7 +9446,7 @@ export interface RangePatternPrefix {
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.True | TSKindId.False | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
 			  >
 			| LiteralPattern
 			| Identifier
@@ -9260,7 +9480,7 @@ export interface RangePatternWithLeftWithRight {
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.True | TSKindId.False | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
 			  >
 			| LiteralPattern
 			| Identifier
@@ -9293,7 +9513,7 @@ export interface RangePatternWithLeft {
 		readonly left:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.True | TSKindId.False | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
 			  >
 			| LiteralPattern
 			| Identifier
@@ -9357,7 +9577,7 @@ export interface AttributedEnumVariant {
 export interface AttributedParameter {
 	readonly $type: TSKindId.AttributedParameter;
 	readonly _attribute_item?: AttributeItem;
-	readonly _content: Parameter | SelfParameter | VariadicParameter | TSKindId.Anonymous | _Type;
+	readonly _content: Parameter | SelfParameter | VariadicParameter | TSKindId.Keyword | Type;
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<
@@ -9380,7 +9600,7 @@ export interface AttributedParameter {
 					| 'bool'
 					| 'str'
 					| 'char',
-					| TSKindId.Anonymous
+					| TSKindId.Keyword
 					| TSKindId.Bang
 					| TSKindId.U8
 					| TSKindId.I8
@@ -9403,13 +9623,13 @@ export interface AttributedParameter {
 			| Parameter
 			| SelfParameter
 			| VariadicParameter
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly attribute_item?: readonly ('self' | Identifier | Metavariable | 'super' | 'crate' | ScopedIdentifier)[];
 	};
 	attributeItem(): AttributeItem | undefined;
-	content(): Parameter | SelfParameter | VariadicParameter | TSKindId.Anonymous | _Type;
+	content(): Parameter | SelfParameter | VariadicParameter | TSKindId.Keyword | Type;
 }
 
 export interface AttributedTypeParameter {
@@ -9426,7 +9646,7 @@ export interface AttributedArgument {
 	readonly _expression: Expression;
 	readonly __inputHints__?: {
 		readonly expression:
-			| KindEnum<'true' | 'false' | 'self', TSKindId.True | TSKindId.False | TSKindId.Self>
+			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	attributeItems(): readonly AttributeItem[];
@@ -9437,7 +9657,7 @@ export interface AttributedOrderedField {
 	readonly $type: TSKindId.AttributedOrderedField;
 	readonly _attribute_item?: readonly AttributeItem[];
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _type: _Type;
+	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -9478,19 +9698,19 @@ export interface AttributedOrderedField {
 					| TSKindId.Str
 					| TSKindId.Char
 			  >
-			| _Type;
+			| Type;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	attributeItems(): readonly AttributeItem[];
 	visibilityModifier(): VisibilityModifier | undefined;
-	type(): _Type;
+	type(): Type;
 }
 
 export interface TypeArgument {
 	readonly $type: TSKindId.TypeArgument;
-	readonly _content: _Type | TypeBinding | Lifetime | _Literal | Block;
+	readonly _content: Type | TypeBinding | Lifetime | Literal | Block;
 	readonly _trait_bounds?: TraitBounds;
 	readonly __inputHints__?: {
 		readonly content:
@@ -9533,19 +9753,19 @@ export interface TypeArgument {
 					| TSKindId.Bool
 					| TSKindId.Str
 					| TSKindId.Char
-					| TSKindId.True
-					| TSKindId.False
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
 			  >
-			| _Type
+			| Type
 			| TypeBinding
 			| Lifetime
-			| _Literal
+			| Literal
 			| Block;
 	};
 	readonly __looseHints__?: {
-		readonly trait_bounds?: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+		readonly trait_bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 	};
-	content(): _Type | TypeBinding | Lifetime | _Literal | Block;
+	content(): Type | TypeBinding | Lifetime | Literal | Block;
 	traitBounds(): TraitBounds | undefined;
 }
 
@@ -9560,21 +9780,21 @@ export interface MatchBlockArms {
 // Leaf node types
 export type EmptyStatement = TSKindId.EmptyStatement;
 export type FragmentSpecifier =
-	| TSKindId.AnonBlock
-	| TSKindId.Expr
-	| TSKindId.Expr2021
-	| TSKindId.Ident
-	| TSKindId.Item
-	| TSKindId.AnonLifetime
-	| TSKindId.Literal
-	| TSKindId.Meta
-	| TSKindId.Pat
-	| TSKindId.PatParam
-	| TSKindId.Path
-	| TSKindId.Stmt
-	| TSKindId.Tt
-	| TSKindId.Ty
-	| TSKindId.Vis;
+	| TSKindId.BlockKeyword
+	| TSKindId.ExprKeyword
+	| TSKindId.Expr2021Keyword
+	| TSKindId.IdentKeyword
+	| TSKindId.ItemKeyword
+	| TSKindId.LifetimeKeyword
+	| TSKindId.LiteralKeyword
+	| TSKindId.MetaKeyword
+	| TSKindId.PatKeyword
+	| TSKindId.PatParamKeyword
+	| TSKindId.PathKeyword
+	| TSKindId.StmtKeyword
+	| TSKindId.TtKeyword
+	| TSKindId.TyKeyword
+	| TSKindId.VisKeyword;
 export type UnitType = TSKindId.UnitType;
 export type NeverType = TSKindId.NeverType;
 export type MutableSpecifier = TSKindId.MutableSpecifier;
@@ -9583,7 +9803,7 @@ export type RemainingFieldPattern = TSKindId.RemainingFieldPattern;
 export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
 export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
-export type BooleanLiteral = TSKindId.True | TSKindId.False;
+export type BooleanLiteral = TSKindId.TrueKeyword | TSKindId.FalseKeyword;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type Shebang = Terminal<TSKindId.Shebang, string>;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
@@ -9662,7 +9882,7 @@ export type TokenTreePunctuation =
 	| TSKindId.GtEq
 	| TSKindId.LtEq
 	| TSKindId.At
-	| TSKindId.Anonymous
+	| TSKindId.Keyword
 	| TSKindId.Dot
 	| TSKindId.DotDot
 	| TSKindId.DotDotDot
@@ -9678,34 +9898,34 @@ export type TokenTreePunctuation =
 	| TSKindId.Dollar;
 export type TokenKeywords =
 	| TSKindId.Squote
-	| TSKindId.As
-	| TSKindId.Async
-	| TSKindId.Await
-	| TSKindId.Break
-	| TSKindId.Const
-	| TSKindId.Continue
-	| TSKindId.Default
-	| TSKindId.Enum
-	| TSKindId.Fn
-	| TSKindId.For
-	| TSKindId.Gen
-	| TSKindId.If
-	| TSKindId.Impl
-	| TSKindId.Let
-	| TSKindId.Loop
-	| TSKindId.Match
-	| TSKindId.Mod
-	| TSKindId.Pub
-	| TSKindId.Return
-	| TSKindId.Static
-	| TSKindId.Struct
-	| TSKindId.Trait
-	| TSKindId.Type
-	| TSKindId.Union
-	| TSKindId.Unsafe
-	| TSKindId.Use
-	| TSKindId.Where
-	| TSKindId.While;
+	| TSKindId.AsKeyword
+	| TSKindId.AsyncKeyword
+	| TSKindId.AwaitKeyword
+	| TSKindId.BreakKeyword
+	| TSKindId.ConstKeyword
+	| TSKindId.ContinueKeyword
+	| TSKindId.DefaultKeyword
+	| TSKindId.EnumKeyword
+	| TSKindId.FnKeyword
+	| TSKindId.ForKeyword
+	| TSKindId.GenKeyword
+	| TSKindId.IfKeyword
+	| TSKindId.ImplKeyword
+	| TSKindId.LetKeyword
+	| TSKindId.LoopKeyword
+	| TSKindId.MatchKeyword
+	| TSKindId.ModKeyword
+	| TSKindId.PubKeyword
+	| TSKindId.ReturnKeyword
+	| TSKindId.StaticKeyword
+	| TSKindId.StructKeyword
+	| TSKindId.TraitKeyword
+	| TSKindId.TypeKeyword
+	| TSKindId.UnionKeyword
+	| TSKindId.UnsafeKeyword
+	| TSKindId.UseKeyword
+	| TSKindId.WhereKeyword
+	| TSKindId.WhileKeyword;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type StringLiteralOpen = Terminal<TSKindId.StringLiteralOpen, string>;
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
@@ -10196,158 +10416,158 @@ export interface LineDocContentTree extends AnyTreeNode {
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
 }
-export interface AnonBlockTree extends AnyTreeNode {
-	readonly type: 'anon_block';
+export interface BlockKeywordTree extends AnyTreeNode {
+	readonly type: 'block_keyword';
 }
-export interface ExprTree extends AnyTreeNode {
-	readonly type: 'expr';
+export interface ExprKeywordTree extends AnyTreeNode {
+	readonly type: 'expr_keyword';
 }
-export interface Expr2021Tree extends AnyTreeNode {
-	readonly type: 'expr_2021';
+export interface Expr2021KeywordTree extends AnyTreeNode {
+	readonly type: 'expr_2021_keyword';
 }
-export interface IdentTree extends AnyTreeNode {
-	readonly type: 'ident';
+export interface IdentKeywordTree extends AnyTreeNode {
+	readonly type: 'ident_keyword';
 }
-export interface ItemTree extends AnyTreeNode {
-	readonly type: 'item';
+export interface ItemKeywordTree extends AnyTreeNode {
+	readonly type: 'item_keyword';
 }
-export interface AnonLifetimeTree extends AnyTreeNode {
-	readonly type: 'anon_lifetime';
+export interface LifetimeKeywordTree extends AnyTreeNode {
+	readonly type: 'lifetime_keyword';
 }
-export interface LiteralTree extends AnyTreeNode {
-	readonly type: 'literal';
+export interface LiteralKeywordTree extends AnyTreeNode {
+	readonly type: 'literal_keyword';
 }
-export interface MetaTree extends AnyTreeNode {
-	readonly type: 'meta';
+export interface MetaKeywordTree extends AnyTreeNode {
+	readonly type: 'meta_keyword';
 }
-export interface PatTree extends AnyTreeNode {
-	readonly type: 'pat';
+export interface PatKeywordTree extends AnyTreeNode {
+	readonly type: 'pat_keyword';
 }
-export interface PatParamTree extends AnyTreeNode {
-	readonly type: 'pat_param';
+export interface PatParamKeywordTree extends AnyTreeNode {
+	readonly type: 'pat_param_keyword';
 }
-export interface PathTree extends AnyTreeNode {
-	readonly type: 'path';
+export interface PathKeywordTree extends AnyTreeNode {
+	readonly type: 'path_keyword';
 }
-export interface StmtTree extends AnyTreeNode {
-	readonly type: 'stmt';
+export interface StmtKeywordTree extends AnyTreeNode {
+	readonly type: 'stmt_keyword';
 }
-export interface TtTree extends AnyTreeNode {
-	readonly type: 'tt';
+export interface TtKeywordTree extends AnyTreeNode {
+	readonly type: 'tt_keyword';
 }
-export interface TyTree extends AnyTreeNode {
-	readonly type: 'ty';
+export interface TyKeywordTree extends AnyTreeNode {
+	readonly type: 'ty_keyword';
 }
-export interface VisTree extends AnyTreeNode {
-	readonly type: 'vis';
+export interface VisKeywordTree extends AnyTreeNode {
+	readonly type: 'vis_keyword';
 }
-export interface ModTree extends AnyTreeNode {
-	readonly type: 'mod';
+export interface ModKeywordTree extends AnyTreeNode {
+	readonly type: 'mod_keyword';
 }
-export interface StructTree extends AnyTreeNode {
-	readonly type: 'struct';
+export interface StructKeywordTree extends AnyTreeNode {
+	readonly type: 'struct_keyword';
 }
-export interface UnionTree extends AnyTreeNode {
-	readonly type: 'union';
+export interface UnionKeywordTree extends AnyTreeNode {
+	readonly type: 'union_keyword';
 }
-export interface EnumTree extends AnyTreeNode {
-	readonly type: 'enum';
+export interface EnumKeywordTree extends AnyTreeNode {
+	readonly type: 'enum_keyword';
 }
-export interface ExternTree extends AnyTreeNode {
-	readonly type: 'extern';
+export interface ExternKeywordTree extends AnyTreeNode {
+	readonly type: 'extern_keyword';
 }
-export interface AsTree extends AnyTreeNode {
-	readonly type: 'as';
+export interface AsKeywordTree extends AnyTreeNode {
+	readonly type: 'as_keyword';
 }
-export interface ConstTree extends AnyTreeNode {
-	readonly type: 'const';
+export interface ConstKeywordTree extends AnyTreeNode {
+	readonly type: 'const_keyword';
 }
-export interface StaticTree extends AnyTreeNode {
-	readonly type: 'static';
+export interface StaticKeywordTree extends AnyTreeNode {
+	readonly type: 'static_keyword';
 }
-export interface TypeTree extends AnyTreeNode {
-	readonly type: 'type';
+export interface TypeKeywordTree extends AnyTreeNode {
+	readonly type: 'type_keyword';
 }
-export interface FnTree extends AnyTreeNode {
-	readonly type: 'fn';
+export interface FnKeywordTree extends AnyTreeNode {
+	readonly type: 'fn_keyword';
 }
-export interface WhereTree extends AnyTreeNode {
-	readonly type: 'where';
+export interface WhereKeywordTree extends AnyTreeNode {
+	readonly type: 'where_keyword';
 }
-export interface ImplTree extends AnyTreeNode {
-	readonly type: 'impl';
+export interface ImplKeywordTree extends AnyTreeNode {
+	readonly type: 'impl_keyword';
 }
-export interface TraitTree extends AnyTreeNode {
-	readonly type: 'trait';
+export interface TraitKeywordTree extends AnyTreeNode {
+	readonly type: 'trait_keyword';
 }
-export interface ForTree extends AnyTreeNode {
-	readonly type: 'for';
+export interface ForKeywordTree extends AnyTreeNode {
+	readonly type: 'for_keyword';
 }
-export interface LetTree extends AnyTreeNode {
-	readonly type: 'let';
+export interface LetKeywordTree extends AnyTreeNode {
+	readonly type: 'let_keyword';
 }
-export interface ElseTree extends AnyTreeNode {
-	readonly type: 'else';
+export interface ElseKeywordTree extends AnyTreeNode {
+	readonly type: 'else_keyword';
 }
-export interface UseTree extends AnyTreeNode {
-	readonly type: 'use';
+export interface UseKeywordTree extends AnyTreeNode {
+	readonly type: 'use_keyword';
 }
-export interface DynTree extends AnyTreeNode {
-	readonly type: 'dyn';
+export interface DynKeywordTree extends AnyTreeNode {
+	readonly type: 'dyn_keyword';
 }
-export interface ReturnTree extends AnyTreeNode {
-	readonly type: 'return';
+export interface ReturnKeywordTree extends AnyTreeNode {
+	readonly type: 'return_keyword';
 }
-export interface YieldTree extends AnyTreeNode {
-	readonly type: 'yield';
+export interface YieldKeywordTree extends AnyTreeNode {
+	readonly type: 'yield_keyword';
 }
-export interface IfTree extends AnyTreeNode {
-	readonly type: 'if';
+export interface IfKeywordTree extends AnyTreeNode {
+	readonly type: 'if_keyword';
 }
-export interface MatchTree extends AnyTreeNode {
-	readonly type: 'match';
+export interface MatchKeywordTree extends AnyTreeNode {
+	readonly type: 'match_keyword';
 }
-export interface WhileTree extends AnyTreeNode {
-	readonly type: 'while';
+export interface WhileKeywordTree extends AnyTreeNode {
+	readonly type: 'while_keyword';
 }
-export interface LoopTree extends AnyTreeNode {
-	readonly type: 'loop';
+export interface LoopKeywordTree extends AnyTreeNode {
+	readonly type: 'loop_keyword';
 }
-export interface InTree extends AnyTreeNode {
-	readonly type: 'in';
+export interface InKeywordTree extends AnyTreeNode {
+	readonly type: 'in_keyword';
 }
-export interface BreakTree extends AnyTreeNode {
-	readonly type: 'break';
+export interface BreakKeywordTree extends AnyTreeNode {
+	readonly type: 'break_keyword';
 }
-export interface ContinueTree extends AnyTreeNode {
-	readonly type: 'continue';
+export interface ContinueKeywordTree extends AnyTreeNode {
+	readonly type: 'continue_keyword';
 }
-export interface AwaitTree extends AnyTreeNode {
-	readonly type: 'await';
+export interface AwaitKeywordTree extends AnyTreeNode {
+	readonly type: 'await_keyword';
 }
-export interface UnsafeTree extends AnyTreeNode {
-	readonly type: 'unsafe';
+export interface UnsafeKeywordTree extends AnyTreeNode {
+	readonly type: 'unsafe_keyword';
 }
-export interface AsyncTree extends AnyTreeNode {
-	readonly type: 'async';
+export interface AsyncKeywordTree extends AnyTreeNode {
+	readonly type: 'async_keyword';
 }
-export interface GenTree extends AnyTreeNode {
-	readonly type: 'gen';
+export interface GenKeywordTree extends AnyTreeNode {
+	readonly type: 'gen_keyword';
 }
-export interface TryTree extends AnyTreeNode {
-	readonly type: 'try';
+export interface TryKeywordTree extends AnyTreeNode {
+	readonly type: 'try_keyword';
 }
-export interface RefTree extends AnyTreeNode {
-	readonly type: 'ref';
+export interface RefKeywordTree extends AnyTreeNode {
+	readonly type: 'ref_keyword';
 }
-export interface TrueTree extends AnyTreeNode {
-	readonly type: 'true';
+export interface TrueKeywordTree extends AnyTreeNode {
+	readonly type: 'true_keyword';
 }
-export interface FalseTree extends AnyTreeNode {
-	readonly type: 'false';
+export interface FalseKeywordTree extends AnyTreeNode {
+	readonly type: 'false_keyword';
 }
-export interface DefaultTree extends AnyTreeNode {
-	readonly type: 'default';
+export interface DefaultKeywordTree extends AnyTreeNode {
+	readonly type: 'default_keyword';
 }
 export interface U8Tree extends AnyTreeNode {
 	readonly type: 'u8';
@@ -10400,17 +10620,17 @@ export interface StrTree extends AnyTreeNode {
 export interface CharTree extends AnyTreeNode {
 	readonly type: 'char';
 }
-export interface MoveTree extends AnyTreeNode {
-	readonly type: 'move';
+export interface MoveKeywordTree extends AnyTreeNode {
+	readonly type: 'move_keyword';
 }
-export interface AnonymousTree extends AnyTreeNode {
-	readonly type: '_';
+export interface KeywordTree extends AnyTreeNode {
+	readonly type: '__keyword';
 }
-export interface PubTree extends AnyTreeNode {
-	readonly type: 'pub';
+export interface PubKeywordTree extends AnyTreeNode {
+	readonly type: 'pub_keyword';
 }
-export interface RawTree extends AnyTreeNode {
-	readonly type: 'raw';
+export interface RawKeywordTree extends AnyTreeNode {
+	readonly type: 'raw_keyword';
 }
 
 // Supertype unions
@@ -10527,7 +10747,7 @@ export type Tokens = TokenTree | TokenRepetition | Metavariable | _NonSpecialTok
 export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree;
 
 export type _NonSpecialToken =
-	| _Literal
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -10583,7 +10803,7 @@ export type UseClauseTree =
 	| ScopedUseListTree
 	| UseWildcardTree;
 
-export type _Type =
+export type Type =
 	| AbstractType
 	| ReferenceType
 	| Metavariable
@@ -10602,7 +10822,7 @@ export type _Type =
 	| RemovedTraitBound
 	| PrimitiveType;
 
-export type _TypeTree =
+export type TypeTree =
 	| AbstractTypeTree
 	| ReferenceTypeTree
 	| MetavariableTree
@@ -10632,7 +10852,7 @@ export type ExpressionExceptRange =
 	| CallExpression
 	| ReturnExpression
 	| YieldExpression
-	| _Literal
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -10725,7 +10945,7 @@ export type Expression =
 	| CallExpression
 	| ReturnExpression
 	| YieldExpression
-	| _Literal
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -10853,7 +11073,7 @@ export type Condition =
 	| CallExpression
 	| ReturnExpression
 	| YieldExpression
-	| _Literal
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -10994,9 +11214,9 @@ export type PatternTree =
 	| MacroInvocationTree
 	| WildcardPatternTree;
 
-export type _Literal = StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral;
+export type Literal = StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral;
 
-export type _LiteralTree =
+export type LiteralTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree
@@ -11022,14 +11242,14 @@ export type LiteralPatternTree =
 	| FloatLiteralTree
 	| NegativeLiteralTree;
 
-export type _Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
+export type Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
 
-export type _PathTree = SelfTree | IdentifierTree | MetavariableTree | SuperTree | CrateTree | ScopedIdentifierTree;
+export type PathTree = SelfTree | IdentifierTree | MetavariableTree | SuperTree | CrateTree | ScopedIdentifierTree;
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
 export type NonSpecialToken =
-	| _Literal
+	| Literal
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -15014,18 +15234,34 @@ export namespace FunctionModifiers {
 		readonly $named: true;
 		readonly $with: {
 			modifiers(
-				...vs: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+				...vs: (
+					| TSKindId.AsyncKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.UnsafeKeyword
+					| T.ExternModifier
+				)[]
 			): T.FunctionModifiers.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FunctionModifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionModifiers>;
 	export type BuildArgs = [
-		...children: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+		...children: (
+			| TSKindId.AsyncKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.UnsafeKeyword
+			| T.ExternModifier
+		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier,
+			| TSKindId.AsyncKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.UnsafeKeyword
+			| T.ExternModifier,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -15143,15 +15379,15 @@ export namespace TraitBounds {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			bounds(...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]): T.TraitBounds.Built;
+			bounds(...vs: (T.Type | T.Lifetime | T.HigherRankedTraitBound)[]): T.TraitBounds.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TraitBounds>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TraitBounds>;
-	export type BuildArgs = [...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]];
+	export type BuildArgs = [...children: (T.Type | T.Lifetime | T.HigherRankedTraitBound)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T._Type | T.Lifetime | T.HigherRankedTraitBound,
+			T.Type | T.Lifetime | T.HigherRankedTraitBound,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -15187,13 +15423,13 @@ export namespace RemovedTraitBound {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(value: NonNullable<T._Type>): T.RemovedTraitBound.Built;
+			type(value: NonNullable<T.Type>): T.RemovedTraitBound.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.RemovedTraitBound>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RemovedTraitBound>;
-	export type BuildArgs = [value: T._Type];
-	export type LooseArgs = [value: LooseValue<T._Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: T.Type];
+	export type LooseArgs = [value: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.RemovedTraitBound>;
 	export type Kind = 'removed_trait_bound';
 }
@@ -15517,14 +15753,14 @@ export namespace BracketedType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T._Type | T.QualifiedType>): T.BracketedType.Built;
+			content(value: NonNullable<T.Type | T.QualifiedType>): T.BracketedType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BracketedType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BracketedType>;
-	export type BuildArgs = [value: T._Type | T.QualifiedType];
+	export type BuildArgs = [value: T.Type | T.QualifiedType];
 	export type LooseArgs = [
-		value: LooseValue<T._Type | T.QualifiedType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<T.Type | T.QualifiedType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
 	export type Tree = TreeFor<TSKindId.BracketedType>;
 	export type Kind = 'bracketed_type';
@@ -17276,19 +17512,19 @@ export namespace OrderedFieldDeclarationListElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			elements(...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>): T.OrderedFieldDeclarationListElements.Built;
+			elements(...vs: NonEmptyArray<T.AttributedOrderedField | T.Type>): T.OrderedFieldDeclarationListElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.OrderedFieldDeclarationListElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.OrderedFieldDeclarationListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OrderedFieldDeclarationListElements>;
 	export type BuildArgs = [
-		element: T.AttributedOrderedField | T._Type,
-		...elements: (T.AttributedOrderedField | T._Type)[]
+		element: T.AttributedOrderedField | T.Type,
+		...elements: (T.AttributedOrderedField | T.Type)[]
 	];
 	export type LooseArgs = [
-		element: LooseValue<T.AttributedOrderedField | T._Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.AttributedOrderedField | T._Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		element: LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.OrderedFieldDeclarationListElements>;
 	export type Kind = '_ordered_field_declaration_list_elements';
@@ -17453,7 +17689,7 @@ export namespace ParametersElements {
 		readonly $with: {
 			elements(
 				...vs: NonEmptyArray<
-					T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+					T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 				>
 			): T.ParametersElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ParametersElements.Built;
@@ -17462,25 +17698,25 @@ export namespace ParametersElements {
 	export type Loose = LooseFor<TSKindId.ParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParametersElements>;
 	export type BuildArgs = [
-		element: T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type,
+		element: T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type,
 		...elements: (
 			| T.AttributedParameter
 			| T.Parameter
 			| T.SelfParameter
 			| T.VariadicParameter
-			| TSKindId.Anonymous
-			| T._Type
+			| TSKindId.Keyword
+			| T.Type
 		)[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type,
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
 		>,
 		...elements: LooseValue<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type,
+			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17539,7 +17775,7 @@ export namespace TypeArgumentsElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(
-				...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
+				...vs: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 			): T.TypeArgumentsElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TypeArgumentsElements.Built;
 		};
@@ -17547,18 +17783,18 @@ export namespace TypeArgumentsElements {
 	export type Loose = LooseFor<TSKindId.TypeArgumentsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArgumentsElements>;
 	export type BuildArgs = [
-		element: T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block,
-		...elements: (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block)[]
+		element: T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
+		...elements: (T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
-			T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block,
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
 		>,
 		...elements: LooseValue<
-			T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block,
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17735,16 +17971,16 @@ export namespace TupleTypeElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			types(...vs: NonEmptyArray<T._Type>): T.TupleTypeElements.Built;
+			types(...vs: NonEmptyArray<T.Type>): T.TupleTypeElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleTypeElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TupleTypeElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeElements>;
-	export type BuildArgs = [element: T._Type, ...elements: T._Type[]];
+	export type BuildArgs = [element: T.Type, ...elements: T.Type[]];
 	export type LooseArgs = [
-		element: LooseValue<T._Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T._Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		element: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TupleTypeElements>;
 	export type Kind = '_tuple_type_elements';
@@ -17939,14 +18175,14 @@ export namespace ClosureExpressionExpr {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			body(value: NonNullable<T.Expression | TSKindId.Anonymous>): T.ClosureExpressionExpr.Built;
+			body(value: NonNullable<T.Expression | TSKindId.Keyword>): T.ClosureExpressionExpr.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ClosureExpressionExpr>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClosureExpressionExpr>;
-	export type BuildArgs = [value: T.Expression | TSKindId.Anonymous];
+	export type BuildArgs = [value: T.Expression | TSKindId.Keyword];
 	export type LooseArgs = [
-		value: LooseValue<T.Expression | TSKindId.Anonymous, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<T.Expression | TSKindId.Keyword, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
 	export type Tree = TreeFor<TSKindId.ClosureExpressionExpr>;
 	export type Kind = '_closure_expression_expr';

@@ -189,21 +189,21 @@ export function buildTokenTreePattern(
 export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): T.TokenBindingPattern.Built {
 	const _name = config.name;
 	const _type = coerceKindEnumStorage<number>(config.type, [
-		['block', TSKindId.AnonBlock] as const,
-		['expr', TSKindId.Expr] as const,
-		['expr_2021', TSKindId.Expr2021] as const,
-		['ident', TSKindId.Ident] as const,
-		['item', TSKindId.Item] as const,
-		['lifetime', TSKindId.AnonLifetime] as const,
-		['literal', TSKindId.Literal] as const,
-		['meta', TSKindId.Meta] as const,
-		['pat', TSKindId.Pat] as const,
-		['pat_param', TSKindId.PatParam] as const,
-		['path', TSKindId.Path] as const,
-		['stmt', TSKindId.Stmt] as const,
-		['tt', TSKindId.Tt] as const,
-		['ty', TSKindId.Ty] as const,
-		['vis', TSKindId.Vis] as const
+		['block', TSKindId.BlockKeyword] as const,
+		['expr', TSKindId.ExprKeyword] as const,
+		['expr_2021', TSKindId.Expr2021Keyword] as const,
+		['ident', TSKindId.IdentKeyword] as const,
+		['item', TSKindId.ItemKeyword] as const,
+		['lifetime', TSKindId.LifetimeKeyword] as const,
+		['literal', TSKindId.LiteralKeyword] as const,
+		['meta', TSKindId.MetaKeyword] as const,
+		['pat', TSKindId.PatKeyword] as const,
+		['pat_param', TSKindId.PatParamKeyword] as const,
+		['path', TSKindId.PathKeyword] as const,
+		['stmt', TSKindId.StmtKeyword] as const,
+		['tt', TSKindId.TtKeyword] as const,
+		['ty', TSKindId.TyKeyword] as const,
+		['vis', TSKindId.VisKeyword] as const
 	]);
 	return withMethods(
 		withAccessors(
@@ -769,7 +769,7 @@ function _buildFieldDeclarationList(value?: T.FieldDeclarationListElements): T.F
 export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.FieldDeclaration.Built {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -802,10 +802,10 @@ export function buildOrderedFieldDeclarationList(
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
+	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
-	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
+	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -880,7 +880,7 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Built {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	return withMethods(
 		withAccessors(
@@ -916,7 +916,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Built
 	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = config.name;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	return withMethods(
 		withAccessors(
@@ -960,7 +960,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Built {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	const _trailing_where_clause = config.trailingWhereClause;
 	return withMethods(
 		withAccessors(
@@ -1002,7 +1002,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters;
-	const _return_type = coerceMixedEnumStorage<T._Type>(config.returnType, []);
+	const _return_type = coerceMixedEnumStorage<T.Type>(config.returnType, []);
 	const _where_clause = config.whereClause;
 	const _body = config.body;
 	return withMethods(
@@ -1054,7 +1054,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters;
-	const _return_type = coerceMixedEnumStorage<T._Type>(config.returnType, []);
+	const _return_type = coerceMixedEnumStorage<T.Type>(config.returnType, []);
 	const _where_clause = config.whereClause;
 	return withMethods(
 		withAccessors(
@@ -1098,7 +1098,13 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 }
 
 export function buildFunctionModifiers(
-	...children: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+	...children: (
+		| TSKindId.AsyncKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.UnsafeKeyword
+		| T.ExternModifier
+	)[]
 ): T.FunctionModifiers.Built {
 	_assertNonEmpty(children, 'function_modifiers.children');
 	const _modifier = children;
@@ -1111,7 +1117,13 @@ export function buildFunctionModifiers(
 				_modifier,
 				$with: {
 					modifiers: (
-						...vs: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+						...vs: (
+							| TSKindId.AsyncKeyword
+							| TSKindId.DefaultKeyword
+							| TSKindId.ConstKeyword
+							| TSKindId.UnsafeKeyword
+							| T.ExternModifier
+						)[]
 					) => buildFunctionModifiers(...vs)
 				}
 			},
@@ -1238,7 +1250,7 @@ export function buildImplItem(config: T.ImplItem.Config): T.ImplItem.Built {
 	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
 	const _type_parameters = config.typeParameters;
 	const _trait_clause = config.traitClause;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	const _where_clause = config.whereClause;
 	const _content = coerceMixedEnumStorage<T.ImplItemBody | TSKindId.ImplItemSemi>(config.content, [
 		[';', TSKindId.ImplItemSemi] as const
@@ -1359,9 +1371,7 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 	);
 }
 
-export function buildTraitBounds(
-	...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]
-): T.TraitBounds.Built {
+export function buildTraitBounds(...children: (T.Type | T.Lifetime | T.HigherRankedTraitBound)[]): T.TraitBounds.Built {
 	_assertNonEmpty(children, 'trait_bounds.children');
 	const _bounds = children;
 	return withMethods(
@@ -1371,7 +1381,7 @@ export function buildTraitBounds(
 				$source: 2 as const,
 				$named: true as const,
 				_bounds,
-				$with: { bounds: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => buildTraitBounds(...vs) }
+				$with: { bounds: (...vs: (T.Type | T.Lifetime | T.HigherRankedTraitBound)[]) => buildTraitBounds(...vs) }
 			},
 			{
 				bounds: () => _bounds
@@ -1383,7 +1393,7 @@ export function buildTraitBounds(
 
 export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Config): T.HigherRankedTraitBound.Built {
 	const _type_parameters = config.typeParameters;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1408,8 +1418,8 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 	);
 }
 
-export function buildRemovedTraitBound(value: T._Type): T.RemovedTraitBound.Built {
-	const _type = coerceMixedEnumStorage<T._Type>(value, []);
+export function buildRemovedTraitBound(value: T.Type): T.RemovedTraitBound.Built {
+	const _type = coerceMixedEnumStorage<T.Type>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1418,7 +1428,7 @@ export function buildRemovedTraitBound(value: T._Type): T.RemovedTraitBound.Buil
 				$named: true as const,
 				_type,
 				$with: {
-					type: (value: NonNullable<T._Type>) => buildRemovedTraitBound(value)
+					type: (value: NonNullable<T.Type>) => buildRemovedTraitBound(value)
 				}
 			},
 			{
@@ -1479,8 +1489,8 @@ function _buildTypeParameters(value: T.TypeParametersElements): T.TypeParameters
 
 export function buildConstParameter(config: T.ConstParameter.Config): T.ConstParameter.Built {
 	const _name = config.name;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
-	const _value = coerceMixedEnumStorage<T.Block | T.Identifier | T._Literal | T.NegativeLiteral>(config.value, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
+	const _value = coerceMixedEnumStorage<T.Block | T.Identifier | T.Literal | T.NegativeLiteral>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1511,7 +1521,7 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParameter.Built {
 	const _name = config.name;
 	const _bounds = config.bounds;
-	const _default_type = coerceMixedEnumStorage<T._Type>(config.defaultType, []);
+	const _default_type = coerceMixedEnumStorage<T.Type>(config.defaultType, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1566,7 +1576,7 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDeclaration.Built {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = coerceMixedEnumStorage<T.Pattern>(config.pattern, []);
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
 	const _alternative = config.alternative;
 	return withMethods(
@@ -1805,12 +1815,12 @@ export function buildParameters(value?: T.ParametersElements): ReturnType<typeof
 export function buildParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
@@ -1908,7 +1918,7 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 export function buildParameter(config: T.Parameter.Config): T.Parameter.Built {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = coerceMixedEnumStorage<T.Pattern | TSKindId.Self>(config.name, [['self', TSKindId.Self] as const]);
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1994,8 +2004,8 @@ export function buildVisibilityModifier(value: TSKindId.Crate | T.VisibilityModi
 	);
 }
 
-export function buildBracketedType(value: T._Type | T.QualifiedType): T.BracketedType.Built {
-	const _content = coerceMixedEnumStorage<T._Type | T.QualifiedType>(value, []);
+export function buildBracketedType(value: T.Type | T.QualifiedType): T.BracketedType.Built {
+	const _content = coerceMixedEnumStorage<T.Type | T.QualifiedType>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2004,7 +2014,7 @@ export function buildBracketedType(value: T._Type | T.QualifiedType): T.Brackete
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<T._Type | T.QualifiedType>) => buildBracketedType(value)
+					content: (value: NonNullable<T.Type | T.QualifiedType>) => buildBracketedType(value)
 				}
 			},
 			{
@@ -2016,8 +2026,8 @@ export function buildBracketedType(value: T._Type | T.QualifiedType): T.Brackete
 }
 
 export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedType.Built {
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
-	const _alias = coerceMixedEnumStorage<T._Type>(config.alias, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
+	const _alias = coerceMixedEnumStorage<T.Type>(config.alias, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2078,7 +2088,7 @@ function _buildLifetime(value: T.Identifier): T.Lifetime.Built {
 }
 
 export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Built {
-	const _element = coerceMixedEnumStorage<T._Type>(config.element, []);
+	const _element = coerceMixedEnumStorage<T.Type>(config.element, []);
 	const _length = coerceMixedEnumStorage<T.Expression>(config.length, []);
 	return withMethods(
 		withAccessors(
@@ -2146,7 +2156,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 	const _for_lifetimes = config.forLifetimes;
 	const _content = config.content;
 	const _parameters = config.parameters;
-	const _return_type = coerceMixedEnumStorage<T._Type>(config.returnType, []);
+	const _return_type = coerceMixedEnumStorage<T.Type>(config.returnType, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2180,9 +2190,9 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 export function buildTupleType(value: T.TupleTypeElements): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T._Type>
+	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTupleType>;
-export function buildTupleType(...elements: NonEmptyArray<T._Type>): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildTupleType(args[0] as T.TupleTypeElements);
@@ -2300,8 +2310,8 @@ export function buildGenericTypeWithTurbofish(
 }
 
 export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Built {
-	const _left = coerceMixedEnumStorage<T.Lifetime | T._Type | T.UseBounds>(config.left, []);
-	const _right = coerceMixedEnumStorage<T.Lifetime | T._Type | T.UseBounds>(config.right, []);
+	const _left = coerceMixedEnumStorage<T.Lifetime | T.Type | T.UseBounds>(config.left, []);
+	const _right = coerceMixedEnumStorage<T.Lifetime | T.Type | T.UseBounds>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2369,10 +2379,10 @@ function _buildUseBounds(value?: T.UseBoundsElements): T.UseBounds.Built {
 export function buildTypeArguments(value: T.TypeArgumentsElements): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
+	...elements: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
-	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
+	...elements: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2413,7 +2423,7 @@ function _buildTypeArguments(value: T.TypeArgumentsElements): T.TypeArguments.Bu
 export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Built {
 	const _name = config.name;
 	const _type_arguments = config.typeArguments;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2442,7 +2452,7 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bu
 export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceType.Built {
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2474,7 +2484,7 @@ export function buildPointerType(config: T.PointerType.Config): T.PointerType.Bu
 		['const', TSKindId.PointerTypeConst] as const,
 		['mut', TSKindId.MutableSpecifier] as const
 	]);
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2981,7 +2991,7 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 
 export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.TypeCastExpression.Built {
 	const _value = coerceMixedEnumStorage<T.Expression>(config.value, []);
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3060,7 +3070,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		| T.CallExpression
 		| T.ReturnExpression
 		| T.YieldExpression
-		| T._Literal
+		| T.Literal
 		| T.Identifier
 		| TSKindId.Self
 		| T.ScopedIdentifier
@@ -4918,14 +4928,14 @@ function _buildFieldDeclarationListElements(
 }
 
 export function buildOrderedFieldDeclarationListElements(
-	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
+	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedOrderedField | T._Type>
+	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedOrderedField | T._Type))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedOrderedField | T.Type))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -4934,11 +4944,11 @@ export function buildOrderedFieldDeclarationListElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedOrderedField | T._Type>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedOrderedField | T.Type>;
 	return _buildOrderedFieldDeclarationListElements(elements, options);
 }
 function _buildOrderedFieldDeclarationListElements(
-	elements: NonEmptyArray<T.AttributedOrderedField | T._Type>,
+	elements: NonEmptyArray<T.AttributedOrderedField | T.Type>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.OrderedFieldDeclarationListElements.Built {
 	_assertNonEmpty(elements, '_ordered_field_declaration_list_elements.elements');
@@ -4960,7 +4970,7 @@ function _buildOrderedFieldDeclarationListElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.AttributedOrderedField | T._Type>) =>
+					elements: (...vs: NonEmptyArray<T.AttributedOrderedField | T.Type>) =>
 						buildOrderedFieldDeclarationListElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
@@ -5216,19 +5226,19 @@ function _buildUseClauses(
 
 export function buildParametersElements(
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type)
+		| (T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type)
 	)[]
 ) {
 	const _optsFirst =
@@ -5239,13 +5249,13 @@ export function buildParametersElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 	>;
 	return _buildParametersElements(elements, options);
 }
 function _buildParametersElements(
 	elements: NonEmptyArray<
-		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+		T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ParametersElements.Built {
@@ -5270,7 +5280,7 @@ function _buildParametersElements(
 				$with: {
 					elements: (
 						...vs: NonEmptyArray<
-							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
+							T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
 						>
 					) => buildParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -5380,16 +5390,16 @@ function _buildUseBoundsElements(
 }
 
 export function buildTypeArgumentsElements(
-	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
+	...elements: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
+	...elements: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block)
+		| (T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)
 	)[]
 ) {
 	const _optsFirst =
@@ -5400,12 +5410,12 @@ export function buildTypeArgumentsElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block
+		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block
 	>;
 	return _buildTypeArgumentsElements(elements, options);
 }
 function _buildTypeArgumentsElements(
-	elements: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>,
+	elements: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TypeArgumentsElements.Built {
 	_assertNonEmpty(elements, '_type_arguments_elements.elements');
@@ -5428,7 +5438,7 @@ function _buildTypeArgumentsElements(
 				_delimiter,
 				$with: {
 					elements: (
-						...vs: NonEmptyArray<T.TypeArgument | T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>
+						...vs: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
 					) => buildTypeArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
@@ -5728,12 +5738,12 @@ export function buildVisibilityModifierGroup(
 	);
 }
 
-export function buildTupleTypeElements(...elements: NonEmptyArray<T._Type>): ReturnType<typeof _buildTupleTypeElements>;
+export function buildTupleTypeElements(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTupleTypeElements>;
 export function buildTupleTypeElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T._Type>
+	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTupleTypeElements>;
-export function buildTupleTypeElements(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T._Type)[]) {
+export function buildTupleTypeElements(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Type)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
@@ -5741,11 +5751,11 @@ export function buildTupleTypeElements(...args: ({ delimiter?: Delimiter.None | 
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T._Type>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Type>;
 	return _buildTupleTypeElements(elements, options);
 }
 function _buildTupleTypeElements(
-	elements: NonEmptyArray<T._Type>,
+	elements: NonEmptyArray<T.Type>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeElements.Built {
 	_assertNonEmpty(elements, '_tuple_type_elements.elements');
@@ -5760,7 +5770,7 @@ function _buildTupleTypeElements(
 				_type,
 				_delimiter,
 				$with: {
-					types: (...vs: NonEmptyArray<T._Type>) => buildTupleTypeElements(options, ...vs),
+					types: (...vs: NonEmptyArray<T.Type>) => buildTupleTypeElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -6029,7 +6039,7 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 }
 
 export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Config): T.ClosureExpressionBlock.Built {
-	const _return_type = coerceMixedEnumStorage<T._Type>(config.returnType, []);
+	const _return_type = coerceMixedEnumStorage<T.Type>(config.returnType, []);
 	const _body = config.body;
 	return withMethods(
 		withAccessors(
@@ -6054,8 +6064,8 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 	);
 }
 
-export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Anonymous): T.ClosureExpressionExpr.Built {
-	const _body = coerceMixedEnumStorage<T.Expression | TSKindId.Anonymous>(value, [['_', TSKindId.Anonymous] as const]);
+export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Keyword): T.ClosureExpressionExpr.Built {
+	const _body = coerceMixedEnumStorage<T.Expression | TSKindId.Keyword>(value, [['_', TSKindId.Keyword] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -6064,7 +6074,7 @@ export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Anonym
 				$named: true as const,
 				_body,
 				$with: {
-					body: (value: NonNullable<T.Expression | TSKindId.Anonymous>) => buildClosureExpressionExpr(value)
+					body: (value: NonNullable<T.Expression | TSKindId.Keyword>) => buildClosureExpressionExpr(value)
 				}
 			},
 			{
@@ -6171,7 +6181,13 @@ export function buildFunctionTypeTraitForm(
 
 export function buildFunctionTypeFnForm(value?: T.FunctionModifiers): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(
-	...children: (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+	...children: (
+		| TSKindId.AsyncKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.UnsafeKeyword
+		| T.ExternModifier
+	)[]
 ): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -7199,8 +7215,8 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 export function buildAttributedParameter(config: T.AttributedParameter.Config): T.AttributedParameter.Built {
 	const _attribute_item = config.attributeItem;
 	const _content = coerceMixedEnumStorage<
-		T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type
-	>(config.content, [['_', TSKindId.Anonymous] as const]);
+		T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type
+	>(config.content, [['_', TSKindId.Keyword] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -7283,7 +7299,7 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config): T.AttributedOrderedField.Built {
 	const _attribute_item = config.attributeItem ?? [];
 	const _visibility_modifier = config.visibilityModifier;
-	const _type = coerceMixedEnumStorage<T._Type>(config.type, []);
+	const _type = coerceMixedEnumStorage<T.Type>(config.type, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -7313,7 +7329,7 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 }
 
 export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument.Built {
-	const _content = coerceMixedEnumStorage<T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>(
+	const _content = coerceMixedEnumStorage<T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(
 		config.content,
 		[]
 	);

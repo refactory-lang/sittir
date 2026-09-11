@@ -269,7 +269,7 @@ describe('wrapped tree materialization', () => {
 				$type: TSKindId.FunctionItem,
 				_function_modifiers: {
 					$type: TSKindId.FunctionModifiers,
-					_modifier: TSKindId.Async
+					_modifier: TSKindId.AsyncKeyword
 				},
 				_name: {
 					$type: TSKindId.Identifier,
@@ -295,7 +295,7 @@ describe('wrapped tree materialization', () => {
 		// becomes a one-element array — the shape the transport's `Vec` needs.
 		expect(materialized._function_modifiers).toMatchObject({
 			$type: TSKindId.FunctionModifiers,
-			_modifier: [TSKindId.Async]
+			_modifier: [TSKindId.AsyncKeyword]
 		});
 	});
 

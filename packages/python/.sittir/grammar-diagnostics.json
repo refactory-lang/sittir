@@ -119,10 +119,11 @@
   },
   {
     "code": "kindid-unstamped-literals",
-    "message": "8 literal(s) resolved no parser kindId",
+    "message": "9 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
+        "",
         "\n",
         "\n\n",
         "\n\n\n",
@@ -153,11 +154,12 @@
   },
   {
     "code": "kindid-vaporized-literals",
-    "message": "8 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "9 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
+        "",
         "\n",
         "\n\n",
         "\n\n\n",

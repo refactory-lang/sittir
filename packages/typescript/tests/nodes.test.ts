@@ -288,7 +288,7 @@ describe('export_specifier sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ExportSpecifier);
 		const seated = (node as any).exportKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.AnonType);
+		expect(seated?.$text ?? seated).toBe(TSKindId.TypeKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('typeof builds the parent', () => {
@@ -297,7 +297,7 @@ describe('export_specifier sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ExportSpecifier);
 		const seated = (node as any).exportKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Typeof);
+		expect(seated?.$text ?? seated).toBe(TSKindId.TypeofKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -543,7 +543,7 @@ describe('import_specifier sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ImportSpecifier);
 		const seated = (node as any).importKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.AnonType);
+		expect(seated?.$text ?? seated).toBe(TSKindId.TypeKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('typeof builds the parent', () => {
@@ -552,7 +552,7 @@ describe('import_specifier sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ImportSpecifier);
 		const seated = (node as any).importKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Typeof);
+		expect(seated?.$text ?? seated).toBe(TSKindId.TypeofKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('as builds the parent', () => {
@@ -591,7 +591,7 @@ describe('import_attribute sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ImportAttribute);
 		const seated = (node as any).attributeKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.With);
+		expect(seated?.$text ?? seated).toBe(TSKindId.WithKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('assert builds the parent', () => {
@@ -600,7 +600,7 @@ describe('import_attribute sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ImportAttribute);
 		const seated = (node as any).attributeKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Assert);
+		expect(seated?.$text ?? seated).toBe(TSKindId.AssertKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2835,7 +2835,7 @@ describe('binary_expression sub-factories', () => {
 		const node = ir.binaryExpression.instanceof({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Instanceof);
+		expect(seated?.$text ?? seated).toBe(TSKindId.InstanceofKeyword);
 		expect(() => node.$render!()).not.toThrow();
 	});
 	it('in builds the _binary_expression_in form', () => {
@@ -3466,7 +3466,7 @@ describe('method_definition sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		const seated = (node as any).accessorKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Get);
+		expect(seated?.$text ?? seated).toBe(TSKindId.GetKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('set builds the parent', () => {
@@ -3477,7 +3477,7 @@ describe('method_definition sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		const seated = (node as any).accessorKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Set);
+		expect(seated?.$text ?? seated).toBe(TSKindId.SetKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('star builds the parent', () => {
@@ -3675,7 +3675,7 @@ describe('method_signature sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		const seated = (node as any).accessorKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Get);
+		expect(seated?.$text ?? seated).toBe(TSKindId.GetKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('set builds the parent', () => {
@@ -3685,7 +3685,7 @@ describe('method_signature sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		const seated = (node as any).accessorKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Set);
+		expect(seated?.$text ?? seated).toBe(TSKindId.SetKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('star builds the parent', () => {
@@ -3726,7 +3726,7 @@ describe('abstract_method_signature sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		const seated = (node as any).accessorKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Get);
+		expect(seated?.$text ?? seated).toBe(TSKindId.GetKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('set builds the parent', () => {
@@ -3736,7 +3736,7 @@ describe('abstract_method_signature sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		const seated = (node as any).accessorKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Set);
+		expect(seated?.$text ?? seated).toBe(TSKindId.SetKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('star builds the parent', () => {
@@ -3891,7 +3891,7 @@ describe('as_expression sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.AsExpression);
 		const seated = (node as any).typeAnnotation();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Const);
+		expect(seated?.$text ?? seated).toBe(TSKindId.ConstKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -5566,7 +5566,7 @@ describe('constraint sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.Constraint);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Extends);
+		expect(seated?.$text ?? seated).toBe(TSKindId.ExtendsKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('colon builds the parent', () => {

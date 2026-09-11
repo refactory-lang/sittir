@@ -11179,9 +11179,9 @@ passes the generator's `generatedIdTables` through for that reason.
 // dispatch surface from (see collectCatalogKinds' doc: TSKindId /
 // kindIdFromName / kind_ids.rs / AnyTransport "MUST share the same
 // kind universe"). The previous nodeMap-derived name list could
-// never contain collision-disambiguated catalog keys (rust's
-// `anon_block` — the fragment-specifier keyword whose text collides
-// with the `block` rule), so emitters resolving those entries
+// never contain suffix-renamed catalog keys (rust's
+// `block_keyword` — the fragment-specifier keyword, distinct from
+// the `block` rule), so emitters resolving those entries
 // (findKindEntryForLiteral, #129) referenced TSKindId members that
 // were never emitted. Fall back to the old list only when no id
 // catalog exists (legacy callers).
@@ -14945,16 +14945,6 @@ the kind catalog is in hand, so the render emitter never re-derives it.
  */
 ```
 
-### `packages/codegen/src/emitters/render-options-rs.ts::segmentIdent`
-
-```text
-/** The Rust field/type-segment identifier for one address segment's JS
- *  property key (`nestedKey` of the segment): the key itself when it is
- *  already a valid identifier, otherwise the kind name a literal segment's
- *  own text names (`findEntryForLiteralText`) — a key with no kind name to
- *  fall back on is a codegen-time error, never a guessed name. */
-```
-
 ### `packages/codegen/src/emitters/render-options-rs.ts::structNameOf`
 
 ```text
@@ -15281,11 +15271,13 @@ address that names a site with what that site admits. Roots and the deepest path
 come out with them, so the emitted type is unrolled to the depth the grammar
 actually has rather than a guess.
 
-The tables are data, not structure. A key is joined with `/`, which survives a
-token whose own text is a separator — rust's `/` and `/=` arms give
-`token_tree_punctuation//` and `token_tree_punctuation//=`, distinct from each
-other and from every other address, because the path is built by concatenation
-rather than parsed back.
+The tables are data, not structure. A key is `nestedKey` of the segment, joined
+with `/`; two different segments that both resolve to the same joined path (a
+literal whose kind name collides with a sibling's name, or with a fieldName)
+would otherwise merge silently — the collision is caught by comparing each
+path's incoming segments against the ones already recorded there
+(`formatPreferencePath`, which keeps the quoted literal spelling), and a
+mismatch is rejected as `options: address '<path>' names two segments`.
 
 A key that is both a branch and a leaf, or an address resolving to two types, is
 rejected: an address names one site or a set of them, never both.
@@ -15347,13 +15339,19 @@ exists.
 
 ### `packages/codegen/src/emitters/options.ts::nestedKey`
 
-```text
-/** One address segment's JS property key / raw field key: a literal
- *  segment's own text, an index segment's number as a string, `_` for a
- *  wildcard, otherwise the segment's name. This is the join `path` is built
- *  from — never split back apart, since a literal segment's own text can
- *  contain the `/` join character (TypeScript's `/=` and `/`). */
-```
+The one derivation of a nested option object's key, shared by the TS type
+emitter (`AddressedOptions`) and the Rust struct emitter
+(`render-options-rs.ts`): an index segment's number as a string, `_` for a
+wildcard, a named segment's own name, and — for a literal segment — the
+anonymous token's own kind name (`findEntryForLiteralText`), never its raw
+text. The kind name it reads is `generated-metadata.ts::deriveSymbolRuntimeName`'s
+own output, so a keyword-shaped literal (`class`, `await`, …) already carries
+its `_keyword` suffix there (`class_keyword`, `await_keyword`) — `nestedKey`
+adds no naming rule of its own for that case. A literal with no kind entry at
+all is a codegen-time error, never a guessed name. The canonical address path (`formatPreferencePath`, the
+`canonical` strings on leaf entries, every error message) is untouched by this
+— it keeps the literal's quoted text, since that is what makes two different
+segments that would spell the same nested key distinguishable.
 
 ### `packages/codegen/src/emitters/options.ts::AddressBranchEntry.segments`
 
@@ -15388,8 +15386,8 @@ exists.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::childIndexOf`
 
-```text
-/// Every branch/leaf bucketed by its own parent's canonical address, so a
-/// struct's fields resolve by one lookup instead of a scan over every
-/// branch and leaf in the grammar.
-```
+Every branch/leaf bucketed by its own parent's canonical address, so a
+struct's fields resolve by one lookup instead of a scan over every branch and
+leaf in the grammar. Takes `kindEntries` because bucketing a child under its
+parent keys it by `nestedKey(segment, kindEntries)`, the same derivation the
+address tables used to build `path` and `children` in the first place.

@@ -4902,8 +4902,8 @@ const _closureExpressionExpr: {
 	};
 } = {
 	_: {
-		strict: _closureExpressionExpr$_(F.buildClosureExpressionExpr, TSKindId.Anonymous),
-		coerce: _closureExpressionExpr$_(C.coerceToClosureExpressionExpr, TSKindId.Anonymous)
+		strict: _closureExpressionExpr$_(F.buildClosureExpressionExpr, TSKindId.Keyword),
+		coerce: _closureExpressionExpr$_(C.coerceToClosureExpressionExpr, TSKindId.Keyword)
 	}
 };
 
@@ -8369,8 +8369,8 @@ const _attributedParameter: {
 		coerce: _attributedParameter$variadicParameter(C.coerceToAttributedParameter, C.coerceToVariadicParameter)
 	},
 	_: {
-		strict: _attributedParameter$_(F.buildAttributedParameter, TSKindId.Anonymous),
-		coerce: _attributedParameter$_(C.coerceToAttributedParameter, TSKindId.Anonymous)
+		strict: _attributedParameter$_(F.buildAttributedParameter, TSKindId.Keyword),
+		coerce: _attributedParameter$_(C.coerceToAttributedParameter, TSKindId.Keyword)
 	}
 };
 

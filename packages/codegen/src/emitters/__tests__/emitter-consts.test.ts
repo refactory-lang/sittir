@@ -273,7 +273,7 @@ describe('emitConsts', () => {
 		expect(output).not.toContain('export const enum TSKindId {');
 		// KIND rows come from the FULL parser-symbol catalog now (#129: the
 		// old nodeMap-name filtering could never include collision-
-		// disambiguated catalog keys like rust's `anon_block`, so emitters
+		// disambiguated catalog keys like rust's `block_keyword`, so emitters
 		// resolving those entries referenced ids these tables never carried).
 		// A catalog row absent from the nodeMap ('missing') is therefore
 		// INCLUDED on the kind side...

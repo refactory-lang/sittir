@@ -432,8 +432,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -493,8 +493,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'_',
-		'',
+		'__keyword',
+		'_keyword',
+		'keyword',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -511,34 +512,34 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_token_keywords',
 		'token_keywords',
 		'squote',
-		'as',
-		'async',
-		'await',
-		'break',
-		'const',
-		'continue',
-		'default',
-		'enum',
-		'fn',
-		'for',
-		'gen',
-		'if',
-		'impl',
-		'let',
-		'loop',
-		'match',
-		'mod',
-		'pub',
-		'return',
-		'static',
-		'struct',
-		'trait',
-		'type',
-		'union',
-		'unsafe',
-		'use',
-		'where',
-		'while'
+		'as_keyword',
+		'async_keyword',
+		'await_keyword',
+		'break_keyword',
+		'const_keyword',
+		'continue_keyword',
+		'default_keyword',
+		'enum_keyword',
+		'fn_keyword',
+		'for_keyword',
+		'gen_keyword',
+		'if_keyword',
+		'impl_keyword',
+		'let_keyword',
+		'loop_keyword',
+		'match_keyword',
+		'mod_keyword',
+		'pub_keyword',
+		'return_keyword',
+		'static_keyword',
+		'struct_keyword',
+		'trait_keyword',
+		'type_keyword',
+		'union_keyword',
+		'unsafe_keyword',
+		'use_keyword',
+		'where_keyword',
+		'while_keyword'
 	]),
 	_tokens: new Set([
 		'token_tree',
@@ -552,8 +553,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -613,8 +614,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'_',
-		'',
+		'__keyword',
+		'_keyword',
+		'keyword',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -631,34 +633,34 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_token_keywords',
 		'token_keywords',
 		'squote',
-		'as',
-		'async',
-		'await',
-		'break',
-		'const',
-		'continue',
-		'default',
-		'enum',
-		'fn',
-		'for',
-		'gen',
-		'if',
-		'impl',
-		'let',
-		'loop',
-		'match',
-		'mod',
-		'pub',
-		'return',
-		'static',
-		'struct',
-		'trait',
-		'type',
-		'union',
-		'unsafe',
-		'use',
-		'where',
-		'while'
+		'as_keyword',
+		'async_keyword',
+		'await_keyword',
+		'break_keyword',
+		'const_keyword',
+		'continue_keyword',
+		'default_keyword',
+		'enum_keyword',
+		'fn_keyword',
+		'for_keyword',
+		'gen_keyword',
+		'if_keyword',
+		'impl_keyword',
+		'let_keyword',
+		'loop_keyword',
+		'match_keyword',
+		'mod_keyword',
+		'pub_keyword',
+		'return_keyword',
+		'static_keyword',
+		'struct_keyword',
+		'trait_keyword',
+		'type_keyword',
+		'union_keyword',
+		'unsafe_keyword',
+		'use_keyword',
+		'where_keyword',
+		'while_keyword'
 	]),
 	_non_special_token: new Set([
 		'_literal',
@@ -667,8 +669,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -728,8 +730,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'_',
-		'',
+		'__keyword',
+		'_keyword',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -746,34 +748,34 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_token_keywords',
 		'token_keywords',
 		'squote',
-		'as',
-		'async',
-		'await',
-		'break',
-		'const',
-		'continue',
-		'default',
-		'enum',
-		'fn',
-		'for',
-		'gen',
-		'if',
-		'impl',
-		'let',
-		'loop',
-		'match',
-		'mod',
-		'pub',
-		'return',
-		'static',
-		'struct',
-		'trait',
-		'type',
-		'union',
-		'unsafe',
-		'use',
-		'where',
-		'while'
+		'as_keyword',
+		'async_keyword',
+		'await_keyword',
+		'break_keyword',
+		'const_keyword',
+		'continue_keyword',
+		'default_keyword',
+		'enum_keyword',
+		'fn_keyword',
+		'for_keyword',
+		'gen_keyword',
+		'if_keyword',
+		'impl_keyword',
+		'let_keyword',
+		'loop_keyword',
+		'match_keyword',
+		'mod_keyword',
+		'pub_keyword',
+		'return_keyword',
+		'static_keyword',
+		'struct_keyword',
+		'trait_keyword',
+		'type_keyword',
+		'union_keyword',
+		'unsafe_keyword',
+		'use_keyword',
+		'where_keyword',
+		'while_keyword'
 	]),
 	_use_clause: new Set([
 		'self',
@@ -841,8 +843,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -891,8 +893,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -947,8 +949,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -1008,8 +1010,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'_',
-		'',
+		'__keyword',
+		'_keyword',
+		'keyword',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -1026,34 +1029,34 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_token_keywords',
 		'token_keywords',
 		'squote',
-		'as',
-		'async',
-		'await',
-		'break',
-		'const',
-		'continue',
-		'default',
-		'enum',
-		'fn',
-		'for',
-		'gen',
-		'if',
-		'impl',
-		'let',
-		'loop',
-		'match',
-		'mod',
-		'pub',
-		'return',
-		'static',
-		'struct',
-		'trait',
-		'type',
-		'union',
-		'unsafe',
-		'use',
-		'where',
-		'while',
+		'as_keyword',
+		'async_keyword',
+		'await_keyword',
+		'break_keyword',
+		'const_keyword',
+		'continue_keyword',
+		'default_keyword',
+		'enum_keyword',
+		'fn_keyword',
+		'for_keyword',
+		'gen_keyword',
+		'if_keyword',
+		'impl_keyword',
+		'let_keyword',
+		'loop_keyword',
+		'match_keyword',
+		'mod_keyword',
+		'pub_keyword',
+		'return_keyword',
+		'static_keyword',
+		'struct_keyword',
+		'trait_keyword',
+		'type_keyword',
+		'union_keyword',
+		'unsafe_keyword',
+		'use_keyword',
+		'where_keyword',
+		'while_keyword',
 		'delim_token_tree'
 	]),
 	_non_delim_token: new Set([
@@ -1065,8 +1068,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -1126,8 +1129,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'_',
-		'',
+		'__keyword',
+		'_keyword',
+		'keyword',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -1144,34 +1148,34 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_token_keywords',
 		'token_keywords',
 		'squote',
-		'as',
-		'async',
-		'await',
-		'break',
-		'const',
-		'continue',
-		'default',
-		'enum',
-		'fn',
-		'for',
-		'gen',
-		'if',
-		'impl',
-		'let',
-		'loop',
-		'match',
-		'mod',
-		'pub',
-		'return',
-		'static',
-		'struct',
-		'trait',
-		'type',
-		'union',
-		'unsafe',
-		'use',
-		'where',
-		'while'
+		'as_keyword',
+		'async_keyword',
+		'await_keyword',
+		'break_keyword',
+		'const_keyword',
+		'continue_keyword',
+		'default_keyword',
+		'enum_keyword',
+		'fn_keyword',
+		'for_keyword',
+		'gen_keyword',
+		'if_keyword',
+		'impl_keyword',
+		'let_keyword',
+		'loop_keyword',
+		'match_keyword',
+		'mod_keyword',
+		'pub_keyword',
+		'return_keyword',
+		'static_keyword',
+		'struct_keyword',
+		'trait_keyword',
+		'type_keyword',
+		'union_keyword',
+		'unsafe_keyword',
+		'use_keyword',
+		'where_keyword',
+		'while_keyword'
 	]),
 	_condition: new Set([
 		'_expression',
@@ -1192,8 +1196,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -1236,8 +1240,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'negative_literal',
@@ -1265,8 +1269,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal'
 	]),
@@ -1275,8 +1279,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'negative_literal'
@@ -1303,8 +1307,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'raw_string_literal',
 		'char_literal',
 		'boolean_literal',
-		'true',
-		'false',
+		'true_keyword',
+		'false_keyword',
 		'integer_literal',
 		'float_literal',
 		'identifier',
@@ -1364,8 +1368,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'gt_eq',
 		'lt_eq',
 		'at',
-		'_',
-		'',
+		'__keyword',
+		'_keyword',
 		'dot',
 		'dot_dot',
 		'dot_dot_dot',
@@ -1382,34 +1386,34 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_token_keywords',
 		'token_keywords',
 		'squote',
-		'as',
-		'async',
-		'await',
-		'break',
-		'const',
-		'continue',
-		'default',
-		'enum',
-		'fn',
-		'for',
-		'gen',
-		'if',
-		'impl',
-		'let',
-		'loop',
-		'match',
-		'mod',
-		'pub',
-		'return',
-		'static',
-		'struct',
-		'trait',
-		'type',
-		'union',
-		'unsafe',
-		'use',
-		'where',
-		'while'
+		'as_keyword',
+		'async_keyword',
+		'await_keyword',
+		'break_keyword',
+		'const_keyword',
+		'continue_keyword',
+		'default_keyword',
+		'enum_keyword',
+		'fn_keyword',
+		'for_keyword',
+		'gen_keyword',
+		'if_keyword',
+		'impl_keyword',
+		'let_keyword',
+		'loop_keyword',
+		'match_keyword',
+		'mod_keyword',
+		'pub_keyword',
+		'return_keyword',
+		'static_keyword',
+		'struct_keyword',
+		'trait_keyword',
+		'type_keyword',
+		'union_keyword',
+		'unsafe_keyword',
+		'use_keyword',
+		'where_keyword',
+		'while_keyword'
 	])
 };
 
@@ -2070,21 +2074,21 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 				normalizeSingularWrapSlot(
 					data._type ??
 						readTerminalFromOther(data, [
-							TSKindId.AnonBlock,
-							TSKindId.Expr,
-							TSKindId.Expr2021,
-							TSKindId.Ident,
-							TSKindId.Item,
-							TSKindId.AnonLifetime,
-							TSKindId.Literal,
-							TSKindId.Meta,
-							TSKindId.Pat,
-							TSKindId.PatParam,
-							TSKindId.Path,
-							TSKindId.Stmt,
-							TSKindId.Tt,
-							TSKindId.Ty,
-							TSKindId.Vis
+							TSKindId.BlockKeyword,
+							TSKindId.ExprKeyword,
+							TSKindId.Expr2021Keyword,
+							TSKindId.IdentKeyword,
+							TSKindId.ItemKeyword,
+							TSKindId.LifetimeKeyword,
+							TSKindId.LiteralKeyword,
+							TSKindId.MetaKeyword,
+							TSKindId.PatKeyword,
+							TSKindId.PatParamKeyword,
+							TSKindId.PathKeyword,
+							TSKindId.StmtKeyword,
+							TSKindId.TtKeyword,
+							TSKindId.TyKeyword,
+							TSKindId.VisKeyword
 						]),
 					'type',
 					true,
@@ -3286,7 +3290,7 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 				return drillIn<T.Identifier>(this._name, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				visibilityModifier: (v: NonNullable<T.FieldDeclaration['_visibility_modifier']>) =>
@@ -3441,7 +3445,7 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._name, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			value() {
 				return drillIn<T.Expression | undefined>(this._value, tree);
@@ -3553,7 +3557,7 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._name, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			value() {
 				return drillIn<T.Expression | undefined>(this._value, tree);
@@ -3662,7 +3666,7 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle) {
 				return drillIn<T.WhereClause | undefined>(this._where_clause, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			trailingWhereClause() {
 				return drillIn<T.WhereClause | undefined>(this._trailing_where_clause, tree);
@@ -3789,7 +3793,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle) {
 				return drillIn<T.Parameters>(this._parameters, tree);
 			},
 			returnType() {
-				return drillIn<T._Type | undefined>(this._return_type, tree);
+				return drillIn<T.Type | undefined>(this._return_type, tree);
 			},
 			whereClause() {
 				return drillIn<T.WhereClause | undefined>(this._where_clause, tree);
@@ -3916,7 +3920,7 @@ export function wrapFunctionSignatureItem(data: T.FunctionSignatureItem, tree: T
 				return drillIn<T.Parameters>(this._parameters, tree);
 			},
 			returnType() {
-				return drillIn<T._Type | undefined>(this._return_type, tree);
+				return drillIn<T.Type | undefined>(this._return_type, tree);
 			},
 			whereClause() {
 				return drillIn<T.WhereClause | undefined>(this._where_clause, tree);
@@ -3963,9 +3967,21 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 			),
 
 			modifiers() {
-				return drillInAll<TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier>(
+				return drillInAll<
+					| TSKindId.AsyncKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.UnsafeKeyword
+					| T.ExternModifier
+				>(
 					this._modifier as
-						| readonly (TSKindId.Async | TSKindId.Default | TSKindId.Const | TSKindId.Unsafe | T.ExternModifier)[]
+						| readonly (
+								| TSKindId.AsyncKeyword
+								| TSKindId.DefaultKeyword
+								| TSKindId.ConstKeyword
+								| TSKindId.UnsafeKeyword
+								| T.ExternModifier
+						  )[]
 						| undefined,
 					tree
 				);
@@ -4190,7 +4206,7 @@ export function wrapImplItem(
 				return drillIn<T.ImplItemPositiveClause | T.ImplItemNegativeClause | undefined>(this._trait_clause, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			whereClause() {
 				return drillIn<T.WhereClause | undefined>(this._where_clause, tree);
@@ -4411,8 +4427,8 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle) {
 			),
 
 			bounds() {
-				return drillInAll<T._Type | T.Lifetime | T.HigherRankedTraitBound>(
-					this._bounds as readonly (T._Type | T.Lifetime | T.HigherRankedTraitBound)[] | undefined,
+				return drillInAll<T.Type | T.Lifetime | T.HigherRankedTraitBound>(
+					this._bounds as readonly (T.Type | T.Lifetime | T.HigherRankedTraitBound)[] | undefined,
 					tree
 				);
 			},
@@ -4471,7 +4487,7 @@ export function wrapHigherRankedTraitBound(data: T.HigherRankedTraitBound, tree:
 				return drillIn<T.TypeParameters>(this._type_parameters, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				typeParameters: (v: NonNullable<T.HigherRankedTraitBound['_type_parameters']>) =>
@@ -4521,7 +4537,7 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 			),
 
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				type: (v: NonNullable<T.RemovedTraitBound['_type']>) =>
@@ -4614,10 +4630,10 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle) {
 				return drillIn<T.Identifier>(this._name, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			value() {
-				return drillIn<T.Block | T.Identifier | T._Literal | T.NegativeLiteral | undefined>(this._value, tree);
+				return drillIn<T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined>(this._value, tree);
 			},
 			$with: {
 				name: (v: NonNullable<T.ConstParameter['_name']>) => wrapConstParameter({ ...$edited(data), _name: v }, tree),
@@ -4684,7 +4700,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 				return drillIn<T.TraitBounds | undefined>(this._bounds, tree);
 			},
 			defaultType() {
-				return drillIn<T._Type | undefined>(this._default_type, tree);
+				return drillIn<T.Type | undefined>(this._default_type, tree);
 			},
 			$with: {
 				name: (v: NonNullable<T.TypeParameter['_name']>) => wrapTypeParameter({ ...$edited(data), _name: v }, tree),
@@ -4812,7 +4828,7 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
 				return drillIn<T.Pattern>(this._pattern, tree);
 			},
 			type() {
-				return drillIn<T._Type | undefined>(this._type, tree);
+				return drillIn<T.Type | undefined>(this._type, tree);
 			},
 			value() {
 				return drillIn<T.Expression | undefined>(this._value, tree);
@@ -5283,7 +5299,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 				return drillIn<T.Pattern | TSKindId.Self>(this._name, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				mutableSpecifier: (v: NonNullable<T.Parameter['_mutable_specifier']>) =>
@@ -5360,7 +5376,7 @@ export function wrapVisibilityModifier(
 	return _node;
 }
 
-export function wrap_Type(data: T._Type & { readonly $other?: T._Type | readonly T._Type[] }, tree: TreeHandle) {
+export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.Type[] }, tree: TreeHandle) {
 	if (typeof data === 'number') return data;
 	data = _keepModelledSlots(data, [
 		'_abstract_type',
@@ -5401,7 +5417,7 @@ export function wrap_Type(data: T._Type & { readonly $other?: T._Type | readonly
 		'removed_trait_bound',
 		'_primitive_type',
 		'primitive_type'
-	]) as T._Type | readonly T._Type[] | undefined;
+	]) as T.Type | readonly T.Type[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(data.$other, [
@@ -5425,9 +5441,9 @@ export function wrap_Type(data: T._Type & { readonly $other?: T._Type | readonly
 			'primitive_type'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillInSelf<T._Type>(data as T._Type, tree);
+		return drillInSelf<T.Type>(data as T.Type, tree);
 	}
-	return drillIn<T._Type>(
+	return drillIn<T.Type>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -5440,25 +5456,25 @@ export function wrap_Type(data: T._Type & { readonly $other?: T._Type | readonly
 
 export function wrapBracketedType(
 	data: T.BracketedType & {
-		readonly _type_identifier?: T._Type | T.QualifiedType;
-		readonly _primitive_type?: T._Type | T.QualifiedType;
-		readonly _abstract_type?: T._Type | T.QualifiedType;
-		readonly _reference_type?: T._Type | T.QualifiedType;
-		readonly _metavariable?: T._Type | T.QualifiedType;
-		readonly _pointer_type?: T._Type | T.QualifiedType;
-		readonly _generic_type?: T._Type | T.QualifiedType;
-		readonly _scoped_type_identifier?: T._Type | T.QualifiedType;
-		readonly _tuple_type?: T._Type | T.QualifiedType;
-		readonly _unit_type?: T._Type | T.QualifiedType;
-		readonly _array_type?: T._Type | T.QualifiedType;
-		readonly _function_type?: T._Type | T.QualifiedType;
-		readonly _identifier?: T._Type | T.QualifiedType;
-		readonly _macro_invocation?: T._Type | T.QualifiedType;
-		readonly _never_type?: T._Type | T.QualifiedType;
-		readonly _dynamic_type?: T._Type | T.QualifiedType;
-		readonly _bounded_type?: T._Type | T.QualifiedType;
-		readonly _removed_trait_bound?: T._Type | T.QualifiedType;
-		readonly _qualified_type?: T._Type | T.QualifiedType;
+		readonly _type_identifier?: T.Type | T.QualifiedType;
+		readonly _primitive_type?: T.Type | T.QualifiedType;
+		readonly _abstract_type?: T.Type | T.QualifiedType;
+		readonly _reference_type?: T.Type | T.QualifiedType;
+		readonly _metavariable?: T.Type | T.QualifiedType;
+		readonly _pointer_type?: T.Type | T.QualifiedType;
+		readonly _generic_type?: T.Type | T.QualifiedType;
+		readonly _scoped_type_identifier?: T.Type | T.QualifiedType;
+		readonly _tuple_type?: T.Type | T.QualifiedType;
+		readonly _unit_type?: T.Type | T.QualifiedType;
+		readonly _array_type?: T.Type | T.QualifiedType;
+		readonly _function_type?: T.Type | T.QualifiedType;
+		readonly _identifier?: T.Type | T.QualifiedType;
+		readonly _macro_invocation?: T.Type | T.QualifiedType;
+		readonly _never_type?: T.Type | T.QualifiedType;
+		readonly _dynamic_type?: T.Type | T.QualifiedType;
+		readonly _bounded_type?: T.Type | T.QualifiedType;
+		readonly _removed_trait_bound?: T.Type | T.QualifiedType;
+		readonly _qualified_type?: T.Type | T.QualifiedType;
 	},
 	tree: TreeHandle
 ) {
@@ -5558,7 +5574,7 @@ export function wrapBracketedType(
 			),
 
 			content() {
-				return drillIn<T._Type | T.QualifiedType>(this._content, tree);
+				return drillIn<T.Type | T.QualifiedType>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.BracketedType['_content']>) =>
@@ -5634,10 +5650,10 @@ export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle) {
 			),
 
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			alias() {
-				return drillIn<T._Type>(this._alias, tree);
+				return drillIn<T.Type>(this._alias, tree);
 			},
 			$with: {
 				type: (v: NonNullable<T.QualifiedType['_type']>) => wrapQualifiedType({ ...$edited(data), _type: v }, tree),
@@ -5719,7 +5735,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 			),
 
 			element() {
-				return drillIn<T._Type>(this._element, tree);
+				return drillIn<T.Type>(this._element, tree);
 			},
 			length() {
 				return drillIn<T.Expression | undefined>(this._length, tree);
@@ -5837,7 +5853,7 @@ export function wrapFunctionType(
 				return drillIn<T.Parameters>(this._parameters, tree);
 			},
 			returnType() {
-				return drillIn<T._Type | undefined>(this._return_type, tree);
+				return drillIn<T.Type | undefined>(this._return_type, tree);
 			},
 			$with: {
 				forLifetimes: (v: NonNullable<T.FunctionType['_for_lifetimes']>) =>
@@ -6056,10 +6072,10 @@ export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle) {
 			),
 
 			left() {
-				return drillIn<T.Lifetime | T._Type | T.UseBounds>(this._left, tree);
+				return drillIn<T.Lifetime | T.Type | T.UseBounds>(this._left, tree);
 			},
 			right() {
-				return drillIn<T.Lifetime | T._Type | T.UseBounds>(this._right, tree);
+				return drillIn<T.Lifetime | T.Type | T.UseBounds>(this._right, tree);
 			},
 			$with: {
 				left: (v: NonNullable<T.BoundedType['_left']>) => wrapBoundedType({ ...$edited(data), _left: v }, tree),
@@ -6177,7 +6193,7 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle) {
 				return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				name: (v: NonNullable<T.TypeBinding['_name']>) => wrapTypeBinding({ ...$edited(data), _name: v }, tree),
@@ -6248,7 +6264,7 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle) {
 				return this._mutable_specifier;
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				lifetime: (v: NonNullable<T.ReferenceType['_lifetime']>) =>
@@ -6323,7 +6339,7 @@ export function wrapPointerType(
 				return this._content;
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.PointerType['_content']>) =>
@@ -7528,7 +7544,7 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 				return drillIn<T.Expression>(this._value, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				value: (v: NonNullable<T.TypeCastExpression['_value']>) =>
@@ -7636,7 +7652,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
 					| T.CallExpression
 					| T.ReturnExpression
 					| T.YieldExpression
-					| T._Literal
+					| T.Literal
 					| T.Identifier
 					| TSKindId.Self
 					| T.ScopedIdentifier
@@ -10204,8 +10220,8 @@ export function wrapOrPattern(
 	return _node;
 }
 
-export function wrap_Literal(
-	data: T._Literal & { readonly $other?: T._Literal | readonly T._Literal[] },
+export function wrapLiteral(
+	data: T.Literal & { readonly $other?: T.Literal | readonly T.Literal[] },
 	tree: TreeHandle
 ) {
 	if (typeof data === 'number') return data;
@@ -10224,7 +10240,7 @@ export function wrap_Literal(
 		'boolean_literal',
 		'integer_literal',
 		'float_literal'
-	]) as T._Literal | readonly T._Literal[] | undefined;
+	]) as T.Literal | readonly T.Literal[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(data.$other, [
@@ -10236,9 +10252,9 @@ export function wrap_Literal(
 			'float_literal'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
-		return drillInSelf<T._Literal>(data as T._Literal, tree);
+		return drillInSelf<T.Literal>(data as T.Literal, tree);
 	}
-	return drillIn<T._Literal>(
+	return drillIn<T.Literal>(
 		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -11146,7 +11162,7 @@ export function wrapTupleTypeElements(
 				: Delimiter.None,
 
 			types() {
-				return drillInAll<T._Type>(this._type as readonly T._Type[] | undefined, tree);
+				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
 			},
 			$with: {}
 		},
@@ -11451,7 +11467,7 @@ export function wrapClosureExpressionBlock(data: T.ClosureExpressionBlock, tree:
 			}),
 
 			returnType() {
-				return drillIn<T._Type | undefined>(this._return_type, tree);
+				return drillIn<T.Type | undefined>(this._return_type, tree);
 			},
 			body() {
 				return drillIn<T.Block>(this._body, tree);
@@ -11487,7 +11503,7 @@ export function wrapClosureExpressionExpr(data: T.ClosureExpressionExpr, tree: T
 			),
 
 			body() {
-				return drillIn<T.Expression | TSKindId.Anonymous>(this._body, tree);
+				return drillIn<T.Expression | TSKindId.Keyword>(this._body, tree);
 			},
 			$with: {
 				body: (v: NonNullable<T.ClosureExpressionExpr['_body']>) =>
@@ -13684,33 +13700,28 @@ export function wrapAttributedEnumVariant(data: T.AttributedEnumVariant, tree: T
 
 export function wrapAttributedParameter(
 	data: T.AttributedParameter & {
-		readonly _parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _self_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _variadic_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _type_identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _primitive_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _abstract_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _reference_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _metavariable?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _pointer_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _generic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _scoped_type_identifier?:
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Anonymous
-			| T._Type;
-		readonly _tuple_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _unit_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _array_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _function_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _macro_invocation?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _never_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _dynamic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _bounded_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
-		readonly _removed_trait_bound?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type;
+		readonly _parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _self_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _variadic_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly __keyword?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _type_identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _primitive_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _abstract_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _reference_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _metavariable?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _pointer_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _generic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _scoped_type_identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _tuple_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _unit_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _array_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _function_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _macro_invocation?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _never_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _dynamic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _bounded_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
+		readonly _removed_trait_bound?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type;
 	},
 	tree: TreeHandle
 ) {
@@ -13720,7 +13731,7 @@ export function wrapAttributedParameter(
 		'_parameter',
 		'_self_parameter',
 		'_variadic_parameter',
-		'_',
+		'__keyword',
 		'_type_identifier',
 		'_primitive_type',
 		'_abstract_type',
@@ -13745,7 +13756,7 @@ export function wrapAttributedParameter(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_',
+				'__keyword',
 				'_abstract_type',
 				'_array_type',
 				'_bounded_type',
@@ -13781,7 +13792,7 @@ export function wrapAttributedParameter(
 						data._parameter ??
 						data._self_parameter ??
 						data._variadic_parameter ??
-						data['_'] ??
+						data.__keyword ??
 						data._type_identifier ??
 						data._primitive_type ??
 						data._abstract_type ??
@@ -13832,7 +13843,7 @@ export function wrapAttributedParameter(
 				return drillIn<T.AttributeItem | undefined>(this._attribute_item, tree);
 			},
 			content() {
-				return drillIn<T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Anonymous | T._Type>(
+				return drillIn<T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Keyword | T.Type>(
 					this._content,
 					tree
 				);
@@ -14190,7 +14201,7 @@ export function wrapAttributedOrderedField(data: T.AttributedOrderedField, tree:
 				return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree);
 			},
 			type() {
-				return drillIn<T._Type>(this._type, tree);
+				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
 				attributeItems: (...v: NonNullable<T.AttributedOrderedField['_attribute_item']>[number][]) =>
@@ -14208,33 +14219,33 @@ export function wrapAttributedOrderedField(data: T.AttributedOrderedField, tree:
 
 export function wrapTypeArgument(
 	data: T.TypeArgument & {
-		readonly _type_identifier?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _primitive_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _abstract_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _reference_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _metavariable?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _pointer_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _generic_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _scoped_type_identifier?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _tuple_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _unit_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _array_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _function_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _identifier?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _macro_invocation?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _never_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _dynamic_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _bounded_type?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _removed_trait_bound?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _type_binding?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _lifetime?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _string_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _raw_string_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _char_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _boolean_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _integer_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _float_literal?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
-		readonly _block?: T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block;
+		readonly _type_identifier?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _primitive_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _abstract_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _reference_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _metavariable?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _pointer_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _generic_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _scoped_type_identifier?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _tuple_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _unit_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _array_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _function_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _identifier?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _macro_invocation?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _never_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _dynamic_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _bounded_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _removed_trait_bound?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _type_binding?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _lifetime?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _string_literal?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _raw_string_literal?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _char_literal?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _boolean_literal?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _integer_literal?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _float_literal?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _block?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 	},
 	tree: TreeHandle
 ) {
@@ -14367,7 +14378,7 @@ export function wrapTypeArgument(
 			}),
 
 			content() {
-				return drillIn<T._Type | T.TypeBinding | T.Lifetime | T._Literal | T.Block>(this._content, tree);
+				return drillIn<T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(this._content, tree);
 			},
 			traitBounds() {
 				return drillIn<T.TraitBounds | undefined>(this._trait_bounds, tree);
@@ -14567,7 +14578,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Parameter]: (d, t) => wrapParameter(d as unknown as T.Parameter, t),
 	[TSKindId.ExternModifier]: (d, t) => wrapExternModifier(d as unknown as T.ExternModifier, t),
 	[TSKindId.VisibilityModifier]: (d, t) => wrapVisibilityModifier(d as unknown as T.VisibilityModifier, t),
-	[TSKindId._Type]: (d, t) => wrap_Type(d as unknown as T._Type, t),
+	[TSKindId.Type]: (d, t) => wrapType(d as unknown as T.Type, t),
 	[TSKindId.BracketedType]: (d, t) => wrapBracketedType(d as unknown as T.BracketedType, t),
 	[TSKindId.QualifiedType]: (d, t) => wrapQualifiedType(d as unknown as T.QualifiedType, t),
 	[TSKindId.Lifetime]: (d, t) => wrapLifetime(d as unknown as T.Lifetime, t),
@@ -14664,7 +14675,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CapturedPattern]: (d, t) => wrapCapturedPattern(d as unknown as T.CapturedPattern, t),
 	[TSKindId.ReferencePattern]: (d, t) => wrapReferencePattern(d as unknown as T.ReferencePattern, t),
 	[TSKindId.OrPattern]: (d, t) => wrapOrPattern(d as unknown as T.OrPattern, t),
-	[TSKindId._Literal]: (d, t) => wrap_Literal(d as unknown as T._Literal, t),
+	[TSKindId.Literal]: (d, t) => wrapLiteral(d as unknown as T.Literal, t),
 	[TSKindId.LiteralPattern]: (d, t) => wrapLiteralPattern(d as unknown as T.LiteralPattern, t),
 	[TSKindId.NegativeLiteral]: (d, t) => wrapNegativeLiteral(d as unknown as T.NegativeLiteral, t),
 	[TSKindId.IntegerLiteral]: (d) => ({ ...d, $type: TSKindId.IntegerLiteral as const }),
@@ -14853,7 +14864,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.Parameter]: ReturnType<typeof wrapParameter>;
 	[TSKindId.ExternModifier]: ReturnType<typeof wrapExternModifier>;
 	[TSKindId.VisibilityModifier]: ReturnType<typeof wrapVisibilityModifier>;
-	[TSKindId._Type]: ReturnType<typeof wrap_Type>;
+	[TSKindId.Type]: ReturnType<typeof wrapType>;
 	[TSKindId.BracketedType]: ReturnType<typeof wrapBracketedType>;
 	[TSKindId.QualifiedType]: ReturnType<typeof wrapQualifiedType>;
 	[TSKindId.Lifetime]: ReturnType<typeof wrapLifetime>;
@@ -14946,7 +14957,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.CapturedPattern]: ReturnType<typeof wrapCapturedPattern>;
 	[TSKindId.ReferencePattern]: ReturnType<typeof wrapReferencePattern>;
 	[TSKindId.OrPattern]: ReturnType<typeof wrapOrPattern>;
-	[TSKindId._Literal]: ReturnType<typeof wrap_Literal>;
+	[TSKindId.Literal]: ReturnType<typeof wrapLiteral>;
 	[TSKindId.LiteralPattern]: ReturnType<typeof wrapLiteralPattern>;
 	[TSKindId.NegativeLiteral]: ReturnType<typeof wrapNegativeLiteral>;
 	[TSKindId.IntegerLiteral]: _NodeData & { readonly $type: TSKindId.IntegerLiteral };

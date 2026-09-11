@@ -647,7 +647,7 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
-          "_anon_type",
+          "_type_keyword",
           "_import_specifier_as"
         ]
       }
@@ -3471,7 +3471,7 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_extends",
+          "_extends_keyword",
           "_colon"
         ]
       },
@@ -4175,7 +4175,7 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
-          "_anon_type"
+          "_type_keyword"
         ]
       },
       "import_clause_group": {
@@ -6545,7 +6545,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "anon_type"
+              "parseKind": "type_keyword"
             }
           ]
         },
@@ -6638,8 +6638,8 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "anon_type",
-        "identifier"
+        "identifier",
+        "type_keyword"
       ]
     },
     {
@@ -8377,18 +8377,6 @@
       ]
     },
     {
-      "kind": "abstract",
-      "modelType": "token",
-      "typeName": "Abstract",
-      "irKey": "abstract",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"abstract\" as const",
-      "word": true,
-      "text": "abstract",
-      "factoryShape": "text"
-    },
-    {
       "kind": "abstract_class_declaration",
       "modelType": "branch",
       "typeName": "AbstractClassDeclaration",
@@ -8512,6 +8500,18 @@
       ]
     },
     {
+      "kind": "abstract_keyword",
+      "modelType": "token",
+      "typeName": "AbstractKeyword",
+      "irKey": "abstractKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"abstract\" as const",
+      "word": true,
+      "text": "abstract",
+      "factoryShape": "text"
+    },
+    {
       "kind": "abstract_method_signature",
       "modelType": "branch",
       "typeName": "AbstractMethodSignature",
@@ -8575,13 +8575,13 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "get",
-              "parseKind": "get"
+              "parseKind": "get_keyword"
             },
             {
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "set",
-              "parseKind": "set"
+              "parseKind": "set_keyword"
             },
             {
               "kind": "terminal",
@@ -8769,10 +8769,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "accessor",
+      "kind": "accessor_keyword",
       "modelType": "token",
-      "typeName": "Accessor",
-      "irKey": "accessor",
+      "typeName": "AccessorKeyword",
+      "irKey": "accessorKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"accessor\" as const",
@@ -8911,106 +8911,10 @@
       "text": "&="
     },
     {
-      "kind": "anon_asserts",
+      "kind": "any_keyword",
       "modelType": "token",
-      "typeName": "AnonAsserts",
-      "irKey": "anonAsserts",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"asserts\" as const",
-      "word": true,
-      "text": "asserts",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_class",
-      "modelType": "token",
-      "typeName": "AnonClass",
-      "irKey": "anonClass",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"class\" as const",
-      "word": true,
-      "text": "class",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_import",
-      "modelType": "token",
-      "typeName": "AnonImport",
-      "irKey": "anonImport",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"import\" as const",
-      "word": true,
-      "text": "import",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_module",
-      "modelType": "token",
-      "typeName": "AnonModule",
-      "irKey": "anonModule",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"module\" as const",
-      "word": true,
-      "text": "module",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_number",
-      "modelType": "token",
-      "typeName": "AnonNumber",
-      "irKey": "anonNumber",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"number\" as const",
-      "word": true,
-      "text": "number",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_object",
-      "modelType": "token",
-      "typeName": "AnonObject",
-      "irKey": "anonObject",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"object\" as const",
-      "word": true,
-      "text": "object",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_string",
-      "modelType": "token",
-      "typeName": "AnonString",
-      "irKey": "anonString",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"string\" as const",
-      "word": true,
-      "text": "string",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "anon_type",
-      "modelType": "token",
-      "typeName": "AnonType",
-      "irKey": "anonType",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"type\" as const",
-      "word": true,
-      "text": "type",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "any",
-      "modelType": "token",
-      "typeName": "Any",
-      "irKey": "any",
+      "typeName": "AnyKeyword",
+      "irKey": "anyKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"any\" as const",
@@ -9283,18 +9187,6 @@
       ]
     },
     {
-      "kind": "as",
-      "modelType": "token",
-      "typeName": "As",
-      "irKey": "as",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"as\" as const",
-      "word": true,
-      "text": "as",
-      "factoryShape": "text"
-    },
-    {
       "kind": "as_expression",
       "modelType": "branch",
       "typeName": "AsExpression",
@@ -9339,7 +9231,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "const",
-              "parseKind": "const"
+              "parseKind": "const_keyword"
             },
             {
               "kind": "node-ref",
@@ -9358,10 +9250,22 @@
       ]
     },
     {
-      "kind": "assert",
+      "kind": "as_keyword",
       "modelType": "token",
-      "typeName": "Assert",
-      "irKey": "assert",
+      "typeName": "AsKeyword",
+      "irKey": "asKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"as\" as const",
+      "word": true,
+      "text": "as",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "assert_keyword",
+      "modelType": "token",
+      "typeName": "AssertKeyword",
+      "irKey": "assertKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"assert\" as const",
@@ -9455,6 +9359,18 @@
       "factoryFields": [
         "asserts"
       ]
+    },
+    {
+      "kind": "asserts_keyword",
+      "modelType": "token",
+      "typeName": "AssertsKeyword",
+      "irKey": "assertsKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"asserts\" as const",
+      "word": true,
+      "text": "asserts",
+      "factoryShape": "text"
     },
     {
       "kind": "assignment_expression",
@@ -9601,10 +9517,10 @@
       ]
     },
     {
-      "kind": "async",
+      "kind": "async_keyword",
       "modelType": "token",
-      "typeName": "Async",
-      "irKey": "async",
+      "typeName": "AsyncKeyword",
+      "irKey": "asyncKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
@@ -9743,18 +9659,6 @@
       ]
     },
     {
-      "kind": "await",
-      "modelType": "token",
-      "typeName": "Await",
-      "irKey": "await",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"await\" as const",
-      "word": true,
-      "text": "await",
-      "factoryShape": "text"
-    },
-    {
       "kind": "await_expression",
       "modelType": "envelope",
       "typeName": "AwaitExpression",
@@ -9788,6 +9692,18 @@
       "factoryFields": [
         "expression"
       ]
+    },
+    {
+      "kind": "await_keyword",
+      "modelType": "token",
+      "typeName": "AwaitKeyword",
+      "irKey": "awaitKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"await\" as const",
+      "word": true,
+      "text": "await",
+      "factoryShape": "text"
     },
     {
       "kind": "bang",
@@ -10003,7 +9919,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "instanceof",
-              "parseKind": "instanceof"
+              "parseKind": "instanceof_keyword"
             }
           ]
         },
@@ -10059,10 +9975,10 @@
       ]
     },
     {
-      "kind": "boolean",
+      "kind": "boolean_keyword",
       "modelType": "token",
-      "typeName": "Boolean",
-      "irKey": "boolean",
+      "typeName": "BooleanKeyword",
+      "irKey": "booleanKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"boolean\" as const",
@@ -10082,10 +9998,10 @@
       "text": "`"
     },
     {
-      "kind": "break",
+      "kind": "break_keyword",
       "modelType": "token",
-      "typeName": "Break",
-      "irKey": "break",
+      "typeName": "BreakKeyword",
+      "irKey": "breakKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
@@ -10340,27 +10256,15 @@
       "text": "^="
     },
     {
-      "kind": "case",
+      "kind": "case_keyword",
       "modelType": "token",
-      "typeName": "Case",
-      "irKey": "case",
+      "typeName": "CaseKeyword",
+      "irKey": "caseKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"case\" as const",
       "word": true,
       "text": "case",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "catch",
-      "modelType": "token",
-      "typeName": "Catch",
-      "irKey": "catch",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"catch\" as const",
-      "word": true,
-      "text": "catch",
       "factoryShape": "text"
     },
     {
@@ -10424,6 +10328,18 @@
         "catch_clause_group",
         "body"
       ]
+    },
+    {
+      "kind": "catch_keyword",
+      "modelType": "token",
+      "typeName": "CatchKeyword",
+      "irKey": "catchKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"catch\" as const",
+      "word": true,
+      "text": "catch",
+      "factoryShape": "text"
     },
     {
       "kind": "class",
@@ -10807,6 +10723,18 @@
       ]
     },
     {
+      "kind": "class_keyword",
+      "modelType": "token",
+      "typeName": "ClassKeyword",
+      "irKey": "classKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"class\" as const",
+      "word": true,
+      "text": "class",
+      "factoryShape": "text"
+    },
+    {
       "kind": "class_static_block",
       "modelType": "branch",
       "typeName": "ClassStaticBlock",
@@ -11031,10 +10959,10 @@
       ]
     },
     {
-      "kind": "const",
+      "kind": "const_keyword",
       "modelType": "token",
-      "typeName": "Const",
-      "irKey": "const",
+      "typeName": "ConstKeyword",
+      "irKey": "constKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
@@ -11064,7 +10992,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "extends",
-              "parseKind": "extends"
+              "parseKind": "extends_keyword"
             },
             {
               "kind": "terminal",
@@ -11305,10 +11233,10 @@
       ]
     },
     {
-      "kind": "continue",
+      "kind": "continue_keyword",
       "modelType": "token",
-      "typeName": "Continue",
-      "irKey": "continue",
+      "typeName": "ContinueKeyword",
+      "irKey": "continueKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
@@ -11424,10 +11352,10 @@
       "text": "-?:"
     },
     {
-      "kind": "debugger",
+      "kind": "debugger_keyword",
       "modelType": "token",
-      "typeName": "Debugger",
-      "irKey": "debugger",
+      "typeName": "DebuggerKeyword",
+      "irKey": "debuggerKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"debugger\" as const",
@@ -11501,10 +11429,10 @@
       ]
     },
     {
-      "kind": "declare",
+      "kind": "declare_keyword",
       "modelType": "token",
-      "typeName": "Declare",
-      "irKey": "declare",
+      "typeName": "DeclareKeyword",
+      "irKey": "declareKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"declare\" as const",
@@ -11775,10 +11703,10 @@
       ]
     },
     {
-      "kind": "default",
+      "kind": "default_keyword",
       "modelType": "token",
-      "typeName": "Default",
-      "irKey": "default",
+      "typeName": "DefaultKeyword",
+      "irKey": "defaultKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
@@ -11822,10 +11750,10 @@
       ]
     },
     {
-      "kind": "delete",
+      "kind": "delete_keyword",
       "modelType": "token",
-      "typeName": "Delete",
-      "irKey": "delete",
+      "typeName": "DeleteKeyword",
+      "irKey": "deleteKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"delete\" as const",
@@ -11834,10 +11762,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "do",
+      "kind": "do_keyword",
       "modelType": "token",
-      "typeName": "Do",
-      "irKey": "do",
+      "typeName": "DoKeyword",
+      "irKey": "doKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"do\" as const",
@@ -11975,18 +11903,6 @@
       "text": "\""
     },
     {
-      "kind": "else",
-      "modelType": "token",
-      "typeName": "Else",
-      "irKey": "else",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"else\" as const",
-      "word": true,
-      "text": "else",
-      "factoryShape": "text"
-    },
-    {
       "kind": "else_clause",
       "modelType": "envelope",
       "typeName": "ElseClause",
@@ -12022,6 +11938,18 @@
       ]
     },
     {
+      "kind": "else_keyword",
+      "modelType": "token",
+      "typeName": "ElseKeyword",
+      "irKey": "elseKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"else\" as const",
+      "word": true,
+      "text": "else",
+      "factoryShape": "text"
+    },
+    {
       "kind": "empty_statement",
       "modelType": "token",
       "typeName": "EmptyStatement",
@@ -12032,18 +11960,6 @@
       "stampExpression": "\";\" as const",
       "word": false,
       "text": ";",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "enum",
-      "modelType": "token",
-      "typeName": "Enum",
-      "irKey": "enum",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"enum\" as const",
-      "word": true,
-      "text": "enum",
       "factoryShape": "text"
     },
     {
@@ -12251,6 +12167,18 @@
       ]
     },
     {
+      "kind": "enum_keyword",
+      "modelType": "token",
+      "typeName": "EnumKeyword",
+      "irKey": "enumKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"enum\" as const",
+      "word": true,
+      "text": "enum",
+      "factoryShape": "text"
+    },
+    {
       "kind": "eq",
       "modelType": "token",
       "typeName": "Eq",
@@ -12317,18 +12245,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "export",
-      "modelType": "token",
-      "typeName": "Export",
-      "irKey": "export",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"export\" as const",
-      "word": true,
-      "text": "export",
-      "factoryShape": "text"
-    },
-    {
       "kind": "export_clause",
       "modelType": "envelope",
       "typeName": "ExportClause",
@@ -12365,6 +12281,18 @@
       ]
     },
     {
+      "kind": "export_keyword",
+      "modelType": "token",
+      "typeName": "ExportKeyword",
+      "irKey": "exportKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"export\" as const",
+      "word": true,
+      "text": "export",
+      "factoryShape": "text"
+    },
+    {
       "kind": "export_specifier",
       "modelType": "branch",
       "typeName": "ExportSpecifier",
@@ -12386,13 +12314,13 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "type",
-              "parseKind": "anon_type"
+              "parseKind": "type_keyword"
             },
             {
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "typeof",
-              "parseKind": "typeof"
+              "parseKind": "typeof_keyword"
             }
           ]
         },
@@ -12618,18 +12546,6 @@
       ]
     },
     {
-      "kind": "extends",
-      "modelType": "token",
-      "typeName": "Extends",
-      "irKey": "extends",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"extends\" as const",
-      "word": true,
-      "text": "extends",
-      "factoryShape": "text"
-    },
-    {
       "kind": "extends_clause",
       "modelType": "envelope",
       "typeName": "ExtendsClause",
@@ -12663,6 +12579,18 @@
       "factoryFields": [
         "extends_clause_single"
       ]
+    },
+    {
+      "kind": "extends_keyword",
+      "modelType": "token",
+      "typeName": "ExtendsKeyword",
+      "irKey": "extendsKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"extends\" as const",
+      "word": true,
+      "text": "extends",
+      "factoryShape": "text"
     },
     {
       "kind": "extends_type_clause",
@@ -12729,18 +12657,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "finally",
-      "modelType": "token",
-      "typeName": "Finally",
-      "irKey": "finally",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"finally\" as const",
-      "word": true,
-      "text": "finally",
-      "factoryShape": "text"
-    },
-    {
       "kind": "finally_clause",
       "modelType": "envelope",
       "typeName": "FinallyClause",
@@ -12777,6 +12693,18 @@
       ]
     },
     {
+      "kind": "finally_keyword",
+      "modelType": "token",
+      "typeName": "FinallyKeyword",
+      "irKey": "finallyKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"finally\" as const",
+      "word": true,
+      "text": "finally",
+      "factoryShape": "text"
+    },
+    {
       "kind": "flow_maybe_type",
       "modelType": "envelope",
       "typeName": "FlowMaybeType",
@@ -12810,18 +12738,6 @@
       "factoryFields": [
         "type"
       ]
-    },
-    {
-      "kind": "for",
-      "modelType": "token",
-      "typeName": "For",
-      "irKey": "for",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"for\" as const",
-      "word": true,
-      "text": "for",
-      "factoryShape": "text"
     },
     {
       "kind": "for_in_statement",
@@ -12984,6 +12900,18 @@
         "right",
         "body"
       ]
+    },
+    {
+      "kind": "for_keyword",
+      "modelType": "token",
+      "typeName": "ForKeyword",
+      "irKey": "forKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"for\" as const",
+      "word": true,
+      "text": "for",
+      "factoryShape": "text"
     },
     {
       "kind": "for_statement",
@@ -13179,27 +13107,15 @@
       ]
     },
     {
-      "kind": "from",
+      "kind": "from_keyword",
       "modelType": "token",
-      "typeName": "From",
-      "irKey": "from",
+      "typeName": "FromKeyword",
+      "irKey": "fromKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"from\" as const",
       "word": true,
       "text": "from",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "function",
-      "modelType": "token",
-      "typeName": "Function",
-      "irKey": "function",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"function\" as const",
-      "word": true,
-      "text": "function",
       "factoryShape": "text"
     },
     {
@@ -13545,6 +13461,18 @@
         "return_type",
         "body"
       ]
+    },
+    {
+      "kind": "function_keyword",
+      "modelType": "token",
+      "typeName": "FunctionKeyword",
+      "irKey": "functionKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"function\" as const",
+      "word": true,
+      "text": "function",
+      "factoryShape": "text"
     },
     {
       "kind": "function_signature",
@@ -14226,10 +14154,10 @@
       ]
     },
     {
-      "kind": "get",
+      "kind": "get_keyword",
       "modelType": "token",
-      "typeName": "Get",
-      "irKey": "get",
+      "typeName": "GetKeyword",
+      "irKey": "getKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"get\" as const",
@@ -14238,10 +14166,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "global",
+      "kind": "global_keyword",
       "modelType": "token",
-      "typeName": "Global",
-      "irKey": "global",
+      "typeName": "GlobalKeyword",
+      "irKey": "globalKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"global\" as const",
@@ -14344,10 +14272,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "if",
+      "kind": "if_keyword",
       "modelType": "token",
-      "typeName": "If",
-      "irKey": "if",
+      "typeName": "IfKeyword",
+      "irKey": "ifKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"if\" as const",
@@ -14435,18 +14363,6 @@
       ]
     },
     {
-      "kind": "implements",
-      "modelType": "token",
-      "typeName": "Implements",
-      "irKey": "implements",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"implements\" as const",
-      "word": true,
-      "text": "implements",
-      "factoryShape": "text"
-    },
-    {
       "kind": "implements_clause",
       "modelType": "envelope",
       "typeName": "ImplementsClause",
@@ -14480,6 +14396,18 @@
       "factoryFields": [
         "type"
       ]
+    },
+    {
+      "kind": "implements_keyword",
+      "modelType": "token",
+      "typeName": "ImplementsKeyword",
+      "irKey": "implementsKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"implements\" as const",
+      "word": true,
+      "text": "implements",
+      "factoryShape": "text"
     },
     {
       "kind": "import",
@@ -14609,13 +14537,13 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "with",
-              "parseKind": "with"
+              "parseKind": "with_keyword"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "assert",
-              "parseKind": "assert"
+              "parseKind": "assert_keyword"
             }
           ]
         },
@@ -14704,6 +14632,18 @@
       ]
     },
     {
+      "kind": "import_keyword",
+      "modelType": "token",
+      "typeName": "ImportKeyword",
+      "irKey": "importKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"import\" as const",
+      "word": true,
+      "text": "import",
+      "factoryShape": "text"
+    },
+    {
       "kind": "import_require_clause",
       "modelType": "branch",
       "typeName": "ImportRequireClause",
@@ -14782,13 +14722,13 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "type",
-              "parseKind": "anon_type"
+              "parseKind": "type_keyword"
             },
             {
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "typeof",
-              "parseKind": "typeof"
+              "parseKind": "typeof_keyword"
             }
           ]
         },
@@ -14816,7 +14756,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "anon_type"
+              "parseKind": "type_keyword"
             },
             {
               "kind": "node-ref",
@@ -14861,13 +14801,13 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "type",
-              "parseKind": "anon_type"
+              "parseKind": "type_keyword"
             },
             {
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "typeof",
-              "parseKind": "typeof"
+              "parseKind": "typeof_keyword"
             }
           ]
         },
@@ -14966,10 +14906,10 @@
       ]
     },
     {
-      "kind": "in",
+      "kind": "in_keyword",
       "modelType": "token",
-      "typeName": "In",
-      "irKey": "in",
+      "typeName": "InKeyword",
+      "irKey": "inKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
@@ -15023,7 +14963,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "readonly",
-              "parseKind": "readonly"
+              "parseKind": "readonly_keyword"
             }
           ]
         },
@@ -15151,10 +15091,10 @@
       ]
     },
     {
-      "kind": "infer",
+      "kind": "infer_keyword",
       "modelType": "token",
-      "typeName": "Infer",
-      "irKey": "infer",
+      "typeName": "InferKeyword",
+      "irKey": "inferKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"infer\" as const",
@@ -15220,10 +15160,10 @@
       ]
     },
     {
-      "kind": "instanceof",
+      "kind": "instanceof_keyword",
       "modelType": "token",
-      "typeName": "Instanceof",
-      "irKey": "instanceof",
+      "typeName": "InstanceofKeyword",
+      "irKey": "instanceofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"instanceof\" as const",
@@ -15287,18 +15227,6 @@
         "expression",
         "type_arguments"
       ]
-    },
-    {
-      "kind": "interface",
-      "modelType": "token",
-      "typeName": "Interface",
-      "irKey": "interface",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"interface\" as const",
-      "word": true,
-      "text": "interface",
-      "factoryShape": "text"
     },
     {
       "kind": "interface_declaration",
@@ -15400,6 +15328,18 @@
         "extends_type_clause",
         "body"
       ]
+    },
+    {
+      "kind": "interface_keyword",
+      "modelType": "token",
+      "typeName": "InterfaceKeyword",
+      "irKey": "interfaceKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"interface\" as const",
+      "word": true,
+      "text": "interface",
+      "factoryShape": "text"
     },
     {
       "kind": "internal_module",
@@ -15532,10 +15472,10 @@
       ]
     },
     {
-      "kind": "is",
+      "kind": "is_keyword",
       "modelType": "token",
-      "typeName": "Is",
-      "irKey": "is",
+      "typeName": "IsKeyword",
+      "irKey": "isKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"is\" as const",
@@ -15553,10 +15493,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "keyof",
+      "kind": "keyof_keyword",
       "modelType": "token",
-      "typeName": "Keyof",
-      "irKey": "keyof",
+      "typeName": "KeyofKeyword",
+      "irKey": "keyofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"keyof\" as const",
@@ -15655,10 +15595,10 @@
       "text": "["
     },
     {
-      "kind": "let",
+      "kind": "let_keyword",
       "modelType": "token",
-      "typeName": "Let",
-      "irKey": "let",
+      "typeName": "LetKeyword",
+      "irKey": "letKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"let\" as const",
@@ -16153,10 +16093,10 @@
       ]
     },
     {
-      "kind": "meta",
+      "kind": "meta_keyword",
       "modelType": "token",
-      "typeName": "Meta",
-      "irKey": "meta",
+      "typeName": "MetaKeyword",
+      "irKey": "metaKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"meta\" as const",
@@ -16302,7 +16242,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "readonly",
-              "parseKind": "readonly"
+              "parseKind": "readonly_keyword"
             }
           ]
         },
@@ -16341,13 +16281,13 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "get",
-              "parseKind": "get"
+              "parseKind": "get_keyword"
             },
             {
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "set",
-              "parseKind": "set"
+              "parseKind": "set_keyword"
             },
             {
               "kind": "terminal",
@@ -16630,7 +16570,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "readonly",
-              "parseKind": "readonly"
+              "parseKind": "readonly_keyword"
             }
           ]
         },
@@ -16669,13 +16609,13 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "get",
-              "parseKind": "get"
+              "parseKind": "get_keyword"
             },
             {
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "set",
-              "parseKind": "set"
+              "parseKind": "set_keyword"
             },
             {
               "kind": "terminal",
@@ -16925,6 +16865,18 @@
       ]
     },
     {
+      "kind": "module_keyword",
+      "modelType": "token",
+      "typeName": "ModuleKeyword",
+      "irKey": "moduleKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"module\" as const",
+      "word": true,
+      "text": "module",
+      "factoryShape": "text"
+    },
+    {
       "kind": "named_imports",
       "modelType": "envelope",
       "typeName": "NamedImports",
@@ -16959,18 +16911,6 @@
       "factoryFields": [
         "import_specifiers"
       ]
-    },
-    {
-      "kind": "namespace",
-      "modelType": "token",
-      "typeName": "Namespace",
-      "irKey": "namespace",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"namespace\" as const",
-      "word": true,
-      "text": "namespace",
-      "factoryShape": "text"
     },
     {
       "kind": "namespace_export",
@@ -17050,6 +16990,18 @@
       "factoryFields": [
         "name"
       ]
+    },
+    {
+      "kind": "namespace_keyword",
+      "modelType": "token",
+      "typeName": "NamespaceKeyword",
+      "irKey": "namespaceKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"namespace\" as const",
+      "word": true,
+      "text": "namespace",
+      "factoryShape": "text"
     },
     {
       "kind": "nested_identifier",
@@ -17182,27 +17134,15 @@
       ]
     },
     {
-      "kind": "never",
+      "kind": "never_keyword",
       "modelType": "token",
-      "typeName": "Never",
-      "irKey": "never",
+      "typeName": "NeverKeyword",
+      "irKey": "neverKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"never\" as const",
       "word": true,
       "text": "never",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "new",
-      "modelType": "token",
-      "typeName": "New",
-      "irKey": "new",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"new\" as const",
-      "word": true,
-      "text": "new",
       "factoryShape": "text"
     },
     {
@@ -17285,6 +17225,18 @@
       ]
     },
     {
+      "kind": "new_keyword",
+      "modelType": "token",
+      "typeName": "NewKeyword",
+      "irKey": "newKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"new\" as const",
+      "word": true,
+      "text": "new",
+      "factoryShape": "text"
+    },
+    {
       "kind": "non_null_expression",
       "modelType": "envelope",
       "typeName": "NonNullExpression",
@@ -17339,6 +17291,18 @@
       "factoryName": "number",
       "irKey": "number",
       "hidden": false,
+      "factoryShape": "text"
+    },
+    {
+      "kind": "number_keyword",
+      "modelType": "token",
+      "typeName": "NumberKeyword",
+      "irKey": "numberKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"number\" as const",
+      "word": true,
+      "text": "number",
       "factoryShape": "text"
     },
     {
@@ -17472,6 +17436,18 @@
         "left",
         "right"
       ]
+    },
+    {
+      "kind": "object_keyword",
+      "modelType": "token",
+      "typeName": "ObjectKeyword",
+      "irKey": "objectKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"object\" as const",
+      "word": true,
+      "text": "object",
+      "factoryShape": "text"
     },
     {
       "kind": "object_pattern",
@@ -17642,10 +17618,10 @@
       ]
     },
     {
-      "kind": "of",
+      "kind": "of_keyword",
       "modelType": "token",
-      "typeName": "Of",
-      "irKey": "of",
+      "typeName": "OfKeyword",
+      "irKey": "ofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"of\" as const",
@@ -17821,7 +17797,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "readonly",
-              "parseKind": "readonly"
+              "parseKind": "readonly_keyword"
             }
           ]
         },
@@ -18001,10 +17977,10 @@
       ]
     },
     {
-      "kind": "override",
+      "kind": "override_keyword",
       "modelType": "token",
-      "typeName": "Override",
-      "irKey": "override",
+      "typeName": "OverrideKeyword",
+      "irKey": "overrideKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
@@ -18536,10 +18512,10 @@
       ]
     },
     {
-      "kind": "private",
+      "kind": "private_keyword",
       "modelType": "token",
-      "typeName": "Private",
-      "irKey": "private",
+      "typeName": "PrivateKeyword",
+      "irKey": "privateKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"private\" as const",
@@ -18710,7 +18686,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "readonly",
-              "parseKind": "readonly"
+              "parseKind": "readonly_keyword"
             }
           ]
         },
@@ -18819,27 +18795,15 @@
       ]
     },
     {
-      "kind": "protected",
+      "kind": "protected_keyword",
       "modelType": "token",
-      "typeName": "Protected",
-      "irKey": "protected",
+      "typeName": "ProtectedKeyword",
+      "irKey": "protectedKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"protected\" as const",
       "word": true,
       "text": "protected",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "public",
-      "modelType": "token",
-      "typeName": "Public",
-      "irKey": "public",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"public\" as const",
-      "word": true,
-      "text": "public",
       "factoryShape": "text"
     },
     {
@@ -18948,7 +18912,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "readonly",
-              "parseKind": "readonly"
+              "parseKind": "readonly_keyword"
             }
           ]
         },
@@ -19152,6 +19116,18 @@
       ]
     },
     {
+      "kind": "public_keyword",
+      "modelType": "token",
+      "typeName": "PublicKeyword",
+      "irKey": "publicKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"public\" as const",
+      "word": true,
+      "text": "public",
+      "factoryShape": "text"
+    },
+    {
       "kind": "qmark",
       "modelType": "token",
       "typeName": "Qmark",
@@ -19229,10 +19205,10 @@
       "text": "]"
     },
     {
-      "kind": "readonly",
+      "kind": "readonly_keyword",
       "modelType": "token",
-      "typeName": "Readonly",
-      "irKey": "readonly",
+      "typeName": "ReadonlyKeyword",
+      "irKey": "readonlyKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"readonly\" as const",
@@ -19352,10 +19328,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "require",
+      "kind": "require_keyword",
       "modelType": "token",
-      "typeName": "Require",
-      "irKey": "require",
+      "typeName": "RequireKeyword",
+      "irKey": "requireKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"require\" as const",
@@ -19448,7 +19424,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "readonly",
-              "parseKind": "readonly"
+              "parseKind": "readonly_keyword"
             }
           ]
         },
@@ -19662,10 +19638,10 @@
       ]
     },
     {
-      "kind": "return",
+      "kind": "return_keyword",
       "modelType": "token",
-      "typeName": "Return",
-      "irKey": "return",
+      "typeName": "ReturnKeyword",
+      "irKey": "returnKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
@@ -19756,18 +19732,6 @@
       "text": ")"
     },
     {
-      "kind": "satisfies",
-      "modelType": "token",
-      "typeName": "Satisfies",
-      "irKey": "satisfies",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"satisfies\" as const",
-      "word": true,
-      "text": "satisfies",
-      "factoryShape": "text"
-    },
-    {
       "kind": "satisfies_expression",
       "modelType": "branch",
       "typeName": "SatisfiesExpression",
@@ -19825,6 +19789,18 @@
       ]
     },
     {
+      "kind": "satisfies_keyword",
+      "modelType": "token",
+      "typeName": "SatisfiesKeyword",
+      "irKey": "satisfiesKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"satisfies\" as const",
+      "word": true,
+      "text": "satisfies",
+      "factoryShape": "text"
+    },
+    {
       "kind": "semi",
       "modelType": "token",
       "typeName": "Semi",
@@ -19871,10 +19847,10 @@
       ]
     },
     {
-      "kind": "set",
+      "kind": "set_keyword",
       "modelType": "token",
-      "typeName": "Set",
-      "irKey": "set",
+      "typeName": "SetKeyword",
+      "irKey": "setKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"set\" as const",
@@ -20082,10 +20058,10 @@
       ]
     },
     {
-      "kind": "static",
+      "kind": "static_keyword",
       "modelType": "token",
-      "typeName": "Static",
-      "irKey": "static",
+      "typeName": "StaticKeyword",
+      "irKey": "staticKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
@@ -20145,6 +20121,18 @@
       "factoryFields": [
         "content"
       ]
+    },
+    {
+      "kind": "string_keyword",
+      "modelType": "token",
+      "typeName": "StringKeyword",
+      "irKey": "stringKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"string\" as const",
+      "word": true,
+      "text": "string",
+      "factoryShape": "text"
     },
     {
       "kind": "subscript_expression",
@@ -20252,18 +20240,6 @@
       "stampExpression": "\"super\" as const",
       "word": true,
       "text": "super",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "switch",
-      "modelType": "token",
-      "typeName": "Switch",
-      "irKey": "switch",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"switch\" as const",
-      "word": true,
-      "text": "switch",
       "factoryShape": "text"
     },
     {
@@ -20410,6 +20386,18 @@
       ]
     },
     {
+      "kind": "switch_keyword",
+      "modelType": "token",
+      "typeName": "SwitchKeyword",
+      "irKey": "switchKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"switch\" as const",
+      "word": true,
+      "text": "switch",
+      "factoryShape": "text"
+    },
+    {
       "kind": "switch_statement",
       "modelType": "branch",
       "typeName": "SwitchStatement",
@@ -20467,10 +20455,10 @@
       ]
     },
     {
-      "kind": "symbol",
+      "kind": "symbol_keyword",
       "modelType": "token",
-      "typeName": "Symbol",
-      "irKey": "symbol",
+      "typeName": "SymbolKeyword",
+      "irKey": "symbolKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"symbol\" as const",
@@ -20479,10 +20467,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "target",
+      "kind": "target_keyword",
       "modelType": "token",
-      "typeName": "Target",
-      "irKey": "target",
+      "typeName": "TargetKeyword",
+      "irKey": "targetKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"target\" as const",
@@ -20763,10 +20751,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "throw",
+      "kind": "throw_keyword",
       "modelType": "token",
-      "typeName": "Throw",
-      "irKey": "throw",
+      "typeName": "ThrowKeyword",
+      "irKey": "throwKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"throw\" as const",
@@ -20870,10 +20858,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "try",
+      "kind": "try_keyword",
       "modelType": "token",
-      "typeName": "Try",
-      "irKey": "try",
+      "typeName": "TryKeyword",
+      "irKey": "tryKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"try\" as const",
@@ -21314,6 +21302,18 @@
       ]
     },
     {
+      "kind": "type_keyword",
+      "modelType": "token",
+      "typeName": "TypeKeyword",
+      "irKey": "typeKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
+      "word": true,
+      "text": "type",
+      "factoryShape": "text"
+    },
+    {
       "kind": "type_parameter",
       "modelType": "branch",
       "typeName": "TypeParameter",
@@ -21635,10 +21635,10 @@
       ]
     },
     {
-      "kind": "typeof",
+      "kind": "typeof_keyword",
       "modelType": "token",
-      "typeName": "Typeof",
-      "irKey": "typeof",
+      "typeName": "TypeofKeyword",
+      "irKey": "typeofKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"typeof\" as const",
@@ -21805,10 +21805,10 @@
       "text": "unique symbol"
     },
     {
-      "kind": "unknown",
+      "kind": "unknown_keyword",
       "modelType": "token",
-      "typeName": "Unknown",
-      "irKey": "unknown",
+      "typeName": "UnknownKeyword",
+      "irKey": "unknownKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"unknown\" as const",
@@ -21870,10 +21870,10 @@
       ]
     },
     {
-      "kind": "using",
+      "kind": "using_keyword",
       "modelType": "token",
-      "typeName": "Using",
-      "irKey": "using",
+      "typeName": "UsingKeyword",
+      "irKey": "usingKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"using\" as const",
@@ -21882,10 +21882,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "var",
+      "kind": "var_keyword",
       "modelType": "token",
-      "typeName": "Var",
-      "irKey": "var",
+      "typeName": "VarKeyword",
+      "irKey": "varKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"var\" as const",
@@ -22010,10 +22010,10 @@
       ]
     },
     {
-      "kind": "void",
+      "kind": "void_keyword",
       "modelType": "token",
-      "typeName": "Void",
-      "irKey": "void",
+      "typeName": "VoidKeyword",
+      "irKey": "voidKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"void\" as const",
@@ -22022,10 +22022,10 @@
       "factoryShape": "text"
     },
     {
-      "kind": "while",
+      "kind": "while_keyword",
       "modelType": "token",
-      "typeName": "While",
-      "irKey": "while",
+      "typeName": "WhileKeyword",
+      "irKey": "whileKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"while\" as const",
@@ -22091,10 +22091,10 @@
       ]
     },
     {
-      "kind": "with",
+      "kind": "with_keyword",
       "modelType": "token",
-      "typeName": "With",
-      "irKey": "with",
+      "typeName": "WithKeyword",
+      "irKey": "withKeyword",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"with\" as const",
@@ -22160,18 +22160,6 @@
       ]
     },
     {
-      "kind": "yield",
-      "modelType": "token",
-      "typeName": "Yield",
-      "irKey": "yield",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"yield\" as const",
-      "word": true,
-      "text": "yield",
-      "factoryShape": "text"
-    },
-    {
       "kind": "yield_expression",
       "modelType": "polymorph",
       "typeName": "YieldExpression",
@@ -22205,6 +22193,18 @@
       "factoryFields": [
         "expression"
       ]
+    },
+    {
+      "kind": "yield_keyword",
+      "modelType": "token",
+      "typeName": "YieldKeyword",
+      "irKey": "yieldKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"yield\" as const",
+      "word": true,
+      "text": "yield",
+      "factoryShape": "text"
     }
   ]
 }

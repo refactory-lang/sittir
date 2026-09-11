@@ -4314,7 +4314,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 				return this._operator;
 			},
 			name() {
-				return drillIn<T.Identifier | TSKindId.Anonymous>(this._name, tree);
+				return drillIn<T.Identifier | TSKindId.Keyword>(this._name, tree);
 			},
 			$with: {
 				operator: (v: NonNullable<T.SplatPattern['_operator']>) =>
@@ -5052,7 +5052,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 			}),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.And, TSKindId.Or]),
+					data._operator ?? readTerminalFromOther(data, [TSKindId.AndKeyword, TSKindId.OrKeyword]),
 					'operator',
 					true,
 					data.$type,
@@ -6285,7 +6285,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 			}),
 
 			name() {
-				return drillIn<T.Identifier | TSKindId.AnonType>(this._name, tree);
+				return drillIn<T.Identifier | TSKindId.TypeKeyword>(this._name, tree);
 			},
 			typeParameter() {
 				return drillIn<T.TypeParameter>(this._type_parameter, tree);
@@ -8920,9 +8920,9 @@ export function wrapComparisonOperatorComparator(
 							TSKindId.GtEq,
 							TSKindId.Gt,
 							TSKindId.LtGt,
-							TSKindId.In,
+							TSKindId.InKeyword,
 							TSKindId._NotIn,
-							TSKindId.Is,
+							TSKindId.IsKeyword,
 							TSKindId._IsNot
 						]),
 					'operators',
@@ -9350,8 +9350,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.EscapeInterpolation]: (d) => ({ ...d, $type: TSKindId.EscapeInterpolation as const }),
 	[TSKindId.StringEnd]: (d) => ({ ...d, $type: TSKindId.StringEnd as const }),
 	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
-	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
-	[TSKindId.Except]: (d) => ({ ...d, $type: TSKindId.Except as const })
+	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
 };
 
 interface _WrapReturnByKindId {
@@ -9536,7 +9535,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.StringEnd]: _NodeData & { readonly $type: TSKindId.StringEnd };
 	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
 	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
-	[TSKindId.Except]: _NodeData & { readonly $type: TSKindId.Except };
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

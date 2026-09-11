@@ -141,7 +141,7 @@ describe('renderOptionsRs', () => {
 			'::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(formal_parameters)/elements:/separator/\\",\\"")?;'
 		);
 		expect(source).toContain('separator: obj.get("separator")?,');
-		expect(source).toContain('comma: obj.get(",")?,');
+		expect(source).toContain('comma: obj.get("comma")?,');
 		expect(source).toContain(
 			'if let Some(v) = options.formal_parameters.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.separator.as_ref()).and_then(|o| o.comma.as_ref()).and_then(|o| o.after) {\n        set_spacing(&mut table, SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER, SPACING_SITES[SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER].4, v, "(formal_parameters)/elements:/separator/\\",\\"/after")?;\n    }'
 		);

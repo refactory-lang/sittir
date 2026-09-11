@@ -1702,8 +1702,8 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
-	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.Anonymous>(config.name, [
-		['_', TSKindId.Anonymous] as const
+	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.Keyword>(config.name, [
+		['_', TSKindId.Keyword] as const
 	]);
 	return withMethods(
 		withAccessors(
@@ -2108,8 +2108,8 @@ export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
 export function buildBooleanOperator(config: T.BooleanOperator.Config): T.BooleanOperator.Built {
 	const _left = config.left;
 	const _operator = coerceKindEnumStorage<number>(config.operator, [
-		['and', TSKindId.And] as const,
-		['or', TSKindId.Or] as const
+		['and', TSKindId.AndKeyword] as const,
+		['or', TSKindId.OrKeyword] as const
 	]);
 	const _right = config.right;
 	return withMethods(
@@ -2600,8 +2600,8 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Built {
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Built {
-	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.name, [
-		['type', TSKindId.AnonType] as const
+	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.TypeKeyword>(config.name, [
+		['type', TSKindId.TypeKeyword] as const
 	]);
 	const _type_parameter = config.typeParameter;
 	return withMethods(
@@ -4803,9 +4803,9 @@ export function buildComparisonOperatorComparator(
 		['>=', TSKindId.GtEq] as const,
 		['>', TSKindId.Gt] as const,
 		['<>', TSKindId.LtGt] as const,
-		['in', TSKindId.In] as const,
+		['in', TSKindId.InKeyword] as const,
 		['not in', TSKindId._NotIn] as const,
-		['is', TSKindId.Is] as const,
+		['is', TSKindId.IsKeyword] as const,
 		['is not', TSKindId._IsNot] as const
 	]);
 	const _primary_expression = config.primaryExpression;
@@ -4938,20 +4938,6 @@ export function buildDedent(text: string): T.Dedent.Built {
 	return withMethods(
 		{
 			$type: TSKindId.Dedent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildExcept(text: string): T.Except.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`except: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Except as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5129,7 +5115,6 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
-	except: T.Except;
 };
 
 export const _factoryMap = {
@@ -5300,7 +5285,6 @@ export const _factoryMap = {
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
 	_indent: buildIndent,
-	_dedent: buildDedent,
-	except: buildExcept
+	_dedent: buildDedent
 } as const;
 export type _FactoryMap = typeof _factoryMap;

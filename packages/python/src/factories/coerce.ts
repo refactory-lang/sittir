@@ -175,8 +175,7 @@ export const _fromMap = {
 	string_start: coerceToStringStart,
 	_string_content: coerceTo_StringContent,
 	escape_interpolation: coerceToEscapeInterpolation,
-	string_end: coerceToStringEnd,
-	except: coerceToExcept
+	string_end: coerceToStringEnd
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -207,8 +206,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator() },
 	string_start: { factory: F.buildStringStart },
 	escape_interpolation: { factory: F.buildEscapeInterpolation },
-	string_end: { factory: F.buildStringEnd },
-	except: { factory: F.buildExcept }
+	string_end: { factory: F.buildStringEnd }
 };
 
 function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
@@ -328,10 +326,10 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'_yield_from_clause'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34,
-	35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-	64, 66, 71, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
-	101, 108, 109, 110, 111, 122, 132, 133, 134, 235, 238, 239, 240, 254, 265
+	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
+	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
+	63, 64, 66, 71, 72, 73, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+	100, 101, 108, 109, 110, 111, 122, 132, 133, 134, 235, 238, 239, 240, 254, 265
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
@@ -2969,7 +2967,7 @@ export function resolveSplatPattern_operator(
 export function resolveSplatPattern_name(value: T.SplatPattern.LooseConfig['name']): T.SplatPattern['_name'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
-		[['_', TSKindId.Anonymous] as const]
+		[['_', TSKindId.Keyword] as const]
 	);
 }
 
@@ -3253,7 +3251,7 @@ export function resolveBooleanOperator_operator(
 ): T.BooleanOperator['_operator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'and' | 'or'>(value, _K0, _K0)),
-		[['and', TSKindId.And] as const, ['or', TSKindId.Or] as const]
+		[['and', TSKindId.AndKeyword] as const, ['or', TSKindId.OrKeyword] as const]
 	);
 }
 
@@ -3659,7 +3657,7 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): T.GenericType['_name'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier')),
-		[['type', TSKindId.AnonType] as const]
+		[['type', TSKindId.TypeKeyword] as const]
 	);
 }
 
@@ -5114,9 +5112,9 @@ export function resolveComparisonOperatorComparator_operators(
 			['>=', TSKindId.GtEq] as const,
 			['>', TSKindId.Gt] as const,
 			['<>', TSKindId.LtGt] as const,
-			['in', TSKindId.In] as const,
+			['in', TSKindId.InKeyword] as const,
 			['not in', TSKindId._NotIn] as const,
-			['is', TSKindId.Is] as const,
+			['is', TSKindId.IsKeyword] as const,
 			['is not', TSKindId._IsNot] as const
 		]
 	);
@@ -5191,9 +5189,4 @@ export function coerceToEscapeInterpolation(
 export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F.buildStringEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
-}
-
-export function coerceToExcept(input: T.Except.Loose): ReturnType<typeof F.buildExcept> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildExcept>;
-	return F.buildExcept(input as Parameters<typeof F.buildExcept>[0]);
 }

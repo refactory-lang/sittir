@@ -10288,10 +10288,12 @@ the set from that annotation alone.
 			   not already covered by `existing`, the alias's id — not the hidden
 			   rule's — is what `$type` dispatch must key on for that name.
 			   (Cascade: prefer a real `sym_<name>` under that exact visible name
-			   if one exists elsewhere in the catalog —
-			   `shouldReplaceSymbol`/the anon-swap branch above already handle
-			   that case before we ever get here — falling back to the alias's id
-			   only when nothing else claims the name.) */
+			   if one exists elsewhere in the catalog — `shouldReplaceSymbol`
+			   already handles that case before we ever get here — falling back
+			   to the alias's id only when nothing else claims the name. An
+			   anonymous and a named entry reaching the same key here, after
+			   keyword-suffixing has already run, is a genuine naming collision:
+			   `joinIdNames` throws rather than inventing a second name for it.) */
 ```
 
 #### body
@@ -10307,20 +10309,35 @@ the set from that annotation alone.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::deriveSymbolRuntimeName`
 
-#### body
+Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
+arrive in parser.c with all-caps tail names. Lowercase them so the catalog
+`key` is consistently snake-case across all kinds (aligns with
+`call_expression`, `_array_expression_list`, etc.) and the downstream
+PascalCase / SCREAMING_SNAKE_CASE conversions produce sane identifiers.
+Without this, `LPAREN` stays uppercase, the `toScreamingSnakeCase` regex
+inserts `_` before every letter, and the emitted Rust constant becomes
+`L_P_A_R_E_N` instead of `LPAREN`. The original C-side name is preserved in
+`parser.cSymbol`; the literal token text is preserved in `parser.symbolName`.
 
-```text
-/* Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
-	   arrive in parser.c with all-caps tail names. Lowercase them so the
-	   catalog `key` is consistently snake-case across all kinds (aligns with
-	   `call_expression`, `_array_expression_list`, etc.) and the downstream
-	   PascalCase / SCREAMING_SNAKE_CASE conversions produce sane identifiers.
-	   Without this, `LPAREN` stays uppercase, the `toScreamingSnakeCase`
-	   regex inserts `_` before every letter, and the emitted Rust constant
-	   becomes `L_P_A_R_E_N` instead of `LPAREN`. The original C-side name is
-	   preserved in `parser.cSymbol`; the literal punctuation text is
-	   preserved in `parser.symbolName`. */
-```
+#### body — keyword tokens
+
+A keyword is not detected by a regex or a word-shape test on the runtime
+name; parser.c already names it that way. An anonymous symbol's own C name
+is `anon_sym_` followed by its literal text verbatim exactly when
+tree-sitter minted that symbol from an identifier-shaped keyword — `class`,
+`_`, `expr_2021` — since a symbolic token instead goes through per-character
+name substitution (`anon_sym_COMMA` for `,`, `anon_sym_macro_rules_BANG` for
+`macro_rules!`), which never reproduces the literal text after the
+`anon_sym_` prefix. That exact match (`cName === 'anon_sym_' + symbolName`)
+is the one predicate: every keyword token gets the `_keyword` suffix,
+collision with a same-named kind or not — `fn_keyword`, `class_keyword`,
+`u8_keyword`, `tt_keyword`, `__keyword` for `_` — and a symbolic token keeps
+its plain derived name (`comma`, `macro_rules_bang`). This is the ONE
+derivation of a keyword's runtime name: the `TSKindId` member, the kind
+string, factories, and the nested option key `nestedKey` derives all follow
+from it. If a `_keyword`-suffixed name still collides with an existing key,
+`joinIdNames` throws naming both symbols — there is no second, id-suffixed
+fallback.
 
 #### body
 
