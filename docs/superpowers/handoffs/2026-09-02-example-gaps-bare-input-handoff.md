@@ -178,7 +178,50 @@ The example now writes `applyFormat().$trivia(importTypes(), applyFormatDoc())`
 rust `trivia.test.ts` gained carry and verbatim cases (spacing-robust — its
 three pre-existing exact-whitespace failures are untouched).
 
-## The remaining example red (rust 3 · typescript 3 · python 2)
+## Classes 4–7 (commits `cf818b068`, `83df6c3de`, `f7cf740b0`, `4f56416b3`)
+
+Taken in the order agreed with the user: example mistakes first, then the
+surface gaps.
+
+- **Examples (`cf818b068`)**: rust 271 called the single-slot form
+  `withSemi` with a config bag — its builder takes the value directly;
+  python strict 21 called `module.strict({})` — the strict layer takes the
+  module's children positionally. Both examples were wrong against
+  documented conventions.
+- **typescript `expression` key (`83df6c3de`)**: `return_statement`,
+  `throw_statement`, `expression_statement` and `template_substitution`
+  reference the hidden rule `_expressions`, and an unlabelled slot is named
+  after the kind it references, so the single-value slot was `expressions`.
+  `field('expression')` in `grammar.sittir.ts` (a `rules:` override for
+  `template_substitution`) is the one naming source. This also closed the old
+  "GAP D": the loose config silently ignored the unknown `expression` key, so
+  `return result;` rendered as `return;`. Parser change → native rebuild
+  (`cd rust/crates/sittir-typescript && pnpm run build`); the API-surface
+  snapshot moved (four resolver renames).
+- **`ir.identifier(name)` (`f7cf740b0`)**: the key pass pre-claimed every
+  supertype's group name, so the `identifier` leaf was demoted to
+  `identifier2` and the group won the key as a plain object. A supertype no
+  longer pre-claims a name a concrete kind owns; the ir emitter emits such a
+  group as the kind's callable with the members attached
+  (`attachProps(F.buildIdentifier, { … })`). Only typescript had the
+  collision.
+- **python `pass` in `module.statements` (`4f56416b3`)**: three roots. The
+  from-map skipped every `_`-prefixed kind even with an emitted coercer, so
+  `_resolveByKind` could never reach `_simple_statements`; it now covers
+  exactly what `classifyFromEmission` emits. `_resolveOne` recognises a kind
+  before a scalar — a number is a kind only when `_KIND_ID_STORED` has it —
+  and routes a foreign kind to the single arm whose bare input admits it
+  (`_BARE_ACCEPTS`, transitive), erroring on several. `WidenBranches` offers
+  every member's bare slot (`BareArms`), and rest-parameter coercers take
+  `T.<Kind>.Loose | LooseValue<Element>`. Side finding: the generated node
+  tests stubbed sole slots by parse alias; they now stub by storage kind.
+
+Examples after these: rust 2 · typescript 0 · python 0. Every gate identical
+or improved at each commit (validate unchanged ×3, codegen vitest 15 known,
+package suites at baseline plus new passing tests, all three generated node
+suites green).
+
+## The remaining example red (rust 2)
 
 With their roots as far as this session got:
 
