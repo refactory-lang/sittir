@@ -111,17 +111,39 @@ var ApplyPathSkip = class extends Error {
     this.name = "ApplyPathSkip";
   }
 };
+function splitSegments(pathStr) {
+  const parts = [];
+  let current = "";
+  let inLiteral = false;
+  for (const c of pathStr) {
+    if (c === '"') {
+      inLiteral = !inLiteral;
+      current += c;
+    } else if (c === "/" && !inLiteral) {
+      parts.push(current);
+      current = "";
+    } else {
+      current += c;
+    }
+  }
+  if (inLiteral) throw new Error(`parsePath: unterminated literal in path '${pathStr}'`);
+  parts.push(current);
+  return parts;
+}
 function parsePath(pathStr) {
+  if (pathStr === ".") return [];
   if (typeof pathStr !== "string" || pathStr.length === 0) {
     throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
   }
   if (pathStr.startsWith("/") || pathStr.endsWith("/")) {
     throw new Error(`parsePath: leading/trailing slash not allowed in path '${pathStr}'`);
   }
-  const parts = pathStr.split("/");
+  const parts = splitSegments(pathStr);
   const segments = [];
   for (const part of parts) {
-    if (part === "_") {
+    if (part.length >= 2 && part.startsWith('"') && part.endsWith('"')) {
+      segments.push({ kind: "literal", text: part.slice(1, -1) });
+    } else if (part === "_") {
       segments.push({ kind: "wildcard" });
     } else if (/^-?\d+$/.test(part)) {
       segments.push({ kind: "index", value: Number(part) });
@@ -130,10 +152,10 @@ function parsePath(pathStr) {
     } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
       segments.push({ kind: "fieldName", name: part.slice(0, -1) });
     } else if (part === "*") {
-      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`);
+      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard`);
     } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
       throw new Error(
-        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`
+        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead`
       );
     } else {
       throw new Error(
@@ -166,6 +188,7 @@ function applyPath(rule, segments, patch, precStack) {
     case "fieldName":
       return descendThroughNamedField(rule, head.name, rest, patch, precStack);
     case "index":
+    case "literal":
     case "wildcard": {
       if (isContainerType(t)) {
         return applyToMembers(rule, head, rest, patch, precStack);
@@ -251,6 +274,15 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
         `applyPath: index ${head.value} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
       );
     }
+    case "literal": {
+      if (literalTextOfMember(contentOf(rule)) !== head.text) {
+        throw new ApplyPathSkip(
+          `applyPath: '${rule.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+        );
+      }
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+      return reconstructWrapper(rule, newContent);
+    }
     case "kind-match":
     case "fieldName": {
       throw new Error(
@@ -279,6 +311,15 @@ function descendThroughAlias(rule, head, rest, patch, precStack) {
       throw new ApplyPathSkip(
         `applyPath: index ${head.value} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
       );
+    }
+    case "literal": {
+      if (literalTextOfMember(contentOf(rule)) !== head.text) {
+        throw new ApplyPathSkip(
+          `applyPath: '${rule.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+        );
+      }
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+      return reconstructWrapper(rule, newContent);
     }
     case "kind-match":
     case "fieldName": {
@@ -445,6 +486,12 @@ function applyToMembers(rule, head, rest, patch, precStack) {
   switch (head.kind) {
     case "index":
       return applyToIndexedMember(rule, members, head.value, rest, patch, precStack);
+    case "literal": {
+      const at = members.findIndex((m) => literalTextOfMember(m) === head.text);
+      if (at < 0) throw new ApplyPathSkip(`applyPath: no literal ${JSON.stringify(head.text)} in ${rule.type}`);
+      members[at] = applyPath(members[at], rest, patch, precStack);
+      return reconstructContainer(rule, members);
+    }
     case "wildcard":
       return applyWildcardToMembers(rule, members, rest, patch, precStack);
     case "kind-match":
@@ -458,6 +505,10 @@ function applyToMembers(rule, head, rest, patch, precStack) {
       );
     }
   }
+}
+function literalTextOfMember(rule) {
+  const r = rule;
+  return r.type === "STRING" && typeof r.value === "string" ? r.value : void 0;
 }
 function applyToIndexedMember(rule, members, indexValue, rest, patch, precStack) {
   const idx = indexValue < 0 ? members.length + indexValue : indexValue;
@@ -489,24 +540,32 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
+// packages/codegen/src/dsl/annotations.ts
+function withAnnotations(rule, extra) {
+  const node = rule;
+  if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
+    const content = node.content;
+    return {
+      ...node,
+      content: { ...content, annotations: { ...content.annotations, ...extra } }
+    };
+  }
+  return { ...node, annotations: { ...node.annotations, ...extra } };
+}
+function withHoistedAnnotation(rule) {
+  return withAnnotations(rule, { hoisted: true });
+}
+
 // packages/codegen/src/dsl/primitives/preference.ts
 function isPreference(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
 }
-function preference(label, defaultArm) {
-  return { __sittirPlaceholder: "preference", label, default: defaultArm };
+function preference(arm2) {
+  return { __sittirPlaceholder: "preference", default: arm2 };
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
-var SPACING_ARMS = ["tight", "space", "newline"];
-var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
-var DELIMITER_LABEL = "delimiter";
-var DELIMITER_ARMS = ["Delimiter.None", "Delimiter.Leading", "Delimiter.Trailing", "Delimiter.Both"];
-function isDelimiterArm(value) {
-  return DELIMITER_ARMS.includes(value);
-}
-var SEPARATOR_LABEL = "separator";
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
 function parseSpacingLabel(name) {
   const m = SPACING_LABEL.exec(name);
@@ -522,21 +581,10 @@ function parseSeamLabel(name) {
   const m = SEAM_LABEL.exec(name);
   return m ? { token: m[1], side: m[2] } : void 0;
 }
-function siteKey(slot, label) {
-  const spacing = parseSpacingLabel(label);
-  if (spacing === void 0) return `${slot}_${label}`;
-  return spacing.side === void 0 ? `${slot}_separator_space` : `${slot}_separator_space_${spacing.side}`;
-}
 var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
 function parseFlankAddress(key) {
   const m = FLANK_ADDRESS.exec(key);
   return m ? { kind: m[1], side: m[2] } : void 0;
-}
-function isSpacingArm(value) {
-  return SPACING_ARMS.includes(value);
-}
-function isWhitespaceArm(value) {
-  return WHITESPACE_ARMS.includes(value);
 }
 
 // packages/codegen/src/dsl/primitives/alias.ts
@@ -568,6 +616,12 @@ function isVariantPlaceholder(v) {
 }
 function variant(name) {
   return { __sittirPlaceholder: "variant", name };
+}
+function variantMintName(v) {
+  return [...v.nestedUnder ?? [], v.name].join("_");
+}
+function nestVariant(v, nestedUnder) {
+  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
 }
 
 // packages/codegen/src/types/rule-types.ts
@@ -1403,15 +1457,15 @@ function diagnoseParseKindCollisions(input) {
     const byWireIdentity = /* @__PURE__ */ new Map();
     for (const value of bucket) {
       const wireKey = value.storageKindId !== void 0 ? `#${value.storageKindId}` : `?${parseKey}`;
-      const group = byWireIdentity.get(wireKey) ?? [];
-      group.push(value);
-      byWireIdentity.set(wireKey, group);
+      const group2 = byWireIdentity.get(wireKey) ?? [];
+      group2.push(value);
+      byWireIdentity.set(wireKey, group2);
     }
-    for (const group of byWireIdentity.values()) {
-      const groupStorageIdentities = distinct(group.map((value) => kindKey(value.storageKindId, value.storageKind)));
+    for (const group2 of byWireIdentity.values()) {
+      const groupStorageIdentities = distinct(group2.map((value) => kindKey(value.storageKindId, value.storageKind)));
       if (groupStorageIdentities.length <= 1) continue;
-      if (distinct(group.map((value) => value.structuralSignature)).length === 1) continue;
-      const storageKinds = distinct(group.map((value) => value.storageKind));
+      if (distinct(group2.map((value) => value.structuralSignature)).length === 1) continue;
+      const storageKinds = distinct(group2.map((value) => value.storageKind));
       diagnostics.push({
         code: "parsekind-noninjective",
         severity: "error",
@@ -1537,7 +1591,7 @@ function enrich(baseInput) {
       clauseGroupRules,
       supertypeNames
     );
-    clauseGroupRules[groupName] = groupUnaliasResult.rule;
+    clauseGroupRules[groupName] = withHoistedAnnotation(groupUnaliasResult.rule);
     for (const diagnostic of groupUnaliasResult.diagnostics) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
     }
@@ -3371,6 +3425,7 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     if (isSupertypeLike(body)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
     if (!promoted) return null;
+    rulesBag[name] = withHoistedAnnotation(body);
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
@@ -3468,12 +3523,12 @@ function walkFieldEnums(rule, rules, parentKind, out) {
 function buildCanonicalEnumNames(occurrences, rules) {
   const byKey = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    let group = byKey.get(occ.memberKey);
-    if (!group) {
-      group = [];
-      byKey.set(occ.memberKey, group);
+    let group2 = byKey.get(occ.memberKey);
+    if (!group2) {
+      group2 = [];
+      byKey.set(occ.memberKey, group2);
     }
-    group.push(occ);
+    group2.push(occ);
   }
   const existingNameCandidatesByMemberKey = /* @__PURE__ */ new Map();
   for (const [name, rule] of Object.entries(rules)) {
@@ -3492,17 +3547,17 @@ function buildCanonicalEnumNames(occurrences, rules) {
     existingRuleNameByMemberKey.set(key, candidates.sort()[0]);
   }
   const result = /* @__PURE__ */ new Map();
-  const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
-    const first = group[0];
-    const candidate = deriveCandidateName(group, existingRuleNameByMemberKey, first);
-    return { memberKey, group, first, index, ...candidate };
+  const groups = Array.from(byKey.entries()).map(([memberKey, group2], index) => {
+    const first = group2[0];
+    const candidate = deriveCandidateName(group2, existingRuleNameByMemberKey, first);
+    return { memberKey, group: group2, first, index, ...candidate };
   });
   groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
   const claimedNames = /* @__PURE__ */ new Set();
-  for (const group of groups) {
-    const chosenName = claimUniqueEnumName(group.name, rules, group.memberKey, claimedNames);
+  for (const group2 of groups) {
+    const chosenName = claimUniqueEnumName(group2.name, rules, group2.memberKey, claimedNames);
     claimedNames.add(chosenName);
-    result.set(group.memberKey, chosenName);
+    result.set(group2.memberKey, chosenName);
   }
   return result;
 }
@@ -3558,7 +3613,7 @@ function enumMemberKeySlug(memberKey) {
     return encoded.length > 0 ? encoded : "empty";
   }).join("__");
 }
-function deriveCandidateName(group, existingRuleNameByMemberKey, first) {
+function deriveCandidateName(group2, existingRuleNameByMemberKey, first) {
   const existingName = existingRuleNameByMemberKey.get(first.memberKey);
   if (existingName !== void 0) {
     if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
@@ -3569,9 +3624,9 @@ function deriveCandidateName(group, existingRuleNameByMemberKey, first) {
     }
     return { name: existingName, priority: 0 };
   }
-  const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+  const allSameFieldName = group2.every((o) => o.fieldName === first.fieldName);
   if (allSameFieldName) {
-    const distinctParents = new Set(group.map((o) => o.parentKind)).size;
+    const distinctParents = new Set(group2.map((o) => o.parentKind)).size;
     if (distinctParents >= 2) {
       return { name: `_${first.fieldName}`, priority: 2 };
     }
@@ -3714,6 +3769,7 @@ function wireGetCurrentRuleKind() {
 function wire(config, base2) {
   const cfg = config;
   const baseArg = base2;
+  assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
@@ -3727,11 +3783,11 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
-    defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
+    options: cfg.options,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
+  const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
@@ -3792,128 +3848,75 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 function knownRuleNames(cfg, base2) {
   const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
   return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
-function isSitePreferenceEntry(key, value) {
-  return SLOT_KEY.test(key) && isPreference(value);
+function isRetiredAddressKey(key, rules) {
+  if (rules.has(key) || rules.has(`_${key}`)) return false;
+  return parseSpacingLabel(key) !== void 0 || parseSeamLabel(key) !== void 0 || parseFlankAddress(key) !== void 0;
 }
-function isFlankDefaultKey(key, rules) {
-  return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
-}
-function isSeamDefaultKey(key, rules) {
-  return parseSeamLabel(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
-}
-function checkSpacingArm(at, arm2) {
-  if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
-  return arm2;
-}
-function checkDelimiterArm(at, arm2) {
-  if (!isDelimiterArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${DELIMITER_ARMS.join(", ")}`);
-  return arm2;
-}
-function checkWhitespaceArm(at, arm2) {
-  if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
-  return arm2;
-}
-function onePreference(kind, entry, what) {
-  const preferences = kindPreferencesOf(entry);
-  if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
-    throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
-  }
-  return preferences[0];
-}
-function renderDefaultsOf(patches, rules) {
-  const labels = {};
-  const sites = {};
-  const site = (kind, address, value) => {
-    const own = sites[kind] ?? {};
-    if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
-    own[address] = value;
-    sites[kind] = own;
-  };
-  for (const [key, entry] of Object.entries(patches)) {
-    if (!entry) continue;
-    if (parseSpacingLabel(key) !== void 0) {
-      const { label, default: arm2 } = onePreference(key, entry, "a separator spacing preference");
-      if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', \u2026) does not rename it`);
-      labels[key] = checkSpacingArm(`'${key}'`, arm2);
-      continue;
-    }
-    if (isSeamDefaultKey(key, rules)) {
-      const { label, default: arm2 } = onePreference(key, entry, "a token seam preference");
-      if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', \u2026) does not rename it`);
-      labels[key] = checkWhitespaceArm(`'${key}'`, arm2);
-      continue;
-    }
-    const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
-    if (flank !== void 0) {
-      const { label, default: arm2 } = onePreference(key, entry, "an array flank");
-      site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm2) });
-      continue;
-    }
-    for (const patchMap of patchSetsOf(entry)) {
-      for (const [slot, value] of Object.entries(patchMap)) {
-        if (!isSitePreferenceEntry(slot, value)) continue;
-        const { label, default: arm2 } = value;
-        const seam = parseSeamLabel(slot);
-        if (seam !== void 0 && parseSeamLabel(label) === void 0) {
-          throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
-        }
-        const address = seam === void 0 ? siteKey(slot, label) : slot;
-        const checked = label === DELIMITER_LABEL ? checkDelimiterArm(`${key}.${address}`, arm2) : label === SEPARATOR_LABEL ? arm2 : seam !== void 0 ? checkWhitespaceArm(`${key}.${address}`, arm2) : checkSpacingArm(`${key}.${address}`, arm2);
-        site(key, address, { label, arm: checked });
-      }
+function assertNoSpacingAddressPatches(patches, rules) {
+  for (const key of Object.keys(patches)) {
+    if (!patches[key]) continue;
+    if (isRetiredAddressKey(key, rules)) {
+      throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
     }
   }
-  return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? void 0 : { labels, sites };
-}
-function structuralPatchesOf(patches, rules) {
-  const out = {};
-  for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
-    const items = Array.isArray(entry) ? entry : [entry];
-    const kept = [];
-    for (const item of items) {
-      if (isPreference(item)) {
-        kept.push(item);
-        continue;
-      }
-      const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
-      if (Object.keys(structural).length > 0) kept.push(structural);
-    }
-    if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0] : kept;
-  }
-  return out;
 }
 function patchSetsOf(entry) {
   const items = Array.isArray(entry) ? entry : [entry];
-  return items.filter((item) => !isPreference(item));
+  return nestVariantsByPath(items.filter((item) => !isPreference(item)));
 }
-function kindPreferencesOf(entry) {
-  const items = Array.isArray(entry) ? entry : [entry];
-  return items.filter(isPreference);
+function nestVariantsByPath(sets) {
+  const variantAt = /* @__PURE__ */ new Map();
+  for (const set of sets) {
+    for (const [key, value] of Object.entries(set)) {
+      if (isVariantPlaceholder(value)) variantAt.set(key, value);
+    }
+  }
+  if (variantAt.size < 2) return sets;
+  const ancestorsOf = (key) => {
+    const segments = key.split("/");
+    const names = [];
+    for (let i = 1; i < segments.length; i++) {
+      const prefix = segments.slice(0, i).join("/");
+      const outer = variantAt.get(prefix);
+      if (outer !== void 0) names.push(outer.name);
+    }
+    return names;
+  };
+  return sets.map((set) => {
+    let changed = false;
+    const out = {};
+    for (const [key, value] of Object.entries(set)) {
+      if (!isVariantPlaceholder(value)) {
+        out[key] = value;
+        continue;
+      }
+      const nested = nestVariant(value, ancestorsOf(key));
+      changed ||= nested !== value;
+      out[key] = nested;
+    }
+    return changed ? out : set;
+  });
 }
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
   }
 }
-function buildPatchedParentFn(kind, patchSets, preferences, userFn, context) {
+function buildPatchedParentFn(kind, patchSets, userFn, context) {
   const isHidden = kind.startsWith("_");
   return function wiredPatchedParent($, original) {
     const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
-    let result = patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
-    for (const pref of preferences) result = applyPreference(result, pref, kind);
-    return result;
+    return patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
   };
 }
 function placeholderHiddenName(value, parentKind) {
   if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
   if (isAliasPlaceholder(value)) return `_${value.name}`;
   return void 0;
 }
@@ -3983,7 +3986,7 @@ function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
     const renamed = context.symbolRenames.size === 0 ? base2 : base2.map(
-      (group) => group.map((entry) => {
+      (group2) => group2.map((entry) => {
         const symbol = entry;
         const next = symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" ? context.symbolRenames.get(symbol.name) : void 0;
         return next === void 0 ? entry : symbolizeRef($, next);
@@ -3991,7 +3994,7 @@ function buildWiredConflictsFn(userConflicts, context) {
     );
     if (context.conflictGroups.length === 0) return renamed;
     const symbolized = context.conflictGroups.map(
-      (group) => group.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
+      (group2) => group2.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
     );
     return [...renamed, ...symbolized];
   };
@@ -4191,6 +4194,11 @@ function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
   }
   return rule;
 }
+function stampHoistedFn(fn) {
+  return function hoistedRuleFn($, previous) {
+    return withHoistedAnnotation(fn($, previous));
+  };
+}
 function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
   return function visibleExternalsRewritingRuleFn($, previous) {
     const result = fn($, previous);
@@ -4261,7 +4269,8 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
       );
     }
     candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-    rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    const registered = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    rules[hiddenName] = section === "groups" ? stampHoistedFn(registered) : registered;
   }
   if (candidates.length === 0) return;
   const candidateNames = new Set(candidates.map((c) => c.name));
@@ -4366,57 +4375,12 @@ function isArmDefault(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "default";
 }
 
+// packages/codegen/src/dsl/primitives/group.ts
+function isGroupPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
+}
+
 // packages/codegen/src/dsl/transform/transform.ts
-function armNamesOf(arm2) {
-  const node = arm2;
-  const names = [];
-  if (node.annotations?.variant !== void 0) names.push(node.annotations.variant);
-  if (node.type === "STRING" && typeof node.value === "string") names.push(node.value);
-  if (node.type === "ALIAS") {
-    const value = node.value;
-    const target = typeof value === "string" ? value : value?.name;
-    if (target !== void 0) names.push(target, target.replace(/^_+/, ""));
-    names.push(...armNamesOf(node.content));
-  }
-  if (node.type === "SYMBOL" && typeof node.name === "string") names.push(node.name, node.name.replace(/^_+/, ""));
-  if (isPrecWrapper(node)) names.push(...armNamesOf(node.content));
-  return names;
-}
-function applyPreference(rule, patch, kind) {
-  const node = rule;
-  if (node.type === "CHOICE" && Array.isArray(node.members)) {
-    let matched = false;
-    const members = node.members.map((arm2) => {
-      const isDefault = armNamesOf(arm2).includes(patch.default);
-      matched ||= isDefault;
-      return withAnnotations(arm2, { preference: patch.label, ...isDefault ? { default: true } : {} });
-    });
-    if (!matched) {
-      throw new Error(
-        `preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? "?").join(", ")})`
-      );
-    }
-    return { ...node, members };
-  }
-  if (node.content !== void 0 && node.content !== null && typeof node.content === "object") {
-    return {
-      ...node,
-      content: applyPreference(node.content, patch, kind)
-    };
-  }
-  throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
-}
-function withAnnotations(rule, extra) {
-  const node = rule;
-  if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
-    const content = node.content;
-    return {
-      ...node,
-      content: { ...content, annotations: { ...content.annotations, ...extra } }
-    };
-  }
-  return { ...node, annotations: { ...node.annotations, ...extra } };
-}
 function withVariantAnnotation(rule, variantName, parentKind) {
   return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
@@ -4430,7 +4394,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -4550,20 +4514,20 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altMember = choiceMembers[resolvedAlt];
-    const visibleName = polymorphVisibleName(parentKind, p.v.name);
-    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+    const visibleName = polymorphVisibleName(parentKind, variantMintName(p.v));
+    const hiddenName = polymorphHiddenName(parentKind, variantMintName(p.v));
     const lift = enrichLiftArmOf(altMember);
     if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
     const altContent = lift === null ? altMember : lift.body;
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
+    const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
     refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
   }
-  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
+  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))));
   const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -4607,7 +4571,7 @@ function enrichLiftArmOf(member) {
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
 function renameEnrichLift(aliasMember, lift, hiddenName, visibleName) {
-  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, withHoistedAnnotation(lift.body));
   wireRegisterSymbolRename(lift.liftName, hiddenName);
   return {
     ...aliasMember,
@@ -4701,21 +4665,21 @@ function resolvePatch(patch, originalMember, precStack) {
   if (isArmDefault(patch)) {
     return withAnnotations(originalMember, { default: true });
   }
-  if (isPreference(patch)) {
-    return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? "(unknown)");
+  if (isGroupPlaceholder(patch)) {
+    return withAnnotations(originalMember, { hoisted: true });
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
-    const visibleName = polymorphVisibleName(parentKind, patch.name);
+    const visibleName = polymorphVisibleName(parentKind, variantMintName(patch));
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
       const lift = enrichLiftArmOf(originalMember);
       if (lift !== null) {
         return annotated(
-          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, variantMintName(patch)), visibleName)
         );
       }
       return annotated({ ...originalMember, value: visibleName });
@@ -4726,7 +4690,7 @@ function resolvePatch(patch, originalMember, precStack) {
         metadata: makeRuleMetadata({ fieldSource: "override" })
       });
     }
-    const hiddenName = polymorphHiddenName(parentKind, patch.name);
+    const hiddenName = polymorphHiddenName(parentKind, variantMintName(patch));
     return annotated(
       registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
     );
@@ -4956,7 +4920,7 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     );
   }
   const body = factored ? factored.nonEmpty : originalMember;
-  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body))) {
+  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(withHoistedAnnotation(body)))) {
     throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
   }
   const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);
@@ -5193,34 +5157,94 @@ var grammar_sittir_default = grammar(
           repeat(field("attribute", $._jsx_attribute))
         )
       },
+      options: {
+        body: { before: preference("indent"), after: preference("dedent") },
+        case_body: { start: preference("indent"), end: preference("dedent") },
+        gap: { separator: preference("newline") },
+        statements: { terminator: preference(";") },
+        quotes: { style: preference("double") },
+        enum_body_elements: { 'content:/separator/","/after': preference("newline"), "content:/delimiter": preference("Delimiter.Trailing") },
+        program: { "statements:/separator": preference("tight"), "statements:/(_)/after": preference("blankline") },
+        _: {
+          "decorator:/separator": preference("tight"),
+          "decorator:/(_)/after": preference("newline"),
+          "decorator:/end": preference("newline"),
+          '_/separator/","/before': preference("tight"),
+          '":"/after': preference("space"),
+          '"="/before': preference("space"),
+          '"="/after': preference("space"),
+          '"=>"/before': preference("space"),
+          '"=>"/after': preference("space"),
+          '"|"/before': preference("space"),
+          '"|"/after': preference("space"),
+          '"&"/before': preference("space"),
+          '"&"/after': preference("space"),
+          "operator:/before": preference("space"),
+          "operator:/after": preference("space"),
+          "from:/after": preference("space"),
+          "if:/after": preference("space"),
+          "while:/after": preference("space"),
+          "for:/after": preference("space"),
+          "return:/before": preference("space"),
+          "return:/after": preference("space"),
+          "switch:/after": preference("space"),
+          "catch:/after": preference("space"),
+          "var:/after": preference("space"),
+          "kind:/after": preference("space")
+        },
+        object_type_content: {
+          "content:/separator/before": preference("tight"),
+          "content:/separator/after": preference("newline"),
+          "content:/separator/kind": preference("semi"),
+          "content:/delimiter": preference("Delimiter.Trailing")
+        },
+        statement_block: { before: preference("space") },
+        class_body: { before: preference("space") },
+        switch_body: { before: preference("space") },
+        named_imports: {
+          before: preference("space"),
+          after: preference("space"),
+          '"{"/after': preference("space"),
+          '"}"/before': preference("space")
+        },
+        export_clause: {
+          before: preference("space"),
+          after: preference("space"),
+          '"{"/after': preference("space"),
+          '"}"/before': preference("space")
+        },
+        object: { '"{"/after': preference("space"), '"}"/before': preference("space") },
+        object_pattern: { '"{"/after': preference("space"), '"}"/before': preference("space") },
+        ternary_expression: { '":"/before': preference("space") },
+        for_statement: { '"("/before': preference("space") },
+        required_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
+        optional_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
+        _bindings: {
+          "_/terminator:": "statements/terminator",
+          "_/automatic_semicolon:": "statements/terminator",
+          "string/content:": "quotes/style",
+          'class_body/"{"/after': "body/before",
+          'class_body/"}"/before': "body/after",
+          'statement_block/"{"/after': "body/before",
+          'statement_block/"}"/before': "body/after",
+          'switch_body/"{"/after': "body/before",
+          'switch_body/"}"/before': "body/after",
+          'enum_body/"{"/after': "body/before",
+          'enum_body/"}"/before': "body/after",
+          "object_type/opening:/after": "body/before",
+          "object_type/closing:/before": "body/after",
+          "switch_case/body:/start": "case_body/start",
+          "switch_case/body:/end": "case_body/end",
+          "switch_default/body:/start": "case_body/start",
+          "switch_default/body:/end": "case_body/end",
+          "class_body/content:/separator": "gap/separator",
+          "statement_block/statements:/separator": "gap/separator",
+          "switch_body/cases:/separator": "gap/separator",
+          "switch_case/body:/separator": "gap/separator",
+          "switch_default/body:/separator": "gap/separator"
+        }
+      },
       patches: {
-        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
-        empty_separator_space: preference("empty_separator_space", "newline"),
-        object_type_content_separator_space_before: preference("object_type_content_separator_space_before", "tight"),
-        object_type_content_separator_space_after: preference("object_type_content_separator_space_after", "newline"),
-        statement_block_before: preference("statement_block_before", "space"),
-        from_after: preference("from_after", "space"),
-        if_after: preference("if_after", "space"),
-        while_after: preference("while_after", "space"),
-        switch_after: preference("switch_after", "space"),
-        catch_after: preference("catch_after", "space"),
-        class_body_before: preference("class_body_before", "space"),
-        switch_body_before: preference("switch_body_before", "space"),
-        named_imports_before: preference("named_imports_before", "space"),
-        named_imports_after: preference("named_imports_after", "space"),
-        export_clause_before: preference("export_clause_before", "space"),
-        export_clause_after: preference("export_clause_after", "space"),
-        colon_after: preference("colon_after", "space"),
-        eq_before: preference("eq_before", "space"),
-        eq_after: preference("eq_after", "space"),
-        eq_gt_before: preference("eq_gt_before", "space"),
-        eq_gt_after: preference("eq_gt_after", "space"),
-        operator_before: preference("operator_before", "space"),
-        operator_after: preference("operator_after", "space"),
-        named_imports: { lbrace_after: preference("lbrace_after", "space"), rbrace_before: preference("rbrace_before", "space") },
-        export_clause: { lbrace_after: preference("lbrace_after", "space"), rbrace_before: preference("rbrace_before", "space") },
-        ternary_expression: { colon_before: preference("colon_before", "space") },
-        for_statement: { lparen_before: preference("lparen_before", "space") },
         binary_expression: {
           24: variant("in")
         },
@@ -5234,40 +5258,16 @@ var grammar_sittir_default = grammar(
           1: field("elements")
         },
         object: {
-          lbrace_after: preference("lbrace_after", "space"),
-          rbrace_before: preference("rbrace_before", "space"),
           1: field("properties")
         },
         object_pattern: {
-          lbrace_after: preference("lbrace_after", "space"),
-          rbrace_before: preference("rbrace_before", "space"),
           1: field("properties")
         },
         switch_body: {
-          lbrace_after: preference("block_body_before", "indent"),
-          rbrace_before: preference("block_body_after", "dedent"),
           1: field("cases")
         },
-        object_type: {
-          opening_after: preference("block_body_before", "indent"),
-          closing_before: preference("block_body_after", "dedent")
-        },
-        enum_body: {
-          lbrace_after: preference("block_body_before", "indent"),
-          rbrace_before: preference("block_body_after", "dedent")
-        },
-        enum_body_elements: [
-          { content: preference("comma_separator_space_after", "newline") },
-          { content: preference("delimiter", "Delimiter.Trailing") }
-        ],
-        object_type_content: [
-          { content: preference("separator", "semi") },
-          { content: preference("delimiter", "Delimiter.Trailing") }
-        ],
-        switch_case_start: preference("case_body_start", "indent"),
-        switch_case_end: preference("case_body_end", "dedent"),
-        switch_default_start: preference("case_body_start", "indent"),
-        switch_default_end: preference("case_body_end", "dedent"),
+        object_type: {},
+        enum_body: {},
         jsx_expression: {
           1: field("expression")
         },
@@ -5279,7 +5279,6 @@ var grammar_sittir_default = grammar(
         // retiring this kind's per-kind bucket merge. The third's variant
         // paths then traverse the `content` field the second added.
         class_body: [
-          { lbrace_after: preference("block_body_before", "indent"), rbrace_before: preference("block_body_after", "dedent") },
           {
             "1/0/0/2": field("terminator"),
             "1/0/1/1": field("terminator"),
@@ -5383,8 +5382,6 @@ var grammar_sittir_default = grammar(
           2: field("type_annotation")
         },
         statement_block: {
-          lbrace_after: preference("block_body_before", "indent"),
-          rbrace_before: preference("block_body_after", "dedent"),
           1: field("statements"),
           3: field("automatic_semicolon")
         },
@@ -5504,8 +5501,7 @@ var grammar_sittir_default = grammar(
           1: variant("template_call"),
           2: variant("member")
         },
-        string: [{ 0: variant("double"), 1: variant("single") }, preference("quote_style", "double")],
-        _semicolon: preference("statement_terminator", ";"),
+        string: { 0: variant("double"), 1: variant("single") },
         update_expression: {
           0: variant("postfix"),
           1: variant("prefix")
@@ -5546,13 +5542,15 @@ var grammar_sittir_default = grammar(
           "1/2": variant("let_const_kind")
         }
       },
-      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._indent, $._dedent],
+      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+      supertypes: ($, previous) => [...previous ?? [], $._whitespace],
       visibleExternals: (_$) => ({
         _automatic_semicolon: string("\n"),
         _function_signature_automatic_semicolon: string("\n"),
         _tight: string(""),
         _space: string(" "),
         _newline: string("\n"),
+        _blankline: string("\n\n"),
         _indent: indent(),
         _dedent: dedent()
       }),
@@ -5563,6 +5561,7 @@ var grammar_sittir_default = grammar(
         string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
       },
       rules: {
+        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
         // `template_substitution` sits only in string-interior contexts
         // (template_string / template_literal_type elements), where any
         // preceding characters are absorbed into a fragment token — no

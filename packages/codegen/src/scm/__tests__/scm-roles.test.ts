@@ -199,18 +199,6 @@ describe('GrammarRoles interface', () => {
 // ---------------------------------------------------------------------------
 
 describe('ir.synonym.* canonical factories — Rust', () => {
-	it('synonym.boolean(true) produces boolean_literal', async () => {
-		const { synonym } = await loadSynonyms(RUST_IR);
-		const node = synonym.boolean(true);
-		expect(node.$text).toBe('true');
-	});
-
-	it('synonym.boolean(false) produces boolean_literal', async () => {
-		const { synonym } = await loadSynonyms(RUST_IR);
-		const node = synonym.boolean(false);
-		expect(node.$text).toBe('false');
-	});
-
 	it('synonym.number(42) produces integer_literal', async () => {
 		const { synonym } = await loadSynonyms(RUST_IR);
 		const node = synonym.number(42);

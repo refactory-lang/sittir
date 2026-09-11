@@ -699,14 +699,6 @@ export type PythonGrammar = {
 			];
 		};
 	};
-	readonly except_clause_as: {
-		type: 'except_clause_as';
-		named: true;
-		fields: {
-			alias: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
-			value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
-		};
-	};
 	readonly except_clause_exception: {
 		type: 'except_clause_exception';
 		named: true;
@@ -714,11 +706,22 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'except_clause_as'; named: true }, { type: 'except_clause_list'; named: true }];
+			types: [
+				{ type: 'except_clause_exception_as'; named: true },
+				{ type: 'except_clause_exception_list'; named: true }
+			];
 		};
 	};
-	readonly except_clause_list: {
-		type: 'except_clause_list';
+	readonly except_clause_exception_as: {
+		type: 'except_clause_exception_as';
+		named: true;
+		fields: {
+			alias: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
+			value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
+		};
+	};
+	readonly except_clause_exception_list: {
+		type: 'except_clause_exception_list';
 		named: true;
 		fields: { value: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] } };
 	};

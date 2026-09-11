@@ -21,8 +21,9 @@ export default grammar(
 				role($._indent, 'indent');
 				role($._dedent, 'dedent');
 				role($._newline, 'newline');
-				return [...(prev ?? []), $._tight, $._space];
+				return [...(prev ?? []), $._tight, $._space, $._blankline, $._double_newline];
 			},
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			expectTestFailures: {
 				'parenthesized_list_splat.parenthesizedListSplat':
 					'dummy stub — the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects'
@@ -30,13 +31,15 @@ export default grammar(
 			conflicts: ($, previous) => [
 				...(previous ?? []),
 				[$.expression_statement, $._expression_statement_tuple],
-				[$._except_clause_as, $._except_clause_list],
-				[$.as_pattern, $._except_clause_as],
+				[$._except_clause_exception_as, $._except_clause_exception_list],
+				[$.as_pattern, $._except_clause_exception_as],
 				[$._expressions, $.expression_list]
 			],
-			inline: ($, previous) => [...(previous ?? []), $._except_clause_as_optional1],
+			inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
 			visibleExternals: (_$) => ({
 				_newline: string('\n'),
+				_blankline: string('\n\n'),
+				_double_newline: string('\n\n\n'),
 				_tight: string(''),
 				_space: string(' ')
 			}),
@@ -80,23 +83,51 @@ export default grammar(
 					),
 				yield_from_clause: ($) => seq('from', $.expression)
 			},
+			options: {
+				gap: { separator: preference('tight') },
+				module: {
+					'statements:/separator': preference('tight'),
+					'statements:/(function_definition)/after': preference('double_newline'),
+					'statements:/(class_definition)/after': preference('double_newline'),
+					'statements:/(decorated_definition)/after': preference('double_newline')
+				},
+
+				_: {
+					'_/separator/","/before': preference('tight'),
+					'_/separator/";"/before': preference('tight'),
+					'_/separator/"."/before': preference('tight'),
+					'_/separator/"."/after': preference('tight'),
+					'":"/after': preference('space'),
+					'"->"/before': preference('space'),
+					'"->"/after': preference('space'),
+					'"="/before': preference('space'),
+					'"="/after': preference('space'),
+					'":="/before': preference('space'),
+					'":="/after': preference('space'),
+					'operator:/before': preference('space'),
+					'operator:/after': preference('space'),
+					'operators:/before': preference('space'),
+					'operators:/after': preference('space')
+				},
+				keyword_argument: { '"="/before': preference('tight'), '"="/after': preference('tight') },
+				default_parameter: { '"="/before': preference('tight'), '"="/after': preference('tight') },
+				slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
+				splat_pattern: { 'operator:/after': preference('tight') },
+				splat_type: { 'operator:/after': preference('tight') },
+
+				_bindings: {
+					'block/statements:/separator': 'gap/separator',
+					'comparison_operator/comparators:/separator': 'gap/separator',
+					'comprehension_clauses/content:/separator': 'gap/separator',
+					'concatenated_string/string:/separator': 'gap/separator',
+					'decorated_definition/decorator:/separator': 'gap/separator',
+					'if_statement/alternative:/separator': 'gap/separator',
+					'match_block_block/alternative:/separator': 'gap/separator',
+					'try_statement/except_clauses:/separator': 'gap/separator'
+				}
+			},
+
 			patches: {
-				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
-				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
-				dot_separator_space_before: preference('dot_separator_space_before', 'tight'),
-				dot_separator_space_after: preference('dot_separator_space_after', 'tight'),
-				empty_separator_space: preference('empty_separator_space', 'tight'),
-				colon_after: preference('colon_after', 'space'),
-				dash_gt_before: preference('dash_gt_before', 'space'),
-				dash_gt_after: preference('dash_gt_after', 'space'),
-				eq_before: preference('eq_before', 'space'),
-				eq_after: preference('eq_after', 'space'),
-				colon_eq_before: preference('colon_eq_before', 'space'),
-				colon_eq_after: preference('colon_eq_after', 'space'),
-				operator_before: preference('operator_before', 'space'),
-				operator_after: preference('operator_after', 'space'),
-				keyword_argument: { eq_before: preference('eq_before', 'tight'), eq_after: preference('eq_after', 'tight') },
-				default_parameter: { eq_before: preference('eq_before', 'tight'), eq_after: preference('eq_after', 'tight') },
 				argument_list: {
 					1: field('arguments')
 				},
@@ -206,21 +237,17 @@ export default grammar(
 				},
 
 				slice: {
-					colon_before: preference('colon_before', 'tight'),
-					colon_after: preference('colon_after', 'tight'),
 					0: field('start'),
 					2: field('stop'),
 					3: field('step')
 				},
 
 				splat_pattern: {
-					operator_after: preference('operator_after', 'tight'),
 					'0': field('operator'),
 					1: field('name')
 				},
 
 				splat_type: {
-					operator_after: preference('operator_after', 'tight'),
 					// Same star position as splat_pattern above — the choice of
 					// '*'/'**' is the operator, not a second 'identifier' (the
 					// duplicate name merged both positions into one slot and
@@ -274,6 +301,7 @@ export default grammar(
 				_suite: { 0: variant('inline'), 1: variant('block'), 2: variant('empty') }
 			},
 			rules: {
+				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_newline, $._indent, $._dedent),
 				// Base grammar aliases this arm (`alias($.list_splat_pattern,
 				// $.list_splat)`), making primary_expression and list_splat_pattern
 				// parse-kind-non-injective; stripping the alias below (needed so
@@ -291,8 +319,8 @@ export default grammar(
 
 					return choice(...base.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
 				},
-				_except_clause_as: ($) => seq(field('value', $.expression), optional($._except_clause_as_optional1)),
-				_except_clause_as_optional1: ($) => seq('as', field('alias', $.expression)),
+				_except_clause_exception_as: ($) => seq(field('value', $.expression), optional($._except_clause_exception_as_optional1)),
+				_except_clause_exception_as_optional1: ($) => seq('as', field('alias', $.expression)),
 
 				// `string_content`'s plain-text runs (`_string_content`) and
 				// invalid-escape runs (`_not_escape_sequence`) are hidden

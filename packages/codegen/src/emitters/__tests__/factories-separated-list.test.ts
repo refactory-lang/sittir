@@ -25,7 +25,6 @@ import {
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
-import type { RenderDefaults } from '../../dsl/primitives/spacing.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
 // `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
@@ -55,8 +54,13 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', anon: true }
 ];
 
-function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, renderDefaults?: RenderDefaults): string {
-	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES, renderDefaults });
+function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, resolved?: { readonly separator?: string; readonly delimiter?: string }): string {
+	const node = nodeMap.nodes.get('member_list');
+	if (node instanceof AssembledList) {
+		if (resolved?.separator !== undefined) node.resolvedSeparatorArm = resolved.separator;
+		if (resolved?.delimiter !== undefined) node.resolvedDelimiterArm = resolved.delimiter;
+	}
+	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
 }
 
 function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
@@ -110,10 +114,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), {
-			labels: {},
-			sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } }
-		});
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), { separator: 'semi' });
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');

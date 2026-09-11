@@ -1,0 +1,9 @@
+{
+	"extends": "./tsconfig.json",
+	"include": [
+		"./17-dogfood-rust.generated.ts",
+		"./18-dogfood-typescript.generated.ts",
+		"./19-dogfood-python.generated.ts"
+	],
+	"exclude": []
+}

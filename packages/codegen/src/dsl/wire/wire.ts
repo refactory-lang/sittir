@@ -1,10 +1,11 @@
+import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
-import { transform as transformFn, applyPreference } from '../transform/transform.ts';
+import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
+import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
+import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
-	isSpacingArm,
-	isWhitespaceArm,
 	parseFlankAddress,
 	parseSeamLabel,
 	DELIMITER_LABEL,
@@ -12,18 +13,19 @@ import {
 	SEPARATOR_LABEL,
 	isDelimiterArm,
 	parseSpacingLabel,
-	siteKey,
-	SPACING_ARMS,
-	WHITESPACE_ARMS,
-	type RenderDefaults,
-	type SiteDefault
+	siteKey
 } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
-import { isVariantPlaceholder } from '../primitives/variant.ts';
+import {
+	isVariantPlaceholder,
+	nestVariant,
+	variantMintName,
+	type VariantPlaceholder
+} from '../primitives/variant.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
-import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
+import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
@@ -42,7 +44,7 @@ export interface WireContext {
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
-	readonly defaults?: RenderDefaults;
+	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
 }
@@ -116,6 +118,7 @@ export function withWireContext<T>(
 		refineForms: new Map(),
 		groups: undefined,
 		renderAs: undefined,
+		options: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
 	};
@@ -143,22 +146,72 @@ export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule
 ]
 	? Partial<Record<BaseKind<Base>, PatchEntry>>
 	: Base extends { readonly rules: infer R }
-		? {
-				readonly [K in keyof R]?: R[K] extends GrammarRule
-					?
-							| TransformPatchMap<FastKeys<R[K]>>
-							| SitePreferenceMap
-							| (TransformPatchMap<FastKeys<R[K]>> | SitePreferenceMap | PreferencePlaceholder)[]
-							| PreferencePlaceholder
-					: PatchEntry;
-			}
+		? { readonly [K in keyof R]?: TransformPatchMap | readonly TransformPatchMap[] }
 		: Partial<Record<BaseKind<Base>, PatchEntry>>;
 
-export type PatchEntry = PatchMap | (PatchMap | PreferencePlaceholder)[] | PreferencePlaceholder;
-
-export type SitePreferenceMap = Readonly<Record<string, PreferencePlaceholder>>;
+export type PatchEntry = PatchMap | readonly PatchMap[];
 
 export type PatchMap = Record<string, unknown>;
+
+type RulesOf<B> = B extends { readonly rules: infer R } ? R : never;
+
+type PatchKeyCheck<Rule, M> = {
+	readonly [Path in keyof M]: Path extends string | number
+		? string extends Path
+			? M[Path]
+			: IsPath<Rule, `${Path}`> extends true
+				? M[Path]
+				: { readonly 'patches: no such path in this rule': `${Path}` }
+		: M[Path];
+};
+
+type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
+	? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I]> }
+	: PatchKeyCheck<Rule, E>;
+
+type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
+
+export type PatchesCheck<B, P> = IsShaped<B> extends false
+	? unknown
+	: { readonly [K in keyof P]: K extends keyof RulesOf<B> ? PatchEntryCheck<RulesOf<B>[K], P[K]> : P[K] };
+
+type DeclaredLabels<O> = {
+	[K in Exclude<keyof O, typeof BINDINGS_KEY> & string]: `${K}/${keyof O[K] & string}`;
+}[Exclude<keyof O, typeof BINDINGS_KEY> & string];
+
+type PreferencePathCheck<M> = {
+	readonly [Path in keyof M]: Path extends string
+		? string extends Path
+			? M[Path]
+			: IsPreferencePath<Path> extends true
+				? M[Path]
+				: { readonly 'options: not a path': Path }
+		: M[Path];
+};
+
+type BindingsCheck<B, O, M> = {
+	readonly [Address in keyof M]: Address extends string
+		? string extends Address
+			? M[Address]
+			: IsPreferencePath<Address> extends false
+				? { readonly 'options: _bindings address is not a path': Address }
+				: M[Address] extends DeclaredLabels<O>
+					? M[Address] extends `${infer Root}/${string}`
+						? IsShaped<B> extends true
+							? Root extends keyof RulesOf<B>
+								? { readonly "options: a label's kind is virtual, this names a real kind": Root }
+								: M[Address]
+							: M[Address]
+						: M[Address]
+					: { readonly 'options: _bindings names no declared label': M[Address] }
+		: M[Address];
+};
+
+export type OptionsCheck<B, O> = {
+	readonly [K in keyof O]: K extends typeof BINDINGS_KEY
+		? BindingsCheck<B, O, O[K]>
+		: PreferencePathCheck<O[K]>;
+};
 
 export type ShapedSymbols<B extends GrammarJson> = {
 	readonly [R in keyof B['rules'] & string]: SymbolRule<R>;
@@ -185,6 +238,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	>;
 	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly patches?: PatchesConfig<B>;
+	readonly options?: OptionsConfig;
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
@@ -213,9 +267,13 @@ type RuleFn = SittirRuleFn;
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
-export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: B): WiredOpts {
+export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
+	config: WireConfig<B> & { readonly patches?: P & PatchesCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
+	base?: B
+): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
 	const baseArg = base as unknown as BaseArg | undefined;
+	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
@@ -229,12 +287,12 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
-		defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
+		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
+	const patches = cfg.patches ?? {};
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
@@ -309,121 +367,69 @@ function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 
-function isSitePreferenceEntry(key: string, value: unknown): boolean {
-	return SLOT_KEY.test(key) && isPreference(value);
+/// A top-level gap, seam or flank spelling, retired from patches.
+function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
+	if (rules.has(key) || rules.has(`_${key}`)) return false;
+	return parseSpacingLabel(key) !== undefined || parseSeamLabel(key) !== undefined || parseFlankAddress(key) !== undefined;
 }
 
-function isFlankDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
-	return parseFlankAddress(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
-}
 
-function isSeamDefaultKey(key: string, rules: ReadonlySet<string>): boolean {
-	return parseSeamLabel(key) !== undefined && !rules.has(key) && !rules.has(`_${key}`);
-}
 
-function checkSpacingArm(at: string, arm: string): string {
-	if (!isSpacingArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${SPACING_ARMS.join(', ')}`);
-	return arm;
-}
 
-function checkDelimiterArm(at: string, arm: string): string {
-	if (!isDelimiterArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${DELIMITER_ARMS.join(', ')}`);
-	return arm;
-}
-
-function checkWhitespaceArm(at: string, arm: string): string {
-	if (!isWhitespaceArm(arm)) throw new Error(`patches: ${at} defaults to '${arm}', not one of ${WHITESPACE_ARMS.join(', ')}`);
-	return arm;
-}
-
-function onePreference(kind: string, entry: PatchEntry, what: string): PreferencePlaceholder {
-	const preferences = kindPreferencesOf(entry);
-	if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
-		throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
-	}
-	return preferences[0]!;
-}
-
-function renderDefaultsOf(patches: PatchesConfig, rules: ReadonlySet<string>): RenderDefaults | undefined {
-	const labels: Record<string, string> = {};
-	const sites: Record<string, Record<string, SiteDefault>> = {};
-	const site = (kind: string, address: string, value: SiteDefault): void => {
-		const own = sites[kind] ?? {};
-		if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
-		own[address] = value;
-		sites[kind] = own;
-	};
-	for (const [key, entry] of Object.entries(patches)) {
-		if (!entry) continue;
-		if (parseSpacingLabel(key) !== undefined) {
-			const { label, default: arm } = onePreference(key, entry, 'a separator spacing preference');
-			if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', …) does not rename it`);
-			labels[key] = checkSpacingArm(`'${key}'`, arm);
-			continue;
-		}
-		if (isSeamDefaultKey(key, rules)) {
-			const { label, default: arm } = onePreference(key, entry, 'a token seam preference');
-			if (label !== key) throw new Error(`patches: '${key}' is named by its token and side; preference('${label}', …) does not rename it`);
-			labels[key] = checkWhitespaceArm(`'${key}'`, arm);
-			continue;
-		}
-		const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : undefined;
-		if (flank !== undefined) {
-			const { label, default: arm } = onePreference(key, entry, 'an array flank');
-			site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm) });
-			continue;
-		}
-		for (const patchMap of patchSetsOf(entry)) {
-			for (const [slot, value] of Object.entries(patchMap)) {
-				if (!isSitePreferenceEntry(slot, value)) continue;
-				const { label, default: arm } = value as PreferencePlaceholder;
-				const seam = parseSeamLabel(slot);
-				if (seam !== undefined && parseSeamLabel(label) === undefined) {
-					throw new Error(`patches: ${key}.${slot} labels a token seam '${label}', which is not spelled <token>_before / <token>_after`);
-				}
-				const address = seam === undefined ? siteKey(slot, label) : slot;
-				const checked =
-					label === DELIMITER_LABEL
-						? checkDelimiterArm(`${key}.${address}`, arm)
-						: label === SEPARATOR_LABEL
-							? arm
-							: seam !== undefined
-								? checkWhitespaceArm(`${key}.${address}`, arm)
-								: checkSpacingArm(`${key}.${address}`, arm);
-				site(key, address, { label, arm: checked });
-			}
+function assertNoSpacingAddressPatches(patches: PatchesConfig, rules: ReadonlySet<string>): void {
+	for (const key of Object.keys(patches)) {
+		if (!patches[key]) continue;
+		if (isRetiredAddressKey(key, rules)) {
+			throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
 		}
 	}
-	return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? undefined : { labels, sites };
-}
-
-function structuralPatchesOf(patches: PatchesConfig, rules: ReadonlySet<string>): PatchesConfig {
-	const out: Record<string, PatchEntry> = {};
-	for (const [kind, entry] of Object.entries(patches)) {
-		if (!entry || parseSpacingLabel(kind) !== undefined || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;
-		const items = Array.isArray(entry) ? entry : [entry];
-		const kept: (PatchMap | PreferencePlaceholder)[] = [];
-		for (const item of items) {
-			if (isPreference(item)) {
-				kept.push(item);
-				continue;
-			}
-			const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
-			if (Object.keys(structural).length > 0) kept.push(structural);
-		}
-		if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0]! : kept;
-	}
-	return out as PatchesConfig;
 }
 
 function patchSetsOf(entry: PatchEntry): readonly PatchMap[] {
 	const items = Array.isArray(entry) ? entry : [entry];
-	return items.filter((item): item is PatchMap => !isPreference(item));
+	return nestVariantsByPath(items.filter((item): item is PatchMap => !isPreference(item)));
 }
 
-function kindPreferencesOf(entry: PatchEntry): readonly PreferencePlaceholder[] {
-	const items = Array.isArray(entry) ? entry : [entry];
-	return items.filter(isPreference);
+/**
+ * A variant patched at a position INSIDE another variant's position is minted
+ * inside that variant's rule, so its name composes through it:
+ * `{ '2/0': variant('exception'), '2/0/0': variant('as') }` mints
+ * `_except_clause_exception` and `_except_clause_exception_as`, not a flat
+ * `_except_clause_as` that reads as a sibling of the group it lives in. The
+ * arm keeps its own short name, so the spelling stays `exception.as`.
+ */
+function nestVariantsByPath(sets: readonly PatchMap[]): readonly PatchMap[] {
+	const variantAt = new Map<string, VariantPlaceholder>();
+	for (const set of sets) {
+		for (const [key, value] of Object.entries(set)) {
+			if (isVariantPlaceholder(value)) variantAt.set(key, value);
+		}
+	}
+	if (variantAt.size < 2) return sets;
+	const ancestorsOf = (key: string): readonly string[] => {
+		const segments = key.split('/');
+		const names: string[] = [];
+		for (let i = 1; i < segments.length; i++) {
+			const prefix = segments.slice(0, i).join('/');
+			const outer = variantAt.get(prefix);
+			if (outer !== undefined) names.push(outer.name);
+		}
+		return names;
+	};
+	return sets.map((set) => {
+		let changed = false;
+		const out: PatchMap = {};
+		for (const [key, value] of Object.entries(set)) {
+			if (!isVariantPlaceholder(value)) {
+				out[key] = value;
+				continue;
+			}
+			const nested = nestVariant(value, ancestorsOf(key));
+			changed ||= nested !== value;
+			out[key] = nested;
+		}
+		return changed ? out : set;
+	});
 }
 
 function composeOrSynthesizePatchedParents(
@@ -433,14 +439,13 @@ function composeOrSynthesizePatchedParents(
 ): void {
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
-		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
+		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
 	}
 }
 
 function buildPatchedParentFn(
 	kind: string,
 	patchSets: readonly PatchMap[],
-	preferences: readonly PreferencePlaceholder[],
 	userFn: SittirRuleFn | undefined,
 	context: WireContext
 ): SittirRuleFn {
@@ -451,18 +456,15 @@ function buildPatchedParentFn(
 			: isHidden && context.deposits.has(kind)
 				? context.deposits.get(kind)
 				: original;
-		let result =
-			patchSets.length === 0
-				? base
-				: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
-		for (const pref of preferences) result = applyPreference(result as RuntimeRule, pref, kind);
-		return result;
+		return patchSets.length === 0
+			? base
+			: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
 
 function placeholderHiddenName(value: unknown, parentKind: string): string | undefined {
 	if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
 	if (isAliasPlaceholder(value)) return `_${value.name}`;
 	return undefined;
 }
@@ -816,6 +818,12 @@ function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMa
 	return rule;
 }
 
+function stampHoistedFn(fn: RuleFn): RuleFn {
+	return function hoistedRuleFn($, previous) {
+		return withHoistedAnnotation(fn($, previous));
+	};
+}
+
 function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyMap<string, string>): RuleFn {
 	return function visibleExternalsRewritingRuleFn($, previous) {
 		const result = fn($, previous);
@@ -899,7 +907,8 @@ export function applyWirePatternReplacement(
 			);
 		}
 		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-		rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+		const registered = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}
 
 	if (candidates.length === 0) return;

@@ -5,7 +5,7 @@
 //! parse/read/render/edit state machine so `sittir-{lang}` crates stay
 //! thin and grammar-owned.
 //!
-//! ## ADR-0017 split
+//! ## Engine / ParsedTree split
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
 //! `ParsedTree<G>` that owns the tree, source, format, and a node coordinate

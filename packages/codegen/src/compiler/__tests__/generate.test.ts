@@ -44,7 +44,7 @@ describe('generate — new pipeline end-to-end', () => {
 
 		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
-		expect(result.types).toContain('export type TokenKeywords = Terminal<');
+		expect(result.types).toContain('export type TokenKeywords = TSKindId.');
 		expect(result.types).toContain('export interface BinaryExpression {');
 		expect(result.types).toContain('readonly _operator: number;');
 		expect(result.types).toContain(

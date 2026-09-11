@@ -1,9 +1,7 @@
 import {
 	ALIAS,
 	CHOICE,
-	DEDENT,
 	FIELD,
-	INDENT,
 	NEWLINE,
 	OPTIONAL,
 	PATTERN,
@@ -15,13 +13,12 @@ import {
 	SYMBOL,
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
+import { DEDENT_TEXT, INDENT_TEXT } from './primitives/spacing.ts';
 import type {
 	AliasRule,
 	ChoiceRule,
-	DedentRule,
 	FieldRule,
 	ImmediateTokenRule,
-	IndentRule,
 	NewlineRule,
 	OptionalRule,
 	PatternRule,
@@ -74,8 +71,8 @@ export interface RuleBuilder<P extends PhaseName> {
 	pattern(value: string): PatternRule<P>;
 	symbol(name: string): SymbolRule<P>;
 	supertype(name: string, subtypes: SymbolRule<P>[]): SupertypeRule<P>;
-	indent(): IndentRule<P>;
-	dedent(): DedentRule<P>;
+	indent(): StringRule<P>;
+	dedent(): StringRule<P>;
 	newline(): NewlineRule<P>;
 }
 
@@ -247,8 +244,8 @@ export const structuralBuilder: StructuralBuilder = {
 	pattern: (value) => ({ type: PATTERN, value }),
 	symbol: sym,
 	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes }),
-	indent: () => ({ type: INDENT }),
-	dedent: () => ({ type: DEDENT }),
+	indent: () => ({ type: STRING, value: INDENT_TEXT }),
+	dedent: () => ({ type: STRING, value: DEDENT_TEXT }),
 	newline: () => ({ type: NEWLINE })
 };
 
@@ -420,8 +417,8 @@ export const attributeBuilder: AttributeBuilder = {
 	pattern: (value) => ({ type: PATTERN, value, nonterminal: true }),
 	symbol: (name) => ({ type: SYMBOL, name, nonterminal: true }),
 	supertype: (name, subtypes) => ({ type: SUPERTYPE, name, subtypes, nonterminal: true }),
-	indent: () => ({ type: INDENT, nonterminal: false }),
-	dedent: () => ({ type: DEDENT, nonterminal: false }),
+	indent: () => ({ type: STRING, value: INDENT_TEXT, nonterminal: false }),
+	dedent: () => ({ type: STRING, value: DEDENT_TEXT, nonterminal: false }),
 	newline: () => ({ type: NEWLINE, nonterminal: false })
 };
 

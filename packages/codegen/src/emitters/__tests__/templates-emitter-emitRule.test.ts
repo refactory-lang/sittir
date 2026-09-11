@@ -578,7 +578,7 @@ function seamChoice(label: string): ChoiceRule {
 		type: CHOICE,
 		nonterminal: true,
 		fieldName: label,
-		members: ['_tight', '_space', '_newline'].map((name, i) => ({
+		members: ['_tight', '_space', '_newline', '_blankline'].map((name, i) => ({
 			type: SYMBOL,
 			name,
 			nonterminal: true,

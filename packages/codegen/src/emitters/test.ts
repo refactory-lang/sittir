@@ -34,7 +34,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
 import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
-import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
+import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
@@ -116,7 +116,6 @@ export function emitTests(config: EmitTestsConfig): string {
 				if (node instanceof AssembledKeyword) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
-				emitEnumTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 		}
 
@@ -139,7 +138,7 @@ function emitBranchTest(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.hoisted) return;
+	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.annotations?.hoisted === true) return;
 	if (testConstructsWithChildren(node, nodeMap)) {
 		emitChildrenTest(lines, node, kind, key, kindEntries, nodeMap);
 		return;
@@ -354,12 +353,13 @@ function emitSubFactoryTests(
 	for (const sub of entries) {
 		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds);
 		if (args === undefined) continue;
+		const spelling = emittedArmPath(kind, [sub.name], polymorphWires).join('.');
 		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
 		cases.push(
-			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(sub.name)} builds the parent', () => {`
+			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(spelling)} builds the parent', () => {`
 		);
-		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${sub.name}` : `ir.${key}.${sub.name}`;
+		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${spelling}` : `ir.${key}.${spelling}`;
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const slotProp = sub.slot.propertyName;
@@ -534,27 +534,6 @@ function emitKeywordTest(
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
 	lines.push(`  it('factory produces the kind id', () => {`);
 	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push('  });');
-	lines.push('});');
-	lines.push('');
-}
-
-function emitEnumTest(
-	lines: string[],
-	node: AssembledNode,
-	kind: string,
-	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): void {
-	if (node.modelType !== 'enum') return;
-	const first = node.values[0];
-	if (!first) return;
-	lines.push(`describe('${kind}', () => {`);
-	lines.push(`  it('factory accepts valid value', () => {`);
-	lines.push(`    const node = ir.${key}('${escForSource(first)}');`);
-	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');

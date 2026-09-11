@@ -90,7 +90,7 @@ export async function loadVariantAdoptedKinds(grammar: string): Promise<Readonly
  */
 
 /**
- * ADR-0017: find a tree-sitter node by its exact byte span (start + end).
+ * Find a tree-sitter node by its exact byte span (start + end).
  * Using both start and end eliminates the collision that arises from
  * start-only lookup: when a parent node and its first child share the same
  * startIndex (e.g. `parameter` and its child `identifier` both start at
@@ -416,9 +416,9 @@ export interface ReadRenderParseResult {
  * hard-fails decoding (`Missing field _content`).
  */
 export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
-	const leading = data.$triviaData?.leading;
+	const leading = data.$_trivia?.leading;
 	if (!leading || leading.length === 0) return 0;
-	const stripped = { ...data, $triviaData: { ...data.$triviaData, leading: undefined } } as AnyNodeData;
+	const stripped = { ...data, $_trivia: { ...data.$_trivia, leading: undefined } } as AnyNodeData;
 	return render(data).length - render(stripped).length;
 }
 

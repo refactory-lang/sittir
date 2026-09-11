@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
@@ -7,6 +7,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
+import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar covering the sub-factory shapes exercised here:
@@ -187,5 +188,191 @@ describe('emitPolymorphsOverlay', () => {
 		expect(warn).toHaveBeenCalledWith(
 			'[codegen] grandparent_b: sub-factory sharedLeaf skipped (ambiguous): parent_x.sharedLeaf, parent_y.sharedLeaf'
 		);
+	});
+});
+
+function hoistedMiddleNodeMap(): NodeMap {
+	return buildNodeMap({
+		grandparent: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: '_parent' },
+				{ type: SYMBOL, name: 'leaf_a' }
+			]
+		},
+		_parent: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'leaf_a' },
+				{ type: SYMBOL, name: 'leaf_b' }
+			],
+			annotations: { hoisted: true }
+		},
+		leaf_a: { type: PATTERN, value: '[a-z]+' },
+		leaf_b: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'identifier' } },
+				{ type: FIELD, name: 'y', content: { type: SYMBOL, name: 'identifier' } }
+			]
+		},
+		identifier: { type: PATTERN, value: '[0-9]+' }
+	});
+}
+
+describe('a hoisted kind in the middle of a flattened arm', () => {
+	it('gets a private wire set the grandparent routes through, and no export', () => {
+		const nodeMap = hoistedMiddleNodeMap();
+		const parent = nodeMap.nodes.get('_parent')!;
+		expect(parent.annotations?.hoisted).toBe(true);
+		const key = parent.factoryName!;
+		const text = emitPolymorphsOverlay({ nodeMap });
+		expect(text).toContain(`const ${key}: {`);
+		expect(text).not.toContain(`export const ${key}`);
+		expect(text).toContain(`grandparent$leafB(F.buildGrandparent, ${key}.leafB.strict)`);
+		expect(text.indexOf(`const ${key}: {`)).toBeLessThan(text.indexOf('export const grandparent'));
+	});
+});
+
+describe('a single hoisted group splices onto its parent', () => {
+	it('wraps strict with a both-or-neither config and keeps the base spread first', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'try' }, { type: SYMBOL, name: 'clause' }] },
+			clause: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: 'catch' },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: '_clause_group' } },
+					{ type: FIELD, name: 'body', content: { type: PATTERN, value: '.+' } }
+				]
+			},
+			_clause_group: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '(' },
+					{ type: FIELD, name: 'parameter', content: { type: PATTERN, value: '[a-z]+' } },
+					{ type: OPTIONAL, content: { type: FIELD, name: 'type', content: { type: PATTERN, value: '[A-Z]+' } } },
+					{ type: STRING, value: ')' }
+				],
+				annotations: { hoisted: true }
+			}
+		});
+		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const clause$splice =');
+		expect(out).toContain(
+			`ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
+		);
+		expect(out).toContain('export const clause: typeof B.clause & {');
+		expect(out).toContain('= clause$splice(F.buildClause, F.buildClauseGroup);');
+		expect(out).toContain('strict: clause$seated,');
+		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$seated,'));
+	});
+});
+
+describe('a repeated hoisted group seats as an array of its configs', () => {
+	it('builds each element from its config and keeps built elements', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'cmp' }, { type: SYMBOL, name: 'comparison' }] },
+			comparison: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
+					{
+						type: FIELD,
+						name: 'comparators',
+						content: { type: REPEAT1, content: { type: SYMBOL, name: '_comparison_comparator' } }
+					}
+				]
+			},
+			_comparison_comparator: {
+				type: SEQ,
+				members: [
+					{
+						type: FIELD,
+						name: 'operators',
+						content: { type: CHOICE, members: [{ type: STRING, value: '<' }, { type: STRING, value: '==' }] }
+					},
+					{ type: FIELD, name: 'right', content: { type: PATTERN, value: '[a-z]+' } }
+				],
+				annotations: { hoisted: true }
+			}
+		});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const comparison$comparators =');
+		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
+		expect(out).toContain('= comparison$comparators(F.buildComparison, F.buildComparisonComparator);');
+		expect(out).toContain('strict: comparison$seated,');
+		expect(out).toContain("{ comparators: ReadonlyArray<ArgsOf<typeof F.buildComparisonComparator>[0]");
+	});
+});
+
+describe('a repeated hoisted group on a spread-shaped parent seats through the rest parameters', () => {
+	it('maps each rest argument through the group builder when it is a config', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'u' }, { type: SYMBOL, name: 'union' }] },
+			union: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '(' },
+					{
+						type: FIELD,
+						name: 'patterns',
+						content: {
+							type: REPEAT1,
+							content: { type: CHOICE, members: [{ type: SYMBOL, name: '_union_negative' }, { type: SYMBOL, name: 'literal' }] }
+						}
+					},
+					{ type: STRING, value: ')' }
+				]
+			},
+			_union_negative: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'sign', content: { type: CHOICE, members: [{ type: STRING, value: '-' }, { type: STRING, value: '+' }] } },
+					{ type: FIELD, name: 'content', content: { type: SYMBOL, name: 'literal' } }
+				],
+				annotations: { hoisted: true }
+			},
+			literal: { type: PATTERN, value: '[0-9]+' }
+		});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const union$patterns =');
+		expect(out).toContain('_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)))');
+	});
+});
+
+describe('a mount route carries the seats of its own parent', () => {
+	it('builds the mount on the seated parent, not the raw factory', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'c' }, { type: SYMBOL, name: 'clause' }] },
+			clause: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'patterns', content: { type: SYMBOL, name: '_clause_patterns' } },
+					{
+						type: FIELD,
+						name: 'body',
+						content: { type: CHOICE, members: [{ type: SYMBOL, name: '_clause_block' }, { type: SYMBOL, name: 'literal' }] }
+					}
+				]
+			},
+			_clause_patterns: {
+				type: FIELD,
+				name: 'pattern',
+				content: { type: REPEAT1, content: { type: SYMBOL, name: 'literal' } },
+				annotations: { hoisted: true }
+			},
+			_clause_block: {
+				type: SEQ,
+				members: [{ type: STRING, value: '{' }, { type: FIELD, name: 'inner', content: { type: SYMBOL, name: 'literal' } }],
+				annotations: { hoisted: true }
+			},
+			literal: { type: PATTERN, value: '[0-9]+' }
+		});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain('const clause$seated');
+		expect(out).toContain('clause$block(clause$seated,');
+		expect(out).not.toContain('clause$block(F.buildClause,');
 	});
 });

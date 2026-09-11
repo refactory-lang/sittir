@@ -30,10 +30,11 @@ import {
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
 	kindEnumAltIdPairs,
-	fieldTypeComponents
+	fieldTypeComponents,
+	collectConcreteStorageKeys,
+	expandToConcreteParseKinds
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
-import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
 import {
 	collectKindEntries,
@@ -46,30 +47,6 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
-	const expanded: string[] = [];
-	const seen = new Set<string>();
-	function add(name: string): void {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		if (seen.has(normalized)) return;
-		seen.add(normalized);
-		expanded.push(normalized);
-	}
-	for (const name of names) {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
-		if (!(node instanceof AssembledSupertype)) {
-			add(name);
-			continue;
-		}
-		for (const v of node.transitiveParseKinds ?? []) {
-			const parseName = v.parseKind?.name;
-			if (parseName !== undefined) add(parseName);
-		}
-	}
-	return expanded;
-}
-
 interface SlotModel {
 	readonly name: string;
 	readonly propertyName: string;
@@ -85,7 +62,6 @@ export interface EmitWrapConfig {
 	synthesizedKinds?: ReadonlySet<string>;
 	kindEntries?: readonly KindEnumEntry[];
 	rootKind?: string;
-	renderDefaults?: RenderDefaults;
 }
 
 function collectTypeImports(_nodeMap: NodeMap): Set<string> {
@@ -122,27 +98,6 @@ export namespace wrap {
 		output.push(renameUnusedTreeParam(result));
 	}
 
-	export function group(
-		output: string[],
-		node: BranchLikeForWrap,
-		kindEntries: readonly KindEnumEntry[] | undefined,
-		nodeMap: NodeMap
-	): void {
-		const result = emitFieldCarryingWrap(
-			{
-				kind: node.kind,
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				exposesChildren: wrapExposesChildren(node, nodeMap)
-			},
-			node.slots,
-			[],
-			kindEntries,
-			nodeMap
-		);
-		output.push(renameUnusedTreeParam(result));
-	}
-
 	export function supertype(
 		output: string[],
 		node: AssembledSupertype,
@@ -155,10 +110,9 @@ export namespace wrap {
 		output: string[],
 		node: AssembledList,
 		kindEntries: readonly KindEnumEntry[] | undefined,
-		nodeMap: NodeMap,
-		renderDefaults: RenderDefaults | undefined
+		nodeMap: NodeMap
 	): void {
-		const result = emitSeparatedListWrap(node, kindEntries, nodeMap, renderDefaults);
+		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
 		if (result !== undefined) output.push(renameUnusedTreeParam(result));
 	}
 }
@@ -304,21 +258,6 @@ function resolveUnnamedSlotConfig(
 
 function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
-}
-
-function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
-	if (!slot.isUnnamed) return undefined;
-	const labelNames = valueParseLabelsOf(slot);
-	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
-	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
-	const concrete = kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [];
-	if (labelNames.length === 0 && concrete.length === 0) return undefined;
-	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
-	const legacyKey = `_${slot.name}`;
-	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
-		return undefined;
-	}
-	return storageKeys;
 }
 
 function computeConsumedCandidateKeys(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): readonly string[] {
@@ -509,8 +448,7 @@ function buildSeparatedListWrapParamType(typeName: string, wireKeyTypes: Readonl
 function emitSeparatedListWrap(
 	node: AssembledList,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap,
-	renderDefaults: RenderDefaults | undefined
+	nodeMap: NodeMap
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = `wrap${node.typeName}`;
@@ -582,7 +520,7 @@ function emitSeparatedListWrap(
 			.filter((k) => hasCatalogEntry(kindEntries, k))
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
 		lines.push(
-			`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]) ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries, renderDefaults)},`
+			`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]) ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)},`
 		);
 	}
 	const bothFlanksOptional = node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional';
@@ -898,7 +836,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #canonicalAliasSourceKinds: ReadonlySet<string>;
 	readonly #typeImportLine: string | undefined;
 	readonly #rootKind: string | undefined;
-	readonly #renderDefaults: RenderDefaults | undefined;
 	readonly #output: string[] = [];
 	readonly #emittedStructuralKinds = new Set<string>();
 	#rootTreeTypeName: string | undefined;
@@ -914,8 +851,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			inlineKinds,
 			synthesizedKinds,
 			kindEntries: providedKindEntries,
-			rootKind,
-			renderDefaults
+			rootKind
 		} = config;
 		const kindEntries =
 			providedKindEntries ??
@@ -930,7 +866,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#synthesizedKinds = synthesizedKinds;
 		this.#canonicalAliasSourceKinds = new Set(collectAliasTargetToSourceMap(nodeMap).values());
 		this.#rootKind = rootKind;
-		this.#renderDefaults = renderDefaults;
 		this.#typeImportLine =
 			typeImports.size > 0
 				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types.js';"].join('\n')
@@ -942,18 +877,13 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
-	emitGroup(node: BranchLikeForWrap): void {
-		wrap.group(this.#output, node, this.#kindEntries, this.#nodeMap);
-		this.#emittedStructuralKinds.add(node.kind);
-	}
-
 	emitSupertype(node: AssembledSupertype): void {
 		wrap.supertype(this.#output, node, this.#kindEntries);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
 	emitSeparatedList(node: AssembledList): void {
-		wrap.separatedList(this.#output, node, this.#kindEntries, this.#nodeMap, this.#renderDefaults);
+		wrap.separatedList(this.#output, node, this.#kindEntries, this.#nodeMap);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
@@ -980,12 +910,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		switch (node.modelType) {
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'supertype':
 				this.emitSupertype(node);

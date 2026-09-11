@@ -1,5 +1,5 @@
-import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
-import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -13,7 +13,8 @@ import { FromEmitter } from './from.ts';
 import { WrapEmitter } from './wrap.ts';
 import { emitTypes } from './types.ts';
 import { emitConsts } from './consts.ts';
-import { EMPTY_OPTIONS, emitOptions, renderOptionsModule } from './options.ts';
+import { emitOptions, renderOptionsModule } from './options.ts';
+import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
@@ -50,7 +51,7 @@ export interface EmitAllConfig {
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
-	renderDefaults?: RenderDefaults;
+	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 }
 
@@ -93,7 +94,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		grammarRoles,
 		emitRenderModule,
 		expectTestFailures,
-		renderDefaults,
+		options: optionsBlock,
 		visibleExternals
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
@@ -101,9 +102,12 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 	const rulesConfig = kindEntries
-		? { nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) }
+		? { nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals, nodeMap) }
 		: undefined;
-	const spacedRules = rulesConfig ? spaceRenderRules(rulesConfig) : undefined;
+	const resolvedRules = rulesConfig
+		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
+		: undefined;
+	const spacedRules = resolvedRules?.spaced;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
@@ -113,8 +117,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		triviaKinds,
-		renderDefaults
+		triviaKinds
 	});
 
 	const fromEmitter = new FromEmitter({
@@ -131,12 +134,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		rootKind: grammarRoles?.get('root')[0],
-		renderDefaults
+		rootKind: grammarRoles?.get('root')[0]
 	});
 
-	stampStaticSpacing(nodeMap, grammar, spacedRules);
-	const renderRules = rulesConfig && spacedRules ? seamRenderRules(spacedRules, rulesConfig) : undefined;
+	const renderRules = resolvedRules?.seamed;
+	const sitePreferences =
+		kindEntries && renderRules
+			? collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock })
+			: undefined;
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
 
 	const renderModuleEmitterInst =
@@ -146,7 +151,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					nodeMap,
 					generatedIdTables,
 					renderRules,
-					renderDefaults,
+					options: optionsBlock,
 					visibleExternals
 				})
 			: undefined;
@@ -164,7 +169,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults }) : renderOptionsModule(EMPTY_OPTIONS);
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences }) : renderOptionsModule();
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
@@ -269,17 +274,10 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			case 'branch':
 			case 'polymorph':
 				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
-				if (node.hoisted) {
-					if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
-					if (templateEmission === 'emit') templateEmitter.emitGroup(node);
-					renderModuleEmitterInst?.emitGroup?.(node);
-				} else {
-					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
-					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-					renderModuleEmitterInst?.emitBranch?.(node);
-				}
+				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
+				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
+				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
+				renderModuleEmitterInst?.emitBranch?.(node);
 				break;
 			case 'supertype':
 				if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);

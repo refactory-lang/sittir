@@ -15,6 +15,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 How a slot's values are stored on the built node: `verbatim` (values as given), `boolean`/`bitflag` (keyword presence collapsed), `kindEnum` (every value is a literal arm — the slot stores kind ids), and `mixedEnum` (literal arms store their kind ids beside whole-node arms). Classified once in `emitters/shared.ts::classifyFieldStorageInfo` and cached on the slot; every storage-aware emitter reads the cached classification.
 
+### `packages/codegen/src/compiler/model/node-map.ts::concreteKindsOf`
+
+A kind expanded to the concrete kinds it can stand for: itself when it is not
+a supertype, otherwise the union over its subtypes, transitively. Shared with
+the transport emitters, which need the same closure to decide what a slot's
+element type can hold — one derivation, so the sites addressed against a
+generated enum and the enum's own variants cannot disagree.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isNodeRef`
 
 ```text
@@ -1772,7 +1780,10 @@ can't be unified.
 // text. `kindId` always names its kind: a reference to a kind whose
 // storage is its id and an inline literal that resolved to a kind both
 // store identity alone, and nothing downstream distinguishes which way
-// the grammar wrote the arm. `literal` is a genuinely anonymous inline
+// the grammar wrote the arm. A reference to an enum-of-literals is the
+// `kindId` arm that carries `members` instead of one `text`/`kindId`: the
+// slot stores one of the members' ids, and every consumer expands the set
+// through `textStoragesOf`. `literal` is a genuinely anonymous inline
 // terminal; a node reference either resolves to a kind (`kindId`) or to a
 // type (`node`), never to anonymous text. `immediate` is an inline
 // terminal's `token.immediate` fact.
@@ -1784,6 +1795,38 @@ can't be unified.
 // The storage variants that carry text: `kindId` and `literal`. A value arm
 // is exactly a value with this storage; `node` storage composes a child
 // factory instead.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::EnumMemberStorage`
+
+```text
+// One member of an enum-of-literals as a slot stores it: the member's
+// catalog kind, its wire id and its text — the row `AssembledEnum.members`
+// derives from `resolvedByText`, carried on the reference's storage stamp.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeValueStorage`
+
+```text
+// The `node` arm alone; with `TextValueStorage` it covers every storage a
+// single type component projects from.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isTextStorage`
+
+```text
+/** Narrows to the arms that carry one text (`kindId` with `text`, and
+ *  `literal`), excluding the member-set arm. Every reader of
+ *  `storage.text` goes through this, never through `via !== 'node'`. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::textStoragesOf`
+
+```text
+/** A storage stamp as the text storages it stands for: itself when it
+ *  carries one text, one `kindId` storage per member for an enum
+ *  reference, nothing for a `node`. The one place the member set is
+ *  expanded, so type unions, factory unions and tables agree. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.value`
@@ -2149,6 +2192,18 @@ can't be unified.
 	 */
 ```
 
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.annotations`
+
+The declarations stamped on the node's rule (`hoisted`, `variant`,
+`variantOf`, `default`, `preference`), read straight off the rule. This is
+the only representation of "hoisted": there is no model flag and no grammar
+set, so a base emitter cannot branch on hoisting by accident — the readers
+are the overlays (seating), the surface exclusions (bundle / `ir` / `is` /
+consts / generated tests, `irKey` phases) and the node model, which passes
+the bag through to the tools. `withKindFacts` keeps the bag on a root that
+a pass rebuilds.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.diagnosticRule`
 
 ```text
@@ -2333,9 +2388,10 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::fixedTextOfKind`
 
 ```text
-/** The constant text a leaf kind renders as — the text of a kind whose
- *  storage is its id (`isKindIdStored`: a keyword, or a token whose body
- *  is a single string) — else `undefined`. The one text source for a
+/** The constant text a leaf kind renders as — the text of a fixed-text
+ *  leaf (`isFixedTextLeaf`: a keyword, or a token whose body is a single
+ *  string) — else `undefined`; an enum stores as an id too but has no one
+ *  text. The one text source for a
  *  reference stamped `nonterminal: false` (template emitter) — a compound
  *  target is never fixed text: its render is its own template. */
 ```
@@ -2361,9 +2417,18 @@ can't be unified.
 ### `packages/codegen/src/compiler/model/node-map.ts::isKindIdStored`
 
 ```text
-/** Narrows on the stamped `storage` attribute: the kinds stored as ids are
- *  exactly the fixed-text leaf classes, whose `text` / `resolvedKindId` a
- *  consumer then reads. */
+/** Narrows on the stamped `storage` attribute: a keyword, a token, or an
+ *  enum-of-literals — the kinds a slot stores as a kind id rather than as a
+ *  built node. A consumer that needs one fixed text narrows further with
+ *  `isFixedTextLeaf`. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
+
+```text
+/** The id-stored kinds that render one constant text (`text`,
+ *  `resolvedKindId`): a keyword or a token. An enum is id-stored but has a
+ *  member set, so readers of a single text use this guard. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound`
@@ -2608,13 +2673,6 @@ can't be unified.
  *  `AssembledSupertype`/`AssembledList` directly instead. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeEnrichment`
-
-`hoisted: true` is the only enrichment fact: the kind is a form of its parent
-(link's `hoistedKinds`). A form carries no separate name, detect token, or
-parent pointer — the parent reaches it through the arm the sub-factory
-derivation names (`kindArmName`), and its factory emits its own kind.
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.hoisted`
 
 True for a form of its parent (assemble copies it from `hoistedKinds`). It
@@ -2806,6 +2864,36 @@ the rule shape.
 	 * stamped-fact discipline as `NodeRef.resolvedKindId` (spec §2.3),
 	 * carried node-level because enum members are not NodeRefs.
 	 */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.storage`
+
+```text
+/** An enum-of-literals stores as a kind id: its value set is its members'
+ *  ids and nothing else, so a slot holding one — directly or through a
+ *  supertype — types as the member-id union, the wrap projects a read
+ *  member node to its id, and the transport decodes the bare id. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.rawFactoryName`
+
+```text
+/** No build function: a caller spells the member id (`TSKindId.Comma`)
+ *  itself. Every factory-bearing site gates on this being undefined. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.fromFunctionName`
+
+```text
+/** No coercer either — the loose surface accepts the member text through
+ *  the slot's kind-enum text table, not through a per-kind function. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.members`
+
+```text
+/** The member set as storage rows (`EnumMemberStorage`), in
+ *  `resolvedByText` order — what a reference to this enum stamps. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
@@ -3220,6 +3308,75 @@ the rule shape.
 carries it as a fact, a caller may name it, and a render option may set it
 over a declared `Trailing` default.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::RenderRules`
+
+The render rules, and the option arms they were resolved against. An ordinary
+site carries its declared arm inside the rule it is read back from, so the map
+is redundant for those; a seated site is minted from the rules rather than
+baked into one, and reads its declaration here. Absent until
+`resolveRenderRules` has an `options:` block to resolve.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::SeatedChild`
+
+The child a seated site belongs to: the kind that occupies the position, and
+the transport field carrying that kind's own trailing edge. A seated site
+writes no field of its own — the parent fills the child's.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatedSites`
+
+The kind edges scoped to a seat. A kind's trailing edge is global to that
+kind, so an attribute takes the same gap after it among statements as among
+parameters; a seated site narrows it to one (parent kind, slot, child kind)
+so the two can differ. One per admitted child kind of every heterogeneous
+repeat slot, addressed `(<parent>)/<slot>:/(<child>)/after` and born with
+that path stamped rather than spelled flat for `pathOf` to decompose.
+
+Seats are grouped by (kind, slot) and their admitted kinds unioned, because
+more than one render rule can reach the same slot. The admitted kinds come
+from `slotElementKinds`, the same derivation the element enum is emitted
+from, so every seated site has a variant to seat it. A child with no
+trailing edge of its own — a leaf — takes none, and a slot admitting one
+child kind seats that child like any other, so every sibling gap in the
+grammar has an address.
+
+An admitted kind is expanded to what renders in its place before it is
+seated: a supertype to its concrete members, and a polymorph with no trailing
+edge of its own to the element kinds of its slot, recursively. The slot, not
+the polymorph's arm list, is what is expanded: arms are named by their
+public alias while nodes are keyed by their storage kind, and the slot is the
+same derivation the emitter drills when it seats the arm. A supertype never has an edge
+and a body-less polymorph parent has none either — nothing renders them — so
+the child the renderer sees in the slot is the member or the arm, which is
+the kind the site is looked up by. A polymorph that does render, such as a
+decorator with its `@` token, keeps its own edge and is seated as itself. Without the expansion a `statements` slot whose union holds a
+`declaration` supertype or an `export_statement` polymorph had no site for
+anything under them, and a top-level gap rule reached only the union's leaf
+members.
+
+Each seated site takes the arm its child's global edge already resolves to.
+The parent fills unconditionally, so a seated site always decides the edge
+inside its slot; inheriting the arm is what lets the whole space be minted
+without moving a rendered byte.
+
+A declaration on a seated address overrides that inheritance. An ordinary site
+carries its declared arm because the arm is baked into the render rule the site
+is read back from; a seated site has no rule of its own, so the arms
+`resolveRenderRules` resolved ride with the rules (`RenderRules.declared`) and
+the minting reads them there.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::withDeclaredArms`
+
+The `options:` block resolved against every site, not only the ones the render
+rules hold. A delimiter, a separator's token, a quote style and a statement
+terminator are declared options with defaults like any other; they are simply
+collected here rather than injected into a rule, so this is the pass that can
+see them.
+
+A site whose arms do not admit a declared value is passed over, so one broad
+address may span sites of different arm spaces without failing on the ones it
+does not fit. An address that names sites and is admitted by none of them is
+refused — the arm is wrong, not merely inapplicable.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildSupertypeMembersMap`
 
 ```text
@@ -3262,11 +3419,10 @@ over a declared `Trailing` default.
 A separated list whose separator is a choice of literal tokens is a
 `separator` site on the list kind (`<slot>_separator`, label
 `separator`): its arms are the choice's literal kinds
-(`separatorArmKinds`) and its default is the one the grammar declared
-with `preference('separator', <kind>)`. Unlike the delimiter, the default
-is required: a choice separator with no declaration, a declared arm that is
-not one of the list's tokens, and a declaration naming no such list are
-each a build error.
+(`separatorArmKinds`) and its default is the one the `options:` block
+declares at `<kind>/<slot>:/separator/kind`. Unlike the delimiter, the
+default is required: a choice separator with no declaration is a build
+error, as is a declared arm no site admits (`withDeclaredArms`).
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceSource`
 
@@ -3281,18 +3437,6 @@ and `separator` sites are per-kind keys with no top-level label.
 The catalog kinds of a list's separator tokens: one for a literal, the
 members' kinds for a choice of literals. A token with no catalog kind, or
 a separator of any other shape, is a build error naming the list.
-
-### `packages/codegen/src/compiler/model/site-preferences.ts::declaredPreference`
-
-```text
-/**
- * The `preference()` a slot's labelled arms carry, if any. A slot may not
- * mix labels and must mark a default arm; unlabelled arms beside the
- * labelled ones stay outside the preference. An arm's value is its variant
- * name, else its literal text, else its kind; its kind is the parse kind
- * the arm resolves to, which is what the option is typed by.
- */
-```
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
 
@@ -3316,7 +3460,10 @@ a separator of any other shape, is a build error naming the list.
  * flank arms. Every choice's arms carry the preference label and the
  * resolved default exactly as a declared choice does, so sites, transport
  * fields, the native fill and the list view are all reads of the rule. A
- * grammar that registers no whitespace kinds gets its rules back unchanged.
+ * grammar whose `_whitespace` supertype is empty gets its rules back
+ * unchanged; the arms of every separator gap are that supertype's members
+ * less `indent`/`dedent` (`spacingArmsOf`), the arms of a flank all of them
+ * (`whitespaceArmsOf`).
  * Assemble and the factory surface never see the injected choices. The
  * declared defaults are not validated here: `seamRenderRules`, the pass
  * that follows the seam-stamping dry run, validates them once over every
@@ -3344,6 +3491,9 @@ or default label, and side `seam`. Rule order is what the depth walk
 its array's sites and its end follows them. One entry per kind × transport
 field; two seams of one token in one kind resolving to different defaults
 is an error, since they share one transport field.
+
+After the walk it appends the seated sites (`seatedSites`), which carry no
+transport field of the kind that holds them.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamRenderRules`
 
@@ -3432,6 +3582,22 @@ token, not a slot, and keeps its token seam.
 The fixed text of a literal leaf whatever its field: a non-optional string
 or a symbol carrying `literal`.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::armSeamName`
+
+The seam name a single literal arm of an enum contributes: its own anonymous
+token's catalog kind. Word-shaped arms name nothing — two words cannot abut,
+so the lexical rule already separates them and a site there would never be
+declared. The resolver is the anon-only one, because this asks which token
+identity a text already has, not which rule answers to that name.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::withArmSeams`
+
+An enum's choice with each punctuation arm wrapped in its own seam pair, so
+one enum spaces `,` and `::` differently in the same position — a single
+site on the enum could only say one thing for all its arms. An arm that
+names nothing is left bare rather than vetoing its siblings; a choice where
+no arm names anything is returned as is.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamNameOf`
 
 The name a member contributes to a seam beside it: its punctuation token's
@@ -3479,18 +3645,6 @@ A separator spacing choice or a five-arm whitespace choice (a flank, a
 kind edge or a token seam of an indenting grammar): the members a seam is
 never injected beside.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::validateRenderDefaults`
-
-The one check that every declared default names something: each label key
-is a separator or seam label of some site, and each `sites[kind][address]`
-names a site of that kind or of a member of that supertype (a flank by its
-side, anything else by its address). A `<slot>_delimiter` or
-`<slot>_separator` address is a list's delimiter or separator default and
-is checked where those sites are collected (`collectSitePreferences`),
-not here. Runs once, over the sites of the
-finished rules, at the end of `seamRenderRules`. Arm admissibility is
-checked earlier, by `checkDefaultArms`.
-
 ### `packages/codegen/src/compiler/model/render-rules.ts::validateIndentDepth`
 
 Indent and dedent pair within one kind: walking the kind's sites in rule
@@ -3513,14 +3667,6 @@ walk visits.
 
 The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
 `<kind>.<address>` otherwise.
-
-### `packages/codegen/src/compiler/model/render-rules.ts::checkDefaultArms`
-
-Every declared arm is one the site admits: a spacing arm for a label or a
-slot site, any whitespace arm for a flank, a `Delimiter` member for a
-delimiter address. A separator address is skipped: its arm is a token kind
-checked against the list's own tokens by `collectSitePreferences`. Runs
-when the resolver is built, before any default is consumed.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoExtras`
 
@@ -3548,22 +3694,13 @@ when the resolver is built, before any default is consumed.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::DefaultResolver`
 
-```text
-/**
- * Resolves each site's default from the grammar's declared render defaults
- * with the precedence the native resolver applies to a user's options: the
- * kind's own site, then a supertype's, then (for separator spacing and
- * token seams) the label's top-level value, then the fallback: `space` for
- * a separator gap, `tight` for a flank, and for a token seam the arm the
- * seam-stamping dry run baked (`space` where the body had a static space,
- * `tight` otherwise). A flank's or a seam's label is the declared one or
- * its address; a seam's resolved arm must be one its site admits.
- * Construction checks every declared arm is admissible for its site, since
- * an arm is consumed as a default before the site-existence check runs;
- * two supertypes disagreeing about one site is an error at resolution.
- */
-```
-
+Resolves each site's default: the arm the `options:` block declares for it
+(`declaredOptionArms`, keyed by kind and address, with supertype and
+wildcard declarations already matched to the sites they reach), otherwise
+the fallback — `space` for a separator gap, `tight` for a flank, and for a
+token seam the arm the seam-stamping dry run baked (`space` where the body
+had a static space, `tight` otherwise). A site's label is its address; a
+seam's resolved arm must be one its site admits.
 ### `packages/codegen/src/compiler/model/render-rules.ts::publicKindName`
 
 ```text
@@ -3607,12 +3744,13 @@ labels tell them apart, since a flank label never parses as a seam label.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`
 
-```text
-/** The render text of each whitespace kind a grammar declares through
- *  `visibleExternals`: a string for `_tight`, `_space` and `_newline`, the
- *  core writer's indent or dedent mark constant for `_indent` and `_dedent`.
- *  Flanks are injected only when both indentation kinds are declared. */
-```
+The render text of each member of the grammar's `_whitespace` supertype
+(`whitespaceArmsOf`) that `visibleExternals` declares as a `string(...)`:
+`_tight` is `''`, python's `_double_newline` is `'\n\n\n'`, and `_indent` /
+`_dedent` carry the writer's depth marks (`INDENT_TEXT`, `DEDENT_TEXT`,
+which `indent()` and `dedent()` stand for). Every whitespace kind is a
+literal. A visible external outside the supertype is not whitespace and is
+skipped. Flanks are injected only when both indentation kinds are declared.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
 
@@ -3621,3 +3759,206 @@ labels tell them apart, since a flank label never parses as a seam label.
 // separator spacing, `<kind>_start` / `<kind>_end` at the top level for an
 // array flank.
 ```
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::addressSites`
+
+Every site with its canonical path, sorted. A site's index in the result is its
+site number, which is what makes a prefix-scoped declaration a contiguous range
+rather than a scan.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf`
+
+A site's address decomposed into path segments. It is the only place the flat
+spellings — seam, separator, flank — are read, so retiring them is a deletion
+here rather than a search.
+
+A seam is named after one of three things, and each takes its own segment. A
+seam whose name is the rule's own kind is that kind's edge, and takes no
+segment beyond the side. A seam named after an anonymous token becomes a
+literal segment carrying the token's TEXT rather than its catalog name, because
+an address names a token the way an author writes it — `"{"`, not `lbrace`; the
+two are joined through the catalog, which the only caller already holds. Every
+other seam is named after a field, and takes a field segment.
+
+The catalog is in hand wherever it is consulted, because a seam's token name is
+minted from it — a site can carry one only if the catalog existed when the site
+was made. So the absence of an entry is not a phase that ran too early; it means
+the seam names a field, which is the remaining case.
+
+A separator is named by its own label rather than by its address, because a
+gap with no token spells its address `<slot>_separator_space`, which reads as
+a token named after the slot. The label says which it is: a token separator
+carries the token's text as a literal segment and a side; the empty gap
+carries neither, so it addresses as `<slot>:/separator` — one place, whether
+or not a token sits in it.
+
+A side is a bare name segment. That is what the canonical order recognises, so
+a kind's own edges sort after everything nested beneath them and each subtree
+stays contiguous.
+
+A site that was born knowing its path returns it unchanged. No decomposition
+branch produces a kind-match in the middle of a path, so a seated site could
+only be spelled flat to be parsed back — the address exists to be read.
+
+A declared preference is named by its label, which its address already spells
+as `<slot>_<label>` — a delimiter, a quote style, a statement terminator. Each
+addresses as `<slot>:/<label>`, so `content_quote_style` reads
+`content:/quote_style`. The separator is the one with children: the spacing
+around it nests as `<slot>:/separator/before` and `/after`, so the token it
+chooses takes the terminal `kind` rather than sitting where its own sides
+live.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::matchAddress`
+
+The sites an address names: itself and everything beneath it. A wildcard
+matches any segment and `(_)` any kind, so an address with an interior wildcard
+is a scan while a concrete prefix is a range. A kind-match segment naming a
+supertype matches every site whose segment names one of its members, through
+`membersOf` (`supertypeMembersByPublicName`), so `(statement)/after` reaches
+the members' sites the way the flat `Members` fan-out did; a site path itself
+always names the concrete kind.
+
+### `packages/codegen/src/compiler/model/supertype-members.ts::supertypeMembersByPublicName`
+
+`buildSupertypeMembersMap` keyed and valued by public kind names: the form an
+address spells, so a `(supertype)` segment can be compared with a site's
+concrete kind without either side stripping underscores at the comparison.
+Built once per caller and threaded into `matchAddress` and `resolveBindings`
+rather than derived inside them, so the membership has one source.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
+
+The whitespace kinds a grammar renders, in declaration order: the members
+of its `_whitespace` supertype (`WHITESPACE_SUPERTYPE`), each named by the
+visible alias `visibleExternals` registers for it (`tight`, `space`,
+`newline`, `blankline`, `indent`, `dedent`, python's `double_newline`). A
+grammar without the supertype is an error: nothing in codegen lists
+whitespace kinds by name, so every spacing site, `options.ts` union and
+whitespace text is read from here.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::spacingArmsOf`
+
+`whitespaceArmsOf` less the depth movers (`DEPTH_ARMS`): the arms a
+separator gap admits, where moving depth has no meaning.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
+
+Each site's arm, with the narrowest address that reaches it winning.
+Specificity is the site set rather than the path length, because two addresses
+can reach one site from different roots with neither a prefix of the other. Two
+addresses whose sets overlap without one containing the other are a conflict,
+reported before anything is written, so an ambiguous pair fails rather than
+resolving by declaration order.
+
+Declarations and bindings are resolved together, because both are an address
+with an arm: a binding takes its arm from the label it names, a declaration
+carries its own. Where the two reach the identical set the declaration wins, so
+a site bound to a label may still default to something else — the binding then
+decides only which key moves it, not what it starts as.
+
+An address naming no site is an error, so a typo cannot resolve to a silent
+no-op. The exception is a declaration that some binding names as its label: a
+label is a virtual kind and matches no site by construction.
+
+`requireHit` is what lets one block be resolved twice against different site
+sets. The render-rule pass sees only the sites the rules hold, so an address
+naming a delimiter or a separator token is passed over rather than refused;
+the pass that sees every site is the one that refuses an address naming
+nothing.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::addressSegments`
+
+A written path read as an address. The first segment is the kind, so a bare
+name at the head is the kind it names — that is how a declaration keyed by its
+kind in the `options:` block and an address written `(kind)/…` reach the same
+site. Parsing stays literal, because a label's head is virtual and must not be
+resolved against the grammar.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::declaredOptionArms`
+
+Each site's arm as the `options:` block declares it, keyed by kind and address —
+the form the default resolver already looks sites up by.
+
+It runs between the two render-rule passes, because that is the first point
+where the sites an address names exist: they are read off the built rules, not
+off the model. `resolveRenderRules` builds both phases once to enumerate the
+sites, resolves the block against them, and builds both again with the arms in
+hand. Both phases, not just the seam one — a separator's arm is resolved while
+spacing, so a pass that reseamed alone would leave every separator on its
+fallback.
+
+The second build is safe because rule structure comes from the grammar's shape
+and never from a default's value; only the arm a site carries differs. Static
+spacing is stamped before each seam pass rather than once, since a declared
+separator arm can move the stamp and seam fallbacks read it.
+
+A grammar declaring nothing skips the resolution and the second build.
+
+The block is carried unread from `wire()` through `RawGrammar` to here rather
+than being read where it is written. Reading it needs the real kind set, to
+reject a virtual label that shadows a kind the grammar has, and wire has only
+rule names.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf` — the separator's token
+
+A separator gap names the token it flanks:
+`(arguments_elements)/element:/separator/","/before`. The token is read from the
+site's label, which is the only place it is recorded — the address says which
+slot and which side, and the label says which token.
+
+Without it a grammar-wide fact has nowhere to live. A comma's leading gap is one
+rule across every comma-separated list in a grammar, and every list has a
+different kind and slot, so the token is the only thing they share. With the
+token in the path, `_/_/separator/","/before` is that rule and a longer path
+under one kind is an exception to it, ranked by the ordinary subset test.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::SiteCandidate`
+
+A choice slot that could be a site, with the arms its members admit and the
+address it would answer to. It becomes a `SitePreference` only where the
+options block names it, so the site space holds what a grammar addresses and
+not every choice in the model.
+
+It carries its own `path`: the address a candidate answers to is decided where
+the candidate is made, and the emitters read that stamp rather than deriving a
+path a second time from the address string.
+
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::choiceCandidate`
+
+The candidate a slot offers when it holds more than one value and every value
+names an arm. Arms come from the slot's own members, the way a separated
+list's arms come from its separator rule.
+
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::stampResolvedDefaults`
+
+Writes each resolved site's arm back onto the model: a choice slot's
+`optionDefaultArm`, a list's `resolvedDelimiterArm` and `resolvedSeparatorArm`.
+
+The factory reads the stamp rather than the options block, so the arm it
+bakes in and the arm the renderer resolves have one source. Resolution runs
+before the emitters walk the model, and a slot with no stamp is one no option
+addressed.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultArm`
+
+The arm an option declared for this slot, stamped once resolution has run.
+The factory consults it to pick among arms a bare input fits, so the value it
+bakes in is the one the options block chose rather than a second declaration
+beside it. Undefined on a slot no option addressed.
+
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.resolvedDelimiterArm`
+
+The delimiter member an option declared for this list, stamped once
+resolution has run. Absent when nothing addressed it, which the factory reads
+as `Delimiter.None`.
+
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.resolvedSeparatorArm`
+
+The separator token an option declared for this list, stamped once resolution
+has run. A list that chooses its separator per instance and has no stamp is a
+build error naming the arms it admits.
+

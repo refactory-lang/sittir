@@ -21,7 +21,7 @@ export function nestedGreetFunction() {
 		// A form three levels down (`pub` -> its parenthesized group -> the
 		// `in <path>` arm) keeps the variant name the grammar authored, on the
 		// parent a caller actually names.
-		visibilityModifier: ir.visibilityModifier.inPath(
+		visibilityModifier: ir.visibilityModifier.pub.inPath(
 			ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') }),
 		),
 		name: ir.identifier('greet'),
@@ -37,9 +37,11 @@ export function fromGreetFunction() {
 		visibilityModifier: 'pub',
 		name: 'greet',
 		parameters: ir.parameters(
-			ir.parameter({ name: 'name', type: 'String' }),
+			ir.parameter({ name: 'name', type: 'String', mutableSpecifier: true }),
 		),
-		body: ir.block(),
+		body: ir.block({
+			statements: ir.statement.let({ pattern: 'a', mutableSpecifier: true, value: ir.integerLiteral('1') }),
+		}),
 	});
 }
 

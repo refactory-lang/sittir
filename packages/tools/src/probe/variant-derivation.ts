@@ -164,7 +164,7 @@ async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	// not diffed.
 	const isBranchParent = (parent: string): boolean => {
 		const n = nodeMap.nodes.get(parent);
-		return n !== undefined && 'hoisted' in n && !n.hoisted && n.modelType !== 'list';
+		return n !== undefined && (n as { annotations?: { hoisted?: true } }).annotations?.hoisted !== true && n.modelType !== 'list';
 	};
 
 	const parents = new Set<string>([...structuralMap.keys(), ...committedMap.keys()].filter(isBranchParent));

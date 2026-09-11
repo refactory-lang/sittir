@@ -1,8 +1,13 @@
-export const SPACING_ARMS = ['tight', 'space', 'newline'] as const;
-export type SpacingArm = (typeof SPACING_ARMS)[number];
+export const WHITESPACE_SUPERTYPE = '_whitespace';
+export const DEPTH_ARMS = ['indent', 'dedent'] as const;
+export const INDENT_TEXT = '\u{FDD0}\n';
+export const DEDENT_TEXT = '\u{FDD1}\n';
+export function isDepthText(text: string): boolean {
+	return text === INDENT_TEXT || text === DEDENT_TEXT;
+}
+export type SpacingArm = string;
+export type WhitespaceArm = string;
 export const SPACING_DEFAULT: SpacingArm = 'space';
-export const WHITESPACE_ARMS = ['tight', 'space', 'newline', 'indent', 'dedent'] as const;
-export type WhitespaceArm = (typeof WHITESPACE_ARMS)[number];
 export const FLANK_DEFAULT: WhitespaceArm = 'tight';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
@@ -69,20 +74,3 @@ export function parseFlankAddress(key: string): { readonly kind: string; readonl
 	return m ? { kind: m[1]!, side: m[2] as FlankSide } : undefined;
 }
 
-export function isSpacingArm(value: string): value is SpacingArm {
-	return (SPACING_ARMS as readonly string[]).includes(value);
-}
-
-export function isWhitespaceArm(value: string): value is WhitespaceArm {
-	return (WHITESPACE_ARMS as readonly string[]).includes(value);
-}
-
-export interface SiteDefault {
-	readonly label?: string;
-	readonly arm: string;
-}
-
-export interface RenderDefaults {
-	readonly labels: Readonly<Record<string, string>>;
-	readonly sites: Readonly<Record<string, Readonly<Record<string, SiteDefault>>>>;
-}

@@ -24,7 +24,7 @@
  */
 
 import type { AnyNodeData } from '@sittir/types';
-import type { PolymorphVariantMap, FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
+import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
@@ -42,8 +42,22 @@ import {
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
+	type IrSurface,
+	loadIrSurface,
 	buildFactoryNodeFromReference
 } from './common.ts';
+
+/**
+ * Which factory surface a run builds through: `raw` calls each kind's raw
+ * builder, where a hoisted child is an ordinary child; `ir` calls the
+ * author-facing `ir` binding and its mount routes, projecting a hoisted child
+ * by its seat, and counts only kinds bound on `ir`.
+ */
+export type FactorySurface = 'raw' | 'ir';
+
+export interface ValidateFactoryRenderParseOptions {
+	readonly surface?: FactorySurface;
+}
 
 /**
  * Find a node anywhere in the tree by its exact byte span, preferring the
@@ -303,7 +317,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
-	polymorphVariants: PolymorphVariantMap;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
@@ -313,7 +326,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
-	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
 	if (!factoryModulePath) {
 		return {
@@ -322,7 +334,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
 			importFailure: null
 		};
@@ -337,7 +348,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		polymorphVariants = mapData.polymorphVariants;
 		const typesModulePath = FACTORY_MODULE_PATHS[grammar]?.replace('factories/raw.ts', 'types.ts');
 		if (typesModulePath) {
 			try {
@@ -370,7 +380,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 					fieldAliasMap,
 					factoryFields,
 					factorySlots,
-					polymorphVariants,
 					kindNameFromId,
 					importFailure: { message }
 				};
@@ -382,7 +391,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
 			importFailure: null
 		};
@@ -395,7 +403,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
 			importFailure: { message }
 		};
@@ -462,6 +469,7 @@ function recordFactoryModuleLoadFailure(
  * @param fieldAliasMap - Camel→snake alias map used by `nodeToConfig`.
  * @param factoryFields - Declared field list per kind used by `nodeToConfig`.
  * @param factorySlots - Declared slot metadata per kind used by `nodeToConfig`.
+ * @param surface - The `ir` surface when the run builds through it.
  * @param entryName - Corpus entry name, used when recording errors.
  * @param inputSource - Original source text, used when recording errors.
  * @param errors - Mutable error list to append to on factory throw.
@@ -478,7 +486,7 @@ function buildFactoryNodeData(
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>,
-	polymorphVariants: PolymorphVariantMap,
+	surface: IrSurface | undefined,
 	entryName: string,
 	inputSource: string,
 	errors: {
@@ -496,7 +504,7 @@ function buildFactoryNodeData(
 		return buildFactoryNodeFromReference(
 			referenceData,
 			renderedKind,
-			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants },
+			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
 			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId }
 		) as AnyNodeData | null;
 	} catch (e) {
@@ -512,7 +520,8 @@ function buildFactoryNodeData(
 
 export async function validateFactoryRenderParse(
 	grammar: string,
-	backend: 'native' = 'native'
+	backend: 'native' = 'native',
+	options: ValidateFactoryRenderParseOptions = {}
 ): Promise<FactoryRenderParseResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -527,12 +536,12 @@ export async function validateFactoryRenderParse(
 		fieldAliasMap,
 		factoryFields,
 		factorySlots,
-		polymorphVariants,
 		kindNameFromId,
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -557,7 +566,10 @@ export async function validateFactoryRenderParse(
 	let total = 0;
 
 	recordFactoryModuleLoadFailure(importFailure, errors);
-	if (importFailure) {
+	if (options.surface === 'ir' && surface === undefined) {
+		errors.push({ kind: '(ir-surface-load)', message: `[validate-factory-roundtrip] no ir module for '${grammar}'` });
+	}
+	if (importFailure || (options.surface === 'ir' && surface === undefined)) {
 		return {
 			grammar,
 			total: 0,
@@ -624,6 +636,7 @@ export async function validateFactoryRenderParse(
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
 			const span = (w as { $span?: { start: number; end: number } }).$span;
 			if (span == null) return;
 			const dedup = `${sourceKind}@${span.start}:${span.end}`;
@@ -665,7 +678,7 @@ export async function validateFactoryRenderParse(
 					fieldAliasMap,
 					factoryFields,
 					factorySlots,
-					polymorphVariants,
+					surface,
 					entry.name,
 					inputSource,
 					errors,

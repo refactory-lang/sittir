@@ -19,6 +19,7 @@ import type {
 	TokenPattern,
 	Tokens,
 	UseClause,
+	Whitespace,
 	_Literal,
 	_NonSpecialToken,
 	_Path,
@@ -512,51 +513,12 @@ export interface IsGuards {
 	ImplItemBody<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemBody };
-	AttributeInput<T extends { readonly $type: number } | number>(
+	ImplItemPositiveClause<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeInput };
-	ClosureExpressionExpr<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemPositiveClause };
+	ImplItemNegativeClause<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionExpr };
-	VisibilityModifierPub<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierPub };
-	VisibilityModifierInPath<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierInPath };
-	FunctionTypeTraitForm<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionTypeTraitForm };
-	FunctionTypeFnForm<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionTypeFnForm };
-	MacroDefinitionParen<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionParen };
-	MacroDefinitionBracket<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBracket };
-	MacroDefinitionBrace<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBrace };
-	AttributedFieldDeclaration<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedFieldDeclaration };
-	AttributedEnumVariant<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedEnumVariant };
-	AttributedParameter<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedParameter };
-	AttributedTypeParameter<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedTypeParameter };
-	AttributedArgument<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedArgument };
-	TypeArgument<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeArgument };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemNegativeClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
@@ -575,6 +537,7 @@ export interface IsGuards {
 	literal(v: { readonly $type: string | number } | number): v is _Literal;
 	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern;
 	path(v: { readonly $type: string | number } | number): v is _Path;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -828,47 +791,12 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
 	ImplItemBody(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImplItemBody };
-	AttributeInput(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.AttributeInput };
-	ClosureExpressionExpr(
+	ImplItemPositiveClause(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ClosureExpressionExpr };
-	VisibilityModifierPub(
+	): asserts v is { readonly $type: TSKindId.ImplItemPositiveClause };
+	ImplItemNegativeClause(
 		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.VisibilityModifierPub };
-	VisibilityModifierInPath(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.VisibilityModifierInPath };
-	FunctionTypeTraitForm(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
-	FunctionTypeFnForm(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
-	MacroDefinitionParen(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.MacroDefinitionParen };
-	MacroDefinitionBracket(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
-	MacroDefinitionBrace(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
-	AttributedFieldDeclaration(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
-	AttributedEnumVariant(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
-	AttributedParameter(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedParameter };
-	AttributedTypeParameter(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedTypeParameter };
-	AttributedArgument(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.AttributedArgument };
-	TypeArgument(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TypeArgument };
+	): asserts v is { readonly $type: TSKindId.ImplItemNegativeClause };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): asserts v is DeclarationStatement;
@@ -887,6 +815,7 @@ export interface AssertGuards {
 	literal(v: { readonly $type: string | number } | number): asserts v is _Literal;
 	literalPattern(v: { readonly $type: string | number } | number): asserts v is LiteralPattern;
 	path(v: { readonly $type: string | number } | number): asserts v is _Path;
+	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -898,40 +827,40 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_statement_ids = new Set<number>([
-	165, 191, 245, 166, 164, 176, 177, 179, 180, 182, 183, 184, 193, 194, 195, 199, 200, 201, 209, 210, 190, 192
+	166, 192, 246, 167, 165, 177, 178, 180, 181, 183, 184, 185, 194, 195, 196, 200, 201, 202, 210, 211, 191, 193
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
-	191, 245, 166, 164, 176, 177, 179, 180, 182, 183, 184, 193, 194, 195, 199, 200, 201, 209, 210, 190, 192
+	192, 246, 167, 165, 177, 178, 180, 181, 183, 184, 185, 194, 195, 196, 200, 201, 202, 210, 211, 191, 193
 ]);
-const _supertype_tokenPattern_ids = new Set<number>([169, 171, 170, 135]);
-const _supertype_tokens_ids = new Set<number>([173, 174, 135]);
-const _supertype_nonSpecialToken_ids = new Set<number>([317, 318, 121, 319, 119, 151, 1, 76, 132, 133, 134, 352, 353]);
-const _supertype_useClause_ids = new Set<number>([132, 1, 135, 133, 134, 249, 214, 213, 212, 215]);
+const _supertype_tokenPattern_ids = new Set<number>([170, 172, 171, 135]);
+const _supertype_tokens_ids = new Set<number>([174, 175, 135]);
+const _supertype_nonSpecialToken_ids = new Set<number>([318, 319, 121, 320, 119, 151, 1, 76, 132, 133, 134, 353, 354]);
+const _supertype_useClause_ids = new Set<number>([132, 1, 135, 133, 134, 250, 215, 214, 213, 216]);
 const _supertype_type_ids = new Set<number>([
-	241, 238, 135, 239, 232, 251, 229, 230, 226, 228, 1, 245, 240, 242, 234, 204
+	242, 239, 135, 240, 233, 252, 230, 231, 227, 229, 1, 246, 241, 243, 235, 205
 ]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	253, 255, 254, 256, 257, 258, 259, 262, 260, 261, 317, 318, 121, 319, 119, 151, 1, 132, 249, 231, 293, 294, 264, 266,
-	245, 267, 290, 291, 292, 135, 287, 265, 268, 295, 296, 297, 298, 299, 273, 278, 283, 284, 285, 286
+	254, 256, 255, 257, 258, 259, 260, 263, 261, 262, 318, 319, 121, 320, 119, 151, 1, 132, 250, 232, 294, 295, 265, 267,
+	246, 268, 291, 292, 293, 135, 288, 266, 269, 296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287
 ]);
 const _supertype_expression_ids = new Set<number>([
-	253, 255, 254, 256, 257, 258, 259, 262, 260, 261, 317, 318, 121, 319, 119, 151, 1, 132, 249, 231, 293, 294, 264, 266,
-	245, 267, 290, 291, 292, 135, 287, 265, 268, 295, 296, 297, 298, 299, 273, 278, 283, 284, 285, 286, 252
+	254, 256, 255, 257, 258, 259, 260, 263, 261, 262, 318, 319, 121, 320, 119, 151, 1, 132, 250, 232, 294, 295, 265, 267,
+	246, 268, 291, 292, 293, 135, 288, 266, 269, 296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287, 253
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
-	295, 296, 297, 298, 299, 273, 278, 283, 284, 285, 286
+	296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287
 ]);
-const _supertype_delimTokens_ids = new Set<number>([246]);
+const _supertype_delimTokens_ids = new Set<number>([247]);
 const _supertype_condition_ids = new Set<number>([
-	253, 255, 254, 256, 257, 258, 259, 262, 260, 261, 317, 318, 121, 319, 119, 151, 1, 132, 249, 231, 293, 294, 264, 266,
-	245, 267, 290, 291, 292, 135, 287, 265, 268, 295, 296, 297, 298, 299, 273, 278, 283, 284, 285, 286, 252, 274, 275
+	254, 256, 255, 257, 258, 259, 260, 263, 261, 262, 318, 319, 121, 320, 119, 151, 1, 132, 250, 232, 294, 295, 265, 267,
+	246, 268, 291, 292, 293, 135, 288, 266, 269, 296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287, 253, 275, 276
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	317, 318, 121, 319, 119, 151, 316, 1, 249, 301, 302, 304, 305, 310, 303, 311, 312, 307, 308, 309, 313, 286, 245, 355
+	318, 319, 121, 320, 119, 151, 317, 1, 250, 302, 303, 305, 306, 311, 304, 312, 313, 308, 309, 310, 314, 287, 246, 356
 ]);
-const _supertype_literal_ids = new Set<number>([317, 318, 121, 319, 119, 151]);
-const _supertype_literalPattern_ids = new Set<number>([317, 318, 121, 319, 119, 151, 316]);
-const _supertype_path_ids = new Set<number>([132, 1, 135, 133, 134, 249]);
+const _supertype_literal_ids = new Set<number>([318, 319, 121, 320, 119, 151]);
+const _supertype_literalPattern_ids = new Set<number>([318, 319, 121, 320, 119, 151, 317]);
+const _supertype_path_ids = new Set<number>([132, 1, 135, 133, 134, 250]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),
@@ -1095,21 +1024,8 @@ export const is = {
 	TupleExpressionElements: _g(TSKindId.TupleExpressionElements),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
-	AttributeInput: _g(TSKindId.AttributeInput),
-	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
-	VisibilityModifierPub: _g(TSKindId.VisibilityModifierPub),
-	VisibilityModifierInPath: _g(TSKindId.VisibilityModifierInPath),
-	FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
-	FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
-	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
-	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
-	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
-	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
-	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
-	AttributedParameter: _g(TSKindId.AttributedParameter),
-	AttributedTypeParameter: _g(TSKindId.AttributedTypeParameter),
-	AttributedArgument: _g(TSKindId.AttributedArgument),
-	TypeArgument: _g(TSKindId.TypeArgument),
+	ImplItemPositiveClause: _g(TSKindId.ImplItemPositiveClause),
+	ImplItemNegativeClause: _g(TSKindId.ImplItemNegativeClause),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	declarationStatement: _sg(_supertype_declarationStatement_ids),
@@ -1127,7 +1043,8 @@ export const is = {
 	pattern: _sg(_supertype_pattern_ids),
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
-	path: _sg(_supertype_path_ids)
+	path: _sg(_supertype_path_ids),
+	whitespace: _sg(new Set<number>())
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1326,21 +1243,8 @@ export const assert = {
 	TupleExpressionElements: _makeAssert('TupleExpressionElements', is.TupleExpressionElements as _AnyGuard),
 	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
 	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
-	AttributeInput: _makeAssert('AttributeInput', is.AttributeInput as _AnyGuard),
-	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
-	VisibilityModifierPub: _makeAssert('VisibilityModifierPub', is.VisibilityModifierPub as _AnyGuard),
-	VisibilityModifierInPath: _makeAssert('VisibilityModifierInPath', is.VisibilityModifierInPath as _AnyGuard),
-	FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
-	FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
-	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
-	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
-	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
-	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
-	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
-	AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),
-	AttributedTypeParameter: _makeAssert('AttributedTypeParameter', is.AttributedTypeParameter as _AnyGuard),
-	AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
-	TypeArgument: _makeAssert('TypeArgument', is.TypeArgument as _AnyGuard),
+	ImplItemPositiveClause: _makeAssert('ImplItemPositiveClause', is.ImplItemPositiveClause as _AnyGuard),
+	ImplItemNegativeClause: _makeAssert('ImplItemNegativeClause', is.ImplItemNegativeClause as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),
@@ -1358,7 +1262,8 @@ export const assert = {
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
 	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
-	path: _makeAssert('path', is.path as _AnyGuard)
+	path: _makeAssert('path', is.path as _AnyGuard),
+	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

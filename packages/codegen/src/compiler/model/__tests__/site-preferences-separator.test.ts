@@ -4,6 +4,7 @@ import { AssembledList, AssembledPattern, type AssembledNode, type SeparatedList
 import type { RenderRule, SimplifiedRule } from '../../../types/rule.ts';
 import { makeNodeMapWith } from '../../../__tests__/helpers/node-map-fixtures.ts';
 import { collectSitePreferences } from '../site-preferences.ts';
+import { preference } from '../../../dsl/primitives/preference.ts';
 
 const SIMPLIFIED: SimplifiedRule = { type: SYMBOL, name: 'member' };
 const RENDER: RenderRule = { type: SYMBOL, name: 'member' };
@@ -34,12 +35,33 @@ function listNodeMap(separatorRule: RenderRule | undefined) {
 	return makeNodeMapWith(nodes);
 }
 
+describe('collectSitePreferences — the options block', () => {
+	const withOptions = (options: object) =>
+		collectSitePreferences({
+			nodeMap: listNodeMap(SEP),
+			kindEntries,
+			options: options as never
+		});
+
+	it('declares a site the render rules never see, and refuses one that names nothing', () => {
+		const sites = withOptions({ member_list: { 'member:/separator/kind': preference('comma') } });
+		expect(sites.find((s) => s.source === 'separator')?.defaultArm).toBe('comma');
+		expect(() => withOptions({ member_list: { 'member:/nowhere': preference('comma') } })).toThrow(/names no site/);
+	});
+
+	it('refuses an arm no site it names admits', () => {
+		expect(() => withOptions({ member_list: { 'member:/separator/kind': preference('newline') } })).toThrow(
+			/which no site it names admits/
+		);
+	});
+});
+
 describe('collectSitePreferences — separator sites', () => {
 	it('a list with a choice separator is a site whose arms are the literal kinds and whose default is the declared one', () => {
 		const sites = collectSitePreferences({
 			nodeMap: listNodeMap(SEP),
 			kindEntries,
-			defaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } } }
+			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
 		});
 		const site = sites.find((s) => s.source === 'separator')!;
 		expect(site).toEqual({
@@ -56,23 +78,23 @@ describe('collectSitePreferences — separator sites', () => {
 		});
 	});
 
-	it('an undeclared choice separator, a foreign arm, and a declaration naming no list are build errors', () => {
+	it('an undeclared choice separator, a foreign arm, and a declaration naming no site are build errors', () => {
 		expect(() => collectSitePreferences({ nodeMap: listNodeMap(SEP), kindEntries })).toThrow(
-			/member_list\.member chooses its separator per instance \(comma, semi\); declare preference\('separator', <kind>\)/
+			/member_list\.member chooses its separator per instance \(comma, semi\); declare its kind under options:/
 		);
 		expect(() =>
 			collectSitePreferences({
 				nodeMap: listNodeMap(SEP),
 				kindEntries,
-				defaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'colon' } } } }
+				options: { member_list: { 'member:/separator/kind': preference('colon') } } as never
 			})
-		).toThrow(/member_list\.member_separator is 'colon', not one of comma, semi/);
+		).toThrow(/which no site it names admits \(comma, semi\)/);
 		expect(() =>
 			collectSitePreferences({
 				nodeMap: listNodeMap(undefined),
 				kindEntries,
-				defaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'comma' } } } }
+				options: { member_list: { 'member:/separator/kind': preference('comma') } } as never
 			})
-		).toThrow(/member_list\.member_separator names no list with a choice separator/);
+		).toThrow(/names no site/);
 	});
 });

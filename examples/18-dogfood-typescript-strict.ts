@@ -6,10 +6,12 @@ import { ir, TSKindId } from '@sittir/typescript';
 // branch kinds, `.<form>.strict` on a namespaced form, and the bare factory on
 // leaves (leaves have no `.strict`; they are already it).
 //
-// The whole file rebuilds here: the import with its type modifier, both
-// function declarations with parameter and return annotations, and real
-// statement bodies. The coercion half renders the same functions with empty
-// bodies and no annotations; every one of those shapes is constructible below.
+// What rebuilds here is the file's skeleton: the import with its type
+// modifier and both function declarations with parameter and return
+// annotations. Each body holds two statements (`let result = …;` and
+// `return result;`); the real bodies are not written. The coercion half
+// renders the same functions with empty bodies and no annotations; every
+// shape below is constructible on this surface.
 //
 // Five spellings are worth naming, because getting one wrong reads as a
 // missing feature rather than a wrong call:
@@ -44,9 +46,7 @@ export function importTypesStrict() {
 					ir.importSpecifier({ content: 'FormatTrivia' })
 				)
 			),
-			source: ir.string.single.strict({
-				elements: [ir.unescapedSingleStringFragment('@sittir/types')],
-			}),
+			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
 		}),
 		terminator: ';',
 	});

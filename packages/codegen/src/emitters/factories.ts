@@ -1,4 +1,4 @@
-import { DELIMITER_LABEL, SEPARATOR_LABEL, type RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { DELIMITER_LABEL, SEPARATOR_LABEL } from '../dsl/primitives/spacing.ts';
 import { publicKindName } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -19,6 +19,7 @@ import {
 	type AssembledBranch,
 	type AssembledPattern,
 	type AssembledEnum,
+	AbstractAssembledCompound,
 	AssembledList,
 	AssembledEnvelope,
 	AssembledPolymorph,
@@ -28,7 +29,14 @@ import {
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, storageKindOfRef, isKindIdStored, delimiterMembersFor } from '../compiler/model/node-map.ts';
+import {
+	isNodeRef,
+	isTerminalValue,
+	storageKindOfRef,
+	isFixedTextLeaf,
+	textStoragesOf,
+	delimiterMembersFor
+} from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import {
 	isRequired,
@@ -54,7 +62,8 @@ import {
 	escForSource,
 	emitsPlainBuiltAlias,
 	transparentWrapperContentSlot,
-	isAuthoredCompound
+	isAuthoredCompound,
+	enumMemberDiscriminant
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -75,7 +84,6 @@ export interface EmitFactoriesConfig {
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	triviaKinds?: readonly string[];
-	renderDefaults?: RenderDefaults;
 }
 
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -256,11 +264,6 @@ export namespace factory {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
-			case 'enum': {
-				const literalUnion = buildEnumLiteralUnion(node);
-				result = emitTextFactory(node, `text: ${literalUnion}`, 'text', undefined, kindEntries, nodeMap);
-				break;
-			}
 			default:
 				break;
 		}
@@ -276,23 +279,13 @@ export namespace factory {
 		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
 	}
 
-	export function group(
-		output: string[],
-		node: FieldCarryingNode,
-		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
-	): void {
-		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
-	}
-
 	export function separatedList(
 		output: string[],
 		node: AssembledList,
 		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined,
-		renderDefaults: RenderDefaults | undefined
+		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		const result = emitSeparatedListFactory(node, nodeMap, kindEntries, renderDefaults);
+		const result = emitSeparatedListFactory(node, nodeMap, kindEntries);
 		if (result) output.push(result);
 	}
 }
@@ -311,9 +304,6 @@ function buildLeafGuards(node: { kind: string }, leafReConsts: Map<string, strin
 	return guards;
 }
 
-function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
-	return node.values.map((v) => `'${escForSource(v)}'`).join(' | ');
-}
 
 type FieldCarryingNode = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 
@@ -329,7 +319,9 @@ export function childElementType(
 			const storage = valueStorageOf(value, nodeMap);
 			if (storage === undefined) continue;
 			if (storage.via !== 'node') {
-				parts.add(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
+				for (const text of textStoragesOf(storage)) {
+					parts.add(valueKindIdExpr(text, slotInfo, kindEntries) ?? JSON.stringify(text.text));
+				}
 				continue;
 			}
 			if (storage.missing) {
@@ -370,7 +362,7 @@ export function kindEnumTextMapExpr(
 		if (isNodeRef(value)) {
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
-			if (resolved !== undefined && isKindIdStored(resolved)) {
+			if (resolved !== undefined && isFixedTextLeaf(resolved)) {
 				const text = resolved.text;
 				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
 				const discriminant =
@@ -562,10 +554,6 @@ export function builtTypeSurfaceOf(
 	switch (node.modelType) {
 		case 'pattern':
 			return leafBuiltTypeSurface(node, 'text: string', 'string', nodeMap, kindEntries);
-		case 'enum': {
-			const union = buildEnumLiteralUnion(node);
-			return leafBuiltTypeSurface(node, `text: ${union}`, union, nodeMap, kindEntries);
-		}
 		default:
 			return undefined;
 	}
@@ -595,7 +583,9 @@ export function fieldElementType(
 			);
 			continue;
 		}
-		parts.push(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
+		for (const text of textStoragesOf(storage)) {
+			parts.push(valueKindIdExpr(text, slotInfo, kindEntries) ?? JSON.stringify(text.text));
+		}
 	}
 	return [...new Set(parts)].join(' | ');
 }
@@ -827,7 +817,7 @@ export function constructorSurface(
 		case 'pattern':
 			return { params: 'text: string', args: 'text' };
 		case 'enum':
-			return { params: `text: ${buildEnumLiteralUnion(target)}`, args: 'text' };
+			return { params: `value: ${enumMemberDiscriminant(target, kindEntries)}`, args: 'value' };
 		default:
 			return undefined;
 	}
@@ -926,7 +916,12 @@ function emitFieldCarryingFactory(
 		resolvedForwardTarget !== null && kindEntries !== undefined && !hasCatalogEntry(kindEntries, resolvedForwardTarget)
 			? null
 			: resolvedForwardTarget;
-	if (forwardTarget !== null) {
+	const forwardTargetNode = forwardTarget === null ? undefined : nodeMap.nodes.get(forwardTarget);
+	const forwardsToSeatedGroup =
+		forwardTargetNode instanceof AbstractAssembledCompound &&
+		forwardTargetNode.annotations?.hoisted === true &&
+		classifyFactoryShape(forwardTargetNode, nodeMap) === 'config';
+	if (forwardTarget !== null && !forwardsToSeatedGroup) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
 		const targetSurface = constructorSurface(forwardTarget, nodeMap, kindEntries);
@@ -1239,30 +1234,25 @@ function listBuiltTypeSurface(
 export function declaredSeparatorDefault(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	renderDefaults: RenderDefaults | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	const slot = node.slots[0]?.name;
-	const declared = slot === undefined ? undefined : renderDefaults?.sites[publicKindName(node.kind)]?.[`${slot}_${SEPARATOR_LABEL}`]?.arm;
+	const declared = node.resolvedSeparatorArm;
 	if (declared === undefined) throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
 	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
 }
 
-function declaredDelimiterDefault(node: AssembledList, renderDefaults: RenderDefaults | undefined): string {
-	const slot = node.slots[0]?.name;
-	const declared = slot === undefined ? undefined : renderDefaults?.sites[publicKindName(node.kind)]?.[`${slot}_${DELIMITER_LABEL}`]?.arm;
-	return declared ?? 'Delimiter.None';
+function declaredDelimiterDefault(node: AssembledList): string {
+	return node.resolvedDelimiterArm ?? 'Delimiter.None';
 }
 
 function emitSeparatedListFactory(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	renderDefaults: RenderDefaults | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
-	const delimiterDefault = declaredDelimiterDefault(node, renderDefaults);
+	const delimiterDefault = declaredDelimiterDefault(node);
 
 	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
@@ -1318,7 +1308,7 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = elements;`);
 	}
 	if (hasSeparatorKindOption) {
-		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries, renderDefaults)};`);
+		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)};`);
 	}
 	if (hasDelimiterOption) {
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
@@ -1453,7 +1443,6 @@ interface MapEntry {
 export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
 	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
-	readonly #renderDefaults: RenderDefaults | undefined;
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
 	readonly #leafReConsts: Map<string, string>;
@@ -1464,7 +1453,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 	constructor(config: EmitFactoriesConfig) {
 		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
-		this.#renderDefaults = config.renderDefaults;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -1520,12 +1508,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
-	emitGroup(node: FieldCarryingNode): void {
-		factory.group(this.#output, node, this.#nodeMap, this.#kindEntries);
-	}
-
 	emitSeparatedList(node: AssembledList): void {
-		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries, this.#renderDefaults);
+		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
 	emitRefineForms(kind: string, node: AssembledNode): void {
@@ -1565,13 +1549,11 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'polymorph':
 				if (node instanceof AssembledSupertype) break;
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'list':
 				this.emitSeparatedList(node);

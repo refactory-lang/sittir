@@ -220,7 +220,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
@@ -238,13 +237,12 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
-		// factorySlots, polymorphVariants) lives in node-model.json5 (PR-K).
+		// factorySlots) lives in node-model.json5.
 		const model = await loadNodeModel(grammar);
 		factoryShapes = model.factoryShapes;
 		factoryFields = model.factoryFields;
 		factorySlots = model.factorySlots;
 		fieldAliasMap = model.fieldAliasMap;
-		polymorphVariants = model.polymorphVariants;
 	} catch (e) {
 		errors.push({
 			kind: '(factory-module-load)',
@@ -406,7 +404,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					const shape = factoryShapes[readKind] ?? 'config';
 					const factory = factoryMap[readKind]!;
 					if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-						// ADR-0018: readNode emits `_<name>` top-level keys, not
+						// ReadNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
 						const config = nodeToConfig(readData, {
@@ -415,7 +413,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factoryFields,
 							factorySlots,
 							fieldAliasMap,
-							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
 						if (shape === 'direct' || shape === 'forwarded') {
@@ -454,7 +451,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factoryFields,
 							factorySlots,
 							fieldAliasMap,
-							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
 						const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
@@ -468,7 +464,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factoryFields,
 							factorySlots,
 							fieldAliasMap,
-							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
 						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);

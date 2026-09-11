@@ -61,7 +61,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_export_statement_default_declaration",
-    "message": "[collect-slots] kind '_export_statement_default_declaration': choice rule:_export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind '_export_statement_default_declaration': choice rule:_export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -75,14 +75,38 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_export_statement_default_default_kw",
-    "message": "[collect-slots] kind '_export_statement_default_default_kw': choice rule:_export_statement_default_default_kw:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "ownerKind": "_export_statement_default_declaration_default_kw",
+    "message": "[collect-slots] kind '_export_statement_default_declaration_default_kw': choice rule:_export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
         "declaration"
       ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷐\n"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷑\n"
     }
   },
   {
@@ -180,11 +204,16 @@
   },
   {
     "code": "kindid-unstamped-literals",
-    "message": "1 literal(s) resolved no parser kindId",
+    "message": "6 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "\n"
+        "",
+        "\n",
+        "\n\n",
+        " ",
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "severity": "warning",
@@ -193,12 +222,17 @@
   },
   {
     "code": "kindid-vaporized-literals",
-    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "6 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "\n"
+        "",
+        "\n",
+        "\n\n",
+        " ",
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "scope": "grammar",

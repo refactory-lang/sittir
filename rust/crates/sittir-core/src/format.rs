@@ -3,7 +3,7 @@
 //!
 //! This is a single-pass extractor: one tree walk produces all style samples;
 //! the samples are reduced to consensus values; `None` is returned when the
-//! source is already template-canonical (FR-002, FR-007, SC-005).
+//! source is already template-canonical.
 
 use crate::types::{FormatBoundary, FormatRecord, FormatTrivia};
 

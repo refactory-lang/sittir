@@ -141,15 +141,15 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar)));
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const rulesConfig = { nodeMap, kindEntries, defaults: raw.renderDefaults, whitespaceText: whitespaceTextOf(raw.visibleExternals) };
+	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap) };
 	const spacedRules = spaceRenderRules(rulesConfig);
 	stampStaticSpacing(nodeMap, grammar, spacedRules);
 	const renderRules = seamRenderRules(spacedRules, rulesConfig);
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
-		renderDefaults: raw.renderDefaults,
-		visibleExternals: raw.visibleExternals
+		visibleExternals: raw.visibleExternals,
+		options: raw.options
 	});
 	return emit.transportRs.contents;
 }
@@ -323,8 +323,8 @@ async function buildRustFixtureForParity() {
 			: spaceRenderRules({
 					nodeMap,
 					kindEntries: collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables),
-					defaults: raw.renderDefaults,
-					whitespaceText: whitespaceTextOf(raw.visibleExternals)
+					options: raw.options,
+					whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
 				});
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	return { grammar, nodeMap, generatedIdTables, templates };
@@ -419,7 +419,7 @@ describe('render options on transports', () => {
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).toContain('let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));');
-		expect(render).toMatch(/write!\(f, "\{arguments_before\}\(\{lparen_after\}/);
+		expect(render).toMatch(/write!\(f, "\{arguments_before\}\{lparen_before\}\(\{lparen_after\}/);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
 		expect(binary).toContain('pub operator_before: Option<u16>,');

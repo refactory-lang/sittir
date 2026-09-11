@@ -5875,7 +5875,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_raise_statement_optional1": {
       "type": "SEQ",
@@ -5892,7 +5895,10 @@
             "name": "expression"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_subjects": {
       "type": "SEQ",
@@ -5937,7 +5943,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_case_patterns": {
       "type": "SEQ",
@@ -5988,7 +5997,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_with_clause_with_items": {
       "type": "SEQ",
@@ -6039,7 +6051,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_function_definition_optional1": {
       "type": "SEQ",
@@ -6056,7 +6071,10 @@
             "name": "type"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_exec_statement_optional1": {
       "type": "SEQ",
@@ -6104,7 +6122,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_types": {
       "type": "SEQ",
@@ -6155,7 +6176,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_argument_list_elements": {
       "type": "SEQ",
@@ -6248,7 +6272,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_expression_list_expressions": {
       "type": "PREC_RIGHT",
@@ -6285,6 +6312,9 @@
             ]
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_list_pattern_case_patterns": {
@@ -6336,7 +6366,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_dict_pattern_elements": {
       "type": "SEQ",
@@ -6421,7 +6454,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_pattern_list_patterns": {
       "type": "SEQ",
@@ -6454,7 +6490,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_subscripts": {
       "type": "PREC",
@@ -6521,6 +6560,9 @@
             ]
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "_dictionary_elements": {
@@ -6590,7 +6632,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_slice_group": {
       "type": "SEQ",
@@ -6611,7 +6656,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_augmented_assignment_operator": {
       "type": "PREC",
@@ -6677,7 +6725,65 @@
       },
       "value": -1
     },
-    "_except_clause_as": {
+    "_whitespace": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_tight"
+          },
+          "named": true,
+          "value": "tight"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_space"
+          },
+          "named": true,
+          "value": "space"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_newline"
+          },
+          "named": true,
+          "value": "newline"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_blankline"
+          },
+          "named": true,
+          "value": "blankline"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_double_newline"
+          },
+          "named": true,
+          "value": "double_newline"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_indent"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_dedent"
+        }
+      ]
+    },
+    "_except_clause_exception_as": {
       "type": "SEQ",
       "members": [
         {
@@ -6696,7 +6802,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_except_clause_as_optional1"
+              "name": "_except_clause_exception_as_optional1"
             },
             {
               "type": "BLANK"
@@ -6705,7 +6811,7 @@
         }
       ]
     },
-    "_except_clause_as_optional1": {
+    "_except_clause_exception_as_optional1": {
       "type": "SEQ",
       "members": [
         {
@@ -7049,10 +7155,13 @@
               }
             ]
           }
-        ]
+        ],
+        "annotations": {
+          "hoisted": true
+        }
       }
     },
-    "_except_clause_list": {
+    "_except_clause_exception_list": {
       "type": "SEQ",
       "members": [
         {
@@ -7083,7 +7192,10 @@
             ]
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_except_clause_exception": {
       "type": "CHOICE",
@@ -7092,29 +7204,32 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_except_clause_as",
+            "name": "_except_clause_exception_as",
             "annotations": {
               "variant": "as",
               "variantOf": "except_clause"
             }
           },
           "named": true,
-          "value": "except_clause_as"
+          "value": "except_clause_exception_as"
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_except_clause_list",
+            "name": "_except_clause_exception_list",
             "annotations": {
               "variant": "list",
               "variantOf": "except_clause"
             }
           },
           "named": true,
-          "value": "except_clause_list"
+          "value": "except_clause_exception_list"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_kw_comma": {
       "type": "PREC_LEFT",
@@ -7143,7 +7258,10 @@
             "name": "_right_hand_side"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_assignment_type": {
       "type": "SEQ",
@@ -7160,7 +7278,10 @@
             "name": "type"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_assignment_typed": {
       "type": "SEQ",
@@ -7189,7 +7310,10 @@
             "name": "_right_hand_side"
           }
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_expression_statement_tuple": {
       "type": "SEQ",
@@ -7245,7 +7369,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_with_clause_bare": {
       "type": "SEQ",
@@ -7296,7 +7423,10 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_with_clause_paren": {
       "type": "SEQ",
@@ -7325,7 +7455,10 @@
           "type": "STRING",
           "value": ")"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_match_block_block": {
       "type": "SEQ",
@@ -7349,7 +7482,10 @@
           "type": "SYMBOL",
           "name": "_dedent"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_suite_block": {
       "type": "SEQ",
@@ -7362,7 +7498,10 @@
           "type": "SYMBOL",
           "name": "block"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_comparison_operator_comparator": {
       "type": "SEQ",
@@ -7437,7 +7576,10 @@
           "type": "SYMBOL",
           "name": "primary_expression"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_yield_from_clause": {
       "type": "SEQ",
@@ -7450,7 +7592,10 @@
           "type": "SYMBOL",
           "name": "expression"
         }
-      ]
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     }
   },
   "extras": [
@@ -7509,12 +7654,12 @@
       "_expression_statement_tuple"
     ],
     [
-      "_except_clause_as",
-      "_except_clause_list"
+      "_except_clause_exception_as",
+      "_except_clause_exception_list"
     ],
     [
       "as_pattern",
-      "_except_clause_as"
+      "_except_clause_exception_as"
     ],
     [
       "_expressions",
@@ -7756,6 +7901,14 @@
     {
       "type": "SYMBOL",
       "name": "_space"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_blankline"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_double_newline"
     }
   ],
   "inline": [
@@ -7765,7 +7918,7 @@
     "_expressions",
     "_left_hand_side",
     "keyword_identifier",
-    "_except_clause_as_optional1",
+    "_except_clause_exception_as_optional1",
     "_kw_sign",
     "_raise_statement_optional1",
     "_function_definition_optional1",
@@ -7780,7 +7933,8 @@
     "expression",
     "primary_expression",
     "pattern",
-    "parameter"
+    "parameter",
+    "_whitespace"
   ],
   "reserved": {
     "global": [

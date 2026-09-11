@@ -10,8 +10,6 @@
 import base from './base.ts';
 
 import { enrich, field, alias, variant, arm, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
-import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
-import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -19,7 +17,7 @@ const enrichedBase = enrich(base);
 
 export default grammar(
 	enrichedBase,
-	wire<EnrichedGrammar<RustGrammarShape>>(
+	wire(
 		{
 			name: 'rust',
 			conflicts: ($, previous) => [
@@ -35,11 +33,13 @@ export default grammar(
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._indent, $._dedent],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			visibleExternals: (_$) => ({
 				_tight: string(''),
 				_space: string(' '),
 				_newline: string('\n'),
+				_blankline: string('\n\n'),
 				_indent: indent(),
 				_dedent: dedent()
 			}),
@@ -74,52 +74,102 @@ export default grammar(
 
 				match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 			},
+			options: {
+				body: { before: preference('indent'), after: preference('dedent') },
+				gap: { separator: preference('newline') },
+				field_declaration_list_elements: {
+					'element:/separator/","/after': preference('newline'),
+					'element:/delimiter': preference('Delimiter.Trailing')
+				},
+				enum_variant_list_elements: {
+					'element:/separator/","/after': preference('newline'),
+					'element:/delimiter': preference('Delimiter.Trailing')
+				},
+
+				_: {
+					'_/separator/","/before': preference('tight'),
+					'_/separator/";"/before': preference('tight'),
+					'_/separator/"+"/before': preference('space'),
+					'_/separator/"+"/after': preference('space'),
+					'":"/after': preference('space'),
+					'"->"/before': preference('space'),
+					'"->"/after': preference('space'),
+					'"="/before': preference('space'),
+					'"="/after': preference('space'),
+					'"=>"/before': preference('space'),
+					'"=>"/after': preference('space'),
+					'operator:/before': preference('space'),
+					'operator:/after': preference('space'),
+					'if:/after': preference('space'),
+					'in:/after': preference('space')
+				},
+
+				source_file: {
+					'statements:/separator': preference('tight'),
+					'statements:/(_)/after': preference('blankline'),
+					'statements:/(attribute_item)/after': preference('newline')
+				},
+
+				delim_token_tree_brace: { 'delim_tokens:/separator': preference('tight') },
+				delim_token_tree_bracket: { 'delim_tokens:/separator': preference('tight') },
+				delim_token_tree_paren: { 'delim_tokens:/separator': preference('tight') },
+				token_tree_brace: { 'tokens:/separator': preference('tight') },
+				token_tree_bracket: { 'tokens:/separator': preference('tight') },
+				token_tree_paren: { 'tokens:/separator': preference('tight') },
+				token_tree_pattern_brace: { 'token_patterns:/separator': preference('tight') },
+				token_tree_pattern_bracket: { 'token_patterns:/separator': preference('tight') },
+				token_tree_pattern_paren: { 'token_patterns:/separator': preference('tight') },
+
+				block: { before: preference('space'), 'statements:/end': preference('newline') },
+				match_block: { before: preference('space') },
+				declaration_list: { before: preference('space') },
+				field_declaration_list: { before: preference('space') },
+				enum_variant_list: { before: preference('space') },
+				field_initializer_list: {
+					before: preference('space'),
+					'"{"/after': preference('space'),
+					'"}"/before': preference('space')
+				},
+				last_match_arm: { before: preference('newline') },
+
+				range_expression_binary: { 'operator:/before': preference('tight'), 'operator:/after': preference('tight') },
+				range_expression_prefix: { 'operator:/after': preference('tight') },
+				unary_expression: { 'operator:/after': preference('tight') },
+				token_tree_punctuation: { '","/after': preference('space') },
+
+				_bindings: {
+					'block/"{"/after': 'body/before',
+					'block/"}"/before': 'body/after',
+					'match_block/"{"/after': 'body/before',
+					'match_block/"}"/before': 'body/after',
+					'declaration_list/"{"/after': 'body/before',
+					'declaration_list/"}"/before': 'body/after',
+					'field_declaration_list/"{"/after': 'body/before',
+					'field_declaration_list/"}"/before': 'body/after',
+					'enum_variant_list/"{"/after': 'body/before',
+					'enum_variant_list/"}"/before': 'body/after',
+					'array_expression_list/attributes:/separator': 'gap/separator',
+					'array_expression_semi/attributes:/separator': 'gap/separator',
+					'attributed_argument/attribute_item:/separator': 'gap/separator',
+					'attributed_enum_variant/attribute_item:/separator': 'gap/separator',
+					'attributed_field_declaration/attribute_item:/separator': 'gap/separator',
+					'attributed_ordered_field/attribute_item:/separator': 'gap/separator',
+					'attributed_type_parameter/attribute_item:/separator': 'gap/separator',
+					'block/statements:/separator': 'gap/separator',
+					'declaration_list/declarations:/separator': 'gap/separator',
+					'field_initializer/attribute_item:/separator': 'gap/separator',
+					'function_modifiers/modifier:/separator': 'gap/separator',
+					'last_match_arm/attributes:/separator': 'gap/separator',
+					'match_arm/attributes:/separator': 'gap/separator',
+					'match_block_arms/match_arm:/separator': 'gap/separator',
+					'shorthand_field_initializer/attributes:/separator': 'gap/separator',
+					'token_repetition/tokens:/separator': 'gap/separator',
+					'token_repetition_pattern/token_patterns:/separator': 'gap/separator',
+					'tuple_expression/attributes:/separator': 'gap/separator'
+				}
+			},
+
 			patches: {
-				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
-				semi_separator_space_before: preference('semi_separator_space_before', 'tight'),
-				empty_separator_space: preference('empty_separator_space', 'newline'),
-				block_before: preference('block_before', 'space'),
-				match_block_before: preference('match_block_before', 'space'),
-				declaration_list_before: preference('declaration_list_before', 'space'),
-				field_declaration_list_before: preference('field_declaration_list_before', 'space'),
-				enum_variant_list_before: preference('enum_variant_list_before', 'space'),
-				field_initializer_list_before: preference('field_initializer_list_before', 'space'),
-				last_match_arm_before: preference('last_match_arm_before', 'newline'),
-				block_end: preference('block_end', 'newline'),
-				field_declaration_list: { lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
-				enum_variant_list: { lbrace_after: preference('block_body_before', 'indent'), rbrace_before: preference('block_body_after', 'dedent') },
-				field_declaration_list_elements: [
-					{ element: preference('comma_separator_space_after', 'newline') },
-					{ element: preference('delimiter', 'Delimiter.Trailing') }
-				],
-				enum_variant_list_elements: [
-					{ element: preference('comma_separator_space_after', 'newline') },
-					{ element: preference('delimiter', 'Delimiter.Trailing') }
-				],
-				colon_after: preference('colon_after', 'space'),
-				dash_gt_before: preference('dash_gt_before', 'space'),
-				dash_gt_after: preference('dash_gt_after', 'space'),
-				eq_before: preference('eq_before', 'space'),
-				eq_after: preference('eq_after', 'space'),
-				eq_gt_before: preference('eq_gt_before', 'space'),
-				eq_gt_after: preference('eq_gt_after', 'space'),
-				operator_before: preference('operator_before', 'space'),
-				operator_after: preference('operator_after', 'space'),
-				plus_separator_space_before: preference('plus_separator_space_before', 'space'),
-				plus_separator_space_after: preference('plus_separator_space_after', 'space'),
-				range_expression_binary: { operator_before: preference('operator_before', 'tight'), operator_after: preference('operator_after', 'tight') },
-				range_expression_prefix: { operator_after: preference('operator_after', 'tight') },
-				_token_tree_paren: { tokens: preference('empty_separator_space', 'tight') },
-				_token_tree_bracket: { tokens: preference('empty_separator_space', 'tight') },
-				_token_tree_brace: { tokens: preference('empty_separator_space', 'tight') },
-				_delim_token_tree_paren: { delim_tokens: preference('empty_separator_space', 'tight') },
-				_delim_token_tree_bracket: { delim_tokens: preference('empty_separator_space', 'tight') },
-				_delim_token_tree_brace: { delim_tokens: preference('empty_separator_space', 'tight') },
-				_token_tree_pattern_paren: { token_patterns: preference('empty_separator_space', 'tight') },
-				_token_tree_pattern_bracket: { token_patterns: preference('empty_separator_space', 'tight') },
-				_token_tree_pattern_brace: { token_patterns: preference('empty_separator_space', 'tight') },
-				token_repetition: { tokens: preference('empty_separator_space', 'tight') },
-				token_repetition_pattern: { token_patterns: preference('empty_separator_space', 'tight') },
 				parameter: {
 					'1': field('name')
 				},
@@ -135,8 +185,6 @@ export default grammar(
 				},
 
 				field_initializer_list: {
-					lbrace_after: preference('lbrace_after', 'space'),
-					rbrace_before: preference('rbrace_before', 'space'),
 					1: field('initializers')
 				},
 
@@ -162,8 +210,6 @@ export default grammar(
 				},
 
 				match_block: {
-					lbrace_after: preference('block_body_before', 'indent'),
-					rbrace_before: preference('block_body_after', 'dedent'),
 					'1/0/1': field('last_arm')
 				},
 
@@ -179,8 +225,6 @@ export default grammar(
 				attribute: [{ 0: field('path') }, { '1/0': variant('input') }, { 1: field('input') }],
 
 				block: {
-					lbrace_after: preference('block_body_before', 'indent'),
-					rbrace_before: preference('block_body_after', 'dedent'),
 					3: field('trailing_expression')
 				},
 
@@ -316,7 +360,6 @@ export default grammar(
 				},
 
 				unary_expression: {
-					operator_after: preference('operator_after', 'tight'),
 					0: field('operator'),
 					1: field('operand')
 				},
@@ -329,8 +372,6 @@ export default grammar(
 				unsafe_block: { 1: field('body') },
 				try_block: { 1: field('body') },
 				declaration_list: {
-					lbrace_after: preference('block_body_before', 'indent'),
-					rbrace_before: preference('block_body_after', 'dedent'),
 					1: field('declarations')
 				},
 
@@ -379,8 +420,8 @@ export default grammar(
 
 				range_pattern: [
 					{
-						'0/1/0': variant('left_with_right'),
-						'0/1/1': variant('left_bare'),
+						'0/1/0': variant('with_right'),
+						'0/1/1': variant('bare'),
 						'1': variant('prefix')
 					},
 					{ '0': variant('with_left') }
@@ -406,6 +447,7 @@ export default grammar(
 				impl_item: { '3/0/0/0': arm.default }
 			},
 			rules: {
+				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
 				// tuple_type's separated list realized as its own kind — the
 				// delimiter is a fact of the list, so the list is a top-level
 				// rule carrying it (hidden rule + visible alias, matching the

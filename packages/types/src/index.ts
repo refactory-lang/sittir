@@ -89,7 +89,7 @@ type IsBooleanKeyword<T> = T extends { readonly __booleanKeyword__?: unknown } ?
 type BooleanKeywordText<T> = T extends { readonly __booleanKeyword__?: infer V } ? V : never;
 
 /**
- * Bitflag<E, TStorage> — brands numeric bitflag storage (ADR-0012).
+ * Bitflag<E, TStorage> — brands numeric bitflag storage.
  * `E` is the const-enum type the Config / Loose surface expose; the
  * underlying NodeData storage is numeric and native-aligned.
  */
@@ -310,7 +310,7 @@ type ExpandNode<G, K extends NodeKind<G>, Visited extends (string | number)[]> =
  * Branch nodes (have fields in grammar): `{ $type, $fields, $other? }`
  * Leaf nodes (no fields): `{ $type, $text }`
  *
- * Metadata keys are `$`-prefixed (spec 008 US7) so user-facing field
+ * Metadata keys are `$`-prefixed so user-facing field
  * names like `type` (python's `type_alias_statement`) don't collide
  * with the kind discriminant.
  *
@@ -560,7 +560,7 @@ export type FluentNodeOf<T> = T extends { readonly $type: number }
 /**
  * Extract the fields record from a concrete node interface, or `{}` if none.
  *
- * ADR-0018 Phase 2: supports both the old `$fields: { name: T }` shape and
+ * Supports both the old `$fields: { name: T }` shape and
  * the new de-hoisted `_name: T` storage shape. When the interface uses
  * `_`-prefixed keys, FieldsOf extracts them and strips the underscore prefix
  * so that `ConfigOf<T>` / `RuntimeNodeOf<T>` / `FluentNodeOf<T>` see the

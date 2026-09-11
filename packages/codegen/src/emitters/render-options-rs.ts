@@ -2,7 +2,10 @@ import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
-import { admitsDepth, type WhitespaceText } from '../compiler/model/render-rules.ts';
+import { admitsDepth } from '../compiler/model/render-rules.ts';
+import { DEDENT_TEXT, INDENT_TEXT, isDepthText } from '../dsl/primitives/spacing.ts';
+import { pathOf } from '../compiler/model/site-addresses.ts';
+import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
 
@@ -19,6 +22,8 @@ export interface SpacingSite {
 	readonly side?: SpacingSide;
 	readonly role?: 'separator';
 	readonly defaultText?: string;
+	readonly seat?: { readonly kind: string; readonly field: string };
+	readonly path?: readonly PreferenceSegment[];
 }
 
 export interface DelimiterSite {
@@ -34,15 +39,20 @@ export interface DepthSites {
 	readonly sites: readonly number[];
 }
 
+export interface SitePath {
+	readonly path: string;
+	readonly site: 'spacing' | 'delimiter';
+	readonly index: number;
+}
+
 export interface RenderOptionsPlan {
 	readonly spacingSites: readonly SpacingSite[];
+	readonly sitePaths: readonly SitePath[];
 	readonly delimiterSites: readonly DelimiterSite[];
 	readonly depthSites: readonly DepthSites[];
 	readonly indentId: number;
 	readonly dedentId: number;
-	readonly labels: readonly { readonly label: string; readonly allowedIds: readonly number[] }[];
-	readonly supertypes: readonly { readonly name: string; readonly members: readonly string[] }[];
-	readonly whitespaceText: readonly { readonly id: number; readonly text: WhitespaceText }[];
+	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 }
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = {
@@ -74,19 +84,20 @@ function screaming(s: string): string {
 export function planRenderOptions(
 	sites: readonly SitePreference[],
 	kindEntries: readonly IdEntry[],
-	supertypeMembers: ReadonlyMap<string, readonly string[]>,
-	whitespaceText: ReadonlyMap<string, WhitespaceText>
+	whitespaceText: ReadonlyMap<string, string>
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
+	const delimiterPaths = new Map<DelimiterSite, readonly PreferenceSegment[]>();
 	const depthCapable: SpacingSite[] = [];
-	const labels = new Map<string, readonly number[]>();
 	for (const site of sites) {
 		const kind = publicKindName(site.kind);
 		const at = `${kind}.${site.slot}`;
 		if (site.source === 'delimiter') {
 			const allowed = site.arms.reduce((acc, arm) => acc | (DELIMITER_BITS[arm.value] ?? 0), 0);
-			delimiters.push({ kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 });
+			const row: DelimiterSite = { kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 };
+			delimiters.push(row);
+			delimiterPaths.set(row, pathOf(site, kindEntries));
 			continue;
 		}
 		if (site.source === 'separator') {
@@ -122,26 +133,33 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
-			...(site.side === undefined ? {} : { side: site.side })
+			...(site.side === undefined ? {} : { side: site.side }),
+			...(site.seat === undefined ? {} : { seat: site.seat }),
+			...(site.path === undefined ? {} : { path: site.path })
 		});
-		labels.set(site.label, allowedIds);
 		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
-	spacing.sort((a, b) => byTuple([a.kind, a.slot, a.label], [b.kind, b.slot, b.label]));
+	const paths = new Map(spacing.map((site) => [site, pathOf(site, kindEntries)]));
+	spacing.sort((a, b) => comparePreferencePaths(paths.get(a)!, paths.get(b)!));
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
 	const depthSites = new Map<string, number[]>();
 	for (const s of depthCapable) depthSites.set(s.kind, [...(depthSites.get(s.kind) ?? []), spacing.indexOf(s)]);
-	const idOfText = (constant: string): number => whitespaceText.size === 0 ? 0 : ([...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)?.[0] ?? undefined) === undefined ? 0 : idOf(kindEntries, [...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)![0], 'visibleExternals');
+	const idOfText = (text: string): number => {
+		const kind = [...whitespaceText].find(([, t]) => t === text)?.[0];
+		return kind === undefined ? 0 : idOf(kindEntries, kind, 'visibleExternals');
+	};
 	return {
 		spacingSites: spacing,
+		sitePaths: [
+			...spacing.map((site, index) => ({ path: paths.get(site)!, site: 'spacing' as const, index })),
+			...delimiters.map((site, index) => ({ path: delimiterPaths.get(site)!, site: 'delimiter' as const, index }))
+		]
+			.sort((a, b) => comparePreferencePaths(a.path, b.path))
+			.map(({ path, site, index }) => ({ path: formatPreferencePath(path), site, index })),
 		delimiterSites: delimiters,
 		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
-		indentId: idOfText('INDENT_NEWLINE'),
-		dedentId: idOfText('DEDENT_NEWLINE'),
-		labels: [...labels].map(([label, allowedIds]) => ({ label, allowedIds })).sort((a, b) => byTuple([a.label], [b.label])),
-		supertypes: [...supertypeMembers]
-			.map(([name, members]) => ({ name: publicKindName(name), members: [...new Set(members.map(publicKindName))].sort() }))
-			.sort((a, b) => byTuple([a.name], [b.name])),
+		indentId: idOfText(INDENT_TEXT),
+		dedentId: idOfText(DEDENT_TEXT),
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
 			.sort((a, b) => a.id - b.id)
@@ -159,19 +177,18 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	plan.spacingSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
-	L.push('/// (kind, address, label, default kind id, allowed kind ids), in site order. A');
-	L.push('/// separator site is addressed under its kind; an array flank is addressed at');
-	L.push('/// the top level by `<kind>_start` / `<kind>_end`.');
+	L.push('/// (kind, address, label, default kind id, allowed kind ids), in canonical path order.');
 	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[');
 	for (const s of plan.spacingSites) {
 		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
 	}
 	L.push('];', '');
-	L.push('/// Site indices of the array flanks, keyed by their top-level address.');
-	L.push('pub static FLANK_SITES: &[(&str, usize)] = &[');
-	plan.spacingSites.forEach((s, i) => {
-		if (s.side === 'start' || s.side === 'end') L.push(`    (${q(s.address)}, ${i}),`);
-	});
+	L.push('/// A site the path table refers to: an index into `SPACING_SITES` or into `DELIMITER_SITES`.');
+	L.push('#[derive(Clone, Copy)]', 'pub enum SiteRef {', '    Spacing(usize),', '    Delimiter(usize),', '}', '');
+	L.push("/// Every site by its canonical address, spacing and delimiter sites together, in");
+	L.push('/// sorted path order, so every descendant of a prefix is a contiguous range.');
+	L.push('pub static SITE_PATHS: &[(&str, SiteRef)] = &[');
+	for (const p of plan.sitePaths) L.push(`    (${q(p.path)}, SiteRef::${p.site === 'spacing' ? 'Spacing' : 'Delimiter'}(${p.index})),`);
 	L.push('];', '');
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
@@ -183,16 +200,10 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('pub static DEPTH_SITES: &[(&str, &[usize])] = &[');
 	for (const d of plan.depthSites) L.push(`    (${q(d.kind)}, &[${d.sites.join(', ')}]),`);
 	L.push('];', '');
-	L.push('pub static LABELS: &[(&str, &[u16])] = &[');
-	for (const l of plan.labels) L.push(`    (${q(l.label)}, &[${l.allowedIds.join(', ')}]),`);
-	L.push('];', '');
-	L.push('pub static SUPERTYPE_MEMBERS: &[(&str, &[&str])] = &[');
-	for (const s of plan.supertypes) L.push(`    (${q(s.name)}, &[${s.members.map(q).join(', ')}]),`);
-	L.push('];', '');
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
-		L.push(`        ${w.id} => ${'text' in w.text ? rustStringLiteral(SEAM_MARK + w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
+		L.push(`        ${w.id} => ${rustStringLiteral(isDepthText(w.text) ? w.text : SEAM_MARK + w.text)},`);
 	}
 	L.push('        _ => "",');
 	L.push('    }');
@@ -231,98 +242,105 @@ const RESOLVER_BODY: readonly string[] = [
 	'    Ok(())',
 	'}',
 	'',
-	"/// Apply one kind's entries to its sites. `owner` is the key the entries",
-	'/// came under: the kind itself, or a supertype whose members include it —',
-	'/// a key no site of a member owns is skipped there, and an error under',
-	'/// the kind itself.',
-	'fn apply_kind(table: &mut ResolvedOptions, kind: &str, entries: &::serde_json::Map<String, ::serde_json::Value>, owner: &str) -> Result<(), String> {',
-	'    for (key, value) in entries {',
-	'        if let Some(i) = SPACING_SITES.iter().position(|s| s.0 == kind && s.1 == key) {',
-	'            set_spacing(table, i, SPACING_SITES[i].4, value, &format!("{owner}.{key}"))?;',
-	'            continue;',
-	'        }',
-	'        if let Some(i) = DELIMITER_SITES.iter().position(|s| s.0 == kind && s.1 == key) {',
-	'            set_delimiter(table, i, DELIMITER_SITES[i].2, value, &format!("{owner}.{key}"))?;',
-	'            continue;',
-	'        }',
-	'        if owner == kind {',
-	'            return Err(format!("options: unknown key {owner}.{key}"));',
-	'        }',
+	'fn set_site(table: &mut ResolvedOptions, site: SiteRef, value: &::serde_json::Value, key: &str) -> Result<(), String> {',
+	'    match site {',
+	'        SiteRef::Spacing(i) => set_spacing(table, i, SPACING_SITES[i].4, value, key),',
+	'        SiteRef::Delimiter(i) => set_delimiter(table, i, DELIMITER_SITES[i].2, value, key),',
 	'    }',
-	'    Ok(())',
 	'}',
 	'',
-	'/// A `<supertype>_start` / `<supertype>_end` key: the supertype, its members and the side.',
-	"fn flank_supertype(key: &str) -> Option<(&'static str, &'static [&'static str], &'static str)> {",
-	'    for side in ["start", "end"] {',
-	'        if let Some(name) = key.strip_suffix(&format!("_{side}")) {',
-	'            if let Some((n, members)) = SUPERTYPE_MEMBERS.iter().find(|(n, _)| *n == name) {',
-	'                return Some((n, members, side));',
-	'            }',
+	'/// The sites an address names: itself and everything beneath it. Sites are',
+	'/// in canonical path order, so that set is always a contiguous range.',
+	'pub fn site_range(prefix: &str) -> (usize, usize) {',
+	'    range_within(0, SITE_PATHS.len(), prefix)',
+	'}',
+	'',
+	'fn range_within(start: usize, end: usize, prefix: &str) -> (usize, usize) {',
+	'    let mut first = start;',
+	'    while first < end && !path_under(SITE_PATHS[first].0, prefix) {',
+	'        first += 1;',
+	'    }',
+	'    let mut last = first;',
+	'    while last < end && path_under(SITE_PATHS[last].0, prefix) {',
+	'        last += 1;',
+	'    }',
+	'    (first, last)',
+	'}',
+	'',
+	'fn path_under(path: &str, prefix: &str) -> bool {',
+	'    path == prefix || (path.starts_with(prefix) && path.as_bytes().get(prefix.len()) == Some(&b"/"[0]))',
+	'}',
+	'',
+	'/// One nested key as a path segment. The nested object and the path are the',
+	'/// same address in two layouts, so a key is matched against every spelling a',
+	"/// segment has: a bare name, a quoted literal, or a field.",
+	'fn segment_under(start: usize, end: usize, prefix: &str, key: &str) -> Option<(String, usize, usize)> {',
+	'    for candidate in [key.to_string(), format!("\\"{key}\\""), format!("{key}:")] {',
+	'        let next = format!("{prefix}/{candidate}");',
+	'        let (s, e) = range_within(start, end, &next);',
+	'        if e > s {',
+	'            return Some((next, s, e));',
 	'        }',
 	'    }',
 	'    None',
 	'}',
 	'',
-	'/// Resolve a JSON options object over `base`: the label\'s top-level value',
-	'/// first, then supertype × slot, then kind × slot, so the more specific',
-	'/// tier overwrites. Unknown keys and values a site does not admit are',
-	'/// errors naming the key.',
+	'/// Every assignment a nested object makes. A key that names no site is an',
+	'/// error naming the full address it was written at.',
+	"fn collect_nested<'a>(",
+	"    out: &mut Vec<(usize, usize, String, &'a ::serde_json::Value)>,",
+	'    start: usize,',
+	'    end: usize,',
+	'    prefix: &str,',
+	"    entries: &'a ::serde_json::Map<String, ::serde_json::Value>,",
+	') -> Result<(), String> {',
+	'    for (key, value) in entries {',
+	'        let Some((path, s, e)) = segment_under(start, end, prefix, key) else {',
+	'            return Err(format!("options: {prefix}/{key} names no site"));',
+	'        };',
+	'        match value.as_object() {',
+	'            Some(nested) => collect_nested(out, s, e, &path, nested)?,',
+	'            None => out.push((s, e, path, value)),',
+	'        }',
+	'    }',
+	'    Ok(())',
+	'}',
+	'',
+	'/// A kind-keyed nested object applied by address: every leaf sets the site',
+	'/// it names and everything beneath it. Nothing is written until every leaf',
+	'/// has resolved, so an error leaves the table as it was.',
+	'fn apply_nested(table: &mut ResolvedOptions, key: &str, value: &::serde_json::Value) -> Result<(), String> {',
+	'    let root = format!("({key})");',
+	'    let (start, end) = site_range(&root);',
+	'    if end == start {',
+	'        return Err(format!("options: unknown key {key}"));',
+	'    }',
+	'    let entries = value',
+	'        .as_object()',
+	'        .ok_or_else(|| format!("options: {key} must be an object of addresses"))?;',
+	'    let mut assignments = Vec::new();',
+	'    collect_nested(&mut assignments, start, end, &root, entries)?;',
+	'    for (s, e, path, value) in assignments {',
+	'        for i in s..e {',
+	'            set_site(table, SITE_PATHS[i].1, value, &path)?;',
+	'        }',
+	'    }',
+	'    Ok(())',
+	'}',
+	'',
+	'/// Resolve a JSON options object over `base`: `indent` and one address',
+	'/// object per root kind. Unknown keys, addresses naming no site and values',
+	'/// a site does not admit are errors naming the key.',
 	'pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {',
 	'    let value: ::serde_json::Value = ::serde_json::from_str(json).map_err(|e| format!("options: not a JSON object: {e}"))?;',
 	'    let object = value.as_object().ok_or_else(|| "options: not a JSON object".to_string())?;',
 	'    let mut table = base.clone();',
-	'    let mut kinds: Vec<(&String, &::serde_json::Map<String, ::serde_json::Value>)> = Vec::new();',
-	'    let mut supertypes: Vec<(&str, &[&str], &::serde_json::Map<String, ::serde_json::Value>)> = Vec::new();',
 	'    for (key, value) in object {',
 	'        if key == "indent" {',
 	'            table.indent = value.as_str().ok_or_else(|| "options: indent must be a string".to_string())?.to_string();',
 	'            continue;',
 	'        }',
-	'        if let Some((_, allowed)) = LABELS.iter().find(|(label, _)| label == key) {',
-	'            let id = spacing_id(allowed, value, key)?;',
-	'            for (j, site) in SPACING_SITES.iter().enumerate() {',
-	'                if site.2 == key {',
-	'                    table.spacing[j] = id;',
-	'                }',
-	'            }',
-	'            continue;',
-	'        }',
-	'        if let Some((_, i)) = FLANK_SITES.iter().find(|(address, _)| address == key) {',
-	'            set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, key)?;',
-	'            continue;',
-	'        }',
-	'        if let Some((name, members, side)) = flank_supertype(key) {',
-	'            let mut any = false;',
-	'            for member in members.iter() {',
-	'                let address = format!("{member}_{side}");',
-	'                if let Some((_, i)) = FLANK_SITES.iter().find(|(a, _)| *a == address) {',
-	'                    set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, &format!("{name}_{side}"))?;',
-	'                    any = true;',
-	'                }',
-	'            }',
-	'            if any {',
-	'                continue;',
-	'            }',
-	'        }',
-	'        let entries = value.as_object().ok_or_else(|| format!("options: {key} must be an object of <slot>_<label> entries"))?;',
-	'        if let Some((name, members)) = SUPERTYPE_MEMBERS.iter().find(|(name, _)| name == key) {',
-	'            supertypes.push((name, members, entries));',
-	'            continue;',
-	'        }',
-	'        if SPACING_SITES.iter().any(|s| s.0 == key) || DELIMITER_SITES.iter().any(|s| s.0 == key) {',
-	'            kinds.push((key, entries));',
-	'            continue;',
-	'        }',
-	'        return Err(format!("options: unknown key {key}"));',
-	'    }',
-	'    for (name, members, entries) in supertypes {',
-	'        for member in members.iter() {',
-	'            apply_kind(&mut table, member, entries, name)?;',
-	'        }',
-	'    }',
-	'    for (kind, entries) in kinds {',
-	'        apply_kind(&mut table, kind, entries, kind)?;',
+	'        apply_nested(&mut table, key, value)?;',
 	'    }',
 	'    for (kind, sites) in DEPTH_SITES {',
 	'        let mut depth = 0usize;',
@@ -342,5 +360,69 @@ const RESOLVER_BODY: readonly string[] = [
 	'        }',
 	'    }',
 	'    Ok(table)',
+	'}',
+	'',
+	'#[cfg(test)]',
+	'mod site_address_tests {',
+	'    use super::*;',
+	'',
+	'    fn kind_of(path: &str) -> &str {',
+	"        match path.find('/') {",
+	'            Some(i) => &path[..i],',
+	'            None => path,',
+	'        }',
+	'    }',
+	'',
+	'    #[test]',
+	'    fn the_path_table_names_every_site_once() {',
+	'        assert_eq!(SITE_PATHS.len(), SPACING_SITES.len() + DELIMITER_SITES.len());',
+	'        let mut spacing = vec![false; SPACING_SITES.len()];',
+	'        let mut delimiter = vec![false; DELIMITER_SITES.len()];',
+	'        for (_, site) in SITE_PATHS.iter() {',
+	'            let seen = match *site {',
+	'                SiteRef::Spacing(i) => &mut spacing[i],',
+	'                SiteRef::Delimiter(i) => &mut delimiter[i],',
+	'            };',
+	'            assert!(!*seen, "a site is named twice");',
+	'            *seen = true;',
+	'        }',
+	'        assert!(spacing.iter().chain(delimiter.iter()).all(|seen| *seen));',
+	'    }',
+	'',
+	'    #[test]',
+	'    fn a_prefix_names_a_contiguous_range() {',
+	'        if SITE_PATHS.is_empty() {',
+	'            return;',
+	'        }',
+	'        let prefix = kind_of(SITE_PATHS[0].0);',
+	'        let (start, end) = site_range(prefix);',
+	'        assert!(end > start);',
+	'        for i in start..end {',
+	'            assert!(path_under(SITE_PATHS[i].0, prefix));',
+	'        }',
+	'        for (i, (path, _)) in SITE_PATHS.iter().enumerate() {',
+	'            if path_under(path, prefix) {',
+	'                assert!(i >= start && i < end, "site {i} {path} outside the range");',
+	'            }',
+	'        }',
+	'    }',
+	'',
+	'    #[test]',
+	'    fn every_kind_occupies_one_run() {',
+	'        let mut runs: Vec<&str> = Vec::new();',
+	'        for (path, _) in SITE_PATHS.iter() {',
+	'            let kind = kind_of(path);',
+	'            if runs.last() != Some(&kind) {',
+	'                assert!(!runs.contains(&kind), "kind {kind} appears in more than one run");',
+	'                runs.push(kind);',
+	'            }',
+	'        }',
+	'    }',
+	'',
+	'    #[test]',
+	'    fn an_address_naming_no_site_is_an_empty_range() {',
+	'        let (start, end) = site_range("(no_such_kind_exists_here)");',
+	'        assert_eq!(start, end);',
+	'    }',
 	'}'
 ];

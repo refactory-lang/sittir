@@ -1,5 +1,8 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { DelimiterFlags } from '../compiler/model/node-map.ts';
+import { DelimiterFlags,
+	isFixedTextLeaf,
+	isKindIdStored
+} from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
@@ -70,7 +73,8 @@ import {
 	fromBareInput,
 	scalarLeafKinds,
 	resolveDirectFactorySlot,
-	canonicalSeparatedListField
+	canonicalSeparatedListField,
+	enumMemberDiscriminant
 } from './shared.ts';
 import {
 	constructorTargetKind,
@@ -243,7 +247,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	assertNoCamelCaseCollisions(nodeKinds);
 
-	lines.push('// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)');
+	lines.push('// Per-kind namespace interfaces — one computed base per kind');
 	const namespaceKinds = nodeKinds.filter(
 		(kind) => generatedTypes.has(nodeMap.nodes.get(kind)!.typeName) && hasKindId(kind, kindEntries)
 	);
@@ -260,7 +264,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	const keywordNamespaceKinds = leafKinds.filter((kind) => {
 		const node = nodeMap.nodes.get(kind)!;
-		return node.storage === 'kindId' && generatedTypes.has(node.typeName) && hasKindId(kind, kindEntries);
+		return isFixedTextLeaf(node) && generatedTypes.has(node.typeName) && hasKindId(kind, kindEntries);
 	});
 	for (const kind of keywordNamespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
@@ -272,7 +276,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const leafNamespaceKinds = leafKinds.filter((kind) => {
 		const node = nodeMap.nodes.get(kind)!;
 		return (
-			node.storage !== 'kindId' &&
+			!isKindIdStored(node) &&
 			generatedTypes.has(node.typeName) &&
 			emitsBuildArgsAlias(kind, node, { nodeMap, kindEntries })
 		);
@@ -326,7 +330,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const kind of [...keywordNamespaceKinds, ...leafNamespaceKinds]) {
 		const node = nodeMap.nodes.get(kind)!;
 		const ns = `${node.typeName}Ns`;
-		const surface = node.storage === 'kindId' ? undefined : builtTypeSurfaceOf(node, nodeMap, kindEntries);
+		const surface = isKindIdStored(node) ? undefined : builtTypeSurfaceOf(node, nodeMap, kindEntries);
 		lines.push(`export namespace ${node.typeName} {`);
 		for (const member of ['Config', 'Built', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs', 'Tree']) {
 			if (member === 'Built' && surface !== undefined) emitBuiltInterface(lines, surface, '  ');
@@ -534,20 +538,6 @@ function makeInliningLookupUnion(): LookupUnion {
 	return () => undefined;
 }
 
-function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	if (!kindEntries) return JSON.stringify(node.kind);
-	const members: string[] = [];
-	for (const value of node.values) {
-		const rec = node.resolvedByText.get(value);
-		const entry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntry(kindEntries, value);
-		if (entry) {
-			members.push(`TSKindId.${entry.member}`);
-		}
-	}
-	if (members.length === 0) return 'number';
-	return members.join(' | ');
-}
-
 function emitLeafTerminalAliases(
 	lines: string[],
 	leafKinds: string[],
@@ -563,16 +553,18 @@ function emitLeafTerminalAliases(
 		if (!node.rawFactoryName && !referenced.has(kind)) continue;
 		generatedTypes.add(node.typeName);
 
-		if (node.storage === 'kindId') {
+		if (node instanceof AssembledEnum) {
+			lines.push(`export type ${node.typeName} = ${enumMemberDiscriminant(node, kindEntries)};`);
+			continue;
+		}
+		if (isKindIdStored(node)) {
 			lines.push(`export type ${node.typeName} = ${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)};`);
 			continue;
 		}
 
-		const typeDiscriminant =
-			node.modelType === 'enum' && !hasKindId(kind, kindEntries)
-				? enumMemberDiscriminant(node, kindEntries)
-				: kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
-		lines.push(`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${leafTextType(node)}>;`);
+		lines.push(
+			`export type ${node.typeName} = Terminal<${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}, ${leafTextType(node)}>;`
+		);
 	}
 	lines.push('');
 }
@@ -644,9 +636,9 @@ function emitSupertypeUnionDeclarations(
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
-			return { sub, typeName: n.typeName };
+			return { sub, typeName: n.typeName, token: n instanceof AssembledToken };
 		});
-		const members = resolvedSubs.map((r) => r.typeName).filter((t) => generatedTypes.has(t));
+		const members = resolvedSubs.filter((r) => r.token || generatedTypes.has(r.typeName)).map((r) => r.typeName);
 		if (members.length === 0) {
 			throw new Error(
 				`types: supertype '${st.kind}' has no resolvable member types after filtering. ` +
@@ -705,7 +697,7 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 		if (prev !== undefined && prev !== kind) {
 			throw new Error(
 				`types emitter: camelCase collision — kinds '${prev}' and '${kind}' both camelCase to '${camel}'. ` +
-					`Rename one before proceeding (spec 008 FR-017).`
+					`Rename one before proceeding.`
 			);
 		}
 		camelNames.set(camel, kind);

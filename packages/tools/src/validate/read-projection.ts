@@ -131,7 +131,7 @@ function countUnfieldedNamedChildren(node: TSNode): number {
 /**
  * Extract named-slot field names from a NodeData object.
  *
- * ADR-0018 Phase 3a: readNode emits named slots as `_<name>` top-level keys
+ * ReadNode emits named slots as `_<name>` top-level keys
  * (de-hoisted storage). The legacy `$fields` wrapper is no longer emitted.
  * This helper reads both shapes for backward compatibility with test fixtures
  * that still use `$fields`.
@@ -141,7 +141,7 @@ function countUnfieldedNamedChildren(node: TSNode): number {
  */
 function* iterNamedSlots(data: AnyNodeData): Iterable<[string, unknown]> {
 	const rec = data as unknown as Record<string, unknown>;
-	// ADR-0018 Phase 3a: de-hoisted `_<name>` keys.
+	// De-hoisted `_<name>` keys.
 	for (const key of Object.keys(rec)) {
 		if (key.startsWith('_')) {
 			yield [key.slice(1), rec[key]];
@@ -221,7 +221,7 @@ function checkNodeData(
 	}
 
 	const liveFieldNames = collectLiveFieldNames(node);
-	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys.
+	// Named slots are stored as `_<name>` top-level keys.
 	// iterNamedSlots handles both de-hoisted (_<name>) and legacy ($fields) shapes.
 	const dataFields = new Set([...iterNamedSlots(data)].map(([fname]) => fname));
 

@@ -367,6 +367,20 @@ tie-break when several arms admit the same bare value.
 
     patches: { impl_item: { '3/0/0/0': arm.default } }
 
+### `packages/codegen/src/dsl/primitives/group.ts::group`
+
+`group()` is the `patches` declaration that a rule is a form of its parent:
+`resolvePatch` lowers it to `annotations.hoisted` on the addressed rule, the
+same stamp the variant lift and the `groups:` / clause-hoist mints make. The
+path `'.'` addresses the rule itself, so an authored hidden rule a parent
+only aliases can be declared a seat without restating its body:
+
+    patches: { _except_clause_as: { '.': group() } }
+
+It carries no data; it is a placeholder like `arm.default`, recognised by
+`isGroupPlaceholder` (`__sittirPlaceholder: 'group'`).
+
+
 ### `packages/codegen/src/dsl/primitives/variant.ts::VariantPlaceholder`
 
 ```text
@@ -393,12 +407,98 @@ tie-break when several arms admit the same bare value.
  */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::SPACING_ARMS`
+### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
-```text
-// The whitespace kinds every spacing preference chooses between. `tight`
-// renders nothing; each is a never-scanned external so it has a kind id.
-```
+`_whitespace`, the hidden supertype every grammar declares (in `supertypes:`
+and as a rule) listing the whitespace kinds it renders: each member is a
+never-scanned external with a kind id, `tight` renders nothing, and a
+grammar may add its own — python's `_double_newline` leaves two blank
+lines. The model reads the arms of every spacing site from it
+(`whitespace-arms.ts`); nothing in codegen lists whitespace kinds by name.
+The supertype is protected from unreachable-rule pruning like any other.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::DEPTH_ARMS`
+
+`indent` and `dedent`, the two whitespace members that move depth rather
+than lay out a run: a separator gap admits every member but these
+(`spacingArmsOf`), while an array flank, a kind edge or a token seam of an
+indenting grammar admits them too (`whitespaceArmsOf`).
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::INDENT_TEXT`
+
+The literal text of the `indent` whitespace kind: the core writer's INDENT
+mark (U+FDD0) followed by a newline — "go one level deeper, then break".
+`indent()` in a grammar's `visibleExternals` is `string(INDENT_TEXT)`, so
+`_indent` is a fixed-text token like every other whitespace kind, and the
+render crate's `spacing_text` table carries the mark itself rather than a
+core constant.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::DEDENT_TEXT`
+
+The literal text of the `dedent` whitespace kind: the DEDENT mark (U+FDD1)
+and a newline. `dedent()` is `string(DEDENT_TEXT)`.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::isDepthText`
+
+Whether a whitespace kind's text is a depth mark. A depth mark is written
+to the render stream as it is; every other whitespace text is written
+behind a SEAM mark so the writer can coalesce it with its neighbours.
+
+### `packages/codegen/src/dsl/primitives/preference.ts::preference`
+
+A preference's arm: the value chosen at the site an `options:` key addresses.
+The key is the address, so the arm is all a preference carries.
+
+A choice is addressable because it is a choice, not because anything labelled
+it. What names a site for a reader is the `options:` key, and a binding maps
+one address onto another key, so a name never has to be stamped onto the arms
+themselves.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::parsePreferencePath`
+
+A preference address's segments. It shares the path splitter and the segment
+forms with `parsePath` but not its rules: a bare identifier is a segment here,
+naming a side or a part of a label, where a rule path rejects one and demands
+`(name)`. So `(kind)` stays a kind, `field:` a field, `"text"` a literal, and
+everything bare is a name.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::comparePreferencePaths`
+
+The canonical order over preference addresses: segment by segment, then by
+length, so a prefix precedes its descendants and every descendant is
+contiguous. Site indices are assigned in this order, which is what makes a
+prefix-scoped declaration a range rather than a scan. Sides sort after any
+sibling that is not one, and among themselves in render order — `before`,
+`after`, `separator` — so a kind's own gaps do not interleave with its
+children's.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::formatPreferencePath`
+
+An address back in its written spelling, so a diagnostic names what an author
+typed rather than a segment dump.
+
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::Punctuated`
+
+A segment text holding a character no bare name may: space, quote, either
+paren, colon or slash.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::IsPreferenceSegment`
+
+Type-level twin of `parseSegment`: a quoted literal, `_`, an index, a
+`(kind)`, a `name:` or a bare name. Looser than the runtime on the
+characters a name may hold — it refuses punctuation rather than requiring an
+identifier — so it never rejects what `parsePreferencePath` accepts.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::AllSegments`
+
+`true` when every split segment is a preference segment.
+
+### `packages/codegen/src/dsl/primitives/preference-path.ts::IsPreferencePath`
+
+`true` when `parsePreferencePath` would accept the path. Splits with
+`Segments` (`grammar-shapes/path-type.ts`), the type-level `splitSegments`,
+so a quoted literal may hold a slash. What `OptionsCheck` consults per key.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::spacingLabel`
 
@@ -406,19 +506,6 @@ tie-break when several arms admit the same bare value.
 /** The preference label of a separator gap: `<token>_separator_space_<side>`
  *  for a token, `empty_separator_space` for an unseparated repeat. It is a
  *  top-level key of the grammar's `Options` type and of its `defaults`. */
-```
-
-### `packages/codegen/src/dsl/primitives/spacing.ts::RenderDefaults`
-
-```text
-/**
- * A grammar's declared render defaults: `labels` maps a separator spacing
- * label or a token seam label to its default arm; `sites[kind][address]` holds a site's default
- * and, where the grammar named it, its label — the address being a slot
- * site key or the flank side `start` / `end`. Wire derives it from the
- * `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
- * carries it to RawGrammar.renderDefaults and `spaceRenderRules` consumes it.
- */
 ```
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingLabel`
@@ -469,14 +556,6 @@ keys, the render-rules seam detection, and the site collection.
  *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_ARMS`
-
-The arms of every site that may move depth (an array flank, a kind edge, a
-token seam of an indenting grammar): the spacing kinds plus `indent`, one
-level deeper then a newline, and `dedent`, one level shallower then a
-newline. Either side of any token may carry either, and a kind's depth
-walk pairs them.
-
 ### `packages/codegen/src/dsl/primitives/spacing.ts::flankAddress`
 
 ```text
@@ -487,9 +566,3 @@ walk pairs them.
  *  spelled that way. */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::SiteDefault`
-
-```text
-/** One declared site default: the arm, and the label the grammar gave the
- *  site when it declared one. */
-```

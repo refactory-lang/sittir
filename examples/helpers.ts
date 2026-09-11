@@ -62,12 +62,12 @@ export function structuralShape(node: unknown): unknown {
 	}
 	const isBareLeaf = Object.keys(shape).length === 1;
 	if (typeof record.$text === 'string' && isBareLeaf) shape.$text = record.$text;
-	if (record.$triviaData !== undefined) {
-		const trivia = record.$triviaData as NodeTrivia;
+	if (record.$_trivia !== undefined) {
+		const trivia = record.$_trivia as NodeTrivia;
 		const triviaShape: Record<string, unknown> = {};
 		if (trivia.leading !== undefined) triviaShape.leading = trivia.leading.map(structuralShape);
 		if (trivia.trailing !== undefined) triviaShape.trailing = trivia.trailing.map(structuralShape);
-		shape.$triviaData = triviaShape;
+		shape.$_trivia = triviaShape;
 	}
 	return shape;
 }

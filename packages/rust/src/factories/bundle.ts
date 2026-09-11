@@ -181,21 +181,5 @@ export const tupleTypeElements = bundle(F.buildTupleTypeElements, C.coerceToTupl
 export const tupleExpressionElements = bundle(F.buildTupleExpressionElements, C.coerceToTupleExpressionElements);
 export const referenceExpressionRawMut = bundle(F.buildReferenceExpressionRawMut, C.coerceToReferenceExpressionRawMut);
 export const implItemBody = bundle(F.buildImplItemBody, C.coerceToImplItemBody);
-export const attributeInput = bundle(F.buildAttributeInput, C.coerceToAttributeInput);
-export const closureExpressionExpr = bundle(F.buildClosureExpressionExpr, C.coerceToClosureExpressionExpr);
-export const visibilityModifierPub = bundle(F.buildVisibilityModifierPub, C.coerceToVisibilityModifierPub);
-export const visibilityModifierInPath = bundle(F.buildVisibilityModifierInPath, C.coerceToVisibilityModifierInPath);
-export const functionTypeTraitForm = bundle(F.buildFunctionTypeTraitForm, C.coerceToFunctionTypeTraitForm);
-export const functionTypeFnForm = bundle(F.buildFunctionTypeFnForm, C.coerceToFunctionTypeFnForm);
-export const macroDefinitionParen = bundle(F.buildMacroDefinitionParen, C.coerceToMacroDefinitionParen);
-export const macroDefinitionBracket = bundle(F.buildMacroDefinitionBracket, C.coerceToMacroDefinitionBracket);
-export const macroDefinitionBrace = bundle(F.buildMacroDefinitionBrace, C.coerceToMacroDefinitionBrace);
-export const attributedFieldDeclaration = bundle(
-	F.buildAttributedFieldDeclaration,
-	C.coerceToAttributedFieldDeclaration
-);
-export const attributedEnumVariant = bundle(F.buildAttributedEnumVariant, C.coerceToAttributedEnumVariant);
-export const attributedParameter = bundle(F.buildAttributedParameter, C.coerceToAttributedParameter);
-export const attributedTypeParameter = bundle(F.buildAttributedTypeParameter, C.coerceToAttributedTypeParameter);
-export const attributedArgument = bundle(F.buildAttributedArgument, C.coerceToAttributedArgument);
-export const typeArgument = bundle(F.buildTypeArgument, C.coerceToTypeArgument);
+export const implItemPositiveClause = bundle(F.buildImplItemPositiveClause, C.coerceToImplItemPositiveClause);
+export const implItemNegativeClause = bundle(F.buildImplItemNegativeClause, C.coerceToImplItemNegativeClause);

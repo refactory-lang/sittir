@@ -17,14 +17,16 @@ export function emitIsModule(grammar: GrammarModel): string {
 		statements: [
 			ir.interfaceDeclaration({
 				name: 'IsGuards',
-				body: {
-					members: grammar.kinds.map((kind) =>
-						ir.propertySignature({
-							name: `is${pascalCase(kind)}`,
-							type: { type: 'boolean' },
-						}),
+				body: ir.objectType.curly({
+					members: ir.objectTypeContent(
+						...grammar.kinds.map((kind) =>
+							ir.propertySignature({
+								name: `is${pascalCase(kind)}`,
+								type: { type: 'boolean' },
+							}),
+						),
 					),
-				},
+				}),
 			}),
 		],
 	}).$render();

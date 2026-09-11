@@ -24,7 +24,7 @@ function makeComment(text: string): LineComment {
  *  deliberately not part of the public node type surface. */
 type TriviaData = { leading?: unknown[]; trailing?: unknown[] };
 function triviaDataOf(node: object): TriviaData | undefined {
-	return (node as { $triviaData?: TriviaData }).$triviaData;
+	return (node as { $_trivia?: TriviaData }).$_trivia;
 }
 
 describe('$trivia() integration', () => {
@@ -74,7 +74,7 @@ describe('$trivia() integration', () => {
 
 	// `line_comment.jinja` renders `//{{ content }}` — content is the text
 	// AFTER the `//` marker, unlike `makeComment`'s raw-`//`-prefixed text
-	// above (whose callers never render, only assert `$triviaData` shape).
+	// above (whose callers never render, only assert `$_trivia` shape).
 	function buildLineComment(afterSlashes: string): LineComment {
 		return F.buildLineComment(F.buildLineCommentContent(afterSlashes));
 	}

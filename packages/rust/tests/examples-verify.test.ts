@@ -19,6 +19,16 @@ import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
 import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
 import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+// The generated rebuild is loaded by a computed path so tsc does not follow
+// it: its type errors are counted under examples/generated-typecheck-ceiling.json,
+// and vitest runs it regardless.
+const rebuildSpliceGenerated = async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL('../../../examples/17-dogfood-rust.generated.ts', import.meta.url));
+	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
+	return mod.rebuildSpliceGenerated!();
+};
 import { createEngine, ir } from '@sittir/rust';
 import { writeFileSync, mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
@@ -145,11 +155,11 @@ describe('dogfoodContract helper', () => {
 });
 
 describe('structuralShape trivia handling', () => {
-	it("keeps a bare leaf's $text alongside its $triviaData", () => {
+	it("keeps a bare leaf's $text alongside its $_trivia", () => {
 		const leaf = ir.synonym.identifier('main').$trivia(ir.lineComment.content('c'));
 		const shape = structuralShape(leaf) as Record<string, unknown>;
 		expect(shape.$text).toBe('main');
-		expect(shape.$triviaData).toBeDefined();
+		expect(shape.$_trivia).toBeDefined();
 	});
 	it('differs when only the comment text differs', () => {
 		const alpha = ir.synonym.identifier('main').$trivia(ir.lineComment.content('alpha'));
@@ -170,7 +180,7 @@ describe('examples/17 dogfood rust (splice.rs)', () => {
 	it('builds and renders the whole file through the construction surface', () => {
 		expect(rebuildSplice().$render()).toContain('pub enum SpliceError');
 	});
-	it.fails('re-parses to the same tree as the real file', () => {
+	it.fails('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), rebuildSplice(), target).reparsesEqual).toBe(true);
 	});
 	it.fails('is identical to the real file modulo whitespace', () => {
@@ -207,14 +217,16 @@ describe('namespaced constructors reach the arm kinds', () => {
 	it('builds a semicolon-terminated expression statement', () => {
 		expect(ir.expressionStatement.withSemi(ir.identifier('x')).$render()).toBe('x;');
 	});
-	// The arm is minted under `visibility_modifier` and reaches it through two
-	// intermediate hops, but the name a caller types is the one the grammar
-	// authored for the form — never the arm's full kind name.
-	it('reaches an in-path visibility modifier under its authored name', () => {
-		const vm = ir.visibilityModifier as unknown as Record<string, (...args: unknown[]) => { $render(): string }>;
+	// A variant minted inside another variant's rule is spelled inside it: the
+	// caller types the authored form name, under the arm that reaches it.
+	it('reaches an in-path visibility modifier under the arm it nests in', () => {
+		const pub = ir.visibilityModifier.pub as unknown as Record<
+			string,
+			{ strict(...args: unknown[]): { $render(): string } }
+		>;
 		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
-		expect(vm.inPath!(path).$render()).toBe('pub(in crate::x)');
-		expect(vm.self!().$render()).toBe('pub(self)');
+		expect(pub.inPath!.strict(path).$render()).toBe('pub(in crate::x)');
+		expect(pub.self!.strict().$render()).toBe('pub(self)');
 	});
 	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
 	// `pub(crate)`. Flattening stops at the clash, so the hoisted one is
@@ -230,10 +242,13 @@ describe('ir entry ratchet', () => {
 	it('exposes no more top-level builders than the recorded ceiling', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
-		// (287 total keys today; 270 are callable builders — the ceiling is
-		// the exact current count, so any new top-level builder trips it.)
+		// (274 callable builders today — the ceiling is the exact current
+		// count, so any new top-level builder trips it. The user-facing
+		// aliased pattern leaves — stringLiteralOpen, rawStringLiteralStart /
+		// End, the comment-content patterns — are on the surface; the
+		// enum-of-literals leaves are not, their values being kind ids.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(270);
+		expect(builders.length).toBeLessThanOrEqual(261);
 	});
 });
 
@@ -242,5 +257,18 @@ describe('ir entry ratchet', () => {
 describe('examples/17 dogfood rust — strict factory surface', () => {
 	it('builds the items the public surface can reach', () => {
 		expect(rebuildSpliceStrict().$render()).toContain('pub enum SpliceError');
+	});
+});
+
+// The generated rebuild: `sittir tool emit-factory-source` over splice.rs. It
+// is checked in so the strict surface's gaps are a diff, not a description;
+// its type errors are counted under examples/generated-typecheck-ceiling.json.
+describe('examples/17 generated rebuild (splice.rs)', () => {
+	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
+	it('renders — every token-tree child now builds', async () => {
+		expect((await rebuildSpliceGenerated()).$render()).toContain('pub enum SpliceError');
+	});
+	it.fails('re-parses to the same tree as the real file — open rows S2, S3, S9', async () => {
+		expect(dogfoodContract(createEngine(), await rebuildSpliceGenerated(), target).reparsesEqual).toBe(true);
 	});
 });

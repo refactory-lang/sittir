@@ -46,6 +46,7 @@ import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts'
 import {
 	collectGeneratedKindEntries,
 	findEntryForKindName,
+	findAnonEntryForLiteralText,
 	findEntryForLiteralText,
 	type GeneratedIdTables,
 	type GeneratedKindEntry
@@ -61,7 +62,6 @@ import type {
 	LinkedRefineForm,
 	NarrowedField
 } from './types.ts';
-import { hasAnyField } from '../dsl/rule-transforms.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -97,7 +97,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly applyPromotedRules: boolean;
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
-	readonly hoistedKinds = new Set<string>();
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -173,7 +172,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	}
 
 	stripResolvedRoleRules(rules);
-	createSyntheticExternalRules(rules, raw.externals);
+	createSyntheticExternalRules(rules, raw.externals, kindEntries);
 	if (raw.visibleInlineNames !== undefined && raw.visibleInlineNames.length > 0) {
 		linkCtx.diagnostics.warn({
 			code: 'inline-array-visible-name',
@@ -206,10 +205,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, lifted.rules);
 		for (const synthKind of lifted.synthesizedKinds) {
 			const body = rules[synthKind];
-			if (body && !linkCtx.hoistedKinds.has(synthKind)) {
-				rules[synthKind] = liftSeparators(body, linkCtx);
-				linkCtx.hoistedKinds.add(synthKind);
-			}
+			if (body) rules[synthKind] = liftSeparators(body, linkCtx);
 		}
 	}
 
@@ -269,7 +265,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		name: raw.name,
 		rules,
 		supertypes,
-		hoistedKinds: linkCtx.hoistedKinds,
 		factoryInline,
 		externalRoles,
 		externals: raw.externals,
@@ -301,11 +296,15 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 	}
 }
 
-function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
+function createSyntheticExternalRules(
+	rules: Record<string, Rule<'link'>>,
+	externals: readonly string[],
+	kindEntries: readonly GeneratedKindEntry[]
+): void {
 	for (const ext of externals) {
-		if (!rules[ext]) {
-			rules[ext] = { type: TOKEN, content: { type: PATTERN, value: '' }, immediate: false };
-		}
+		if (rules[ext]) continue;
+		if (findAnonEntryForLiteralText(kindEntries, ext)) continue;
+		rules[ext] = { type: TOKEN, content: { type: PATTERN, value: '' }, immediate: false };
 	}
 }
 
@@ -758,7 +757,7 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 	const rootName = rootRuleName(rules);
 	if (rootName === undefined) return;
 	const reachable = new Set(computeReachableFromRoot({ rules, rootName }));
-	for (const keep of [...ctx.grammar.externals, ...ctx.grammar.extras]) {
+	for (const keep of [...ctx.grammar.externals, ...ctx.grammar.extras, ...ctx.supertypes]) {
 		for (const name of computeReachableFromRoot({ rules, rootName: keep })) reachable.add(name);
 	}
 	for (const name of Object.keys(rules)) {
@@ -1425,17 +1424,12 @@ function classifyHiddenRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
-	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || ctx.hoistedKinds.has(name)) {
+	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.annotations?.hoisted === true) {
 		return { rule };
 	}
 
 	if (rule.type === CHOICE) {
 		return classifyHiddenChoiceRule(rule, ctx, name, rules);
-	}
-
-	if (isSeq(rule)) {
-		if (hasAnyField(rule)) ctx.hoistedKinds.add(name);
-		return { rule };
 	}
 
 	return { rule };
@@ -1479,7 +1473,7 @@ function classifyHiddenChoiceRule(
 		}
 		return undefined;
 	});
-	if (enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
+	if (!supertypes.has(name) && enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
 		const allStrings = enumMembers.every((m): m is StringRule<'link'> => m.type === STRING);
 		return {
 			rule: allStrings
@@ -2053,7 +2047,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 			const { liftedBody, replacement } = liftRule(target, synName, discriminator);
 
 			parentBody = replaceAtPath(parentBody, path, replacement);
-			newRules[synName] = liftedBody;
+			newRules[synName] = { ...liftedBody, annotations: { ...liftedBody.annotations, hoisted: true } };
 			synthesizedKinds.push(synName);
 		}
 
@@ -2301,6 +2295,10 @@ function stepPath(
 		case 'kind-match':
 			throw new Error(
 				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`
+			);
+		case 'literal':
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' uses literal '"${seg.text}"' — refine paths only support positional indices and 'name:' field traversal`
 			);
 	}
 }

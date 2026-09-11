@@ -1,4 +1,4 @@
-import { Delimiter, ir } from '@sittir/rust';
+import { Delimiter, ir, TSKindId } from '@sittir/rust';
 
 // Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a
@@ -12,10 +12,13 @@ import { Delimiter, ir } from '@sittir/rust';
 //              the loose input into it.
 //   (factory)  the builder itself cannot produce the shape.
 //
-// All six top-level items rebuild here, including `#[derive(…)]` and the
-// `write!(f, …)` match arms. The factory surface is currently the healthier of
-// the two: the coercion rebuild renders those same arms as empty `{}` and drops
-// the `sort_by` comparator, both of which are constructible below.
+// All six top-level items rebuild here with their real signatures,
+// including `#[derive(…)]` and the `write!(f, …)` match arms.
+// `apply_edits` holds its first two statements and an empty `sort_by`
+// closure; the validation loop, the comparator and the apply loop are not
+// written. The factory surface is currently the healthier of the two: the
+// coercion rebuild renders those same arms as empty `{}` and drops the
+// `sort_by` comparator, both of which are constructible below.
 //
 // A form constructor whose seat holds the child's ARGUMENT TUPLE takes an
 // array there — `ir.matchArm.withComma({ pattern, content: [expr] })`. A bare
@@ -28,6 +31,8 @@ const id = (text: string) => ir.identifier(text);
 const ns = (path: string, name: string) => ir.scopedIdentifier.strict({ path: id(path), name: id(name) });
 const scopedTy = (path: Parameters<typeof ir.scopedTypeIdentifier.strict>[0]['path'], name: string) =>
 	ir.scopedTypeIdentifier.strict({ path, name: id(name) });
+const str = (text: string) =>
+	ir.stringLiteral.strict({ stringOpen: ir.stringLiteralOpen('"'), elements: [ir.stringContent(text)] });
 
 /** `use crate::types::Edit;` */
 export function useEditStrict() {
@@ -40,19 +45,23 @@ export function useEditStrict() {
 }
 
 /**
- * `#[derive(Debug, Clone, PartialEq, Eq)]`. The attribute's argument list is
- * the `input` slot, not an `arguments` key — an unrecognised key is
- * dropped silently, which makes a wrong spelling look like a missing feature.
+ * `#[derive(Debug, Clone, PartialEq, Eq)]`. The attribute's argument list
+ * belongs to the `input` group, which is spliced onto `attribute`: its keys
+ * (`value`, `arguments`) sit directly on the config and come as a whole.
  */
 export function deriveStrict() {
 	return ir.attributeItem.strict(
 		ir.attribute.strict({
 			path: id('derive'),
-			input: ir.attributeInput.strict({
-				arguments: ir.delimTokenTree.paren({
-					delimTokens: ['Debug', ',', 'Clone', ',', 'PartialEq', ',', 'Eq'],
-				}),
-			}),
+			arguments: ir.delimTokenTree.paren.strict(
+				id('Debug'),
+				TSKindId.Comma,
+				id('Clone'),
+				TSKindId.Comma,
+				id('PartialEq'),
+				TSKindId.Comma,
+				id('Eq'),
+			),
 		})
 	);
 }
@@ -106,12 +115,10 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 	});
 }
 
-function writeCall(format: string, args: readonly string[]) {
+function writeCall(format: string) {
 	return ir.macroInvocation.strict({
 		macro: id('write'),
-		arguments: ir.delimTokenTree.paren({
-			delimTokens: ['f', ',', format, ...args.flatMap((arg) => [',', arg])],
-		}),
+		arguments: ir.delimTokenTree.paren.strict(id('f'), TSKindId.Comma, str(format)),
 	});
 }
 
@@ -129,7 +136,10 @@ export function displayImplStrict() {
 							name: id('f'),
 							type: ir.referenceType.strict({
 								mutableSpecifier: true,
-								type: scopedTy(ns('std', 'fmt'), 'Formatter'),
+								type: ir.genericType.strict({
+									type: scopedTy(ns('std', 'fmt'), 'Formatter'),
+									typeArguments: ir.typeArguments.strict(ir.lifetime('_')),
+								}),
 							}),
 						})
 					),
@@ -143,16 +153,16 @@ export function displayImplStrict() {
 								matchArm: [
 									ir.matchArm.withComma({
 										pattern: armPattern('InvalidRange', ['start', 'end'] as const),
-										content: [writeCall('"invalid range"', ['start', 'end'])],
+										content: [writeCall('invalid edit range: start={start}, end={end}')],
 									}),
 									ir.matchArm.withComma({
 										pattern: armPattern('OutOfBounds', ['end', 'source_len'] as const),
-										content: [writeCall('"out of bounds"', ['end', 'source_len'])],
+										content: [writeCall('edit out of bounds: end={end} > source length={source_len}')],
 									}),
 								],
 								lastArm: ir.lastMatchArm.strict({
 									pattern: armPattern('NonCharBoundary', ['start', 'end'] as const),
-									value: writeCall('"non-char boundary"', ['start', 'end']),
+									value: writeCall('edit range not at UTF-8 char boundary: start={start}, end={end}'),
 								}),
 							}),
 						}),

@@ -24,6 +24,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
+import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
 import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
@@ -151,7 +152,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	try {
 		for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
 			const simplifiedRule = normalized.rules[kind]!;
-			const hoisted = normalized.hoistedKinds?.has(kind) === true;
+			const hoisted = renderRule.annotations?.hoisted === true;
 			const modelType = classifyNode(kind, simplifiedRule, {
 				renderRule,
 				variantParents,
@@ -183,8 +184,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 							kindEntries,
 							parseKindCollisionContext,
 							visibleAliasTargets: normalized.visibleAliasTargets,
-							simplifiedRules: normalized.rules,
-							...(hoisted ? { hoisted: true } : {})
+							simplifiedRules: normalized.rules
 						})
 					);
 					break;
@@ -270,7 +270,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 		const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat().map((c) => c.kind));
 		for (const rule of Object.values(normalized.normalizedRules)) {
-			if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
+			if (rule.type !== SUPERTYPE || !rule.variantArms || rule.name === WHITESPACE_SUPERTYPE) continue;
 			for (const arm of rule.variantArms) variantChildKindsSet.add(arm);
 		}
 		const userFacingCtx: _UserFacingCtx = {
@@ -763,7 +763,7 @@ function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set
 	const ownedByKind = new Set<string>();
 	for (const node of nodes.values()) {
 		if (node instanceof AssembledSupertype || !node.factoryName) continue;
-		if (node instanceof AbstractAssembledCompound && node.hoisted) continue;
+		if (node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) ownedByKind.add(short);
 	}
@@ -782,7 +782,7 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	const phase2: AssembledNode[] = [];
 	for (const node of nodes.values()) {
 		if (!node.factoryName) continue;
-		if (node instanceof AbstractAssembledCompound && node.hoisted) continue;
+		if (node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true) continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) phase1.push(node);
 		else phase2.push(node);
@@ -892,7 +892,7 @@ export function classifyNode(
 		hoisted?: boolean;
 	}
 ): ModelType {
-	if (opts?.hoisted) {
+	if (opts?.hoisted && !isAllTextShape(rule)) {
 		if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
 		return compoundModelType(rule);
 	}

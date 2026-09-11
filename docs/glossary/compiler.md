@@ -691,7 +691,9 @@ parents.
  *       (`ctx.aliasSourceKinds`), and
  *   (d) hidden variant-child kinds from `polymorphVariants` that the slot
  *       walker never reaches when the parent is a supertype
- *       (`ctx.variantChildKinds`).
+ *       (`ctx.variantChildKinds`) — except the arms of the `_whitespace`
+ *       supertype: a whitespace kind is chosen through an options address,
+ *       never authored, so it has no IR builder, coercion or factory entry.
  *
  * Per principle #14, `userFacing` is cross-node state (whether THIS hidden
  * kind appears in ANOTHER node's slot, or in the `polymorphVariants` list),
@@ -872,10 +874,16 @@ parents.
  * (`collectFixedLiteral`) and a slot-free single-member seq has already
  * collapsed to its survivor — into a `ModelType`.
  *
- * A hoisted kind (`opts.hoisted`, the link-stamped fact) is decided first:
- * 'list' when its peeled core (`peelSeparatedListCore`) is a separated-list
- * shape (`isSeparatedListShape`), else `compoundModelType`
- * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'). Otherwise a
+ * A hoisted kind (`opts.hoisted`, the link-stamped fact) with a body that
+ * is not all text (`isAllTextShape`) is decided first: 'list' when its
+ * peeled core (`peelSeparatedListCore`) is a separated-list shape
+ * (`isSeparatedListShape`), else `compoundModelType`
+ * (`compoundModelTypeFor` — 'envelope'/'branch'/'polymorph'). A hoisted
+ * all-text body is a leaf like any other — a variant arm such as
+ * `_struct_item_unit` (`;`) or `_line_comment_regular_dslash` (two
+ * patterns) has no keys to seat; its seat is the parent's slot, where it
+ * is a kind-id or verbatim-text value, and the parse node has no children
+ * to read a slot from. Otherwise a
  * fielded/multiplicity-free body dispatches structurally: an enum
  * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
  * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
@@ -2589,7 +2597,9 @@ parents.
  *
  * Skips rules that DID receive a deposit (they're real synthesized
  * content). Skips rules whose body is non-blank (author-declared hidden
- * helpers are legitimate and can have any body).
+ * helpers are legitimate and can have any body). Runs once the metadata
+ * callbacks have been evaluated, because a declared supertype is a root
+ * too: `_whitespace` is referenced by nothing but the `supertypes:` list.
  */
 ```
 
@@ -2994,35 +3004,7 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/rule-catalog.ts::computeReachableRuleNames`
-
-```text
-/**
- * The set of rule names transitively reachable from any VISIBLE (non-`_`)
- * rule — visible kinds are treated as roots unconditionally (they are, by
- * construction, the grammar's directly-nameable surface), then every SYMBOL
- * reference reached by walking their bodies (via `RuleWalker.foldDeep`,
- * which descends through SEQ/CHOICE/FIELD/ALIAS/... children AND through
- * SYMBOL refs themselves) is added too. A HIDDEN rule name absent from this
- * set can never be produced by any live grammar production — nothing
- * visible, directly or transitively, refers to it.
- *
- * Used to gate `buildRuleCatalog`'s catalog-identity assignment (see
- * below): a cascaded/nested `variant()` split can leave an enrich raw
- * clause-hoist mint behind as exactly this kind of orphan once a later
- * split repoints the live alias elsewhere (its content symbol name simply
- * stops appearing in anything reachable) — confirmed concretely for
- * typescript's `_export_statement_group2`/`_export_statement_group5`, see
- * docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan every
- * `rules` map entry..." entry. This does NOT touch the raw `rules` map
- * (tree-sitter's own `grammar()` call still sees every declared rule name,
- * so nothing about the compiled parser changes) — it only decides which
- * kinds sittir's OWN downstream modeling (assemble/derive/emit) treats as
- * real, materializable grammar structure.
- */
-```
-
-#### body
+### body
 
 ```text
 // A hidden-only grammar has no visible roots, so an empty seed set would
@@ -3339,6 +3321,22 @@ parents.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::findAnonEntryForLiteralText`
+
+```text
+/**
+ * The ANONYMOUS token whose display text is exactly this string, or
+ * `undefined`. The strict half of the literal-text chain: it answers "does
+ * the grammar already lex this text as an anonymous token?" and never falls
+ * back to the kind-name chain.
+ *
+ * Callers deciding whether a literal-text spelling already HAS an identity
+ * must use this rather than {@link findEntryForLiteralText} — the fallback
+ * there matches named symbols too, so a scanner symbol whose name happens to
+ * read as text (`_template_chars`) would answer yes and lose its own rule.
+ */
+```
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForLiteralText`
 
 ```text
@@ -3474,11 +3472,19 @@ parents.
  * Create synthetic pattern rules for external tokens that have no grammar rule.
  *
  * @param rules - Mutable resolved rules map; missing entries are added in place.
- * @param externals - External token names declared in `grammar.externals`.
+ * @param externals - External token entries declared in `grammar.externals`,
+ *   which hold SYMBOL names and literal token texts in one list.
+ * @param kindEntries - Generated kind catalog, consulted for anon-token identity.
  * @remarks
- *   External tokens are declared at the grammar level but have no rule body.
- *   Per design: Link creates empty pattern leaf rules for them so downstream
- *   phases (Assemble, codegen) see them as known leaf kinds.
+ *   A scanner SYMBOL is declared at the grammar level with no rule body, so
+ *   Link creates an empty pattern leaf rule for it and downstream phases
+ *   (Assemble, codegen) see it as a known leaf kind.
+ *
+ *   A literal-text external (`externals: $ => [..., '||']`) is NOT that: the
+ *   grammar already lexes it as an anonymous token under the catalog's own
+ *   spelling (`||` is `pipe_pipe`). Minting a rule keyed by the raw text
+ *   would give one parser symbol a second kind competing for its id, so a
+ *   text the catalog already knows anonymously is skipped and defers to it.
  */
 ```
 
@@ -3611,9 +3617,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /** Drops every rule not reachable from the grammar's root, nor from any
- *  external or extra (each of those is its own reachability root — an
- *  external/extra can be referenced only indirectly, e.g. through a
- *  dialect-only production). Dialect filtering: a rule that exists in the
+ *  external, extra or declared supertype (each of those is its own
+ *  reachability root — an external/extra can be referenced only
+ *  indirectly, e.g. through a dialect-only production, and the
+ *  `_whitespace` supertype by nothing at all). Dialect filtering: a rule that exists in the
  *  raw grammar but only serves a variant the current dialect never reaches
  *  is deleted here, before any later pass's raw-rule collectors run, so
  *  those collectors only ever see the pruned (reachable) set. */
@@ -3958,7 +3965,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *   / `classifiedBy` are set only when a new classification was made.
  * @remarks
  *   Classification:
- *   - All-string members → `EnumRule<'link'>` (promoted).
+ *   - All-string members → `EnumRule<'link'>` (promoted), unless the grammar
+ *     declares the rule in `supertypes:` — `_whitespace` is a choice over
+ *     fixed-text tokens and must stay a supertype.
  *   - Supertype-compatible members (symbols, named aliases, enums/strings) →
  *     `SupertypeRule<'link'>` when at least one concrete subtype name can be resolved.
  *   - Mixed/structural members → rule unchanged; Assemble classifies by shape.
@@ -6460,7 +6469,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ### `packages/codegen/src/compiler/rule-catalog.ts::BuildRuleCatalogCtx`
 
 ```text
-/** Ctx for {@link buildRuleCatalog} — just the provenance map it needs. */
+/** Ctx for {@link buildRuleCatalog}: the provenance map, and `roots`, the
+ *  names the grammar's machinery references outside rule bodies (evaluate
+ *  passes its declared supertypes) that keep a hidden rule alive even when
+ *  no visible rule reaches it — `_whitespace` has no reference anywhere. */
 ```
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::AttachReferenceRuleIdsCtx`
@@ -7371,13 +7383,12 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
 
-`hoistedKinds` is the set of hidden kinds that are forms of their parent — a
-hidden SEQ with a field, or a group-lift synthesized kind — stamped once by
-link and copied unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`,
-exactly as `supertypes` is. It replaced the GROUP wrapper node: a per-kind fact
-carried on the grammar cannot be dropped by a pass that rebuilds the rule.
-Readers: normalize's inline gate, simplify's `inlineRefs`, and assemble's
-`hoisted` stamp.
+There is no hoisted set on the grammar: the fact is the rule's
+`annotations.hoisted`, stamped by the minting route, and `withKindFacts`
+keeps the bag on a root that any pass rebuilds. Readers take it off the rule
+they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
+`classifyNode`'s list peel — and the model exposes it as
+`AssembledNodeBase.annotations`.
 
 ### `packages/codegen/src/compiler/types.ts::NormalizedGrammar`
 
@@ -8995,8 +9006,12 @@ source, one derivation.
 // (link/assemble) iterate `Object.entries`/keys of the map they
 // receive, not `ruleCatalog.rootsByKind`, so a pass-through-but-
 // unidentified entry would still reach template/factory emission as
-// if it were live grammar structure. See `computeReachableRuleNames`
-// above. The RAW `rules` map this function was CALLED with (and
+// if it were live grammar structure. Reachability is the shared
+// `collectUnreachableHiddenRules` walk from every visible rule and every
+// `ctx.roots` name, the same walk evaluate and link prune with; a grammar
+// with no visible rule at all keeps everything, since nothing is orphaned
+// relative to a nonexistent root set. The RAW `rules` map this function
+// was CALLED with (and
 // hence tree-sitter's own `grammar()`/compiled parser) is untouched —
 // this only prunes sittir's OWN downstream (assemble/derive/emit)
 // view.
@@ -9668,14 +9683,15 @@ source, one derivation.
 // Other hidden rules survive as-is — Assemble classifies by structure
 ```
 
-A hidden SEQ that contains a field anywhere (`hasAnyField`: `repeat(field(...))`,
-`optional(field(...))`, a choice of fields — python's `_import_list` is the
-textbook case) is a hoisted form of the kind that references it: the name is
-added to `LinkCtx.hoistedKinds` and the rule itself is left untouched. A kind
-already in that set (a group-lift synthesized kind) is not reclassified. This
-set is the one source of the hoisted fact; it travels on the grammar
-(`LinkedGrammar.hoistedKinds` → normalize → assemble) the way `supertypes`
-does, so no rebuilding pass has to carry it and nothing re-derives it.
+A hidden rule whose `annotations.hoisted` is stamped is a hoisted form of the
+kind that references it; the rule is left as it is. The stamp is declared by the route that minted
+the rule — the variant lift, a `groups:` entry, enrich's clause-hoist and
+promoted-arm mints, a `group()` patch, the group lift here — never inferred
+from the body's shape: a hidden sequence with a `field()` that no route
+stamped (an upstream rule, or an authored rule a parent merely aliases) is an
+ordinary hidden rule. The annotation is the one source of the hoisted fact: nothing collects it
+into a set and nothing re-derives it; `withKindFacts` carries the bag across
+every root rebuild so the assembled node still reads it.
 
 ### `packages/codegen/src/compiler/link.ts::flattenNestedChoiceMembers`
 
@@ -9947,6 +9963,11 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 ```text
 // deep first
 ```
+
+Each lifted body is registered with `annotations.hoisted` stamped, the same
+declaration every other minting route makes; `classifyHiddenRule` collects
+the set from that annotation alone.
+
 
 ### `packages/codegen/src/compiler/link.ts::liftRule`
 
@@ -10917,7 +10938,7 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 ### `packages/codegen/src/compiler/assemble.ts::hasSlotBearingContent`
 
 ```text
-// Replaces the link-phase `hasAnyField(rule) || hasAnyChild(rule)` walk with
+// The one structural "is there a named field or a rule reference here" walk,
 // the same, narrower question — see "classifyNode's RenderRule-only design"
 // in docs/compiler-phase-glossary.md.
 ```
@@ -11154,12 +11175,5 @@ does, so no rebuilding pass has to carry it and nothing re-derives it.
 
 ```text
 // Extract factored branches (the parts that differ)
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::drainRenderDefaultsMetadata`
-
-```text
-/** The grammar's `defaults:` block as wire carried it, or undefined when
- *  the grammar declared none. */
 ```
 

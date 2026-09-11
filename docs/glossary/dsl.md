@@ -2051,6 +2051,14 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // primary slot lookup) resolve instead of degrading to fragile fallbacks.
 ```
 
+Also carries the source root's whole `annotations` bag (merged over the
+result's own), because the annotation is the only representation of a
+kind-level declaration such as `hoisted`: a pass that rebuilds the root
+(normalize's wrapper collapse and choice factoring, `inlineSingleUseHidden`,
+simplify's canonicalisation, flatten) would otherwise drop it. Every root
+rebuild goes through here.
+
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::withId`
 
 ```text
@@ -2945,6 +2953,25 @@ registered but later unused still counts as a sibling.
 // the same `id: rule.id ?? input.id` every builder stamps.
 ```
 
+### `packages/codegen/src/dsl/annotations.ts::withAnnotations`
+
+Merge annotations onto a runtime rule. An ALIAS is transparent: the
+annotation lands on its content, which is the rule the alias faces, so a
+stamp on `alias($._x, $.x)` reads back from `$._x`'s body. Lives in its own
+module because both the transform (variant lift, `patches` lowering) and
+wire / enrich (the `groups:` and clause-hoist mints) stamp through it, and
+neither may import the other.
+
+
+### `packages/codegen/src/dsl/annotations.ts::withHoistedAnnotation`
+
+`withAnnotations(rule, { hoisted: true })`: the one spelling of the hoisted
+declaration. Every route that mints a rule which is a form of its parent
+stamps through here; link's `classifyHiddenRule` reads the stamp and nothing
+else decides hoisting. Stamp the body, not a wrapper around it — evaluate
+unwraps `prec` and a stamp on the wrapper is lost.
+
+
 ### `packages/codegen/src/dsl/builders.ts::slotShaped`
 
 ```text
@@ -3781,13 +3808,6 @@ registered but later unused still counts as a sibling.
 ```text
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
-```
-
-### `packages/codegen/src/dsl/rule-transforms.ts::hasAnyField`
-
-```text
-// Genuinely link-phase only — see "Rule IR and snapshots" in
-// docs/compiler-phase-glossary.md for the phase-scoping rationale.
 ```
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::Mult`
@@ -4858,6 +4878,13 @@ registered but later unused still counts as a sibling.
 // entire parser identity) with it, while the IR still models the kind —
 // the "VAPORIZED" phantom divergence. See getEnrichVisibleGroupSources.
 ```
+
+Each clause group is stamped `annotations.hoisted` (`withHoistedAnnotation`)
+in place, right after its unalias pass — not at the merge, because
+`collapseSingletonMintOrdinals` rereads `clauseGroupRules` after the merge and
+a stamp made there would be lost. The stamp is the declaration link collects
+`hoistedKinds` from; enrich is one of its minting routes.
+
 
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
@@ -5977,6 +6004,10 @@ field labels instead of taking the minted `element` field.
 		   parent's own slots instead of minting a group kind. */
 ```
 
+A promoted arm's body is re-registered with `annotations.hoisted` stamped: the
+promotion is a mint, and the seat it declares is what link collects.
+
+
 ### `packages/codegen/src/dsl/enrich.ts::synthesizeFieldEnumRules`
 
 ```text
@@ -6195,19 +6226,13 @@ inline literals no longer type-checked. One helper, one cast.
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::preference`
 
-```text
-/**
- * `preference(label, default)` — a user-facing choice, declared on the
- * choice-shaped kind it lives on. As a kind-level patch value it labels
- * every arm of the kind's choice and marks the arm spelled `default`
- * (literal text, alias target, symbol name or variant name) as the one
- * that applies when the user sets nothing; as a path-level patch value it
- * does the same for the choice at that position. The label is the option
- * key in the generated catalog, shared by every site that references the
- * kind. Distinct from `arm.default`, which is the semantic default a bare
- * construction takes and is never an option.
- */
-```
+A preference's arm: the value chosen at the site an `options:` key addresses.
+The key is the address, so the arm is all a preference carries.
+
+A choice is addressable because it is a choice, not because anything labelled
+it. What names a site for a reader is the `options:` key, and a binding maps
+one address onto another key, so a name never has to be stamped onto the arms
+themselves.
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::isPreference`
 

@@ -1,0 +1,648 @@
+import {
+	buildFactoryNodeFromReference,
+	type FactoryDispatchArtifacts,
+	type FactoryDispatchOpts,
+	type IrEntry,
+	type IrSurface,
+	type Seat,
+	type SeatTable
+} from '../validate/common.ts';
+import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
+import type { NodeTrivia as ReadTrivia } from '@sittir/types';
+
+export interface PrintContext {
+	readonly grammar: string;
+	readonly kindNameFromId: (id: number) => string | undefined;
+	readonly memberNameOfId: (id: number) => string | undefined;
+	readonly irPathOfKind: (kind: string) => string;
+	readonly delimiterArmOfId: (id: number) => string | undefined;
+	readonly seats?: SeatTable;
+	readonly absorbedKinds?: ReadonlySet<string>;
+	readonly slotKinds?: Record<string, Record<string, readonly string[]>>;
+	readonly textLeafKinds?: ReadonlySet<string>;
+	readonly enumKinds?: ReadonlySet<string>;
+	readonly keywordKinds?: ReadonlySet<string>;
+	readonly slotStorage?: Record<string, Record<string, string>>;
+	readonly memberIdOfText?: (text: string) => number | undefined;
+}
+
+export interface NodeTrivia {
+	readonly leading: readonly string[];
+	readonly trailing: readonly string[];
+}
+
+export class Printed {
+	readonly $named = true as const;
+	/** Set by the construction funnel from the read node this was built from. */
+	$_trivia?: ReadTrivia;
+	constructor(
+		readonly $type: number | string,
+		readonly source: string,
+		readonly kind?: string,
+		readonly argsSource?: string
+	) {}
+}
+
+export interface ReadNodeLike {
+	readonly $type?: string | number;
+	readonly $text?: string;
+	readonly $nodeHandle?: number;
+	readonly $_trivia?: ReadTrivia;
+}
+
+const INDENT = '\t';
+
+function pad(depth: number): string {
+	return INDENT.repeat(depth);
+}
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+	return v !== null && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Printed);
+}
+
+function triviaSuffix(trivia: NodeTrivia | undefined, ctx: PrintContext): string {
+	if (trivia === undefined || (trivia.leading.length === 0 && trivia.trailing.length === 0)) return '';
+	const parts: string[] = [];
+	if (trivia.leading.length > 0) parts.push(`leading: ${printValue(trivia.leading, ctx, 0)}`);
+	if (trivia.trailing.length > 0) parts.push(`trailing: ${printValue(trivia.trailing, ctx, 0)}`);
+	return `.$trivia({ ${parts.join(', ')} })`;
+}
+
+function reindent(source: string, depth: number): string {
+	return depth === 0 ? source : source.replace(/\n/g, `\n${pad(depth)}`);
+}
+
+function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: number): string | undefined {
+	const slotKeys = Object.keys(node).filter((k) => k.startsWith('_') && node[k] !== undefined);
+	if (slotKeys.length === 1) {
+		const kind = slotKeys[0]!.slice(1);
+		const value = node[slotKeys[0]!];
+		if (typeof value === 'string') {
+			if (ctx.textLeafKinds?.has(kind)) return `${ctx.irPathOfKind(kind)}(${JSON.stringify(value)})`;
+			const id = ctx.memberIdOfText?.(value);
+			return id === undefined ? JSON.stringify(value) : printValue(id, ctx, depth);
+		}
+		return printValue(value, ctx, depth);
+	}
+	if (slotKeys.length === 0 && typeof node.$text === 'number') {
+		// A fixed-text leaf stores its kind id in place of its text.
+		return printValue(node.$text, ctx, depth);
+	}
+	if (slotKeys.length === 0 && typeof node.$text === 'string') {
+		const id = ctx.memberIdOfText?.(node.$text);
+		if (id !== undefined) return printValue(id, ctx, depth);
+		if (typeof node.$type === 'number' && ctx.memberNameOfId(node.$type) !== undefined) {
+			return printValue(node.$type, ctx, depth);
+		}
+		return JSON.stringify(node.$text);
+	}
+	return undefined;
+}
+
+export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
+	if (value instanceof Printed) {
+		return reindent(value.source, depth) + triviaSuffix(triviaOf(value), ctx);
+	}
+	if (typeof value === 'string') return JSON.stringify(value);
+	if (typeof value === 'boolean') return String(value);
+	if (typeof value === 'number') {
+		const member = ctx.memberNameOfId(value);
+		if (member === undefined) throw new Error(`emit-factory-source: kind id ${value} has no TSKindId member`);
+		return `TSKindId.${member}`;
+	}
+	if (Array.isArray(value)) {
+		const [first, ...rest] = value;
+		const parts = isListOptions(first)
+			? [printListOptions(first, ctx), ...rest.map((v) => printValue(v, ctx, depth))]
+			: value.map((v) => printValue(v, ctx, depth));
+		return `[${parts.join(', ')}]`;
+	}
+	if (isPlainObject(value)) {
+		if ('$type' in value) {
+			const raw = printRawNode(value, ctx, depth);
+			if (raw !== undefined) return raw;
+		}
+		const entries = Object.entries(value).filter(
+			([k, v]) => v !== undefined && !k.startsWith('$') && !(Array.isArray(v) && v.length === 0)
+		);
+		if (entries.length === 0) return '{}';
+		const body = entries.map(([k, v]) => `${pad(depth + 1)}${k}: ${printValue(v, ctx, depth + 1)},`).join('\n');
+		return `{\n${body}\n${pad(depth)}}`;
+	}
+	return String(value);
+}
+
+/**
+ * A separated list's options bag, which its factory takes ahead of the
+ * elements. It reaches the generic printer too: a tuple seat hands the
+ * parent's slot the child's WHOLE argument list, so the bag arrives as the
+ * first entry of an array rather than as a positional argument.
+ */
+function isListOptions(value: unknown): value is Record<string, unknown> {
+	return isPlainObject(value) && !('$type' in value) && ('delimiter' in value || 'separator' in value);
+}
+
+function printListOptions(options: Record<string, unknown>, ctx: PrintContext): string {
+	const parts: string[] = [];
+	if (typeof options.delimiter === 'number') {
+		parts.push(`delimiter: ${ctx.delimiterArmOfId(options.delimiter) ?? options.delimiter}`);
+	}
+	if (typeof options.separator === 'number') parts.push(`separator: ${printValue(options.separator, ctx, 0)}`);
+	return `{ ${parts.join(', ')} }`;
+}
+
+export function triviaOf(node: ReadNodeLike | undefined): NodeTrivia | undefined {
+	const trivia = node?.$_trivia;
+	if (!trivia) return undefined;
+	const texts = (list: readonly unknown[] | undefined): string[] =>
+		(list ?? []).map((t) => (t as ReadNodeLike).$text).filter((t): t is string => typeof t === 'string');
+	const leading = texts(trivia.leading);
+	const trailing = texts(trivia.trailing);
+	return leading.length === 0 && trailing.length === 0 ? undefined : { leading, trailing };
+}
+
+function textLeafOfSlot(kind: string, property: string, ctx: PrintContext): string | undefined {
+	const kinds = ctx.slotKinds?.[kind]?.[property];
+	if (kinds === undefined || ctx.textLeafKinds === undefined) return undefined;
+	return kinds.find((k) => ctx.textLeafKinds!.has(k));
+}
+
+/**
+ * A slot whose storage is `verbatim` holds text, never a kind id, so the
+ * literal-text resolution chain does not apply to it: that chain answers
+ * "which literal token spells this", and it falls back to the full name chain,
+ * which matches any identifier that happens to share a rule's name (python's
+ * `list` as a type annotation became `TSKindId.List`, rendering `[]`).
+ */
+function storesKindId(storage: string | undefined): boolean {
+	return storage !== 'verbatim';
+}
+
+function printVerbatimText(
+	text: string,
+	leaf: string | undefined,
+	ctx: PrintContext,
+	slotKinds: readonly string[] = [],
+	storage?: string
+): unknown {
+	if (leaf !== undefined) return new Printed(leaf, `${ctx.irPathOfKind(leaf)}(${JSON.stringify(text)})`, leaf);
+	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
+	const id = storesKindId(storage) ? ctx.memberIdOfText?.(text) : undefined;
+	if (id !== undefined) return id;
+	if (ctx.textLeafKinds?.has('identifier')) {
+		return new Printed('identifier', `${ctx.irPathOfKind('identifier')}(${JSON.stringify(text)})`, 'identifier');
+	}
+	return text;
+}
+
+function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unknown {
+	if (!isPlainObject(config)) return config;
+	const out: Record<string, unknown> = {};
+	for (const [property, value] of Object.entries(config)) {
+		if (ctx.slotStorage?.[kind]?.[property] === 'boolean') {
+			out[property] = value === undefined || value === false || value === null ? undefined : true;
+			continue;
+		}
+		const leaf = textLeafOfSlot(kind, property, ctx);
+		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
+		const storage = ctx.slotStorage?.[kind]?.[property];
+		const wrap = (v: unknown): unknown =>
+			typeof v === 'string' ? printVerbatimText(v, leaf, ctx, kinds, storage) : v;
+		out[property] = Array.isArray(value) ? value.map(wrap) : wrap(value);
+	}
+	return out;
+}
+
+/**
+ * Text leaves inside a seated config belong to the group, not the parent: a
+ * spliced or flattened-arm key and an element-seat object carry the child's
+ * slot names. Wrap with the parent's slot map first so its own slots win,
+ * then with each seat's kind for what the parent does not declare.
+ */
+function wrapSeatedConfig(kind: string, config: unknown, ctx: PrintContext): unknown {
+	let out = wrapTextLeaves(kind, config, ctx);
+	const slots = ctx.seats?.[kind];
+	if (slots === undefined || !isPlainObject(out)) return out;
+	for (const [slotName, table] of Object.entries(slots)) {
+		for (const seat of Object.values(table)) {
+			if (seat.shape === 'elements') {
+				const key = camelCase(slotName);
+				const value = (out as Record<string, unknown>)[key];
+				if (!Array.isArray(value)) continue;
+				out = {
+					...(out as Record<string, unknown>),
+					[key]: value.map((e) => (isPlainObject(e) ? wrapTextLeaves(seat.kind, e, ctx) : e))
+				};
+				continue;
+			}
+			out = wrapTextLeaves(seat.kind, out, ctx);
+		}
+	}
+	return out;
+}
+
+function wrapDirectArg(kind: string, value: unknown, ctx: PrintContext): unknown {
+	if (typeof value !== 'string') return value;
+	const properties = Object.keys(ctx.slotKinds?.[kind] ?? {});
+	const property = properties.length === 1 ? properties[0] : undefined;
+	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, ctx);
+	const kinds = property === undefined ? [] : (ctx.slotKinds?.[kind]?.[property] ?? []);
+	const storage = property === undefined ? undefined : ctx.slotStorage?.[kind]?.[property];
+	return printVerbatimText(value, leaf, ctx, kinds, storage);
+}
+
+function camelCase(kind: string): string {
+	return kind.replace(/^_+/, '').replace(/_([a-z0-9])/g, (_m, c: string) => c.toUpperCase());
+}
+
+export function printingFactoryMap(
+	realShapes: Record<string, FactoryShape>,
+	kindIdOfName: (kind: string) => number | undefined,
+	ctx: PrintContext
+): Record<string, (...args: unknown[]) => Printed> {
+	const map: Record<string, (...args: unknown[]) => Printed> = {};
+	const kinds = Object.keys(realShapes);
+	for (const kind of kinds) {
+		const shape: FactoryShape = realShapes[kind]!;
+		const path = ctx.irPathOfKind(kind);
+		const id = kindIdOfName(kind) ?? kind;
+		const publicName = kind.replace(/^_+/, '');
+		const entry = (...args: unknown[]): Printed => {
+			switch (shape) {
+				case 'text': {
+					const text = String(args[0] ?? '');
+					if (ctx.enumKinds?.has(kind)) {
+						const member = ctx.memberIdOfText?.(text);
+						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
+					}
+					return new Printed(id, `${path}(${JSON.stringify(text)})`, kind);
+				}
+				case 'direct':
+				case 'forwarded': {
+					const value = wrapDirectArg(kind, args[0], ctx);
+					const absorbed =
+						value instanceof Printed && value.kind !== undefined && ctx.absorbedKinds?.has(value.kind)
+							? value.argsSource
+							: undefined;
+					const argSource = absorbed ?? (value === undefined ? '' : printValue(value, ctx, 0));
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
+				}
+				case 'spread': {
+					const argSource = args.map((a) => printValue(wrapDirectArg(kind, a, ctx), ctx, 0)).join(', ');
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
+				}
+				case 'elements': {
+					const [first, ...rest] = args;
+					const hasOptions = isListOptions(first);
+					const elements = (hasOptions ? rest : args).map((a) =>
+						printValue(wrapDirectArg(kind, a, ctx), ctx, 0)
+					);
+					const head = hasOptions ? [printListOptions(first, ctx)] : [];
+					const argSource = [...head, ...elements].join(', ');
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
+				}
+				case 'config':
+				default: {
+					const wrapped = wrapSeatedConfig(kind, args[0] ?? {}, ctx);
+					const argSource = printValue(wrapped, ctx, 0);
+					return new Printed(id, `${path}.strict(${argSource})`, kind, argSource);
+				}
+			}
+		};
+		map[kind] = entry;
+		if (!(publicName in map) && !kinds.includes(publicName)) map[publicName] = entry;
+	}
+	return map;
+}
+
+/**
+ * The printing counterpart of a grammar's `ir` bindings: every kind's
+ * `strict`, plus one entry per mount name its seats declare, printing
+ * `ir.<parent>.<mount>.strict(…)`. Handing this to
+ * `buildFactoryNodeFromReference` as the surface makes the printer take the
+ * same seat projection the validators take, so the emitted spelling is the
+ * one `ir-render-parse` builds rather than a second derivation of it.
+ */
+export function printingIrSurface(
+	map: Record<string, (...args: unknown[]) => Printed>,
+	kindIdOfName: (kind: string) => number | undefined,
+	modelTypes: Record<string, string>,
+	ctx: PrintContext
+): IrSurface {
+	const entries: Record<string, IrEntry> = {};
+	for (const [kind, strict] of Object.entries(map)) {
+		const entry: Record<string, unknown> = { strict };
+		const path = ctx.irPathOfKind(kind);
+		const id = kindIdOfName(kind) ?? kind;
+		for (const table of Object.values(ctx.seats?.[kind] ?? {})) {
+			for (const seat of Object.values(table)) {
+				if (seat.shape !== 'arm' || seat.mount === undefined || seat.mount in entry) continue;
+				entry[seat.mount] = { strict: mountPrinter(path, seat, kind, id, ctx) };
+			}
+		}
+		entries[kind] = entry as IrEntry;
+	}
+	return { entries, seats: ctx.seats ?? {}, modelTypes };
+}
+
+function mountPrinter(
+	path: string,
+	seat: Seat,
+	parentKind: string,
+	id: number | string,
+	ctx: PrintContext
+): (...args: unknown[]) => Printed {
+	return (...args: unknown[]): Printed => {
+		const printed = args.map((a) =>
+			printValue(
+				isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx),
+				ctx,
+				0
+			)
+		);
+		const argSource = printed.join(', ');
+		return new Printed(id, `${path}.${seat.mount!}.strict(${argSource})`, parentKind, argSource);
+	};
+}
+
+export function printFactorySource(
+	root: ReadNodeLike,
+	rootKind: string,
+	artifacts: FactoryDispatchArtifacts,
+	opts: FactoryDispatchOpts,
+	ctx: PrintContext
+): string {
+	const printed = buildFactoryNodeFromReference(root, rootKind, artifacts, opts);
+	if (!(printed instanceof Printed)) {
+		throw new Error(`emit-factory-source: no factory for root kind '${rootKind}'`);
+	}
+	return printed.source + triviaSuffix(triviaOf(printed), ctx);
+}
+
+import { readFileSync, writeFileSync } from 'node:fs';
+import { basename, resolve } from 'node:path';
+import {
+	TYPES_MODULE_PATHS,
+	buildReadHandle,
+	loadKindIdFromName,
+	loadKindNameFromId,
+	loadLanguageForGrammar,
+	loadNodeModel,
+	loadReadTreeNode,
+	materializeWrappedNodeData,
+	walkWrappedTree
+} from '../validate/common.ts';
+import { invoke } from '../codegen-surface.ts';
+import type { GeneratedIdTables, GeneratedKindEntry } from '../../../codegen/src/compiler/generated-metadata.ts';
+
+interface TypesModule {
+	readonly KIND_NAMES: ReadonlyMap<number, string>;
+	readonly TSKindId: Record<number, string | number>;
+	readonly Delimiter: Record<number, string | number>;
+}
+
+function pascalCase(name: string): string {
+	const c = camelCase(name.replace(/[^A-Za-z0-9_]+/g, '_'));
+	return c.charAt(0).toUpperCase() + c.slice(1);
+}
+
+function withPublicNames<T>(record: Record<string, T>): Record<string, T> {
+	const out: Record<string, T> = { ...record };
+	for (const [kind, value] of Object.entries(record)) {
+		const publicName = kind.replace(/^_+/, '');
+		if (!(publicName in out)) out[publicName] = value;
+	}
+	return out;
+}
+
+/**
+ * A hoisted child whose OWN surface is a rest-parameter one (`spread`, or a
+ * separated list's `elements`) and that its parent takes POSITIONALLY is
+ * absorbed: its arguments splice straight into the parent's call, because the
+ * parent's own factory already offers those rest parameters. A parent with
+ * named keys takes the same child as a tuple on its slot, which is the tuple
+ * seat. Every other hoisted child prints its own call, and so does one that
+ * seats children of its own: those arrive as the child's configs, which only
+ * the child's own builder knows how to take.
+ */
+function absorbedKindsOf(model: {
+	hoistedKinds: ReadonlySet<string>;
+	factoryShapes: Record<string, FactoryShape>;
+	seats: SeatTable;
+}): ReadonlySet<string> {
+	const out = new Set<string>();
+	for (const kind of model.hoistedKinds) {
+		const shape = model.factoryShapes[kind];
+		if (shape !== 'spread' && shape !== 'elements') continue;
+		if (model.seats[kind] !== undefined) continue;
+		out.add(kind);
+		out.add(kind.replace(/^_+/, ''));
+	}
+	return out;
+}
+
+interface VariantForm {
+	readonly parent: string;
+	readonly form: string;
+}
+
+/**
+ * The variant form each child kind is declared under, keyed by node kind and
+ * by its public name. `childKind` is keyed by parse kind, which drops a hidden
+ * kind's leading underscore.
+ */
+function variantFormsOf(
+	variants: PolymorphVariantMap,
+	modelTypes: Record<string, string>
+): ReadonlyMap<string, VariantForm> {
+	const kindOf = (name: string): string | undefined =>
+		name in modelTypes ? name : `_${name}` in modelTypes ? `_${name}` : undefined;
+	const out = new Map<string, VariantForm>();
+	for (const [parent, descriptor] of Object.entries(variants)) {
+		if (descriptor.definedBy !== 'override') continue;
+		const parentKind = kindOf(parent);
+		if (parentKind === undefined) continue;
+		for (const [child, form] of Object.entries(descriptor.childKind)) {
+			const childKind = kindOf(child);
+			if (childKind === undefined || childKind === parentKind || out.has(childKind)) continue;
+			const entry: VariantForm = { parent: parentKind, form };
+			out.set(childKind, entry);
+			const publicName = childKind.replace(/^_+/, '');
+			if (!out.has(publicName)) out.set(publicName, entry);
+		}
+	}
+	return out;
+}
+
+/**
+ * A hoisted compound has no flat `ir` binding — hoisting is what keeps it out
+ * of the bundle — so its spelling is the variant form its parent declares:
+ * `ir.<parent>.<form>`. The parent composes in turn while it is itself
+ * hoisted, and the path stops at the first kind that owns a flat binding.
+ * Being declared under a variant form does not settle this on its own: a kind
+ * that is not hoisted carries both spellings, and its flat one is canonical.
+ */
+function irPathResolver(
+	irKeys: Record<string, string>,
+	variantForms: ReadonlyMap<string, VariantForm>,
+	hoistedKinds: ReadonlySet<string>
+): (kind: string) => string {
+	const isHoisted = (kind: string): boolean => hoistedKinds.has(kind) || hoistedKinds.has(`_${kind}`);
+	const segments = (kind: string, seen: Set<string>): string[] => {
+		const form = variantForms.get(kind);
+		if (form === undefined || !isHoisted(kind) || seen.has(kind)) {
+			return [irKeys[kind] ?? camelCase(kind)];
+		}
+		seen.add(kind);
+		return [...segments(form.parent, seen), camelCase(form.form)];
+	};
+	return (kind: string): string => `ir.${segments(kind, new Set()).join('.')}`;
+}
+
+interface SeatWalkContext {
+	readonly kindNameFromId: (id: number) => string | undefined;
+	readonly seats: SeatTable;
+}
+
+/**
+ * Apply the seat key-move to every node of an already-materialized tree,
+ * bottom-up so a child is seated before its parent reads the slot.
+ */
+function seatFormTree(node: unknown, ctx: SeatWalkContext, depth = 0): void {
+	if (depth > 256) return;
+	if (Array.isArray(node)) {
+		for (const entry of node) seatFormTree(entry, ctx, depth + 1);
+		return;
+	}
+	if (!isPlainObject(node)) return;
+	for (const [key, value] of Object.entries(node)) {
+		if (key.startsWith('_')) seatFormTree(value, ctx, depth + 1);
+	}
+	seatFormChild(node, ctx);
+}
+
+/**
+ * A read stores an arm's value under the child's own kind (`_delim_token_tree_paren`)
+ * when the parent's slot carries no label. Move it to the slot the seat names
+ * so `nodeToConfig` sees a declared slot and the seat projection applies.
+ */
+function seatFormChild(node: Record<string, unknown>, mctx: SeatWalkContext): void {
+	const kind = typeof node.$type === 'number' ? mctx.kindNameFromId(node.$type) : undefined;
+	if (kind === undefined) return;
+	const slots = mctx.seats[kind];
+	if (slots === undefined) return;
+	for (const [key, value] of Object.entries(node)) {
+		if (!key.startsWith('_')) continue;
+		const childKind = key.slice(1);
+		for (const [slotName, table] of Object.entries(slots)) {
+			if (table[childKind] === undefined && table[`_${childKind}`] === undefined) continue;
+			if (slotName === childKind || node[`_${slotName}`] !== undefined) continue;
+			node[`_${slotName}`] = value;
+			delete node[key];
+			return;
+		}
+	}
+}
+
+function catalogEntriesOf(tables: GeneratedIdTables | undefined): GeneratedKindEntry[] {
+	const kindIds = tables?.kindIds;
+	if (kindIds === undefined) return [];
+	const rows = kindIds instanceof Map ? [...kindIds.entries()] : Object.entries(kindIds);
+	return rows.map(([kind, value]) =>
+		typeof value === 'number'
+			? { kind, id: value }
+			: { kind, id: value.id ?? -1, symbolName: value.parser?.symbolName, anon: value.parser?.anon }
+	);
+}
+
+export async function emitFactorySourceText(grammar: string, source: string, exportName: string): Promise<string> {
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
+	const parser = new Parser();
+	parser.setLanguage(lang);
+	const tree = parser.parse(source);
+	if (!tree || tree.rootNode.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
+	const readTreeNode = await loadReadTreeNode(grammar);
+	if (!readTreeNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
+	const kindIdFromName = await loadKindIdFromName(grammar);
+	const handle = buildReadHandle(grammar, tree, source, 'native', kindIdFromName);
+	const model = await loadNodeModel(grammar);
+	const typesPath = TYPES_MODULE_PATHS[grammar];
+	if (!typesPath) throw new Error(`emit-factory-source: no types module for ${grammar}`);
+	const types = (await import(new URL(`../validate/${typesPath}`, import.meta.url).pathname)) as TypesModule;
+	const displayNameFromId = await loadKindNameFromId(grammar);
+	const kindNameFromId = (id: number): string | undefined => types.KIND_NAMES.get(id) ?? displayNameFromId?.(id);
+	const idOfName = new Map<string, number>();
+	for (const [id, name] of types.KIND_NAMES) {
+		if (!idOfName.has(name)) idOfName.set(name, id);
+		const display = displayNameFromId?.(id);
+		if (display !== undefined && !idOfName.has(display)) idOfName.set(display, id);
+	}
+	const memberOf = (table: Record<number, string | number>, id: number): string | undefined =>
+		typeof table[id] === 'string' ? (table[id] as string) : undefined;
+	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
+	const { findEntryForLiteralText } = await import('../../../codegen/src/compiler/generated-metadata.ts');
+	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
+	seatFormTree(root, { kindNameFromId, seats: model.seats });
+	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
+	const ctx: PrintContext = {
+		grammar,
+		kindNameFromId,
+		memberNameOfId: (id) => memberOf(types.TSKindId, id),
+		irPathOfKind: irPathResolver(
+			withPublicNames(model.irKeys),
+			variantFormsOf(model.polymorphVariants, model.modelTypes),
+			model.hoistedKinds
+		),
+		seats: model.seats,
+		slotKinds: withPublicNames(model.slotKinds),
+		textLeafKinds,
+		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
+		absorbedKinds: absorbedKindsOf(model),
+		slotStorage: withPublicNames(model.slotStorage),
+		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
+		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id ?? idOfName.get(text),
+		delimiterArmOfId: (id) => {
+			const member = memberOf(types.Delimiter, id);
+			return member === undefined ? undefined : `Delimiter.${member}`;
+		},
+	};
+	const factoryShapes: Record<string, FactoryShape> = withPublicNames(model.factoryShapes);
+	const factoryMap = printingFactoryMap(model.factoryShapes, (kind) => idOfName.get(kind), ctx);
+	const artifacts: FactoryDispatchArtifacts = {
+		factoryMap,
+		surface: printingIrSurface(factoryMap, (kind) => idOfName.get(kind), model.modelTypes, ctx),
+		factoryShapes,
+		fieldAliasMap: withPublicNames(model.fieldAliasMap),
+		factoryFields: withPublicNames(model.factoryFields),
+		factorySlots: withPublicNames(model.factorySlots),
+	};
+	const rootKind = typeof root.$type === 'number' ? kindNameFromId(root.$type) : root.$type;
+	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
+	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle }, ctx);
+	return [
+		'// @generated by `sittir tool emit-factory-source`; do not edit.',
+		`import { ir, TSKindId, Delimiter } from '@sittir/${grammar}';`,
+		'',
+		`export function ${exportName}() {`,
+		`\treturn ${body.replace(/\n/g, '\n\t')};`,
+		'}',
+		''
+	].join('\n');
+}
+
+export interface EmitFactorySourceOptions {
+	readonly grammar: string;
+	readonly file: string;
+	readonly exportName?: string;
+	readonly out?: string;
+}
+
+export async function run(opts: EmitFactorySourceOptions): Promise<number> {
+	const file = resolve(opts.file);
+	const source = readFileSync(file, 'utf8');
+	const exportName = opts.exportName ?? `rebuild${pascalCase(basename(file).replace(/\.[^.]+$/, ''))}`;
+	const printed = await emitFactorySourceText(opts.grammar, source, exportName);
+	if (opts.out) writeFileSync(resolve(opts.out), printed);
+	else process.stdout.write(printed);
+	return 0;
+}

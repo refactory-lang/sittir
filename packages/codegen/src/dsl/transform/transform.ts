@@ -15,12 +15,15 @@ import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
-import { isVariantPlaceholder } from '../primitives/variant.ts';
+import { isVariantPlaceholder, variantMintName } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import { isPreference } from '../primitives/preference.ts';
 import type { PreferencePlaceholder } from '../primitives/preference.ts';
+import { isGroupPlaceholder } from '../primitives/group.ts';
+import type { GroupPlaceholder } from '../primitives/group.ts';
+import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import {
 	wireRegisterSymbolRename,
 	wireHasAuthoredRule,
@@ -68,43 +71,6 @@ function armNamesOf(arm: unknown): string[] {
 	return names;
 }
 
-export function applyPreference(rule: RuntimeRule, patch: PreferencePlaceholder, kind: string): RuntimeRule {
-	const node = rule as { type?: string; content?: unknown; members?: unknown[]; annotations?: RuleAnnotations };
-	if (node.type === 'CHOICE' && Array.isArray(node.members)) {
-		let matched = false;
-		const members = node.members.map((arm) => {
-			const isDefault = armNamesOf(arm).includes(patch.default);
-			matched ||= isDefault;
-			return withAnnotations(arm, { preference: patch.label, ...(isDefault ? { default: true as const } : {}) });
-		});
-		if (!matched) {
-			throw new Error(
-				`preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? '?').join(', ')})`
-			);
-		}
-		return { ...(node as object), members } as unknown as RuntimeRule;
-	}
-	if (node.content !== undefined && node.content !== null && typeof node.content === 'object') {
-		return {
-			...(node as object),
-			content: applyPreference(node.content as RuntimeRule, patch, kind)
-		} as unknown as RuntimeRule;
-	}
-	throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
-}
-
-function withAnnotations(rule: unknown, extra: RuleAnnotations): RuntimeRule {
-	const node = rule as { type?: string; content?: unknown; annotations?: RuleAnnotations };
-	if (node?.type === 'ALIAS' && node.content !== null && typeof node.content === 'object') {
-		const content = node.content as { annotations?: RuleAnnotations };
-		return {
-			...(node as object),
-			content: { ...(content as object), annotations: { ...content.annotations, ...extra } }
-		} as unknown as RuntimeRule;
-	}
-	return { ...(node as object), annotations: { ...node.annotations, ...extra } } as unknown as RuntimeRule;
-}
-
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
 	return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
@@ -121,7 +87,8 @@ export type PatchValue =
 	| AliasPlaceholder
 	| VariantPlaceholder
 	| ArmDefaultPlaceholder
-	| PreferencePlaceholder;
+	| PreferencePlaceholder
+	| GroupPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -130,7 +97,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -299,20 +266,20 @@ function buildHoistedVariants(
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
 		const altMember = choiceMembers[resolvedAlt]!;
-		const visibleName = polymorphVisibleName(parentKind, p.v.name);
-		const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+		const visibleName = polymorphVisibleName(parentKind, variantMintName(p.v));
+		const hiddenName = polymorphHiddenName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
 		if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
 		const altContent = lift === null ? altMember : lift.body;
 		const hoistedMembers = seqMembers.map((m, i) => (i === resolvedPos ? altContent : m));
 		const hoistedSeq = reconstructContainer(core, hoistedMembers);
-		const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
+		const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
 		if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
 			throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 		}
 		refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
 	}
-	registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
+	registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))));
 	const newChoice = reconstructContainer(choice, refs);
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -368,7 +335,7 @@ function renameEnrichLift(
 	hiddenName: string,
 	visibleName: string
 ): RuntimeRule {
-	if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+	if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, withHoistedAnnotation(lift.body));
 	wireRegisterSymbolRename(lift.liftName, hiddenName);
 	return {
 		...(aliasMember as object),
@@ -483,21 +450,21 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	if (isArmDefault(patch)) {
 		return withAnnotations(originalMember, { default: true });
 	}
-	if (isPreference(patch)) {
-		return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? '(unknown)');
+	if (isGroupPlaceholder(patch)) {
+		return withAnnotations(originalMember, { hoisted: true });
 	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
-		const visibleName = polymorphVisibleName(parentKind, patch.name);
+		const visibleName = polymorphVisibleName(parentKind, variantMintName(patch));
 		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind);
 		if ((originalMember as { type?: string }).type === 'ALIAS') {
 			const lift = enrichLiftArmOf(originalMember);
 			if (lift !== null) {
 				return annotated(
-					renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+					renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, variantMintName(patch)), visibleName)
 				);
 			}
 			return annotated({ ...(originalMember as object), value: visibleName });
@@ -508,7 +475,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
 			});
 		}
-		const hiddenName = polymorphHiddenName(parentKind, patch.name);
+		const hiddenName = polymorphHiddenName(parentKind, variantMintName(patch));
 		return annotated(
 			registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
 		);
@@ -764,7 +731,7 @@ export function registerAliasedVariant(
 		);
 	}
 	const body = factored ? factored.nonEmpty : originalMember;
-	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))) {
+	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(withHoistedAnnotation(body as RuntimeRule)))) {
 		throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 	}
 	const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);

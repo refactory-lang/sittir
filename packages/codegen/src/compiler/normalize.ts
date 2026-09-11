@@ -107,14 +107,13 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 	return keep;
 }
 
-const NO_HOISTED_KINDS: ReadonlySet<string> = new Set();
 
 export function inlineHiddenSeqRefs(
 	rules: Record<string, Rule<'link'>>,
 	ctx: NormalizeCtx | undefined,
 	keepRef: ReadonlySet<string>
 ): boolean {
-	const ictx: InlineRefsCtx = { rules, hoistedKinds: ctx?.grammar.hoistedKinds };
+	const ictx: InlineRefsCtx = { rules };
 	const foldable = new Set<string>();
 	for (const name of Object.keys(rules)) {
 		if (!isHiddenRule(name, rules)) continue;
@@ -217,28 +216,30 @@ function applyNormalizationPasses(
 	ctx?: NormalizeCtx,
 	preserveKinds?: ReadonlySet<string>
 ): Record<string, Rule<'link'>> {
-	let rules: Record<string, Rule<'link'>> = {};
-	for (const [name, rule] of Object.entries(linkRules)) {
-		rules[name] = collapseWrappers(rule, ctx);
-	}
+	const rebuildEach = (
+		current: Record<string, Rule<'link'>>,
+		pass: (rule: Rule<'link'>) => Rule<'link'>
+	): Record<string, Rule<'link'>> => {
+		const out: Record<string, Rule<'link'>> = {};
+		for (const [name, rule] of Object.entries(current)) out[name] = withKindFacts(pass(rule), rule);
+		return out;
+	};
+	let rules = rebuildEach(linkRules, (rule) => collapseWrappers(rule, ctx));
 	dbgChoiceId('after collapseWrappers#1', rules);
-	for (const name of Object.keys(rules)) {
-		rules[name] = fanOutSeqChoices(rules[name]!, ctx);
-	}
+	rules = rebuildEach(rules, (rule) => fanOutSeqChoices(rule, ctx));
 	dbgChoiceId('after fanOutSeqChoices', rules);
-	for (const name of Object.keys(rules)) {
-		rules[name] = factorChoiceBranches(rules[name]!, ctx);
-	}
+	rules = rebuildEach(rules, (rule) => factorChoiceBranches(rule, ctx));
 	dbgChoiceId('after factorChoiceBranches', rules);
-	for (const name of Object.keys(rules)) {
-		rules[name] = dedupeSeqMembers(rules[name]!, ctx);
-	}
+	rules = rebuildEach(rules, (rule) => dedupeSeqMembers(rule, ctx));
 	dbgChoiceId('after dedupeSeqMembers', rules);
+	const before = rules;
 	rules = inlineSingleUseHidden(rules, ctx, preserveKinds);
-	dbgChoiceId('after inlineSingleUseHidden', rules);
 	for (const name of Object.keys(rules)) {
-		rules[name] = collapseWrappers(rules[name]!, ctx);
+		const source = before[name];
+		if (source !== undefined) rules[name] = withKindFacts(rules[name]!, source);
 	}
+	dbgChoiceId('after inlineSingleUseHidden', rules);
+	rules = rebuildEach(rules, (rule) => collapseWrappers(rule, ctx));
 	dbgChoiceId('after collapseWrappers#2', rules);
 	return rules;
 }
@@ -266,7 +267,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		name: linked.name,
 		rules: normalizedRules,
 		supertypes: linked.supertypes,
-		hoistedKinds: linked.hoistedKinds,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
 		externals: linked.externals,
@@ -327,7 +327,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		normalizedRules,
 		rules: simplifiedRules,
 		supertypes: linked.supertypes,
-		hoistedKinds: linked.hoistedKinds,
 		factoryInline: linked.factoryInline,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
@@ -496,13 +495,12 @@ function iterateInliningToFixedPoint(
 	ctx?: NormalizeCtx,
 	preserveKinds?: ReadonlySet<string>
 ): void {
-	const hoistedKinds = ctx?.grammar.hoistedKinds ?? NO_HOISTED_KINDS;
 	for (let pass = 0; pass < 4; pass++) {
 		const refCounts = countReferences(work);
 		let changed = false;
 		for (const [name, rule] of Object.entries(work)) {
 			if (!isHiddenRule(name, work)) continue;
-			if (hoistedKinds.has(name) || isStructurallyMeaningfulHiddenRule(rule)) continue;
+			if (rule.annotations?.hoisted === true || isStructurallyMeaningfulHiddenRule(rule)) continue;
 			if (preserveKinds?.has(name)) continue;
 			const uses = refCounts.get(name) ?? 0;
 			if (uses !== 1) continue;

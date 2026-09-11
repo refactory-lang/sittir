@@ -30,7 +30,7 @@ export interface NodeTrivia {
 // ---------------------------------------------------------------------------
 
 /**
- * Unified named-member value type (ADR-0018 Phase 2).
+ * Unified named-member value type.
  *
  * A named slot's `_<name>` storage and its accessor return type both
  * resolve to `NodeMemberValue`.
@@ -130,7 +130,7 @@ export interface AnyNodeData {
 	/** Create an Edit replacing the target tree node's range with this node's rendered text. */
 	$replace?: (target: { range(): ByteRange }) => Edit;
 	/** Trivia metadata (leading / trailing comments) attached via `$trivia()`. */
-	$triviaData?: NodeTrivia;
+	$_trivia?: NodeTrivia;
 	/** Attach trivia to this node. Rest args → leading; object form → as-is. Returns `this`.
 	 *
 	 * `any[]` in the base type so per-grammar narrowed signatures

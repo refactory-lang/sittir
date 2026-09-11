@@ -4071,34 +4071,22 @@ export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
 	);
 }
 
-export function buildAugmentedAssignmentOperator(
-	text: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
-): T.AugmentedAssignmentOperator.Built {
-	return withMethods(
-		{
-			$type: TSKindId.AugmentedAssignmentOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildExceptClauseAs(config: T.ExceptClauseAs.Config): T.ExceptClauseAs.Built {
+export function buildExceptClauseExceptionAs(
+	config: T.ExceptClauseExceptionAs.Config
+): T.ExceptClauseExceptionAs.Built {
 	const _value = config.value;
 	const _alias = config.alias;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExceptClauseAs as const,
+				$type: TSKindId.ExceptClauseExceptionAs as const,
 				$source: 2 as const,
 				$named: true as const,
 				_value,
 				_alias,
 				$with: {
-					value: (value: T.Expression) => buildExceptClauseAs({ ...config, value: value }),
-					alias: (value?: T.Expression) => buildExceptClauseAs({ ...config, alias: value })
+					value: (value: T.Expression) => buildExceptClauseExceptionAs({ ...config, value: value }),
+					alias: (value?: T.Expression) => buildExceptClauseExceptionAs({ ...config, alias: value })
 				}
 			},
 			{
@@ -4475,17 +4463,17 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 	);
 }
 
-export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClauseList.Built {
-	_assertNonEmpty(children, '_except_clause_list.children');
+export function buildExceptClauseExceptionList(...children: T.Expression[]): T.ExceptClauseExceptionList.Built {
+	_assertNonEmpty(children, '_except_clause_exception_list.children');
 	const _value = children;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExceptClauseList as const,
+				$type: TSKindId.ExceptClauseExceptionList as const,
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: { values: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
+				$with: { values: (...vs: T.Expression[]) => buildExceptClauseExceptionList(...vs) }
 			},
 			{
 				values: () => _value
@@ -4496,7 +4484,7 @@ export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClau
 }
 
 export function buildExceptClauseException(
-	value: T.ExceptClauseAs | T.ExceptClauseList
+	value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList
 ): T.ExceptClauseException.Built {
 	const _content = value;
 	return withMethods(
@@ -4507,7 +4495,7 @@ export function buildExceptClauseException(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseException(value)
+					content: (value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList) => buildExceptClauseException(value)
 				}
 			},
 			{
@@ -4744,8 +4732,8 @@ function _buildWithClauseParen(value: T.WithClauseWithItems): T.WithClauseParen.
 	);
 }
 
-export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> = {}): T.MatchBlockBlock.Built {
-	const _alternative = config.alternative ?? [];
+export function buildMatchBlockBlock(...children: T.CaseClause[]): T.MatchBlockBlock.Built {
+	const _alternative = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -4753,9 +4741,7 @@ export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> =
 				$source: 2 as const,
 				$named: true as const,
 				_alternative,
-				$with: {
-					alternatives: (...values: T.CaseClause[]) => buildMatchBlockBlock({ ...config, alternative: values })
-				}
+				$with: { alternatives: (...vs: T.CaseClause[]) => buildMatchBlockBlock(...vs) }
 			},
 			{
 				alternatives: () => _alternative
@@ -4960,82 +4946,12 @@ export function buildDedent(text: string): T.Dedent.Built {
 	);
 }
 
-export function buildCloseBracket(text: string): T.CloseBracket.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`]: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rbrack as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCloseParen(text: string): T.CloseParen.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`): text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rparen as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCloseBrace(text: string): T.CloseBrace.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`}: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rbrace as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildExcept(text: string): T.Except.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`except: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.Except as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildTight(text: string): T.Tight.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_tight: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Tight as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildSpace(text: string): T.Space.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_space: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Space as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5184,8 +5100,7 @@ export type FluentKindMap = {
 	_subscripts: T.Subscripts.Built;
 	_dictionary_elements: T.DictionaryElements.Built;
 	_slice_group: T.SliceGroup.Built;
-	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
-	_except_clause_as: T.ExceptClauseAs.Built;
+	_except_clause_exception_as: T.ExceptClauseExceptionAs.Built;
 	case_tuple_pattern: T.CaseTuplePattern.Built;
 	case_list_pattern: T.CaseListPattern.Built;
 	case_as_pattern: T.CaseAsPattern.Built;
@@ -5196,7 +5111,7 @@ export type FluentKindMap = {
 	print_statement_chevron: T.PrintStatementChevron.Built;
 	print_statement_plain: T.PrintStatementPlain.Built;
 	_simple_pattern_negative: T.SimplePatternNegative.Built;
-	_except_clause_list: T.ExceptClauseList.Built;
+	_except_clause_exception_list: T.ExceptClauseExceptionList.Built;
 	_except_clause_exception: T.ExceptClauseException.Built;
 	_assignment_eq: T.AssignmentEq.Built;
 	_assignment_type: T.AssignmentType.Built;
@@ -5214,12 +5129,7 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
-	']': T.CloseBracket;
-	')': T.CloseParen;
-	'}': T.CloseBrace;
 	except: T.Except;
-	_tight: T.Tight;
-	_space: T.Space;
 };
 
 export const _factoryMap = {
@@ -5362,8 +5272,7 @@ export const _factoryMap = {
 	_subscripts: buildSubscripts,
 	_dictionary_elements: buildDictionaryElements,
 	_slice_group: buildSliceGroup,
-	_augmented_assignment_operator: buildAugmentedAssignmentOperator,
-	_except_clause_as: buildExceptClauseAs,
+	_except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
 	case_as_pattern: buildCaseAsPattern,
@@ -5374,7 +5283,7 @@ export const _factoryMap = {
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
 	_simple_pattern_negative: buildSimplePatternNegative,
-	_except_clause_list: buildExceptClauseList,
+	_except_clause_exception_list: buildExceptClauseExceptionList,
 	_except_clause_exception: buildExceptClauseException,
 	_assignment_eq: buildAssignmentEq,
 	_assignment_type: buildAssignmentType,
@@ -5392,11 +5301,6 @@ export const _factoryMap = {
 	string_end: buildStringEnd,
 	_indent: buildIndent,
 	_dedent: buildDedent,
-	']': buildCloseBracket,
-	')': buildCloseParen,
-	'}': buildCloseBrace,
-	except: buildExcept,
-	_tight: buildTight,
-	_space: buildSpace
+	except: buildExcept
 } as const;
 export type _FactoryMap = typeof _factoryMap;

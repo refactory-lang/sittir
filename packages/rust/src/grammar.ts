@@ -1599,26 +1599,6 @@ export type RustGrammar = {
 			types: [{ type: 'range_pattern_prefix'; named: true }, { type: 'range_pattern_with_left'; named: true }];
 		};
 	};
-	readonly range_pattern_left_bare: { type: 'range_pattern_left_bare'; named: true; fields: {} };
-	readonly range_pattern_left_with_right: {
-		type: 'range_pattern_left_with_right';
-		named: true;
-		fields: {
-			right: {
-				multiple: false;
-				required: true;
-				types: [
-					{ type: '_literal_pattern'; named: true },
-					{ type: 'crate'; named: true },
-					{ type: 'identifier'; named: true },
-					{ type: 'metavariable'; named: true },
-					{ type: 'scoped_identifier'; named: true },
-					{ type: 'self'; named: true },
-					{ type: 'super'; named: true }
-				];
-			};
-		};
-	};
 	readonly range_pattern_prefix: {
 		type: 'range_pattern_prefix';
 		named: true;
@@ -1659,7 +1639,30 @@ export type RustGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'range_pattern_left_bare'; named: true }, { type: 'range_pattern_left_with_right'; named: true }];
+			types: [
+				{ type: 'range_pattern_with_left_bare'; named: true },
+				{ type: 'range_pattern_with_left_with_right'; named: true }
+			];
+		};
+	};
+	readonly range_pattern_with_left_bare: { type: 'range_pattern_with_left_bare'; named: true; fields: {} };
+	readonly range_pattern_with_left_with_right: {
+		type: 'range_pattern_with_left_with_right';
+		named: true;
+		fields: {
+			right: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: '_literal_pattern'; named: true },
+					{ type: 'crate'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'metavariable'; named: true },
+					{ type: 'scoped_identifier'; named: true },
+					{ type: 'self'; named: true },
+					{ type: 'super'; named: true }
+				];
+			};
 		};
 	};
 	readonly raw_string_literal: {
@@ -2450,14 +2453,20 @@ export type RustGrammar = {
 				{ type: 'crate'; named: true },
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
-				{ type: 'visibility_modifier_in_path'; named: true }
+				{ type: 'visibility_modifier_pub_in_path'; named: true }
 			];
 		};
 	};
-	readonly visibility_modifier_in_path: {
-		type: 'visibility_modifier_in_path';
+	readonly visibility_modifier_pub: {
+		type: 'visibility_modifier_pub';
 		named: true;
 		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'visibility_modifier_group'; named: true }] };
+	};
+	readonly visibility_modifier_pub_in_path: {
+		type: 'visibility_modifier_pub_in_path';
+		named: true;
+		fields: { in: { multiple: false; required: true; types: [{ type: 'in'; named: false }] } };
 		children: {
 			multiple: false;
 			required: true;
@@ -2470,12 +2479,6 @@ export type RustGrammar = {
 				{ type: 'super'; named: true }
 			];
 		};
-	};
-	readonly visibility_modifier_pub: {
-		type: 'visibility_modifier_pub';
-		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'visibility_modifier_group'; named: true }] };
 	};
 	readonly where_clause: {
 		type: 'where_clause';

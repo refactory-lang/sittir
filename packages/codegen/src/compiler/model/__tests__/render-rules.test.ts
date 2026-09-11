@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { DEDENT_TEXT, INDENT_TEXT } from '../../../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
-import { flanksOf, isSeamChoice, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
+import { flanksOf, isSeamChoice, resolveRenderRules, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
 import { AssembledBranch, AssembledSupertype } from '../node-map.ts';
-import type { RenderDefaults } from '../../../dsl/primitives/spacing.ts';
+import { preference } from '../../../dsl/primitives/preference.ts';
+import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -18,18 +20,21 @@ const kindEntries = [
 	{ kind: 'fn', anon: true, symbolName: 'fn', member: 'Fn', id: 10 },
 	{ kind: 'tight', member: 'Tight', id: 90 },
 	{ kind: 'space', member: 'Space', id: 91 },
-	{ kind: 'newline', member: 'Newline', id: 92 }
+	{ kind: 'newline', member: 'Newline', id: 92 },
+	{ kind: 'blankline', member: 'Blankline', id: 93 }
 ] as never;
 
 function nodeMapOf(
 	rules: Record<string, RenderRule>,
 	slots: Record<string, string>,
-	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]> } = {}
+	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]> } = {}
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
 	for (const kind of Object.keys(rules)) nodes.set(kind, { kind });
-	if (opts.whitespace !== false) for (const w of ['_tight', '_space', '_newline', '_indent', '_dedent']) nodes.set(w, { kind: w });
-	for (const [supertype, members] of Object.entries(opts.supertypes ?? {})) {
+	const whitespace = ['_tight', '_space', '_newline', '_blankline', '_indent', '_dedent'];
+	if (opts.whitespace !== false) for (const w of whitespace) nodes.set(w, { kind: w });
+	const supertypes = { _whitespace: opts.whitespace === false ? [] : whitespace, ...opts.supertypes };
+	for (const [supertype, members] of Object.entries(supertypes)) {
 		nodes.set(
 			supertype,
 			new AssembledSupertype(
@@ -39,7 +44,12 @@ function nodeMapOf(
 			)
 		);
 	}
-	const slotByRuleId = new Map(Object.entries(slots).map(([id, name]) => [id, { name }]));
+	const slotByRuleId = new Map(
+		Object.entries(slots).map(([id, name]) => [
+			id,
+			{ name, values: (opts.slotKinds?.[id] ?? []).map((kind) => ({ node: { kind }, multiplicity: 'array' })) }
+		])
+	);
 	return {
 		name: 'test',
 		nodes,
@@ -62,13 +72,13 @@ describe('spaceRenderRules', () => {
 			label: 'comma_separator_space_before',
 			side: 'before',
 			defaultArm: 'space',
-			arms: ['tight', 'space', 'newline']
+			arms: ['tight', 'space', 'newline', 'blankline']
 		});
 		expect(spaced.after?.label).toBe('comma_separator_space_after');
 		const choice = (out.rules.list as unknown as { separator: { value: { members: unknown[] } } }).separator.value.members[0] as {
 			members: { name: string; annotations: object }[];
 		};
-		expect(choice.members.map((m) => m.name)).toEqual(['_tight', '_space', '_newline']);
+		expect(choice.members.map((m) => m.name)).toEqual(['_tight', '_space', '_newline', '_blankline']);
 		expect(choice.members[1]!.annotations).toEqual({ preference: 'comma_separator_space_before', default: true });
 	});
 
@@ -83,7 +93,7 @@ describe('spaceRenderRules', () => {
 			label: 'empty_separator_space',
 			side: 'gap',
 			defaultArm: 'space',
-			arms: ['tight', 'space', 'newline']
+			arms: ['tight', 'space', 'newline', 'blankline']
 		});
 	});
 
@@ -124,13 +134,13 @@ describe('spaceRenderRules', () => {
 		expect(spacedSeparatorOf(out.rules.list!)).toBeUndefined();
 	});
 
-	it('returns the rules untouched when the grammar registers no whitespace kinds', () => {
+	it('returns the rules untouched when the whitespace supertype is empty', () => {
 		const rules = { list: commaList() };
 		const out = spaceRenderRules({ nodeMap: nodeMapOf(rules, { r1: 'items' }, { whitespace: false }), kindEntries });
 		expect(out.rules).toBe(rules);
 	});
 
-	it('resolves a default by kind × slot, then supertype × slot, then label, then space', () => {
+	it('resolves a separator gap from the options block by kind, then supertype, then wildcard, then space', () => {
 		const rules = {
 			a: commaList({ id: 'ra' }),
 			b: commaList({ id: 'rb' }),
@@ -138,17 +148,16 @@ describe('spaceRenderRules', () => {
 			d: commaList({ id: 'rd' })
 		};
 		const nodeMap = nodeMapOf(rules, { ra: 'items', rb: 'items', rc: 'items', rd: 'items' }, { supertypes: { _expression: ['b'] } });
-		const out = spaceRenderRules({
+		const config = {
 			nodeMap,
 			kindEntries,
-			defaults: {
-				labels: { comma_separator_space_after: 'newline' },
-				sites: {
-					a: { items_separator_space_after: { label: 'comma_separator_space_after', arm: 'tight' } },
-					_expression: { items_separator_space_after: { label: 'comma_separator_space_after', arm: 'tight' } }
-				}
+			options: {
+				a: { 'items:/separator/","/after': preference('tight') },
+				expression: { 'items:/separator/","/after': preference('tight') },
+				_: { 'items:/separator/","/after': preference('newline') }
 			}
-		});
+		} as never;
+		const out = resolveRenderRules(config, () => {}).spaced;
 		const after = (kind: string) => spacedSeparatorOf(out.rules[kind]!)!.after!.defaultArm;
 		const before = (kind: string) => spacedSeparatorOf(out.rules[kind]!)!.before!.defaultArm;
 		expect(after('a')).toBe('tight');
@@ -168,23 +177,24 @@ describe('spaceRenderRules', () => {
 	});
 
 	const flankText = new Map([
-		['indent', { constant: 'INDENT_NEWLINE' as const }],
-		['dedent', { constant: 'DEDENT_NEWLINE' as const }]
+		['indent', INDENT_TEXT],
+		['dedent', DEDENT_TEXT]
 	]);
 
 	it('wraps the single unseparated array of a kind in start and end choices when the grammar renders indentation', () => {
 		const block = seq(str('{'), sym('statement', { id: 'r2', multiplicity: 'array', fieldName: 'statements' }), str('}'));
 		const nodeMap = nodeMapOf({ block }, { r2: 'statements' });
-		const out = spaceRenderRules({
+		const config = {
 			nodeMap,
 			kindEntries,
 			whitespaceText: flankText,
-			defaults: { labels: {}, sites: { block: { start: { label: 'body_start', arm: 'indent' }, end: { arm: 'dedent' } } } }
-		});
+			options: { block: { 'statements:/start': preference('indent'), 'statements:/end': preference('dedent') } }
+		} as never;
+		const out = resolveRenderRules(config, () => {}).spaced;
 		const wrapper = (out.rules.block as unknown as { members: RenderRule[] }).members[1]!;
 		const flanks = flanksOf(wrapper)!;
-		const arms = ['tight', 'space', 'newline', 'indent', 'dedent'];
-		expect(flanks.start).toEqual({ fieldName: 'statements_start', label: 'body_start', side: 'start', defaultArm: 'indent', arms });
+		const arms = ['tight', 'space', 'newline', 'blankline', 'indent', 'dedent'];
+		expect(flanks.start).toEqual({ fieldName: 'statements_start', label: 'block_start', side: 'start', defaultArm: 'indent', arms });
 		expect(flanks.end).toEqual({ fieldName: 'statements_end', label: 'block_end', side: 'end', defaultArm: 'dedent', arms });
 		expect(spacedSeparatorOf(flanks.inner)?.after?.label).toBe('empty_separator_space');
 		expect(spacingSitesOf(out, nodeMap).map((s) => `${s.address}=${s.defaultArm}`)).toEqual([
@@ -212,8 +222,7 @@ describe('spaceRenderRules', () => {
 	it('spaces a choice-of-literals separator like a literal one, naming the gap by the list kind', () => {
 		const sep = { type: 'CHOICE', members: [str(','), str(';')] } as unknown as RenderRule;
 		const list = sym('member', { id: 'r9', multiplicity: 'nonEmptyArray', fieldName: 'content', separator: { value: sep } });
-		const defaults: RenderDefaults = { labels: {}, sites: { object_type_content: { content_separator: { label: 'separator', arm: 'semi' } } } };
-		const config = { nodeMap: nodeMapOf({ object_type_content: list }, { r9: 'content' }), kindEntries, defaults };
+		const config = { nodeMap: nodeMapOf({ object_type_content: list }, { r9: 'content' }), kindEntries };
 		const out = spaceRenderRules(config);
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.address}:${s.label}`)).toEqual([
 			'content_separator_space_before:object_type_content_separator_space_before',
@@ -236,7 +245,7 @@ describe('seamRenderRules', () => {
 		const call = seq(str('fn'), sym('name'), str('('), sym('params'), str(')'));
 		const { out, config } = seamed({ call });
 		expect(memberNames(out.rules.call!)).toEqual(['fn', 'S(fn_after)', 'name', 'S(lparen_before)', '(', 'S(lparen_after)', 'params', 'S(rparen_before)', ')']);
-		expect(seamPartOf(membersOf(out.rules.call!)[3]!)).toEqual({ fieldName: 'lparen_before', label: 'lparen_before', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline'] });
+		expect(seamPartOf(membersOf(out.rules.call!)[3]!)).toEqual({ fieldName: 'lparen_before', label: 'lparen_before', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline', 'blankline'] });
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} ${s.label}=${s.defaultArm} @${s.address} ${s.side}`)).toEqual([
 			'call.fn fn_after=tight @fn_after seam',
 			'call.lparen lparen_before=tight @lparen_before seam',
@@ -256,17 +265,18 @@ describe('seamRenderRules', () => {
 		expect(memberNames(out.rules.body!)).toEqual(['x', 'S(rparen_before)', ')', 'S(rparen_after)', 'S(lbrace_before)', '{', 'S(lbrace_after)', 'y']);
 	});
 
-	it('resolves a seam default by kind, then supertype, then label, then the stamp', () => {
+	it('resolves a seam from the options block by kind, then supertype, then wildcard, then the stamp', () => {
 		const rules = { a: seq(sym('x'), str('(')), b: seq(sym('x'), str('(')), c: seq(sym('x'), str('(')), d: seq(sym('x'), str('(')) };
 		const config = {
 			nodeMap: nodeMapOf(rules, {}, { supertypes: { _expression: ['b'] } }),
 			kindEntries,
-			defaults: {
-				labels: { lparen_before: 'newline' },
-				sites: { a: { lparen_before: { arm: 'space' } }, _expression: { lparen_before: { arm: 'tight' } } }
+			options: {
+				a: { '"("/before': preference('space') },
+				expression: { '"("/before': preference('tight') },
+				_: { '"("/before': preference('newline') }
 			}
-		};
-		const out = seamRenderRules(spaceRenderRules(config), config);
+		} as never;
+		const out = resolveRenderRules(config, () => {}).seamed;
 		const arm = (kind: string) => seamPartOf(membersOf(out.rules[kind]!)[1]!).defaultArm;
 		expect([arm('a'), arm('b'), arm('c'), arm('d')]).toEqual(['space', 'tight', 'newline', 'newline']);
 	});
@@ -344,23 +354,36 @@ describe('seamRenderRules', () => {
 		};
 		const nodeMap = nodeMapOf(rules, {});
 		for (const kind of ['call', '_helper', '_call', 'pick'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
-		const config = { nodeMap, kindEntries, defaults: { labels: { call_after: 'newline' }, sites: {} } };
-		const out = seamRenderRules(spaceRenderRules(config), config);
-		expect(memberNames(out.rules.call!)).toEqual(['S(call_before)', 'x', 'S(lparen_before)', '(', 'S(call_after)']);
+		const config = { nodeMap, kindEntries, options: { call: { after: preference('newline') } } } as never;
+		const out = resolveRenderRules(config, () => {}).seamed;
+		expect(memberNames(out.rules.call!)).toEqual([
+			'S(call_before)',
+			'x',
+			'S(lparen_before)',
+			'(',
+			'S(lparen_after)',
+			'S(call_after)'
+		]);
 		const members = membersOf(out.rules.call!);
-		expect(seamPartOf(members[0]!)).toEqual({ fieldName: 'call_before', label: 'call_before', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline'] });
-		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', arms: ['tight', 'space', 'newline'] });
+		expect(seamPartOf(members[0]!)).toEqual({ fieldName: 'call_before', label: 'call_before', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline', 'blankline'] });
+		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'lparen_after', label: 'lparen_after', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline', 'blankline'] });
+		expect(seamPartOf(members[5]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', arms: ['tight', 'space', 'newline', 'blankline'] });
 		expect(out.rules._helper).toBe(rules._helper);
 		expect(out.rules._call).toBe(rules._call);
 		expect(out.rules.pick).toBe(rules.pick);
-		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual(['call_before', 'lparen_before', 'call_after']);
+		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual([
+			'call_before',
+			'lparen_before',
+			'lparen_after',
+			'call_after'
+		]);
 	});
 
 	it('puts a list kind\'s edge seams around its flank wrapper, which stays a three-member seq', () => {
 		const rules = { list: commaList() };
 		const nodeMap = nodeMapOf(rules, { r1: 'items' });
 		nodeMap.nodes.set('list', new AssembledBranch('list', rules.list as never, rules.list));
-		const whitespaceText = new Map([['indent', { constant: 'INDENT_NEWLINE' as const }], ['dedent', { constant: 'DEDENT_NEWLINE' as const }]]);
+		const whitespaceText = new Map([['indent', INDENT_TEXT], ['dedent', DEDENT_TEXT]]);
 		const config = { nodeMap, kindEntries, whitespaceText };
 		const out = seamRenderRules(spaceRenderRules(config), config);
 		const members = membersOf(out.rules.list!);
@@ -370,45 +393,119 @@ describe('seamRenderRules', () => {
 	});
 
 	it('gives every seam the indentation arms when the grammar renders indentation, and walks each kind\'s depth in rule order', () => {
-		const whitespaceText = new Map([['indent', { constant: 'INDENT_NEWLINE' as const }], ['dedent', { constant: 'DEDENT_NEWLINE' as const }]]);
-		const arms = ['tight', 'space', 'newline', 'indent', 'dedent'];
+		const whitespaceText = new Map([['indent', INDENT_TEXT], ['dedent', DEDENT_TEXT]]);
+		const arms = ['tight', 'space', 'newline', 'blankline', 'indent', 'dedent'];
 		const rules = { arms: seq(sym('a'), sym('b')) };
 		const nodeMap = nodeMapOf(rules, {});
 		nodeMap.nodes.set('arms', new AssembledBranch('arms', rules.arms as never, rules.arms));
-		const paired = { nodeMap, kindEntries, whitespaceText, defaults: { labels: { arms_before: 'indent', arms_after: 'dedent' }, sites: {} } };
-		const out = seamRenderRules(spaceRenderRules(paired), paired);
+		const run = (config: object) => resolveRenderRules(config as never, () => {}).seamed;
+		const paired = { nodeMap, kindEntries, whitespaceText, options: { arms: { before: preference('indent'), after: preference('dedent') } } };
+		const out = run(paired);
 		const [before, , , after] = membersOf(out.rules.arms!);
 		expect(seamPartOf(before!)).toEqual({ fieldName: 'arms_before', label: 'arms_before', side: 'seam', defaultArm: 'indent', arms });
 		expect(seamPartOf(after!).defaultArm).toBe('dedent');
-		const unpaired = { nodeMap, kindEntries, whitespaceText, defaults: { labels: { arms_before: 'indent' }, sites: {} } };
-		expect(() => seamRenderRules(spaceRenderRules(unpaired), unpaired)).toThrow(/arms opens an indent it never dedents/);
+		const unpaired = { nodeMap, kindEntries, whitespaceText, options: { arms: { before: preference('indent') } } };
+		expect(() => run(unpaired)).toThrow(/arms opens an indent it never dedents/);
 		const call = seq(sym('x'), str('('), sym('y'), str(')'));
-		const braces = (sites: RenderDefaults['sites']) => ({ nodeMap: nodeMapOf({ call }, {}), kindEntries, whitespaceText, defaults: { labels: {}, sites } });
-		const tokens = braces({ call: { lparen_after: { label: 'body_before', arm: 'indent' }, rparen_before: { label: 'body_after', arm: 'dedent' } } });
-		const sites = spacingSitesOf(seamRenderRules(spaceRenderRules(tokens), tokens), tokens.nodeMap);
-		expect(sites.map((s) => `${s.address}:${s.label}=${s.defaultArm}`)).toEqual(['lparen_before:lparen_before=tight', 'lparen_after:body_before=indent', 'rparen_before:body_after=dedent']);
+		const braces = (options: object) => ({ nodeMap: nodeMapOf({ call }, {}), kindEntries, whitespaceText, options });
+		const tokens = braces({ call: { '"("/after': preference('indent'), '")"/before': preference('dedent') } });
+		const sites = spacingSitesOf(run(tokens), tokens.nodeMap);
+		expect(sites.map((s) => `${s.address}:${s.label}=${s.defaultArm}`)).toEqual(['lparen_before:lparen_before=tight', 'lparen_after:lparen_after=indent', 'rparen_before:rparen_before=dedent']);
 		expect(sites.every((s) => s.arms.length === arms.length)).toBe(true);
-		const closesFirst = braces({ call: { lparen_before: { arm: 'dedent' }, rparen_before: { arm: 'indent' } } });
-		expect(() => seamRenderRules(spaceRenderRules(closesFirst), closesFirst)).toThrow(/call\.lparen_before dedents an indent it never opened/);
-		const token = { nodeMap: nodeMapOf({ call: seq(sym('x'), str('(')) }, {}), kindEntries, defaults: { labels: { lparen_before: 'indent' }, sites: {} } };
-		expect(() => seamRenderRules(spaceRenderRules(token), token)).toThrow(/'lparen_before' on call is 'indent', not one of tight, space, newline/);
+		const closesFirst = braces({ call: { '"("/before': preference('dedent'), '")"/before': preference('indent') } });
+		expect(() => run(closesFirst)).toThrow(/call\.lparen_before dedents an indent it never opened/);
+		const token = { nodeMap: nodeMapOf({ call: seq(sym('x'), str('(')) }, {}), kindEntries, options: { call: { '"("/before': preference('indent') } } };
+		expect(() => run(token)).toThrow(/'lparen_before' on call is 'indent', not one of tight, space, newline/);
 	});
 
-	it('returns the rules untouched when the grammar registers no whitespace kinds', () => {
+	it('returns the rules untouched when the whitespace supertype is empty', () => {
 		const rules = { call: seq(sym('x'), str('(')) };
 		const config = { nodeMap: nodeMapOf(rules, {}, { whitespace: false }), kindEntries };
 		expect(seamRenderRules(spaceRenderRules(config), config).rules).toBe(rules);
 	});
 
-	it('fails on a default that names no preference, no site or no arm', () => {
-		const rules = { list: commaList(), call: seq(sym('x'), str('(')) };
-		const at = (defaults: object) => () => seamed(rules, { r1: 'items' }, { defaults });
-		expect(at({ labels: { semi_separator_space_before: 'tight' }, sites: {} })).toThrow(/'semi_separator_space_before' is not a spacing preference/);
-		expect(at({ labels: { rparen_before: 'tight' }, sites: {} })).toThrow(/'rparen_before' is not a spacing preference/);
-		expect(at({ labels: {}, sites: { block: { items_separator_space_before: { arm: 'tight' } } } })).toThrow(/'block' names no kind or supertype with a spacing site/);
-		expect(at({ labels: {}, sites: { list: { items_separator_space: { arm: 'tight' } } } })).toThrow(/list\.items_separator_space names no site/);
-		expect(at({ labels: {}, sites: { call: { rparen_before: { arm: 'tight' } } } })).toThrow(/call\.rparen_before names no site/);
-		expect(at({ labels: { comma_separator_space_before: 'wide' }, sites: {} })).toThrow(/is 'wide', not one of tight, space, newline/);
-		expect(at({ labels: { lparen_before: 'indent' }, sites: {} })).toThrow(/is 'indent', not one of tight, space, newline/);
+});
+
+describe('a seated child edge', () => {
+	const seat = (options?: object) => {
+		const rules = {
+			file: sym('stmt', { id: 'r9', multiplicity: 'array', fieldName: 'statements' }),
+			solo: sym('attr', { id: 'r8', multiplicity: 'array', fieldName: 'only' }),
+			attr: seq(str('#'), sym('a')),
+			item: seq(str('fn'), sym('b'))
+		};
+		const nodeMap = nodeMapOf(rules, { r9: 'statements', r8: 'only' }, { slotKinds: { r9: ['attr', 'item'], r8: ['attr'] } });
+		for (const kind of ['file', 'solo', 'attr', 'item'] as const) {
+			nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		}
+		const config = { nodeMap, kindEntries, options } as never;
+		return spacingSitesOf(resolveRenderRules(config, () => {}).seamed, nodeMap);
+	};
+
+	it('seats one per (slot, child kind) where a slot admits several', () => {
+		const paths = seat()
+			.filter((s) => s.seat !== undefined)
+			.map((s) => formatPreferencePath(s.path!));
+		expect(paths).toContain('(file)/statements:/(attr)/after');
+		expect(paths).toContain('(file)/statements:/(item)/after');
+	});
+
+	it('seats the one child of a slot that admits a single kind', () => {
+		const only = seat().filter((s) => s.seat !== undefined && s.slot === 'only');
+		expect(only.map((s) => formatPreferencePath(s.path!))).toEqual(['(solo)/only:/(attr)/after']);
+	});
+
+	it('takes the arm the child edge already resolves to, so minting moves nothing', () => {
+		const sites = seat({ attr: { after: preference('newline') } });
+		const global = sites.find((s) => s.kind === 'attr' && s.address === 'attr_after')!;
+		const seated = sites.find((s) => s.kind === 'file' && s.seat?.kind === 'attr')!;
+		expect(global.defaultArm).toBe('newline');
+		expect(seated.defaultArm).toBe('newline');
+		expect(seated.seat?.field).toBe('attr_after');
+	});
+});
+
+describe('the options block reaches a site', () => {
+	const braced = { block: seq(str('{'), sym('body')), body: seq(sym('x')) };
+	const armOf = (out: { rules: Record<string, RenderRule> }, address: string): string | undefined =>
+		spacingSitesOf(out as never, nodeMapOf(braced, {})).find((s) => s.address === address)?.defaultArm;
+	const resolved = (extra: object = {}) => {
+		const config = { nodeMap: nodeMapOf(braced, {}), kindEntries, ...extra } as never;
+		return resolveRenderRules(config, () => {}).seamed;
+	};
+
+	it('leaves a site on its fallback when nothing declares it', () => {
+		const out = resolved();
+		expect(armOf(out, 'lbrace_after')).toBe('tight');
+	});
+
+	it('a declaration under a kind sets that site', () => {
+		const out = resolved({ options: { block: { '"{"/after': preference('newline') } } });
+		expect(armOf(out, 'lbrace_after')).toBe('newline');
+	});
+
+	it('a binding to a virtual label sets every address bound to it', () => {
+		const out = resolved({
+			options: {
+				indented: { before: preference('newline') },
+				_bindings: { 'block/"{"/after': 'indented/before' }
+			}
+		});
+		expect(armOf(out, 'lbrace_after')).toBe('newline');
+	});
+
+	it('rejects a virtual label that shadows a kind the grammar has', () => {
+		expect(() =>
+			resolved({
+				options: {
+					body: { before: preference('newline') },
+					_bindings: { 'block/"{"/after': 'body/before' }
+				}
+			})
+		).toThrow(/names the kind 'body'/);
+	});
+
+	it('passes over an address no render-rule site answers, which a later site may', () => {
+		expect(() => resolved({ options: { block: { '"("/after': preference('newline') } } })).not.toThrow();
 	});
 });

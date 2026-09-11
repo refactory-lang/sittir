@@ -5,7 +5,9 @@ import type {
 	NodeBackedRef,
 	AssembledNode,
 	FieldStorageInfo,
-	ValueStorage
+	ValueStorage,
+	NodeValueStorage,
+	TextValueStorage
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
@@ -29,9 +31,15 @@ import {
 	AssembledPolymorph,
 	AssembledLeaf,
 	AssembledPattern,
-	AssembledList
+	AssembledList,
+	isFixedTextLeaf,
+	isTextStorage,
+	textStoragesOf,
+	valueParseKindsOf,
+	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
+import { publicKindName } from '../compiler/model/render-rules.ts';
 
 export function isSlotBearingCompound(
 	node: AssembledNode
@@ -42,7 +50,7 @@ export function isSlotBearingCompound(
 export function isAuthoredCompound(
 	node: AssembledNode
 ): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph {
-	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.hoisted;
+	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
 export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPattern | AssembledEnum {
@@ -53,7 +61,7 @@ export function canonicalSeparatedListField(node: AssembledList): AssembledNonte
 	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { hasCatalogEntry } from './kind-discriminant.ts';
+import { findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -138,7 +146,7 @@ export function resolveHiddenKeywordLeaf(
 	const node = nodeMap.nodes.get(kindName);
 	if (node === undefined) return undefined;
 	const target = storageTargetOf(node, nodeMap);
-	return isKindIdStored(target) ? target : undefined;
+	return isFixedTextLeaf(target) ? target : undefined;
 }
 
 export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
@@ -191,7 +199,8 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 		};
 	}
 	const target = storageTargetOf(node, nodeMap);
-	if (isKindIdStored(target)) {
+	if (target instanceof AssembledEnum) return { via: 'kindId', kind, members: target.members };
+	if (isFixedTextLeaf(target)) {
 		return { via: 'kindId', kind, kindId: keywordRefWireIdentity(value, target).kindId, text: target.text };
 	}
 	return { via: 'node', kind, typeName: node.typeName };
@@ -201,7 +210,7 @@ export function valueStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): ValueSt
 	return (value.storage ??= classifyValueStorage(value, nodeMap));
 }
 
-function typeComponentOf(storage: ValueStorage): TypeComponent {
+function typeComponentOf(storage: NodeValueStorage | TextValueStorage): TypeComponent {
 	if (storage.via === 'node') {
 		return storage.missing
 			? { kind: 'missing', value: storage.typeName, rawKind: storage.kind }
@@ -223,7 +232,9 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 	const out: TypeComponent[] = [];
 	for (const value of field.values) {
 		const storage = valueStorageOf(value, nodeMap);
-		if (storage !== undefined) out.push(typeComponentOf(storage));
+		if (storage === undefined) continue;
+		if (storage.via === 'node') out.push(typeComponentOf(storage));
+		else for (const text of textStoragesOf(storage)) out.push(typeComponentOf(text));
 	}
 	return out;
 }
@@ -234,7 +245,7 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 
 function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
 	const storage = valueStorageOf(entry, nodeMap);
-	return storage !== undefined && storage.via !== 'node' ? storage.text : undefined;
+	return storage !== undefined && isTextStorage(storage) ? storage.text : undefined;
 }
 
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
@@ -309,6 +320,116 @@ export function classifyPrimitiveField(
 	return undefined;
 }
 
+export interface EnumArm {
+	readonly kind: string;
+	readonly id: number | undefined;
+	readonly text: string;
+}
+
+export interface EnumArms {
+	readonly arms: readonly EnumArm[];
+	readonly texts: readonly string[];
+	readonly sawNodeArm: boolean;
+	readonly verbatim: boolean;
+}
+
+export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumArms {
+	const arms: EnumArm[] = [];
+	const texts: string[] = [];
+	const seenKinds = new Set<string>();
+	const seenTexts = new Set<string>();
+	const visitedSupertypes = new Set<string>();
+	let sawNodeArm = false;
+	let verbatim = false;
+	const push = (kind: string, id: number | undefined, text: string): void => {
+		if (!seenKinds.has(kind)) {
+			seenKinds.add(kind);
+			arms.push({ kind, id, text });
+		}
+		if (!seenTexts.has(text)) {
+			seenTexts.add(text);
+			texts.push(text);
+		}
+	};
+	const seatMembers = (value: NodeBackedRef): boolean => {
+		const storage = valueStorageOf(value, nodeMap);
+		if (storage?.via !== 'kindId' || isTextStorage(storage) || storage.members.length === 0) return false;
+		for (const member of storage.members) push(member.kind, member.kindId, member.text);
+		return true;
+	};
+	const seatKeyword = (value: NodeBackedRef, node: AssembledKeyword | AssembledToken): boolean => {
+		const text = node.text;
+		const { kindName, kindId } = keywordRefWireIdentity(value, node);
+		if (kindName === undefined || text === undefined) return false;
+		push(kindName, kindId, text);
+		return true;
+	};
+	const aliasedIntoAnotherKind = (parent: AssembledSupertype, node: AssembledNode): boolean => {
+		const parse = parent.subtypeParseNames?.[node.kind];
+		return parse !== undefined && publicKindName(parse) !== publicKindName(node.kind);
+	};
+	const visitSubtype = (
+		parent: AssembledSupertype,
+		value: NodeBackedRef,
+		node: AssembledNode | undefined,
+		visited: Set<string>
+	): void => {
+		if (node === undefined || aliasedIntoAnotherKind(parent, node)) {
+			sawNodeArm = true;
+			return;
+		}
+		if (node instanceof AssembledEnum) {
+			if (!seatMembers(value)) sawNodeArm = true;
+			return;
+		}
+		if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+			if (!seatKeyword(value, node)) sawNodeArm = true;
+			return;
+		}
+		if (node instanceof AssembledSupertype) {
+			if (visited.has(node.kind)) return;
+			visited.add(node.kind);
+			for (const sub of node.subtypes) {
+				if (isNodeRef(sub)) visitSubtype(node, sub, nodeMap.nodes.get(storageKindOfRef(sub.node)), visited);
+			}
+			return;
+		}
+		sawNodeArm = true;
+	};
+	for (const value of field.values) {
+		if (isNodeRef(value)) {
+			const node = nodeMap.nodes.get(storageKindOfRef(value.node));
+			if (node instanceof AssembledEnum) {
+				if (!seatMembers(value)) verbatim = true;
+				continue;
+			}
+			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+				if (!seatKeyword(value, node)) verbatim = true;
+				continue;
+			}
+			if (node instanceof AssembledSupertype) {
+				visitedSupertypes.add(node.kind);
+				for (const sub of node.subtypes) {
+					if (isNodeRef(sub)) visitSubtype(node, sub, nodeMap.nodes.get(storageKindOfRef(sub.node)), visitedSupertypes);
+				}
+				continue;
+			}
+			sawNodeArm = true;
+			continue;
+		}
+		if (!isTerminalValue(value)) {
+			verbatim = true;
+			continue;
+		}
+		if (value.resolvedKind !== undefined) push(value.resolvedKind, value.resolvedKindId, value.value);
+		else if (!seenTexts.has(value.value)) {
+			seenTexts.add(value.value);
+			texts.push(value.value);
+		}
+	}
+	return { arms, texts, sawNodeArm, verbatim };
+}
+
 function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
@@ -331,12 +452,6 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 		};
 	}
 
-	const enumKinds: string[] = [];
-	const enumKindsById = new Map<string, number>();
-	const texts: string[] = [];
-	const seenKinds = new Set<string>();
-	const seenTexts = new Set<string>();
-	let sawNodeArm = false;
 	const verbatim = (): FieldStorageInfo => ({
 		kind: 'verbatim',
 		texts: [],
@@ -344,60 +459,14 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 		enumKindsById: new Map(),
 		collapsesMultiplicity: false
 	});
-	for (const value of field.values) {
-		if (isNodeRef(value)) {
-			const resolvedKind = storageKindOfRef(value.node);
-			const node = nodeMap.nodes.get(resolvedKind);
-			if (node instanceof AssembledEnum) {
-				if (node.values.length <= 1 || node.resolvedKinds.length === 0) return verbatim();
-				node.resolvedKinds.forEach((enumKind, i) => {
-					if (seenKinds.has(enumKind)) return;
-					seenKinds.add(enumKind);
-					enumKinds.push(enumKind);
-					const id = node.resolvedKindIds[i];
-					if (id !== undefined) enumKindsById.set(enumKind, id);
-				});
-				for (const text of node.values) {
-					if (seenTexts.has(text)) continue;
-					seenTexts.add(text);
-					texts.push(text);
-				}
-				continue;
-			}
-			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
-				const text = node.text;
-				const { kindName, kindId } = keywordRefWireIdentity(value, node);
-				if (kindName === undefined || text === undefined) return verbatim();
-				if (!seenKinds.has(kindName)) {
-					seenKinds.add(kindName);
-					enumKinds.push(kindName);
-					if (kindId !== undefined) enumKindsById.set(kindName, kindId);
-				}
-				if (!seenTexts.has(text)) {
-					seenTexts.add(text);
-					texts.push(text);
-				}
-				continue;
-			}
-			sawNodeArm = true;
-			continue;
-		}
-		if (!isTerminalValue(value)) return verbatim();
-		if (value.resolvedKind !== undefined && !seenKinds.has(value.resolvedKind)) {
-			seenKinds.add(value.resolvedKind);
-			enumKinds.push(value.resolvedKind);
-			if (value.resolvedKindId !== undefined) enumKindsById.set(value.resolvedKind, value.resolvedKindId);
-		}
-		if (!seenTexts.has(value.value)) {
-			seenTexts.add(value.value);
-			texts.push(value.value);
-		}
-	}
-	if (enumKinds.length === 0) return verbatim();
+	const walked = enumArmsOf(field, nodeMap);
+	if (walked.verbatim || walked.arms.length === 0) return verbatim();
+	const enumKindsById = new Map<string, number>();
+	for (const arm of walked.arms) if (arm.id !== undefined) enumKindsById.set(arm.kind, arm.id);
 	return {
-		kind: sawNodeArm ? 'mixedEnum' : 'kindEnum',
-		texts,
-		enumKinds,
+		kind: walked.sawNodeArm ? 'mixedEnum' : 'kindEnum',
+		texts: [...walked.texts],
+		enumKinds: walked.arms.map((a) => a.kind),
 		enumKindsById,
 		collapsesMultiplicity: false
 	};
@@ -437,26 +506,11 @@ export function kindEnumTextIdPairs(
 ): readonly (readonly [string, number])[] {
 	const out: (readonly [string, number])[] = [];
 	const seen = new Set<string>();
-	const push = (text: string, id: number | undefined): void => {
-		if (id === undefined || seen.has(text)) return;
-		seen.add(text);
-		out.push([text, id]);
-	};
-	for (const value of field.values) {
-		if (isNodeRef(value)) {
-			const node = nodeMap.nodes.get(storageKindOfRef(value.node));
-			if (node instanceof AssembledEnum) {
-				for (const [text, entry] of node.resolvedByText) push(text, entry.id);
-				continue;
-			}
-			if ((node instanceof AssembledKeyword || node instanceof AssembledToken) && node.text !== undefined) {
-				const { kindName, kindId } = keywordRefWireIdentity(value, node);
-				const entry = kindEntries?.find((e) => e.kind === kindName);
-				push(node.text, kindId ?? entry?.id);
-			}
-			continue;
-		}
-		if (isTerminalValue(value)) push(value.value, value.resolvedKindId);
+	for (const arm of enumArmsOf(field, nodeMap).arms) {
+		const id = arm.id ?? kindEntries?.find((e) => e.kind === arm.kind)?.id;
+		if (id === undefined || seen.has(arm.text)) continue;
+		seen.add(arm.text);
+		out.push([arm.text, id]);
 	}
 	return out;
 }
@@ -472,7 +526,7 @@ export function kindEnumAltIdPairs(
 		const node = nodeMap.nodes.get(storageKindOfRef(value.node));
 		if (node === undefined) continue;
 		const target = storageTargetOf(node, nodeMap);
-		if (!isKindIdStored(target)) continue;
+		if (!isFixedTextLeaf(target)) continue;
 		const stored = keywordRefWireIdentity(value, target).kindId;
 		if (stored === undefined) continue;
 		for (const alt of [value.storageKindId, value.parseKindId, target.resolvedKindId]) {
@@ -571,7 +625,7 @@ export function resolveFactoryFieldNames(node: AssembledNode): readonly string[]
 }
 
 function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
-	if (!(node instanceof AbstractAssembledCompound) || node.hoisted) return null;
+	if (!(node instanceof AbstractAssembledCompound)) return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
 	return shape === 'direct' || shape === 'forwarded' ? 'direct' : null;
@@ -648,10 +702,6 @@ export function classifyFactoryShape(
 	if (node instanceof AssembledToken) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
-		if (node.hoisted) {
-			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
-			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
-		}
 		const slot = node.soleSlot;
 		if (slot !== undefined) {
 			if (isMultiple(slot)) return 'spread';
@@ -718,6 +768,59 @@ export type FactoryEmission =
 	| 'skip-non-surface-kind'
 	| 'skip-hidden-keyword-literal'
 	| 'skip-no-factory-name';
+
+export function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindEnumEntry[] | undefined): string {
+	if (!kindEntries) return JSON.stringify(node.kind);
+	const members: string[] = [];
+	for (const value of node.values) {
+		const rec = node.resolvedByText.get(value);
+		const entry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntry(kindEntries, value);
+		if (entry) {
+			members.push(`TSKindId.${entry.member}`);
+		}
+	}
+	if (members.length === 0) return 'number';
+	return members.join(' | ');
+}
+
+export function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
+	const expanded: string[] = [];
+	const seen = new Set<string>();
+	function add(name: string): void {
+		const normalized = name.startsWith('_') ? name.slice(1) : name;
+		if (seen.has(normalized)) return;
+		seen.add(normalized);
+		expanded.push(normalized);
+	}
+	for (const name of names) {
+		const normalized = name.startsWith('_') ? name.slice(1) : name;
+		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
+		if (!(node instanceof AssembledSupertype)) {
+			add(name);
+			continue;
+		}
+		for (const v of node.transitiveParseKinds ?? []) {
+			const parseName = v.parseKind?.name;
+			if (parseName !== undefined) add(parseName);
+		}
+	}
+	return expanded;
+}
+
+export function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
+	if (!slot.isUnnamed) return undefined;
+	const labelNames = valueParseLabelsOf(slot);
+	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
+	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
+	const concrete = kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [];
+	if (labelNames.length === 0 && concrete.length === 0) return undefined;
+	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
+	const legacyKey = `_${slot.name}`;
+	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
+		return undefined;
+	}
+	return storageKeys;
+}
 
 export function classifyFactoryEmission(
 	kind: string,
@@ -786,7 +889,7 @@ export function isWrapChildrenKind(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): boolean {
-	const compound = node instanceof AbstractAssembledCompound && !node.hoisted;
+	const compound = node instanceof AbstractAssembledCompound;
 	if (!compound && !(node instanceof AssembledList)) return false;
 	if (!node.rawFactoryName) return false;
 	if (kind.startsWith('_') && !node.userFacing) return false;

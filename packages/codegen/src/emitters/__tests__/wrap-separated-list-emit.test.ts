@@ -59,8 +59,9 @@ describe('wrap emitter — separatedList', () => {
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
-		const renderDefaults = { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } } };
-		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES, renderDefaults });
+		const list = nodeMap.nodes.get('member_list');
+		if (list instanceof AssembledList) list.resolvedSeparatorArm = 'semi';
+		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
 
 		expect(emitted).toContain('_member:');
 		expect(emitted).toContain('member() {');
@@ -69,7 +70,8 @@ describe('wrap emitter — separatedList', () => {
 		expect(emitted).toContain('"leading"');
 		expect(emitted).toContain('"trailing"');
 		expect(emitted).toContain('_separator: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]) ?? TSKindId.Semi,');
-		expect(() => emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES })).toThrow(
+		const undeclared = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		expect(() => emitWrap({ grammar: 'test', nodeMap: undeclared, kindEntries: KIND_ENTRIES })).toThrow(
 			/member_list chooses its separator per instance and declares no default/
 		);
 	});
