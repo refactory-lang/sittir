@@ -1,4 +1,6 @@
-//! SpacingWriter — render-time word-boundary spacing.
+//! SpacingWriter — a `RenderSink` that inserts render-time word-boundary
+//! spacing and resolves whitespace sites against a grammar's
+//! `WhitespaceTable`.
 //!
 //! Insert a space at any write seam where a word-class character would
 //! collide with a word-class character. If two word-class characters from
@@ -6,6 +8,13 @@
 //! have merged them into one token — so the insert is the definition of
 //! tokenization, not a heuristic. Style spaces stay in template literals;
 //! this writer supplies only lexically-required spaces at dynamic seams.
+//!
+//! Every other whitespace decision — a site's arm, a fixed seam, a
+//! whitespace token, depth — arrives as a `RenderSink` method call, never as
+//! a character in the text stream: `site` resolves an id through the
+//! attached `WhitespaceTable`, `seam`/`token_seam` hold a payload that
+//! coalesces to the widest of what a run of calls asks for, and
+//! `indent`/`dedent` move the depth the next line is paid at.
 //!
 //! Wrap the destination ONCE at the root render call. Wrapping per
 //! nesting level instead monomorphizes recursive render paths into an
@@ -93,61 +102,9 @@ const fn default_ascii_table() -> [bool; 128] {
 }
 
 /// Streaming writer inserting lexically-required spaces at write seams.
-/// See the module doc. Inert under templates that carry their own spaces:
-/// The in-band adjacency mark: "no seam space may be inserted before
-/// the text that follows this character". It travels IN the stream,
-/// written by whoever knows the fact — generated render code for an
-/// immediate-stamped token, or a template literal at a boundary codegen
-/// resolved as statically glued — so its position is exactly the write
-/// order, whatever `fmt::Write`/`Display`/askama chokepoints sit between
-/// the writer of the fact and the root `SpacingWriter`. U+FFFE is a
-/// Unicode noncharacter: it is invalid in interchange, so no source text
-/// can carry it and the writer strips it without ambiguity.
-pub const ADJACENT: char = '\u{FFFE}';
-pub const ADJACENT_STR: &str = "\u{FFFE}";
-
-/// Write the adjacency mark to `dest`: the next text written begins an
-/// immediate token.
-pub fn mark_adjacent(dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
-    dest.write_str(ADJACENT_STR)
-}
-
-/// Indentation marks: noncharacters like [`ADJACENT`], stripped by the
-/// writer. `INDENT` deepens the indentation by one unit and `DEDENT`
-/// shallows it; each is followed by the newline it implies, so a whitespace
-/// kind that renders `INDENT_NEWLINE` reads "go one level deeper, then break".
+/// See the module doc. Every whitespace decision reaches the writer as a
+/// `RenderSink` call, never as a character in the text stream.
 ///
-/// `INDENT`, `DEDENT`, [`SEAM`] and [`TOKEN_SEAM`] additionally carry a payload: the
-/// whitespace run written immediately after the mark, in the same
-/// `write_str` call, is that mark's option-driven whitespace (a separator, a
-/// flank, or a token seam) rather than ordinary text. The writer holds a
-/// mark's payload instead of writing it immediately; a later mark's payload
-/// replaces the held one only when it is wider (`""` < spaces < a run
-/// containing `\n`, ties keeping the first), so consecutive marks coalesce
-/// to the widest whitespace any of them asked for. The held payload is
-/// flushed before the next non-empty literal text reaches the sink, and
-/// dropped by [`SpacingWriter::finish`] when nothing follows it. Literal
-/// text is never part of this coalescing, even when it is itself
-/// whitespace.
-pub const INDENT: char = '\u{FDD0}';
-pub const DEDENT: char = '\u{FDD1}';
-pub const INDENT_NEWLINE: &str = "\u{FDD0}\n";
-pub const DEDENT_NEWLINE: &str = "\u{FDD1}\n";
-
-/// The seam mark: names a punctuation-token spacing site (`lparen_before`,
-/// `rparen_after`, …) whose resolved whitespace follows it in the stream as
-/// its payload, per the contract on [`INDENT`].
-pub const SEAM: char = '\u{FDD2}';
-pub const SEAM_STR: &str = "\u{FDD2}";
-
-/// The whitespace-token mark: a token whose text is nothing but whitespace —
-/// a newline terminator, an automatic semicolon rendered as a break — is
-/// written behind it as a payload, so it coalesces with the seams around it
-/// like one of them; but it is a token the source holds, so unlike a seam it
-/// is never dropped: one still held when the render ends is written out.
-pub const TOKEN_SEAM: char = '\u{FDD3}';
-pub const TOKEN_SEAM_STR: &str = "\u{FDD3}";
-
 /// The indentation unit a writer uses when none is configured.
 pub const DEFAULT_INDENT: &str = "    ";
 
@@ -397,73 +354,16 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 }
 
-fn is_mark(c: char) -> bool {
-    c == ADJACENT || c == INDENT || c == DEDENT || c == SEAM || c == TOKEN_SEAM
-}
-
-impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
-    /// Splits the incoming text at every mark. The text before a mark is an
-    /// ordinary chunk, flushing any held seam payload ahead of it. `ADJACENT`
-    /// arms `adjacent_next` for whatever non-empty text comes next (in this
-    /// call or a later one) and carries no payload. `INDENT` and `DEDENT`
-    /// move the depth immediately; they and `SEAM` then claim the
-    /// whitespace run that follows them in this same call as their payload,
-    /// merged into the held seam rather than written. A `DEDENT` that
-    /// arrives while the `INDENT` before it has had no text written since
-    /// cancels it: the held payload and its own are dropped, so an empty
-    /// body renders as its bare delimiters (`{}`). No mark reaches the
-    /// sink.
-    fn write_str(&mut self, s: &str) -> std::fmt::Result {
-        let mut rest = s;
-        while let Some(i) = rest.find(is_mark) {
-            self.write_chunk(&rest[..i])?;
-            let mark = rest[i..].chars().next().expect("a mark was found");
-            rest = &rest[i + mark.len_utf8()..];
-            if mark == ADJACENT {
-                crate::render::RenderSink::adjacent(self);
-                continue;
-            }
-            let end = rest
-                .find(|c: char| !c.is_whitespace())
-                .unwrap_or(rest.len());
-            let payload = &rest[..end];
-            rest = &rest[end..];
-            match mark {
-                INDENT => {
-                    crate::render::RenderSink::indent(self);
-                }
-                DEDENT => {
-                    if !self.dedent_keeps_payload() {
-                        continue;
-                    }
-                }
-                _ => {}
-            }
-            if mark == TOKEN_SEAM {
-                crate::render::RenderSink::token_seam(self, payload);
-            } else {
-                self.merge_seam(payload);
-            }
-        }
-        self.write_chunk(rest)
-    }
-
-    fn write_char(&mut self, c: char) -> std::fmt::Result {
-        let mut buf = [0u8; 4];
-        self.write_str(c.encode_utf8(&mut buf))
-    }
-}
-
 #[cfg(test)]
-mod tests {
+mod word_matcher_tests {
     use super::*;
-    use std::fmt::Write;
+    use crate::render::RenderSink;
 
     fn spaced(parts: &[&str]) -> String {
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
         for p in parts {
-            w.write_str(p).unwrap();
+            w.text(p).unwrap();
         }
         out
     }
@@ -512,7 +412,7 @@ mod tests {
         let mut out = String::new();
         let mut w = SpacingWriter::new(&mut out, word);
         for p in parts {
-            w.write_str(p).unwrap();
+            w.text(p).unwrap();
         }
         out
     }
@@ -556,235 +456,6 @@ mod tests {
         // WordMatcher::default_ident() carries an empty pair set —
         // grammars opt in via with_literal_merge_pairs at emit time.
         assert_eq!(spaced(&["..", "=>"]), "..=>");
-    }
-}
-
-#[cfg(test)]
-mod adjacent_tests {
-    use super::*;
-    use std::fmt::Write;
-
-    #[test]
-    fn marked_chunk_suppresses_word_word_seam() {
-        // A string fragment following an escape: `\n` then `b` — both
-        // word-class flanks, but the boundary is grammar-immediate.
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str("a").unwrap();
-        w.write_str(ADJACENT_STR).unwrap();
-        w.write_str("\\n").unwrap();
-        w.write_str(ADJACENT_STR).unwrap();
-        w.write_str("b").unwrap();
-        assert_eq!(out, "a\\nb");
-    }
-
-    #[test]
-    fn mark_is_consumed_by_one_chunk_only() {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str("pub").unwrap();
-        w.write_str(ADJACENT_STR).unwrap();
-        w.write_str("x").unwrap();
-        w.write_str("fn").unwrap();
-        assert_eq!(out, "pubx fn");
-    }
-
-    #[test]
-    fn mark_updates_last_char_state() {
-        // The first NORMAL seam after an adjacent run must be computed
-        // against the run's true final character, not stale state.
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str("(").unwrap();
-        w.write_str(ADJACENT_STR).unwrap();
-        w.write_str("d").unwrap();
-        w.write_str("if").unwrap();
-        assert_eq!(out, "(d if");
-    }
-
-    #[test]
-    fn mark_inside_one_chunk_is_split_and_stripped() {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str("from\u{FFFE}").unwrap();
-        w.write_str("x").unwrap();
-        w.write_str("a\u{FFFE}b").unwrap();
-        assert_eq!(out, "fromx ab");
-    }
-
-    #[test]
-    fn whitespace_flank_is_not_a_seam() {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str("fn ").unwrap();
-        w.write_str("main").unwrap();
-        w.write_str("\n").unwrap();
-        w.write_str("x").unwrap();
-        assert_eq!(out, "fn main\nx");
-    }
-
-    #[test]
-    fn mark_before_empty_write_survives_for_next_chunk() {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str("a").unwrap();
-        w.write_str(ADJACENT_STR).unwrap();
-        w.write_str("").unwrap();
-        w.write_str("b").unwrap();
-        assert_eq!(out, "ab");
-    }
-    #[test]
-    fn indent_marks_move_the_depth_and_a_newline_pays_it_on_the_next_text() {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str("{").unwrap();
-        w.write_str(INDENT_NEWLINE).unwrap();
-        w.write_str("a").unwrap();
-        w.write_str("\n").unwrap();
-        w.write_str("b").unwrap();
-        w.write_str(DEDENT_NEWLINE).unwrap();
-        w.write_str("}").unwrap();
-        assert_eq!(out, "{\n    a\n    b\n}");
-    }
-
-    #[test]
-    fn nested_indentation_uses_the_configured_unit_and_blank_lines_stay_empty() {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_indent("  ");
-        w.write_str("a").unwrap();
-        w.write_str(INDENT_NEWLINE).unwrap();
-        w.write_str("b").unwrap();
-        w.write_str(INDENT_NEWLINE).unwrap();
-        w.write_str("\n").unwrap();
-        w.write_str("c").unwrap();
-        w.write_str(DEDENT_NEWLINE).unwrap();
-        w.write_str(DEDENT_NEWLINE).unwrap();
-        w.write_str("d").unwrap();
-        assert_eq!(out, "a\n  b\n\n    c\nd");
-    }
-
-    #[test]
-    fn a_dedent_below_zero_saturates_and_marks_never_reach_the_sink() {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        w.write_str(DEDENT_NEWLINE).unwrap();
-        w.write_str("x").unwrap();
-        w.write_str(INDENT_NEWLINE).unwrap();
-        w.write_str("y").unwrap();
-        assert_eq!(out, "x\n    y");
-        assert!(!out.contains(INDENT) && !out.contains(DEDENT));
-    }
-}
-
-#[cfg(test)]
-mod seam_tests {
-    use super::*;
-    use std::fmt::Write;
-
-    fn run(parts: &[&str]) -> String {
-        let mut out = String::new();
-        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident());
-        for p in parts {
-            w.write_str(p).unwrap();
-        }
-        w.finish().unwrap();
-        out
-    }
-
-    #[test]
-    fn a_token_seam_coalesces_with_seams_but_is_never_dropped() {
-        assert_eq!(run(&["a", "\u{FDD3}\n", "\u{FDD2}\n\n", "b"]), "a\n\nb");
-        assert_eq!(run(&["a", "\u{FDD2}\n\n", "\u{FDD3}\n", "b"]), "a\n\nb");
-        assert_eq!(run(&["a", "\u{FDD3}\n", "\u{FDD2}\n", "b"]), "a\nb");
-        assert_eq!(run(&["a", "\u{FDD3}\n"]), "a\n");
-        assert_eq!(run(&["a", "\u{FDD3}\n", "\u{FDD2}"]), "a\n");
-        assert_eq!(run(&["a", "\u{FDD2}\n"]), "a");
-    }
-
-    #[test]
-    fn a_seam_mark_writes_its_payload_before_the_next_text() {
-        assert_eq!(run(&["a", "\u{FDD2} ", "b"]), "a b");
-        assert_eq!(run(&["a", "\u{FDD2}\n", "b"]), "a\nb");
-        assert_eq!(run(&["a", "\u{FDD2}", "("]), "a(");
-    }
-
-    #[test]
-    fn consecutive_seams_coalesce_to_the_wider_in_either_order() {
-        assert_eq!(run(&["a", "\u{FDD2} ", "\u{FDD2}\n", "b"]), "a\nb");
-        assert_eq!(run(&["a", "\u{FDD2}\n", "\u{FDD2} ", "b"]), "a\nb");
-        assert_eq!(run(&["a", "\u{FDD2}", "\u{FDD2} ", "b"]), "a b");
-        assert_eq!(run(&["a", "\u{FDD2} ", "\u{FDD2} ", "b"]), "a b");
-    }
-
-    #[test]
-    fn a_blank_line_seam_outranks_a_newline_in_either_order() {
-        assert_eq!(run(&["a", "\u{FDD2}\n", "\u{FDD2}\n\n", "b"]), "a\n\nb");
-        assert_eq!(run(&["a", "\u{FDD2}\n\n", "\u{FDD2}\n", "b"]), "a\n\nb");
-        assert_eq!(run(&["a", "\u{FDD2}\n\n", "\u{FDD2} ", "b"]), "a\n\nb");
-    }
-
-    #[test]
-    fn a_tight_seam_across_a_word_hazard_still_gets_the_lexical_space() {
-        assert_eq!(run(&["pub", "\u{FDD2}", "fn"]), "pub fn");
-        assert_eq!(run(&["pub", "\u{FDD2}", "("]), "pub(");
-    }
-
-    #[test]
-    fn literal_whitespace_is_never_coalesced() {
-        assert_eq!(run(&["a", "\u{FDD2} ", "  b"]), "a   b");
-        assert_eq!(run(&["a", " ", "\u{FDD2} ", "b"]), "a  b");
-        assert_eq!(run(&["a", "\u{FDD2} x", "("]), "a x(");
-    }
-
-    #[test]
-    fn a_space_seam_beside_an_indent_flank_keeps_the_indent_and_the_depth() {
-        assert_eq!(
-            run(&[
-                "{",
-                "\u{FDD2} ",
-                INDENT_NEWLINE,
-                "a",
-                DEDENT_NEWLINE,
-                "\u{FDD2} ",
-                "}"
-            ]),
-            "{\n    a\n}"
-        );
-    }
-
-    #[test]
-    fn an_indent_dedented_before_any_text_leaves_an_empty_body_bare() {
-        assert_eq!(run(&["{", INDENT_NEWLINE, DEDENT_NEWLINE, "}"]), "{}");
-        assert_eq!(
-            run(&["{", INDENT_NEWLINE, "\u{FDD2} ", DEDENT_NEWLINE, "}"]),
-            "{}"
-        );
-        assert_eq!(
-            run(&["{", INDENT_NEWLINE, "a", DEDENT_NEWLINE, "}"]),
-            "{\n    a\n}"
-        );
-        assert_eq!(
-            run(&["{", INDENT_NEWLINE, DEDENT_NEWLINE, "}", "\u{FDD2}\n", "x"]),
-            "{}\nx"
-        );
-    }
-
-    #[test]
-    fn a_bare_dedent_never_drops_a_following_seam() {
-        assert_eq!(run(&["a", "\u{FDD1}", "\u{FDD2}\n", "b"]), "a\nb");
-    }
-
-    #[test]
-    fn an_adjacency_mark_survives_a_tight_seam() {
-        assert_eq!(run(&["a", ADJACENT_STR, "\u{FDD2}", "b"]), "ab");
-    }
-
-    #[test]
-    fn a_seam_lies_between_two_things_so_the_edges_of_a_render_drop_theirs() {
-        assert_eq!(run(&["\u{FDD2} ", "a"]), "a");
-        assert_eq!(run(&["\u{FDD2}\n", "\u{FDD2} ", "a"]), "a");
-        assert_eq!(run(&["a", "\u{FDD2}\n"]), "a");
-        assert_eq!(run(&["a", "\u{FDD2} ", "b", "\u{FDD2} "]), "a b");
     }
 }
 
@@ -939,6 +610,27 @@ mod sink_tests {
                 w.text("}").unwrap();
             }),
             "{\n  a\n}"
+        );
+    }
+
+    #[test]
+    fn nested_indentation_stacks_and_a_dedented_indent_leaves_the_body_bare() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.indent();
+                w.seam("\n");
+                w.text("b").unwrap();
+                w.indent();
+                w.seam("\n\n");
+                w.text("c").unwrap();
+                w.dedent();
+                w.seam("\n");
+                w.dedent();
+                w.seam("\n");
+                w.text("d").unwrap();
+            }),
+            "a\n  b\n\n    c\nd"
         );
     }
 

@@ -2,57 +2,55 @@
 //!
 //! `render_with_trivia!` is the canonical way to wrap a transport's
 //! render call with leading/trailing trivia text. Used by every
-//! struct-based `Display` impl in grammar crates.
+//! struct-based `Render` impl in grammar crates.
 
 /// Wraps a transport render call with trivia (leading/trailing comments).
-/// Each entry is rendered to a short scratch string so the newline that
-/// separates it from what follows can be skipped when the entry already
-/// ends the line. Each trivia entry renders via its OWN `Display` impl (the same per-kind
-/// dispatch every other transport uses), not as a pre-rendered string —
-/// the concrete trivia entry type is grammar-specific (`TriviaTransport`,
-/// generated per grammar) and only needs to implement `Display`.
+/// Each trivia entry renders via its OWN `Render` impl (the same per-kind
+/// dispatch every other transport uses) — the concrete trivia entry type is
+/// grammar-specific (`TriviaTransport`, generated per grammar) and only
+/// needs to implement `Render`.
 ///
 /// # Usage
 ///
-/// In every struct-based `Display` impl:
+/// In every struct-based `Render` impl:
 ///
 /// ```rust,ignore
-/// fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-///     render_with_trivia!(self, f, render_xxx(self, f))
+/// fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+///     render_with_trivia!(self, w, render_xxx(self, w))
 /// }
 /// ```
 ///
 /// # Parameters
 ///
 /// - `$self` — the transport struct (must have a `transport_trivia_data: Option<T>` field
-///   where `T` has `leading`/`trailing: Option<Vec<E>>` and `E: Display`)
-/// - `$dest` — any `fmt::Write` target, the formatter included
-/// - `$render` — the actual render expression (returns `std::fmt::Result`)
+///   where `T` has `leading`/`trailing: Option<Vec<E>>` and `E: Render`)
+/// - `$w` — a `&mut dyn RenderSink`
+/// - `$render` — the actual render expression (returns `RenderResult`)
 ///
 /// # Returns
 ///
-/// `std::fmt::Result` — propagates errors from both trivia renders and the inner render.
+/// `RenderResult` — propagates errors from both trivia renders and the inner render.
 ///
 /// # Notes
 ///
 /// - Bool/enum transport variants don't have `transport_trivia_data` — those
-///   write directly to dest and don't use this macro.
+///   write directly to `$w` and don't use this macro.
 /// - Double-underscore prefixed variable names avoid shadowing caller variables.
+/// - The boundary after the last trailing entry must be a line break: a
+///   line comment silently swallows whatever follows it on the same
+///   physical line. An entry whose own text already ends the line (a
+///   grammar may include the terminator in the comment node's span)
+///   satisfies that without an extra break.
 #[macro_export]
 macro_rules! render_with_trivia {
-    ($self:expr, $dest:expr, $render:expr) => {
-        (|| -> ::std::fmt::Result {
+    ($self:expr, $w:expr, $render:expr) => {
+        (|| -> $crate::render::RenderResult {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __leading) = __trivia.leading {
                     for __entry in __leading {
-                        let mut __text = ::std::string::String::new();
-                        ::std::fmt::Write::write_fmt(
-                            &mut __text,
-                            ::std::format_args!("{__entry}"),
-                        )?;
-                        $dest.write_str(&__text)?;
-                        if !__text.ends_with('\n') {
-                            $dest.write_str("\n")?;
+                        $crate::render::Render::render(__entry, $w)?;
+                        if !$w.ends_line() {
+                            $w.text("\n")?;
                         }
                     }
                 }
@@ -61,28 +59,12 @@ macro_rules! render_with_trivia {
             if let Some(ref __trivia) = $self.transport_trivia_data {
                 if let Some(ref __trailing) = __trivia.trailing {
                     if !__trailing.is_empty() {
-                        let mut __ends_line = false;
                         for __entry in __trailing {
-                            let mut __text = ::std::string::String::new();
-                            ::std::fmt::Write::write_fmt(
-                                &mut __text,
-                                ::std::format_args!("{__entry}"),
-                            )?;
-                            $dest.write_str("\n")?;
-                            $dest.write_str(&__text)?;
-                            __ends_line = __text.ends_with('\n');
+                            $w.text("\n")?;
+                            $crate::render::Render::render(__entry, $w)?;
                         }
-                        // The boundary after the LAST trailing entry must be a
-                        // line break: a line comment silently swallows whatever
-                        // follows it on the same physical line, and
-                        // SpacingWriter only guarantees a space. An entry whose
-                        // own text ends the line already satisfies that — a
-                        // grammar may include the terminator in the comment
-                        // node's span (rust's `line_comment` does, its
-                        // `block_comment` does not), so writing one
-                        // unconditionally would open a blank line.
-                        if !__ends_line {
-                            $dest.write_str("\n")?;
+                        if !$w.ends_line() {
+                            $w.text("\n")?;
                         }
                     }
                 }
@@ -94,18 +76,18 @@ macro_rules! render_with_trivia {
 
 #[cfg(test)]
 mod trivia_macro_tests {
-    use std::fmt::Write;
+    use crate::render::{Render, RenderResult, RenderSink};
 
-    /// Minimal `Display` impl for macro-expansion tests —
-    /// real trivia entries are the generated, grammar-specific
-    /// `TriviaTransport` enum (see `render_module.ts`); this mock only
-    /// needs to prove the macro's leading/trailing/empty control flow,
-    /// not any concrete grammar's render output.
+    /// Minimal `Render` impl for macro-expansion tests — real trivia
+    /// entries are the generated, grammar-specific `TriviaTransport` enum
+    /// (see `render_module.ts`); this mock only needs to prove the macro's
+    /// leading/trailing/empty control flow, not any concrete grammar's
+    /// render output.
     struct MockTrivia(String);
 
-    impl std::fmt::Display for MockTrivia {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            f.write_str(&self.0)
+    impl Render for MockTrivia {
+        fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+            w.text(&self.0)
         }
     }
 
@@ -118,12 +100,21 @@ mod trivia_macro_tests {
         transport_trivia_data: Option<MockTransportTrivia>,
     }
 
-    fn render_mock(_t: &MockTransport, dest: &mut dyn Write) -> std::fmt::Result {
-        dest.write_str("CONTENT")
+    fn render_mock(_t: &MockTransport, w: &mut dyn RenderSink) -> RenderResult {
+        w.text("CONTENT")
     }
 
     fn mock_trivia(texts: &[&str]) -> Vec<MockTrivia> {
         texts.iter().map(|t| MockTrivia(t.to_string())).collect()
+    }
+
+    fn render(t: &MockTransport) -> String {
+        let mut s = String::new();
+        let mut w = crate::spacing::SpacingWriter::new(&mut s, crate::spacing::WordMatcher::default_ident());
+        let result: RenderResult = render_with_trivia!(t, &mut w, render_mock(t, &mut w));
+        result.unwrap();
+        w.finish().unwrap();
+        s
     }
 
     #[test]
@@ -131,10 +122,7 @@ mod trivia_macro_tests {
         let t = MockTransport {
             transport_trivia_data: None,
         };
-        let mut buf = String::new();
-        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
-        assert!(result.is_ok());
-        assert_eq!(buf, "CONTENT");
+        assert_eq!(render(&t), "CONTENT");
     }
 
     #[test]
@@ -145,10 +133,7 @@ mod trivia_macro_tests {
                 trailing: None,
             }),
         };
-        let mut buf = String::new();
-        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
-        assert!(result.is_ok());
-        assert_eq!(buf, "// hello\nCONTENT");
+        assert_eq!(render(&t), "// hello\nCONTENT");
     }
 
     #[test]
@@ -159,10 +144,7 @@ mod trivia_macro_tests {
                 trailing: Some(mock_trivia(&["// end"])),
             }),
         };
-        let mut buf = String::new();
-        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
-        assert!(result.is_ok());
-        assert_eq!(buf, "CONTENT\n// end\n");
+        assert_eq!(render(&t), "CONTENT\n// end\n");
     }
 
     #[test]
@@ -173,10 +155,7 @@ mod trivia_macro_tests {
                 trailing: Some(mock_trivia(&["// bottom"])),
             }),
         };
-        let mut buf = String::new();
-        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
-        assert!(result.is_ok());
-        assert_eq!(buf, "// top\nCONTENT\n// bottom\n");
+        assert_eq!(render(&t), "// top\nCONTENT\n// bottom\n");
     }
 
     #[test]
@@ -187,10 +166,7 @@ mod trivia_macro_tests {
                 trailing: None,
             }),
         };
-        let mut buf = String::new();
-        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
-        assert!(result.is_ok());
-        assert_eq!(buf, "// line 1\n// line 2\nCONTENT");
+        assert_eq!(render(&t), "// line 1\n// line 2\nCONTENT");
     }
 
     #[test]
@@ -201,10 +177,7 @@ mod trivia_macro_tests {
                 trailing: Some(mock_trivia(&["// end 1", "// end 2"])),
             }),
         };
-        let mut buf = String::new();
-        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
-        assert!(result.is_ok());
-        assert_eq!(buf, "CONTENT\n// end 1\n// end 2\n");
+        assert_eq!(render(&t), "CONTENT\n// end 1\n// end 2\n");
     }
 
     #[test]
@@ -215,9 +188,6 @@ mod trivia_macro_tests {
                 trailing: Some(Vec::<MockTrivia>::new()),
             }),
         };
-        let mut buf = String::new();
-        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
-        assert!(result.is_ok());
-        assert_eq!(buf, "CONTENT");
+        assert_eq!(render(&t), "CONTENT");
     }
 }

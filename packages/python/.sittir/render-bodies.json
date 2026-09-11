@@ -277,16 +277,14 @@
 			"field": "match_block_block_before"
 		},
 		{
-			"kind": "text",
-			"text": "﷐\n"
+			"kind": "indent"
 		},
 		{
 			"kind": "slot",
 			"name": "alternative"
 		},
 		{
-			"kind": "text",
-			"text": "﷑\n"
+			"kind": "dedent"
 		},
 		{
 			"kind": "seam",
@@ -407,8 +405,8 @@
 			"name": "simple_statements_elements"
 		},
 		{
-			"kind": "whitespace",
-			"text": "﷓\n"
+			"kind": "tokenSeam",
+			"text": "\n"
 		},
 		{
 			"kind": "seam",
@@ -475,8 +473,7 @@
 			"field": "suite_block_before"
 		},
 		{
-			"kind": "text",
-			"text": "﷐\n"
+			"kind": "indent"
 		},
 		{
 			"kind": "slot",
@@ -839,8 +836,7 @@
 			"name": "statements"
 		},
 		{
-			"kind": "text",
-			"text": "﷑\n"
+			"kind": "dedent"
 		},
 		{
 			"kind": "seam",
@@ -1429,8 +1425,8 @@
 			"name": "expression"
 		},
 		{
-			"kind": "whitespace",
-			"text": "﷓\n"
+			"kind": "tokenSeam",
+			"text": "\n"
 		},
 		{
 			"kind": "seam",

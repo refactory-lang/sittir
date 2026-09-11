@@ -7,7 +7,7 @@ import { DEDENT_TEXT, INDENT_TEXT, isDepthText } from '../dsl/primitives/spacing
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
-import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
+import { rustStringLiteral } from './render-body.ts';
 
 export interface SpacingSite {
 	readonly kind: string;
@@ -203,11 +203,15 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
-		L.push(`        ${w.id} => ${rustStringLiteral(isDepthText(w.text) ? w.text : SEAM_MARK + w.text)},`);
+		L.push(`        ${w.id} => ${rustStringLiteral(isDepthText(w.text) ? '\n' : w.text)},`);
 	}
 	L.push('        _ => "",');
 	L.push('    }');
 	L.push('}', '');
+	L.push(
+		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };',
+		''
+	);
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');

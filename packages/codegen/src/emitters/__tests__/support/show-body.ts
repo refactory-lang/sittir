@@ -1,4 +1,4 @@
-import { ADJACENT_MARK, type Body } from '../../render-body.ts';
+import type { Body } from '../../render-body.ts';
 
 export function showBody(body: Body): string {
 	let out = '';
@@ -7,8 +7,14 @@ export function showBody(body: Body): string {
 			case 'text':
 				out += node.text;
 				break;
-			case 'whitespace':
-				out += `⟨ws ${JSON.stringify(node.text)}⟩`;
+			case 'indent':
+				out += '⟨indent⟩';
+				break;
+			case 'dedent':
+				out += '⟨dedent⟩';
+				break;
+			case 'tokenSeam':
+				out += `⟨tokenSeam ${JSON.stringify(node.text)}⟩`;
 				break;
 			case 'slot':
 				out += `⟨${node.name}⟩`;
@@ -17,7 +23,7 @@ export function showBody(body: Body): string {
 				out += ' ';
 				break;
 			case 'adjacent':
-				out += ADJACENT_MARK;
+				out += '⟨adjacent⟩';
 				break;
 			case 'seam':
 				out += `⟨seam ${node.field}⟩`;

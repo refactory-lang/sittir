@@ -8,14 +8,13 @@
 //! `}}` are literal braces. A template with no `{}` is written whole when the
 //! slot is present, which is how a boolean primitive renders its keyword.
 
-use std::fmt::{self, Display, Formatter};
-
+use crate::render::{Render, RenderResult, RenderSink};
 use crate::slot::SlotValue;
 
 /// A slot position as a view sees it: it writes itself between `prefix` and
 /// `suffix`, or writes nothing at all when it holds no value.
 pub trait Slot {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result;
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult;
 
     /// Whether the position holds a value the template's text should
     /// surround. The generated bodies test this where a render rule still
@@ -23,11 +22,11 @@ pub trait Slot {
     fn is_present(&self) -> bool;
 }
 
-impl<T: Display, const ADJACENT: bool> Slot for SlotValue<T, ADJACENT> {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result {
-        write_literal(prefix, f)?;
-        Display::fmt(self, f)?;
-        write_literal(suffix, f)
+impl<T: Render, const ADJACENT: bool> Slot for SlotValue<T, ADJACENT> {
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
+        write_literal(prefix, w)?;
+        Render::render(self, w)?;
+        write_literal(suffix, w)
     }
 
     fn is_present(&self) -> bool {
@@ -36,8 +35,8 @@ impl<T: Display, const ADJACENT: bool> Slot for SlotValue<T, ADJACENT> {
 }
 
 impl<S: Slot + ?Sized> Slot for &S {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result {
-        (**self).write_slot(prefix, suffix, f)
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
+        (**self).write_slot(prefix, suffix, w)
     }
 
     fn is_present(&self) -> bool {
@@ -46,8 +45,8 @@ impl<S: Slot + ?Sized> Slot for &S {
 }
 
 impl<S: Slot + ?Sized> Slot for Box<S> {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result {
-        (**self).write_slot(prefix, suffix, f)
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
+        (**self).write_slot(prefix, suffix, w)
     }
 
     fn is_present(&self) -> bool {
@@ -56,9 +55,9 @@ impl<S: Slot + ?Sized> Slot for Box<S> {
 }
 
 impl<S: Slot> Slot for Option<S> {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result {
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
         match self {
-            Some(slot) => slot.write_slot(prefix, suffix, f),
+            Some(slot) => slot.write_slot(prefix, suffix, w),
             None => Ok(()),
         }
     }
@@ -69,10 +68,10 @@ impl<S: Slot> Slot for Option<S> {
 }
 
 impl Slot for str {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result {
-        write_literal(prefix, f)?;
-        f.write_str(self)?;
-        write_literal(suffix, f)
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
+        write_literal(prefix, w)?;
+        w.text(self)?;
+        write_literal(suffix, w)
     }
 
     fn is_present(&self) -> bool {
@@ -81,8 +80,8 @@ impl Slot for str {
 }
 
 impl Slot for String {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result {
-        self.as_str().write_slot(prefix, suffix, f)
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
+        self.as_str().write_slot(prefix, suffix, w)
     }
 
     fn is_present(&self) -> bool {
@@ -91,12 +90,12 @@ impl Slot for String {
 }
 
 impl Slot for bool {
-    fn write_slot(&self, prefix: &str, suffix: &str, f: &mut Formatter<'_>) -> fmt::Result {
+    fn write_slot(&self, prefix: &str, suffix: &str, w: &mut dyn RenderSink) -> RenderResult {
         if !*self {
             return Ok(());
         }
-        write_literal(prefix, f)?;
-        write_literal(suffix, f)
+        write_literal(prefix, w)?;
+        write_literal(suffix, w)
     }
 
     fn is_present(&self) -> bool {
@@ -122,19 +121,19 @@ fn split_template(template: &str) -> (&str, &str) {
 
 /// Writes template text with `{{` and `}}` unescaped. Any other brace is a
 /// malformed template, which only the emitter can produce.
-fn write_literal(text: &str, f: &mut Formatter<'_>) -> fmt::Result {
+fn write_literal(text: &str, w: &mut dyn RenderSink) -> RenderResult {
     let mut rest = text;
     while let Some(at) = rest.find(['{', '}']) {
-        f.write_str(&rest[..at])?;
+        w.text(&rest[..at])?;
         let brace = &rest[at..at + 1];
         debug_assert!(
             rest[at + 1..].starts_with(brace),
             "unescaped brace in view template {text:?}"
         );
-        f.write_str(brace)?;
+        w.text(brace)?;
         rest = &rest[at + 2..];
     }
-    f.write_str(rest)
+    w.text(rest)
 }
 
 /// A scalar slot with its template: `View::new(&node.return_type, "->{}")`.
@@ -160,9 +159,9 @@ impl<'t, S: Slot> View<'t, S> {
     }
 }
 
-impl<S: Slot> Display for View<'_, S> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        self.slot.write_slot(self.prefix, self.suffix, f)
+impl<S: Slot> Render for View<'_, S> {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        self.slot.write_slot(self.prefix, self.suffix, w)
     }
 }
 
@@ -174,22 +173,24 @@ pub const NO_ITEMS: &[&str] = &[];
 /// follows it, a trailing flank what precedes it and the token, so the
 /// list's edges never carry whitespace the surrounding template did not ask
 /// for. `head` and `tail` (spacing) sit inside the template's text and, like
-/// it, are written only when there are items.
+/// it, are written only when there are items. `before`/`after`/`head`/`tail`
+/// are whitespace site ids (`0` = no site) resolved by the writer's
+/// `WhitespaceTable`, not literal text.
 #[derive(Debug, Clone, Copy)]
 pub struct ListView<'a, E: Slot> {
     pub items: &'a [E],
     /// The list's surrounding text, `{}` standing for the joined items.
     pub template: &'a str,
-    /// Whitespace written before the separator token.
-    pub before: &'a str,
+    /// Whitespace site written before the separator token.
+    pub before: u16,
     /// The separator token itself; empty for an unseparated repeat.
     pub token: &'a str,
-    /// Whitespace written after the separator token.
-    pub after: &'a str,
+    /// Whitespace site written after the separator token.
+    pub after: u16,
     pub leading: bool,
     pub trailing: bool,
-    pub head: &'a str,
-    pub tail: &'a str,
+    pub head: u16,
+    pub tail: u16,
 }
 
 impl<E: Slot> ListView<'_, E> {
@@ -198,31 +199,31 @@ impl<E: Slot> ListView<'_, E> {
     }
 }
 
-impl<E: Slot> Display for ListView<'_, E> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+impl<E: Slot> Render for ListView<'_, E> {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         if self.items.is_empty() {
             return Ok(());
         }
         let (prefix, suffix) = split_template(self.template);
-        write_literal(prefix, f)?;
-        f.write_str(self.head)?;
+        write_literal(prefix, w)?;
+        w.site(self.head);
         if self.leading {
-            f.write_str(self.token)?;
-            f.write_str(self.after)?;
+            w.text(self.token)?;
+            w.site(self.after);
         }
         for (i, item) in self.items.iter().enumerate() {
             if i > 0 {
-                f.write_str(self.before)?;
-                f.write_str(self.token)?;
-                f.write_str(self.after)?;
+                w.site(self.before);
+                w.text(self.token)?;
+                w.site(self.after);
             }
-            item.write_slot("", "", f)?;
+            item.write_slot("", "", w)?;
         }
         if self.trailing {
-            f.write_str(self.before)?;
-            f.write_str(self.token)?;
+            w.site(self.before);
+            w.text(self.token)?;
         }
-        f.write_str(self.tail)?;
-        write_literal(suffix, f)
+        w.site(self.tail);
+        write_literal(suffix, w)
     }
 }

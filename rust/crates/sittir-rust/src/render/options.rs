@@ -4835,15 +4835,17 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
 
 pub fn spacing_text(kind: u16) -> &'static str {
     match kind {
-        157 => "\u{FDD2}",
-        158 => "\u{FDD2} ",
-        159 => "\u{FDD2}\n",
-        160 => "\u{FDD2}\n\n",
-        161 => "\u{FDD0}\n",
-        162 => "\u{FDD1}\n",
+        157 => "",
+        158 => " ",
+        159 => "\n",
+        160 => "\n\n",
+        161 => "\n",
+        162 => "\n",
         _ => "",
     }
 }
+
+pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };
 
 pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {

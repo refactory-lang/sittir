@@ -133,9 +133,19 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[usize])] = &[\n];');
 		expect(src).toContain('opens an indent it never dedents');
 		expect(src).toContain('dedents an indent it never opened');
-		expect(src).toContain('167 => "\\u{FDD2}",');
-		expect(src).toContain('169 => "\\u{FDD2}\\n",');
+		expect(src).toContain('167 => "",');
+		expect(src).toContain('169 => "\\n",');
+		expect(src).not.toContain('\\u{FDD2}');
 		expect(src).toContain('pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, String>');
+	});
+
+	it('emits the whitespace table with plain text and the depth ids', () => {
+		const source = renderOptionsRs(planRenderOptions(sites, kindEntries, whitespaceText));
+		expect(source).toContain('        169 => "\\n",');
+		expect(source).not.toContain('\\u{FDD2}');
+		expect(source).toContain(
+			'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };'
+		);
 	});
 
 	it('lists each kind\'s indent-capable sites in rule order for the resolver\'s depth walk', () => {

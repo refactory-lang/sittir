@@ -11,6 +11,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 
 
+
 ### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
@@ -783,7 +784,6 @@ forwards a config or a spread to the target factory) is not emitted when the
 target is a hoisted, config-shaped group: that parent keeps the direct
 signature only, and the overlay's splice seat (`spliceShape`) supplies the
 config form. Group seating is emitted in one place.
-
 
 ### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
 
@@ -2983,8 +2983,8 @@ of a kind that has no body. `expr` names the slot's `SlotValue` carrier:
 the concrete and supertype classes call their own `render_<kind>` function,
 so they unwrap through `node_or_write`, which writes the verbatim arm
 itself and yields the node only when there is one. The heterogeneous
-classes are interpolated as `Display`, which the carrier implements, so
-they need no unwrap.
+classes call `.render(w)` directly, which the carrier implements, so they
+need no unwrap.
 
 ### `packages/codegen/src/emitters/render-module.ts::mergeTemplateSurfaceFromBody`
 
@@ -2998,19 +2998,21 @@ body that still names it fails in `buildTypedTemplateBody`.
 
 Emits the per-kind `render_<kind>` functions, the per-supertype render
 helpers, the grammar's word-class table, `render_transport_dispatch`, and
-`impl Display for AnyTransport`. The supertype helpers come after every
+`impl Render for AnyTransport`. The supertype helpers come after every
 per-kind function so each concrete subtype's function is declared before a
 match arm names it.
 
-`render_transport_dispatch` takes `&dyn Display` rather than
+`render_transport_dispatch` takes `&dyn Render` rather than
 `&AnyTransport` so the root's own `SlotValue` carrier renders through the
 same single `SpacingWriter` wrap; a second entry point would be a second
-place the root seam policy could drift. It wraps the output `String` in the
-writer once, never per level, and interpolates the root into it.
+place the root seam policy could drift. It builds the writer with
+`.with_table(&options::WHITESPACE)` so `w.site(...)` resolves against this
+grammar's whitespace vocabulary, wraps the output `String` in it once,
+never per level, and calls `transport.render(&mut w)`.
 
 The `AnyTransport` impl is one match: every kind variant delegates to the
-payload's `Display` (so a struct kind's trivia wrapper fires), and a
-literal variant writes its text.
+payload's `Render` (so a struct kind's trivia wrapper fires), and a
+literal variant writes its text via `literalWriteTail`.
 
 `usedSupertypeNames` limits helper emission to the supertypes some slot
 actually names; `kindIdByKind` lets a list kind with a nonterminal
@@ -3069,21 +3071,21 @@ other leaf writes its text as it is.
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedLeafFn`
 
 The render function for a pattern, token or enum kind: an enum transport
-writes through its own `Display`, every other leaf writes `t.text` through
+writes through its own `Render`, every other leaf writes `t.text` through
 `leafTextWrite`.
 
 #### body
 
 Grammar-declared immediacy (`token.immediate`, or an immediate-declared
-external's renderAs body): no whitespace may precede this token, so its
-write must not receive a seam space. The adjacency mark is written inside
-the trivia-wrapped render function so factory-attached leading trivia still
-seams normally before the mark applies to the token text itself.
+external's renderAs body): no whitespace may precede this token, so the
+function calls `w.adjacent()` before its body. That call is inside the
+trivia-wrapped render function so factory-attached leading trivia still
+seams normally before adjacency applies to the token text itself.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFn`
 
 The one render function for a kind with a body:
-`fn render_<kind>(node: &<Kind>Transport, f: &mut Formatter) -> fmt::Result`,
+`fn render_<kind>(node: &<Kind>Transport, w: &mut dyn RenderSink) -> RenderResult`,
 whose statements `buildTypedTemplateBody` produces. The node-wide fallback
 separator comes from `MetaData.separators` for list slots whose values
 carry no per-slot separator stamp.
@@ -3122,15 +3124,15 @@ that skipped the fill.
 ### `packages/codegen/src/emitters/render-module.ts::buildTypedTemplateBody`
 
 The statements of a kind's render function: the captured-text fast path,
-one local per slot the body names, one per token seam site of the kind,
-then the body printed by `printRustBody`. The locals are the views; the
-body's `write!` names them. A seam local is the site's resolved text,
-`options::spacing_text(node.<site>.unwrap_or(0))`, already carrying the
-writer's seam mark; a body naming a seam the transport has no field for is
-an error, like a slot.
+one local per slot the body names, then the body printed by `printRustBody`.
+The locals are the views; the body's sink calls reference them by name. A
+seam is not bound as a local at all: `printRustBody` prints it directly as
+`w.site(node.<field>.unwrap_or(0))`, resolved through the field's own
+`Option<u16>`; a body naming a seam the transport has no spacing site for
+is an error, like a slot naming a field the transport doesn't have.
 
 A required slot with a transport field is a plain reference
-(`let name = &node.name;`), since `SlotValue` is `Display` on its own.
+(`let name = &node.name;`), since `SlotValue` is `Render` on its own.
 Every other slot is a view built from the node's field and the slot's
 template, `templateOf(struct.flanks.get(name))`:
 
@@ -3475,9 +3477,9 @@ inherent `write_fmt`, and the render root spells the trait call in full.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitSupertypeRenderHelper`
 
-Emits `render_<supertype>(t: &<Supertype>Transport, f: &mut Formatter)`
+Emits `render_<supertype>(t: &<Supertype>Transport, w: &mut dyn RenderSink) -> RenderResult`
 as a bounded match over the enum variants, each arm delegating to the
-subtype payload's `Display` so its own trivia-wrapped impl fires. Boxed
+subtype payload's `.render(w)` so its own trivia-wrapped impl fires. Boxed
 (in-cycle) variants reach the inner struct through `.as_ref()`. Arm count
 is bounded by the supertype's subtype count, not the grammar.
 
@@ -3723,7 +3725,7 @@ is bounded by the supertype's subtype count, not the grammar.
 #### body
 
 ```text
-// Display impl — match on variant and delegate to the payload's own Display
+// Render impl — match on variant and delegate to the payload's own Render
 // (not the per-kind render fn directly) so the concrete variant's own
 // render_with_trivia!-wrapped impl fires.
 ```
@@ -3741,7 +3743,7 @@ is bounded by the supertype's subtype count, not the grammar.
 
 ```text
 // A literal arm for an immediate token writes seam-free — grammar
-// forbids whitespace before it (see `mark_adjacent`). Inline
+// forbids whitespace before it (see `w.adjacent()`). Inline
 // terminals carry the stamp on the literal itself (no kind of
 // their own to look up); kind-named literals resolve it through
 // their kind.
@@ -4260,11 +4262,12 @@ is bounded by the supertype's subtype count, not the grammar.
 
 The per-grammar `Seamed<T>` carrier and the `ArmSeams` trait it fills
 through. It is generated beside the transports rather than living in
-`sittir-core` because its `Display` writes the grammar's own
-`options::spacing_text`, which core cannot name. `Seamed` holds the value
-and the two resolved whitespace kinds; every position that already accepted
-the enum accepts it unchanged, because the enum's public name becomes an
-alias for it.
+`sittir-core` because its `Render` impl resolves the grammar's own site ids
+through `w.site(...)`, which core's writer already does generically —
+`Seamed` just calls it before and after the value. `Seamed` holds the value
+and the two resolved whitespace kind ids; every position that already
+accepted the enum accepts it unchanged, because the enum's public name
+becomes an alias for it.
 
 ### `packages/codegen/src/emitters/render-module.ts::armSeamPairsOf`
 
@@ -5166,11 +5169,28 @@ error, since one view carries one template.
 ### `packages/codegen/src/emitters/render-body.ts::printRustBody`
 
 Prints a lifted body as the statements of a kind's render function over
-the sink `f`, with the slots already bound as locals by their field names.
-Every run of text, slots and seams is one `write!` whose format string
-names the slots and the seam locals; a literal-only run is a plain
-`write_str`. A residual gate chain is an `if … else if … else` block over
-the views' `is_present`.
+the sink `w`, with the slots already bound as locals by their field names.
+A run of literal text is one `w.text(...)?;`; a slot is its own
+`<local>.render(w)?;`; a seam is `w.site(node.<field>.unwrap_or(0));`
+resolved straight from the transport field, with no local bound for it. An
+`indent`/`dedent`/`tokenSeam` node is its own sink call (`w.indent()` plus
+its seam payload, `w.dedent()`, `w.token_seam(...)`) — see
+`printStatements`'s payload rule for how a following literal's leading
+whitespace becomes that call's argument. A residual gate chain is an
+`if … else if … else` block over the views' `is_present`.
+
+### `packages/codegen/src/emitters/render-body.ts::printStatements`
+
+The statement-by-statement printer `printRustBody` wraps. Runs of `text`/
+`space` nodes coalesce into one `w.text(...)` call, flushed before any
+sink-call node. The payload rule: when an `indent`, `dedent` or `tokenSeam`
+node is immediately followed by a `text` node beginning with whitespace,
+that leading run is split off and becomes the node's own payload — a
+`w.seam(...)` call right after `w.indent()`/`w.dedent()`, or folded into a
+`tokenSeam`'s own text — rather than ordinary literal text. This is the
+printed shape a mark's coalescing payload took before the mark path
+existed: a depth move or a token's whitespace text absorbing the run that
+used to sit next to it in the same literal.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
@@ -5225,7 +5245,6 @@ slot is `spread` like any other (rust's token trees, typescript's string
 forms, python's `_except_clause_list` and `_match_block_block`). The seat the
 overlay derives from that shape is the kind's own builder passed through
 the parent's.
-
 
 ### `packages/codegen/src/emitters/shared.ts::wordCharAsciiTable`
 
@@ -5482,12 +5501,14 @@ builds the spaced rules, since the stamps land on those rules.
  *  - undefined (required)     → the bare slot reference
  *
  * A hidden kind with fixed text renders that text; when the text is
- * nothing but whitespace it is structural `whitespace` carrying the
- * whitespace-token mark, so the writer holds it as a payload and coalesces
- * it with the seams around it instead of writing it as literal text: a newline
- * terminator such as an automatic semicolon is absorbed by the newline
- * gap after its statement and outranked by a blank-line gap, rather than
- * stacking a second break on top of either.
+ * nothing but whitespace it is a `tokenSeam` node instead, so the sink
+ * coalesces it with the seams around it (`w.token_seam` never drops, unlike
+ * `w.seam`) rather than writing it as literal text: a newline terminator
+ * such as an automatic semicolon is absorbed by the newline gap after its
+ * statement and outranked by a blank-line gap, rather than stacking a
+ * second break on top of either. The depth arms' own stamped text
+ * (`isDepthText`) is neither: it becomes the `indent`/`dedent` node itself,
+ * the payload rule's job in `printStatements`.
  */
 ```
 
@@ -8991,7 +9012,6 @@ string routes build through the raw factory — `ir.visibilityModifier('pub')`
 routes by the text `pub` into the hoisted `_visibility_modifier_pub` arm, and
 would otherwise fall through to the in-path arm and render `pub(in pub)`.
 
-
 ### `packages/codegen/src/emitters/shared.ts::wordConstructibleText`
 
 ```text
@@ -9390,7 +9410,6 @@ A hoisted compound is admitted like any other; the children-wrap route
 still requires a child factory surface (`classifyChildFactorySurface`), which
 a hoisted kind does not have today, so its `_wrapKindIds` entry is decided
 there, not by the hoisted flag here.
-
 
 ### `packages/codegen/src/emitters/shared.ts::classifyTemplateEmission`
 
@@ -10975,7 +10994,6 @@ Every node carries its rule's `annotations` (`hoisted`, `variant`,
 `variantOf`, …) as written; the tools read `annotations.hoisted` and there
 is no separate flag. A hoisted compound also serializes `name`.
 
-
 ### `packages/codegen/src/emitters/node-model.ts::serializeSlot`
 
 #### body
@@ -10987,8 +11005,6 @@ is no separate flag. A hoisted compound also serializes `name`.
 
 Takes the parent and the polymorph wires so each value can carry its `seat`
 (`seatOf` on the parent's wire set).
-
-
 
 ### `packages/codegen/src/emitters/node-model.ts::seatsOfList`
 
@@ -11862,7 +11878,6 @@ preference; the literal texts are not part of the surface.
  *  would drop the id out of every slot union it belongs to. */
 ```
 
-
 ### `packages/codegen/src/emitters/factories.ts::kindDiscriminantType`
 
 ```text
@@ -11871,6 +11886,7 @@ preference; the literal texts are not part of the surface.
  *  text is a valid expression, which is what lets a kind-id factory annotate
  *  and return one spelling. */
 ```
+
 ### `packages/codegen/src/emitters/factories.ts::emitTextFactory`
 
 #### body
@@ -13742,7 +13758,7 @@ candidate list.
 #### body
 
 ```text
-// Display for the supertype enum — delegates to the per-supertype
+// Render for the supertype enum — delegates to the per-supertype
 // render helper (declared later by emitSupertypeRenderHelper; forward fn
 // references are fine at Rust module scope).
 ```
@@ -14267,7 +14283,6 @@ The strict/coerce expression pair for an arm: a direct child uses its own factor
 A flattened arm through a hoisted child references that child's private
 wiring const under the same `<childKey>.<path>` spelling.
 
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::spliceShape`
 
 The method behind a splice seat. For a config parent: partition the
@@ -14284,8 +14299,6 @@ passes straight to the parent, anything else is the group's config and is
 built first. The `$type` probe (`_built`) is what the raw forwarded wrapper
 used to do; it lives here now, once, because the seating is the overlay's.
 
-
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::elementsShape`
 
 The method behind an elements seat. An element is the group's config when
@@ -14296,7 +14309,6 @@ list, or a spread-shaped parent whose sole slot is the seat (python
 `union_pattern`): the elements arrive as rest arguments and are mapped in
 place, options object included, which the key test leaves alone. The
 type admits the parent's own input or the group's config per element.
-
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
 
@@ -14316,7 +14328,6 @@ and its wiring const is not exported (`emitPolymorphsOverlay`). A list is
 excluded whatever its annotation says — a group-lifted list carries
 `hoisted` but is bundled and bound on `ir` like any list, so its wiring
 const must be the export `ir` reaches (its elements seat lives there).
-
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::AliasWire`
 
@@ -14347,7 +14358,6 @@ the map, because the seat rewrites its `strict`.
 
 A wire set also carries the parent's elements seats (`elementsSeatOf`) whose
 group factory is emitted; a parent with only seats still enters the map.
-
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
@@ -14445,7 +14455,6 @@ hoisted kind has no flat `ir` entry, so its parent's sub-factory is the one
 way to build it, whatever else the parent holds. Visible kinds in a second
 choice slot are not mounted — they are reachable on `ir` already.
 
-
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::hoistedCandidatesOf`
 
 The shape-1 seat for a hoisted arm: one candidate per hoisted compound
@@ -14463,7 +14472,6 @@ value arm carrying its kind-id storage, a pattern becomes a node arm on its
 text factory. The seat
 passes the leaf's value through the parent's builder; the leaf keeps its
 shape and builder.
-
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::tupleSeatOf`
 
@@ -14559,8 +14567,6 @@ the group from that key's value alone (python `slice.step`, `except_clause.excep
 typescript `_import_clause_default_import.import_clause_group`). A forwarded
 group is not a seat: the parent's own builder already takes it whole.
 
-
-
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::elementsSeatOf`
 
 The shape-3 seats: every multiple slot — a compound's list slot or a list
@@ -14577,8 +14583,6 @@ may have several; each gets its own wire, composed in slot order.
 
 A compound's config keys, the one list both the config-shaped arm merge
 (`armConfigKeys`) and the splice seat partition by.
-
-
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatOf`
 
@@ -14682,7 +14686,6 @@ The slot-collision check reads each entry's own residual: candidates from
 different slots of the same parent (`hoistedCandidatesOf`) have different
 residuals.
 
-
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
 
 Top-level entry: derives the sub-factory set for a kind with an empty visiting context and caches per (nodeMap, predicate, kind). The cache is read ONLY for top-level queries — a nested derivation (non-empty visiting set) always recomputes, because ambiguity and flattening are context-sensitive: a cached context-free result served into a cyclic context (or vice versa) yields order-dependent wire sets. True cycles short-circuit to the empty set through a per-derivation in-progress guard. A kind with no choice slot but a forwarding hop (`forwardedTargetKind`: sole slot seating exactly one emitted child kind) passes the child's sub-factories through — each entry re-seated in the hop's own slot under a leaf-relative name, its wire referencing the child const's matching property. Both the choice-slot and forwarding branches feed one shared resolution tail (`resolveCandidates`: name-ambiguity and slot-collision filtering), so the two seat modes cannot diverge in how claims are settled.
@@ -14747,7 +14750,6 @@ through it (post-order).
 
 `NoneOf<T>` (every key of `T` forbidden) and `_built` (the `$type` probe)
 ride in the erased-helper block for the splice methods.
-
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -15073,3 +15075,39 @@ Without this a label would vanish: a table built from sites alone cannot
 put it back — a virtual kind has no site of its own. A consumer would lose the one
 key that moves every address bound to it, which is the only reason the label
 exists.
+
+### `packages/codegen/src/emitters/render-body.ts::ADJACENT_EDGE`
+
+```text
+/// Internal-only edge sentinel for an `adjacent` node's boundary character
+/// at compile-time seq classification (`classifySeqBoundary`): never reaches
+/// generated Rust source, unlike the deleted runtime writer mark it replaces.
+```
+
+### `packages/codegen/src/emitters/render-body.ts::literalOf`
+
+```text
+/// A slot's flank text lifted onto a `View`: a literal run reproducible as
+/// plain `w.text(...)` on its own, with nothing that needs a `RenderSink`
+/// call of its own (`adjacent`, a seam, a depth move, a token seam). A gate
+/// carrying one of those stays an explicit `if`/`else` in the printed body,
+/// where it can still make its own sink calls.
+```
+
+### `packages/codegen/src/emitters/render-body.ts::splitLeadingWhitespace`
+
+```text
+/// Splits off the whitespace run that immediately follows a depth move or a
+/// token seam in the SAME literal, so it becomes that node's payload
+/// (`w.seam(...)` right after the depth call, or folded into the token
+/// seam's own text) rather than ordinary text — the printed shape a coalescing
+/// mark's payload took before the mark path existed.
+```
+
+### `packages/codegen/src/emitters/render-module.ts::literalWriteTail`
+
+```text
+/// A literal's own render tail: the depth arms' stamped identity moves the
+/// writer's depth, a whitespace-only literal is a token seam (survives a
+/// render's end, unlike a seam), and anything else is plain text.
+```
