@@ -40,7 +40,6 @@ describe('collectSitePreferences — the options block', () => {
 		collectSitePreferences({
 			nodeMap: listNodeMap(SEP),
 			kindEntries,
-			defaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } } },
 			options: options as never
 		});
 
@@ -62,7 +61,7 @@ describe('collectSitePreferences — separator sites', () => {
 		const sites = collectSitePreferences({
 			nodeMap: listNodeMap(SEP),
 			kindEntries,
-			defaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } } }
+			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
 		});
 		const site = sites.find((s) => s.source === 'separator')!;
 		expect(site).toEqual({
@@ -79,7 +78,7 @@ describe('collectSitePreferences — separator sites', () => {
 		});
 	});
 
-	it('an undeclared choice separator, a foreign arm, and a declaration naming no list are build errors', () => {
+	it('an undeclared choice separator, a foreign arm, and a declaration naming no site are build errors', () => {
 		expect(() => collectSitePreferences({ nodeMap: listNodeMap(SEP), kindEntries })).toThrow(
 			/member_list\.member chooses its separator per instance \(comma, semi\); declare its kind under options:/
 		);
@@ -87,15 +86,15 @@ describe('collectSitePreferences — separator sites', () => {
 			collectSitePreferences({
 				nodeMap: listNodeMap(SEP),
 				kindEntries,
-				defaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'colon' } } } }
+				options: { member_list: { 'member:/separator/kind': preference('colon') } } as never
 			})
-		).toThrow(/member_list\.member_separator is 'colon', not one of comma, semi/);
+		).toThrow(/which no site it names admits \(comma, semi\)/);
 		expect(() =>
 			collectSitePreferences({
 				nodeMap: listNodeMap(undefined),
 				kindEntries,
-				defaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'comma' } } } }
+				options: { member_list: { 'member:/separator/kind': preference('comma') } } as never
 			})
-		).toThrow(/member_list\.member_separator names no list with a choice separator/);
+		).toThrow(/names no site/);
 	});
 });

@@ -7343,11 +7343,11 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 ```
 
 `_separator` is the kind of the separator token found among the node's
-other children, else the grammar's declared default
-(`declaredSeparatorDefault`, from the `renderDefaults` the wrap emitter is
-built with): a single-member list has no token to read, and a rebuilt
-node stamps the default, so the read side stamps it too and the two
-agree. The delimiter is stamped the same way, `Delimiter.None` included.
+other children, else the default the `options:` block declared for the
+list (`declaredSeparatorDefault`, reading the arm `collectSitePreferences`
+stamped on the list node): a single-member list has no token to read, and
+a rebuilt node stamps the default, so the read side stamps it too and the
+two agree. The delimiter is stamped the same way, `Delimiter.None` included.
 
 ### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
@@ -14967,13 +14967,6 @@ resolved `<kind>.<slot>_separator` option reach the render the same way.
 
 The separator site of a separated-list kind whose separator is a choice of
 literal tokens: the spacing-table row with `role: 'separator'`, if any.
-
-### `packages/codegen/src/emitters/emit.ts::EmitAllConfig.renderDefaults`
-
-```text
-// The grammar's declared render defaults; with the kind catalog they yield
-// the spaced render rules the options and render emitters share.
-```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SpacingSite.address`
 

@@ -17,9 +17,7 @@ import {
 	parseSpacingLabel,
 	siteKey,
 	SPACING_ARMS,
-	WHITESPACE_ARMS,
-	type RenderDefaults,
-	type SiteDefault
+	WHITESPACE_ARMS
 } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
@@ -50,7 +48,6 @@ export interface WireContext {
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
-	readonly defaults?: RenderDefaults;
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
@@ -294,7 +291,6 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
-		defaults: undefined,
 		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))

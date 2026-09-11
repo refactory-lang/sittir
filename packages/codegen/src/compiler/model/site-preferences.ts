@@ -2,7 +2,7 @@ import type { NodeMap } from '../types.ts';
 import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
 import { CHOICE, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../../types/rule.ts';
-import { DELIMITER_LABEL, SEPARATOR_LABEL, isDelimiterAddress, isSeparatorAddress, type RenderDefaults } from '../../dsl/primitives/spacing.ts';
+import { DELIMITER_LABEL, SEPARATOR_LABEL } from '../../dsl/primitives/spacing.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -55,7 +55,6 @@ export interface SitePreferencesConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEntryLike[];
 	readonly renderRules?: RenderRules;
-	readonly defaults?: RenderDefaults;
 	readonly options?: OptionsConfig;
 }
 
@@ -87,61 +86,29 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 			});
 		}
 	}
-	const declared = new Map<string, string>();
-	for (const [kind, sites] of Object.entries(config.defaults?.sites ?? {})) {
-		for (const [address, site] of Object.entries(sites)) {
-			if (isDelimiterAddress(address)) declared.set(`${publicKindName(kind)} ${address}`, site.arm);
-		}
-	}
-	const consumed = new Set<string>();
 	for (const [kind, node] of config.nodeMap.nodes) {
 		if (!(node instanceof AssembledList)) continue;
 		const slot = node.slots[0]?.name;
 		const members = delimiterMembersFor(node);
 		if (slot === undefined || members.length === 0) continue;
 		const address = `${slot}_${DELIMITER_LABEL}`;
-		const key = `${publicKindName(kind)} ${address}`;
-		const arm = declared.get(key) ?? 'Delimiter.None';
-		if (arm !== 'Delimiter.None' && !members.includes(arm)) {
-			throw new Error(`defaults: ${publicKindName(kind)}.${address} is '${arm}', which the list does not admit (${members.join(', ')})`);
-		}
-		consumed.add(key);
-		out.push({ kind, slot, address, label: DELIMITER_LABEL, arms: members.map((value) => ({ value })), defaultArm: arm, source: 'delimiter' });
+		out.push({ kind, slot, address, label: DELIMITER_LABEL, arms: members.map((value) => ({ value })), defaultArm: 'Delimiter.None', source: 'delimiter' });
 	}
-	for (const key of declared.keys()) {
-		if (!consumed.has(key)) throw new Error(`defaults: ${key.replace(' ', '.')} names no list with an optional delimiter`);
-	}
-	const declaredSeparators = new Map<string, string>();
-	for (const [kind, sites] of Object.entries(config.defaults?.sites ?? {})) {
-		for (const [address, site] of Object.entries(sites)) {
-			if (isSeparatorAddress(address)) declaredSeparators.set(`${publicKindName(kind)} ${address}`, site.arm);
-		}
-	}
-	const consumedSeparators = new Set<string>();
 	for (const [kind, node] of config.nodeMap.nodes) {
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
 		const slot = node.slots[0]?.name;
 		if (slot === undefined) continue;
 		const arms = separatorArmKinds(kind, node.separatorRule, config.kindEntries);
 		const address = `${slot}_${SEPARATOR_LABEL}`;
-		const key = `${publicKindName(kind)} ${address}`;
-		const arm = declaredSeparators.get(key);
-		if (arm !== undefined && !arms.includes(arm)) {
-			throw new Error(`defaults: ${key.replace(' ', '.')} is '${arm}', not one of ${arms.join(', ')}`);
-		}
-		consumedSeparators.add(key);
 		out.push({
 			kind,
 			slot,
 			address,
 			label: SEPARATOR_LABEL,
 			arms: arms.map((value) => ({ value, kind: value })),
-			defaultArm: arm ?? UNDECLARED_ARM,
+			defaultArm: UNDECLARED_ARM,
 			source: 'separator'
 		});
-	}
-	for (const key of declaredSeparators.keys()) {
-		if (!consumedSeparators.has(key)) throw new Error(`defaults: ${key.replace(' ', '.')} names no list with a choice separator`);
 	}
 	const resolved = withDeclaredArms(out, candidates, config);
 	for (const site of resolved) {

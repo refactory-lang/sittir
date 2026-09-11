@@ -77,12 +77,3 @@ export function isWhitespaceArm(value: string): value is WhitespaceArm {
 	return (WHITESPACE_ARMS as readonly string[]).includes(value);
 }
 
-export interface SiteDefault {
-	readonly label?: string;
-	readonly arm: string;
-}
-
-export interface RenderDefaults {
-	readonly labels: Readonly<Record<string, string>>;
-	readonly sites: Readonly<Record<string, Readonly<Record<string, SiteDefault>>>>;
-}

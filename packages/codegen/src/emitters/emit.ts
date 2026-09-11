@@ -1,4 +1,3 @@
-import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
@@ -52,7 +51,6 @@ export interface EmitAllConfig {
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
-	renderDefaults?: RenderDefaults;
 	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 }
@@ -96,7 +94,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		grammarRoles,
 		emitRenderModule,
 		expectTestFailures,
-		renderDefaults,
 		options: optionsBlock,
 		visibleExternals
 	} = config;
@@ -105,7 +102,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 	const rulesConfig = kindEntries
-		? { nodeMap, kindEntries, defaults: renderDefaults, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals) }
+		? { nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals) }
 		: undefined;
 	const resolvedRules = rulesConfig
 		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
@@ -120,8 +117,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		triviaKinds,
-		renderDefaults
+		triviaKinds
 	});
 
 	const fromEmitter = new FromEmitter({
@@ -138,14 +134,13 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		rootKind: grammarRoles?.get('root')[0],
-		renderDefaults
+		rootKind: grammarRoles?.get('root')[0]
 	});
 
 	const renderRules = resolvedRules?.seamed;
 	const sitePreferences =
 		kindEntries && renderRules
-			? collectSitePreferences({ nodeMap, kindEntries, renderRules, defaults: renderDefaults, options: optionsBlock })
+			? collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock })
 			: undefined;
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
 
@@ -156,7 +151,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					nodeMap,
 					generatedIdTables,
 					renderRules,
-					renderDefaults,
 					options: optionsBlock,
 					visibleExternals
 				})
@@ -175,7 +169,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, renderDefaults, options: optionsBlock, sites: sitePreferences }) : renderOptionsModule();
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences }) : renderOptionsModule();
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

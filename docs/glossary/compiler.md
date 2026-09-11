@@ -11191,10 +11191,3 @@ the set from that annotation alone.
 // Extract factored branches (the parts that differ)
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::drainRenderDefaultsMetadata`
-
-```text
-/** The grammar's `defaults:` block as wire carried it, or undefined when
- *  the grammar declared none. */
-```
-

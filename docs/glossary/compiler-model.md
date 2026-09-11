@@ -3419,11 +3419,10 @@ refused — the arm is wrong, not merely inapplicable.
 A separated list whose separator is a choice of literal tokens is a
 `separator` site on the list kind (`<slot>_separator`, label
 `separator`): its arms are the choice's literal kinds
-(`separatorArmKinds`) and its default is the one the grammar declared
-with `preference('separator', <kind>)`. Unlike the delimiter, the default
-is required: a choice separator with no declaration, a declared arm that is
-not one of the list's tokens, and a declaration naming no such list are
-each a build error.
+(`separatorArmKinds`) and its default is the one the `options:` block
+declares at `<kind>/<slot>:/separator/kind`. Unlike the delimiter, the
+default is required: a choice separator with no declaration is a build
+error, as is a declared arm no site admits (`withDeclaredArms`).
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceSource`
 
@@ -3643,18 +3642,6 @@ A separator spacing choice or a five-arm whitespace choice (a flank, a
 kind edge or a token seam of an indenting grammar): the members a seam is
 never injected beside.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::validateRenderDefaults`
-
-The one check that every declared default names something: each label key
-is a separator or seam label of some site, and each `sites[kind][address]`
-names a site of that kind or of a member of that supertype (a flank by its
-side, anything else by its address). A `<slot>_delimiter` or
-`<slot>_separator` address is a list's delimiter or separator default and
-is checked where those sites are collected (`collectSitePreferences`),
-not here. Runs once, over the sites of the
-finished rules, at the end of `seamRenderRules`. Arm admissibility is
-checked earlier, by `checkDefaultArms`.
-
 ### `packages/codegen/src/compiler/model/render-rules.ts::validateIndentDepth`
 
 Indent and dedent pair within one kind: walking the kind's sites in rule
@@ -3677,14 +3664,6 @@ walk visits.
 
 The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
 `<kind>.<address>` otherwise.
-
-### `packages/codegen/src/compiler/model/render-rules.ts::checkDefaultArms`
-
-Every declared arm is one the site admits: a spacing arm for a label or a
-slot site, any whitespace arm for a flank, a `Delimiter` member for a
-delimiter address. A separator address is skipped: its arm is a token kind
-checked against the list's own tokens by `collectSitePreferences`. Runs
-when the resolver is built, before any default is consumed.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoExtras`
 
@@ -3712,22 +3691,13 @@ when the resolver is built, before any default is consumed.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::DefaultResolver`
 
-```text
-/**
- * Resolves each site's default from the grammar's declared render defaults
- * with the precedence the native resolver applies to a user's options: the
- * kind's own site, then a supertype's, then (for separator spacing and
- * token seams) the label's top-level value, then the fallback: `space` for
- * a separator gap, `tight` for a flank, and for a token seam the arm the
- * seam-stamping dry run baked (`space` where the body had a static space,
- * `tight` otherwise). A flank's or a seam's label is the declared one or
- * its address; a seam's resolved arm must be one its site admits.
- * Construction checks every declared arm is admissible for its site, since
- * an arm is consumed as a default before the site-existence check runs;
- * two supertypes disagreeing about one site is an error at resolution.
- */
-```
-
+Resolves each site's default: the arm the `options:` block declares for it
+(`declaredOptionArms`, keyed by kind and address, with supertype and
+wildcard declarations already matched to the sites they reach), otherwise
+the fallback — `space` for a separator gap, `tight` for a flank, and for a
+token seam the arm the seam-stamping dry run baked (`space` where the body
+had a static space, `tight` otherwise). A site's label is its address; a
+seam's resolved arm must be one its site admits.
 ### `packages/codegen/src/compiler/model/render-rules.ts::publicKindName`
 
 ```text

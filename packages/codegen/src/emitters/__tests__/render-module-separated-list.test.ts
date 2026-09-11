@@ -14,6 +14,7 @@ import { emittedTemplates } from './support/emitted-templates.ts';
 import { slot } from '../render-body.ts';
 import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
+import { preference } from '../../dsl/primitives/preference.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
@@ -210,7 +211,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		const emitted = emitRenderModule('rust', emittedTemplates({ member_list: slot('member') }), nodeMap, GENERATED_ID_TABLES, {
 			renderRules: { rules: {} },
-			renderDefaults: { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } } }
+			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
 		}).transportRs.contents;
 
 		expect(emitted).toContain('self.separator_kind.get_or_insert(table.spacing[options::SITE_MEMBER_LIST_MEMBER_SEPARATOR]);');

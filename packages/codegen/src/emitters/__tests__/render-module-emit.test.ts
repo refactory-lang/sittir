@@ -141,14 +141,13 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar)));
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const rulesConfig = { nodeMap, kindEntries, defaults: raw.renderDefaults, whitespaceText: whitespaceTextOf(raw.visibleExternals) };
+	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.visibleExternals) };
 	const spacedRules = spaceRenderRules(rulesConfig);
 	stampStaticSpacing(nodeMap, grammar, spacedRules);
 	const renderRules = seamRenderRules(spacedRules, rulesConfig);
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
-		renderDefaults: raw.renderDefaults,
 		visibleExternals: raw.visibleExternals,
 		options: raw.options
 	});
@@ -324,7 +323,7 @@ async function buildRustFixtureForParity() {
 			: spaceRenderRules({
 					nodeMap,
 					kindEntries: collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables),
-					defaults: raw.renderDefaults,
+					options: raw.options,
 					whitespaceText: whitespaceTextOf(raw.visibleExternals)
 				});
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });

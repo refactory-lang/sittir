@@ -35,7 +35,6 @@ import {
 	expandToConcreteParseKinds
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
-import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
 import {
 	collectKindEntries,
@@ -63,7 +62,6 @@ export interface EmitWrapConfig {
 	synthesizedKinds?: ReadonlySet<string>;
 	kindEntries?: readonly KindEnumEntry[];
 	rootKind?: string;
-	renderDefaults?: RenderDefaults;
 }
 
 function collectTypeImports(_nodeMap: NodeMap): Set<string> {
@@ -112,10 +110,9 @@ export namespace wrap {
 		output: string[],
 		node: AssembledList,
 		kindEntries: readonly KindEnumEntry[] | undefined,
-		nodeMap: NodeMap,
-		renderDefaults: RenderDefaults | undefined
+		nodeMap: NodeMap
 	): void {
-		const result = emitSeparatedListWrap(node, kindEntries, nodeMap, renderDefaults);
+		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
 		if (result !== undefined) output.push(renameUnusedTreeParam(result));
 	}
 }
@@ -451,8 +448,7 @@ function buildSeparatedListWrapParamType(typeName: string, wireKeyTypes: Readonl
 function emitSeparatedListWrap(
 	node: AssembledList,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap,
-	renderDefaults: RenderDefaults | undefined
+	nodeMap: NodeMap
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = `wrap${node.typeName}`;
@@ -524,7 +520,7 @@ function emitSeparatedListWrap(
 			.filter((k) => hasCatalogEntry(kindEntries, k))
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
 		lines.push(
-			`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]) ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries, renderDefaults)},`
+			`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]) ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)},`
 		);
 	}
 	const bothFlanksOptional = node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional';
@@ -840,7 +836,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #canonicalAliasSourceKinds: ReadonlySet<string>;
 	readonly #typeImportLine: string | undefined;
 	readonly #rootKind: string | undefined;
-	readonly #renderDefaults: RenderDefaults | undefined;
 	readonly #output: string[] = [];
 	readonly #emittedStructuralKinds = new Set<string>();
 	#rootTreeTypeName: string | undefined;
@@ -856,8 +851,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			inlineKinds,
 			synthesizedKinds,
 			kindEntries: providedKindEntries,
-			rootKind,
-			renderDefaults
+			rootKind
 		} = config;
 		const kindEntries =
 			providedKindEntries ??
@@ -872,7 +866,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#synthesizedKinds = synthesizedKinds;
 		this.#canonicalAliasSourceKinds = new Set(collectAliasTargetToSourceMap(nodeMap).values());
 		this.#rootKind = rootKind;
-		this.#renderDefaults = renderDefaults;
 		this.#typeImportLine =
 			typeImports.size > 0
 				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types.js';"].join('\n')
@@ -890,7 +883,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	}
 
 	emitSeparatedList(node: AssembledList): void {
-		wrap.separatedList(this.#output, node, this.#kindEntries, this.#nodeMap, this.#renderDefaults);
+		wrap.separatedList(this.#output, node, this.#kindEntries, this.#nodeMap);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 

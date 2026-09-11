@@ -6,7 +6,7 @@ import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { AbstractAssembledCompound, AssembledEnum, AssembledPolymorph, concreteKindsOf } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
-import { buildSupertypeMembersMap, supertypeMembersByPublicName } from './supertype-members.ts';
+import { supertypeMembersByPublicName } from './supertype-members.ts';
 import { addressSites, resolveBindings } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
@@ -17,18 +17,13 @@ import {
 	SPACING_DEFAULT,
 	WHITESPACE_ARMS,
 	flankAddress,
-	isDelimiterAddress,
-	isDelimiterArm,
-	isSeparatorAddress,
 	isWhitespaceArm,
 	parseSeamLabel,
 	seamLabel,
 	siteKey,
 	spacingLabel,
 	type FlankSide,
-	type RenderDefaults,
 	type SeparatorSide,
-	type SiteDefault,
 	type SpacingArm,
 	type WhitespaceArm
 } from '../../dsl/primitives/spacing.ts';
@@ -80,7 +75,6 @@ export interface RenderRules {
 export interface RenderRulesConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEntryLike[];
-	readonly defaults?: RenderDefaults;
 	readonly options?: OptionsConfig;
 	readonly whitespaceText?: ReadonlyMap<string, WhitespaceText>;
 }
@@ -205,67 +199,29 @@ function flankedSlots(gaps: ReadonlyMap<RuleId, Gap>): Map<string, Gap> {
 }
 
 class DefaultResolver {
-	readonly #defaults: RenderDefaults;
 	readonly #declared: ReadonlyMap<string, string>;
-	readonly #supertypesOf = new Map<string, string[]>();
 
-	constructor(defaults: RenderDefaults | undefined, nodeMap: NodeMap, declared?: ReadonlyMap<string, string>) {
+	constructor(declared?: ReadonlyMap<string, string>) {
 		this.#declared = declared ?? new Map();
-		const given = defaults ?? { labels: {}, sites: {} };
-		checkDefaultArms(given);
-		this.#defaults = {
-			labels: given.labels,
-			sites: Object.fromEntries(Object.entries(given.sites).map(([kind, value]) => [publicKindName(kind), value]))
-		};
-		for (const [supertype, members] of buildSupertypeMembersMap(nodeMap)) {
-			for (const member of members) {
-				const list = this.#supertypesOf.get(publicKindName(member)) ?? [];
-				list.push(publicKindName(supertype));
-				this.#supertypesOf.set(publicKindName(member), list);
-			}
-		}
 	}
 
-	#site(kind: string, address: string): SiteDefault | undefined {
-		const own = this.#defaults.sites[publicKindName(kind)]?.[address];
-		if (own !== undefined) return own;
-		const inherited = new Map<string, SiteDefault>();
-		for (const supertype of this.#supertypesOf.get(publicKindName(kind)) ?? []) {
-			const v = this.#defaults.sites[supertype]?.[address];
-			if (v !== undefined) inherited.set(`${v.label ?? ''}=${v.arm}`, v);
-		}
-		if (inherited.size > 1) {
-			throw new Error(`defaults: ${publicKindName(kind)}.${address} inherits ${[...inherited.keys()].join(' and ')} from different supertypes`);
-		}
-		return inherited.size === 1 ? [...inherited.values()][0] : undefined;
-	}
-
-	#resolve(kind: string, address: string, label: string, fallback: WhitespaceArm): WhitespaceArm {
-		const declared = this.#declared.get(declaredKey(kind, address));
-		if (declared !== undefined) return declared as WhitespaceArm;
-		const site = this.#site(kind, address);
-		if (site !== undefined) return site.arm as WhitespaceArm;
-		const top = this.#defaults.labels[label];
-		return top === undefined ? fallback : (top as WhitespaceArm);
+	#resolve(kind: string, address: string, fallback: WhitespaceArm): WhitespaceArm {
+		return (this.#declared.get(declaredKey(kind, address)) as WhitespaceArm | undefined) ?? fallback;
 	}
 
 	resolveSeparator(kind: string, slot: string, label: string): SpacingArm {
-		return this.#resolve(kind, siteKey(slot, label), label, SPACING_DEFAULT) as SpacingArm;
+		return this.#resolve(kind, siteKey(slot, label), SPACING_DEFAULT) as SpacingArm;
 	}
 
 	resolveSeam(kind: string, address: string, fallback: WhitespaceArm, arms: readonly WhitespaceArm[]): { readonly label: string; readonly arm: WhitespaceArm } {
-		const label = this.#site(kind, address)?.label ?? address;
-		const arm = this.#resolve(kind, address, label, fallback);
-		if (!arms.includes(arm)) throw new Error(`defaults: '${address}' on ${publicKindName(kind)} is '${arm}', not one of ${arms.join(', ')}`);
-		return { label, arm };
+		const arm = this.#resolve(kind, address, fallback);
+		if (!arms.includes(arm)) throw new Error(`options: '${address}' on ${publicKindName(kind)} is '${arm}', not one of ${arms.join(', ')}`);
+		return { label: address, arm };
 	}
 
 	resolveFlank(kind: string, side: FlankSide): { readonly label: string; readonly arm: WhitespaceArm } {
 		const address = flankAddress(publicKindName(kind), side);
-		const declared = this.#declared.get(declaredKey(kind, address));
-		if (declared !== undefined) return { label: address, arm: declared as WhitespaceArm };
-		const site = this.#site(kind, side);
-		return { label: site?.label ?? address, arm: (site?.arm as WhitespaceArm | undefined) ?? FLANK_DEFAULT };
+		return { label: address, arm: this.#resolve(kind, address, FLANK_DEFAULT) };
 	}
 }
 
@@ -387,7 +343,7 @@ export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyM
 	const gaps = collectGaps(config, rules);
 	const flankSyms = flankSymbols(config);
 	const flanked = flankSyms === undefined ? new Map<string, Gap>() : flankedSlots(gaps);
-	const resolver = new DefaultResolver(config.defaults, config.nodeMap, declared);
+	const resolver = new DefaultResolver(declared);
 	const visit = (r: RenderRule): RenderRule => {
 		const id = bag(r).id;
 		const gap = id === undefined ? undefined : gaps.get(id);
@@ -398,52 +354,6 @@ export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyM
 	const out: Record<string, RenderRule> = {};
 	for (const [kind, rule] of Object.entries(rules)) out[kind] = visit(walker.map(rule, visit));
 	return { rules: out };
-}
-
-export function validateRenderDefaults(defaults: RenderDefaults | undefined, sites: readonly RuleSpacingSite[], nodeMap: NodeMap): void {
-	if (defaults === undefined) return;
-	const labels = new Set<string>();
-	const addresses = new Map<string, Set<string>>();
-	for (const site of sites) {
-		const kind = publicKindName(site.kind);
-		const isFlank = site.side === 'start' || site.side === 'end';
-		if (!isFlank) labels.add(site.label);
-		const set = addresses.get(kind) ?? new Set<string>();
-		set.add(isFlank ? site.side : site.address);
-		addresses.set(kind, set);
-	}
-	const membersOf = new Map<string, string[]>();
-	for (const [supertype, members] of buildSupertypeMembersMap(nodeMap)) {
-		membersOf.set(publicKindName(supertype), members.map(publicKindName));
-	}
-	for (const key of Object.keys(defaults.labels)) {
-		if (!labels.has(key)) throw new Error(`defaults: '${key}' is not a spacing preference of this grammar`);
-	}
-	for (const [key, value] of Object.entries(defaults.sites)) {
-		const kind = publicKindName(key);
-		const kinds = addresses.has(kind) ? [kind] : (membersOf.get(kind) ?? []).filter((m) => addresses.has(m));
-		if (kinds.length === 0) throw new Error(`defaults: '${key}' names no kind or supertype with a spacing site`);
-		for (const address of Object.keys(value)) {
-			if (isDelimiterAddress(address) || isSeparatorAddress(address)) continue;
-			if (!kinds.some((k) => addresses.get(k)!.has(address))) throw new Error(`defaults: ${key}.${address} names no site`);
-		}
-	}
-}
-
-function checkDefaultArms(defaults: RenderDefaults): void {
-	for (const [key, arm] of Object.entries(defaults.labels)) {
-		if (!isWhitespaceArm(arm)) throw new Error(`defaults: '${key}' is '${arm}', not one of ${WHITESPACE_ARMS.join(', ')}`);
-	}
-	for (const [key, value] of Object.entries(defaults.sites)) {
-		for (const [address, site] of Object.entries(value)) {
-			if (isDelimiterAddress(address)) {
-				if (!isDelimiterArm(site.arm)) throw new Error(`defaults: ${key}.${address} is '${site.arm}', not a Delimiter member`);
-				continue;
-			}
-			if (isSeparatorAddress(address)) continue;
-			if (!isWhitespaceArm(site.arm)) throw new Error(`defaults: ${key}.${address} is '${site.arm}', not one of ${WHITESPACE_ARMS.join(', ')}`);
-		}
-	}
 }
 
 export function admitsDepth(site: { readonly arms: readonly string[] }): boolean {
@@ -693,7 +603,7 @@ export function seamRenderRules(
 	const flankSyms = flankSymbols(config);
 	const seams: SeamArms = flankSyms === undefined ? { arms: SPACING_ARMS, symbols } : { arms: WHITESPACE_ARMS, symbols: flankSyms };
 	const build = (): RenderRules => {
-		const resolver = new DefaultResolver(config.defaults, config.nodeMap, declared);
+		const resolver = new DefaultResolver(declared);
 		const out: Record<string, RenderRule> = {};
 		for (const [kind, rule] of Object.entries(spaced.rules)) {
 			if (inlined.has(kind)) {
@@ -712,7 +622,6 @@ export function seamRenderRules(
 	};
 	const result = build();
 	const sites = spacingSitesOf(result, config.nodeMap);
-	validateRenderDefaults(config.defaults, sites, config.nodeMap);
 	validateIndentDepth(sites);
 	return result;
 }

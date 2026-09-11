@@ -9,7 +9,7 @@ import {
 	type SitePreference
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { SPACING_ARMS, WHITESPACE_ARMS, type RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { SPACING_ARMS, WHITESPACE_ARMS } from '../dsl/primitives/spacing.ts';
 import { addressSegments, addressSites, matchAddress } from '../compiler/model/site-addresses.ts';
 import { parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
@@ -192,7 +192,6 @@ export interface EmitOptionsConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly renderRules: RenderRules;
-	readonly renderDefaults?: RenderDefaults;
 	readonly options?: OptionsConfig;
 	readonly sites?: readonly SitePreference[];
 }
@@ -204,7 +203,6 @@ export function emitOptions(config: EmitOptionsConfig): string {
 			nodeMap: config.nodeMap,
 			kindEntries: config.kindEntries,
 			renderRules: config.renderRules,
-			defaults: config.renderDefaults,
 			options: config.options
 		});
 	const supertypeMembers = supertypeMembersByPublicName(config.nodeMap);

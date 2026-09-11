@@ -1,4 +1,4 @@
-import { DELIMITER_LABEL, SEPARATOR_LABEL, type RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { DELIMITER_LABEL, SEPARATOR_LABEL } from '../dsl/primitives/spacing.ts';
 import { publicKindName } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -84,7 +84,6 @@ export interface EmitFactoriesConfig {
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	triviaKinds?: readonly string[];
-	renderDefaults?: RenderDefaults;
 }
 
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -284,10 +283,9 @@ export namespace factory {
 		output: string[],
 		node: AssembledList,
 		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined,
-		renderDefaults: RenderDefaults | undefined
+		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		const result = emitSeparatedListFactory(node, nodeMap, kindEntries, renderDefaults);
+		const result = emitSeparatedListFactory(node, nodeMap, kindEntries);
 		if (result) output.push(result);
 	}
 }
@@ -1236,8 +1234,7 @@ function listBuiltTypeSurface(
 export function declaredSeparatorDefault(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	renderDefaults: RenderDefaults | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	const declared = node.resolvedSeparatorArm;
 	if (declared === undefined) throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
@@ -1251,8 +1248,7 @@ function declaredDelimiterDefault(node: AssembledList): string {
 function emitSeparatedListFactory(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	renderDefaults: RenderDefaults | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
@@ -1312,7 +1308,7 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = elements;`);
 	}
 	if (hasSeparatorKindOption) {
-		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries, renderDefaults)};`);
+		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)};`);
 	}
 	if (hasDelimiterOption) {
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
@@ -1447,7 +1443,6 @@ interface MapEntry {
 export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
 	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
-	readonly #renderDefaults: RenderDefaults | undefined;
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
 	readonly #leafReConsts: Map<string, string>;
@@ -1458,7 +1453,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 	constructor(config: EmitFactoriesConfig) {
 		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
-		this.#renderDefaults = config.renderDefaults;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -1515,7 +1509,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 
 	emitSeparatedList(node: AssembledList): void {
-		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries, this.#renderDefaults);
+		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
 	emitRefineForms(kind: string, node: AssembledNode): void {

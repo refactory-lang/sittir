@@ -478,19 +478,6 @@ so a quoted literal may hold a slash. What `OptionsCheck` consults per key.
  *  top-level key of the grammar's `Options` type and of its `defaults`. */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::RenderDefaults`
-
-```text
-/**
- * A grammar's declared render defaults: `labels` maps a separator spacing
- * label or a token seam label to its default arm; `sites[kind][address]` holds a site's default
- * and, where the grammar named it, its label — the address being a slot
- * site key or the flank side `start` / `end`. Wire derives it from the
- * `preference()` declarations in `patches:` (renderDefaultsOf); evaluate
- * carries it to RawGrammar.renderDefaults and `spaceRenderRules` consumes it.
- */
-```
-
 ### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingLabel`
 
 ```text
@@ -557,9 +544,3 @@ walk pairs them.
  *  spelled that way. */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::SiteDefault`
-
-```text
-/** One declared site default: the arm, and the label the grammar gave the
- *  site when it declared one. */
-```

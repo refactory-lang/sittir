@@ -1,4 +1,4 @@
-import { parseSeamLabel, type RenderDefaults } from '../dsl/primitives/spacing.ts';
+import { parseSeamLabel } from '../dsl/primitives/spacing.ts';
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -116,7 +116,6 @@ export interface RenderModuleBundle {
 
 export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
-	readonly renderDefaults?: RenderDefaults;
 	readonly options?: OptionsConfig;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
 }
@@ -135,9 +134,9 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates, renderRules, renderDefaults, visibleExternals, options } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals, options } = config;
 	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, renderDefaults, visibleExternals, options })
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals, options })
 	};
 }
 
@@ -153,7 +152,6 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#generatedIdTables = config.generatedIdTables;
 		this.#options = {
 			renderRules: config.renderRules,
-			renderDefaults: config.renderDefaults,
 			visibleExternals: config.visibleExternals,
 			options: config.options
 		};
@@ -957,7 +955,7 @@ function planRenderOptionsFor(
 ): RenderPlan {
 	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLAN;
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, defaults: inputs.renderDefaults, options: inputs.options });
+	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
 	return planRenderOptions(
 		sites,
 		kindEntries,

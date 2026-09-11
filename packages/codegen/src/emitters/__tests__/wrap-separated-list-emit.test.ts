@@ -59,10 +59,9 @@ describe('wrap emitter — separatedList', () => {
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
-		const renderDefaults = { labels: {}, sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } } };
 		const list = nodeMap.nodes.get('member_list');
 		if (list instanceof AssembledList) list.resolvedSeparatorArm = 'semi';
-		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES, renderDefaults });
+		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
 
 		expect(emitted).toContain('_member:');
 		expect(emitted).toContain('member() {');

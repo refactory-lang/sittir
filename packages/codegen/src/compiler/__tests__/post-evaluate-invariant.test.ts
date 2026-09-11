@@ -145,8 +145,7 @@ describe('post-evaluate invariant', () => {
 				'visibleExternals',
 				// Spacing phantom declarations from `patches:` — drained from
 				// __wireContext__ by drainSpacingPreferencesMetadata.
-				'renderDefaults',
-				// The `options:` block, carried unread — resolved against the
+						// The `options:` block, carried unread — resolved against the
 				// site universe in seamRenderRules, which is the first place
 				// the sites an address names exist.
 				'options',
