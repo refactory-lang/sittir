@@ -3339,6 +3339,20 @@ trailing edge of its own — a leaf — takes none, and a slot admitting one
 child kind seats that child like any other, so every sibling gap in the
 grammar has an address.
 
+An admitted kind is expanded to what renders in its place before it is
+seated: a supertype to its concrete members, and a polymorph with no trailing
+edge of its own to the element kinds of its slot, recursively. The slot, not
+the polymorph's arm list, is what is expanded: arms are named by their
+public alias while nodes are keyed by their storage kind, and the slot is the
+same derivation the emitter drills when it seats the arm. A supertype never has an edge
+and a body-less polymorph parent has none either — nothing renders them — so
+the child the renderer sees in the slot is the member or the arm, which is
+the kind the site is looked up by. A polymorph that does render, such as a
+decorator with its `@` token, keeps its own edge and is seated as itself. Without the expansion a `statements` slot whose union holds a
+`declaration` supertype or an `export_statement` polymorph had no site for
+anything under them, and a top-level gap rule reached only the union's leaf
+members.
+
 Each seated site takes the arm its child's global edge already resolves to.
 The parent fills unconditionally, so a seated site always decides the edge
 inside its slot; inheriting the arm is what lets the whole space be minted
@@ -3824,7 +3838,19 @@ live.
 
 The sites an address names: itself and everything beneath it. A wildcard
 matches any segment and `(_)` any kind, so an address with an interior wildcard
-is a scan while a concrete prefix is a range.
+is a scan while a concrete prefix is a range. A kind-match segment naming a
+supertype matches every site whose segment names one of its members, through
+`membersOf` (`supertypeMembersByPublicName`), so `(statement)/after` reaches
+the members' sites the way the flat `Members` fan-out did; a site path itself
+always names the concrete kind.
+
+### `packages/codegen/src/compiler/model/supertype-members.ts::supertypeMembersByPublicName`
+
+`buildSupertypeMembersMap` keyed and valued by public kind names: the form an
+address spells, so a `(supertype)` segment can be compared with a site's
+concrete kind without either side stripping underscores at the comparison.
+Built once per caller and threaded into `matchAddress` and `resolveBindings`
+rather than derived inside them, so the membership has one source.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
 

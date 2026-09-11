@@ -2,6 +2,15 @@ export const ADJACENT_MARK = '\u{FFFE}';
 export const INDENT_NEWLINE = '\u{FDD0}\n';
 export const DEDENT_MARK = '\u{FDD1}';
 export const SEAM_MARK = '\u{FDD2}';
+export const TOKEN_SEAM_MARK = '\u{FDD3}';
+
+export function isWhitespaceOnly(text: string): boolean {
+	return text.trim() === '';
+}
+
+export function seamMarked(text: string): string {
+	return isWhitespaceOnly(text) ? TOKEN_SEAM_MARK + text : text;
+}
 
 export interface TextNode {
 	readonly kind: 'text';

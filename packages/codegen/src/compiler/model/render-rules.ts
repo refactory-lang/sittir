@@ -4,9 +4,9 @@ import type { RenderRule, Rule, RuleAnnotations, RuleId } from '../../types/rule
 import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { AbstractAssembledCompound, AssembledEnum } from './node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, AssembledPolymorph, concreteKindsOf } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
-import { buildSupertypeMembersMap } from './supertype-members.ts';
+import { buildSupertypeMembersMap, supertypeMembersByPublicName } from './supertype-members.ts';
 import { addressSites, resolveBindings } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
@@ -750,7 +750,7 @@ export function declaredOptionArms(
 	if (declarations.length === 0) return undefined;
 	const addressed = addressSites(sites, config.kindEntries);
 	const arms = new Map<string, string>();
-	for (const [index, arm] of resolveBindings(declarations, bindings, addressed, false)) {
+	for (const [index, arm] of resolveBindings(declarations, bindings, addressed, supertypeMembersByPublicName(config.nodeMap), false)) {
 		const site = addressed[index]!;
 		arms.set(declaredKey(site.kind, site.address), arm);
 	}
@@ -823,13 +823,25 @@ function seatedSites(
 		const own = publicKindName(site.kind);
 		if (site.side === 'seam' && site.address === seamLabel(own, 'after')) edgeOf.set(own, site);
 	}
+	const renderedKinds = (kind: string, seen: Set<string>): string[] => {
+		if (seen.has(kind)) return [];
+		seen.add(kind);
+		if (edgeOf.has(publicKindName(kind))) return [kind];
+		const node = nodeMap.nodes.get(kind);
+		if (node instanceof AssembledPolymorph) {
+			return node.slots.flatMap((slot) => slotElementKinds(slot, nodeMap)).flatMap((arm) => renderedKinds(arm, seen));
+		}
+		return concreteKindsOf(kind, nodeMap).flatMap((concrete) => (concrete === kind ? [kind] : renderedKinds(concrete, seen)));
+	};
 	const admitted = new Map<string, { kind: string; slot: string; children: Set<string> }>();
 	for (const seat of seats) {
 		const slot = nodeMap.slotByRuleId.get(seat.id);
 		if (slot === undefined) continue;
 		const key = `${seat.kind}\u0000${seat.slot}`;
 		const entry = admitted.get(key) ?? { kind: seat.kind, slot: seat.slot, children: new Set<string>() };
-		for (const c of slotElementKinds(slot, nodeMap)) entry.children.add(publicKindName(c));
+		for (const c of slotElementKinds(slot, nodeMap)) {
+			for (const rendered of renderedKinds(c, new Set())) entry.children.add(publicKindName(rendered));
+		}
 		admitted.set(key, entry);
 	}
 	const out: RuleSpacingSite[] = [];

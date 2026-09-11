@@ -28,7 +28,8 @@ import {
 	storageKindOfRef,
 	storageKindOfValue,
 	isLeftImmediateKind,
-	isKindIdStored
+	isKindIdStored,
+	fixedTextOfKind
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { computeBundleHash, type BundleFile } from './bundle-hash.ts';
@@ -83,6 +84,8 @@ import {
 	printRustBody,
 	references,
 	rustStringLiteral,
+	seamMarked,
+	isWhitespaceOnly,
 	templateOf,
 	type Body,
 	type Flanks,
@@ -602,7 +605,7 @@ function renderTypedDispatch(
 	}
 	for (const [index, literal] of literals.entries()) {
 		const variant = rustLiteralTransportVariantName(literal, index);
-		lines.push(`            AnyTransport::${variant} => f.write_str(${JSON.stringify(literal.text)}),`);
+		lines.push(`            AnyTransport::${variant} => f.write_str(${JSON.stringify(seamMarked(literal.text))}),`);
 	}
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -698,10 +701,17 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	return lines;
 }
 
+function leafTextWrite(node: AssembledNode, on: string): string {
+	const fixed = fixedTextOfKind(node);
+	return fixed !== undefined && isWhitespaceOnly(fixed)
+		? `f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, ${on}.text.as_str()].concat())`
+		: `f.write_str(&${on}.text)`;
+}
+
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
-	const body = node instanceof AssembledEnum ? `::std::fmt::Display::fmt(t, f)` : `f.write_str(&t.text)`;
+	const body = node instanceof AssembledEnum ? `::std::fmt::Display::fmt(t, f)` : leafTextWrite(node, 't');
 	const mark = node instanceof AssembledLeaf && node.immediate ? [`    ::sittir_core::spacing::mark_adjacent(f)?;`] : [];
 	return [
 		`fn ${fnName}(t: &${typeName}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`,
@@ -2123,8 +2133,8 @@ function emitPerSlotChildEnum(
 		if (variant !== undefined) {
 			const arm =
 				literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap)
-					? `{ ::sittir_core::spacing::mark_adjacent(f)?; f.write_str(${JSON.stringify(literal.text)}) }`
-					: `f.write_str(${JSON.stringify(literal.text)})`;
+					? `{ ::sittir_core::spacing::mark_adjacent(f)?; f.write_str(${JSON.stringify(seamMarked(literal.text))}) }`
+					: `f.write_str(${JSON.stringify(seamMarked(literal.text))})`;
 			lines.push(`            ${enumName}::${variant} => ${arm},`);
 		}
 	}
@@ -2487,42 +2497,69 @@ function seatVariantArms(
 	seats: ReadonlyMap<string, SpacingSite>,
 	nodeMap: NodeMap,
 	ownerTypeName: string
-): { readonly arms: readonly string[]; readonly matched: boolean } | undefined {
-	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
-	if (cls.tag === 'concrete') {
-		const seat = seats.get(publicKindName(cls.kind));
-		if (seat === undefined) return undefined;
-		return {
-			matched: false,
-			arms: [
-				`                    seated.${rustFieldIdent(seat.seat!.field)}.get_or_insert(table.spacing[options::${seat.constName}]);`
-			]
-		};
-	}
-	const arm = (enumName: string, kind: string, node: AssembledNode): string | undefined => {
+): readonly string[] {
+	type Arm = { readonly pattern: string; readonly body: readonly string[] };
+	const indent = (lines: readonly string[]): string[] => lines.map((line) => `    ${line}`);
+	const matchOver = (arms: readonly Arm[]): string[] =>
+		arms.length === 0
+			? []
+			: [
+					`match t {`,
+					...arms.flatMap((arm) => [`    ${arm.pattern} => {`, ...indent(indent(arm.body)), `    }`]),
+					`    #[allow(unreachable_patterns)]`,
+					`    _ => {}`,
+					`}`
+				];
+	const bodyFor = (kind: string, node: AssembledNode, seen: Set<string>): string[] => {
 		const seat = seats.get(publicKindName(kind));
-		if (seat === undefined) return undefined;
-		return (
-			`                        ${enumName}::${rustTypeIdent(node.typeName)}(t) => { t.${rustFieldIdent(seat.seat!.field)}` +
-			`.get_or_insert(table.spacing[options::${seat.constName}]); }`
-		);
+		if (seat !== undefined) return [`t.${rustFieldIdent(seat.seat!.field)}.get_or_insert(table.spacing[options::${seat.constName}]);`];
+		if (seen.has(kind)) return [];
+		seen.add(kind);
+		if (node instanceof AssembledSupertype) return matchOver(supertypeArms(node, seen));
+		if (!(node instanceof AssembledPolymorph)) return [];
+		const model = renderSlotModelOf(node);
+		const slot = model.named[0] ?? model.unnamed[0];
+		if (slot?.name === undefined) return [];
+		const inner = slotBody(slot, node.typeName, seen);
+		if (inner.length === 0) return [];
+		const held = isRequired(slot) ? '::sittir_core::SlotValue::Node(seated)' : 'Some(::sittir_core::SlotValue::Node(seated))';
+		return [`if let ${held} = &mut t.${rustFieldIdent(slot.name)} {`, ...indent(inner), `}`];
 	};
-	if (cls.tag === 'supertype') {
-		const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
-		const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
-		if (!(node instanceof AssembledSupertype)) return undefined;
-		const enumName = `${rustTypeIdent(cls.supertypeName)}Transport`;
-		const arms = collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.flatMap(
-			({ subKind, subNode }) => arm(enumName, subKind, subNode) ?? []
+	const variantArms = (
+		enumName: string,
+		members: readonly { readonly kind: string; readonly node: AssembledNode }[],
+		seen: Set<string>
+	): Arm[] =>
+		members.flatMap(({ kind, node }) => {
+			const body = bodyFor(kind, node, seen);
+			return body.length === 0 ? [] : [{ pattern: `${enumName}::${rustTypeIdent(node.typeName)}(t)`, body }];
+		});
+	const supertypeArms = (node: AssembledSupertype, seen: Set<string>): Arm[] =>
+		variantArms(
+			`${rustTypeIdent(node.typeName)}Transport`,
+			collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.map(({ subKind, subNode }) => ({ kind: subKind, node: subNode })),
+			seen
 		);
-		return arms.length === 0 ? undefined : { arms, matched: true };
-	}
-	if (cls.tag !== 'heterogeneous') return undefined;
-	const enumName = perSlotEnumName(ownerTypeName, field.name!);
-	const arms = expandConcreteTransportKinds(kindsOf(field), nodeMap).flatMap(
-		({ kind, node }) => arm(enumName, kind, node) ?? []
-	);
-	return arms.length === 0 ? undefined : { arms, matched: true };
+	const slotBody = (slot: AssembledNonterminal, slotOwnerTypeName: string, seen: Set<string>): string[] => {
+		const kinds = kindsOf(slot);
+		const cls = classifySlotForEmit(kinds, nodeMap);
+		const borrowed = (typeName: string, lines: readonly string[]): string[] =>
+			lines.length === 0 ? [] : [`let t: &mut ${typeName} = ::std::borrow::BorrowMut::borrow_mut(seated);`, ...lines];
+		if (cls.tag === 'concrete') {
+			const node = nodeMap.nodes.get(cls.kind);
+			const typeName = concreteTransportTypeName(cls.kind, nodeMap);
+			return node === undefined || typeName === null ? [] : borrowed(typeName, bodyFor(cls.kind, node, seen));
+		}
+		if (cls.tag === 'supertype') {
+			const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+			const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
+			if (!(node instanceof AssembledSupertype)) return [];
+			return borrowed(`${rustTypeIdent(cls.supertypeName)}Transport`, matchOver(supertypeArms(node, seen)));
+		}
+		const enumName = hasAnyConcreteChildKind(kinds, nodeMap) ? perSlotEnumName(slotOwnerTypeName, slot.name!) : 'AnyTransport';
+		return borrowed(enumName, matchOver(variantArms(enumName, expandConcreteTransportKinds(kinds, nodeMap), seen)));
+	};
+	return slotBody(field, ownerTypeName, new Set());
 }
 
 function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
@@ -2532,8 +2569,8 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 		if (field.name === undefined || !isMultiple(field)) continue;
 		const seats = seatedSitesOf(plan, node.kind, field.name);
 		if (seats.size === 0) continue;
-		const variants = seatVariantArms(field, seats, nodeMap, node.typeName);
-		if (variants === undefined) continue;
+		const seated = seatVariantArms(field, seats, nodeMap, node.typeName);
+		if (seated.length === 0) continue;
 		const ident = rustFieldIdent(field.name);
 		const open = isRequired(field)
 			? [`        {`, `            let seated_items = &mut self.${ident};`]
@@ -2548,9 +2585,7 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 			`                if seated_at == seated_last { continue; }`,
 			...element,
 			`                if let ::sittir_core::SlotValue::Node(seated) = item {`,
-			...(variants.matched ? [`                    match seated {`] : []),
-			...variants.arms,
-			...(variants.matched ? [`                        _ => {}`, `                    }`] : []),
+			...seated.map((line) => `                    ${line}`),
 			`                }`,
 			`            }`,
 			`        }`
@@ -2683,7 +2718,7 @@ function renderTransportDataStruct(
 	lines.push(`impl ::std::fmt::Display for ${structName} {`);
 	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
 	if (isLeafNode) {
-		lines.push(`        render_with_trivia!(self, f, f.write_str(&self.text))`);
+		lines.push(`        render_with_trivia!(self, f, ${leafTextWrite(node, 'self')})`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
 		lines.push(`        render_with_trivia!(self, f, ${renderFn}(self, f))`);

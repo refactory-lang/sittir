@@ -244,7 +244,7 @@ describe('deriveAddressTables', () => {
 	});
 
 	it('splits an address into the branches above a site and the site itself', () => {
-		const tables = deriveAddressTables([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')], kindEntries, addressArm);
+		const tables = deriveAddressTables([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')], kindEntries, addressArm, new Map());
 		expect(tables.roots).toEqual(['block']);
 		expect(tables.branches).toEqual([
 			{ path: 'block', keys: ['before', '{'] },
@@ -258,7 +258,7 @@ describe('deriveAddressTables', () => {
 		const sites = [site('block', 'lbrace', 'lbrace_after')];
 		const src = renderOptionsModule(deriveOptionsShape(sites, new Map(), addressArm), {
 			spacingType: 'TSKindId.tight | TSKindId.space',
-			addresses: deriveAddressTables(sites, kindEntries, addressArm)
+			addresses: deriveAddressTables(sites, kindEntries, addressArm, new Map())
 		});
 		expect(src).toContain("export type AddressRoot = 'block';");
 		expect(src).toContain("export interface AddressBranch {\n\treadonly block: '{';\n\treadonly 'block/{': 'after';\n}");

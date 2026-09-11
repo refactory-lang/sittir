@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { admitsDepth, type RenderRules } from '../compiler/model/render-rules.ts';
 import { findEntryForKindName, type KindEntryLike } from '../compiler/generated-metadata.ts';
-import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
+import { supertypeMembersByPublicName, type SupertypeMembers } from '../compiler/model/supertype-members.ts';
 import {
 	collectSitePreferences,
 	publicKindName,
@@ -181,6 +181,7 @@ export function deriveAddressTables(
 	sites: readonly SitePreference[],
 	kindEntries: readonly KindEntryLike[],
 	armType: ArmTypeResolver,
+	membersOf: SupertypeMembers,
 	declared?: OptionsDeclarations
 ): AddressTables {
 	const branches = new Map<string, Set<string>>();
@@ -207,11 +208,11 @@ export function deriveAddressTables(
 		const addressed = addressSites(sites, kindEntries);
 		const reached = new Map<string, SitePreference[]>();
 		for (const binding of declared.bindings) {
-			const hits = matchAddress(addressSegments(binding.address), addressed);
+			const hits = matchAddress(addressSegments(binding.address), addressed, membersOf);
 			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...(hits as unknown as SitePreference[])]);
 		}
 		for (const declaration of declared.declarations) {
-			if (matchAddress(addressSegments(declaration.path), addressed).length > 0) continue;
+			if (matchAddress(addressSegments(declaration.path), addressed, membersOf).length > 0) continue;
 			const bound = reached.get(declaration.path) ?? [];
 			if (bound.length === 0) continue;
 			const keys = parsePreferencePath(declaration.path).map(nestedKey);
@@ -382,7 +383,7 @@ export function emitOptions(config: EmitOptionsConfig): string {
 			defaults: config.renderDefaults,
 			options: config.options
 		});
-	const supertypeMembers = buildSupertypeMembersMap(config.nodeMap);
+	const supertypeMembers = supertypeMembersByPublicName(config.nodeMap);
 	const armType = kindIdArmType(config.kindEntries);
 	const shape = deriveOptionsShape(sites, supertypeMembers, armType);
 	const typeOf = (arms: readonly string[]): string => arms.map((arm) => armType({ value: arm, kind: arm })).join(' | ');
@@ -392,6 +393,6 @@ export function emitOptions(config: EmitOptionsConfig): string {
 		config.options === undefined
 			? undefined
 			: readOptionsBlock(config.options, new Set([...config.nodeMap.nodes.keys()].map(publicKindName)));
-	const addresses = deriveAddressTables(sites, config.kindEntries, armType, declared);
+	const addresses = deriveAddressTables(sites, config.kindEntries, armType, supertypeMembers, declared);
 	return renderOptionsModule(shape, { spacingType, whitespaceType, supertypeMembers, addresses });
 }

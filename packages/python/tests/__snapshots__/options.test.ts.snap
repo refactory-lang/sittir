@@ -316,14 +316,31 @@ export interface KindSpacing {
 		| 'assert_after'
 		| 'assert_before'
 		| 'expression_as_pattern_after'
+		| 'expression_attribute_after'
+		| 'expression_await_after'
+		| 'expression_binary_operator_after'
 		| 'expression_boolean_operator_after'
+		| 'expression_call_after'
 		| 'expression_comparison_operator_after'
+		| 'expression_concatenated_string_after'
 		| 'expression_conditional_expression_after'
+		| 'expression_dictionary_after'
+		| 'expression_dictionary_comprehension_after'
+		| 'expression_generator_expression_after'
 		| 'expression_lambda_after'
+		| 'expression_list_comprehension_after'
+		| 'expression_list_splat_pattern_after'
 		| 'expression_named_expression_after'
 		| 'expression_not_operator_after'
+		| 'expression_parenthesized_expression_after'
 		| 'expression_separator_space_after'
-		| 'expression_separator_space_before';
+		| 'expression_separator_space_before'
+		| 'expression_set_after'
+		| 'expression_set_comprehension_after'
+		| 'expression_string_after'
+		| 'expression_subscript_after'
+		| 'expression_tuple_after'
+		| 'expression_unary_operator_after';
 	readonly assignment_eq: 'eq_after' | 'eq_before';
 	readonly assignment_type: 'colon_after' | 'colon_before';
 	readonly assignment_typed: 'colon_after' | 'colon_before' | 'eq_after' | 'eq_before';
@@ -372,7 +389,20 @@ export interface KindSpacing {
 	readonly case_as_pattern: 'as_after' | 'as_before';
 	readonly case_clause: 'case_after' | 'case_before' | 'colon_after' | 'colon_before';
 	readonly case_list_pattern: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
-	readonly case_patterns: 'case_pattern_separator_space_after' | 'case_pattern_separator_space_before';
+	readonly case_patterns:
+		| 'case_pattern_case_as_pattern_after'
+		| 'case_pattern_case_list_pattern_after'
+		| 'case_pattern_case_tuple_pattern_after'
+		| 'case_pattern_class_pattern_after'
+		| 'case_pattern_complex_pattern_after'
+		| 'case_pattern_concatenated_string_after'
+		| 'case_pattern_dict_pattern_after'
+		| 'case_pattern_keyword_pattern_after'
+		| 'case_pattern_separator_space_after'
+		| 'case_pattern_separator_space_before'
+		| 'case_pattern_simple_pattern_negative_after'
+		| 'case_pattern_splat_pattern_after'
+		| 'case_pattern_string_after';
 	readonly case_tuple_pattern: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly chevron: 'gt_gt_after' | 'gt_gt_before';
 	readonly class_definition: 'class_after' | 'class_before' | 'colon_after' | 'colon_before';
@@ -448,48 +478,118 @@ export interface KindSpacing {
 	readonly except_clause_exception_as: 'as_after' | 'as_before';
 	readonly except_clause_exception_list:
 		| 'value_as_pattern_after'
+		| 'value_attribute_after'
+		| 'value_await_after'
+		| 'value_binary_operator_after'
 		| 'value_boolean_operator_after'
+		| 'value_call_after'
 		| 'value_comparison_operator_after'
+		| 'value_concatenated_string_after'
 		| 'value_conditional_expression_after'
+		| 'value_dictionary_after'
+		| 'value_dictionary_comprehension_after'
+		| 'value_generator_expression_after'
 		| 'value_lambda_after'
+		| 'value_list_after'
+		| 'value_list_comprehension_after'
+		| 'value_list_splat_pattern_after'
 		| 'value_named_expression_after'
 		| 'value_not_operator_after'
+		| 'value_parenthesized_expression_after'
 		| 'value_separator_space_after'
-		| 'value_separator_space_before';
+		| 'value_separator_space_before'
+		| 'value_set_after'
+		| 'value_set_comprehension_after'
+		| 'value_string_after'
+		| 'value_subscript_after'
+		| 'value_tuple_after'
+		| 'value_unary_operator_after';
 	readonly exec_statement:
 		| 'exec_after'
 		| 'exec_before'
 		| 'in_after'
 		| 'in_before'
 		| 'in_clause_as_pattern_after'
+		| 'in_clause_attribute_after'
+		| 'in_clause_await_after'
+		| 'in_clause_binary_operator_after'
 		| 'in_clause_boolean_operator_after'
+		| 'in_clause_call_after'
 		| 'in_clause_comparison_operator_after'
+		| 'in_clause_concatenated_string_after'
 		| 'in_clause_conditional_expression_after'
+		| 'in_clause_dictionary_after'
+		| 'in_clause_dictionary_comprehension_after'
+		| 'in_clause_generator_expression_after'
 		| 'in_clause_lambda_after'
+		| 'in_clause_list_after'
+		| 'in_clause_list_comprehension_after'
+		| 'in_clause_list_splat_pattern_after'
 		| 'in_clause_named_expression_after'
 		| 'in_clause_not_operator_after'
+		| 'in_clause_parenthesized_expression_after'
 		| 'in_clause_separator_space_after'
-		| 'in_clause_separator_space_before';
+		| 'in_clause_separator_space_before'
+		| 'in_clause_set_after'
+		| 'in_clause_set_comprehension_after'
+		| 'in_clause_string_after'
+		| 'in_clause_subscript_after'
+		| 'in_clause_tuple_after'
+		| 'in_clause_unary_operator_after';
 	readonly expression_list_expressions:
 		| 'expression_as_pattern_after'
+		| 'expression_attribute_after'
+		| 'expression_await_after'
+		| 'expression_binary_operator_after'
 		| 'expression_boolean_operator_after'
+		| 'expression_call_after'
 		| 'expression_comparison_operator_after'
+		| 'expression_concatenated_string_after'
 		| 'expression_conditional_expression_after'
+		| 'expression_dictionary_after'
+		| 'expression_dictionary_comprehension_after'
+		| 'expression_generator_expression_after'
 		| 'expression_lambda_after'
+		| 'expression_list_comprehension_after'
+		| 'expression_list_splat_pattern_after'
 		| 'expression_named_expression_after'
 		| 'expression_not_operator_after'
+		| 'expression_parenthesized_expression_after'
 		| 'expression_separator_space_after'
-		| 'expression_separator_space_before';
+		| 'expression_separator_space_before'
+		| 'expression_set_after'
+		| 'expression_set_comprehension_after'
+		| 'expression_string_after'
+		| 'expression_subscript_after'
+		| 'expression_tuple_after'
+		| 'expression_unary_operator_after';
 	readonly expression_statement_tuple:
 		| 'expression_as_pattern_after'
+		| 'expression_attribute_after'
+		| 'expression_await_after'
+		| 'expression_binary_operator_after'
 		| 'expression_boolean_operator_after'
+		| 'expression_call_after'
 		| 'expression_comparison_operator_after'
+		| 'expression_concatenated_string_after'
 		| 'expression_conditional_expression_after'
+		| 'expression_dictionary_after'
+		| 'expression_dictionary_comprehension_after'
+		| 'expression_generator_expression_after'
 		| 'expression_lambda_after'
+		| 'expression_list_comprehension_after'
+		| 'expression_list_splat_pattern_after'
 		| 'expression_named_expression_after'
 		| 'expression_not_operator_after'
+		| 'expression_parenthesized_expression_after'
 		| 'expression_separator_space_after'
-		| 'expression_separator_space_before';
+		| 'expression_separator_space_before'
+		| 'expression_set_after'
+		| 'expression_set_comprehension_after'
+		| 'expression_string_after'
+		| 'expression_subscript_after'
+		| 'expression_tuple_after'
+		| 'expression_unary_operator_after';
 	readonly finally_clause: 'colon_after' | 'colon_before' | 'finally_after' | 'finally_before';
 	readonly float: 'dot_after' | 'dot_before';
 	readonly for_in_clause:
@@ -577,7 +677,20 @@ export interface KindSpacing {
 	readonly list: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly list_comprehension: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly list_pattern: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
-	readonly list_pattern_case_patterns: 'case_pattern_separator_space_after' | 'case_pattern_separator_space_before';
+	readonly list_pattern_case_patterns:
+		| 'case_pattern_case_as_pattern_after'
+		| 'case_pattern_case_list_pattern_after'
+		| 'case_pattern_case_tuple_pattern_after'
+		| 'case_pattern_class_pattern_after'
+		| 'case_pattern_complex_pattern_after'
+		| 'case_pattern_concatenated_string_after'
+		| 'case_pattern_dict_pattern_after'
+		| 'case_pattern_keyword_pattern_after'
+		| 'case_pattern_separator_space_after'
+		| 'case_pattern_separator_space_before'
+		| 'case_pattern_simple_pattern_negative_after'
+		| 'case_pattern_splat_pattern_after'
+		| 'case_pattern_string_after';
 	readonly list_splat: 'star_after' | 'star_before';
 	readonly list_splat_pattern: 'star_after' | 'star_before';
 	readonly match_block_block: 'alternative_case_clause_after' | 'alternative_separator_space';
@@ -637,24 +750,58 @@ export interface KindSpacing {
 		| 'pattern_tuple_pattern_after';
 	readonly print_arguments:
 		| 'argument_as_pattern_after'
+		| 'argument_attribute_after'
+		| 'argument_await_after'
+		| 'argument_binary_operator_after'
 		| 'argument_boolean_operator_after'
+		| 'argument_call_after'
 		| 'argument_comparison_operator_after'
+		| 'argument_concatenated_string_after'
 		| 'argument_conditional_expression_after'
+		| 'argument_dictionary_after'
+		| 'argument_dictionary_comprehension_after'
+		| 'argument_generator_expression_after'
 		| 'argument_lambda_after'
+		| 'argument_list_comprehension_after'
+		| 'argument_list_splat_pattern_after'
 		| 'argument_named_expression_after'
 		| 'argument_not_operator_after'
+		| 'argument_parenthesized_expression_after'
 		| 'argument_separator_space_after'
-		| 'argument_separator_space_before';
+		| 'argument_separator_space_before'
+		| 'argument_set_after'
+		| 'argument_set_comprehension_after'
+		| 'argument_string_after'
+		| 'argument_subscript_after'
+		| 'argument_tuple_after'
+		| 'argument_unary_operator_after';
 	readonly print_chevron_arguments:
 		| 'argument_as_pattern_after'
+		| 'argument_attribute_after'
+		| 'argument_await_after'
+		| 'argument_binary_operator_after'
 		| 'argument_boolean_operator_after'
+		| 'argument_call_after'
 		| 'argument_comparison_operator_after'
+		| 'argument_concatenated_string_after'
 		| 'argument_conditional_expression_after'
+		| 'argument_dictionary_after'
+		| 'argument_dictionary_comprehension_after'
+		| 'argument_generator_expression_after'
 		| 'argument_lambda_after'
+		| 'argument_list_comprehension_after'
+		| 'argument_list_splat_pattern_after'
 		| 'argument_named_expression_after'
 		| 'argument_not_operator_after'
+		| 'argument_parenthesized_expression_after'
 		| 'argument_separator_space_after'
-		| 'argument_separator_space_before';
+		| 'argument_separator_space_before'
+		| 'argument_set_after'
+		| 'argument_set_comprehension_after'
+		| 'argument_string_after'
+		| 'argument_subscript_after'
+		| 'argument_tuple_after'
+		| 'argument_unary_operator_after';
 	readonly print_statement_chevron: 'print_after' | 'print_before';
 	readonly print_statement_plain: 'print_after' | 'print_before';
 	readonly raise_statement: 'from_after' | 'from_before' | 'raise_after' | 'raise_before';
@@ -663,33 +810,81 @@ export interface KindSpacing {
 	readonly set_comprehension: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly simple_pattern_negative: 'sign_after' | 'sign_before';
 	readonly simple_statements_elements:
+		| 'simple_statement_as_pattern_after'
 		| 'simple_statement_assert_statement_after'
+		| 'simple_statement_assignment_after'
+		| 'simple_statement_attribute_after'
+		| 'simple_statement_augmented_assignment_after'
+		| 'simple_statement_await_after'
+		| 'simple_statement_binary_operator_after'
+		| 'simple_statement_boolean_operator_after'
+		| 'simple_statement_call_after'
+		| 'simple_statement_comparison_operator_after'
+		| 'simple_statement_concatenated_string_after'
+		| 'simple_statement_conditional_expression_after'
 		| 'simple_statement_delete_statement_after'
+		| 'simple_statement_dictionary_after'
+		| 'simple_statement_dictionary_comprehension_after'
 		| 'simple_statement_exec_statement_after'
 		| 'simple_statement_future_import_statement_after'
+		| 'simple_statement_generator_expression_after'
 		| 'simple_statement_global_statement_after'
 		| 'simple_statement_import_from_statement_after'
 		| 'simple_statement_import_statement_after'
+		| 'simple_statement_lambda_after'
+		| 'simple_statement_list_after'
+		| 'simple_statement_list_comprehension_after'
+		| 'simple_statement_list_splat_pattern_after'
+		| 'simple_statement_named_expression_after'
 		| 'simple_statement_nonlocal_statement_after'
+		| 'simple_statement_not_operator_after'
+		| 'simple_statement_parenthesized_expression_after'
+		| 'simple_statement_print_statement_chevron_after'
+		| 'simple_statement_print_statement_plain_after'
 		| 'simple_statement_raise_statement_after'
 		| 'simple_statement_return_statement_after'
 		| 'simple_statement_separator_space_after'
 		| 'simple_statement_separator_space_before'
-		| 'simple_statement_type_alias_statement_after';
+		| 'simple_statement_set_after'
+		| 'simple_statement_set_comprehension_after'
+		| 'simple_statement_string_after'
+		| 'simple_statement_subscript_after'
+		| 'simple_statement_tuple_after'
+		| 'simple_statement_type_alias_statement_after'
+		| 'simple_statement_unary_operator_after'
+		| 'simple_statement_yield_after';
 	readonly slice: 'colon_after' | 'colon_before';
 	readonly slice_group: 'colon_after' | 'colon_before';
 	readonly splat_pattern: 'operator_after' | 'operator_before';
 	readonly splat_type: 'operator_after' | 'operator_before';
 	readonly subjects:
 		| 'subject_as_pattern_after'
+		| 'subject_attribute_after'
+		| 'subject_await_after'
+		| 'subject_binary_operator_after'
 		| 'subject_boolean_operator_after'
+		| 'subject_call_after'
 		| 'subject_comparison_operator_after'
+		| 'subject_concatenated_string_after'
 		| 'subject_conditional_expression_after'
+		| 'subject_dictionary_after'
+		| 'subject_dictionary_comprehension_after'
+		| 'subject_generator_expression_after'
 		| 'subject_lambda_after'
+		| 'subject_list_after'
+		| 'subject_list_comprehension_after'
+		| 'subject_list_splat_pattern_after'
 		| 'subject_named_expression_after'
 		| 'subject_not_operator_after'
+		| 'subject_parenthesized_expression_after'
 		| 'subject_separator_space_after'
-		| 'subject_separator_space_before';
+		| 'subject_separator_space_before'
+		| 'subject_set_after'
+		| 'subject_set_comprehension_after'
+		| 'subject_string_after'
+		| 'subject_subscript_after'
+		| 'subject_tuple_after'
+		| 'subject_unary_operator_after';
 	readonly subscript: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly subscripts:
 		| 'subscript_as_pattern_after'
@@ -733,7 +928,39 @@ export interface KindSpacing {
 	readonly type_parameter: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly typed_default_parameter: 'colon_after' | 'colon_before' | 'eq_after' | 'eq_before';
 	readonly typed_parameter: 'colon_after' | 'colon_before';
-	readonly types: 'type_separator_space_after' | 'type_separator_space_before';
+	readonly types:
+		| 'type_as_pattern_after'
+		| 'type_attribute_after'
+		| 'type_await_after'
+		| 'type_binary_operator_after'
+		| 'type_boolean_operator_after'
+		| 'type_call_after'
+		| 'type_comparison_operator_after'
+		| 'type_concatenated_string_after'
+		| 'type_conditional_expression_after'
+		| 'type_constrained_type_after'
+		| 'type_dictionary_after'
+		| 'type_dictionary_comprehension_after'
+		| 'type_generator_expression_after'
+		| 'type_generic_type_after'
+		| 'type_lambda_after'
+		| 'type_list_after'
+		| 'type_list_comprehension_after'
+		| 'type_list_splat_pattern_after'
+		| 'type_member_type_after'
+		| 'type_named_expression_after'
+		| 'type_not_operator_after'
+		| 'type_parenthesized_expression_after'
+		| 'type_separator_space_after'
+		| 'type_separator_space_before'
+		| 'type_set_after'
+		| 'type_set_comprehension_after'
+		| 'type_splat_type_after'
+		| 'type_string_after'
+		| 'type_subscript_after'
+		| 'type_tuple_after'
+		| 'type_unary_operator_after'
+		| 'type_union_type_after';
 	readonly unary_operator_operator:
 		| 'dash_after'
 		| 'dash_before'
@@ -1047,22 +1274,58 @@ export interface AddressBranch {
 	readonly 'assert_statement/assert': 'after' | 'before';
 	readonly 'assert_statement/expression':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'assert_statement/expression/as_pattern': 'after';
+	readonly 'assert_statement/expression/attribute': 'after';
+	readonly 'assert_statement/expression/await': 'after';
+	readonly 'assert_statement/expression/binary_operator': 'after';
 	readonly 'assert_statement/expression/boolean_operator': 'after';
+	readonly 'assert_statement/expression/call': 'after';
 	readonly 'assert_statement/expression/comparison_operator': 'after';
+	readonly 'assert_statement/expression/concatenated_string': 'after';
 	readonly 'assert_statement/expression/conditional_expression': 'after';
+	readonly 'assert_statement/expression/dictionary': 'after';
+	readonly 'assert_statement/expression/dictionary_comprehension': 'after';
+	readonly 'assert_statement/expression/generator_expression': 'after';
 	readonly 'assert_statement/expression/lambda': 'after';
+	readonly 'assert_statement/expression/list': 'after';
+	readonly 'assert_statement/expression/list_comprehension': 'after';
+	readonly 'assert_statement/expression/list_splat_pattern': 'after';
 	readonly 'assert_statement/expression/named_expression': 'after';
 	readonly 'assert_statement/expression/not_operator': 'after';
+	readonly 'assert_statement/expression/parenthesized_expression': 'after';
 	readonly 'assert_statement/expression/separator': ',';
 	readonly 'assert_statement/expression/separator/,': 'after' | 'before';
+	readonly 'assert_statement/expression/set': 'after';
+	readonly 'assert_statement/expression/set_comprehension': 'after';
+	readonly 'assert_statement/expression/string': 'after';
+	readonly 'assert_statement/expression/subscript': 'after';
+	readonly 'assert_statement/expression/tuple': 'after';
+	readonly 'assert_statement/expression/unary_operator': 'after';
 	readonly assignment: 'after' | 'before';
 	readonly assignment_eq: '=' | 'after' | 'before';
 	readonly 'assignment_eq/=': 'after' | 'before';
@@ -1139,9 +1402,33 @@ export interface AddressBranch {
 	readonly 'case_list_pattern/[': 'after' | 'before';
 	readonly 'case_list_pattern/]': 'after' | 'before';
 	readonly case_patterns: 'case_pattern';
-	readonly 'case_patterns/case_pattern': 'delimiter' | 'separator';
+	readonly 'case_patterns/case_pattern':
+		| 'case_as_pattern'
+		| 'case_list_pattern'
+		| 'case_tuple_pattern'
+		| 'class_pattern'
+		| 'complex_pattern'
+		| 'concatenated_string'
+		| 'delimiter'
+		| 'dict_pattern'
+		| 'keyword_pattern'
+		| 'separator'
+		| 'simple_pattern_negative'
+		| 'splat_pattern'
+		| 'string';
+	readonly 'case_patterns/case_pattern/case_as_pattern': 'after';
+	readonly 'case_patterns/case_pattern/case_list_pattern': 'after';
+	readonly 'case_patterns/case_pattern/case_tuple_pattern': 'after';
+	readonly 'case_patterns/case_pattern/class_pattern': 'after';
+	readonly 'case_patterns/case_pattern/complex_pattern': 'after';
+	readonly 'case_patterns/case_pattern/concatenated_string': 'after';
+	readonly 'case_patterns/case_pattern/dict_pattern': 'after';
+	readonly 'case_patterns/case_pattern/keyword_pattern': 'after';
 	readonly 'case_patterns/case_pattern/separator': ',';
 	readonly 'case_patterns/case_pattern/separator/,': 'after' | 'before';
+	readonly 'case_patterns/case_pattern/simple_pattern_negative': 'after';
+	readonly 'case_patterns/case_pattern/splat_pattern': 'after';
+	readonly 'case_patterns/case_pattern/string': 'after';
 	readonly case_tuple_pattern: '(' | ')' | 'after' | 'before';
 	readonly 'case_tuple_pattern/(': 'after' | 'before';
 	readonly 'case_tuple_pattern/)': 'after' | 'before';
@@ -1290,84 +1577,228 @@ export interface AddressBranch {
 	readonly except_clause_exception_list: 'value';
 	readonly 'except_clause_exception_list/value':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'except_clause_exception_list/value/as_pattern': 'after';
+	readonly 'except_clause_exception_list/value/attribute': 'after';
+	readonly 'except_clause_exception_list/value/await': 'after';
+	readonly 'except_clause_exception_list/value/binary_operator': 'after';
 	readonly 'except_clause_exception_list/value/boolean_operator': 'after';
+	readonly 'except_clause_exception_list/value/call': 'after';
 	readonly 'except_clause_exception_list/value/comparison_operator': 'after';
+	readonly 'except_clause_exception_list/value/concatenated_string': 'after';
 	readonly 'except_clause_exception_list/value/conditional_expression': 'after';
+	readonly 'except_clause_exception_list/value/dictionary': 'after';
+	readonly 'except_clause_exception_list/value/dictionary_comprehension': 'after';
+	readonly 'except_clause_exception_list/value/generator_expression': 'after';
 	readonly 'except_clause_exception_list/value/lambda': 'after';
+	readonly 'except_clause_exception_list/value/list': 'after';
+	readonly 'except_clause_exception_list/value/list_comprehension': 'after';
+	readonly 'except_clause_exception_list/value/list_splat_pattern': 'after';
 	readonly 'except_clause_exception_list/value/named_expression': 'after';
 	readonly 'except_clause_exception_list/value/not_operator': 'after';
+	readonly 'except_clause_exception_list/value/parenthesized_expression': 'after';
 	readonly 'except_clause_exception_list/value/separator': ',';
 	readonly 'except_clause_exception_list/value/separator/,': 'after' | 'before';
+	readonly 'except_clause_exception_list/value/set': 'after';
+	readonly 'except_clause_exception_list/value/set_comprehension': 'after';
+	readonly 'except_clause_exception_list/value/string': 'after';
+	readonly 'except_clause_exception_list/value/subscript': 'after';
+	readonly 'except_clause_exception_list/value/tuple': 'after';
+	readonly 'except_clause_exception_list/value/unary_operator': 'after';
 	readonly exec_statement: 'after' | 'before' | 'exec' | 'in' | 'in_clause';
 	readonly 'exec_statement/exec': 'after' | 'before';
 	readonly 'exec_statement/in': 'after' | 'before';
 	readonly 'exec_statement/in_clause':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'exec_statement/in_clause/as_pattern': 'after';
+	readonly 'exec_statement/in_clause/attribute': 'after';
+	readonly 'exec_statement/in_clause/await': 'after';
+	readonly 'exec_statement/in_clause/binary_operator': 'after';
 	readonly 'exec_statement/in_clause/boolean_operator': 'after';
+	readonly 'exec_statement/in_clause/call': 'after';
 	readonly 'exec_statement/in_clause/comparison_operator': 'after';
+	readonly 'exec_statement/in_clause/concatenated_string': 'after';
 	readonly 'exec_statement/in_clause/conditional_expression': 'after';
+	readonly 'exec_statement/in_clause/dictionary': 'after';
+	readonly 'exec_statement/in_clause/dictionary_comprehension': 'after';
+	readonly 'exec_statement/in_clause/generator_expression': 'after';
 	readonly 'exec_statement/in_clause/lambda': 'after';
+	readonly 'exec_statement/in_clause/list': 'after';
+	readonly 'exec_statement/in_clause/list_comprehension': 'after';
+	readonly 'exec_statement/in_clause/list_splat_pattern': 'after';
 	readonly 'exec_statement/in_clause/named_expression': 'after';
 	readonly 'exec_statement/in_clause/not_operator': 'after';
+	readonly 'exec_statement/in_clause/parenthesized_expression': 'after';
 	readonly 'exec_statement/in_clause/separator': ',';
 	readonly 'exec_statement/in_clause/separator/,': 'after' | 'before';
+	readonly 'exec_statement/in_clause/set': 'after';
+	readonly 'exec_statement/in_clause/set_comprehension': 'after';
+	readonly 'exec_statement/in_clause/string': 'after';
+	readonly 'exec_statement/in_clause/subscript': 'after';
+	readonly 'exec_statement/in_clause/tuple': 'after';
+	readonly 'exec_statement/in_clause/unary_operator': 'after';
 	readonly expression_list: 'after' | 'before';
 	readonly expression_list_expressions: 'expression';
 	readonly 'expression_list_expressions/expression':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
 		| 'delimiter'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'expression_list_expressions/expression/as_pattern': 'after';
+	readonly 'expression_list_expressions/expression/attribute': 'after';
+	readonly 'expression_list_expressions/expression/await': 'after';
+	readonly 'expression_list_expressions/expression/binary_operator': 'after';
 	readonly 'expression_list_expressions/expression/boolean_operator': 'after';
+	readonly 'expression_list_expressions/expression/call': 'after';
 	readonly 'expression_list_expressions/expression/comparison_operator': 'after';
+	readonly 'expression_list_expressions/expression/concatenated_string': 'after';
 	readonly 'expression_list_expressions/expression/conditional_expression': 'after';
+	readonly 'expression_list_expressions/expression/dictionary': 'after';
+	readonly 'expression_list_expressions/expression/dictionary_comprehension': 'after';
+	readonly 'expression_list_expressions/expression/generator_expression': 'after';
 	readonly 'expression_list_expressions/expression/lambda': 'after';
+	readonly 'expression_list_expressions/expression/list': 'after';
+	readonly 'expression_list_expressions/expression/list_comprehension': 'after';
+	readonly 'expression_list_expressions/expression/list_splat_pattern': 'after';
 	readonly 'expression_list_expressions/expression/named_expression': 'after';
 	readonly 'expression_list_expressions/expression/not_operator': 'after';
+	readonly 'expression_list_expressions/expression/parenthesized_expression': 'after';
 	readonly 'expression_list_expressions/expression/separator': ',';
 	readonly 'expression_list_expressions/expression/separator/,': 'after' | 'before';
+	readonly 'expression_list_expressions/expression/set': 'after';
+	readonly 'expression_list_expressions/expression/set_comprehension': 'after';
+	readonly 'expression_list_expressions/expression/string': 'after';
+	readonly 'expression_list_expressions/expression/subscript': 'after';
+	readonly 'expression_list_expressions/expression/tuple': 'after';
+	readonly 'expression_list_expressions/expression/unary_operator': 'after';
 	readonly expression_statement_tuple: 'expression';
 	readonly 'expression_statement_tuple/expression':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
 		| 'delimiter'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'expression_statement_tuple/expression/as_pattern': 'after';
+	readonly 'expression_statement_tuple/expression/attribute': 'after';
+	readonly 'expression_statement_tuple/expression/await': 'after';
+	readonly 'expression_statement_tuple/expression/binary_operator': 'after';
 	readonly 'expression_statement_tuple/expression/boolean_operator': 'after';
+	readonly 'expression_statement_tuple/expression/call': 'after';
 	readonly 'expression_statement_tuple/expression/comparison_operator': 'after';
+	readonly 'expression_statement_tuple/expression/concatenated_string': 'after';
 	readonly 'expression_statement_tuple/expression/conditional_expression': 'after';
+	readonly 'expression_statement_tuple/expression/dictionary': 'after';
+	readonly 'expression_statement_tuple/expression/dictionary_comprehension': 'after';
+	readonly 'expression_statement_tuple/expression/generator_expression': 'after';
 	readonly 'expression_statement_tuple/expression/lambda': 'after';
+	readonly 'expression_statement_tuple/expression/list': 'after';
+	readonly 'expression_statement_tuple/expression/list_comprehension': 'after';
+	readonly 'expression_statement_tuple/expression/list_splat_pattern': 'after';
 	readonly 'expression_statement_tuple/expression/named_expression': 'after';
 	readonly 'expression_statement_tuple/expression/not_operator': 'after';
+	readonly 'expression_statement_tuple/expression/parenthesized_expression': 'after';
 	readonly 'expression_statement_tuple/expression/separator': ',';
 	readonly 'expression_statement_tuple/expression/separator/,': 'after' | 'before';
+	readonly 'expression_statement_tuple/expression/set': 'after';
+	readonly 'expression_statement_tuple/expression/set_comprehension': 'after';
+	readonly 'expression_statement_tuple/expression/string': 'after';
+	readonly 'expression_statement_tuple/expression/subscript': 'after';
+	readonly 'expression_statement_tuple/expression/tuple': 'after';
+	readonly 'expression_statement_tuple/expression/unary_operator': 'after';
 	readonly finally_clause: ':' | 'after' | 'before' | 'finally';
 	readonly 'finally_clause/:': 'after' | 'before';
 	readonly 'finally_clause/finally': 'after' | 'before';
@@ -1503,9 +1934,33 @@ export interface AddressBranch {
 	readonly 'list_pattern/[': 'after' | 'before';
 	readonly 'list_pattern/]': 'after' | 'before';
 	readonly list_pattern_case_patterns: 'case_pattern';
-	readonly 'list_pattern_case_patterns/case_pattern': 'delimiter' | 'separator';
+	readonly 'list_pattern_case_patterns/case_pattern':
+		| 'case_as_pattern'
+		| 'case_list_pattern'
+		| 'case_tuple_pattern'
+		| 'class_pattern'
+		| 'complex_pattern'
+		| 'concatenated_string'
+		| 'delimiter'
+		| 'dict_pattern'
+		| 'keyword_pattern'
+		| 'separator'
+		| 'simple_pattern_negative'
+		| 'splat_pattern'
+		| 'string';
+	readonly 'list_pattern_case_patterns/case_pattern/case_as_pattern': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/case_list_pattern': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/case_tuple_pattern': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/class_pattern': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/complex_pattern': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/concatenated_string': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/dict_pattern': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/keyword_pattern': 'after';
 	readonly 'list_pattern_case_patterns/case_pattern/separator': ',';
 	readonly 'list_pattern_case_patterns/case_pattern/separator/,': 'after' | 'before';
+	readonly 'list_pattern_case_patterns/case_pattern/simple_pattern_negative': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/splat_pattern': 'after';
+	readonly 'list_pattern_case_patterns/case_pattern/string': 'after';
 	readonly list_splat: '*' | 'after' | 'before';
 	readonly 'list_splat/*': 'after' | 'before';
 	readonly list_splat_pattern: '*' | 'after' | 'before';
@@ -1617,43 +2072,115 @@ export interface AddressBranch {
 	readonly print_arguments: 'argument';
 	readonly 'print_arguments/argument':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
 		| 'delimiter'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'print_arguments/argument/as_pattern': 'after';
+	readonly 'print_arguments/argument/attribute': 'after';
+	readonly 'print_arguments/argument/await': 'after';
+	readonly 'print_arguments/argument/binary_operator': 'after';
 	readonly 'print_arguments/argument/boolean_operator': 'after';
+	readonly 'print_arguments/argument/call': 'after';
 	readonly 'print_arguments/argument/comparison_operator': 'after';
+	readonly 'print_arguments/argument/concatenated_string': 'after';
 	readonly 'print_arguments/argument/conditional_expression': 'after';
+	readonly 'print_arguments/argument/dictionary': 'after';
+	readonly 'print_arguments/argument/dictionary_comprehension': 'after';
+	readonly 'print_arguments/argument/generator_expression': 'after';
 	readonly 'print_arguments/argument/lambda': 'after';
+	readonly 'print_arguments/argument/list': 'after';
+	readonly 'print_arguments/argument/list_comprehension': 'after';
+	readonly 'print_arguments/argument/list_splat_pattern': 'after';
 	readonly 'print_arguments/argument/named_expression': 'after';
 	readonly 'print_arguments/argument/not_operator': 'after';
+	readonly 'print_arguments/argument/parenthesized_expression': 'after';
 	readonly 'print_arguments/argument/separator': ',';
 	readonly 'print_arguments/argument/separator/,': 'after' | 'before';
+	readonly 'print_arguments/argument/set': 'after';
+	readonly 'print_arguments/argument/set_comprehension': 'after';
+	readonly 'print_arguments/argument/string': 'after';
+	readonly 'print_arguments/argument/subscript': 'after';
+	readonly 'print_arguments/argument/tuple': 'after';
+	readonly 'print_arguments/argument/unary_operator': 'after';
 	readonly print_chevron_arguments: 'argument';
 	readonly 'print_chevron_arguments/argument':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
 		| 'delimiter'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'print_chevron_arguments/argument/as_pattern': 'after';
+	readonly 'print_chevron_arguments/argument/attribute': 'after';
+	readonly 'print_chevron_arguments/argument/await': 'after';
+	readonly 'print_chevron_arguments/argument/binary_operator': 'after';
 	readonly 'print_chevron_arguments/argument/boolean_operator': 'after';
+	readonly 'print_chevron_arguments/argument/call': 'after';
 	readonly 'print_chevron_arguments/argument/comparison_operator': 'after';
+	readonly 'print_chevron_arguments/argument/concatenated_string': 'after';
 	readonly 'print_chevron_arguments/argument/conditional_expression': 'after';
+	readonly 'print_chevron_arguments/argument/dictionary': 'after';
+	readonly 'print_chevron_arguments/argument/dictionary_comprehension': 'after';
+	readonly 'print_chevron_arguments/argument/generator_expression': 'after';
 	readonly 'print_chevron_arguments/argument/lambda': 'after';
+	readonly 'print_chevron_arguments/argument/list': 'after';
+	readonly 'print_chevron_arguments/argument/list_comprehension': 'after';
+	readonly 'print_chevron_arguments/argument/list_splat_pattern': 'after';
 	readonly 'print_chevron_arguments/argument/named_expression': 'after';
 	readonly 'print_chevron_arguments/argument/not_operator': 'after';
+	readonly 'print_chevron_arguments/argument/parenthesized_expression': 'after';
 	readonly 'print_chevron_arguments/argument/separator': ',';
 	readonly 'print_chevron_arguments/argument/separator/,': 'after' | 'before';
+	readonly 'print_chevron_arguments/argument/set': 'after';
+	readonly 'print_chevron_arguments/argument/set_comprehension': 'after';
+	readonly 'print_chevron_arguments/argument/string': 'after';
+	readonly 'print_chevron_arguments/argument/subscript': 'after';
+	readonly 'print_chevron_arguments/argument/tuple': 'after';
+	readonly 'print_chevron_arguments/argument/unary_operator': 'after';
 	readonly print_statement_chevron: 'after' | 'before' | 'print';
 	readonly 'print_statement_chevron/print': 'after' | 'before';
 	readonly print_statement_plain: 'after' | 'before' | 'print';
@@ -1675,32 +2202,92 @@ export interface AddressBranch {
 	readonly simple_statements: 'after' | 'before';
 	readonly simple_statements_elements: 'simple_statement';
 	readonly 'simple_statements_elements/simple_statement':
+		| 'as_pattern'
 		| 'assert_statement'
+		| 'assignment'
+		| 'attribute'
+		| 'augmented_assignment'
+		| 'await'
+		| 'binary_operator'
+		| 'boolean_operator'
+		| 'call'
+		| 'comparison_operator'
+		| 'concatenated_string'
+		| 'conditional_expression'
 		| 'delete_statement'
 		| 'delimiter'
+		| 'dictionary'
+		| 'dictionary_comprehension'
 		| 'exec_statement'
 		| 'future_import_statement'
+		| 'generator_expression'
 		| 'global_statement'
 		| 'import_from_statement'
 		| 'import_statement'
+		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
+		| 'named_expression'
 		| 'nonlocal_statement'
+		| 'not_operator'
+		| 'parenthesized_expression'
+		| 'print_statement_chevron'
+		| 'print_statement_plain'
 		| 'raise_statement'
 		| 'return_statement'
 		| 'separator'
-		| 'type_alias_statement';
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'type_alias_statement'
+		| 'unary_operator'
+		| 'yield';
+	readonly 'simple_statements_elements/simple_statement/as_pattern': 'after';
 	readonly 'simple_statements_elements/simple_statement/assert_statement': 'after';
+	readonly 'simple_statements_elements/simple_statement/assignment': 'after';
+	readonly 'simple_statements_elements/simple_statement/attribute': 'after';
+	readonly 'simple_statements_elements/simple_statement/augmented_assignment': 'after';
+	readonly 'simple_statements_elements/simple_statement/await': 'after';
+	readonly 'simple_statements_elements/simple_statement/binary_operator': 'after';
+	readonly 'simple_statements_elements/simple_statement/boolean_operator': 'after';
+	readonly 'simple_statements_elements/simple_statement/call': 'after';
+	readonly 'simple_statements_elements/simple_statement/comparison_operator': 'after';
+	readonly 'simple_statements_elements/simple_statement/concatenated_string': 'after';
+	readonly 'simple_statements_elements/simple_statement/conditional_expression': 'after';
 	readonly 'simple_statements_elements/simple_statement/delete_statement': 'after';
+	readonly 'simple_statements_elements/simple_statement/dictionary': 'after';
+	readonly 'simple_statements_elements/simple_statement/dictionary_comprehension': 'after';
 	readonly 'simple_statements_elements/simple_statement/exec_statement': 'after';
 	readonly 'simple_statements_elements/simple_statement/future_import_statement': 'after';
+	readonly 'simple_statements_elements/simple_statement/generator_expression': 'after';
 	readonly 'simple_statements_elements/simple_statement/global_statement': 'after';
 	readonly 'simple_statements_elements/simple_statement/import_from_statement': 'after';
 	readonly 'simple_statements_elements/simple_statement/import_statement': 'after';
+	readonly 'simple_statements_elements/simple_statement/lambda': 'after';
+	readonly 'simple_statements_elements/simple_statement/list': 'after';
+	readonly 'simple_statements_elements/simple_statement/list_comprehension': 'after';
+	readonly 'simple_statements_elements/simple_statement/list_splat_pattern': 'after';
+	readonly 'simple_statements_elements/simple_statement/named_expression': 'after';
 	readonly 'simple_statements_elements/simple_statement/nonlocal_statement': 'after';
+	readonly 'simple_statements_elements/simple_statement/not_operator': 'after';
+	readonly 'simple_statements_elements/simple_statement/parenthesized_expression': 'after';
+	readonly 'simple_statements_elements/simple_statement/print_statement_chevron': 'after';
+	readonly 'simple_statements_elements/simple_statement/print_statement_plain': 'after';
 	readonly 'simple_statements_elements/simple_statement/raise_statement': 'after';
 	readonly 'simple_statements_elements/simple_statement/return_statement': 'after';
 	readonly 'simple_statements_elements/simple_statement/separator': ';';
 	readonly 'simple_statements_elements/simple_statement/separator/;': 'after' | 'before';
+	readonly 'simple_statements_elements/simple_statement/set': 'after';
+	readonly 'simple_statements_elements/simple_statement/set_comprehension': 'after';
+	readonly 'simple_statements_elements/simple_statement/string': 'after';
+	readonly 'simple_statements_elements/simple_statement/subscript': 'after';
+	readonly 'simple_statements_elements/simple_statement/tuple': 'after';
 	readonly 'simple_statements_elements/simple_statement/type_alias_statement': 'after';
+	readonly 'simple_statements_elements/simple_statement/unary_operator': 'after';
+	readonly 'simple_statements_elements/simple_statement/yield': 'after';
 	readonly slice: ':' | 'after' | 'before';
 	readonly 'slice/:': 'after' | 'before';
 	readonly slice_group: ':' | 'after' | 'before';
@@ -1713,23 +2300,59 @@ export interface AddressBranch {
 	readonly subjects: 'subject';
 	readonly 'subjects/subject':
 		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
 		| 'boolean_operator'
+		| 'call'
 		| 'comparison_operator'
+		| 'concatenated_string'
 		| 'conditional_expression'
 		| 'delimiter'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
 		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
 		| 'named_expression'
 		| 'not_operator'
-		| 'separator';
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator';
 	readonly 'subjects/subject/as_pattern': 'after';
+	readonly 'subjects/subject/attribute': 'after';
+	readonly 'subjects/subject/await': 'after';
+	readonly 'subjects/subject/binary_operator': 'after';
 	readonly 'subjects/subject/boolean_operator': 'after';
+	readonly 'subjects/subject/call': 'after';
 	readonly 'subjects/subject/comparison_operator': 'after';
+	readonly 'subjects/subject/concatenated_string': 'after';
 	readonly 'subjects/subject/conditional_expression': 'after';
+	readonly 'subjects/subject/dictionary': 'after';
+	readonly 'subjects/subject/dictionary_comprehension': 'after';
+	readonly 'subjects/subject/generator_expression': 'after';
 	readonly 'subjects/subject/lambda': 'after';
+	readonly 'subjects/subject/list': 'after';
+	readonly 'subjects/subject/list_comprehension': 'after';
+	readonly 'subjects/subject/list_splat_pattern': 'after';
 	readonly 'subjects/subject/named_expression': 'after';
 	readonly 'subjects/subject/not_operator': 'after';
+	readonly 'subjects/subject/parenthesized_expression': 'after';
 	readonly 'subjects/subject/separator': ',';
 	readonly 'subjects/subject/separator/,': 'after' | 'before';
+	readonly 'subjects/subject/set': 'after';
+	readonly 'subjects/subject/set_comprehension': 'after';
+	readonly 'subjects/subject/string': 'after';
+	readonly 'subjects/subject/subscript': 'after';
+	readonly 'subjects/subject/tuple': 'after';
+	readonly 'subjects/subject/unary_operator': 'after';
 	readonly subscript: '[' | ']' | 'after' | 'before';
 	readonly 'subscript/[': 'after' | 'before';
 	readonly 'subscript/]': 'after' | 'before';
@@ -1815,9 +2438,71 @@ export interface AddressBranch {
 	readonly typed_parameter: ':' | 'after' | 'before';
 	readonly 'typed_parameter/:': 'after' | 'before';
 	readonly types: 'type';
-	readonly 'types/type': 'delimiter' | 'separator';
+	readonly 'types/type':
+		| 'as_pattern'
+		| 'attribute'
+		| 'await'
+		| 'binary_operator'
+		| 'boolean_operator'
+		| 'call'
+		| 'comparison_operator'
+		| 'concatenated_string'
+		| 'conditional_expression'
+		| 'constrained_type'
+		| 'delimiter'
+		| 'dictionary'
+		| 'dictionary_comprehension'
+		| 'generator_expression'
+		| 'generic_type'
+		| 'lambda'
+		| 'list'
+		| 'list_comprehension'
+		| 'list_splat_pattern'
+		| 'member_type'
+		| 'named_expression'
+		| 'not_operator'
+		| 'parenthesized_expression'
+		| 'separator'
+		| 'set'
+		| 'set_comprehension'
+		| 'splat_type'
+		| 'string'
+		| 'subscript'
+		| 'tuple'
+		| 'unary_operator'
+		| 'union_type';
+	readonly 'types/type/as_pattern': 'after';
+	readonly 'types/type/attribute': 'after';
+	readonly 'types/type/await': 'after';
+	readonly 'types/type/binary_operator': 'after';
+	readonly 'types/type/boolean_operator': 'after';
+	readonly 'types/type/call': 'after';
+	readonly 'types/type/comparison_operator': 'after';
+	readonly 'types/type/concatenated_string': 'after';
+	readonly 'types/type/conditional_expression': 'after';
+	readonly 'types/type/constrained_type': 'after';
+	readonly 'types/type/dictionary': 'after';
+	readonly 'types/type/dictionary_comprehension': 'after';
+	readonly 'types/type/generator_expression': 'after';
+	readonly 'types/type/generic_type': 'after';
+	readonly 'types/type/lambda': 'after';
+	readonly 'types/type/list': 'after';
+	readonly 'types/type/list_comprehension': 'after';
+	readonly 'types/type/list_splat_pattern': 'after';
+	readonly 'types/type/member_type': 'after';
+	readonly 'types/type/named_expression': 'after';
+	readonly 'types/type/not_operator': 'after';
+	readonly 'types/type/parenthesized_expression': 'after';
 	readonly 'types/type/separator': ',';
 	readonly 'types/type/separator/,': 'after' | 'before';
+	readonly 'types/type/set': 'after';
+	readonly 'types/type/set_comprehension': 'after';
+	readonly 'types/type/splat_type': 'after';
+	readonly 'types/type/string': 'after';
+	readonly 'types/type/subscript': 'after';
+	readonly 'types/type/tuple': 'after';
+	readonly 'types/type/unary_operator': 'after';
+	readonly 'types/type/union_type': 'after';
 	readonly unary_operator: 'after' | 'before';
 	readonly unary_operator_operator: '+' | '-' | '~';
 	readonly 'unary_operator_operator/+': 'after' | 'before';
@@ -1924,14 +2609,32 @@ export interface AddressLeaf {
 	readonly 'assert_statement/assert/before': Spacing;
 	readonly 'assert_statement/before': Spacing;
 	readonly 'assert_statement/expression/as_pattern/after': Spacing;
+	readonly 'assert_statement/expression/attribute/after': Spacing;
+	readonly 'assert_statement/expression/await/after': Spacing;
+	readonly 'assert_statement/expression/binary_operator/after': Spacing;
 	readonly 'assert_statement/expression/boolean_operator/after': Spacing;
+	readonly 'assert_statement/expression/call/after': Spacing;
 	readonly 'assert_statement/expression/comparison_operator/after': Spacing;
+	readonly 'assert_statement/expression/concatenated_string/after': Spacing;
 	readonly 'assert_statement/expression/conditional_expression/after': Spacing;
+	readonly 'assert_statement/expression/dictionary/after': Spacing;
+	readonly 'assert_statement/expression/dictionary_comprehension/after': Spacing;
+	readonly 'assert_statement/expression/generator_expression/after': Spacing;
 	readonly 'assert_statement/expression/lambda/after': Spacing;
+	readonly 'assert_statement/expression/list/after': Spacing;
+	readonly 'assert_statement/expression/list_comprehension/after': Spacing;
+	readonly 'assert_statement/expression/list_splat_pattern/after': Spacing;
 	readonly 'assert_statement/expression/named_expression/after': Spacing;
 	readonly 'assert_statement/expression/not_operator/after': Spacing;
+	readonly 'assert_statement/expression/parenthesized_expression/after': Spacing;
 	readonly 'assert_statement/expression/separator/,/after': Spacing;
 	readonly 'assert_statement/expression/separator/,/before': Spacing;
+	readonly 'assert_statement/expression/set/after': Spacing;
+	readonly 'assert_statement/expression/set_comprehension/after': Spacing;
+	readonly 'assert_statement/expression/string/after': Spacing;
+	readonly 'assert_statement/expression/subscript/after': Spacing;
+	readonly 'assert_statement/expression/tuple/after': Spacing;
+	readonly 'assert_statement/expression/unary_operator/after': Spacing;
 	readonly 'assignment/after': Spacing;
 	readonly 'assignment/before': Spacing;
 	readonly 'assignment_eq/=/after': Spacing;
@@ -2021,9 +2724,20 @@ export interface AddressLeaf {
 	readonly 'case_list_pattern/]/before': Spacing;
 	readonly 'case_list_pattern/after': Spacing;
 	readonly 'case_list_pattern/before': Spacing;
+	readonly 'case_patterns/case_pattern/case_as_pattern/after': Spacing;
+	readonly 'case_patterns/case_pattern/case_list_pattern/after': Spacing;
+	readonly 'case_patterns/case_pattern/case_tuple_pattern/after': Spacing;
+	readonly 'case_patterns/case_pattern/class_pattern/after': Spacing;
+	readonly 'case_patterns/case_pattern/complex_pattern/after': Spacing;
+	readonly 'case_patterns/case_pattern/concatenated_string/after': Spacing;
 	readonly 'case_patterns/case_pattern/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'case_patterns/case_pattern/dict_pattern/after': Spacing;
+	readonly 'case_patterns/case_pattern/keyword_pattern/after': Spacing;
 	readonly 'case_patterns/case_pattern/separator/,/after': Spacing;
 	readonly 'case_patterns/case_pattern/separator/,/before': Spacing;
+	readonly 'case_patterns/case_pattern/simple_pattern_negative/after': Spacing;
+	readonly 'case_patterns/case_pattern/splat_pattern/after': Spacing;
+	readonly 'case_patterns/case_pattern/string/after': Spacing;
 	readonly 'case_tuple_pattern/(/after': Spacing;
 	readonly 'case_tuple_pattern/(/before': Spacing;
 	readonly 'case_tuple_pattern/)/after': Spacing;
@@ -2188,14 +2902,32 @@ export interface AddressLeaf {
 	readonly 'except_clause_exception_as/as/before': Spacing;
 	readonly 'except_clause_exception_as/before': Spacing;
 	readonly 'except_clause_exception_list/value/as_pattern/after': Spacing;
+	readonly 'except_clause_exception_list/value/attribute/after': Spacing;
+	readonly 'except_clause_exception_list/value/await/after': Spacing;
+	readonly 'except_clause_exception_list/value/binary_operator/after': Spacing;
 	readonly 'except_clause_exception_list/value/boolean_operator/after': Spacing;
+	readonly 'except_clause_exception_list/value/call/after': Spacing;
 	readonly 'except_clause_exception_list/value/comparison_operator/after': Spacing;
+	readonly 'except_clause_exception_list/value/concatenated_string/after': Spacing;
 	readonly 'except_clause_exception_list/value/conditional_expression/after': Spacing;
+	readonly 'except_clause_exception_list/value/dictionary/after': Spacing;
+	readonly 'except_clause_exception_list/value/dictionary_comprehension/after': Spacing;
+	readonly 'except_clause_exception_list/value/generator_expression/after': Spacing;
 	readonly 'except_clause_exception_list/value/lambda/after': Spacing;
+	readonly 'except_clause_exception_list/value/list/after': Spacing;
+	readonly 'except_clause_exception_list/value/list_comprehension/after': Spacing;
+	readonly 'except_clause_exception_list/value/list_splat_pattern/after': Spacing;
 	readonly 'except_clause_exception_list/value/named_expression/after': Spacing;
 	readonly 'except_clause_exception_list/value/not_operator/after': Spacing;
+	readonly 'except_clause_exception_list/value/parenthesized_expression/after': Spacing;
 	readonly 'except_clause_exception_list/value/separator/,/after': Spacing;
 	readonly 'except_clause_exception_list/value/separator/,/before': Spacing;
+	readonly 'except_clause_exception_list/value/set/after': Spacing;
+	readonly 'except_clause_exception_list/value/set_comprehension/after': Spacing;
+	readonly 'except_clause_exception_list/value/string/after': Spacing;
+	readonly 'except_clause_exception_list/value/subscript/after': Spacing;
+	readonly 'except_clause_exception_list/value/tuple/after': Spacing;
+	readonly 'except_clause_exception_list/value/unary_operator/after': Spacing;
 	readonly 'exec_statement/after': Spacing;
 	readonly 'exec_statement/before': Spacing;
 	readonly 'exec_statement/exec/after': Spacing;
@@ -2203,36 +2935,90 @@ export interface AddressLeaf {
 	readonly 'exec_statement/in/after': Spacing;
 	readonly 'exec_statement/in/before': Spacing;
 	readonly 'exec_statement/in_clause/as_pattern/after': Spacing;
+	readonly 'exec_statement/in_clause/attribute/after': Spacing;
+	readonly 'exec_statement/in_clause/await/after': Spacing;
+	readonly 'exec_statement/in_clause/binary_operator/after': Spacing;
 	readonly 'exec_statement/in_clause/boolean_operator/after': Spacing;
+	readonly 'exec_statement/in_clause/call/after': Spacing;
 	readonly 'exec_statement/in_clause/comparison_operator/after': Spacing;
+	readonly 'exec_statement/in_clause/concatenated_string/after': Spacing;
 	readonly 'exec_statement/in_clause/conditional_expression/after': Spacing;
+	readonly 'exec_statement/in_clause/dictionary/after': Spacing;
+	readonly 'exec_statement/in_clause/dictionary_comprehension/after': Spacing;
+	readonly 'exec_statement/in_clause/generator_expression/after': Spacing;
 	readonly 'exec_statement/in_clause/lambda/after': Spacing;
+	readonly 'exec_statement/in_clause/list/after': Spacing;
+	readonly 'exec_statement/in_clause/list_comprehension/after': Spacing;
+	readonly 'exec_statement/in_clause/list_splat_pattern/after': Spacing;
 	readonly 'exec_statement/in_clause/named_expression/after': Spacing;
 	readonly 'exec_statement/in_clause/not_operator/after': Spacing;
+	readonly 'exec_statement/in_clause/parenthesized_expression/after': Spacing;
 	readonly 'exec_statement/in_clause/separator/,/after': Spacing;
 	readonly 'exec_statement/in_clause/separator/,/before': Spacing;
+	readonly 'exec_statement/in_clause/set/after': Spacing;
+	readonly 'exec_statement/in_clause/set_comprehension/after': Spacing;
+	readonly 'exec_statement/in_clause/string/after': Spacing;
+	readonly 'exec_statement/in_clause/subscript/after': Spacing;
+	readonly 'exec_statement/in_clause/tuple/after': Spacing;
+	readonly 'exec_statement/in_clause/unary_operator/after': Spacing;
 	readonly 'expression_list/after': Spacing;
 	readonly 'expression_list/before': Spacing;
 	readonly 'expression_list_expressions/expression/as_pattern/after': Spacing;
+	readonly 'expression_list_expressions/expression/attribute/after': Spacing;
+	readonly 'expression_list_expressions/expression/await/after': Spacing;
+	readonly 'expression_list_expressions/expression/binary_operator/after': Spacing;
 	readonly 'expression_list_expressions/expression/boolean_operator/after': Spacing;
+	readonly 'expression_list_expressions/expression/call/after': Spacing;
 	readonly 'expression_list_expressions/expression/comparison_operator/after': Spacing;
+	readonly 'expression_list_expressions/expression/concatenated_string/after': Spacing;
 	readonly 'expression_list_expressions/expression/conditional_expression/after': Spacing;
 	readonly 'expression_list_expressions/expression/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'expression_list_expressions/expression/dictionary/after': Spacing;
+	readonly 'expression_list_expressions/expression/dictionary_comprehension/after': Spacing;
+	readonly 'expression_list_expressions/expression/generator_expression/after': Spacing;
 	readonly 'expression_list_expressions/expression/lambda/after': Spacing;
+	readonly 'expression_list_expressions/expression/list/after': Spacing;
+	readonly 'expression_list_expressions/expression/list_comprehension/after': Spacing;
+	readonly 'expression_list_expressions/expression/list_splat_pattern/after': Spacing;
 	readonly 'expression_list_expressions/expression/named_expression/after': Spacing;
 	readonly 'expression_list_expressions/expression/not_operator/after': Spacing;
+	readonly 'expression_list_expressions/expression/parenthesized_expression/after': Spacing;
 	readonly 'expression_list_expressions/expression/separator/,/after': Spacing;
 	readonly 'expression_list_expressions/expression/separator/,/before': Spacing;
+	readonly 'expression_list_expressions/expression/set/after': Spacing;
+	readonly 'expression_list_expressions/expression/set_comprehension/after': Spacing;
+	readonly 'expression_list_expressions/expression/string/after': Spacing;
+	readonly 'expression_list_expressions/expression/subscript/after': Spacing;
+	readonly 'expression_list_expressions/expression/tuple/after': Spacing;
+	readonly 'expression_list_expressions/expression/unary_operator/after': Spacing;
 	readonly 'expression_statement_tuple/expression/as_pattern/after': Spacing;
+	readonly 'expression_statement_tuple/expression/attribute/after': Spacing;
+	readonly 'expression_statement_tuple/expression/await/after': Spacing;
+	readonly 'expression_statement_tuple/expression/binary_operator/after': Spacing;
 	readonly 'expression_statement_tuple/expression/boolean_operator/after': Spacing;
+	readonly 'expression_statement_tuple/expression/call/after': Spacing;
 	readonly 'expression_statement_tuple/expression/comparison_operator/after': Spacing;
+	readonly 'expression_statement_tuple/expression/concatenated_string/after': Spacing;
 	readonly 'expression_statement_tuple/expression/conditional_expression/after': Spacing;
 	readonly 'expression_statement_tuple/expression/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'expression_statement_tuple/expression/dictionary/after': Spacing;
+	readonly 'expression_statement_tuple/expression/dictionary_comprehension/after': Spacing;
+	readonly 'expression_statement_tuple/expression/generator_expression/after': Spacing;
 	readonly 'expression_statement_tuple/expression/lambda/after': Spacing;
+	readonly 'expression_statement_tuple/expression/list/after': Spacing;
+	readonly 'expression_statement_tuple/expression/list_comprehension/after': Spacing;
+	readonly 'expression_statement_tuple/expression/list_splat_pattern/after': Spacing;
 	readonly 'expression_statement_tuple/expression/named_expression/after': Spacing;
 	readonly 'expression_statement_tuple/expression/not_operator/after': Spacing;
+	readonly 'expression_statement_tuple/expression/parenthesized_expression/after': Spacing;
 	readonly 'expression_statement_tuple/expression/separator/,/after': Spacing;
 	readonly 'expression_statement_tuple/expression/separator/,/before': Spacing;
+	readonly 'expression_statement_tuple/expression/set/after': Spacing;
+	readonly 'expression_statement_tuple/expression/set_comprehension/after': Spacing;
+	readonly 'expression_statement_tuple/expression/string/after': Spacing;
+	readonly 'expression_statement_tuple/expression/subscript/after': Spacing;
+	readonly 'expression_statement_tuple/expression/tuple/after': Spacing;
+	readonly 'expression_statement_tuple/expression/unary_operator/after': Spacing;
 	readonly 'finally_clause/:/after': Spacing;
 	readonly 'finally_clause/:/before': Spacing;
 	readonly 'finally_clause/after': Spacing;
@@ -2398,9 +3184,20 @@ export interface AddressLeaf {
 	readonly 'list_pattern/]/before': Spacing;
 	readonly 'list_pattern/after': Spacing;
 	readonly 'list_pattern/before': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/case_as_pattern/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/case_list_pattern/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/case_tuple_pattern/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/class_pattern/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/complex_pattern/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/concatenated_string/after': Spacing;
 	readonly 'list_pattern_case_patterns/case_pattern/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'list_pattern_case_patterns/case_pattern/dict_pattern/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/keyword_pattern/after': Spacing;
 	readonly 'list_pattern_case_patterns/case_pattern/separator/,/after': Spacing;
 	readonly 'list_pattern_case_patterns/case_pattern/separator/,/before': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/simple_pattern_negative/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/splat_pattern/after': Spacing;
+	readonly 'list_pattern_case_patterns/case_pattern/string/after': Spacing;
 	readonly 'list_splat/*/after': Spacing;
 	readonly 'list_splat/*/before': Spacing;
 	readonly 'list_splat/after': Spacing;
@@ -2504,25 +3301,61 @@ export interface AddressLeaf {
 	readonly 'patterns/pattern/subscript/after': Spacing;
 	readonly 'patterns/pattern/tuple_pattern/after': Spacing;
 	readonly 'print_arguments/argument/as_pattern/after': Spacing;
+	readonly 'print_arguments/argument/attribute/after': Spacing;
+	readonly 'print_arguments/argument/await/after': Spacing;
+	readonly 'print_arguments/argument/binary_operator/after': Spacing;
 	readonly 'print_arguments/argument/boolean_operator/after': Spacing;
+	readonly 'print_arguments/argument/call/after': Spacing;
 	readonly 'print_arguments/argument/comparison_operator/after': Spacing;
+	readonly 'print_arguments/argument/concatenated_string/after': Spacing;
 	readonly 'print_arguments/argument/conditional_expression/after': Spacing;
 	readonly 'print_arguments/argument/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'print_arguments/argument/dictionary/after': Spacing;
+	readonly 'print_arguments/argument/dictionary_comprehension/after': Spacing;
+	readonly 'print_arguments/argument/generator_expression/after': Spacing;
 	readonly 'print_arguments/argument/lambda/after': Spacing;
+	readonly 'print_arguments/argument/list/after': Spacing;
+	readonly 'print_arguments/argument/list_comprehension/after': Spacing;
+	readonly 'print_arguments/argument/list_splat_pattern/after': Spacing;
 	readonly 'print_arguments/argument/named_expression/after': Spacing;
 	readonly 'print_arguments/argument/not_operator/after': Spacing;
+	readonly 'print_arguments/argument/parenthesized_expression/after': Spacing;
 	readonly 'print_arguments/argument/separator/,/after': Spacing;
 	readonly 'print_arguments/argument/separator/,/before': Spacing;
+	readonly 'print_arguments/argument/set/after': Spacing;
+	readonly 'print_arguments/argument/set_comprehension/after': Spacing;
+	readonly 'print_arguments/argument/string/after': Spacing;
+	readonly 'print_arguments/argument/subscript/after': Spacing;
+	readonly 'print_arguments/argument/tuple/after': Spacing;
+	readonly 'print_arguments/argument/unary_operator/after': Spacing;
 	readonly 'print_chevron_arguments/argument/as_pattern/after': Spacing;
+	readonly 'print_chevron_arguments/argument/attribute/after': Spacing;
+	readonly 'print_chevron_arguments/argument/await/after': Spacing;
+	readonly 'print_chevron_arguments/argument/binary_operator/after': Spacing;
 	readonly 'print_chevron_arguments/argument/boolean_operator/after': Spacing;
+	readonly 'print_chevron_arguments/argument/call/after': Spacing;
 	readonly 'print_chevron_arguments/argument/comparison_operator/after': Spacing;
+	readonly 'print_chevron_arguments/argument/concatenated_string/after': Spacing;
 	readonly 'print_chevron_arguments/argument/conditional_expression/after': Spacing;
 	readonly 'print_chevron_arguments/argument/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'print_chevron_arguments/argument/dictionary/after': Spacing;
+	readonly 'print_chevron_arguments/argument/dictionary_comprehension/after': Spacing;
+	readonly 'print_chevron_arguments/argument/generator_expression/after': Spacing;
 	readonly 'print_chevron_arguments/argument/lambda/after': Spacing;
+	readonly 'print_chevron_arguments/argument/list/after': Spacing;
+	readonly 'print_chevron_arguments/argument/list_comprehension/after': Spacing;
+	readonly 'print_chevron_arguments/argument/list_splat_pattern/after': Spacing;
 	readonly 'print_chevron_arguments/argument/named_expression/after': Spacing;
 	readonly 'print_chevron_arguments/argument/not_operator/after': Spacing;
+	readonly 'print_chevron_arguments/argument/parenthesized_expression/after': Spacing;
 	readonly 'print_chevron_arguments/argument/separator/,/after': Spacing;
 	readonly 'print_chevron_arguments/argument/separator/,/before': Spacing;
+	readonly 'print_chevron_arguments/argument/set/after': Spacing;
+	readonly 'print_chevron_arguments/argument/set_comprehension/after': Spacing;
+	readonly 'print_chevron_arguments/argument/string/after': Spacing;
+	readonly 'print_chevron_arguments/argument/subscript/after': Spacing;
+	readonly 'print_chevron_arguments/argument/tuple/after': Spacing;
+	readonly 'print_chevron_arguments/argument/unary_operator/after': Spacing;
 	readonly 'print_statement_chevron/after': Spacing;
 	readonly 'print_statement_chevron/before': Spacing;
 	readonly 'print_statement_chevron/print/after': Spacing;
@@ -2561,20 +3394,50 @@ export interface AddressLeaf {
 	readonly 'simple_pattern_negative/sign/before': Spacing;
 	readonly 'simple_statements/after': Spacing;
 	readonly 'simple_statements/before': Spacing;
+	readonly 'simple_statements_elements/simple_statement/as_pattern/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/assert_statement/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/assignment/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/attribute/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/augmented_assignment/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/await/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/binary_operator/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/boolean_operator/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/call/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/comparison_operator/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/concatenated_string/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/conditional_expression/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/delete_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'simple_statements_elements/simple_statement/dictionary/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/dictionary_comprehension/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/exec_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/future_import_statement/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/generator_expression/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/global_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/import_from_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/import_statement/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/lambda/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/list/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/list_comprehension/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/list_splat_pattern/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/named_expression/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/nonlocal_statement/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/not_operator/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/parenthesized_expression/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/print_statement_chevron/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/print_statement_plain/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/raise_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/return_statement/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/separator/;/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/separator/;/before': Spacing;
+	readonly 'simple_statements_elements/simple_statement/set/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/set_comprehension/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/string/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/subscript/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/tuple/after': Spacing;
 	readonly 'simple_statements_elements/simple_statement/type_alias_statement/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/unary_operator/after': Spacing;
+	readonly 'simple_statements_elements/simple_statement/yield/after': Spacing;
 	readonly 'slice/:/after': Spacing;
 	readonly 'slice/:/before': Spacing;
 	readonly 'slice/after': Spacing;
@@ -2594,15 +3457,33 @@ export interface AddressLeaf {
 	readonly 'string/after': Spacing;
 	readonly 'string/before': Spacing;
 	readonly 'subjects/subject/as_pattern/after': Spacing;
+	readonly 'subjects/subject/attribute/after': Spacing;
+	readonly 'subjects/subject/await/after': Spacing;
+	readonly 'subjects/subject/binary_operator/after': Spacing;
 	readonly 'subjects/subject/boolean_operator/after': Spacing;
+	readonly 'subjects/subject/call/after': Spacing;
 	readonly 'subjects/subject/comparison_operator/after': Spacing;
+	readonly 'subjects/subject/concatenated_string/after': Spacing;
 	readonly 'subjects/subject/conditional_expression/after': Spacing;
 	readonly 'subjects/subject/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'subjects/subject/dictionary/after': Spacing;
+	readonly 'subjects/subject/dictionary_comprehension/after': Spacing;
+	readonly 'subjects/subject/generator_expression/after': Spacing;
 	readonly 'subjects/subject/lambda/after': Spacing;
+	readonly 'subjects/subject/list/after': Spacing;
+	readonly 'subjects/subject/list_comprehension/after': Spacing;
+	readonly 'subjects/subject/list_splat_pattern/after': Spacing;
 	readonly 'subjects/subject/named_expression/after': Spacing;
 	readonly 'subjects/subject/not_operator/after': Spacing;
+	readonly 'subjects/subject/parenthesized_expression/after': Spacing;
 	readonly 'subjects/subject/separator/,/after': Spacing;
 	readonly 'subjects/subject/separator/,/before': Spacing;
+	readonly 'subjects/subject/set/after': Spacing;
+	readonly 'subjects/subject/set_comprehension/after': Spacing;
+	readonly 'subjects/subject/string/after': Spacing;
+	readonly 'subjects/subject/subscript/after': Spacing;
+	readonly 'subjects/subject/tuple/after': Spacing;
+	readonly 'subjects/subject/unary_operator/after': Spacing;
 	readonly 'subscript/[/after': Spacing;
 	readonly 'subscript/[/before': Spacing;
 	readonly 'subscript/]/after': Spacing;
@@ -2682,9 +3563,39 @@ export interface AddressLeaf {
 	readonly 'typed_parameter/:/before': Spacing;
 	readonly 'typed_parameter/after': Spacing;
 	readonly 'typed_parameter/before': Spacing;
+	readonly 'types/type/as_pattern/after': Spacing;
+	readonly 'types/type/attribute/after': Spacing;
+	readonly 'types/type/await/after': Spacing;
+	readonly 'types/type/binary_operator/after': Spacing;
+	readonly 'types/type/boolean_operator/after': Spacing;
+	readonly 'types/type/call/after': Spacing;
+	readonly 'types/type/comparison_operator/after': Spacing;
+	readonly 'types/type/concatenated_string/after': Spacing;
+	readonly 'types/type/conditional_expression/after': Spacing;
+	readonly 'types/type/constrained_type/after': Spacing;
 	readonly 'types/type/delimiter': Delimiter.None | Delimiter.Trailing;
+	readonly 'types/type/dictionary/after': Spacing;
+	readonly 'types/type/dictionary_comprehension/after': Spacing;
+	readonly 'types/type/generator_expression/after': Spacing;
+	readonly 'types/type/generic_type/after': Spacing;
+	readonly 'types/type/lambda/after': Spacing;
+	readonly 'types/type/list/after': Spacing;
+	readonly 'types/type/list_comprehension/after': Spacing;
+	readonly 'types/type/list_splat_pattern/after': Spacing;
+	readonly 'types/type/member_type/after': Spacing;
+	readonly 'types/type/named_expression/after': Spacing;
+	readonly 'types/type/not_operator/after': Spacing;
+	readonly 'types/type/parenthesized_expression/after': Spacing;
 	readonly 'types/type/separator/,/after': Spacing;
 	readonly 'types/type/separator/,/before': Spacing;
+	readonly 'types/type/set/after': Spacing;
+	readonly 'types/type/set_comprehension/after': Spacing;
+	readonly 'types/type/splat_type/after': Spacing;
+	readonly 'types/type/string/after': Spacing;
+	readonly 'types/type/subscript/after': Spacing;
+	readonly 'types/type/tuple/after': Spacing;
+	readonly 'types/type/unary_operator/after': Spacing;
+	readonly 'types/type/union_type/after': Spacing;
 	readonly 'unary_operator/after': Spacing;
 	readonly 'unary_operator/before': Spacing;
 	readonly 'unary_operator_operator/+/after': Spacing;

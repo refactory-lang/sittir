@@ -7,6 +7,7 @@ import {
 import { findEntryForKindName, type KindEntryLike } from '../generated-metadata.ts';
 import { publicKindName } from './render-rules.ts';
 import type { AddressBinding, PathDeclaration } from '../../dsl/wire/options-block.ts';
+import type { SupertypeMembers } from './supertype-members.ts';
 
 export interface SiteAddressInput {
 	readonly kind: string;
@@ -78,20 +79,25 @@ function anonTokenText(kindEntries: readonly KindEntryLike[], token: string): st
 
 export function matchAddress<T extends SiteAddressInput>(
 	address: readonly PreferenceSegment[],
-	sites: readonly AddressedSite<T>[]
+	sites: readonly AddressedSite<T>[],
+	membersOf: SupertypeMembers
 ): AddressedSite<T>[] {
-	return sites.filter((site) => isPrefixOf(address, site.path));
+	return sites.filter((site) => isPrefixOf(address, site.path, membersOf));
 }
 
-function isPrefixOf(address: readonly PreferenceSegment[], path: readonly PreferenceSegment[]): boolean {
+function isPrefixOf(
+	address: readonly PreferenceSegment[],
+	path: readonly PreferenceSegment[],
+	membersOf: SupertypeMembers
+): boolean {
 	if (address.length > path.length) return false;
 	for (let i = 0; i < address.length; i++) {
-		if (!segmentMatches(address[i]!, path[i]!)) return false;
+		if (!segmentMatches(address[i]!, path[i]!, membersOf)) return false;
 	}
 	return true;
 }
 
-function segmentMatches(a: PreferenceSegment, b: PreferenceSegment): boolean {
+function segmentMatches(a: PreferenceSegment, b: PreferenceSegment, membersOf: SupertypeMembers): boolean {
 	if (a.kind === 'wildcard') return true;
 	if (a.kind !== b.kind) return false;
 	switch (a.kind) {
@@ -99,8 +105,10 @@ function segmentMatches(a: PreferenceSegment, b: PreferenceSegment): boolean {
 			return a.value === (b as { value: number }).value;
 		case 'literal':
 			return a.text === (b as { text: string }).text;
-		case 'kind-match':
-			return a.name === '_' || a.name === (b as { name: string }).name;
+		case 'kind-match': {
+			const name = (b as { name: string }).name;
+			return a.name === '_' || a.name === name || (membersOf.get(a.name)?.includes(name) ?? false);
+		}
 		case 'fieldName':
 		case 'name':
 			return a.name === (b as { name: string }).name;
@@ -113,6 +121,7 @@ export function resolveBindings(
 	declarations: readonly PathDeclaration[],
 	bindings: readonly AddressBinding[],
 	sites: readonly AddressedSite[],
+	membersOf: SupertypeMembers,
 	requireHit: boolean = true
 ): Map<number, string> {
 	const indexOf = new Map(sites.map((site, i) => [site, i]));
@@ -120,7 +129,7 @@ export function resolveBindings(
 	const labelled = new Set(bindings.map((binding) => binding.label));
 
 	const hitsOf = (address: string): Set<number> =>
-		new Set(matchAddress(addressSegments(address), sites).map((site) => indexOf.get(site)!));
+		new Set(matchAddress(addressSegments(address), sites, membersOf).map((site) => indexOf.get(site)!));
 
 	const entries: { address: string; arm: string; declared: boolean; hits: Set<number> }[] = [];
 

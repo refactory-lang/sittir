@@ -182,6 +182,7 @@ export default grammar(
 				statements: { terminator: preference(';') },
 				quotes: { style: preference('double') },
 				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
+				program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
 
 				_: {
 					'decorator:/separator': preference('tight'),
@@ -242,8 +243,8 @@ export default grammar(
 
 				_bindings: {
 					'_/terminator:': 'statements/terminator',
-					'string/content:': 'quotes/style',
 					'_/automatic_semicolon:': 'statements/terminator',
+					'string/content:': 'quotes/style',
 					'class_body/"{"/after': 'body/before',
 					'class_body/"}"/before': 'body/after',
 					'statement_block/"{"/after': 'body/before',
@@ -259,7 +260,6 @@ export default grammar(
 					'switch_default/body:/start': 'case_body/start',
 					'switch_default/body:/end': 'case_body/end',
 					'class_body/content:/separator': 'gap/separator',
-					'program/statements:/separator': 'gap/separator',
 					'statement_block/statements:/separator': 'gap/separator',
 					'switch_body/cases:/separator': 'gap/separator',
 					'switch_case/body:/separator': 'gap/separator',

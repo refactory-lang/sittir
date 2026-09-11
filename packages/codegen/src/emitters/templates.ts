@@ -63,6 +63,8 @@ import {
 	text,
 	weight,
 	whitespace,
+	isWhitespaceOnly,
+	seamMarked,
 	type Body
 } from './render-body.ts';
 
@@ -805,7 +807,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		const fixed = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
 		if (fixed === undefined)
 			throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
-		return fixed.trim() === '' ? whitespace(fixed) : text(fixed);
+		return isWhitespaceOnly(fixed) ? whitespace(seamMarked(fixed)) : text(fixed);
 	}
 
 	const isInlineableHiddenHelper =

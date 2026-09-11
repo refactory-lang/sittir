@@ -307,6 +307,18 @@ enum matches its variants, each named from the shape the enum was emitted
 from so a suppressed kind is never named; a slot with a single concrete
 element type has no enum and takes the assignment directly.
 
+A variant that is not itself seated is walked through rather than skipped:
+a nested supertype variant opens a match on its own enum, and a polymorph
+parent with no seat of its own opens its one slot, recursively, so the
+assignment lands on the transport that carries the seated `after` field. Every
+level rebinds `t` through `BorrowMut::borrow_mut`, which std implements for
+`T` and `Box<T>` alike, because a content slot may be boxed to break a
+recursive type and a pattern cannot see through a box; the annotated type on
+the rebinding picks the impl, so the emitter need not know which slots are
+boxed. Only a level that reaches a seat is emitted. The walk mirrors the
+seating in `seatedSites`, which expands the same kinds when it mints the
+sites; a seat with no arm would be a site the renderer never fills.
+
 ### `packages/codegen/src/emitters/shared.ts::emitsPlainBuiltAlias`
 
 ```text
@@ -3041,10 +3053,24 @@ The render function for a compound kind that has no body: each slot is
 written in declaration order through `buildSlotWriteCall`, or, when there
 are no slots, the transport's captured text.
 
+### `packages/codegen/src/emitters/render-module.ts::leafTextWrite`
+
+The write of a leaf transport's `text`, shared by the typed render function
+and the transport's `Display`. A kind whose fixed text is nothing but
+whitespace — the automatic-semicolon externals, a newline terminator —
+writes it behind the writer's whitespace-token mark in one `write_str`, so
+the text is a payload the writer holds and coalesces with the seams around
+it rather than literal text it copies through: the newline gap after a
+statement absorbs the terminator's break, a blank-line gap outranks it,
+and the break still renders when no gap follows, at the end of the render
+included. Every
+other leaf writes its text as it is.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedLeafFn`
 
 The render function for a pattern, token or enum kind: an enum transport
-writes through its own `Display`, every other leaf writes `t.text`.
+writes through its own `Display`, every other leaf writes `t.text` through
+`leafTextWrite`.
 
 #### body
 
@@ -5019,6 +5045,31 @@ whitespace, and the format string interpolates it.
 U+FDD2, the core writer's seam mark, mirrored here so the options emitter
 can prefix each whitespace kind's text with it.
 
+### `packages/codegen/src/emitters/render-body.ts::TOKEN_SEAM_MARK`
+
+U+FDD3, the core writer's whitespace-token mark, mirrored here for
+`seamMarked`. A payload behind it coalesces with the seams around it like a
+seam payload, but the writer never drops it: it is a token the source
+holds, so one still held when the render ends is written out, where a seam
+held there is not.
+
+### `packages/codegen/src/emitters/render-body.ts::isWhitespaceOnly`
+
+Whether a fixed text is nothing but whitespace: the one predicate behind
+every site that decides a text is structural whitespace rather than
+token text.
+
+### `packages/codegen/src/emitters/render-body.ts::seamMarked`
+
+The text a fixed literal is written as. A whitespace-only text takes the
+whitespace-token mark in front so the writer holds it as a payload and
+coalesces it with the seams around it without ever dropping it; any other
+text is returned as it is. Every
+emitter that writes a kind's fixed text — an inlined reference in a body,
+a literal arm of a slot or `AnyTransport` enum, a leaf transport's own
+`text` — goes through this or `isWhitespaceOnly`, so a newline terminator
+renders the same whether it arrived as a kind id or as a node.
+
 ### `packages/codegen/src/emitters/render-body.ts::concat`
 
 Flattens its inputs and merges adjacent literal text, so two bodies that
@@ -5431,7 +5482,12 @@ builds the spaced rules, since the stamps land on those rules.
  *  - undefined (required)     → the bare slot reference
  *
  * A hidden kind with fixed text renders that text; when the text is
- * nothing but whitespace it is structural `whitespace`, not literal text.
+ * nothing but whitespace it is structural `whitespace` carrying the
+ * whitespace-token mark, so the writer holds it as a payload and coalesces
+ * it with the seams around it instead of writing it as literal text: a newline
+ * terminator such as an automatic semicolon is absorbed by the newline
+ * gap after its statement and outranked by a blank-line gap, rather than
+ * stacking a second break on top of either.
  */
 ```
 
@@ -15027,6 +15083,12 @@ checker never has to bound a recursion it cannot see the end of.
 It is intersected into `Options` beside the flat surface rather than replacing
 it. An excess-property check against an intersection admits a key known in any
 constituent, so a caller may write either face while both exist.
+
+### `packages/codegen/src/emitters/options.ts::deriveAddressTables` — supertype membership
+
+Takes the public-name members map so a binding or declaration spelled on a
+supertype counts as reaching its members' sites when the tables decide which
+declared labels have a home.
 
 ### `packages/codegen/src/emitters/options.ts::deriveAddressTables` — declared labels
 

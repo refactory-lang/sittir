@@ -4,6 +4,26 @@ import { parsePreferencePath } from '../../../dsl/primitives/preference-path.ts'
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { RuleSpacingSite } from '../render-rules.ts';
 
+const NO_SUPERTYPES = new Map<string, readonly string[]>();
+
+describe('a supertype segment matches the sites of its members', () => {
+	const members = new Map<string, readonly string[]>([['statement', ['block', 'if_statement']]]);
+	const sites = addressSites(
+		[
+			{ kind: 'block', slot: 'x', address: 'x', label: 'x', path: parsePreferencePath('(block)/after') },
+			{ kind: 'if_statement', slot: 'x', address: 'x', label: 'x', path: parsePreferencePath('(if_statement)/after') },
+			{ kind: 'call', slot: 'x', address: 'x', label: 'x', path: parsePreferencePath('(call)/after') }
+		],
+		[]
+	);
+	it('reaches every member and nothing else', () => {
+		expect(matchAddress(parsePreferencePath('(statement)/after'), sites, members).map((s) => s.kind)).toEqual(['block', 'if_statement']);
+	});
+	it('reaches nothing without the membership', () => {
+		expect(matchAddress(parsePreferencePath('(statement)/after'), sites, NO_SUPERTYPES)).toEqual([]);
+	});
+});
+
 const ENTRIES: readonly KindEntryLike[] = [
 	{ kind: 'lbrace', symbolName: '{', anon: true },
 	{ kind: 'rbrace', symbolName: '}', anon: true },
@@ -72,13 +92,13 @@ describe('matchAddress', () => {
 			[site('block', 'lbrace_after'), site('block', 'rbrace_before'), site('arguments', 'lparen_after')],
 			ENTRIES
 		);
-		const matched = matchAddress(parsePreferencePath('(block)'), sites);
+		const matched = matchAddress(parsePreferencePath('(block)'), sites, NO_SUPERTYPES);
 		expect(matched.map((s) => s.kind)).toEqual(['block', 'block']);
 	});
 
 	it('matches a single site for a full address', () => {
 		const sites = addressSites([site('block', 'lbrace_after'), site('block', 'rbrace_before')], ENTRIES);
-		const matched = matchAddress(parsePreferencePath('(block)/"{"/after'), sites);
+		const matched = matchAddress(parsePreferencePath('(block)/"{"/after'), sites, NO_SUPERTYPES);
 		expect(matched).toHaveLength(1);
 		expect(matched[0]!.address).toBe('lbrace_after');
 	});
@@ -88,19 +108,19 @@ describe('matchAddress', () => {
 			[site('block', 'block_before', 'block'), site('block', 'lbrace_after')],
 			ENTRIES
 		);
-		const matched = matchAddress(parsePreferencePath('(block)/before'), sites);
+		const matched = matchAddress(parsePreferencePath('(block)/before'), sites, NO_SUPERTYPES);
 		expect(matched.map((s) => s.address)).toEqual(['block_before']);
 	});
 
 	it('matches any token through a wildcard', () => {
 		const sites = addressSites([site('block', 'lbrace_after'), site('block', 'rbrace_before')], ENTRIES);
-		const matched = matchAddress(parsePreferencePath('(block)/_/after'), sites);
+		const matched = matchAddress(parsePreferencePath('(block)/_/after'), sites, NO_SUPERTYPES);
 		expect(matched.map((s) => s.address)).toEqual(['lbrace_after']);
 	});
 
 	it('returns nothing for an address naming no site', () => {
 		const sites = addressSites([site('block', 'lbrace_after')], ENTRIES);
-		expect(matchAddress(parsePreferencePath('(nowhere)/"{"/after'), sites)).toEqual([]);
+		expect(matchAddress(parsePreferencePath('(nowhere)/"{"/after'), sites, NO_SUPERTYPES)).toEqual([]);
 	});
 });
 
@@ -118,7 +138,7 @@ describe('resolveBindings', () => {
 		const out = resolveBindings(
 			[{ path: 'punctuation/after', arm: 'space' }],
 			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
-			sites
+			sites, NO_SUPERTYPES
 		);
 		expect([...out.values()]).toEqual(['space', 'space']);
 	});
@@ -131,7 +151,7 @@ describe('resolveBindings', () => {
 				{ path: 'token_tree_punctuation/":"/after', arm: 'tight' }
 			],
 			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
-			sites
+			sites, NO_SUPERTYPES
 		);
 		const arms = armsOf(out, sites);
 		expect(arms.get('comma_after')).toBe('space');
@@ -146,7 +166,7 @@ describe('resolveBindings', () => {
 				{ path: 'keyword_argument/"="/before', arm: 'tight' }
 			],
 			[{ address: 'keyword_argument/"="/before', label: 'assignment/before' }],
-			sites
+			sites, NO_SUPERTYPES
 		);
 		expect([...out.values()]).toEqual(['tight']);
 	});
@@ -163,19 +183,19 @@ describe('resolveBindings', () => {
 					{ address: 'a', label: 'a/after' },
 					{ address: '_/"x"/after', label: 'wildcard/after' }
 				],
-				wide
+				wide, NO_SUPERTYPES
 			)
 		).toThrow(/overlap/);
 	});
 
 	it('rejects a binding naming no site', () => {
 		expect(() =>
-			resolveBindings([{ path: 'l/after', arm: 'space' }], [{ address: 'nowhere', label: 'l/after' }], punctuation())
+			resolveBindings([{ path: 'l/after', arm: 'space' }], [{ address: 'nowhere', label: 'l/after' }], punctuation(), NO_SUPERTYPES)
 		).toThrow(/names no site/);
 	});
 
 	it('rejects a declaration naming no site and bound to nothing', () => {
-		expect(() => resolveBindings([{ path: 'nowhere/after', arm: 'space' }], [], punctuation())).toThrow(
+		expect(() => resolveBindings([{ path: 'nowhere/after', arm: 'space' }], [], punctuation(), NO_SUPERTYPES)).toThrow(
 			/names no site/
 		);
 	});
@@ -185,7 +205,7 @@ describe('resolveBindings', () => {
 		const out = resolveBindings(
 			[{ path: 'punctuation/after', arm: 'space' }],
 			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
-			sites
+			sites, NO_SUPERTYPES
 		);
 		expect(out.size).toBe(2);
 	});
@@ -215,7 +235,7 @@ describe('a separator gap names its token', () => {
 			],
 			ENTRIES
 		);
-		const matched = matchAddress(parsePreferencePath('_/_/separator/","/before'), sites);
+		const matched = matchAddress(parsePreferencePath('_/_/separator/","/before'), sites, NO_SUPERTYPES);
 		expect(matched.map((s) => s.kind)).toEqual(['arguments', 'tuple_type']);
 	});
 
@@ -233,7 +253,7 @@ describe('a separator gap names its token', () => {
 				{ path: 'tuple_type/types:/separator/","/before', arm: 'space' }
 			],
 			[{ address: '_/_/separator/","/before', label: 'comma/before' }],
-			sites
+			sites, NO_SUPERTYPES
 		);
 		const bySite = new Map([...arms].map(([i, arm]) => [sites[i]!.kind, arm]));
 		expect(bySite.get('arguments')).toBe('tight');

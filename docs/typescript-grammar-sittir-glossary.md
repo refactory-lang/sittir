@@ -937,10 +937,16 @@ overriding the canonical rule too.
 			// referencing rule (proven via a scratch parser: aliasing a
 			// zero-width external to a named node yields a
 			// `[0,15]-[0,15]`-spanning CST node at every insertion point, with
-			// no change to the LR tables). `string('\n')` (not `';'`) is the
-			// round-trip-stable render — it re-parses to the SAME
-			// automatic_semicolon node, whereas `';'` would flip the node type
-			// on re-parse.
+			// no change to the LR tables). `string('\n')` is the round-trip-stable
+			// render: a whitespace-only fixed text is emitted as a whitespace-token
+			// payload,
+			// so the newline gap after the statement absorbs it, a blank-line gap
+			// outranks it, and a break the source relied on (`try {}` then
+			// `catch` on the next line) survives so the render re-parses to the
+			// SAME automatic_semicolon node. `''` would lose that break and `';'`
+			// would flip the node type on re-parse; neither is a newline role,
+			// which would strip the node from the `terminator` choice it is an
+			// arm of and leave that slot without a value.
 ```
 
 ### `expectTestFailures` (`packages/typescript/grammar.sittir.ts:1111`)

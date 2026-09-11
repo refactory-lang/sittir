@@ -108,7 +108,7 @@ pub fn mark_adjacent(dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
 /// shallows it; each is followed by the newline it implies, so a whitespace
 /// kind that renders `INDENT_NEWLINE` reads "go one level deeper, then break".
 ///
-/// `INDENT`, `DEDENT` and [`SEAM`] additionally carry a payload: the
+/// `INDENT`, `DEDENT`, [`SEAM`] and [`TOKEN_SEAM`] additionally carry a payload: the
 /// whitespace run written immediately after the mark, in the same
 /// `write_str` call, is that mark's option-driven whitespace (a separator, a
 /// flank, or a token seam) rather than ordinary text. The writer holds a
@@ -116,8 +116,8 @@ pub fn mark_adjacent(dest: &mut dyn std::fmt::Write) -> std::fmt::Result {
 /// replaces the held one only when it is wider (`""` < spaces < a run
 /// containing `\n`, ties keeping the first), so consecutive marks coalesce
 /// to the widest whitespace any of them asked for. The held payload is
-/// flushed before the next non-empty literal text reaches the sink, and by
-/// [`SpacingWriter::finish`] for one held at the end of the tree. Literal
+/// flushed before the next non-empty literal text reaches the sink, and
+/// dropped by [`SpacingWriter::finish`] when nothing follows it. Literal
 /// text is never part of this coalescing, even when it is itself
 /// whitespace.
 pub const INDENT: char = '\u{FDD0}';
@@ -130,6 +130,14 @@ pub const DEDENT_NEWLINE: &str = "\u{FDD1}\n";
 /// its payload, per the contract on [`INDENT`].
 pub const SEAM: char = '\u{FDD2}';
 pub const SEAM_STR: &str = "\u{FDD2}";
+
+/// The whitespace-token mark: a token whose text is nothing but whitespace —
+/// a newline terminator, an automatic semicolon rendered as a break — is
+/// written behind it as a payload, so it coalesces with the seams around it
+/// like one of them; but it is a token the source holds, so unlike a seam it
+/// is never dropped: one still held when the render ends is written out.
+pub const TOKEN_SEAM: char = '\u{FDD3}';
+pub const TOKEN_SEAM_STR: &str = "\u{FDD3}";
 
 /// The indentation unit a writer uses when none is configured.
 pub const DEFAULT_INDENT: &str = "    ";
@@ -168,6 +176,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     indent_armed: bool,
     seam: Option<SeamRank>,
     seam_text: String,
+    seam_is_token: bool,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -183,6 +192,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             indent_armed: false,
             seam: None,
             seam_text: String::new(),
+            seam_is_token: false,
         }
     }
 
@@ -253,7 +263,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if self.seam.take().is_none() {
             return Ok(());
         }
-        if self.last.is_none() {
+        let token = std::mem::replace(&mut self.seam_is_token, false);
+        if self.last.is_none() && !token {
             self.seam_text.clear();
             return Ok(());
         }
@@ -288,9 +299,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// Ends the render: a seam payload still held has nothing after it, so
     /// it is dropped, as a payload held before the first text is. A seam
     /// lies between two things; a node rendered on its own carries no edge
-    /// whitespace. The root render calls this once, after the last
-    /// `write_str`.
+    /// whitespace. A payload a whitespace token contributed is written out
+    /// instead: the token is part of the node. The root render calls this
+    /// once, after the last `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
+        if self.seam_is_token {
+            self.flush_seam()?;
+        }
         self.seam = None;
         self.seam_text.clear();
         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
@@ -299,7 +314,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 }
 
 fn is_mark(c: char) -> bool {
-    c == ADJACENT || c == INDENT || c == DEDENT || c == SEAM
+    c == ADJACENT || c == INDENT || c == DEDENT || c == SEAM || c == TOKEN_SEAM
 }
 
 impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
@@ -343,6 +358,9 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
                 _ => {}
             }
             self.merge_seam(payload);
+            if mark == TOKEN_SEAM {
+                self.seam_is_token = true;
+            }
         }
         self.write_chunk(rest)
     }
@@ -589,6 +607,16 @@ mod seam_tests {
         }
         w.finish().unwrap();
         out
+    }
+
+    #[test]
+    fn a_token_seam_coalesces_with_seams_but_is_never_dropped() {
+        assert_eq!(run(&["a", "\u{FDD3}\n", "\u{FDD2}\n\n", "b"]), "a\n\nb");
+        assert_eq!(run(&["a", "\u{FDD2}\n\n", "\u{FDD3}\n", "b"]), "a\n\nb");
+        assert_eq!(run(&["a", "\u{FDD3}\n", "\u{FDD2}\n", "b"]), "a\nb");
+        assert_eq!(run(&["a", "\u{FDD3}\n"]), "a\n");
+        assert_eq!(run(&["a", "\u{FDD3}\n", "\u{FDD2}"]), "a\n");
+        assert_eq!(run(&["a", "\u{FDD2}\n"]), "a");
     }
 
     #[test]

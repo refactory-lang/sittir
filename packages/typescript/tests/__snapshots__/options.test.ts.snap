@@ -591,6 +591,9 @@ export interface KindWhitespace {
 		| 'arguments_assignment_expression_after'
 		| 'arguments_augmented_assignment_expression_after'
 		| 'arguments_await_expression_after'
+		| 'arguments_call_expression_call_after'
+		| 'arguments_call_expression_member_after'
+		| 'arguments_call_expression_template_call_after'
 		| 'arguments_class_after'
 		| 'arguments_function_expression_after'
 		| 'arguments_generator_function_after'
@@ -604,11 +607,15 @@ export interface KindWhitespace {
 		| 'arguments_regex_after'
 		| 'arguments_satisfies_expression_after'
 		| 'arguments_spread_element_after'
+		| 'arguments_string_double_after'
+		| 'arguments_string_single_after'
 		| 'arguments_subscript_expression_after'
 		| 'arguments_template_string_after'
 		| 'arguments_ternary_expression_after'
 		| 'arguments_type_assertion_after'
 		| 'arguments_unary_expression_after'
+		| 'arguments_update_expression_postfix_after'
+		| 'arguments_update_expression_prefix_after'
 		| 'arguments_yield_expression_after'
 		| 'lparen_after'
 		| 'lparen_before'
@@ -621,6 +628,9 @@ export interface KindWhitespace {
 		| 'elements_assignment_expression_after'
 		| 'elements_augmented_assignment_expression_after'
 		| 'elements_await_expression_after'
+		| 'elements_call_expression_call_after'
+		| 'elements_call_expression_member_after'
+		| 'elements_call_expression_template_call_after'
 		| 'elements_class_after'
 		| 'elements_function_expression_after'
 		| 'elements_generator_function_after'
@@ -634,11 +644,15 @@ export interface KindWhitespace {
 		| 'elements_regex_after'
 		| 'elements_satisfies_expression_after'
 		| 'elements_spread_element_after'
+		| 'elements_string_double_after'
+		| 'elements_string_single_after'
 		| 'elements_subscript_expression_after'
 		| 'elements_template_string_after'
 		| 'elements_ternary_expression_after'
 		| 'elements_type_assertion_after'
 		| 'elements_unary_expression_after'
+		| 'elements_update_expression_postfix_after'
+		| 'elements_update_expression_prefix_after'
 		| 'elements_yield_expression_after'
 		| 'lbrack_after'
 		| 'lbrack_before'
@@ -734,7 +748,11 @@ export interface KindWhitespace {
 	readonly else_clause: 'else_after' | 'else_before';
 	readonly enum_assignment: 'eq_after' | 'eq_before';
 	readonly enum_body: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
-	readonly enum_body_elements: 'content_computed_property_name_after' | 'content_enum_assignment_after';
+	readonly enum_body_elements:
+		| 'content_computed_property_name_after'
+		| 'content_enum_assignment_after'
+		| 'content_string_double_after'
+		| 'content_string_single_after';
 	readonly enum_declaration: 'enum_after' | 'enum_before';
 	readonly export_clause: 'lbrace_after' | 'lbrace_before' | 'rbrace_after' | 'rbrace_before';
 	readonly export_specifier: 'as_after' | 'as_before';
@@ -801,12 +819,28 @@ export interface KindWhitespace {
 	readonly implements_clause:
 		| 'implements_after'
 		| 'implements_before'
+		| 'type_array_type_after'
+		| 'type_conditional_type_after'
 		| 'type_constructor_type_after'
+		| 'type_flow_maybe_type_after'
 		| 'type_function_type_after'
+		| 'type_generic_type_after'
+		| 'type_index_type_query_after'
 		| 'type_infer_type_after'
+		| 'type_intersection_type_after'
+		| 'type_lookup_type_after'
+		| 'type_nested_type_identifier_after'
+		| 'type_object_type_after'
+		| 'type_parenthesized_type_after'
 		| 'type_readonly_type_after'
+		| 'type_string_double_after'
+		| 'type_string_single_after'
+		| 'type_template_literal_type_after'
+		| 'type_tuple_type_after'
+		| 'type_type_query_after'
 		| 'type_type_query_call_expression_in_type_annotation_after'
-		| 'type_type_query_member_expression_in_type_annotation_after';
+		| 'type_type_query_member_expression_in_type_annotation_after'
+		| 'type_union_type_after';
 	readonly import_alias: 'anon_import_after' | 'anon_import_before' | 'eq_after' | 'eq_before';
 	readonly import_clause_group: 'comma_after' | 'comma_before';
 	readonly import_require_clause:
@@ -836,7 +870,11 @@ export interface KindWhitespace {
 	readonly internal_module: 'namespace_after' | 'namespace_before';
 	readonly intersection_type: 'amp_after' | 'amp_before';
 	readonly labeled_statement: 'colon_after' | 'colon_before';
-	readonly lexical_declaration: 'kind_after' | 'kind_before';
+	readonly lexical_declaration:
+		| 'declarators_variable_declarator_definite_after'
+		| 'declarators_variable_declarator_plain_after'
+		| 'kind_after'
+		| 'kind_before';
 	readonly lookup_type: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly mapped_type_clause: 'as_after' | 'as_before' | 'in_after' | 'in_before';
 	readonly meta_property_import_meta: 'anon_import_after' | 'dot_after' | 'dot_before' | 'meta_before';
@@ -886,6 +924,11 @@ export interface KindWhitespace {
 	readonly object_type_content:
 		| 'content_call_signature_after'
 		| 'content_construct_signature_after'
+		| 'content_export_statement_default_declaration_after'
+		| 'content_export_statement_default_from_after'
+		| 'content_export_statement_equals_export_after'
+		| 'content_export_statement_namespace_export_after'
+		| 'content_export_statement_type_export_after'
 		| 'content_index_signature_after'
 		| 'content_method_signature_after'
 		| 'content_property_signature_after';
@@ -901,21 +944,40 @@ export interface KindWhitespace {
 	readonly parenthesized_type: 'lparen_after' | 'lparen_before' | 'rparen_after' | 'rparen_before';
 	readonly predefined_type: 'unique_after' | 'unique_before';
 	readonly program:
+		| 'statements_abstract_class_declaration_after'
+		| 'statements_ambient_declaration_after'
 		| 'statements_break_statement_after'
+		| 'statements_class_declaration_after'
 		| 'statements_continue_statement_after'
 		| 'statements_debugger_statement_after'
 		| 'statements_do_statement_after'
+		| 'statements_enum_declaration_after'
+		| 'statements_export_statement_default_declaration_after'
+		| 'statements_export_statement_default_from_after'
+		| 'statements_export_statement_equals_export_after'
+		| 'statements_export_statement_namespace_export_after'
+		| 'statements_export_statement_type_export_after'
 		| 'statements_expression_statement_after'
 		| 'statements_for_in_statement_after'
 		| 'statements_for_statement_after'
+		| 'statements_function_declaration_after'
+		| 'statements_function_signature_after'
+		| 'statements_generator_function_declaration_after'
 		| 'statements_if_statement_after'
+		| 'statements_import_alias_after'
 		| 'statements_import_statement_after'
+		| 'statements_interface_declaration_after'
+		| 'statements_internal_module_after'
 		| 'statements_labeled_statement_after'
+		| 'statements_lexical_declaration_after'
+		| 'statements_module_after'
 		| 'statements_return_statement_after'
 		| 'statements_statement_block_after'
 		| 'statements_switch_statement_after'
 		| 'statements_throw_statement_after'
 		| 'statements_try_statement_after'
+		| 'statements_type_alias_declaration_after'
+		| 'statements_variable_declaration_after'
 		| 'statements_while_statement_after'
 		| 'statements_with_statement_after';
 	readonly property_signature:
@@ -940,17 +1002,36 @@ export interface KindWhitespace {
 	readonly return_statement: 'return_after' | 'return_before';
 	readonly satisfies_expression: 'satisfies_after' | 'satisfies_before';
 	readonly sequence_expression:
+		| 'expression_array_after'
+		| 'expression_arrow_function_after'
 		| 'expression_as_expression_after'
 		| 'expression_assignment_expression_after'
 		| 'expression_augmented_assignment_expression_after'
 		| 'expression_await_expression_after'
+		| 'expression_call_expression_call_after'
+		| 'expression_call_expression_member_after'
+		| 'expression_call_expression_template_call_after'
+		| 'expression_class_after'
+		| 'expression_function_expression_after'
+		| 'expression_generator_function_after'
 		| 'expression_instantiation_expression_after'
 		| 'expression_internal_module_after'
+		| 'expression_member_expression_after'
 		| 'expression_new_expression_after'
+		| 'expression_non_null_expression_after'
+		| 'expression_object_after'
+		| 'expression_parenthesized_expression_after'
+		| 'expression_regex_after'
 		| 'expression_satisfies_expression_after'
+		| 'expression_string_double_after'
+		| 'expression_string_single_after'
+		| 'expression_subscript_expression_after'
+		| 'expression_template_string_after'
 		| 'expression_ternary_expression_after'
 		| 'expression_type_assertion_after'
 		| 'expression_unary_expression_after'
+		| 'expression_update_expression_postfix_after'
+		| 'expression_update_expression_prefix_after'
 		| 'expression_yield_expression_after';
 	readonly spread_element: 'dot_dot_dot_after' | 'dot_dot_dot_before';
 	readonly statement_block:
@@ -958,21 +1039,40 @@ export interface KindWhitespace {
 		| 'lbrace_before'
 		| 'rbrace_after'
 		| 'rbrace_before'
+		| 'statements_abstract_class_declaration_after'
+		| 'statements_ambient_declaration_after'
 		| 'statements_break_statement_after'
+		| 'statements_class_declaration_after'
 		| 'statements_continue_statement_after'
 		| 'statements_debugger_statement_after'
 		| 'statements_do_statement_after'
+		| 'statements_enum_declaration_after'
+		| 'statements_export_statement_default_declaration_after'
+		| 'statements_export_statement_default_from_after'
+		| 'statements_export_statement_equals_export_after'
+		| 'statements_export_statement_namespace_export_after'
+		| 'statements_export_statement_type_export_after'
 		| 'statements_expression_statement_after'
 		| 'statements_for_in_statement_after'
 		| 'statements_for_statement_after'
+		| 'statements_function_declaration_after'
+		| 'statements_function_signature_after'
+		| 'statements_generator_function_declaration_after'
 		| 'statements_if_statement_after'
+		| 'statements_import_alias_after'
 		| 'statements_import_statement_after'
+		| 'statements_interface_declaration_after'
+		| 'statements_internal_module_after'
 		| 'statements_labeled_statement_after'
+		| 'statements_lexical_declaration_after'
+		| 'statements_module_after'
 		| 'statements_return_statement_after'
 		| 'statements_statement_block_after'
 		| 'statements_switch_statement_after'
 		| 'statements_throw_statement_after'
 		| 'statements_try_statement_after'
+		| 'statements_type_alias_declaration_after'
+		| 'statements_variable_declaration_after'
 		| 'statements_while_statement_after'
 		| 'statements_with_statement_after';
 	readonly string_double: 'dquote_after' | 'dquote_before';
@@ -986,21 +1086,40 @@ export interface KindWhitespace {
 		| 'rbrace_after'
 		| 'rbrace_before';
 	readonly switch_case:
+		| 'body_abstract_class_declaration_after'
+		| 'body_ambient_declaration_after'
 		| 'body_break_statement_after'
+		| 'body_class_declaration_after'
 		| 'body_continue_statement_after'
 		| 'body_debugger_statement_after'
 		| 'body_do_statement_after'
+		| 'body_enum_declaration_after'
+		| 'body_export_statement_default_declaration_after'
+		| 'body_export_statement_default_from_after'
+		| 'body_export_statement_equals_export_after'
+		| 'body_export_statement_namespace_export_after'
+		| 'body_export_statement_type_export_after'
 		| 'body_expression_statement_after'
 		| 'body_for_in_statement_after'
 		| 'body_for_statement_after'
+		| 'body_function_declaration_after'
+		| 'body_function_signature_after'
+		| 'body_generator_function_declaration_after'
 		| 'body_if_statement_after'
+		| 'body_import_alias_after'
 		| 'body_import_statement_after'
+		| 'body_interface_declaration_after'
+		| 'body_internal_module_after'
 		| 'body_labeled_statement_after'
+		| 'body_lexical_declaration_after'
+		| 'body_module_after'
 		| 'body_return_statement_after'
 		| 'body_statement_block_after'
 		| 'body_switch_statement_after'
 		| 'body_throw_statement_after'
 		| 'body_try_statement_after'
+		| 'body_type_alias_declaration_after'
+		| 'body_variable_declaration_after'
 		| 'body_while_statement_after'
 		| 'body_with_statement_after'
 		| 'case_after'
@@ -1008,21 +1127,40 @@ export interface KindWhitespace {
 		| 'colon_after'
 		| 'colon_before';
 	readonly switch_default:
+		| 'body_abstract_class_declaration_after'
+		| 'body_ambient_declaration_after'
 		| 'body_break_statement_after'
+		| 'body_class_declaration_after'
 		| 'body_continue_statement_after'
 		| 'body_debugger_statement_after'
 		| 'body_do_statement_after'
+		| 'body_enum_declaration_after'
+		| 'body_export_statement_default_declaration_after'
+		| 'body_export_statement_default_from_after'
+		| 'body_export_statement_equals_export_after'
+		| 'body_export_statement_namespace_export_after'
+		| 'body_export_statement_type_export_after'
 		| 'body_expression_statement_after'
 		| 'body_for_in_statement_after'
 		| 'body_for_statement_after'
+		| 'body_function_declaration_after'
+		| 'body_function_signature_after'
+		| 'body_generator_function_declaration_after'
 		| 'body_if_statement_after'
+		| 'body_import_alias_after'
 		| 'body_import_statement_after'
+		| 'body_interface_declaration_after'
+		| 'body_internal_module_after'
 		| 'body_labeled_statement_after'
+		| 'body_lexical_declaration_after'
+		| 'body_module_after'
 		| 'body_return_statement_after'
 		| 'body_statement_block_after'
 		| 'body_switch_statement_after'
 		| 'body_throw_statement_after'
 		| 'body_try_statement_after'
+		| 'body_type_alias_declaration_after'
+		| 'body_variable_declaration_after'
 		| 'body_while_statement_after'
 		| 'body_with_statement_after'
 		| 'colon_after'
@@ -1056,6 +1194,8 @@ export interface KindWhitespace {
 		| 'tuple_type_member_parenthesized_type_after'
 		| 'tuple_type_member_readonly_type_after'
 		| 'tuple_type_member_rest_type_after'
+		| 'tuple_type_member_string_double_after'
+		| 'tuple_type_member_string_single_after'
 		| 'tuple_type_member_template_literal_type_after'
 		| 'tuple_type_member_tuple_parameter_after'
 		| 'tuple_type_member_tuple_type_after'
@@ -1074,12 +1214,28 @@ export interface KindWhitespace {
 	readonly type_query_member_expression_in_type_annotation: 'dot_after' | 'dot_before';
 	readonly type_query_subscript_expression: 'lbrack_after' | 'lbrack_before' | 'rbrack_after' | 'rbrack_before';
 	readonly types:
+		| 'type_array_type_after'
+		| 'type_conditional_type_after'
 		| 'type_constructor_type_after'
+		| 'type_flow_maybe_type_after'
 		| 'type_function_type_after'
+		| 'type_generic_type_after'
+		| 'type_index_type_query_after'
 		| 'type_infer_type_after'
+		| 'type_intersection_type_after'
+		| 'type_lookup_type_after'
+		| 'type_nested_type_identifier_after'
+		| 'type_object_type_after'
+		| 'type_parenthesized_type_after'
 		| 'type_readonly_type_after'
+		| 'type_string_double_after'
+		| 'type_string_single_after'
+		| 'type_template_literal_type_after'
+		| 'type_tuple_type_after'
+		| 'type_type_query_after'
 		| 'type_type_query_call_expression_in_type_annotation_after'
-		| 'type_type_query_member_expression_in_type_annotation_after';
+		| 'type_type_query_member_expression_in_type_annotation_after'
+		| 'type_union_type_after';
 	readonly unary_expression_operator:
 		| 'bang_after'
 		| 'bang_before'
@@ -1090,7 +1246,11 @@ export interface KindWhitespace {
 		| 'tilde_after'
 		| 'tilde_before';
 	readonly union_type: 'pipe_after' | 'pipe_before';
-	readonly variable_declaration: 'var_after' | 'var_before';
+	readonly variable_declaration:
+		| 'declarators_variable_declarator_definite_after'
+		| 'declarators_variable_declarator_plain_after'
+		| 'var_after'
+		| 'var_before';
 	readonly variable_declarator_definite: 'bang_after' | 'bang_before';
 	readonly variable_declarator_plain: 'eq_after' | 'eq_before';
 	readonly while_statement: 'while_after' | 'while_before';
@@ -1441,6 +1601,9 @@ export interface AddressBranch {
 		| 'assignment_expression'
 		| 'augmented_assignment_expression'
 		| 'await_expression'
+		| 'call_expression_call'
+		| 'call_expression_member'
+		| 'call_expression_template_call'
 		| 'class'
 		| 'end'
 		| 'function_expression'
@@ -1457,11 +1620,15 @@ export interface AddressBranch {
 		| 'separator'
 		| 'spread_element'
 		| 'start'
+		| 'string_double'
+		| 'string_single'
 		| 'subscript_expression'
 		| 'template_string'
 		| 'ternary_expression'
 		| 'type_assertion'
 		| 'unary_expression'
+		| 'update_expression_postfix'
+		| 'update_expression_prefix'
 		| 'yield_expression';
 	readonly 'arguments/arguments/array': 'after';
 	readonly 'arguments/arguments/arrow_function': 'after';
@@ -1469,6 +1636,9 @@ export interface AddressBranch {
 	readonly 'arguments/arguments/assignment_expression': 'after';
 	readonly 'arguments/arguments/augmented_assignment_expression': 'after';
 	readonly 'arguments/arguments/await_expression': 'after';
+	readonly 'arguments/arguments/call_expression_call': 'after';
+	readonly 'arguments/arguments/call_expression_member': 'after';
+	readonly 'arguments/arguments/call_expression_template_call': 'after';
 	readonly 'arguments/arguments/class': 'after';
 	readonly 'arguments/arguments/function_expression': 'after';
 	readonly 'arguments/arguments/generator_function': 'after';
@@ -1484,11 +1654,15 @@ export interface AddressBranch {
 	readonly 'arguments/arguments/separator': ',';
 	readonly 'arguments/arguments/separator/,': 'after' | 'before';
 	readonly 'arguments/arguments/spread_element': 'after';
+	readonly 'arguments/arguments/string_double': 'after';
+	readonly 'arguments/arguments/string_single': 'after';
 	readonly 'arguments/arguments/subscript_expression': 'after';
 	readonly 'arguments/arguments/template_string': 'after';
 	readonly 'arguments/arguments/ternary_expression': 'after';
 	readonly 'arguments/arguments/type_assertion': 'after';
 	readonly 'arguments/arguments/unary_expression': 'after';
+	readonly 'arguments/arguments/update_expression_postfix': 'after';
+	readonly 'arguments/arguments/update_expression_prefix': 'after';
 	readonly 'arguments/arguments/yield_expression': 'after';
 	readonly array: '[' | ']' | 'after' | 'before' | 'elements';
 	readonly 'array/[': 'after' | 'before';
@@ -1500,6 +1674,9 @@ export interface AddressBranch {
 		| 'assignment_expression'
 		| 'augmented_assignment_expression'
 		| 'await_expression'
+		| 'call_expression_call'
+		| 'call_expression_member'
+		| 'call_expression_template_call'
 		| 'class'
 		| 'end'
 		| 'function_expression'
@@ -1516,11 +1693,15 @@ export interface AddressBranch {
 		| 'separator'
 		| 'spread_element'
 		| 'start'
+		| 'string_double'
+		| 'string_single'
 		| 'subscript_expression'
 		| 'template_string'
 		| 'ternary_expression'
 		| 'type_assertion'
 		| 'unary_expression'
+		| 'update_expression_postfix'
+		| 'update_expression_prefix'
 		| 'yield_expression';
 	readonly 'array/elements/array': 'after';
 	readonly 'array/elements/arrow_function': 'after';
@@ -1528,6 +1709,9 @@ export interface AddressBranch {
 	readonly 'array/elements/assignment_expression': 'after';
 	readonly 'array/elements/augmented_assignment_expression': 'after';
 	readonly 'array/elements/await_expression': 'after';
+	readonly 'array/elements/call_expression_call': 'after';
+	readonly 'array/elements/call_expression_member': 'after';
+	readonly 'array/elements/call_expression_template_call': 'after';
 	readonly 'array/elements/class': 'after';
 	readonly 'array/elements/function_expression': 'after';
 	readonly 'array/elements/generator_function': 'after';
@@ -1543,11 +1727,15 @@ export interface AddressBranch {
 	readonly 'array/elements/separator': ',';
 	readonly 'array/elements/separator/,': 'after' | 'before';
 	readonly 'array/elements/spread_element': 'after';
+	readonly 'array/elements/string_double': 'after';
+	readonly 'array/elements/string_single': 'after';
 	readonly 'array/elements/subscript_expression': 'after';
 	readonly 'array/elements/template_string': 'after';
 	readonly 'array/elements/ternary_expression': 'after';
 	readonly 'array/elements/type_assertion': 'after';
 	readonly 'array/elements/unary_expression': 'after';
+	readonly 'array/elements/update_expression_postfix': 'after';
+	readonly 'array/elements/update_expression_prefix': 'after';
 	readonly 'array/elements/yield_expression': 'after';
 	readonly array_pattern: '[' | ']' | 'after' | 'before' | 'elements';
 	readonly 'array_pattern/[': 'after' | 'before';
@@ -1715,11 +1903,15 @@ export interface AddressBranch {
 		| 'end'
 		| 'enum_assignment'
 		| 'separator'
-		| 'start';
+		| 'start'
+		| 'string_double'
+		| 'string_single';
 	readonly 'enum_body_elements/content/computed_property_name': 'after';
 	readonly 'enum_body_elements/content/enum_assignment': 'after';
 	readonly 'enum_body_elements/content/separator': ',';
 	readonly 'enum_body_elements/content/separator/,': 'after' | 'before';
+	readonly 'enum_body_elements/content/string_double': 'after';
+	readonly 'enum_body_elements/content/string_single': 'after';
 	readonly enum_declaration: 'after' | 'before' | 'enum';
 	readonly 'enum_declaration/enum': 'after' | 'before';
 	readonly export_clause: 'after' | 'before' | '{' | '}';
@@ -1828,23 +2020,55 @@ export interface AddressBranch {
 	readonly implements_clause: 'after' | 'before' | 'implements' | 'type';
 	readonly 'implements_clause/implements': 'after' | 'before';
 	readonly 'implements_clause/type':
+		| 'array_type'
+		| 'conditional_type'
 		| 'constructor_type'
 		| 'end'
+		| 'flow_maybe_type'
 		| 'function_type'
+		| 'generic_type'
+		| 'index_type_query'
 		| 'infer_type'
+		| 'intersection_type'
+		| 'lookup_type'
+		| 'nested_type_identifier'
+		| 'object_type'
+		| 'parenthesized_type'
 		| 'readonly_type'
 		| 'separator'
 		| 'start'
+		| 'string_double'
+		| 'string_single'
+		| 'template_literal_type'
+		| 'tuple_type'
+		| 'type_query'
 		| 'type_query_call_expression_in_type_annotation'
-		| 'type_query_member_expression_in_type_annotation';
+		| 'type_query_member_expression_in_type_annotation'
+		| 'union_type';
+	readonly 'implements_clause/type/array_type': 'after';
+	readonly 'implements_clause/type/conditional_type': 'after';
 	readonly 'implements_clause/type/constructor_type': 'after';
+	readonly 'implements_clause/type/flow_maybe_type': 'after';
 	readonly 'implements_clause/type/function_type': 'after';
+	readonly 'implements_clause/type/generic_type': 'after';
+	readonly 'implements_clause/type/index_type_query': 'after';
 	readonly 'implements_clause/type/infer_type': 'after';
+	readonly 'implements_clause/type/intersection_type': 'after';
+	readonly 'implements_clause/type/lookup_type': 'after';
+	readonly 'implements_clause/type/nested_type_identifier': 'after';
+	readonly 'implements_clause/type/object_type': 'after';
+	readonly 'implements_clause/type/parenthesized_type': 'after';
 	readonly 'implements_clause/type/readonly_type': 'after';
 	readonly 'implements_clause/type/separator': ',';
 	readonly 'implements_clause/type/separator/,': 'after' | 'before';
+	readonly 'implements_clause/type/string_double': 'after';
+	readonly 'implements_clause/type/string_single': 'after';
+	readonly 'implements_clause/type/template_literal_type': 'after';
+	readonly 'implements_clause/type/tuple_type': 'after';
+	readonly 'implements_clause/type/type_query': 'after';
 	readonly 'implements_clause/type/type_query_call_expression_in_type_annotation': 'after';
 	readonly 'implements_clause/type/type_query_member_expression_in_type_annotation': 'after';
+	readonly 'implements_clause/type/union_type': 'after';
 	readonly import_alias: '=' | 'after' | 'before' | 'import' | 'terminator';
 	readonly 'import_alias/=': 'after' | 'before';
 	readonly 'import_alias/import': 'after' | 'before';
@@ -1890,9 +2114,16 @@ export interface AddressBranch {
 	readonly labeled_statement: ':' | 'after' | 'before';
 	readonly 'labeled_statement/:': 'after' | 'before';
 	readonly lexical_declaration: 'after' | 'before' | 'declarators' | 'kind' | 'terminator';
-	readonly 'lexical_declaration/declarators': 'end' | 'separator' | 'start';
+	readonly 'lexical_declaration/declarators':
+		| 'end'
+		| 'separator'
+		| 'start'
+		| 'variable_declarator_definite'
+		| 'variable_declarator_plain';
 	readonly 'lexical_declaration/declarators/separator': ',';
 	readonly 'lexical_declaration/declarators/separator/,': 'after' | 'before';
+	readonly 'lexical_declaration/declarators/variable_declarator_definite': 'after';
+	readonly 'lexical_declaration/declarators/variable_declarator_plain': 'after';
 	readonly 'lexical_declaration/kind': 'after' | 'before';
 	readonly lookup_type: '[' | ']' | 'after' | 'before';
 	readonly 'lookup_type/[': 'after' | 'before';
@@ -1976,6 +2207,11 @@ export interface AddressBranch {
 		| 'construct_signature'
 		| 'delimiter'
 		| 'end'
+		| 'export_statement_default_declaration'
+		| 'export_statement_default_from'
+		| 'export_statement_equals_export'
+		| 'export_statement_namespace_export'
+		| 'export_statement_type_export'
 		| 'index_signature'
 		| 'method_signature'
 		| 'property_signature'
@@ -1983,6 +2219,11 @@ export interface AddressBranch {
 		| 'start';
 	readonly 'object_type_content/content/call_signature': 'after';
 	readonly 'object_type_content/content/construct_signature': 'after';
+	readonly 'object_type_content/content/export_statement_default_declaration': 'after';
+	readonly 'object_type_content/content/export_statement_default_from': 'after';
+	readonly 'object_type_content/content/export_statement_equals_export': 'after';
+	readonly 'object_type_content/content/export_statement_namespace_export': 'after';
+	readonly 'object_type_content/content/export_statement_type_export': 'after';
 	readonly 'object_type_content/content/index_signature': 'after';
 	readonly 'object_type_content/content/method_signature': 'after';
 	readonly 'object_type_content/content/property_signature': 'after';
@@ -2018,17 +2259,34 @@ export interface AddressBranch {
 	readonly 'predefined_type/unique symbol': 'after' | 'before';
 	readonly program: 'after' | 'before' | 'statements';
 	readonly 'program/statements':
+		| 'abstract_class_declaration'
+		| 'ambient_declaration'
 		| 'break_statement'
+		| 'class_declaration'
 		| 'continue_statement'
 		| 'debugger_statement'
 		| 'do_statement'
 		| 'end'
+		| 'enum_declaration'
+		| 'export_statement_default_declaration'
+		| 'export_statement_default_from'
+		| 'export_statement_equals_export'
+		| 'export_statement_namespace_export'
+		| 'export_statement_type_export'
 		| 'expression_statement'
 		| 'for_in_statement'
 		| 'for_statement'
+		| 'function_declaration'
+		| 'function_signature'
+		| 'generator_function_declaration'
 		| 'if_statement'
+		| 'import_alias'
 		| 'import_statement'
+		| 'interface_declaration'
+		| 'internal_module'
 		| 'labeled_statement'
+		| 'lexical_declaration'
+		| 'module'
 		| 'return_statement'
 		| 'separator'
 		| 'start'
@@ -2036,23 +2294,44 @@ export interface AddressBranch {
 		| 'switch_statement'
 		| 'throw_statement'
 		| 'try_statement'
+		| 'type_alias_declaration'
+		| 'variable_declaration'
 		| 'while_statement'
 		| 'with_statement';
+	readonly 'program/statements/abstract_class_declaration': 'after';
+	readonly 'program/statements/ambient_declaration': 'after';
 	readonly 'program/statements/break_statement': 'after';
+	readonly 'program/statements/class_declaration': 'after';
 	readonly 'program/statements/continue_statement': 'after';
 	readonly 'program/statements/debugger_statement': 'after';
 	readonly 'program/statements/do_statement': 'after';
+	readonly 'program/statements/enum_declaration': 'after';
+	readonly 'program/statements/export_statement_default_declaration': 'after';
+	readonly 'program/statements/export_statement_default_from': 'after';
+	readonly 'program/statements/export_statement_equals_export': 'after';
+	readonly 'program/statements/export_statement_namespace_export': 'after';
+	readonly 'program/statements/export_statement_type_export': 'after';
 	readonly 'program/statements/expression_statement': 'after';
 	readonly 'program/statements/for_in_statement': 'after';
 	readonly 'program/statements/for_statement': 'after';
+	readonly 'program/statements/function_declaration': 'after';
+	readonly 'program/statements/function_signature': 'after';
+	readonly 'program/statements/generator_function_declaration': 'after';
 	readonly 'program/statements/if_statement': 'after';
+	readonly 'program/statements/import_alias': 'after';
 	readonly 'program/statements/import_statement': 'after';
+	readonly 'program/statements/interface_declaration': 'after';
+	readonly 'program/statements/internal_module': 'after';
 	readonly 'program/statements/labeled_statement': 'after';
+	readonly 'program/statements/lexical_declaration': 'after';
+	readonly 'program/statements/module': 'after';
 	readonly 'program/statements/return_statement': 'after';
 	readonly 'program/statements/statement_block': 'after';
 	readonly 'program/statements/switch_statement': 'after';
 	readonly 'program/statements/throw_statement': 'after';
 	readonly 'program/statements/try_statement': 'after';
+	readonly 'program/statements/type_alias_declaration': 'after';
+	readonly 'program/statements/variable_declaration': 'after';
 	readonly 'program/statements/while_statement': 'after';
 	readonly 'program/statements/with_statement': 'after';
 	readonly property_signature: 'accessibility_modifier' | 'after' | 'before' | 'optional_marker';
@@ -2092,50 +2371,105 @@ export interface AddressBranch {
 	readonly 'satisfies_expression/satisfies': 'after' | 'before';
 	readonly sequence_expression: 'after' | 'before' | 'expression';
 	readonly 'sequence_expression/expression':
+		| 'array'
+		| 'arrow_function'
 		| 'as_expression'
 		| 'assignment_expression'
 		| 'augmented_assignment_expression'
 		| 'await_expression'
+		| 'call_expression_call'
+		| 'call_expression_member'
+		| 'call_expression_template_call'
+		| 'class'
 		| 'end'
+		| 'function_expression'
+		| 'generator_function'
 		| 'instantiation_expression'
 		| 'internal_module'
+		| 'member_expression'
 		| 'new_expression'
+		| 'non_null_expression'
+		| 'object'
+		| 'parenthesized_expression'
+		| 'regex'
 		| 'satisfies_expression'
 		| 'separator'
 		| 'start'
+		| 'string_double'
+		| 'string_single'
+		| 'subscript_expression'
+		| 'template_string'
 		| 'ternary_expression'
 		| 'type_assertion'
 		| 'unary_expression'
+		| 'update_expression_postfix'
+		| 'update_expression_prefix'
 		| 'yield_expression';
+	readonly 'sequence_expression/expression/array': 'after';
+	readonly 'sequence_expression/expression/arrow_function': 'after';
 	readonly 'sequence_expression/expression/as_expression': 'after';
 	readonly 'sequence_expression/expression/assignment_expression': 'after';
 	readonly 'sequence_expression/expression/augmented_assignment_expression': 'after';
 	readonly 'sequence_expression/expression/await_expression': 'after';
+	readonly 'sequence_expression/expression/call_expression_call': 'after';
+	readonly 'sequence_expression/expression/call_expression_member': 'after';
+	readonly 'sequence_expression/expression/call_expression_template_call': 'after';
+	readonly 'sequence_expression/expression/class': 'after';
+	readonly 'sequence_expression/expression/function_expression': 'after';
+	readonly 'sequence_expression/expression/generator_function': 'after';
 	readonly 'sequence_expression/expression/instantiation_expression': 'after';
 	readonly 'sequence_expression/expression/internal_module': 'after';
+	readonly 'sequence_expression/expression/member_expression': 'after';
 	readonly 'sequence_expression/expression/new_expression': 'after';
+	readonly 'sequence_expression/expression/non_null_expression': 'after';
+	readonly 'sequence_expression/expression/object': 'after';
+	readonly 'sequence_expression/expression/parenthesized_expression': 'after';
+	readonly 'sequence_expression/expression/regex': 'after';
 	readonly 'sequence_expression/expression/satisfies_expression': 'after';
 	readonly 'sequence_expression/expression/separator': ',';
 	readonly 'sequence_expression/expression/separator/,': 'after' | 'before';
+	readonly 'sequence_expression/expression/string_double': 'after';
+	readonly 'sequence_expression/expression/string_single': 'after';
+	readonly 'sequence_expression/expression/subscript_expression': 'after';
+	readonly 'sequence_expression/expression/template_string': 'after';
 	readonly 'sequence_expression/expression/ternary_expression': 'after';
 	readonly 'sequence_expression/expression/type_assertion': 'after';
 	readonly 'sequence_expression/expression/unary_expression': 'after';
+	readonly 'sequence_expression/expression/update_expression_postfix': 'after';
+	readonly 'sequence_expression/expression/update_expression_prefix': 'after';
 	readonly 'sequence_expression/expression/yield_expression': 'after';
 	readonly spread_element: '...' | 'after' | 'before';
 	readonly 'spread_element/...': 'after' | 'before';
 	readonly statement_block: 'after' | 'before' | 'statements' | '{' | '}';
 	readonly 'statement_block/statements':
+		| 'abstract_class_declaration'
+		| 'ambient_declaration'
 		| 'break_statement'
+		| 'class_declaration'
 		| 'continue_statement'
 		| 'debugger_statement'
 		| 'do_statement'
 		| 'end'
+		| 'enum_declaration'
+		| 'export_statement_default_declaration'
+		| 'export_statement_default_from'
+		| 'export_statement_equals_export'
+		| 'export_statement_namespace_export'
+		| 'export_statement_type_export'
 		| 'expression_statement'
 		| 'for_in_statement'
 		| 'for_statement'
+		| 'function_declaration'
+		| 'function_signature'
+		| 'generator_function_declaration'
 		| 'if_statement'
+		| 'import_alias'
 		| 'import_statement'
+		| 'interface_declaration'
+		| 'internal_module'
 		| 'labeled_statement'
+		| 'lexical_declaration'
+		| 'module'
 		| 'return_statement'
 		| 'separator'
 		| 'start'
@@ -2143,23 +2477,44 @@ export interface AddressBranch {
 		| 'switch_statement'
 		| 'throw_statement'
 		| 'try_statement'
+		| 'type_alias_declaration'
+		| 'variable_declaration'
 		| 'while_statement'
 		| 'with_statement';
+	readonly 'statement_block/statements/abstract_class_declaration': 'after';
+	readonly 'statement_block/statements/ambient_declaration': 'after';
 	readonly 'statement_block/statements/break_statement': 'after';
+	readonly 'statement_block/statements/class_declaration': 'after';
 	readonly 'statement_block/statements/continue_statement': 'after';
 	readonly 'statement_block/statements/debugger_statement': 'after';
 	readonly 'statement_block/statements/do_statement': 'after';
+	readonly 'statement_block/statements/enum_declaration': 'after';
+	readonly 'statement_block/statements/export_statement_default_declaration': 'after';
+	readonly 'statement_block/statements/export_statement_default_from': 'after';
+	readonly 'statement_block/statements/export_statement_equals_export': 'after';
+	readonly 'statement_block/statements/export_statement_namespace_export': 'after';
+	readonly 'statement_block/statements/export_statement_type_export': 'after';
 	readonly 'statement_block/statements/expression_statement': 'after';
 	readonly 'statement_block/statements/for_in_statement': 'after';
 	readonly 'statement_block/statements/for_statement': 'after';
+	readonly 'statement_block/statements/function_declaration': 'after';
+	readonly 'statement_block/statements/function_signature': 'after';
+	readonly 'statement_block/statements/generator_function_declaration': 'after';
 	readonly 'statement_block/statements/if_statement': 'after';
+	readonly 'statement_block/statements/import_alias': 'after';
 	readonly 'statement_block/statements/import_statement': 'after';
+	readonly 'statement_block/statements/interface_declaration': 'after';
+	readonly 'statement_block/statements/internal_module': 'after';
 	readonly 'statement_block/statements/labeled_statement': 'after';
+	readonly 'statement_block/statements/lexical_declaration': 'after';
+	readonly 'statement_block/statements/module': 'after';
 	readonly 'statement_block/statements/return_statement': 'after';
 	readonly 'statement_block/statements/statement_block': 'after';
 	readonly 'statement_block/statements/switch_statement': 'after';
 	readonly 'statement_block/statements/throw_statement': 'after';
 	readonly 'statement_block/statements/try_statement': 'after';
+	readonly 'statement_block/statements/type_alias_declaration': 'after';
+	readonly 'statement_block/statements/variable_declaration': 'after';
 	readonly 'statement_block/statements/while_statement': 'after';
 	readonly 'statement_block/statements/with_statement': 'after';
 	readonly 'statement_block/{': 'after' | 'before';
@@ -2182,17 +2537,34 @@ export interface AddressBranch {
 	readonly switch_case: ':' | 'after' | 'before' | 'body' | 'case';
 	readonly 'switch_case/:': 'after' | 'before';
 	readonly 'switch_case/body':
+		| 'abstract_class_declaration'
+		| 'ambient_declaration'
 		| 'break_statement'
+		| 'class_declaration'
 		| 'continue_statement'
 		| 'debugger_statement'
 		| 'do_statement'
 		| 'end'
+		| 'enum_declaration'
+		| 'export_statement_default_declaration'
+		| 'export_statement_default_from'
+		| 'export_statement_equals_export'
+		| 'export_statement_namespace_export'
+		| 'export_statement_type_export'
 		| 'expression_statement'
 		| 'for_in_statement'
 		| 'for_statement'
+		| 'function_declaration'
+		| 'function_signature'
+		| 'generator_function_declaration'
 		| 'if_statement'
+		| 'import_alias'
 		| 'import_statement'
+		| 'interface_declaration'
+		| 'internal_module'
 		| 'labeled_statement'
+		| 'lexical_declaration'
+		| 'module'
 		| 'return_statement'
 		| 'separator'
 		| 'start'
@@ -2200,40 +2572,78 @@ export interface AddressBranch {
 		| 'switch_statement'
 		| 'throw_statement'
 		| 'try_statement'
+		| 'type_alias_declaration'
+		| 'variable_declaration'
 		| 'while_statement'
 		| 'with_statement';
+	readonly 'switch_case/body/abstract_class_declaration': 'after';
+	readonly 'switch_case/body/ambient_declaration': 'after';
 	readonly 'switch_case/body/break_statement': 'after';
+	readonly 'switch_case/body/class_declaration': 'after';
 	readonly 'switch_case/body/continue_statement': 'after';
 	readonly 'switch_case/body/debugger_statement': 'after';
 	readonly 'switch_case/body/do_statement': 'after';
+	readonly 'switch_case/body/enum_declaration': 'after';
+	readonly 'switch_case/body/export_statement_default_declaration': 'after';
+	readonly 'switch_case/body/export_statement_default_from': 'after';
+	readonly 'switch_case/body/export_statement_equals_export': 'after';
+	readonly 'switch_case/body/export_statement_namespace_export': 'after';
+	readonly 'switch_case/body/export_statement_type_export': 'after';
 	readonly 'switch_case/body/expression_statement': 'after';
 	readonly 'switch_case/body/for_in_statement': 'after';
 	readonly 'switch_case/body/for_statement': 'after';
+	readonly 'switch_case/body/function_declaration': 'after';
+	readonly 'switch_case/body/function_signature': 'after';
+	readonly 'switch_case/body/generator_function_declaration': 'after';
 	readonly 'switch_case/body/if_statement': 'after';
+	readonly 'switch_case/body/import_alias': 'after';
 	readonly 'switch_case/body/import_statement': 'after';
+	readonly 'switch_case/body/interface_declaration': 'after';
+	readonly 'switch_case/body/internal_module': 'after';
 	readonly 'switch_case/body/labeled_statement': 'after';
+	readonly 'switch_case/body/lexical_declaration': 'after';
+	readonly 'switch_case/body/module': 'after';
 	readonly 'switch_case/body/return_statement': 'after';
 	readonly 'switch_case/body/statement_block': 'after';
 	readonly 'switch_case/body/switch_statement': 'after';
 	readonly 'switch_case/body/throw_statement': 'after';
 	readonly 'switch_case/body/try_statement': 'after';
+	readonly 'switch_case/body/type_alias_declaration': 'after';
+	readonly 'switch_case/body/variable_declaration': 'after';
 	readonly 'switch_case/body/while_statement': 'after';
 	readonly 'switch_case/body/with_statement': 'after';
 	readonly 'switch_case/case': 'after' | 'before';
 	readonly switch_default: ':' | 'after' | 'before' | 'body' | 'default';
 	readonly 'switch_default/:': 'after' | 'before';
 	readonly 'switch_default/body':
+		| 'abstract_class_declaration'
+		| 'ambient_declaration'
 		| 'break_statement'
+		| 'class_declaration'
 		| 'continue_statement'
 		| 'debugger_statement'
 		| 'do_statement'
 		| 'end'
+		| 'enum_declaration'
+		| 'export_statement_default_declaration'
+		| 'export_statement_default_from'
+		| 'export_statement_equals_export'
+		| 'export_statement_namespace_export'
+		| 'export_statement_type_export'
 		| 'expression_statement'
 		| 'for_in_statement'
 		| 'for_statement'
+		| 'function_declaration'
+		| 'function_signature'
+		| 'generator_function_declaration'
 		| 'if_statement'
+		| 'import_alias'
 		| 'import_statement'
+		| 'interface_declaration'
+		| 'internal_module'
 		| 'labeled_statement'
+		| 'lexical_declaration'
+		| 'module'
 		| 'return_statement'
 		| 'separator'
 		| 'start'
@@ -2241,23 +2651,44 @@ export interface AddressBranch {
 		| 'switch_statement'
 		| 'throw_statement'
 		| 'try_statement'
+		| 'type_alias_declaration'
+		| 'variable_declaration'
 		| 'while_statement'
 		| 'with_statement';
+	readonly 'switch_default/body/abstract_class_declaration': 'after';
+	readonly 'switch_default/body/ambient_declaration': 'after';
 	readonly 'switch_default/body/break_statement': 'after';
+	readonly 'switch_default/body/class_declaration': 'after';
 	readonly 'switch_default/body/continue_statement': 'after';
 	readonly 'switch_default/body/debugger_statement': 'after';
 	readonly 'switch_default/body/do_statement': 'after';
+	readonly 'switch_default/body/enum_declaration': 'after';
+	readonly 'switch_default/body/export_statement_default_declaration': 'after';
+	readonly 'switch_default/body/export_statement_default_from': 'after';
+	readonly 'switch_default/body/export_statement_equals_export': 'after';
+	readonly 'switch_default/body/export_statement_namespace_export': 'after';
+	readonly 'switch_default/body/export_statement_type_export': 'after';
 	readonly 'switch_default/body/expression_statement': 'after';
 	readonly 'switch_default/body/for_in_statement': 'after';
 	readonly 'switch_default/body/for_statement': 'after';
+	readonly 'switch_default/body/function_declaration': 'after';
+	readonly 'switch_default/body/function_signature': 'after';
+	readonly 'switch_default/body/generator_function_declaration': 'after';
 	readonly 'switch_default/body/if_statement': 'after';
+	readonly 'switch_default/body/import_alias': 'after';
 	readonly 'switch_default/body/import_statement': 'after';
+	readonly 'switch_default/body/interface_declaration': 'after';
+	readonly 'switch_default/body/internal_module': 'after';
 	readonly 'switch_default/body/labeled_statement': 'after';
+	readonly 'switch_default/body/lexical_declaration': 'after';
+	readonly 'switch_default/body/module': 'after';
 	readonly 'switch_default/body/return_statement': 'after';
 	readonly 'switch_default/body/statement_block': 'after';
 	readonly 'switch_default/body/switch_statement': 'after';
 	readonly 'switch_default/body/throw_statement': 'after';
 	readonly 'switch_default/body/try_statement': 'after';
+	readonly 'switch_default/body/type_alias_declaration': 'after';
+	readonly 'switch_default/body/variable_declaration': 'after';
 	readonly 'switch_default/body/while_statement': 'after';
 	readonly 'switch_default/body/with_statement': 'after';
 	readonly 'switch_default/default': 'after' | 'before';
@@ -2307,6 +2738,8 @@ export interface AddressBranch {
 		| 'rest_type'
 		| 'separator'
 		| 'start'
+		| 'string_double'
+		| 'string_single'
 		| 'template_literal_type'
 		| 'tuple_parameter'
 		| 'tuple_type'
@@ -2333,6 +2766,8 @@ export interface AddressBranch {
 	readonly 'tuple_type_members/tuple_type_member/rest_type': 'after';
 	readonly 'tuple_type_members/tuple_type_member/separator': ',';
 	readonly 'tuple_type_members/tuple_type_member/separator/,': 'after' | 'before';
+	readonly 'tuple_type_members/tuple_type_member/string_double': 'after';
+	readonly 'tuple_type_members/tuple_type_member/string_single': 'after';
 	readonly 'tuple_type_members/tuple_type_member/template_literal_type': 'after';
 	readonly 'tuple_type_members/tuple_type_member/tuple_parameter': 'after';
 	readonly 'tuple_type_members/tuple_type_member/tuple_type': 'after';
@@ -2375,24 +2810,56 @@ export interface AddressBranch {
 	readonly 'type_query_subscript_expression/]': 'after' | 'before';
 	readonly types: 'after' | 'before' | 'type';
 	readonly 'types/type':
+		| 'array_type'
+		| 'conditional_type'
 		| 'constructor_type'
 		| 'delimiter'
 		| 'end'
+		| 'flow_maybe_type'
 		| 'function_type'
+		| 'generic_type'
+		| 'index_type_query'
 		| 'infer_type'
+		| 'intersection_type'
+		| 'lookup_type'
+		| 'nested_type_identifier'
+		| 'object_type'
+		| 'parenthesized_type'
 		| 'readonly_type'
 		| 'separator'
 		| 'start'
+		| 'string_double'
+		| 'string_single'
+		| 'template_literal_type'
+		| 'tuple_type'
+		| 'type_query'
 		| 'type_query_call_expression_in_type_annotation'
-		| 'type_query_member_expression_in_type_annotation';
+		| 'type_query_member_expression_in_type_annotation'
+		| 'union_type';
+	readonly 'types/type/array_type': 'after';
+	readonly 'types/type/conditional_type': 'after';
 	readonly 'types/type/constructor_type': 'after';
+	readonly 'types/type/flow_maybe_type': 'after';
 	readonly 'types/type/function_type': 'after';
+	readonly 'types/type/generic_type': 'after';
+	readonly 'types/type/index_type_query': 'after';
 	readonly 'types/type/infer_type': 'after';
+	readonly 'types/type/intersection_type': 'after';
+	readonly 'types/type/lookup_type': 'after';
+	readonly 'types/type/nested_type_identifier': 'after';
+	readonly 'types/type/object_type': 'after';
+	readonly 'types/type/parenthesized_type': 'after';
 	readonly 'types/type/readonly_type': 'after';
 	readonly 'types/type/separator': ',';
 	readonly 'types/type/separator/,': 'after' | 'before';
+	readonly 'types/type/string_double': 'after';
+	readonly 'types/type/string_single': 'after';
+	readonly 'types/type/template_literal_type': 'after';
+	readonly 'types/type/tuple_type': 'after';
+	readonly 'types/type/type_query': 'after';
 	readonly 'types/type/type_query_call_expression_in_type_annotation': 'after';
 	readonly 'types/type/type_query_member_expression_in_type_annotation': 'after';
+	readonly 'types/type/union_type': 'after';
 	readonly unary_expression: 'after' | 'before';
 	readonly unary_expression_operator: '!' | '+' | '-' | '~';
 	readonly 'unary_expression_operator/!': 'after' | 'before';
@@ -2404,9 +2871,16 @@ export interface AddressBranch {
 	readonly update_expression_postfix: 'after' | 'before';
 	readonly update_expression_prefix: 'after' | 'before';
 	readonly variable_declaration: 'after' | 'before' | 'declarators' | 'terminator' | 'var';
-	readonly 'variable_declaration/declarators': 'end' | 'separator' | 'start';
+	readonly 'variable_declaration/declarators':
+		| 'end'
+		| 'separator'
+		| 'start'
+		| 'variable_declarator_definite'
+		| 'variable_declarator_plain';
 	readonly 'variable_declaration/declarators/separator': ',';
 	readonly 'variable_declaration/declarators/separator/,': 'after' | 'before';
+	readonly 'variable_declaration/declarators/variable_declarator_definite': 'after';
+	readonly 'variable_declaration/declarators/variable_declarator_plain': 'after';
 	readonly 'variable_declaration/var': 'after' | 'before';
 	readonly variable_declarator_definite: '!' | 'after' | 'before';
 	readonly 'variable_declarator_definite/!': 'after' | 'before';
@@ -2475,6 +2949,9 @@ export interface AddressLeaf {
 	readonly 'arguments/arguments/assignment_expression/after': Whitespace;
 	readonly 'arguments/arguments/augmented_assignment_expression/after': Whitespace;
 	readonly 'arguments/arguments/await_expression/after': Whitespace;
+	readonly 'arguments/arguments/call_expression_call/after': Whitespace;
+	readonly 'arguments/arguments/call_expression_member/after': Whitespace;
+	readonly 'arguments/arguments/call_expression_template_call/after': Whitespace;
 	readonly 'arguments/arguments/class/after': Whitespace;
 	readonly 'arguments/arguments/end': Whitespace;
 	readonly 'arguments/arguments/function_expression/after': Whitespace;
@@ -2492,11 +2969,15 @@ export interface AddressLeaf {
 	readonly 'arguments/arguments/separator/,/before': Spacing;
 	readonly 'arguments/arguments/spread_element/after': Whitespace;
 	readonly 'arguments/arguments/start': Whitespace;
+	readonly 'arguments/arguments/string_double/after': Whitespace;
+	readonly 'arguments/arguments/string_single/after': Whitespace;
 	readonly 'arguments/arguments/subscript_expression/after': Whitespace;
 	readonly 'arguments/arguments/template_string/after': Whitespace;
 	readonly 'arguments/arguments/ternary_expression/after': Whitespace;
 	readonly 'arguments/arguments/type_assertion/after': Whitespace;
 	readonly 'arguments/arguments/unary_expression/after': Whitespace;
+	readonly 'arguments/arguments/update_expression_postfix/after': Whitespace;
+	readonly 'arguments/arguments/update_expression_prefix/after': Whitespace;
 	readonly 'arguments/arguments/yield_expression/after': Whitespace;
 	readonly 'arguments/before': Whitespace;
 	readonly 'array/[/after': Whitespace;
@@ -2511,6 +2992,9 @@ export interface AddressLeaf {
 	readonly 'array/elements/assignment_expression/after': Whitespace;
 	readonly 'array/elements/augmented_assignment_expression/after': Whitespace;
 	readonly 'array/elements/await_expression/after': Whitespace;
+	readonly 'array/elements/call_expression_call/after': Whitespace;
+	readonly 'array/elements/call_expression_member/after': Whitespace;
+	readonly 'array/elements/call_expression_template_call/after': Whitespace;
 	readonly 'array/elements/class/after': Whitespace;
 	readonly 'array/elements/end': Whitespace;
 	readonly 'array/elements/function_expression/after': Whitespace;
@@ -2528,11 +3012,15 @@ export interface AddressLeaf {
 	readonly 'array/elements/separator/,/before': Spacing;
 	readonly 'array/elements/spread_element/after': Whitespace;
 	readonly 'array/elements/start': Whitespace;
+	readonly 'array/elements/string_double/after': Whitespace;
+	readonly 'array/elements/string_single/after': Whitespace;
 	readonly 'array/elements/subscript_expression/after': Whitespace;
 	readonly 'array/elements/template_string/after': Whitespace;
 	readonly 'array/elements/ternary_expression/after': Whitespace;
 	readonly 'array/elements/type_assertion/after': Whitespace;
 	readonly 'array/elements/unary_expression/after': Whitespace;
+	readonly 'array/elements/update_expression_postfix/after': Whitespace;
+	readonly 'array/elements/update_expression_prefix/after': Whitespace;
 	readonly 'array/elements/yield_expression/after': Whitespace;
 	readonly 'array_pattern/[/after': Whitespace;
 	readonly 'array_pattern/[/before': Whitespace;
@@ -2784,6 +3272,8 @@ export interface AddressLeaf {
 	readonly 'enum_body_elements/content/separator/,/after': Spacing;
 	readonly 'enum_body_elements/content/separator/,/before': Spacing;
 	readonly 'enum_body_elements/content/start': Whitespace;
+	readonly 'enum_body_elements/content/string_double/after': Whitespace;
+	readonly 'enum_body_elements/content/string_single/after': Whitespace;
 	readonly 'enum_declaration/after': Whitespace;
 	readonly 'enum_declaration/before': Whitespace;
 	readonly 'enum_declaration/enum/after': Whitespace;
@@ -2984,16 +3474,32 @@ export interface AddressLeaf {
 	readonly 'implements_clause/before': Whitespace;
 	readonly 'implements_clause/implements/after': Whitespace;
 	readonly 'implements_clause/implements/before': Whitespace;
+	readonly 'implements_clause/type/array_type/after': Whitespace;
+	readonly 'implements_clause/type/conditional_type/after': Whitespace;
 	readonly 'implements_clause/type/constructor_type/after': Whitespace;
 	readonly 'implements_clause/type/end': Whitespace;
+	readonly 'implements_clause/type/flow_maybe_type/after': Whitespace;
 	readonly 'implements_clause/type/function_type/after': Whitespace;
+	readonly 'implements_clause/type/generic_type/after': Whitespace;
+	readonly 'implements_clause/type/index_type_query/after': Whitespace;
 	readonly 'implements_clause/type/infer_type/after': Whitespace;
+	readonly 'implements_clause/type/intersection_type/after': Whitespace;
+	readonly 'implements_clause/type/lookup_type/after': Whitespace;
+	readonly 'implements_clause/type/nested_type_identifier/after': Whitespace;
+	readonly 'implements_clause/type/object_type/after': Whitespace;
+	readonly 'implements_clause/type/parenthesized_type/after': Whitespace;
 	readonly 'implements_clause/type/readonly_type/after': Whitespace;
 	readonly 'implements_clause/type/separator/,/after': Spacing;
 	readonly 'implements_clause/type/separator/,/before': Spacing;
 	readonly 'implements_clause/type/start': Whitespace;
+	readonly 'implements_clause/type/string_double/after': Whitespace;
+	readonly 'implements_clause/type/string_single/after': Whitespace;
+	readonly 'implements_clause/type/template_literal_type/after': Whitespace;
+	readonly 'implements_clause/type/tuple_type/after': Whitespace;
+	readonly 'implements_clause/type/type_query/after': Whitespace;
 	readonly 'implements_clause/type/type_query_call_expression_in_type_annotation/after': Whitespace;
 	readonly 'implements_clause/type/type_query_member_expression_in_type_annotation/after': Whitespace;
+	readonly 'implements_clause/type/union_type/after': Whitespace;
 	readonly 'import_alias/=/after': Whitespace;
 	readonly 'import_alias/=/before': Whitespace;
 	readonly 'import_alias/after': Whitespace;
@@ -3088,6 +3594,8 @@ export interface AddressLeaf {
 	readonly 'lexical_declaration/declarators/separator/,/after': Spacing;
 	readonly 'lexical_declaration/declarators/separator/,/before': Spacing;
 	readonly 'lexical_declaration/declarators/start': Whitespace;
+	readonly 'lexical_declaration/declarators/variable_declarator_definite/after': Whitespace;
+	readonly 'lexical_declaration/declarators/variable_declarator_plain/after': Whitespace;
 	readonly 'lexical_declaration/kind/after': Whitespace;
 	readonly 'lexical_declaration/kind/before': Whitespace;
 	readonly 'lexical_declaration/terminator': TSKindId.AutomaticSemicolon | TSKindId.Semi;
@@ -3219,6 +3727,11 @@ export interface AddressLeaf {
 		| Delimiter.Trailing
 		| Delimiter.Both;
 	readonly 'object_type_content/content/end': Whitespace;
+	readonly 'object_type_content/content/export_statement_default_declaration/after': Whitespace;
+	readonly 'object_type_content/content/export_statement_default_from/after': Whitespace;
+	readonly 'object_type_content/content/export_statement_equals_export/after': Whitespace;
+	readonly 'object_type_content/content/export_statement_namespace_export/after': Whitespace;
+	readonly 'object_type_content/content/export_statement_type_export/after': Whitespace;
 	readonly 'object_type_content/content/index_signature/after': Whitespace;
 	readonly 'object_type_content/content/method_signature/after': Whitespace;
 	readonly 'object_type_content/content/property_signature/after': Whitespace;
@@ -3282,17 +3795,34 @@ export interface AddressLeaf {
 	readonly 'predefined_type/unique symbol/before': Whitespace;
 	readonly 'program/after': Whitespace;
 	readonly 'program/before': Whitespace;
+	readonly 'program/statements/abstract_class_declaration/after': Whitespace;
+	readonly 'program/statements/ambient_declaration/after': Whitespace;
 	readonly 'program/statements/break_statement/after': Whitespace;
+	readonly 'program/statements/class_declaration/after': Whitespace;
 	readonly 'program/statements/continue_statement/after': Whitespace;
 	readonly 'program/statements/debugger_statement/after': Whitespace;
 	readonly 'program/statements/do_statement/after': Whitespace;
 	readonly 'program/statements/end': Whitespace;
+	readonly 'program/statements/enum_declaration/after': Whitespace;
+	readonly 'program/statements/export_statement_default_declaration/after': Whitespace;
+	readonly 'program/statements/export_statement_default_from/after': Whitespace;
+	readonly 'program/statements/export_statement_equals_export/after': Whitespace;
+	readonly 'program/statements/export_statement_namespace_export/after': Whitespace;
+	readonly 'program/statements/export_statement_type_export/after': Whitespace;
 	readonly 'program/statements/expression_statement/after': Whitespace;
 	readonly 'program/statements/for_in_statement/after': Whitespace;
 	readonly 'program/statements/for_statement/after': Whitespace;
+	readonly 'program/statements/function_declaration/after': Whitespace;
+	readonly 'program/statements/function_signature/after': Whitespace;
+	readonly 'program/statements/generator_function_declaration/after': Whitespace;
 	readonly 'program/statements/if_statement/after': Whitespace;
+	readonly 'program/statements/import_alias/after': Whitespace;
 	readonly 'program/statements/import_statement/after': Whitespace;
+	readonly 'program/statements/interface_declaration/after': Whitespace;
+	readonly 'program/statements/internal_module/after': Whitespace;
 	readonly 'program/statements/labeled_statement/after': Whitespace;
+	readonly 'program/statements/lexical_declaration/after': Whitespace;
+	readonly 'program/statements/module/after': Whitespace;
 	readonly 'program/statements/return_statement/after': Whitespace;
 	readonly 'program/statements/separator': Spacing;
 	readonly 'program/statements/start': Whitespace;
@@ -3300,6 +3830,8 @@ export interface AddressLeaf {
 	readonly 'program/statements/switch_statement/after': Whitespace;
 	readonly 'program/statements/throw_statement/after': Whitespace;
 	readonly 'program/statements/try_statement/after': Whitespace;
+	readonly 'program/statements/type_alias_declaration/after': Whitespace;
+	readonly 'program/statements/variable_declaration/after': Whitespace;
 	readonly 'program/statements/while_statement/after': Whitespace;
 	readonly 'program/statements/with_statement/after': Whitespace;
 	readonly 'property_signature/accessibility_modifier/after': Whitespace;
@@ -3358,21 +3890,40 @@ export interface AddressLeaf {
 	readonly 'satisfies_expression/satisfies/before': Whitespace;
 	readonly 'sequence_expression/after': Whitespace;
 	readonly 'sequence_expression/before': Whitespace;
+	readonly 'sequence_expression/expression/array/after': Whitespace;
+	readonly 'sequence_expression/expression/arrow_function/after': Whitespace;
 	readonly 'sequence_expression/expression/as_expression/after': Whitespace;
 	readonly 'sequence_expression/expression/assignment_expression/after': Whitespace;
 	readonly 'sequence_expression/expression/augmented_assignment_expression/after': Whitespace;
 	readonly 'sequence_expression/expression/await_expression/after': Whitespace;
+	readonly 'sequence_expression/expression/call_expression_call/after': Whitespace;
+	readonly 'sequence_expression/expression/call_expression_member/after': Whitespace;
+	readonly 'sequence_expression/expression/call_expression_template_call/after': Whitespace;
+	readonly 'sequence_expression/expression/class/after': Whitespace;
 	readonly 'sequence_expression/expression/end': Whitespace;
+	readonly 'sequence_expression/expression/function_expression/after': Whitespace;
+	readonly 'sequence_expression/expression/generator_function/after': Whitespace;
 	readonly 'sequence_expression/expression/instantiation_expression/after': Whitespace;
 	readonly 'sequence_expression/expression/internal_module/after': Whitespace;
+	readonly 'sequence_expression/expression/member_expression/after': Whitespace;
 	readonly 'sequence_expression/expression/new_expression/after': Whitespace;
+	readonly 'sequence_expression/expression/non_null_expression/after': Whitespace;
+	readonly 'sequence_expression/expression/object/after': Whitespace;
+	readonly 'sequence_expression/expression/parenthesized_expression/after': Whitespace;
+	readonly 'sequence_expression/expression/regex/after': Whitespace;
 	readonly 'sequence_expression/expression/satisfies_expression/after': Whitespace;
 	readonly 'sequence_expression/expression/separator/,/after': Spacing;
 	readonly 'sequence_expression/expression/separator/,/before': Spacing;
 	readonly 'sequence_expression/expression/start': Whitespace;
+	readonly 'sequence_expression/expression/string_double/after': Whitespace;
+	readonly 'sequence_expression/expression/string_single/after': Whitespace;
+	readonly 'sequence_expression/expression/subscript_expression/after': Whitespace;
+	readonly 'sequence_expression/expression/template_string/after': Whitespace;
 	readonly 'sequence_expression/expression/ternary_expression/after': Whitespace;
 	readonly 'sequence_expression/expression/type_assertion/after': Whitespace;
 	readonly 'sequence_expression/expression/unary_expression/after': Whitespace;
+	readonly 'sequence_expression/expression/update_expression_postfix/after': Whitespace;
+	readonly 'sequence_expression/expression/update_expression_prefix/after': Whitespace;
 	readonly 'sequence_expression/expression/yield_expression/after': Whitespace;
 	readonly 'spread_element/.../after': Whitespace;
 	readonly 'spread_element/.../before': Whitespace;
@@ -3380,17 +3931,34 @@ export interface AddressLeaf {
 	readonly 'spread_element/before': Whitespace;
 	readonly 'statement_block/after': Whitespace;
 	readonly 'statement_block/before': Whitespace;
+	readonly 'statement_block/statements/abstract_class_declaration/after': Whitespace;
+	readonly 'statement_block/statements/ambient_declaration/after': Whitespace;
 	readonly 'statement_block/statements/break_statement/after': Whitespace;
+	readonly 'statement_block/statements/class_declaration/after': Whitespace;
 	readonly 'statement_block/statements/continue_statement/after': Whitespace;
 	readonly 'statement_block/statements/debugger_statement/after': Whitespace;
 	readonly 'statement_block/statements/do_statement/after': Whitespace;
 	readonly 'statement_block/statements/end': Whitespace;
+	readonly 'statement_block/statements/enum_declaration/after': Whitespace;
+	readonly 'statement_block/statements/export_statement_default_declaration/after': Whitespace;
+	readonly 'statement_block/statements/export_statement_default_from/after': Whitespace;
+	readonly 'statement_block/statements/export_statement_equals_export/after': Whitespace;
+	readonly 'statement_block/statements/export_statement_namespace_export/after': Whitespace;
+	readonly 'statement_block/statements/export_statement_type_export/after': Whitespace;
 	readonly 'statement_block/statements/expression_statement/after': Whitespace;
 	readonly 'statement_block/statements/for_in_statement/after': Whitespace;
 	readonly 'statement_block/statements/for_statement/after': Whitespace;
+	readonly 'statement_block/statements/function_declaration/after': Whitespace;
+	readonly 'statement_block/statements/function_signature/after': Whitespace;
+	readonly 'statement_block/statements/generator_function_declaration/after': Whitespace;
 	readonly 'statement_block/statements/if_statement/after': Whitespace;
+	readonly 'statement_block/statements/import_alias/after': Whitespace;
 	readonly 'statement_block/statements/import_statement/after': Whitespace;
+	readonly 'statement_block/statements/interface_declaration/after': Whitespace;
+	readonly 'statement_block/statements/internal_module/after': Whitespace;
 	readonly 'statement_block/statements/labeled_statement/after': Whitespace;
+	readonly 'statement_block/statements/lexical_declaration/after': Whitespace;
+	readonly 'statement_block/statements/module/after': Whitespace;
 	readonly 'statement_block/statements/return_statement/after': Whitespace;
 	readonly 'statement_block/statements/separator': Spacing;
 	readonly 'statement_block/statements/start': Whitespace;
@@ -3398,6 +3966,8 @@ export interface AddressLeaf {
 	readonly 'statement_block/statements/switch_statement/after': Whitespace;
 	readonly 'statement_block/statements/throw_statement/after': Whitespace;
 	readonly 'statement_block/statements/try_statement/after': Whitespace;
+	readonly 'statement_block/statements/type_alias_declaration/after': Whitespace;
+	readonly 'statement_block/statements/variable_declaration/after': Whitespace;
 	readonly 'statement_block/statements/while_statement/after': Whitespace;
 	readonly 'statement_block/statements/with_statement/after': Whitespace;
 	readonly 'statement_block/{/after': Whitespace;
@@ -3439,17 +4009,34 @@ export interface AddressLeaf {
 	readonly 'switch_case/:/before': Whitespace;
 	readonly 'switch_case/after': Whitespace;
 	readonly 'switch_case/before': Whitespace;
+	readonly 'switch_case/body/abstract_class_declaration/after': Whitespace;
+	readonly 'switch_case/body/ambient_declaration/after': Whitespace;
 	readonly 'switch_case/body/break_statement/after': Whitespace;
+	readonly 'switch_case/body/class_declaration/after': Whitespace;
 	readonly 'switch_case/body/continue_statement/after': Whitespace;
 	readonly 'switch_case/body/debugger_statement/after': Whitespace;
 	readonly 'switch_case/body/do_statement/after': Whitespace;
 	readonly 'switch_case/body/end': Whitespace;
+	readonly 'switch_case/body/enum_declaration/after': Whitespace;
+	readonly 'switch_case/body/export_statement_default_declaration/after': Whitespace;
+	readonly 'switch_case/body/export_statement_default_from/after': Whitespace;
+	readonly 'switch_case/body/export_statement_equals_export/after': Whitespace;
+	readonly 'switch_case/body/export_statement_namespace_export/after': Whitespace;
+	readonly 'switch_case/body/export_statement_type_export/after': Whitespace;
 	readonly 'switch_case/body/expression_statement/after': Whitespace;
 	readonly 'switch_case/body/for_in_statement/after': Whitespace;
 	readonly 'switch_case/body/for_statement/after': Whitespace;
+	readonly 'switch_case/body/function_declaration/after': Whitespace;
+	readonly 'switch_case/body/function_signature/after': Whitespace;
+	readonly 'switch_case/body/generator_function_declaration/after': Whitespace;
 	readonly 'switch_case/body/if_statement/after': Whitespace;
+	readonly 'switch_case/body/import_alias/after': Whitespace;
 	readonly 'switch_case/body/import_statement/after': Whitespace;
+	readonly 'switch_case/body/interface_declaration/after': Whitespace;
+	readonly 'switch_case/body/internal_module/after': Whitespace;
 	readonly 'switch_case/body/labeled_statement/after': Whitespace;
+	readonly 'switch_case/body/lexical_declaration/after': Whitespace;
+	readonly 'switch_case/body/module/after': Whitespace;
 	readonly 'switch_case/body/return_statement/after': Whitespace;
 	readonly 'switch_case/body/separator': Spacing;
 	readonly 'switch_case/body/start': Whitespace;
@@ -3457,6 +4044,8 @@ export interface AddressLeaf {
 	readonly 'switch_case/body/switch_statement/after': Whitespace;
 	readonly 'switch_case/body/throw_statement/after': Whitespace;
 	readonly 'switch_case/body/try_statement/after': Whitespace;
+	readonly 'switch_case/body/type_alias_declaration/after': Whitespace;
+	readonly 'switch_case/body/variable_declaration/after': Whitespace;
 	readonly 'switch_case/body/while_statement/after': Whitespace;
 	readonly 'switch_case/body/with_statement/after': Whitespace;
 	readonly 'switch_case/case/after': Whitespace;
@@ -3465,17 +4054,34 @@ export interface AddressLeaf {
 	readonly 'switch_default/:/before': Whitespace;
 	readonly 'switch_default/after': Whitespace;
 	readonly 'switch_default/before': Whitespace;
+	readonly 'switch_default/body/abstract_class_declaration/after': Whitespace;
+	readonly 'switch_default/body/ambient_declaration/after': Whitespace;
 	readonly 'switch_default/body/break_statement/after': Whitespace;
+	readonly 'switch_default/body/class_declaration/after': Whitespace;
 	readonly 'switch_default/body/continue_statement/after': Whitespace;
 	readonly 'switch_default/body/debugger_statement/after': Whitespace;
 	readonly 'switch_default/body/do_statement/after': Whitespace;
 	readonly 'switch_default/body/end': Whitespace;
+	readonly 'switch_default/body/enum_declaration/after': Whitespace;
+	readonly 'switch_default/body/export_statement_default_declaration/after': Whitespace;
+	readonly 'switch_default/body/export_statement_default_from/after': Whitespace;
+	readonly 'switch_default/body/export_statement_equals_export/after': Whitespace;
+	readonly 'switch_default/body/export_statement_namespace_export/after': Whitespace;
+	readonly 'switch_default/body/export_statement_type_export/after': Whitespace;
 	readonly 'switch_default/body/expression_statement/after': Whitespace;
 	readonly 'switch_default/body/for_in_statement/after': Whitespace;
 	readonly 'switch_default/body/for_statement/after': Whitespace;
+	readonly 'switch_default/body/function_declaration/after': Whitespace;
+	readonly 'switch_default/body/function_signature/after': Whitespace;
+	readonly 'switch_default/body/generator_function_declaration/after': Whitespace;
 	readonly 'switch_default/body/if_statement/after': Whitespace;
+	readonly 'switch_default/body/import_alias/after': Whitespace;
 	readonly 'switch_default/body/import_statement/after': Whitespace;
+	readonly 'switch_default/body/interface_declaration/after': Whitespace;
+	readonly 'switch_default/body/internal_module/after': Whitespace;
 	readonly 'switch_default/body/labeled_statement/after': Whitespace;
+	readonly 'switch_default/body/lexical_declaration/after': Whitespace;
+	readonly 'switch_default/body/module/after': Whitespace;
 	readonly 'switch_default/body/return_statement/after': Whitespace;
 	readonly 'switch_default/body/separator': Spacing;
 	readonly 'switch_default/body/start': Whitespace;
@@ -3483,6 +4089,8 @@ export interface AddressLeaf {
 	readonly 'switch_default/body/switch_statement/after': Whitespace;
 	readonly 'switch_default/body/throw_statement/after': Whitespace;
 	readonly 'switch_default/body/try_statement/after': Whitespace;
+	readonly 'switch_default/body/type_alias_declaration/after': Whitespace;
+	readonly 'switch_default/body/variable_declaration/after': Whitespace;
 	readonly 'switch_default/body/while_statement/after': Whitespace;
 	readonly 'switch_default/body/with_statement/after': Whitespace;
 	readonly 'switch_default/default/after': Whitespace;
@@ -3558,6 +4166,8 @@ export interface AddressLeaf {
 	readonly 'tuple_type_members/tuple_type_member/separator/,/after': Spacing;
 	readonly 'tuple_type_members/tuple_type_member/separator/,/before': Spacing;
 	readonly 'tuple_type_members/tuple_type_member/start': Whitespace;
+	readonly 'tuple_type_members/tuple_type_member/string_double/after': Whitespace;
+	readonly 'tuple_type_members/tuple_type_member/string_single/after': Whitespace;
 	readonly 'tuple_type_members/tuple_type_member/template_literal_type/after': Whitespace;
 	readonly 'tuple_type_members/tuple_type_member/tuple_parameter/after': Whitespace;
 	readonly 'tuple_type_members/tuple_type_member/tuple_type/after': Whitespace;
@@ -3632,17 +4242,33 @@ export interface AddressLeaf {
 	readonly 'type_query_subscript_expression/before': Whitespace;
 	readonly 'types/after': Whitespace;
 	readonly 'types/before': Whitespace;
+	readonly 'types/type/array_type/after': Whitespace;
+	readonly 'types/type/conditional_type/after': Whitespace;
 	readonly 'types/type/constructor_type/after': Whitespace;
 	readonly 'types/type/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'types/type/end': Whitespace;
+	readonly 'types/type/flow_maybe_type/after': Whitespace;
 	readonly 'types/type/function_type/after': Whitespace;
+	readonly 'types/type/generic_type/after': Whitespace;
+	readonly 'types/type/index_type_query/after': Whitespace;
 	readonly 'types/type/infer_type/after': Whitespace;
+	readonly 'types/type/intersection_type/after': Whitespace;
+	readonly 'types/type/lookup_type/after': Whitespace;
+	readonly 'types/type/nested_type_identifier/after': Whitespace;
+	readonly 'types/type/object_type/after': Whitespace;
+	readonly 'types/type/parenthesized_type/after': Whitespace;
 	readonly 'types/type/readonly_type/after': Whitespace;
 	readonly 'types/type/separator/,/after': Spacing;
 	readonly 'types/type/separator/,/before': Spacing;
 	readonly 'types/type/start': Whitespace;
+	readonly 'types/type/string_double/after': Whitespace;
+	readonly 'types/type/string_single/after': Whitespace;
+	readonly 'types/type/template_literal_type/after': Whitespace;
+	readonly 'types/type/tuple_type/after': Whitespace;
+	readonly 'types/type/type_query/after': Whitespace;
 	readonly 'types/type/type_query_call_expression_in_type_annotation/after': Whitespace;
 	readonly 'types/type/type_query_member_expression_in_type_annotation/after': Whitespace;
+	readonly 'types/type/union_type/after': Whitespace;
 	readonly 'unary_expression/after': Whitespace;
 	readonly 'unary_expression/before': Whitespace;
 	readonly 'unary_expression_operator/!/after': Whitespace;
@@ -3667,6 +4293,8 @@ export interface AddressLeaf {
 	readonly 'variable_declaration/declarators/separator/,/after': Spacing;
 	readonly 'variable_declaration/declarators/separator/,/before': Spacing;
 	readonly 'variable_declaration/declarators/start': Whitespace;
+	readonly 'variable_declaration/declarators/variable_declarator_definite/after': Whitespace;
+	readonly 'variable_declaration/declarators/variable_declarator_plain/after': Whitespace;
 	readonly 'variable_declaration/terminator': TSKindId.AutomaticSemicolon | TSKindId.Semi;
 	readonly 'variable_declaration/var/after': Whitespace;
 	readonly 'variable_declaration/var/before': Whitespace;

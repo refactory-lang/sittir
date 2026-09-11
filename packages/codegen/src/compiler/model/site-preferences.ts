@@ -14,6 +14,7 @@ import {
 import { publicKindName, spacingSitesOf, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import { addressSegments, addressSites, matchAddress, resolveBindings } from './site-addresses.ts';
+import { supertypeMembersByPublicName } from './supertype-members.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 
 export { publicKindName, type SpacingSide } from './render-rules.ts';
@@ -180,6 +181,7 @@ function withDeclaredArms(
 		[...sites.map((site, siteIndex) => ({ ...site, siteIndex })), ...candidates],
 		config.kindEntries
 	);
+	const membersOf = supertypeMembersByPublicName(config.nodeMap);
 	const admits = (site: { readonly arms: readonly PreferenceArm[] }, arm: string): boolean =>
 		site.arms.some((candidate) => candidate.value === arm);
 
@@ -188,7 +190,7 @@ function withDeclaredArms(
 		...declarations.map((declaration) => ({ address: declaration.path, arm: declaration.arm })),
 		...bindings.map((binding) => ({ address: binding.address, arm: armOfLabel.get(binding.label)! }))
 	]) {
-		const hits = matchAddress(addressSegments(address), addressed);
+		const hits = matchAddress(addressSegments(address), addressed, membersOf);
 		if (hits.length > 0 && !hits.some((site) => admits(site, arm))) {
 			throw new Error(
 				`options: '${address}' is '${arm}', which no site it names admits (${[...new Set(hits.flatMap((site) => site.arms.map((a) => a.value)))].join(', ')})`
@@ -197,7 +199,7 @@ function withDeclaredArms(
 	}
 
 	const out = [...sites];
-	for (const [index, arm] of resolveBindings(declarations, bindings, addressed)) {
+	for (const [index, arm] of resolveBindings(declarations, bindings, addressed, membersOf)) {
 		const site = addressed[index]!;
 		if (!admits(site, arm)) continue;
 		if (site.siteIndex === undefined) {
