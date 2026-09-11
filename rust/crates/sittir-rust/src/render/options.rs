@@ -4839,8 +4839,8 @@ pub fn spacing_text(kind: u16) -> &'static str {
         158 => "\u{FDD2} ",
         159 => "\u{FDD2}\n",
         160 => "\u{FDD2}\n\n",
-        161 => ::sittir_core::spacing::INDENT_NEWLINE,
-        162 => ::sittir_core::spacing::DEDENT_NEWLINE,
+        161 => "\u{FDD0}\n",
+        162 => "\u{FDD1}\n",
         _ => "",
     }
 }

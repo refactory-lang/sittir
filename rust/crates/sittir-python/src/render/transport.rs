@@ -45422,7 +45422,7 @@ fn render_block(node: &BlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::s
     };
     let block_before = options::spacing_text(node.block_before.unwrap_or(0));
     let block_after = options::spacing_text(node.block_after.unwrap_or(0));
-    write!(f, "{block_before}{statements}\u{FDD1}{block_after}")?;
+    write!(f, "{block_before}{statements}\u{FDD1}\n{block_after}")?;
     Ok(())
 }
 
@@ -46926,7 +46926,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, f: &mut ::std::fmt:
     };
     let match_block_block_before = options::spacing_text(node.match_block_block_before.unwrap_or(0));
     let match_block_block_after = options::spacing_text(node.match_block_block_after.unwrap_or(0));
-    write!(f, "{match_block_block_before}\u{FDD0}\n{alternative}\u{FDD1}{match_block_block_after}")?;
+    write!(f, "{match_block_block_before}\u{FDD0}\n{alternative}\u{FDD1}\n{match_block_block_after}")?;
     Ok(())
 }
 

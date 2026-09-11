@@ -33,9 +33,9 @@ const sites: SitePreference[] = [
 	{ kind: 'call_expression', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' }
 ];
 const whitespaceText = new Map([
-	['tight', { text: '' }],
-	['space', { text: ' ' }],
-	['newline', { text: '\n' }]
+	['tight', ''],
+	['space', ' '],
+	['newline', '\n']
 ]);
 
 describe('planRenderOptions', () => {

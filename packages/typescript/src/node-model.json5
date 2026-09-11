@@ -5366,11 +5366,14 @@
     },
     {
       "kind": "_dedent",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Dedent",
-      "factoryName": "dedent",
       "irKey": "dedent",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷑\\n\" as const",
+      "word": false,
+      "text": "﷑\n"
     },
     {
       "kind": "_destructuring_pattern",
@@ -6805,11 +6808,14 @@
     },
     {
       "kind": "_indent",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Indent",
-      "factoryName": "indent",
       "irKey": "indent",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷐\\n\" as const",
+      "word": false,
+      "text": "﷐\n"
     },
     {
       "kind": "_index_signature_colon",

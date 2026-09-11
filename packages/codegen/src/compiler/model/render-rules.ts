@@ -1,7 +1,7 @@
 import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
 import type { RenderRule, Rule, RuleAnnotations, RuleId } from '../../types/rule.ts';
-import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { AbstractAssembledCompound, AssembledEnum, AssembledPolymorph, concreteKindsOf } from './node-map.ts';
@@ -42,21 +42,17 @@ export interface Flanks {
 	readonly end: SpacingPart;
 }
 
-export type WhitespaceText = { readonly text: string } | { readonly constant: 'INDENT_NEWLINE' | 'DEDENT_NEWLINE' };
-
 export function whitespaceTextOf(
 	visibleExternals: Readonly<Record<string, Rule<'evaluate'>>> | undefined,
 	nodeMap: NodeMap
-): ReadonlyMap<string, WhitespaceText> {
+): ReadonlyMap<string, string> {
 	const arms = whitespaceArmsOf(nodeMap);
-	const out = new Map<string, WhitespaceText>();
+	const out = new Map<string, string>();
 	for (const [name, rule] of Object.entries(visibleExternals ?? {})) {
 		const kind = publicKindName(name);
 		if (!arms.includes(kind)) continue;
 		const r = rule as { type?: unknown; value?: unknown };
-		if (r.type === STRING && typeof r.value === 'string') out.set(kind, { text: r.value });
-		else if (r.type === INDENT) out.set(kind, { constant: 'INDENT_NEWLINE' });
-		else if (r.type === DEDENT) out.set(kind, { constant: 'DEDENT_NEWLINE' });
+		if (r.type === STRING && typeof r.value === 'string') out.set(kind, r.value);
 	}
 	return out;
 }
@@ -76,7 +72,7 @@ export interface RenderRulesConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEntryLike[];
 	readonly options?: OptionsConfig;
-	readonly whitespaceText?: ReadonlyMap<string, WhitespaceText>;
+	readonly whitespaceText?: ReadonlyMap<string, string>;
 }
 
 export interface SeatedChild {

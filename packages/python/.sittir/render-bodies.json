@@ -277,7 +277,7 @@
 			"field": "match_block_block_before"
 		},
 		{
-			"kind": "whitespace",
+			"kind": "text",
 			"text": "﷐\n"
 		},
 		{
@@ -285,8 +285,8 @@
 			"name": "alternative"
 		},
 		{
-			"kind": "whitespace",
-			"text": "﷑"
+			"kind": "text",
+			"text": "﷑\n"
 		},
 		{
 			"kind": "seam",
@@ -475,7 +475,7 @@
 			"field": "suite_block_before"
 		},
 		{
-			"kind": "whitespace",
+			"kind": "text",
 			"text": "﷐\n"
 		},
 		{
@@ -839,8 +839,8 @@
 			"name": "statements"
 		},
 		{
-			"kind": "whitespace",
-			"text": "﷑"
+			"kind": "text",
+			"text": "﷑\n"
 		},
 		{
 			"kind": "seam",

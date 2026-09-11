@@ -327,6 +327,8 @@ pub enum AnyTransport {
     Space(SpaceTransport),
     Newline(NewlineTransport),
     Blankline(BlanklineTransport),
+    Indent(IndentTransport),
+    Dedent(DedentTransport),
     StringContent(StringContentTransport),
     RawStringLiteralStart(RawStringLiteralStartTransport),
     RawStringLiteralContent(RawStringLiteralContentTransport),
@@ -335,8 +337,6 @@ pub enum AnyTransport {
     BlockCommentContent(BlockCommentContentTransport),
     LineDocContent(LineDocContentTransport),
     ErrorSentinel(ErrorSentinelTransport),
-    Indent(IndentTransport),
-    Dedent(DedentTransport),
     Semi(SemiTransport),
     MacroRulesBang(MacroRulesBangTransport),
     EqGt(EqGtTransport),
@@ -826,6 +826,8 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Space(t) => t.fill_options(table),
             AnyTransport::Newline(t) => t.fill_options(table),
             AnyTransport::Blankline(t) => t.fill_options(table),
+            AnyTransport::Indent(t) => t.fill_options(table),
+            AnyTransport::Dedent(t) => t.fill_options(table),
             AnyTransport::StringContent(t) => t.fill_options(table),
             AnyTransport::RawStringLiteralStart(t) => t.fill_options(table),
             AnyTransport::RawStringLiteralContent(t) => t.fill_options(table),
@@ -834,8 +836,6 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::BlockCommentContent(t) => t.fill_options(table),
             AnyTransport::LineDocContent(t) => t.fill_options(table),
             AnyTransport::ErrorSentinel(t) => t.fill_options(table),
-            AnyTransport::Indent(t) => t.fill_options(table),
-            AnyTransport::Dedent(t) => t.fill_options(table),
             AnyTransport::Semi(t) => t.fill_options(table),
             AnyTransport::MacroRulesBang(t) => t.fill_options(table),
             AnyTransport::EqGt(t) => t.fill_options(table),
@@ -2116,6 +2116,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 160 => Ok(AnyTransport::Blankline(
                     BlanklineTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _indent (_INDENT)
+                161 => Ok(AnyTransport::Indent(
+                    IndentTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _dedent (_DEDENT)
+                162 => Ok(AnyTransport::Dedent(
+                    DedentTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: string_content (STRING_CONTENT)
                 147 => Ok(AnyTransport::StringContent(
                     StringContentTransport::from_napi_value(env, napi_val)?
@@ -2147,14 +2155,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _error_sentinel (_ERROR_SENTINEL)
                 156 => Ok(AnyTransport::ErrorSentinel(
                     ErrorSentinelTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _indent (_INDENT)
-                161 => Ok(AnyTransport::Indent(
-                    IndentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _dedent (_DEDENT)
-                162 => Ok(AnyTransport::Dedent(
-                    DedentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: semi (SEMI)
                 2 => Ok(AnyTransport::Semi(
@@ -62957,6 +62957,220 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct IndentTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::std::fmt::Display for IndentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for IndentTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "﷐\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "﷐\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "﷐\n".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IndentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IndentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IndentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IndentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DedentTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::std::fmt::Display for DedentTransport {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        render_with_trivia!(self, f, f.write_str(&self.text))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for DedentTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "﷑\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "﷑\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "﷑\n".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DedentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DedentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        DedentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        DedentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct StringContentTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -63793,216 +64007,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ErrorSentinelTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ErrorSentinelTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct IndentTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::std::fmt::Display for IndentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for IndentTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IndentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IndentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        IndentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IndentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        IndentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct DedentTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::std::fmt::Display for DedentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for DedentTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DedentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DedentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DedentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DedentTransport::to_napi_value(env, *val)
     }
 }
 
@@ -81134,6 +81138,14 @@ fn render_blankline(t: &BlanklineTransport, f: &mut ::std::fmt::Formatter<'_>) -
     f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, t.text.as_str()].concat())
 }
 
+fn render_indent(t: &IndentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
+}
+
+fn render_dedent(t: &DedentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+    f.write_str(&t.text)
+}
+
 fn render_string_content(t: &StringContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     f.write_str(&t.text)
 }
@@ -81163,14 +81175,6 @@ fn render_line_doc_content(t: &LineDocContentTransport, f: &mut ::std::fmt::Form
 }
 
 fn render_error_sentinel(t: &ErrorSentinelTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
-}
-
-fn render_indent(t: &IndentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
-}
-
-fn render_dedent(t: &DedentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
     f.write_str(&t.text)
 }
 
@@ -82127,6 +82131,8 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::Space(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Newline(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Blankline(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Indent(t) => ::std::fmt::Display::fmt(t, f),
+            AnyTransport::Dedent(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::StringContent(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::RawStringLiteralStart(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::RawStringLiteralContent(t) => ::std::fmt::Display::fmt(t, f),
@@ -82135,8 +82141,6 @@ impl ::std::fmt::Display for AnyTransport {
             AnyTransport::BlockCommentContent(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::LineDocContent(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::ErrorSentinel(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Indent(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Dedent(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::Semi(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::MacroRulesBang(t) => ::std::fmt::Display::fmt(t, f),
             AnyTransport::EqGt(t) => ::std::fmt::Display::fmt(t, f),

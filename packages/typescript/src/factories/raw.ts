@@ -7386,34 +7386,6 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
 	);
 }
 
-export function buildIndent(text: string): T.Indent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_indent: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Indent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildDedent(text: string): T.Dedent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_dedent: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Dedent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export type FluentKindMap = {
 	program: T.Program.Built;
 	hash_bang_line: T.HashBangLine;
@@ -7647,8 +7619,6 @@ export type FluentKindMap = {
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	__error_recovery: T.ErrorRecovery;
-	_indent: T.Indent;
-	_dedent: T.Dedent;
 };
 
 export const _factoryMap = {
@@ -7883,8 +7853,6 @@ export const _factoryMap = {
 	_ternary_qmark: buildTernaryQmark,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
-	__error_recovery: buildErrorRecovery,
-	_indent: buildIndent,
-	_dedent: buildDedent
+	__error_recovery: buildErrorRecovery
 } as const;
 export type _FactoryMap = typeof _factoryMap;

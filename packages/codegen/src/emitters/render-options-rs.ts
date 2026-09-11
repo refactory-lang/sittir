@@ -2,7 +2,8 @@ import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
-import { admitsDepth, type WhitespaceText } from '../compiler/model/render-rules.ts';
+import { admitsDepth } from '../compiler/model/render-rules.ts';
+import { DEDENT_TEXT, INDENT_TEXT, isDepthText } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
@@ -51,7 +52,7 @@ export interface RenderOptionsPlan {
 	readonly depthSites: readonly DepthSites[];
 	readonly indentId: number;
 	readonly dedentId: number;
-	readonly whitespaceText: readonly { readonly id: number; readonly text: WhitespaceText }[];
+	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 }
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = {
@@ -83,7 +84,7 @@ function screaming(s: string): string {
 export function planRenderOptions(
 	sites: readonly SitePreference[],
 	kindEntries: readonly IdEntry[],
-	whitespaceText: ReadonlyMap<string, WhitespaceText>
+	whitespaceText: ReadonlyMap<string, string>
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
@@ -143,7 +144,10 @@ export function planRenderOptions(
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
 	const depthSites = new Map<string, number[]>();
 	for (const s of depthCapable) depthSites.set(s.kind, [...(depthSites.get(s.kind) ?? []), spacing.indexOf(s)]);
-	const idOfText = (constant: string): number => whitespaceText.size === 0 ? 0 : ([...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)?.[0] ?? undefined) === undefined ? 0 : idOf(kindEntries, [...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)![0], 'visibleExternals');
+	const idOfText = (text: string): number => {
+		const kind = [...whitespaceText].find(([, t]) => t === text)?.[0];
+		return kind === undefined ? 0 : idOf(kindEntries, kind, 'visibleExternals');
+	};
 	return {
 		spacingSites: spacing,
 		sitePaths: [
@@ -154,8 +158,8 @@ export function planRenderOptions(
 			.map(({ path, site, index }) => ({ path: formatPreferencePath(path), site, index })),
 		delimiterSites: delimiters,
 		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
-		indentId: idOfText('INDENT_NEWLINE'),
-		dedentId: idOfText('DEDENT_NEWLINE'),
+		indentId: idOfText(INDENT_TEXT),
+		dedentId: idOfText(DEDENT_TEXT),
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
 			.sort((a, b) => a.id - b.id)
@@ -199,7 +203,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
-		L.push(`        ${w.id} => ${'text' in w.text ? rustStringLiteral(SEAM_MARK + w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
+		L.push(`        ${w.id} => ${rustStringLiteral(isDepthText(w.text) ? w.text : SEAM_MARK + w.text)},`);
 	}
 	L.push('        _ => "",');
 	L.push('    }');

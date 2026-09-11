@@ -9720,8 +9720,6 @@ export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
 export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
-export type Indent = Terminal<TSKindId.Indent, string>;
-export type Dedent = Terminal<TSKindId.Dedent, string>;
 
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
@@ -10197,12 +10195,6 @@ export interface LineDocContentTree extends AnyTreeNode {
 }
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
-}
-export interface IndentTree extends AnyTreeNode {
-	readonly type: '_indent';
-}
-export interface DedentTree extends AnyTreeNode {
-	readonly type: '_dedent';
 }
 export interface AnonBlockTree extends AnyTreeNode {
 	readonly type: 'anon_block';
@@ -11036,8 +11028,6 @@ export type _PathTree = SelfTree | IdentifierTree | MetavariableTree | SuperTree
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
-export type WhitespaceTree = IndentTree | DedentTree;
-
 export type NonSpecialToken =
 	| _Literal
 	| StringLiteral
@@ -11115,6 +11105,14 @@ export interface NewlineTree extends AnyTreeNode {
 export type Blankline = TSKindId.Blankline;
 export interface BlanklineTree extends AnyTreeNode {
 	readonly type: '_blankline';
+}
+export type Indent = TSKindId.Indent;
+export interface IndentTree extends AnyTreeNode {
+	readonly type: '_indent';
+}
+export type Dedent = TSKindId.Dedent;
+export interface DedentTree extends AnyTreeNode {
+	readonly type: '_dedent';
 }
 export type Dollar = TSKindId.Dollar;
 export interface DollarTree extends AnyTreeNode {
@@ -11588,8 +11586,6 @@ export interface KindMap {
 	_block_comment_content: BlockCommentContent;
 	_line_doc_content: LineDocContent;
 	_error_sentinel: ErrorSentinel;
-	_indent: Indent;
-	_dedent: Dedent;
 }
 
 // Per-kind namespace interfaces — one computed base per kind
@@ -14084,8 +14080,6 @@ export interface ErrorSentinelNs extends LeafNs<
 	ErrorSentinelTree,
 	'_error_sentinel'
 > {}
-export interface IndentNs extends LeafNs<Indent, string, Indent.Built, IndentTree, '_indent'> {}
-export interface DedentNs extends LeafNs<Dedent, string, Dedent.Built, DedentTree, '_dedent'> {}
 
 export interface NamespaceMap {
 	[TSKindId.SourceFile]: SourceFileNs;
@@ -14337,8 +14331,6 @@ export interface NamespaceMap {
 	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
 	[TSKindId.LineDocContent]: LineDocContentNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
-	[TSKindId.Indent]: IndentNs;
-	[TSKindId.Dedent]: DedentNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -19315,34 +19307,4 @@ export namespace ErrorSentinel {
 	export type LooseArgs = ErrorSentinelNs['LooseArgs'];
 	export type Tree = ErrorSentinelNs['Tree'];
 	export type Kind = '_error_sentinel';
-}
-export namespace Indent {
-	export type Config = IndentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Indent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = IndentNs['Loose'];
-	export type LooseConfig = IndentNs['LooseConfig'];
-	export type BuildArgs = IndentNs['BuildArgs'];
-	export type LooseArgs = IndentNs['LooseArgs'];
-	export type Tree = IndentNs['Tree'];
-	export type Kind = '_indent';
-}
-export namespace Dedent {
-	export type Config = DedentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Dedent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = DedentNs['Loose'];
-	export type LooseConfig = DedentNs['LooseConfig'];
-	export type BuildArgs = DedentNs['BuildArgs'];
-	export type LooseArgs = DedentNs['LooseArgs'];
-	export type Tree = DedentNs['Tree'];
-	export type Kind = '_dedent';
 }

@@ -19,6 +19,18 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "grammar": "python",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷑\n"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "python",
     "ownerKind": "...",
     "message": "[assemble] literal \"...\" has no anonymous parser symbol — not minted",
     "canProceed": true,
@@ -60,6 +72,18 @@
     "canProceed": true,
     "details": {
       "literalText": "None"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷐\n"
     }
   },
   {

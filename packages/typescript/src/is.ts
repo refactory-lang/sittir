@@ -951,7 +951,6 @@ const _supertype_tupleTypeMember_ids = new Set<number>([316, 317, 318, 319]);
 const _supertype_primaryType_ids = new Set<number>([
 	342, 343, 1, 295, 327, 345, 354, 355, 341, 334, 335, 100, 340, 338, 336, 326, 324, 358, 357
 ]);
-const _supertype_whitespace_ids = new Set<number>([171, 172]);
 
 export const is = {
 	program: _g(TSKindId.Program),
@@ -1149,7 +1148,7 @@ export const is = {
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
 	primaryType: _sg(_supertype_primaryType_ids),
-	whitespace: _sg(_supertype_whitespace_ids)
+	whitespace: _sg(new Set<number>())
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.

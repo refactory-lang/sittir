@@ -1,5 +1,10 @@
 export const WHITESPACE_SUPERTYPE = '_whitespace';
 export const DEPTH_ARMS = ['indent', 'dedent'] as const;
+export const INDENT_TEXT = '\u{FDD0}\n';
+export const DEDENT_TEXT = '\u{FDD1}\n';
+export function isDepthText(text: string): boolean {
+	return text === INDENT_TEXT || text === DEDENT_TEXT;
+}
 export type SpacingArm = string;
 export type WhitespaceArm = string;
 export const SPACING_DEFAULT: SpacingArm = 'space';

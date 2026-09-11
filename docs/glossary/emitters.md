@@ -14872,6 +14872,11 @@ at the end, the same walk the build runs over the declared defaults
  */
 ```
 
+`spacing_text` writes each whitespace kind's literal text: a depth mark
+(`isDepthText`) as it is, anything else behind a SEAM mark. `INDENT_KIND`
+and `DEDENT_KIND` are the ids of the kinds whose text is `INDENT_TEXT` and
+`DEDENT_TEXT`, zero when the grammar declares neither.
+
 A `source: 'separator'` site becomes a spacing-table row under its kind
 (`SITE_<KIND>_<SLOT>_SEPARATOR`) that fills `separator_kind`; its
 default's token text is stamped on the row as `defaultText` here, where

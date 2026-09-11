@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { DEDENT_TEXT, INDENT_TEXT } from '../../../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
 import { flanksOf, isSeamChoice, resolveRenderRules, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
@@ -176,8 +177,8 @@ describe('spaceRenderRules', () => {
 	});
 
 	const flankText = new Map([
-		['indent', { constant: 'INDENT_NEWLINE' as const }],
-		['dedent', { constant: 'DEDENT_NEWLINE' as const }]
+		['indent', INDENT_TEXT],
+		['dedent', DEDENT_TEXT]
 	]);
 
 	it('wraps the single unseparated array of a kind in start and end choices when the grammar renders indentation', () => {
@@ -382,7 +383,7 @@ describe('seamRenderRules', () => {
 		const rules = { list: commaList() };
 		const nodeMap = nodeMapOf(rules, { r1: 'items' });
 		nodeMap.nodes.set('list', new AssembledBranch('list', rules.list as never, rules.list));
-		const whitespaceText = new Map([['indent', { constant: 'INDENT_NEWLINE' as const }], ['dedent', { constant: 'DEDENT_NEWLINE' as const }]]);
+		const whitespaceText = new Map([['indent', INDENT_TEXT], ['dedent', DEDENT_TEXT]]);
 		const config = { nodeMap, kindEntries, whitespaceText };
 		const out = seamRenderRules(spaceRenderRules(config), config);
 		const members = membersOf(out.rules.list!);
@@ -392,7 +393,7 @@ describe('seamRenderRules', () => {
 	});
 
 	it('gives every seam the indentation arms when the grammar renders indentation, and walks each kind\'s depth in rule order', () => {
-		const whitespaceText = new Map([['indent', { constant: 'INDENT_NEWLINE' as const }], ['dedent', { constant: 'DEDENT_NEWLINE' as const }]]);
+		const whitespaceText = new Map([['indent', INDENT_TEXT], ['dedent', DEDENT_TEXT]]);
 		const arms = ['tight', 'space', 'newline', 'blankline', 'indent', 'dedent'];
 		const rules = { arms: seq(sym('a'), sym('b')) };
 		const nodeMap = nodeMapOf(rules, {});

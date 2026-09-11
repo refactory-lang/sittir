@@ -3965,7 +3965,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *   / `classifiedBy` are set only when a new classification was made.
  * @remarks
  *   Classification:
- *   - All-string members → `EnumRule<'link'>` (promoted).
+ *   - All-string members → `EnumRule<'link'>` (promoted), unless the grammar
+ *     declares the rule in `supertypes:` — `_whitespace` is a choice over
+ *     fixed-text tokens and must stay a supertype.
  *   - Supertype-compatible members (symbols, named aliases, enums/strings) →
  *     `SupertypeRule<'link'>` when at least one concrete subtype name can be resolved.
  *   - Mixed/structural members → rule unchanged; Assemble classifies by shape.

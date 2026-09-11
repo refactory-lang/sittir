@@ -3745,12 +3745,12 @@ labels tell them apart, since a flank label never parses as a seam label.
 ### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`
 
 The render text of each member of the grammar's `_whitespace` supertype
-(`whitespaceArmsOf`) that `visibleExternals` declares: a string for a
-`string(...)` external (`_tight` is `''`, python's `_double_newline` is
-`'\n\n\n'`), the core writer's indent or dedent mark constant for `_indent`
-and `_dedent`. A visible external outside the supertype is not whitespace
-and is skipped. Flanks are injected only when both indentation kinds are
-declared.
+(`whitespaceArmsOf`) that `visibleExternals` declares as a `string(...)`:
+`_tight` is `''`, python's `_double_newline` is `'\n\n\n'`, and `_indent` /
+`_dedent` carry the writer's depth marks (`INDENT_TEXT`, `DEDENT_TEXT`,
+which `indent()` and `dedent()` stand for). Every whitespace kind is a
+literal. A visible external outside the supertype is not whitespace and is
+skipped. Flanks are injected only when both indentation kinds are declared.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
 

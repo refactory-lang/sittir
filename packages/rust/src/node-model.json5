@@ -4988,11 +4988,14 @@
     },
     {
       "kind": "_dedent",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Dedent",
-      "factoryName": "dedent",
       "irKey": "dedent",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷑\\n\" as const",
+      "word": false,
+      "text": "﷑\n"
     },
     {
       "kind": "_delim_token_tree_brace",
@@ -5760,11 +5763,14 @@
     },
     {
       "kind": "_indent",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Indent",
-      "factoryName": "indent",
       "irKey": "indent",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"﷐\\n\" as const",
+      "word": false,
+      "text": "﷐\n"
     },
     {
       "kind": "_inner_block_doc_comment_marker",

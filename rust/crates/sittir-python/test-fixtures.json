@@ -127444,7 +127444,7 @@
       },
       "$nodeHandle": 455266533376
     },
-    "expectedOutput": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n"
+    "expectedOutput": "if a:\n    b\n\n    # one\n    # two\n\nif c:\n    d\n\n    # three\n    # four\n\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n"
   },
   {
     "kind": "roundtrip",
@@ -127452,9 +127452,9 @@
     "sourceIn": "if a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
+    "expectedSourceOut": "if a:\n    b\n\n    # one\n    # two\n\nif c:\n    d\n\n    # three\n    # four\n\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment) (comment)))) statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment) (comment)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (if_statement condition: (identifier) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment)))) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (identifier))) (newline)) (comment)))) (comment))",
-    "wrappedText": "if a:\n    b\n\n    # one\n    # two\nif c:\n    d\n\n    # three\n    # four\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
+    "wrappedText": "if a:\n    b\n\n    # one\n    # two\n\nif c:\n    d\n\n    # three\n    # four\n\ndef a():\n    if b:\n        b\n        # comment\n\n    b\n    # comment\n\n\n# five\n",
     "wrappedOffset": 0
   },
   {

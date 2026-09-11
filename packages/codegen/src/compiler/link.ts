@@ -1473,7 +1473,7 @@ function classifyHiddenChoiceRule(
 		}
 		return undefined;
 	});
-	if (enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
+	if (!supertypes.has(name) && enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
 		const allStrings = enumMembers.every((m): m is StringRule<'link'> => m.type === STRING);
 		return {
 			rule: allStrings

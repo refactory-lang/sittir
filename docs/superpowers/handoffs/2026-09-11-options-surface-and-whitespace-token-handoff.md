@@ -118,6 +118,16 @@ coercions on the IR surface and tripped the examples-verify builder
 ratchet; the whitespace supertype's arms are now excluded there, since a
 whitespace kind is chosen by an options address and never authored.
 
+**Every whitespace kind is a literal.** `indent()` and `dedent()` are
+`string(INDENT_TEXT)` / `string(DEDENT_TEXT)` (`dsl/primitives/spacing.ts`):
+the writer's depth mark plus a newline. `_indent` and `_dedent` therefore
+classify as fixed-text tokens like `_tight`, not as patterns with a
+`buildIndent(text)` factory — the INDENT/DEDENT rule types remain only for
+python's `role()` path, where a scanner token renders as a mark.
+`whitespaceTextOf` is a plain text map (the `constant` variant is gone), and
+`spacing_text` in the render crate writes a depth mark as it is and every
+other whitespace text behind a SEAM mark (`isDepthText`).
+
 ## Facts worth keeping
 
 - An `options:` block addresses a kind by its **public** name: `expression`,

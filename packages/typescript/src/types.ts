@@ -11474,8 +11474,6 @@ export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
-export type Indent = Terminal<TSKindId.Indent, string>;
-export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type AnonType = TSKindId.AnonType;
 
 // Tree types
@@ -11905,12 +11903,6 @@ export interface JsxTextTree extends AnyTreeNode {
 }
 export interface ErrorRecoveryTree extends AnyTreeNode {
 	readonly type: '__error_recovery';
-}
-export interface IndentTree extends AnyTreeNode {
-	readonly type: '_indent';
-}
-export interface DedentTree extends AnyTreeNode {
-	readonly type: '_dedent';
 }
 export interface AsTree extends AnyTreeNode {
 	readonly type: 'as';
@@ -12446,8 +12438,6 @@ export type PrimaryTypeTree =
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
-export type WhitespaceTree = IndentTree | DedentTree;
-
 export type LhsExpression =
 	| MemberExpression
 	| SubscriptExpression
@@ -12504,6 +12494,14 @@ export interface NewlineTree extends AnyTreeNode {
 export type Blankline = TSKindId.Blankline;
 export interface BlanklineTree extends AnyTreeNode {
 	readonly type: '_blankline';
+}
+export type Indent = TSKindId.Indent;
+export interface IndentTree extends AnyTreeNode {
+	readonly type: '_indent';
+}
+export type Dedent = TSKindId.Dedent;
+export interface DedentTree extends AnyTreeNode {
+	readonly type: '_dedent';
 }
 
 export type TypescriptNode =
@@ -12963,8 +12961,6 @@ export interface KindMap {
 	html_comment: HtmlComment;
 	jsx_text: JsxText;
 	__error_recovery: ErrorRecovery;
-	_indent: Indent;
-	_dedent: Dedent;
 	anon_type: AnonType;
 }
 
@@ -15381,8 +15377,6 @@ export interface ErrorRecoveryNs extends LeafNs<
 	ErrorRecoveryTree,
 	'__error_recovery'
 > {}
-export interface IndentNs extends LeafNs<Indent, string, Indent.Built, IndentTree, '_indent'> {}
-export interface DedentNs extends LeafNs<Dedent, string, Dedent.Built, DedentTree, '_dedent'> {}
 
 export interface NamespaceMap {
 	[TSKindId.Program]: ProgramNs;
@@ -15626,8 +15620,6 @@ export interface NamespaceMap {
 	[TSKindId.HtmlComment]: HtmlCommentNs;
 	[TSKindId.JsxText]: JsxTextNs;
 	[TSKindId.ErrorRecovery]: ErrorRecoveryNs;
-	[TSKindId.Indent]: IndentNs;
-	[TSKindId.Dedent]: DedentNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -20758,34 +20750,4 @@ export namespace ErrorRecovery {
 	export type LooseArgs = ErrorRecoveryNs['LooseArgs'];
 	export type Tree = ErrorRecoveryNs['Tree'];
 	export type Kind = '__error_recovery';
-}
-export namespace Indent {
-	export type Config = IndentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Indent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = IndentNs['Loose'];
-	export type LooseConfig = IndentNs['LooseConfig'];
-	export type BuildArgs = IndentNs['BuildArgs'];
-	export type LooseArgs = IndentNs['LooseArgs'];
-	export type Tree = IndentNs['Tree'];
-	export type Kind = '_indent';
-}
-export namespace Dedent {
-	export type Config = DedentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Dedent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = DedentNs['Loose'];
-	export type LooseConfig = DedentNs['LooseConfig'];
-	export type BuildArgs = DedentNs['BuildArgs'];
-	export type LooseArgs = DedentNs['LooseArgs'];
-	export type Tree = DedentNs['Tree'];
-	export type Kind = '_dedent';
 }

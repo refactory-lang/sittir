@@ -87,6 +87,30 @@
   },
   {
     "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷐\n"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷑\n"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
@@ -180,14 +204,16 @@
   },
   {
     "code": "kindid-unstamped-literals",
-    "message": "4 literal(s) resolved no parser kindId",
+    "message": "6 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
         "",
         "\n",
         "\n\n",
-        " "
+        " ",
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "severity": "warning",
@@ -196,7 +222,7 @@
   },
   {
     "code": "kindid-vaporized-literals",
-    "message": "4 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "6 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -204,7 +230,9 @@
         "",
         "\n",
         "\n\n",
-        " "
+        " ",
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "scope": "grammar",

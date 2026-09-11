@@ -1,5 +1,7 @@
+import { INDENT_TEXT } from '../dsl/primitives/spacing.ts';
+
 export const ADJACENT_MARK = '\u{FFFE}';
-export const INDENT_NEWLINE = '\u{FDD0}\n';
+export const INDENT_NEWLINE = INDENT_TEXT;
 export const DEDENT_MARK = '\u{FDD1}';
 export const SEAM_MARK = '\u{FDD2}';
 export const TOKEN_SEAM_MARK = '\u{FDD3}';

@@ -424,6 +424,26 @@ than lay out a run: a separator gap admits every member but these
 (`spacingArmsOf`), while an array flank, a kind edge or a token seam of an
 indenting grammar admits them too (`whitespaceArmsOf`).
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::INDENT_TEXT`
+
+The literal text of the `indent` whitespace kind: the core writer's INDENT
+mark (U+FDD0) followed by a newline — "go one level deeper, then break".
+`indent()` in a grammar's `visibleExternals` is `string(INDENT_TEXT)`, so
+`_indent` is a fixed-text token like every other whitespace kind, and the
+render crate's `spacing_text` table carries the mark itself rather than a
+core constant.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::DEDENT_TEXT`
+
+The literal text of the `dedent` whitespace kind: the DEDENT mark (U+FDD1)
+and a newline. `dedent()` is `string(DEDENT_TEXT)`.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::isDepthText`
+
+Whether a whitespace kind's text is a depth mark. A depth mark is written
+to the render stream as it is; every other whitespace text is written
+behind a SEAM mark so the writer can coalesce it with its neighbours.
+
 ### `packages/codegen/src/dsl/primitives/preference.ts::preference`
 
 A preference's arm: the value chosen at the site an `options:` key addresses.

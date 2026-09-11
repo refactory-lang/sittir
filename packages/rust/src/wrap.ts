@@ -14789,9 +14789,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
 	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
-	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
-	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
-	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
+	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const })
 };
 
 interface _WrapReturnByKindId {
@@ -15061,8 +15059,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
 	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
-	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
-	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

@@ -172,11 +172,9 @@ const LEAF_KINDS = [
 	'_',
 	'_block_comment_content',
 	'_compound_assignment_expr_operator',
-	'_dedent',
 	'_error_sentinel',
 	'_field_identifier',
 	'_impl_item_unsafe_marker',
-	'_indent',
 	'_kw_async',
 	'_kw_async_marker',
 	'_kw_const',
@@ -395,8 +393,10 @@ export const KEYWORDS = [
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
 	'_blankline',
+	'_dedent',
 	'_foreign_mod_item_semi',
 	'_impl_item_semi',
+	'_indent',
 	'_inner_block_doc_comment_marker',
 	'_inner_line_doc_comment_marker',
 	'_mod_item_external',

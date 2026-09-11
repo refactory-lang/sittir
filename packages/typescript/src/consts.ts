@@ -183,8 +183,6 @@ const LEAF_KINDS = [
 	'__for_header_operator',
 	'__number_operator',
 	'_augmented_assignment_expression_operator',
-	'_dedent',
-	'_indent',
 	'_kind',
 	'_kw_abstract_marker',
 	'_kw_accessor_marker',
@@ -403,7 +401,9 @@ export const KEYWORDS = [
 export const OPERATORS = [
 	'_automatic_semicolon',
 	'_blankline',
+	'_dedent',
 	'_function_signature_automatic_semicolon',
+	'_indent',
 	'_meta_property_import_meta',
 	'_meta_property_new_target',
 	'_newline',
