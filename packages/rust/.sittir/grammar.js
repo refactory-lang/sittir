@@ -109,6 +109,7 @@ function matchesEmpty(rule) {
   const members = rule.members ?? [];
   if (isChoiceType(t)) return members.some(matchesEmpty);
   if (isSeqType(t)) return members.every(matchesEmpty);
+  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
   return false;
 }
 
