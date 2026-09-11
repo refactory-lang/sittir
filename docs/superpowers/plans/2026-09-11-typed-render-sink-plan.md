@@ -641,6 +641,8 @@ git commit -- packages/codegen/src/emitters docs/glossary/emitters.md rust/crate
   The TypeScript boundary passes the `Options` object itself: `NativeEngineLike.render(node, treeId?, options?: object)`.
   `ResolvedOptions`, `SPACING_SITES`, `DELIMITER_SITES`, `DEPTH_SITES`, the site constants and `defaults()` are unchanged: the prepare walk keeps reading the flat table by constant.
 
+**Colliding anonymous tokens (user ruling).** An anonymous token whose text is also a named kind's name (`class`, `await`, `type`, `number`, …) is named `<text>_keyword` — `class_keyword`, `TSKindId.ClassKeyword` — by `compiler/generated-metadata.ts::disambiguateAnonKey`, replacing the `anon_<text>` scheme. The nested options key, the Rust struct name and every generated spelling follow from that one name. A colliding anonymous token whose text is not its own base key is a codegen error naming both symbols. Every reference to an old `anon_*` name outside generated output (tests, examples, docs, `grammar.sittir.ts` overrides) is updated; no alias or shim is left behind. Rendered bytes and validator numbers do not move.
+
 - [ ] **Step 1: Write the failing emitter test**
 
 In `render-options-rs.test.ts` (the fixture `sites` includes `formal_parameters/elements/separator/","/before`, `…/after`, `…/delimiter`, `_statement_block/statements/separator`, `return_statement/terminator/statement_terminator`, `call_expression/lparen/before`):
