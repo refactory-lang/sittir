@@ -129,10 +129,13 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "1 literal(s) resolved no parser kindId",
+    "message": "4 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
+        "\n",
+        "\n\n",
+        " ",
         "mut"
       ]
     },
@@ -159,11 +162,14 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "4 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
+        "\n",
+        "\n\n",
+        " ",
         "mut"
       ]
     },
@@ -418,11 +424,14 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "1 literal(s) resolved no parser kindId",
+    "message": "4 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "\n"
+        "",
+        "\n",
+        "\n\n",
+        " "
       ]
     },
     "severity": "warning",
@@ -433,12 +442,15 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "4 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "\n"
+        "",
+        "\n",
+        "\n\n",
+        " "
       ]
     },
     "scope": "grammar"
@@ -580,11 +592,14 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "5 literal(s) resolved no parser kindId",
+    "message": "8 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
         "\n",
+        "\n\n",
+        "\n\n\n",
+        " ",
         "...",
         "False",
         "None",
@@ -615,12 +630,15 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "8 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
         "\n",
+        "\n\n",
+        "\n\n\n",
+        " ",
         "...",
         "False",
         "None",
