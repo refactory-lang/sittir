@@ -367,7 +367,7 @@ function differingArmOf(ref: SitePath, plan: RenderOptionsPlan): number | undefi
 	return site.allowed !== site.defaultBits ? site.allowed : undefined;
 }
 
-function resolveTests(addresses: AddressTables, plan: RenderOptionsPlan, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): string[] {
+function resolveTests(plan: RenderOptionsPlan, kindEntries: readonly KindEntryLike[]): string[] {
 	const L: string[] = [
 		'#[cfg(test)]',
 		'mod resolve_tests {',
@@ -378,19 +378,16 @@ function resolveTests(addresses: AddressTables, plan: RenderOptionsPlan, siteInd
 		'        assert_eq!(resolve(&Options::default(), &defaults()).unwrap(), defaults());',
 		'    }'
 	];
-	const differing = addresses.leaves
-		.map((leaf) => ({ leaf, refs: siteRefsOf(leaf, siteIndex) }))
-		.find(({ refs }) => refs.length === 1 && differingArmOf(refs[0]!, plan) !== undefined);
+	const differing = plan.sitePaths.find((site) => differingArmOf(site, plan) !== undefined);
 	if (differing !== undefined) {
-		const ref = differing.refs[0]!;
-		const value = differingArmOf(ref, plan)!;
-		const table = ref.site === 'spacing' ? 'spacing' : 'delimiter';
-		const constName = ref.site === 'spacing' ? plan.spacingSites[ref.index]!.constName : plan.delimiterSites[ref.index]!.constName;
+		const value = differingArmOf(differing, plan)!;
+		const table = differing.site === 'spacing' ? 'spacing' : 'delimiter';
+		const constName = differing.site === 'spacing' ? plan.spacingSites[differing.index]!.constName : plan.delimiterSites[differing.index]!.constName;
 		L.push(
 			'',
 			'    #[test]',
 			'    fn a_differing_admitted_value_changes_only_its_own_site() {',
-			`        let options = ${literalOf(differing.leaf.segments, value, kindEntries)};`,
+			`        let options = ${literalOf(differing.segments, value, kindEntries)};`,
 			'        let table = resolve(&options, &defaults()).unwrap();',
 			'        let expected = defaults();',
 			`        assert_eq!(table.${table}[${constName}], ${value});`,
@@ -486,7 +483,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('    }');
 	L.push('    Ok(table)');
 	L.push('}', '');
-	L.push(...resolveTests(addresses, plan, siteIndex, kindEntries));
+	L.push(...resolveTests(plan, kindEntries));
 	return L.join('\n') + '\n';
 }
 

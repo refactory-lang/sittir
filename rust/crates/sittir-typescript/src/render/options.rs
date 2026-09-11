@@ -34095,12 +34095,12 @@ mod resolve_tests {
 
     #[test]
     fn a_differing_admitted_value_changes_only_its_own_site() {
-        let options = Options { abstract_class_declaration: Some(AbstractClassDeclarationOptions { abstract_: Some(AbstractClassDeclarationAbstractOptions { after: Some(167), ..::std::default::Default::default() }), ..::std::default::Default::default() }), ..::std::default::Default::default() };
+        let options = Options { abstract_class_declaration: Some(AbstractClassDeclarationOptions { abstract_: Some(AbstractClassDeclarationAbstractOptions { before: Some(168), ..::std::default::Default::default() }), ..::std::default::Default::default() }), ..::std::default::Default::default() };
         let table = resolve(&options, &defaults()).unwrap();
         let expected = defaults();
-        assert_eq!(table.spacing[SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_AFTER], 167);
+        assert_eq!(table.spacing[SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_BEFORE], 168);
         for i in 0..table.spacing.len() {
-            if i != SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_AFTER { assert_eq!(table.spacing[i], expected.spacing[i]); }
+            if i != SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_BEFORE { assert_eq!(table.spacing[i], expected.spacing[i]); }
         }
         for i in 0..table.delimiter.len() {
             assert_eq!(table.delimiter[i], expected.delimiter[i]);

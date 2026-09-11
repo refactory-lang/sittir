@@ -30324,12 +30324,12 @@ mod resolve_tests {
 
     #[test]
     fn a_differing_admitted_value_changes_only_its_own_site() {
-        let options = Options { aliased_import: Some(AliasedImportOptions { after: Some(109), ..::std::default::Default::default() }), ..::std::default::Default::default() };
+        let options = Options { aliased_import: Some(AliasedImportOptions { as_: Some(AliasedImportAsOptions { before: Some(109), ..::std::default::Default::default() }), ..::std::default::Default::default() }), ..::std::default::Default::default() };
         let table = resolve(&options, &defaults()).unwrap();
         let expected = defaults();
-        assert_eq!(table.spacing[SITE_ALIASED_IMPORT_ALIASED_IMPORT_AFTER], 109);
+        assert_eq!(table.spacing[SITE_ALIASED_IMPORT_AS_BEFORE], 109);
         for i in 0..table.spacing.len() {
-            if i != SITE_ALIASED_IMPORT_ALIASED_IMPORT_AFTER { assert_eq!(table.spacing[i], expected.spacing[i]); }
+            if i != SITE_ALIASED_IMPORT_AS_BEFORE { assert_eq!(table.spacing[i], expected.spacing[i]); }
         }
         for i in 0..table.delimiter.len() {
             assert_eq!(table.delimiter[i], expected.delimiter[i]);

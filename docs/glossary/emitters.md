@@ -2894,15 +2894,6 @@ lifted into that arm.
 // isSlotBearingCompound's doc comment (shared.ts, emitters).
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::rustFieldIdent`
-
-```text
-/** Rust field identifier mapping for generated render/transport structs.
- *  Askama template expressions do not accept raw identifiers (`r#pub`),
- *  so keyword-named fields use a uniform `_` suffix (`pub_`, `type_`,
- *  `crate_`, etc.) across the Rust render module. */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::build
 
 Surface`
@@ -13407,6 +13398,14 @@ candidate list.
 // ----------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/transport-common.ts::rustFieldIdent`
+
+```text
+/** A Rust keyword cannot itself be a field identifier (`pub`, `type`,
+ *  `crate`, …); a trailing `_` is the escape (`pub_`, `type_`, `crate_`).
+ *  Every non-keyword id passes through unchanged. */
+```
+
 ### `packages/codegen/src/emitters/render-module.ts::pascal`
 
 ```text
@@ -15003,6 +15002,17 @@ the kind catalog is in hand, so the render emitter never re-derives it.
  *  every site for every leaf. */
 ```
 
+### `packages/codegen/src/emitters/render-options-rs.ts::siteIndexOf`
+
+```text
+/** Builds a `SiteIndex`: every `plan.sitePaths` entry keyed by
+ *  `formatPreferencePath` of its own `segments`. A hash-bucket hit is a
+ *  candidate only — the caller still confirms it against the segment list
+ *  it is actually looking for (`segmentsEq`) before trusting it, since two
+ *  structurally different addresses could in principle format to the same
+ *  string. */
+```
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DirectChild`
 
 ```text
@@ -15081,11 +15091,15 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 
 ```text
 /** The generated `#[cfg(test)] mod resolve_tests`: `resolve` over an empty
- *  `Options` is a no-op, and setting the first leaf that admits an id/bits
- *  other than its own site's default resolves to a table that differs from
- *  `defaults()` at exactly that site's index and nowhere else. A grammar
- *  where every site's only admitted value is its own default emits only the
- *  first assertion. */
+ *  `Options` is a no-op, and setting the first site (from `plan.sitePaths`)
+ *  that admits an id/bits other than its own default resolves to a table
+ *  that differs from `defaults()` at exactly that site's index and nowhere
+ *  else. The site is chosen from `plan.sitePaths` and its own `segments`,
+ *  never through `siteRefsOf`/a leaf: `resolverBody` also reaches its
+ *  `SITE_*` constant through `siteRefsOf`, so a test built the same way
+ *  would assert against whatever wrong constant a leaf→site mismatch there
+ *  produced, not catch it. A grammar where every site's only admitted value
+ *  is its own default emits only the first assertion. */
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::differingArmOf`
@@ -15362,6 +15376,14 @@ exists.
  *  `siteRefsOf` can match structurally (`segmentsEq`) against
  *  `plan.sitePaths` rather than by string; the formatted form is produced
  *  only where a message or an `at` prefix needs one. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::ChildIndex`
+
+```text
+/** Every branch/leaf bucketed by its own parent's canonical address, built
+ *  once per emit so a struct's fields resolve by one lookup instead of a
+ *  scan over every branch and leaf in the grammar. */
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::childIndexOf`
