@@ -73,8 +73,10 @@ import {
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
-import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.ts';
 import { publicKindName } from '../compiler/model/site-preferences.ts';
+import { deriveAddressTables, kindIdArmType, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
+import { supertypeMembersByPublicName } from '../compiler/model/supertype-members.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	escapeBraces,
@@ -968,21 +970,30 @@ export function emitHashFiles(
 
 type RenderPlan = RenderOptionsPlan;
 
+interface PlannedRenderOptions {
+	readonly plan: RenderPlan;
+	readonly addresses: AddressTables;
+	readonly kindEntries: readonly KindEnumEntry[];
+}
+
 const EMPTY_PLAN: RenderPlan = { spacingSites: [], sitePaths: [], delimiterSites: [], depthSites: [], indentId: 0, dedentId: 0, whitespaceText: [] };
+const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
 
 function planRenderOptionsFor(
 	nodeMap: NodeMap,
 	generatedIdTables: GeneratedIdTables | undefined,
 	inputs: RenderOptionsInputs
-): RenderPlan {
-	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLAN;
+): PlannedRenderOptions {
+	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLANNED_OPTIONS;
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
-	return planRenderOptions(
-		sites,
-		kindEntries,
-		whitespaceTextOf(inputs.visibleExternals, nodeMap)
-	);
+	const plan = planRenderOptions(sites, kindEntries, whitespaceTextOf(inputs.visibleExternals, nodeMap));
+	const declared =
+		inputs.options === undefined
+			? undefined
+			: readOptionsBlock(inputs.options, new Set([...nodeMap.nodes.keys()].map(publicKindName)));
+	const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries), supertypeMembersByPublicName(nodeMap), declared);
+	return { plan, addresses, kindEntries };
 }
 
 export function emitRenderModule(
@@ -992,7 +1003,7 @@ export function emitRenderModule(
 	generatedIdTables?: GeneratedIdTables,
 	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
-	const plan = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
+	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
 	for (const kind of [...templates.bodies.keys()].sort((a, b) => a.localeCompare(b))) {
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
@@ -1011,7 +1022,7 @@ export function emitRenderModule(
 			armSeamSupport(),
 			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 		].join('\n') + '\n';
-	const optionsRs = renderOptionsRs(plan);
+	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
 		{ filename: 'transport.rs', content: transportRs },
 		{ filename: 'options.rs', content: optionsRs }

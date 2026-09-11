@@ -48,8 +48,8 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, deep?: boolean): string;
 	readNode(handle: number, childIndex: number, deep?: boolean): string;
-	render(node: TTransport, treeId?: number, options?: string): string;
-	renderToFile?(node: TTransport, path: string, treeId?: number, options?: string): void;
+	render(node: TTransport, treeId?: number, options?: object): string;
+	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 	/** Drop one parsed tree. Driven by GC — see `treeDisposalRegistry`. */
 	disposeTree(treeId: number): void;
@@ -62,7 +62,7 @@ export interface NativeModuleLike<
 	TTransport = unknown,
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
-	SittirEngine: new (options?: { format?: string; options?: string }) => TEngine;
+	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
 }
 
 export type NativeBackendStatusLike<TModule extends NativeModuleLike = NativeModuleLike> = {
@@ -225,12 +225,12 @@ export function createNativeEngine<
 	try {
 		const nativeOptions = {
 			...(options?.format ? { format: JSON.stringify(options.format) } : {}),
-			...(options?.options ? { options: JSON.stringify(options.options) } : {})
+			...(options?.options ? { options: options.options } : {})
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
 
 		function renderNativeNode(node: AnyNodeData, opts?: RenderOptions<O>): RenderHandle {
-			const perCall = opts?.options === undefined ? undefined : JSON.stringify(opts.options);
+			const perCall = opts?.options;
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +

@@ -92,8 +92,15 @@ describe('deriveAddressTables', () => {
 		const tables = deriveAddressTables([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')], kindEntries, addressArm, new Map());
 		expect(tables.roots).toEqual(['block']);
 		expect(tables.branches).toEqual([
-			{ path: 'block', keys: ['before', '{'] },
-			{ path: 'block/{', keys: ['after'] }
+			{ path: 'block', children: ['before', '{'], segments: [{ kind: 'kind-match', name: 'block' }] },
+			{
+				path: 'block/{',
+				children: ['after'],
+				segments: [
+					{ kind: 'kind-match', name: 'block' },
+					{ kind: 'literal', text: '{' }
+				]
+			}
 		]);
 		expect(tables.leaves.map((l) => l.path)).toEqual(['block/before', 'block/{/after']);
 		expect(tables.depth).toBe(3);

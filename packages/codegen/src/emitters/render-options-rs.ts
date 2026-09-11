@@ -1,13 +1,16 @@
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { admitsDepth } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, isDepthText } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { toPascal } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { rustStringLiteral } from './render-body.ts';
+import { RUST_KEYWORDS, rustTypeIdent } from './transport-common.ts';
+import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type AddressTables } from './options.ts';
 
 export interface SpacingSite {
 	readonly kind: string;
@@ -168,7 +171,197 @@ export function planRenderOptions(
 
 const q = (s: string): string => JSON.stringify(s);
 
-export function renderOptionsRs(plan: RenderOptionsPlan): string {
+function rustFieldIdent(id: string): string {
+	return RUST_KEYWORDS.has(id) ? `${id}_` : id;
+}
+
+function segmentIdent(key: string, kindEntries: readonly KindEntryLike[]): string {
+	if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) return rustFieldIdent(key);
+	const entry = findEntryForLiteralText(kindEntries, key);
+	if (entry === undefined) throw new Error(`options.rs: address segment ${JSON.stringify(key)} has no kind name to become a field`);
+	return rustFieldIdent(entry.kind);
+}
+
+function structNameOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
+	return `${segments.map((segment) => rustTypeIdent(toPascal(segmentIdent(nestedKey(segment), kindEntries)))).join('')}Options`;
+}
+
+function siteRefsOf(leaf: AddressLeafEntry, plan: RenderOptionsPlan): SitePath[] {
+	return leaf.canonical.map((path) => {
+		const site = plan.sitePaths.find((p) => p.path === path);
+		if (site === undefined) throw new Error(`options.rs: address '${leaf.path}' names '${path}', which is no site`);
+		return site;
+	});
+}
+
+function segmentEq(a: PreferenceSegment, b: PreferenceSegment): boolean {
+	if (a.kind !== b.kind) return false;
+	switch (a.kind) {
+		case 'literal':
+			return a.text === (b as typeof a).text;
+		case 'index':
+			return a.value === (b as typeof a).value;
+		case 'wildcard':
+			return true;
+		default:
+			return a.name === (b as { name: string }).name;
+	}
+}
+
+function segmentsEq(a: readonly PreferenceSegment[], b: readonly PreferenceSegment[]): boolean {
+	return a.length === b.length && a.every((s, i) => segmentEq(s, b[i]!));
+}
+
+interface DirectChild {
+	readonly key: string;
+	readonly branch?: AddressBranchEntry;
+	readonly leaf?: AddressLeafEntry;
+}
+
+function directChildrenOf(prefix: readonly PreferenceSegment[], addresses: AddressTables): DirectChild[] {
+	const under = (own: readonly PreferenceSegment[]): boolean =>
+		own.length === prefix.length + 1 && segmentsEq(own.slice(0, prefix.length), prefix);
+	return [
+		...addresses.branches.filter((b) => under(b.segments)).map((b) => ({ key: nestedKey(b.segments[b.segments.length - 1]!), branch: b })),
+		...addresses.leaves.filter((l) => under(l.segments)).map((l) => ({ key: nestedKey(l.segments[l.segments.length - 1]!), leaf: l }))
+	];
+}
+
+interface AddressField {
+	readonly key: string;
+	readonly ident: string;
+	readonly type: string;
+}
+
+function fieldsOf(
+	prefix: readonly PreferenceSegment[],
+	children: readonly string[],
+	addresses: AddressTables,
+	plan: RenderOptionsPlan,
+	kindEntries: readonly KindEntryLike[]
+): AddressField[] {
+	const direct = directChildrenOf(prefix, addresses);
+	return children.map((key) => {
+		const child = direct.find((c) => c.key === key);
+		if (child === undefined) throw new Error(`options.rs: address '${key}' beneath '${formatPreferencePath(prefix)}' is neither a site nor a path`);
+		const ident = segmentIdent(key, kindEntries);
+		if (child.branch !== undefined) return { key, ident, type: `Option<${structNameOf(child.branch.segments, kindEntries)}>` };
+		const refs = siteRefsOf(child.leaf!, plan);
+		const isDelimiter = refs.length > 0 && refs.every((r) => r.site === 'delimiter');
+		return { key, ident, type: isDelimiter ? 'Option<u8>' : 'Option<u16>' };
+	});
+}
+
+function emitOptionsStructs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly KindEntryLike[]): string[] {
+	const L: string[] = [];
+	const structsOf = [
+		{ segments: [] as readonly PreferenceSegment[], name: 'Options', children: [...addresses.roots] },
+		...addresses.branches.map((b) => ({ segments: b.segments, name: structNameOf(b.segments, kindEntries), children: b.children }))
+	];
+	for (const s of structsOf) {
+		const fields = fieldsOf(s.segments, s.children, addresses, plan, kindEntries);
+		const isRoot = s.segments.length === 0;
+		L.push('#[derive(Debug, Clone, Default)]');
+		L.push(`pub struct ${s.name} {`);
+		if (isRoot) L.push('    pub indent: Option<String>,');
+		for (const f of fields) L.push(`    pub ${f.ident}: ${f.type},`);
+		L.push('}', '');
+		const allowed = isRoot ? ['indent', ...fields.map((f) => f.key)] : fields.map((f) => f.key);
+		const at = isRoot ? '' : formatPreferencePath(s.segments);
+		L.push('#[cfg(feature = "napi-bindings")]');
+		L.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${s.name} {`);
+		L.push('    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {');
+		L.push('        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };');
+		L.push(`        ::sittir_core::options::reject_unknown_keys(&obj, &[${allowed.map(q).join(', ')}], ${q(at)})?;`);
+		L.push('        Ok(Self {');
+		if (isRoot) L.push('            indent: obj.get("indent")?,');
+		for (const f of fields) L.push(`            ${f.ident}: obj.get(${q(f.key)})?,`);
+		L.push('        })');
+		L.push('    }');
+		L.push('}', '');
+		L.push('#[cfg(feature = "napi-bindings")]');
+		L.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${s.name} {`);
+		L.push('    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {');
+		L.push('        let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;');
+		if (isRoot) L.push('        obj.set("indent", val.indent)?;');
+		for (const f of fields) L.push(`        obj.set(${q(f.key)}, val.${f.ident})?;`);
+		L.push('        Ok(::napi::bindgen_prelude::JsValue::raw(&obj))');
+		L.push('    }');
+		L.push('}', '');
+	}
+	return L;
+}
+
+function chainOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
+	const idents = segments.map((segment) => segmentIdent(nestedKey(segment), kindEntries));
+	const last = idents[idents.length - 1]!;
+	const middle = idents.slice(1, -1);
+	let expr = `options.${idents[0]}.as_ref()`;
+	for (const m of middle) expr += `.and_then(|o| o.${m}.as_ref())`;
+	expr += `.and_then(|o| o.${last})`;
+	return expr;
+}
+
+function literalOf(segments: readonly PreferenceSegment[], value: number, kindEntries: readonly KindEntryLike[]): string {
+	const idents = segments.map((segment) => segmentIdent(nestedKey(segment), kindEntries));
+	let inner = `Some(${value})`;
+	for (let i = idents.length - 1; i >= 1; i--) {
+		const structName = structNameOf(segments.slice(0, i), kindEntries);
+		inner = `Some(${structName} { ${idents[i]}: ${inner}, ..::std::default::Default::default() })`;
+	}
+	return `Options { ${idents[0]}: ${inner}, ..::std::default::Default::default() }`;
+}
+
+function resolverBody(addresses: AddressTables, plan: RenderOptionsPlan, kindEntries: readonly KindEntryLike[]): string[] {
+	const L: string[] = [];
+	for (const leaf of addresses.leaves) {
+		const refs = siteRefsOf(leaf, plan);
+		L.push(`    if let Some(v) = ${chainOf(leaf.segments, kindEntries)} {`);
+		for (const ref of refs) {
+			if (ref.site === 'spacing') {
+				const site = plan.spacingSites[ref.index]!;
+				L.push(`        set_spacing(&mut table, ${site.constName}, SPACING_SITES[${site.constName}].4, v, ${q(ref.path)})?;`);
+			} else {
+				const site = plan.delimiterSites[ref.index]!;
+				L.push(`        set_delimiter(&mut table, ${site.constName}, DELIMITER_SITES[${site.constName}].2, v, ${q(ref.path)})?;`);
+			}
+		}
+		L.push('    }');
+	}
+	return L;
+}
+
+function resolveTests(addresses: AddressTables, plan: RenderOptionsPlan, kindEntries: readonly KindEntryLike[]): string[] {
+	const spacingLeaf = addresses.leaves.find((leaf) => {
+		const refs = siteRefsOf(leaf, plan);
+		return refs.length === 1 && refs[0]!.site === 'spacing';
+	});
+	const L: string[] = [
+		'#[cfg(test)]',
+		'mod resolve_tests {',
+		'    use super::*;',
+		'',
+		'    #[test]',
+		'    fn no_options_leaves_the_defaults() {',
+		'        assert_eq!(resolve(&Options::default(), &defaults()).unwrap(), defaults());',
+		'    }'
+	];
+	if (spacingLeaf !== undefined) {
+		const site = plan.spacingSites[siteRefsOf(spacingLeaf, plan)[0]!.index]!;
+		L.push(
+			'',
+			'    #[test]',
+			'    fn a_sites_own_default_id_leaves_the_defaults() {',
+			`        let options = ${literalOf(spacingLeaf.segments, site.defaultId, kindEntries)};`,
+			'        assert_eq!(resolve(&options, &defaults()).unwrap(), defaults());',
+			'    }'
+		);
+	}
+	L.push('}');
+	return L;
+}
+
+export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly KindEntryLike[]): string {
 	const L: string[] = [];
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
 	L.push('use ::sittir_core::options::ResolvedOptions;', '');
@@ -182,13 +375,6 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	for (const s of plan.spacingSites) {
 		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
 	}
-	L.push('];', '');
-	L.push('/// A site the path table refers to: an index into `SPACING_SITES` or into `DELIMITER_SITES`.');
-	L.push('#[derive(Clone, Copy)]', 'pub enum SiteRef {', '    Spacing(usize),', '    Delimiter(usize),', '}', '');
-	L.push("/// Every site by its canonical address, spacing and delimiter sites together, in");
-	L.push('/// sorted path order, so every descendant of a prefix is a contiguous range.');
-	L.push('pub static SITE_PATHS: &[(&str, SiteRef)] = &[');
-	for (const p of plan.sitePaths) L.push(`    (${q(p.path)}, SiteRef::${p.site === 'spacing' ? 'Spacing' : 'Delimiter'}(${p.index})),`);
 	L.push('];', '');
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
@@ -219,214 +405,58 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
-	L.push(...RESOLVER_BODY);
+	L.push(...emitOptionsStructs(plan, addresses, kindEntries));
+	L.push(...RESOLVER_HELPERS);
+	L.push('/// Resolve an options object over `base`: `indent` and every address that');
+	L.push('/// names a site. A value a site does not admit is an error naming the address.');
+	L.push('pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {');
+	L.push('    let mut table = base.clone();');
+	L.push('    if let Some(indent) = options.indent.as_ref() {');
+	L.push('        table.indent = indent.clone();');
+	L.push('    }');
+	L.push(...resolverBody(addresses, plan, kindEntries));
+	L.push('    for (kind, sites) in DEPTH_SITES {');
+	L.push('        let mut depth = 0usize;');
+	L.push('        for site in sites.iter() {');
+	L.push('            let value = table.spacing[*site];');
+	L.push('            if INDENT_KIND != 0 && value == INDENT_KIND {');
+	L.push('                depth += 1;');
+	L.push('            } else if DEDENT_KIND != 0 && value == DEDENT_KIND {');
+	L.push('                if depth == 0 {');
+	L.push('                    return Err(format!("options: {kind} dedents an indent it never opened"));');
+	L.push('                }');
+	L.push('                depth -= 1;');
+	L.push('            }');
+	L.push('        }');
+	L.push('        if depth != 0 {');
+	L.push('            return Err(format!("options: {kind} opens an indent it never dedents"));');
+	L.push('        }');
+	L.push('    }');
+	L.push('    Ok(table)');
+	L.push('}', '');
+	L.push(...resolveTests(addresses, plan, kindEntries));
 	return L.join('\n') + '\n';
 }
 
-const RESOLVER_BODY: readonly string[] = [
-	'fn spacing_id(allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<u16, String> {',
-	'    let id = value.as_u64().and_then(|v| u16::try_from(v).ok()).ok_or_else(|| format!("options: {key} must be a kind id"))?;',
+const RESOLVER_HELPERS: readonly string[] = [
+	'fn spacing_id(allowed: &[u16], id: u16, key: &str) -> Result<u16, String> {',
 	'    if !allowed.contains(&id) {',
 	'        return Err(format!("options: {key} does not admit kind id {id} (allowed: {allowed:?})"));',
 	'    }',
 	'    Ok(id)',
 	'}',
 	'',
-	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<(), String> {',
+	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: u16, key: &str) -> Result<(), String> {',
 	'    table.spacing[index] = spacing_id(allowed, value, key)?;',
 	'    Ok(())',
 	'}',
 	'',
-	'fn set_delimiter(table: &mut ResolvedOptions, index: usize, allowed: u8, value: &::serde_json::Value, key: &str) -> Result<(), String> {',
-	'    let bits = value.as_u64().and_then(|v| u8::try_from(v).ok()).ok_or_else(|| format!("options: {key} must be a Delimiter member"))?;',
-	'    if bits & !allowed != 0 {',
-	'        return Err(format!("options: {key} does not admit delimiter {bits} (allowed bits: {allowed})"));',
+	'fn set_delimiter(table: &mut ResolvedOptions, index: usize, allowed: u8, value: u8, key: &str) -> Result<(), String> {',
+	'    if value & !allowed != 0 {',
+	'        return Err(format!("options: {key} does not admit delimiter {value} (allowed bits: {allowed})"));',
 	'    }',
-	'    table.delimiter[index] = bits;',
+	'    table.delimiter[index] = value;',
 	'    Ok(())',
 	'}',
-	'',
-	'fn set_site(table: &mut ResolvedOptions, site: SiteRef, value: &::serde_json::Value, key: &str) -> Result<(), String> {',
-	'    match site {',
-	'        SiteRef::Spacing(i) => set_spacing(table, i, SPACING_SITES[i].4, value, key),',
-	'        SiteRef::Delimiter(i) => set_delimiter(table, i, DELIMITER_SITES[i].2, value, key),',
-	'    }',
-	'}',
-	'',
-	'/// The sites an address names: itself and everything beneath it. Sites are',
-	'/// in canonical path order, so that set is always a contiguous range.',
-	'pub fn site_range(prefix: &str) -> (usize, usize) {',
-	'    range_within(0, SITE_PATHS.len(), prefix)',
-	'}',
-	'',
-	'fn range_within(start: usize, end: usize, prefix: &str) -> (usize, usize) {',
-	'    let mut first = start;',
-	'    while first < end && !path_under(SITE_PATHS[first].0, prefix) {',
-	'        first += 1;',
-	'    }',
-	'    let mut last = first;',
-	'    while last < end && path_under(SITE_PATHS[last].0, prefix) {',
-	'        last += 1;',
-	'    }',
-	'    (first, last)',
-	'}',
-	'',
-	'fn path_under(path: &str, prefix: &str) -> bool {',
-	'    path == prefix || (path.starts_with(prefix) && path.as_bytes().get(prefix.len()) == Some(&b"/"[0]))',
-	'}',
-	'',
-	'/// One nested key as a path segment. The nested object and the path are the',
-	'/// same address in two layouts, so a key is matched against every spelling a',
-	"/// segment has: a bare name, a quoted literal, or a field.",
-	'fn segment_under(start: usize, end: usize, prefix: &str, key: &str) -> Option<(String, usize, usize)> {',
-	'    for candidate in [key.to_string(), format!("\\"{key}\\""), format!("{key}:")] {',
-	'        let next = format!("{prefix}/{candidate}");',
-	'        let (s, e) = range_within(start, end, &next);',
-	'        if e > s {',
-	'            return Some((next, s, e));',
-	'        }',
-	'    }',
-	'    None',
-	'}',
-	'',
-	'/// Every assignment a nested object makes. A key that names no site is an',
-	'/// error naming the full address it was written at.',
-	"fn collect_nested<'a>(",
-	"    out: &mut Vec<(usize, usize, String, &'a ::serde_json::Value)>,",
-	'    start: usize,',
-	'    end: usize,',
-	'    prefix: &str,',
-	"    entries: &'a ::serde_json::Map<String, ::serde_json::Value>,",
-	') -> Result<(), String> {',
-	'    for (key, value) in entries {',
-	'        let Some((path, s, e)) = segment_under(start, end, prefix, key) else {',
-	'            return Err(format!("options: {prefix}/{key} names no site"));',
-	'        };',
-	'        match value.as_object() {',
-	'            Some(nested) => collect_nested(out, s, e, &path, nested)?,',
-	'            None => out.push((s, e, path, value)),',
-	'        }',
-	'    }',
-	'    Ok(())',
-	'}',
-	'',
-	'/// A kind-keyed nested object applied by address: every leaf sets the site',
-	'/// it names and everything beneath it. Nothing is written until every leaf',
-	'/// has resolved, so an error leaves the table as it was.',
-	'fn apply_nested(table: &mut ResolvedOptions, key: &str, value: &::serde_json::Value) -> Result<(), String> {',
-	'    let root = format!("({key})");',
-	'    let (start, end) = site_range(&root);',
-	'    if end == start {',
-	'        return Err(format!("options: unknown key {key}"));',
-	'    }',
-	'    let entries = value',
-	'        .as_object()',
-	'        .ok_or_else(|| format!("options: {key} must be an object of addresses"))?;',
-	'    let mut assignments = Vec::new();',
-	'    collect_nested(&mut assignments, start, end, &root, entries)?;',
-	'    for (s, e, path, value) in assignments {',
-	'        for i in s..e {',
-	'            set_site(table, SITE_PATHS[i].1, value, &path)?;',
-	'        }',
-	'    }',
-	'    Ok(())',
-	'}',
-	'',
-	'/// Resolve a JSON options object over `base`: `indent` and one address',
-	'/// object per root kind. Unknown keys, addresses naming no site and values',
-	'/// a site does not admit are errors naming the key.',
-	'pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {',
-	'    let value: ::serde_json::Value = ::serde_json::from_str(json).map_err(|e| format!("options: not a JSON object: {e}"))?;',
-	'    let object = value.as_object().ok_or_else(|| "options: not a JSON object".to_string())?;',
-	'    let mut table = base.clone();',
-	'    for (key, value) in object {',
-	'        if key == "indent" {',
-	'            table.indent = value.as_str().ok_or_else(|| "options: indent must be a string".to_string())?.to_string();',
-	'            continue;',
-	'        }',
-	'        apply_nested(&mut table, key, value)?;',
-	'    }',
-	'    for (kind, sites) in DEPTH_SITES {',
-	'        let mut depth = 0usize;',
-	'        for site in sites.iter() {',
-	'            let value = table.spacing[*site];',
-	'            if INDENT_KIND != 0 && value == INDENT_KIND {',
-	'                depth += 1;',
-	'            } else if DEDENT_KIND != 0 && value == DEDENT_KIND {',
-	'                if depth == 0 {',
-	'                    return Err(format!("options: {kind} dedents an indent it never opened"));',
-	'                }',
-	'                depth -= 1;',
-	'            }',
-	'        }',
-	'        if depth != 0 {',
-	'            return Err(format!("options: {kind} opens an indent it never dedents"));',
-	'        }',
-	'    }',
-	'    Ok(table)',
-	'}',
-	'',
-	'#[cfg(test)]',
-	'mod site_address_tests {',
-	'    use super::*;',
-	'',
-	'    fn kind_of(path: &str) -> &str {',
-	"        match path.find('/') {",
-	'            Some(i) => &path[..i],',
-	'            None => path,',
-	'        }',
-	'    }',
-	'',
-	'    #[test]',
-	'    fn the_path_table_names_every_site_once() {',
-	'        assert_eq!(SITE_PATHS.len(), SPACING_SITES.len() + DELIMITER_SITES.len());',
-	'        let mut spacing = vec![false; SPACING_SITES.len()];',
-	'        let mut delimiter = vec![false; DELIMITER_SITES.len()];',
-	'        for (_, site) in SITE_PATHS.iter() {',
-	'            let seen = match *site {',
-	'                SiteRef::Spacing(i) => &mut spacing[i],',
-	'                SiteRef::Delimiter(i) => &mut delimiter[i],',
-	'            };',
-	'            assert!(!*seen, "a site is named twice");',
-	'            *seen = true;',
-	'        }',
-	'        assert!(spacing.iter().chain(delimiter.iter()).all(|seen| *seen));',
-	'    }',
-	'',
-	'    #[test]',
-	'    fn a_prefix_names_a_contiguous_range() {',
-	'        if SITE_PATHS.is_empty() {',
-	'            return;',
-	'        }',
-	'        let prefix = kind_of(SITE_PATHS[0].0);',
-	'        let (start, end) = site_range(prefix);',
-	'        assert!(end > start);',
-	'        for i in start..end {',
-	'            assert!(path_under(SITE_PATHS[i].0, prefix));',
-	'        }',
-	'        for (i, (path, _)) in SITE_PATHS.iter().enumerate() {',
-	'            if path_under(path, prefix) {',
-	'                assert!(i >= start && i < end, "site {i} {path} outside the range");',
-	'            }',
-	'        }',
-	'    }',
-	'',
-	'    #[test]',
-	'    fn every_kind_occupies_one_run() {',
-	'        let mut runs: Vec<&str> = Vec::new();',
-	'        for (path, _) in SITE_PATHS.iter() {',
-	'            let kind = kind_of(path);',
-	'            if runs.last() != Some(&kind) {',
-	'                assert!(!runs.contains(&kind), "kind {kind} appears in more than one run");',
-	'                runs.push(kind);',
-	'            }',
-	'        }',
-	'    }',
-	'',
-	'    #[test]',
-	'    fn an_address_naming_no_site_is_an_empty_range() {',
-	'        let (start, end) = site_range("(no_such_kind_exists_here)");',
-	'        assert_eq!(start, end);',
-	'    }',
-	'}'
+	''
 ];

@@ -65,8 +65,8 @@ export declare class SittirEngine {
    * `treeId` names the parse whose detected format applies. It is
    * optional because factory-built nodes belong to no tree.
    */
-  render(transport: RenderRoot, treeId?: number | undefined | null, options?: string | undefined | null): string
-  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: string | undefined | null): void
+  render(transport: RenderRoot, treeId?: number | undefined | null, options?: Options | undefined | null): string
+  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: Options | undefined | null): void
   applyEdits(source: string, edits: Array<Edit>): string
   /**
    * Drop one tree. Called from the boundary's `FinalizationRegistry`
@@ -882,11 +882,7 @@ export interface ElseClauseTransport {
 
 export interface EngineOptions {
   format?: string
-  /**
-   * The render options object as JSON; resolved once here against the
-   * grammar's site table. Only the resolved ids are kept.
-   */
-  options?: string
+  options?: Options
 }
 
 export interface EnumItemTransport {

@@ -54,6 +54,7 @@ impl EngineGrammar for TypeScriptGrammar {
 sittir_core::napi_engine!(
     TypeScriptGrammar,
     RenderRoot,
+    render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
     render::options::defaults,

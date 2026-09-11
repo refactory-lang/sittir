@@ -77,3 +77,21 @@ impl FillOptions for u8 {
 impl FillOptions for u16 {
     fn fill_options(&mut self, _: &ResolvedOptions) {}
 }
+
+/// Refuse a napi object whose keys are not all in `allowed`: an address-keyed
+/// deserializer's only defense against a typo, since napi otherwise drops an
+/// unknown property silently.
+#[cfg(feature = "napi-bindings")]
+pub fn reject_unknown_keys(obj: &::napi::bindgen_prelude::Object, allowed: &[&str], at: &str) -> ::napi::Result<()> {
+    for key in ::napi::bindgen_prelude::Object::keys(obj)? {
+        if !allowed.contains(&key.as_str()) {
+            let message = if at.is_empty() {
+                format!("options: unknown key {key}")
+            } else {
+                format!("options: {at}/{key} names no site")
+            };
+            return Err(::napi::Error::from_reason(message));
+        }
+    }
+    Ok(())
+}

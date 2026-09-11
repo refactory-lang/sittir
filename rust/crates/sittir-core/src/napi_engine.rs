@@ -28,13 +28,11 @@
 /// - `$abi` — the render transport ABI version this crate was generated against.
 #[macro_export]
 macro_rules! napi_engine {
-    ($grammar:ty, $render_root:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
+    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
         #[::napi_derive::napi(object)]
         pub struct EngineOptions {
             pub format: Option<String>,
-            /// The render options object as JSON; resolved once here against the
-            /// grammar's site table. Only the resolved ids are kept.
-            pub options: Option<String>,
+            pub options: Option<$options>,
         }
 
         #[::napi_derive::napi]
@@ -52,7 +50,7 @@ macro_rules! napi_engine {
         impl SittirEngine {
             #[::napi_derive::napi(constructor)]
             pub fn new(options: Option<EngineOptions>) -> ::napi::Result<Self> {
-                let (format_json, options_json) = match options {
+                let (format_json, opts) = match options {
                     Some(opts) => (opts.format, opts.options),
                     None => (None, None),
                 };
@@ -62,9 +60,9 @@ macro_rules! napi_engine {
                     .map_err(|e| {
                         ::napi::Error::from_reason(format!("parse engine format failed: {e}"))
                     })?;
-                let table = match options_json {
-                    Some(json) => {
-                        $resolve(&json, &$defaults()).map_err(::napi::Error::from_reason)?
+                let table = match opts {
+                    Some(opts) => {
+                        $resolve(&opts, &$defaults()).map_err(::napi::Error::from_reason)?
                     }
                     None => $defaults(),
                 };
@@ -201,14 +199,17 @@ macro_rules! napi_engine {
                 &self,
                 transport: $render_root,
                 tree_id: Option<f64>,
-                options: Option<String>,
+                options: Option<$options>,
             ) -> ::napi::Result<String> {
+                let resolved;
                 let table = match options {
-                    Some(json) => $resolve(&json, self.engine.options())
-                        .map_err(::napi::Error::from_reason)?,
-                    None => self.engine.options().clone(),
+                    Some(opts) => {
+                        resolved = $resolve(&opts, self.engine.options()).map_err(::napi::Error::from_reason)?;
+                        &resolved
+                    }
+                    None => self.engine.options(),
                 };
-                let (source, canonical) = $render_parts(transport, &table).map_err(|e| {
+                let (source, canonical) = $render_parts(transport, table).map_err(|e| {
                     ::napi::Error::from_reason(format!("render_transport failed: {e}"))
                 })?;
                 // A node knows which tree it came from, but the wrap layer
@@ -237,7 +238,7 @@ macro_rules! napi_engine {
                 transport: $render_root,
                 path: String,
                 tree_id: Option<f64>,
-                options: Option<String>,
+                options: Option<$options>,
             ) -> ::napi::Result<()> {
                 let rendered = self.render(transport, tree_id, options)?;
                 ::std::fs::write(&path, rendered).map_err(|e| {

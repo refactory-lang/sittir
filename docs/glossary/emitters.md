@@ -10,6 +10,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ---
 
 
+
 ### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
@@ -14905,17 +14906,48 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 /**
  * Source text of a render crate's `options.rs`: the site constants, the
  * tables the resolver walks, `spacing_text` mapping a whitespace kind id to
- * the text its visible external renders, `defaults()`, and `resolve()`.
- * A text whitespace kind's string is written with the core writer's seam
- * mark in front, so every option-driven whitespace (separator, flank,
- * token seam) coalesces in the writer; the indent and dedent kinds keep
- * their own mark constants. A delimiter site row carries its default
+ * the text its visible external renders, `defaults()`, one generated struct
+ * per address branch (root plus every `AddressBranchEntry`) with a
+ * `#[cfg(feature = "napi-bindings")]` `FromNapiValue`/`ToNapiValue` pair, and
+ * `resolve()`. A text whitespace kind's string is written with the core
+ * writer's seam mark in front, so every option-driven whitespace (separator,
+ * flank, token seam) coalesces in the writer; the indent and dedent kinds
+ * keep their own mark constants. A delimiter site row carries its default
  * bitflag, from the grammar's declared default or none, and `defaults()`
- * fills the delimiter vector from it. The resolver reads `indent` and one
- * address object per root kind, applying each leaf to the site it names and
- * everything beneath it; an unknown key, an address naming no site, or a
- * value a site does not admit is an error naming the key.
+ * fills the delimiter vector from it. Each struct's `FromNapiValue` calls
+ * `reject_unknown_keys` with that struct's own canonical address as `at`;
+ * the resolver walks every leaf's field-access chain and applies its value
+ * to the site(s) its `canonical` entries name — an unknown key, an address
+ * naming no site, or a value a site does not admit is an error naming the
+ * address.
  */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::segmentIdent`
+
+```text
+/** The Rust field/type-segment identifier for one address segment's JS
+ *  property key (`nestedKey` of the segment): the key itself when it is
+ *  already a valid identifier, otherwise the kind name a literal segment's
+ *  own text names (`findEntryForLiteralText`) — a key with no kind name to
+ *  fall back on is a codegen-time error, never a guessed name. */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::structNameOf`
+
+```text
+/** The generated struct name for an address's own segment list: each
+ *  segment's field identifier, Pascal-cased and sanitized, concatenated and
+ *  suffixed `Options`. The root's struct is named `Options` directly,
+ *  bypassing this function (its segment list is empty). */
+```
+
+### `packages/codegen/src/emitters/render-options-rs.ts::siteRefsOf`
+
+```text
+/** The site(s) a leaf's `canonical` entries name in `plan.sitePaths` — one
+ *  for an ordinary site, every bound site for a declaration reached through
+ *  bindings. A canonical entry naming no site is a codegen-time error. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
@@ -14929,9 +14961,12 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 
 ```text
 /**
- * The render-options plan for one grammar, or the empty plan when there is
- * no kind catalog or no spaced render rules. The empty plan is what emitter
- * tests on fixture node maps get; the real pipeline always has both.
+ * The render-options plan, address tables and kind catalog for one grammar,
+ * or the empty triple when there is no kind catalog or no spaced render
+ * rules. The empty triple is what emitter tests on fixture node maps get;
+ * the real pipeline always has all three. `declared` is read exactly as
+ * `emitOptions` reads it, so the TypeScript `AddressedOptions` type and the
+ * generated Rust structs derive from the same address tables.
  */
 ```
 
@@ -15118,3 +15153,23 @@ exists.
 /// seam's own text) rather than ordinary text.
 ```
 
+### `packages/codegen/src/emitters/options.ts::AddressBranchEntry.segments`
+
+```text
+/** This branch's own address as typed segments — the prefix `path` was joined from. */
+```
+
+### `packages/codegen/src/emitters/options.ts::AddressLeafEntry.segments`
+
+```text
+/** This leaf's own address as typed segments — the full list `path` was joined from. */
+```
+
+### `packages/codegen/src/emitters/options.ts::AddressLeafEntry.canonical`
+
+```text
+/** The canonical path string(s) (`formatPreferencePath`) of every site this
+ *  leaf sets: one for an ordinary site, every bound site's own path for a
+ *  declaration reached through bindings. Matched against `plan.sitePaths`
+ *  by `siteRefsOf` to find the site(s) a leaf's value applies to. */
+```

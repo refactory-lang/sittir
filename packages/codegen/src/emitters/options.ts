@@ -11,7 +11,7 @@ import {
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-arms.ts';
 import { addressSegments, addressSites, matchAddress } from '../compiler/model/site-addresses.ts';
-import { parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
 
 export { publicKindName } from '../compiler/model/site-preferences.ts';
@@ -33,12 +33,15 @@ function unionOf(parts: Iterable<string>): string {
 
 export interface AddressBranchEntry {
 	readonly path: string;
-	readonly keys: readonly string[];
+	readonly segments: readonly PreferenceSegment[];
+	readonly children: readonly string[];
 }
 
 export interface AddressLeafEntry {
 	readonly path: string;
 	readonly type: string;
+	readonly canonical: readonly string[];
+	readonly segments: readonly PreferenceSegment[];
 }
 
 export interface AddressTables {
@@ -50,7 +53,7 @@ export interface AddressTables {
 
 export const EMPTY_ADDRESSES: AddressTables = { roots: [], branches: [], leaves: [], depth: 0 };
 
-function nestedKey(segment: PreferenceSegment): string {
+export function nestedKey(segment: PreferenceSegment): string {
 	switch (segment.kind) {
 		case 'literal':
 			return segment.text;
@@ -71,7 +74,8 @@ export function deriveAddressTables(
 	declared?: OptionsDeclarations
 ): AddressTables {
 	const branches = new Map<string, Set<string>>();
-	const leaves = new Map<string, string>();
+	const branchSegments = new Map<string, readonly PreferenceSegment[]>();
+	const leaves = new Map<string, { type: string; canonical: string[]; segments: readonly PreferenceSegment[] }>();
 	const roots = new Set<string>();
 	let depth = 0;
 	for (const site of addressSites(sites, kindEntries)) {
@@ -80,6 +84,7 @@ export function deriveAddressTables(
 		roots.add(keys[0]!);
 		for (let i = 0; i < keys.length - 1; i++) {
 			const path = keys.slice(0, i + 1).join('/');
+			branchSegments.set(path, site.path.slice(0, i + 1));
 			const children = branches.get(path) ?? new Set<string>();
 			children.add(keys[i + 1]!);
 			branches.set(path, children);
@@ -87,8 +92,8 @@ export function deriveAddressTables(
 		const type = site.arms.map(armType).join(' | ');
 		const path = keys.join('/');
 		const prior = leaves.get(path);
-		if (prior !== undefined && prior !== type) throw new Error(`options: address '${path}' resolves to two types`);
-		leaves.set(path, type);
+		if (prior !== undefined && prior.type !== type) throw new Error(`options: address '${path}' resolves to two types`);
+		leaves.set(path, { type, canonical: [formatPreferencePath(site.path)], segments: site.path });
 	}
 	if (declared !== undefined) {
 		const addressed = addressSites(sites, kindEntries);
@@ -101,16 +106,22 @@ export function deriveAddressTables(
 			if (matchAddress(addressSegments(declaration.path), addressed, membersOf).length > 0) continue;
 			const bound = reached.get(declaration.path) ?? [];
 			if (bound.length === 0) continue;
-			const keys = parsePreferencePath(declaration.path).map(nestedKey);
+			const declaredSegments = parsePreferencePath(declaration.path);
+			const keys = declaredSegments.map(nestedKey);
 			depth = Math.max(depth, keys.length);
 			roots.add(keys[0]!);
 			for (let i = 0; i < keys.length - 1; i++) {
 				const at = keys.slice(0, i + 1).join('/');
+				branchSegments.set(at, declaredSegments.slice(0, i + 1));
 				const children = branches.get(at) ?? new Set<string>();
 				children.add(keys[i + 1]!);
 				branches.set(at, children);
 			}
-			leaves.set(keys.join('/'), unionOf(bound.map((site) => site.arms.map(armType).join(' | '))));
+			leaves.set(keys.join('/'), {
+				type: unionOf(bound.map((site) => site.arms.map(armType).join(' | '))),
+				canonical: bound.map((site) => formatPreferencePath((site as unknown as { readonly path: readonly PreferenceSegment[] }).path)),
+				segments: declaredSegments
+			});
 		}
 	}
 
@@ -120,8 +131,8 @@ export function deriveAddressTables(
 	const byPath = <T extends { readonly path: string }>(a: T, b: T): number => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 	return {
 		roots: [...roots].sort(),
-		branches: [...branches].map(([path, keys]) => ({ path, keys: [...keys].sort() })).sort(byPath),
-		leaves: [...leaves].map(([path, type]) => ({ path, type })).sort(byPath),
+		branches: [...branches].map(([path, children]) => ({ path, segments: branchSegments.get(path)!, children: [...children].sort() })).sort(byPath),
+		leaves: [...leaves].map(([path, { type, canonical, segments }]) => ({ path, type, canonical, segments })).sort(byPath),
 		depth
 	};
 }
@@ -162,7 +173,7 @@ function addressLines(addresses: AddressTables, alias: (type: string) => string)
 	L.push(`export type AddressRoot = ${union(addresses.roots)};`, '');
 	L.push('/// Every address that has something beneath it, and what that is.');
 	L.push('export interface AddressBranch {');
-	for (const branch of addresses.branches) L.push(`\treadonly ${propertyName(branch.path)}: ${union(branch.keys)};`);
+	for (const branch of addresses.branches) L.push(`\treadonly ${propertyName(branch.path)}: ${union(branch.children)};`);
 	L.push('}', '');
 	L.push('/// Every address that names a site, and what that site admits.');
 	L.push('export interface AddressLeaf {');
