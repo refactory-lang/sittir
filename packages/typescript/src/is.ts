@@ -24,6 +24,7 @@ import type {
 	StatementIdentifier,
 	TupleTypeMember,
 	Type,
+	Whitespace,
 	_Identifier,
 	_LhsExpression,
 	_PropertyIdentifier
@@ -576,6 +577,7 @@ export interface IsGuards {
 	type(v: { readonly $type: string | number } | number): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number } | number): v is PrimaryType;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -907,6 +909,7 @@ export interface AssertGuards {
 	type(v: { readonly $type: string | number } | number): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): asserts v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number } | number): asserts v is PrimaryType;
+	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -948,6 +951,7 @@ const _supertype_tupleTypeMember_ids = new Set<number>([316, 317, 318, 319]);
 const _supertype_primaryType_ids = new Set<number>([
 	342, 343, 1, 295, 327, 345, 354, 355, 341, 334, 335, 100, 340, 338, 336, 326, 324, 358, 357
 ]);
+const _supertype_whitespace_ids = new Set<number>([171, 172]);
 
 export const is = {
 	program: _g(TSKindId.Program),
@@ -1144,7 +1148,8 @@ export const is = {
 	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
-	primaryType: _sg(_supertype_primaryType_ids)
+	primaryType: _sg(_supertype_primaryType_ids),
+	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1391,7 +1396,8 @@ export const assert = {
 	importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
 	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
-	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard)
+	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
+	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

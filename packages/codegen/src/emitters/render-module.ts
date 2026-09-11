@@ -959,7 +959,7 @@ function planRenderOptionsFor(
 	return planRenderOptions(
 		sites,
 		kindEntries,
-		whitespaceTextOf(inputs.visibleExternals)
+		whitespaceTextOf(inputs.visibleExternals, nodeMap)
 	);
 }
 

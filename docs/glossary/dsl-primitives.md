@@ -407,12 +407,22 @@ It carries no data; it is a placeholder like `arm.default`, recognised by
  */
 ```
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::SPACING_ARMS`
+### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
-```text
-// The whitespace kinds every spacing preference chooses between. `tight`
-// renders nothing; each is a never-scanned external so it has a kind id.
-```
+`_whitespace`, the hidden supertype every grammar declares (in `supertypes:`
+and as a rule) listing the whitespace kinds it renders: each member is a
+never-scanned external with a kind id, `tight` renders nothing, and a
+grammar may add its own — python's `_double_newline` leaves two blank
+lines. The model reads the arms of every spacing site from it
+(`whitespace-arms.ts`); nothing in codegen lists whitespace kinds by name.
+The supertype is protected from unreachable-rule pruning like any other.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::DEPTH_ARMS`
+
+`indent` and `dedent`, the two whitespace members that move depth rather
+than lay out a run: a separator gap admits every member but these
+(`spacingArmsOf`), while an array flank, a kind edge or a token seam of an
+indenting grammar admits them too (`whitespaceArmsOf`).
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::preference`
 
@@ -525,14 +535,6 @@ keys, the render-rules seam detection, and the site collection.
  *  token is the slot's own and is dropped, `<slot>_separator_space` for the
  *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
 ```
-
-### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_ARMS`
-
-The arms of every site that may move depth (an array flank, a kind edge, a
-token seam of an indenting grammar): the spacing kinds plus `indent`, one
-level deeper then a newline, and `dedent`, one level shallower then a
-newline. Either side of any token may carry either, and a kind's depth
-walk pairs them.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::flankAddress`
 

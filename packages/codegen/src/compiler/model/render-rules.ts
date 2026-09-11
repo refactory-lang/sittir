@@ -10,14 +10,12 @@ import { supertypeMembersByPublicName } from './supertype-members.ts';
 import { addressSites, resolveBindings } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
+import { spacingArmsOf, whitespaceArmsOf } from './whitespace-arms.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
 	FLANK_DEFAULT,
-	SPACING_ARMS,
 	SPACING_DEFAULT,
-	WHITESPACE_ARMS,
 	flankAddress,
-	isWhitespaceArm,
 	parseSeamLabel,
 	seamLabel,
 	siteKey,
@@ -47,12 +45,14 @@ export interface Flanks {
 export type WhitespaceText = { readonly text: string } | { readonly constant: 'INDENT_NEWLINE' | 'DEDENT_NEWLINE' };
 
 export function whitespaceTextOf(
-	visibleExternals: Readonly<Record<string, Rule<'evaluate'>>> | undefined
+	visibleExternals: Readonly<Record<string, Rule<'evaluate'>>> | undefined,
+	nodeMap: NodeMap
 ): ReadonlyMap<string, WhitespaceText> {
+	const arms = whitespaceArmsOf(nodeMap);
 	const out = new Map<string, WhitespaceText>();
 	for (const [name, rule] of Object.entries(visibleExternals ?? {})) {
 		const kind = publicKindName(name);
-		if (!isWhitespaceArm(kind)) continue;
+		if (!arms.includes(kind)) continue;
 		const r = rule as { type?: unknown; value?: unknown };
 		if (r.type === STRING && typeof r.value === 'string') out.set(kind, { text: r.value });
 		else if (r.type === INDENT) out.set(kind, { constant: 'INDENT_NEWLINE' });
@@ -228,6 +228,7 @@ class DefaultResolver {
 type Symbols = Partial<Record<WhitespaceArm, string>>;
 
 function whitespaceSymbols(nodeMap: NodeMap, arms: readonly WhitespaceArm[]): Symbols | undefined {
+	if (arms.length === 0) return undefined;
 	const out: Symbols = {};
 	for (const arm of arms) {
 		const name = nodeMap.nodes.has(arm) ? arm : nodeMap.nodes.has(`_${arm}`) ? `_${arm}` : undefined;
@@ -240,7 +241,7 @@ function whitespaceSymbols(nodeMap: NodeMap, arms: readonly WhitespaceArm[]): Sy
 function flankSymbols(config: RenderRulesConfig): Symbols | undefined {
 	const text = config.whitespaceText;
 	if (text === undefined || !text.has('indent') || !text.has('dedent')) return undefined;
-	return whitespaceSymbols(config.nodeMap, WHITESPACE_ARMS);
+	return whitespaceSymbols(config.nodeMap, whitespaceArmsOf(config.nodeMap));
 }
 
 function whitespaceChoice(part: SpacingPart, arms: readonly WhitespaceArm[], symbols: Symbols): RenderRule {
@@ -257,20 +258,20 @@ function whitespaceChoice(part: SpacingPart, arms: readonly WhitespaceArm[], sym
 	} as unknown as RenderRule;
 }
 
-function isWhitespaceChoice(rule: RenderRule, arms: readonly WhitespaceArm[]): boolean {
+function isWhitespaceChoice(rule: RenderRule): boolean {
 	const r = bag(rule);
 	return (
 		r.type === CHOICE &&
 		r.members !== undefined &&
-		r.members.length === arms.length &&
-		r.members.every((m, i) => {
+		r.members.length > 0 &&
+		r.members.every((m) => {
 			const b = bag(m);
-			return b.type === SYMBOL && b.name !== undefined && publicKindName(b.name) === arms[i] && b.annotations?.preference !== undefined;
+			return b.type === SYMBOL && b.name !== undefined && b.annotations?.preference !== undefined;
 		})
 	);
 }
 
-const isSpacingChoice = (rule: RenderRule): boolean => isWhitespaceChoice(rule, SPACING_ARMS);
+const isSpacingChoice = isWhitespaceChoice;
 
 function partOf(choice: RenderRule, side: SpacingSide): SpacingPart {
 	const r = bag(choice);
@@ -292,7 +293,7 @@ export function flanksOf(rule: RenderRule): Flanks | undefined {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined || r.members.length !== 3 || r.id !== undefined) return undefined;
 	const [start, inner, end] = r.members as [RenderRule, RenderRule, RenderRule];
-	if (!isWhitespaceChoice(start, WHITESPACE_ARMS) || !isWhitespaceChoice(end, WHITESPACE_ARMS)) return undefined;
+	if (!isWhitespaceChoice(start) || !isWhitespaceChoice(end)) return undefined;
 	if (isSeamChoice(start) || isSeamChoice(end)) return undefined;
 	return { start: partOf(start, 'start'), inner, end: partOf(end, 'end') };
 }
@@ -308,25 +309,17 @@ export function spacedSeparatorOf(rule: RenderRule): SpacedSeparator | undefined
 	return { before: partOf(before, 'before'), token, after: partOf(after, 'after') };
 }
 
-function withFlanks(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols): RenderRule {
+function withFlanks(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols, arms: readonly WhitespaceArm[]): RenderRule {
 	const part = (side: FlankSide): RenderRule => {
 		const { label, arm } = resolver.resolveFlank(gap.kind, side);
-		return whitespaceChoice(
-			{ fieldName: `${gap.slot}_${side}`, label, side, defaultArm: arm, arms: WHITESPACE_ARMS },
-			WHITESPACE_ARMS,
-			symbols
-		);
+		return whitespaceChoice({ fieldName: `${gap.slot}_${side}`, label, side, defaultArm: arm, arms }, arms, symbols);
 	};
 	return { type: SEQ, nonterminal: true, members: [part('start'), rule, part('end')] } as unknown as RenderRule;
 }
 
-function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols): RenderRule {
+function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolver, symbols: Symbols, arms: readonly SpacingArm[]): RenderRule {
 	const parts = labelsOf(gap).map(({ label, side }) =>
-		whitespaceChoice(
-			{ fieldName: siteKey(gap.slot, label), label, side, defaultArm: resolver.resolveSeparator(gap.kind, gap.slot, label), arms: SPACING_ARMS },
-			SPACING_ARMS,
-			symbols
-		)
+		whitespaceChoice({ fieldName: siteKey(gap.slot, label), label, side, defaultArm: resolver.resolveSeparator(gap.kind, gap.slot, label), arms }, arms, symbols)
 	);
 	const separator = bag(rule).separator;
 	const value: RenderRule =
@@ -338,7 +331,8 @@ function withSpacedSeparator(rule: RenderRule, gap: Gap, resolver: DefaultResolv
 
 export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyMap<string, string>): RenderRules {
 	const rules = config.nodeMap.normalizedRules ?? {};
-	const symbols = whitespaceSymbols(config.nodeMap, SPACING_ARMS);
+	const spacingArms = spacingArmsOf(config.nodeMap);
+	const symbols = whitespaceSymbols(config.nodeMap, spacingArms);
 	if (symbols === undefined) return { rules };
 	const gaps = collectGaps(config, rules);
 	const flankSyms = flankSymbols(config);
@@ -348,8 +342,8 @@ export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyM
 		const id = bag(r).id;
 		const gap = id === undefined ? undefined : gaps.get(id);
 		if (gap === undefined) return r;
-		const spaced = withSpacedSeparator(r, gap, resolver, symbols);
-		return flanked.get(gap.kind) === gap ? withFlanks(spaced, gap, resolver, flankSyms!) : spaced;
+		const spaced = withSpacedSeparator(r, gap, resolver, symbols, spacingArms);
+		return flanked.get(gap.kind) === gap ? withFlanks(spaced, gap, resolver, flankSyms!, whitespaceArmsOf(config.nodeMap)) : spaced;
 	};
 	const out: Record<string, RenderRule> = {};
 	for (const [kind, rule] of Object.entries(rules)) out[kind] = visit(walker.map(rule, visit));
@@ -382,7 +376,7 @@ export function validateIndentDepth(sites: readonly RuleSpacingSite[]): void {
 }
 
 function isAnyWhitespaceChoice(rule: RenderRule): boolean {
-	return isSpacingChoice(rule) || isWhitespaceChoice(rule, WHITESPACE_ARMS);
+	return isWhitespaceChoice(rule);
 }
 
 export function isSeamChoice(rule: RenderRule): boolean {
@@ -597,11 +591,12 @@ export function seamRenderRules(
 	config: RenderRulesConfig,
 	declared?: ReadonlyMap<string, string>
 ): RenderRules {
-	const symbols = whitespaceSymbols(config.nodeMap, SPACING_ARMS);
+	const spacingArms = spacingArmsOf(config.nodeMap);
+	const symbols = whitespaceSymbols(config.nodeMap, spacingArms);
 	if (symbols === undefined) return spaced;
 	const inlined = inlinedRuleNames(spaced.rules);
 	const flankSyms = flankSymbols(config);
-	const seams: SeamArms = flankSyms === undefined ? { arms: SPACING_ARMS, symbols } : { arms: WHITESPACE_ARMS, symbols: flankSyms };
+	const seams: SeamArms = flankSyms === undefined ? { arms: spacingArms, symbols } : { arms: whitespaceArmsOf(config.nodeMap), symbols: flankSyms };
 	const build = (): RenderRules => {
 		const resolver = new DefaultResolver(declared);
 		const out: Record<string, RenderRule> = {};
@@ -762,8 +757,8 @@ function seatedSites(
 			if (edge === undefined) continue;
 			const address = `${seat.slot}_${edge.address}`;
 			const arm = declared?.get(declaredKey(seat.kind, address));
-			if (arm !== undefined && !isWhitespaceArm(arm)) {
-				throw new Error(`options: ${publicKindName(seat.kind)}.${address} is '${arm}', not a whitespace arm`);
+			if (arm !== undefined && !edge.arms.includes(arm)) {
+				throw new Error(`options: ${publicKindName(seat.kind)}.${address} is '${arm}', not one of ${edge.arms.join(', ')}`);
 			}
 			out.push({
 				kind: seat.kind,

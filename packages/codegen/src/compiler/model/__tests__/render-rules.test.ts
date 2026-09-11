@@ -30,8 +30,10 @@ function nodeMapOf(
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
 	for (const kind of Object.keys(rules)) nodes.set(kind, { kind });
-	if (opts.whitespace !== false) for (const w of ['_tight', '_space', '_newline', '_blankline', '_indent', '_dedent']) nodes.set(w, { kind: w });
-	for (const [supertype, members] of Object.entries(opts.supertypes ?? {})) {
+	const whitespace = ['_tight', '_space', '_newline', '_blankline', '_indent', '_dedent'];
+	if (opts.whitespace !== false) for (const w of whitespace) nodes.set(w, { kind: w });
+	const supertypes = { _whitespace: opts.whitespace === false ? [] : whitespace, ...opts.supertypes };
+	for (const [supertype, members] of Object.entries(supertypes)) {
 		nodes.set(
 			supertype,
 			new AssembledSupertype(
@@ -131,7 +133,7 @@ describe('spaceRenderRules', () => {
 		expect(spacedSeparatorOf(out.rules.list!)).toBeUndefined();
 	});
 
-	it('returns the rules untouched when the grammar registers no whitespace kinds', () => {
+	it('returns the rules untouched when the whitespace supertype is empty', () => {
 		const rules = { list: commaList() };
 		const out = spaceRenderRules({ nodeMap: nodeMapOf(rules, { r1: 'items' }, { whitespace: false }), kindEntries });
 		expect(out.rules).toBe(rules);
@@ -415,7 +417,7 @@ describe('seamRenderRules', () => {
 		expect(() => run(token)).toThrow(/'lparen_before' on call is 'indent', not one of tight, space, newline/);
 	});
 
-	it('returns the rules untouched when the grammar registers no whitespace kinds', () => {
+	it('returns the rules untouched when the whitespace supertype is empty', () => {
 		const rules = { call: seq(sym('x'), str('(')) };
 		const config = { nodeMap: nodeMapOf(rules, {}, { whitespace: false }), kindEntries };
 		expect(seamRenderRules(spaceRenderRules(config), config).rules).toBe(rules);

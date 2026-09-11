@@ -757,7 +757,7 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 	const rootName = rootRuleName(rules);
 	if (rootName === undefined) return;
 	const reachable = new Set(computeReachableFromRoot({ rules, rootName }));
-	for (const keep of [...ctx.grammar.externals, ...ctx.grammar.extras]) {
+	for (const keep of [...ctx.grammar.externals, ...ctx.grammar.extras, ...ctx.supertypes]) {
 		for (const name of computeReachableFromRoot({ rules, rootName: keep })) reachable.add(name);
 	}
 	for (const name of Object.keys(rules)) {

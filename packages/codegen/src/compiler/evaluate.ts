@@ -359,6 +359,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	});
 
 	inheritBaseGrammarMetadata(opts, ctx);
+	const wireCtx = getWireContext(opts);
+	if (wireCtx) prunePlaceholderOrphans(rules, ctx, wireCtx);
 
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);
@@ -370,7 +372,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const optionsBlock = drainOptionsMetadata(opts);
 
 	synthesizeInlineAliasSources(rules, ctx);
-	const identified = buildRuleCatalog(rules, { provenanceByKind });
+	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
 
 	const grammarResult = {
@@ -641,7 +643,6 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 		}
 		applyPatternReplacement(rules, ctx, wireCtx);
 		applyVisibleExternalsRewrite(rules, { evaluateCtx: ctx, wireCtx });
-		prunePlaceholderOrphans(rules, wireCtx);
 	}
 }
 
@@ -662,8 +663,12 @@ function adoptFinalBaseRules(
 	}
 }
 
-function prunePlaceholderOrphans(rules: Record<string, Rule<'evaluate'>>, wireCtx: WireContext): void {
-	const protectedNames = new Set<string>(wireCtx.deposits.keys());
+function prunePlaceholderOrphans(
+	rules: Record<string, Rule<'evaluate'>>,
+	ctx: EvaluateCtx,
+	wireCtx: WireContext
+): void {
+	const protectedNames = new Set<string>([...wireCtx.deposits.keys(), ...ctx.sinks.supertypes]);
 	for (const name of collectUnreachableHiddenRules(rules, protectedNames)) {
 		delete rules[name];
 	}

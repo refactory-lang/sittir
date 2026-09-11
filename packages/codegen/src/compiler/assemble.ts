@@ -24,6 +24,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { subtypeParseNamesOf } from '../types/rule.ts';
+import { WHITESPACE_SUPERTYPE } from '../dsl/primitives/spacing.ts';
 import { isEnumChoiceRule, isHiddenRule } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
@@ -269,7 +270,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 		const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat().map((c) => c.kind));
 		for (const rule of Object.values(normalized.normalizedRules)) {
-			if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
+			if (rule.type !== SUPERTYPE || !rule.variantArms || rule.name === WHITESPACE_SUPERTYPE) continue;
 			for (const arm of rule.variantArms) variantChildKindsSet.add(arm);
 		}
 		const userFacingCtx: _UserFacingCtx = {

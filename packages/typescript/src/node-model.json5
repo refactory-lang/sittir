@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 423,
+  "nodeCount": 424,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -17,6 +17,7 @@
     "_shorthand_property_identifier_pattern",
     "_statement_identifier",
     "_tuple_type_member",
+    "_whitespace",
     "declaration",
     "expression",
     "lhs_expression",
@@ -4720,11 +4721,14 @@
     },
     {
       "kind": "_blankline",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Blankline",
-      "factoryName": "blankline",
       "irKey": "blankline",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "word": false,
+      "text": "\n\n"
     },
     {
       "kind": "_call_expression_call",
@@ -7053,11 +7057,14 @@
     },
     {
       "kind": "_newline",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Newline",
-      "factoryName": "newline",
       "irKey": "newline",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\" as const",
+      "word": false,
+      "text": "\n"
     },
     {
       "kind": "_number",
@@ -7276,11 +7283,14 @@
     },
     {
       "kind": "_space",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Space",
-      "factoryName": "space",
       "irKey": "space",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\" \" as const",
+      "word": false,
+      "text": " "
     },
     {
       "kind": "_statement_identifier",
@@ -7407,11 +7417,14 @@
     },
     {
       "kind": "_tight",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Tight",
-      "factoryName": "tight",
       "irKey": "tight",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\" as const",
+      "word": false,
+      "text": ""
     },
     {
       "kind": "_tuple_type_member",
@@ -8339,6 +8352,22 @@
         "name",
         "type",
         "value"
+      ]
+    },
+    {
+      "kind": "_whitespace",
+      "modelType": "supertype",
+      "typeName": "Whitespace",
+      "irKey": "whitespace",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_dedent",
+        "_indent",
+        "_newline",
+        "_space",
+        "_tight"
       ]
     },
     {

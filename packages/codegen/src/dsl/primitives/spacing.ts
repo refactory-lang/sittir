@@ -1,8 +1,8 @@
-export const SPACING_ARMS = ['tight', 'space', 'newline', 'blankline'] as const;
-export type SpacingArm = (typeof SPACING_ARMS)[number];
+export const WHITESPACE_SUPERTYPE = '_whitespace';
+export const DEPTH_ARMS = ['indent', 'dedent'] as const;
+export type SpacingArm = string;
+export type WhitespaceArm = string;
 export const SPACING_DEFAULT: SpacingArm = 'space';
-export const WHITESPACE_ARMS = ['tight', 'space', 'newline', 'blankline', 'indent', 'dedent'] as const;
-export type WhitespaceArm = (typeof WHITESPACE_ARMS)[number];
 export const FLANK_DEFAULT: WhitespaceArm = 'tight';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
@@ -67,13 +67,5 @@ const FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
 export function parseFlankAddress(key: string): { readonly kind: string; readonly side: FlankSide } | undefined {
 	const m = FLANK_ADDRESS.exec(key);
 	return m ? { kind: m[1]!, side: m[2] as FlankSide } : undefined;
-}
-
-export function isSpacingArm(value: string): value is SpacingArm {
-	return (SPACING_ARMS as readonly string[]).includes(value);
-}
-
-export function isWhitespaceArm(value: string): value is WhitespaceArm {
-	return (WHITESPACE_ARMS as readonly string[]).includes(value);
 }
 

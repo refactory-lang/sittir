@@ -736,7 +736,19 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'pattern_list',
 		'yield'
 	]),
-	keyword_identifier: new Set(['identifier'])
+	keyword_identifier: new Set(['identifier']),
+	_whitespace: new Set([
+		'_tight',
+		'tight',
+		'_space',
+		'space',
+		'_newline',
+		'newline',
+		'_blankline',
+		'blankline',
+		'_double_newline',
+		'double_newline'
+	])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -1072,8 +1084,8 @@ export function wrapImportFromStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '*': 121 },
-				{ 8: 121 }
+				{ '*': 122 },
+				{ 8: 122 }
 			),
 
 			moduleName() {
@@ -2127,8 +2139,8 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 					slotName: 'consequence',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_alternative: normalizeRepeatedWrapSlot(data._alternative, false, 'alternative', {
 				tree,
@@ -2183,8 +2195,8 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 					slotName: 'consequence',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			condition() {
@@ -2219,8 +2231,8 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			body() {
@@ -2333,8 +2345,8 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 					slotName: 'consequence',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			casePatterns() {
@@ -2393,8 +2405,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 				tree,
@@ -2454,8 +2466,8 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 				tree,
@@ -2500,8 +2512,8 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_except_clauses: normalizeRepeatedWrapSlot(data._except_clauses, false, 'except_clauses', {
 				tree,
@@ -2592,8 +2604,8 @@ export function wrapExceptClause(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'suite', span: (data as _NodeData).$span }
 				),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			starMarker() {
@@ -2632,8 +2644,8 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 					slotName: 'block',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			block() {
@@ -2676,8 +2688,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			asyncMarker() {
@@ -2813,8 +2825,8 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			asyncMarker() {
@@ -3160,8 +3172,8 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 316 },
-				{ 101: 316 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			name() {
@@ -3949,8 +3961,8 @@ export function wrapCasePattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 74, False: 75, None: 76, _: 264 },
-				{ 48: 264 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 
 			content() {
@@ -4075,8 +4087,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 					slotName: 'patterns',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 74, False: 75, None: 76, _: 264 },
-				{ 48: 264 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 
 			patterns() {
@@ -4171,8 +4183,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 74, False: 75, None: 76, _: 264 },
-				{ 48: 264 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -4235,8 +4247,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 74, False: 75, None: 76, _: 264 },
-				{ 48: 264 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 
 			name() {
@@ -7236,8 +7248,8 @@ export function wrapStringContent(
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '\\': 234 },
-				{ 66: 234 }
+				{ '\\': 235 },
+				{ 66: 235 }
 			),
 
 			contents() {
@@ -8927,9 +8939,9 @@ export function wrapComparisonOperatorComparator(
 					'>': 99,
 					'<>': 100,
 					in: 25,
-					'not in': 193,
+					'not in': 194,
 					is: 61,
-					'is not': 194
+					'is not': 195
 				}
 			),
 			_primary_expression: normalizeSingularWrapSlot(
@@ -9339,10 +9351,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.StringEnd]: (d) => ({ ...d, $type: TSKindId.StringEnd as const }),
 	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
 	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
-	[TSKindId.Except]: (d) => ({ ...d, $type: TSKindId.Except as const }),
-	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
-	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
-	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const })
+	[TSKindId.Except]: (d) => ({ ...d, $type: TSKindId.Except as const })
 };
 
 interface _WrapReturnByKindId {
@@ -9528,9 +9537,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
 	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
 	[TSKindId.Except]: _NodeData & { readonly $type: TSKindId.Except };
-	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
-	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
-	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

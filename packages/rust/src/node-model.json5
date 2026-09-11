@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 419,
+  "nodeCount": 420,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -20,6 +20,7 @@
     "_tokens",
     "_type",
     "_use_clause",
+    "_whitespace",
     "non_special_token"
   ],
   "externals": [
@@ -4670,11 +4671,14 @@
     },
     {
       "kind": "_blankline",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Blankline",
-      "factoryName": "blankline",
       "irKey": "blankline",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "word": false,
+      "text": "\n\n"
     },
     {
       "kind": "_block_comment_content",
@@ -6409,11 +6413,14 @@
     },
     {
       "kind": "_newline",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Newline",
-      "factoryName": "newline",
       "irKey": "newline",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\" as const",
+      "word": false,
+      "text": "\n"
     },
     {
       "kind": "_non_delim_token",
@@ -7354,11 +7361,14 @@
     },
     {
       "kind": "_space",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Space",
-      "factoryName": "space",
       "irKey": "space",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\" \" as const",
+      "word": false,
+      "text": " "
     },
     {
       "kind": "_statement",
@@ -7564,11 +7574,14 @@
     },
     {
       "kind": "_tight",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Tight",
-      "factoryName": "tight",
       "irKey": "tight",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\" as const",
+      "word": false,
+      "text": ""
     },
     {
       "kind": "_token_keywords",
@@ -8618,6 +8631,22 @@
       "factoryShape": "elements",
       "factoryFields": [
         "where_predicate"
+      ]
+    },
+    {
+      "kind": "_whitespace",
+      "modelType": "supertype",
+      "typeName": "Whitespace",
+      "irKey": "whitespace",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_dedent",
+        "_indent",
+        "_newline",
+        "_space",
+        "_tight"
       ]
     },
     {

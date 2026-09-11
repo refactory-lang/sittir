@@ -34,6 +34,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "TokenPatternKind": "object",
   "TokensKind": "object",
   "UseClauseKind": "object",
+  "WhitespaceKind": "object",
   "_COMPOUND_ASSIGNMENT_EXPR_OPERATORS": "array",
   "_LiteralKind": "object",
   "_NonSpecialTokenKind": "object",

@@ -40,6 +40,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "TSKindId": "object",
   "TupleTypeMemberKind": "object",
   "TypeKind": "object",
+  "WhitespaceKind": "object",
   "_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS": "array",
   "_IdentifierKind": "object",
   "_KINDS": "array",

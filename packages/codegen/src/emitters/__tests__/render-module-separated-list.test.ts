@@ -18,6 +18,7 @@ import { preference } from '../../dsl/primitives/preference.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
+	AssembledSupertype,
 	AssembledList,
 	type AssembledNode,
 	type SeparatedListElementRule
@@ -46,6 +47,7 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('_whitespace', new AssembledSupertype('_whitespace', { type: 'SUPERTYPE', name: '_whitespace', subtypes: [] } as never, []));
 	return makeNodeMapWith(nodes);
 }
 
@@ -76,6 +78,7 @@ function makeBranchWithListFieldNodeMap() {
 	const parentRender = flatten(parentRule);
 	nodes.set('branch_with_list_field', new AssembledBranch('branch_with_list_field', parentRender, parentRender));
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('_whitespace', new AssembledSupertype('_whitespace', { type: 'SUPERTYPE', name: '_whitespace', subtypes: [] } as never, []));
 	return makeNodeMapWith(nodes);
 }
 

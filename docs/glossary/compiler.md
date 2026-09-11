@@ -691,7 +691,9 @@ parents.
  *       (`ctx.aliasSourceKinds`), and
  *   (d) hidden variant-child kinds from `polymorphVariants` that the slot
  *       walker never reaches when the parent is a supertype
- *       (`ctx.variantChildKinds`).
+ *       (`ctx.variantChildKinds`) — except the arms of the `_whitespace`
+ *       supertype: a whitespace kind is chosen through an options address,
+ *       never authored, so it has no IR builder, coercion or factory entry.
  *
  * Per principle #14, `userFacing` is cross-node state (whether THIS hidden
  * kind appears in ANOTHER node's slot, or in the `polymorphVariants` list),
@@ -2595,7 +2597,9 @@ parents.
  *
  * Skips rules that DID receive a deposit (they're real synthesized
  * content). Skips rules whose body is non-blank (author-declared hidden
- * helpers are legitimate and can have any body).
+ * helpers are legitimate and can have any body). Runs once the metadata
+ * callbacks have been evaluated, because a declared supertype is a root
+ * too: `_whitespace` is referenced by nothing but the `supertypes:` list.
  */
 ```
 
@@ -3000,35 +3004,7 @@ parents.
  */
 ```
 
-### `packages/codegen/src/compiler/rule-catalog.ts::computeReachableRuleNames`
-
-```text
-/**
- * The set of rule names transitively reachable from any VISIBLE (non-`_`)
- * rule — visible kinds are treated as roots unconditionally (they are, by
- * construction, the grammar's directly-nameable surface), then every SYMBOL
- * reference reached by walking their bodies (via `RuleWalker.foldDeep`,
- * which descends through SEQ/CHOICE/FIELD/ALIAS/... children AND through
- * SYMBOL refs themselves) is added too. A HIDDEN rule name absent from this
- * set can never be produced by any live grammar production — nothing
- * visible, directly or transitively, refers to it.
- *
- * Used to gate `buildRuleCatalog`'s catalog-identity assignment (see
- * below): a cascaded/nested `variant()` split can leave an enrich raw
- * clause-hoist mint behind as exactly this kind of orphan once a later
- * split repoints the live alias elsewhere (its content symbol name simply
- * stops appearing in anything reachable) — confirmed concretely for
- * typescript's `_export_statement_group2`/`_export_statement_group5`, see
- * docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan every
- * `rules` map entry..." entry. This does NOT touch the raw `rules` map
- * (tree-sitter's own `grammar()` call still sees every declared rule name,
- * so nothing about the compiled parser changes) — it only decides which
- * kinds sittir's OWN downstream modeling (assemble/derive/emit) treats as
- * real, materializable grammar structure.
- */
-```
-
-#### body
+### body
 
 ```text
 // A hidden-only grammar has no visible roots, so an empty seed set would
@@ -3641,9 +3617,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 ```text
 /** Drops every rule not reachable from the grammar's root, nor from any
- *  external or extra (each of those is its own reachability root — an
- *  external/extra can be referenced only indirectly, e.g. through a
- *  dialect-only production). Dialect filtering: a rule that exists in the
+ *  external, extra or declared supertype (each of those is its own
+ *  reachability root — an external/extra can be referenced only
+ *  indirectly, e.g. through a dialect-only production, and the
+ *  `_whitespace` supertype by nothing at all). Dialect filtering: a rule that exists in the
  *  raw grammar but only serves a variant the current dialect never reaches
  *  is deleted here, before any later pass's raw-rule collectors run, so
  *  those collectors only ever see the pruned (reachable) set. */
@@ -6490,7 +6467,10 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ### `packages/codegen/src/compiler/rule-catalog.ts::BuildRuleCatalogCtx`
 
 ```text
-/** Ctx for {@link buildRuleCatalog} — just the provenance map it needs. */
+/** Ctx for {@link buildRuleCatalog}: the provenance map, and `roots`, the
+ *  names the grammar's machinery references outside rule bodies (evaluate
+ *  passes its declared supertypes) that keep a hidden rule alive even when
+ *  no visible rule reaches it — `_whitespace` has no reference anywhere. */
 ```
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::AttachReferenceRuleIdsCtx`
@@ -9024,8 +9004,12 @@ source, one derivation.
 // (link/assemble) iterate `Object.entries`/keys of the map they
 // receive, not `ruleCatalog.rootsByKind`, so a pass-through-but-
 // unidentified entry would still reach template/factory emission as
-// if it were live grammar structure. See `computeReachableRuleNames`
-// above. The RAW `rules` map this function was CALLED with (and
+// if it were live grammar structure. Reachability is the shared
+// `collectUnreachableHiddenRules` walk from every visible rule and every
+// `ctx.roots` name, the same walk evaluate and link prune with; a grammar
+// with no visible rule at all keeps everything, since nothing is orphaned
+// relative to a nonexistent root set. The RAW `rules` map this function
+// was CALLED with (and
 // hence tree-sitter's own `grammar()`/compiled parser) is untouched —
 // this only prunes sittir's OWN downstream (assemble/derive/emit)
 // view.

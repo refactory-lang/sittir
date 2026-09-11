@@ -33,6 +33,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "TREE_SITTER_KIND_ID_JSON": "array",
   "TSFieldId": "object",
   "TSKindId": "object",
+  "WhitespaceKind": "object",
   "_AUGMENTED_ASSIGNMENT_OPERATORS": "array",
   "_UNARY_OPERATOR_OPERATORS": "array",
   "_fromMap": "object",

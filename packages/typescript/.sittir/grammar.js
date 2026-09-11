@@ -5543,6 +5543,7 @@ var grammar_sittir_default = grammar(
         }
       },
       externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+      supertypes: ($, previous) => [...previous ?? [], $._whitespace],
       visibleExternals: (_$) => ({
         _automatic_semicolon: string("\n"),
         _function_signature_automatic_semicolon: string("\n"),
@@ -5560,6 +5561,7 @@ var grammar_sittir_default = grammar(
         string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
       },
       rules: {
+        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
         // `template_substitution` sits only in string-interior contexts
         // (template_string / template_literal_type elements), where any
         // preceding characters are absorbed into a fragment token — no

@@ -48,11 +48,11 @@ describe('renderOptionsModule', () => {
 		const sites = [terminator('return_statement'), spacing('formal_parameters', 'elements', 'comma_separator_space_after'), delimiter];
 		const src = renderOptionsModule({ spacingType, addresses: deriveAddressTables(sites, kindEntries, armType, new Map()) });
 		expect(src).toContain("import type { Delimiter, TSKindId } from './types.js';");
-		expect(src).toContain(`export type Spacing = ${spacingType};`);
-		expect(src).toContain(`export type Whitespace = ${spacingType};`);
+		expect(src).toContain(`export type SpacingArm = ${spacingType};`);
+		expect(src).toContain(`export type WhitespaceArm = ${spacingType};`);
 		expect(src).toContain("export type AddressRoot = 'formal_parameters' | 'return_statement';");
 		expect(src).toContain("readonly 'formal_parameters/elements/delimiter': Delimiter.Trailing;");
-		expect(src).toContain("readonly 'formal_parameters/elements/separator/,/after': Spacing;");
+		expect(src).toContain("readonly 'formal_parameters/elements/separator/,/after': SpacingArm;");
 		expect(src).toContain("readonly 'return_statement/terminator/statement_terminator': TSKindId.automatic_semicolon | TSKindId.semi;");
 		expect(src).toContain('export type Options = AddressedOptions & { readonly indent?: string };');
 		expect(src).not.toMatch(/SpacingLabel|KindSpacing|SitesOf|Members|EdgeKind|OPTION_CATALOG|export const/);
@@ -64,8 +64,8 @@ describe('renderOptionsModule', () => {
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
 		const edge: SitePreference = { kind: 'block', slot: 'block', address: 'block_before', label: 'block_before', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' };
 		const src = renderOptionsModule({ spacingType, whitespaceType, addresses: deriveAddressTables([edge], kindEntries, armType, new Map()) });
-		expect(src).toContain(`export type Whitespace = ${whitespaceType};`);
-		expect(src).toContain("readonly 'block/before': Whitespace;");
+		expect(src).toContain(`export type WhitespaceArm = ${whitespaceType};`);
+		expect(src).toContain("readonly 'block/before': WhitespaceArm;");
 	});
 });
 
@@ -107,7 +107,7 @@ describe('deriveAddressTables', () => {
 		});
 		expect(src).toContain("export type AddressRoot = 'block';");
 		expect(src).toContain("export interface AddressBranch {\n\treadonly block: '{';\n\treadonly 'block/{': 'after';\n}");
-		expect(src).toContain("export interface AddressLeaf {\n\treadonly 'block/{/after': Spacing;\n}");
+		expect(src).toContain("export interface AddressLeaf {\n\treadonly 'block/{/after': SpacingArm;\n}");
 		expect(src).toContain('export type AddressedOptions = { readonly [K in AddressRoot]?: AddressNode1<K> };');
 		expect(src).toContain('type AddressNode2<P extends string> = P extends keyof AddressBranch');
 		expect(src).not.toContain('AddressNode3<');

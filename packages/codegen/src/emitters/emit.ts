@@ -102,7 +102,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 	const rulesConfig = kindEntries
-		? { nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals) }
+		? { nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals, nodeMap) }
 		: undefined;
 	const resolvedRules = rulesConfig
 		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))

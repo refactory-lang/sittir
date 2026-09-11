@@ -6,8 +6,6 @@ import { isPreference, type PreferencePlaceholder } from '../primitives/preferen
 import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
-	isSpacingArm,
-	isWhitespaceArm,
 	parseFlankAddress,
 	parseSeamLabel,
 	DELIMITER_LABEL,
@@ -15,9 +13,7 @@ import {
 	SEPARATOR_LABEL,
 	isDelimiterArm,
 	parseSpacingLabel,
-	siteKey,
-	SPACING_ARMS,
-	WHITESPACE_ARMS
+	siteKey
 } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';

@@ -7,8 +7,8 @@ Nothing pushed, no PR.
 
 | | |
 | --- | --- |
-| done | sibling gaps seat through supertypes and polymorphs; a whitespace-only token coalesces with its seams; `options.ts` is the mapped address type alone; `RenderDefaults` is gone |
-| commits | `abb52b860` step 2 + whitespace token · `5eb71fe14` tsconfig · `fb2b98e81` step 3 · step 4 is the commit that adds this handoff |
+| done | sibling gaps seat through supertypes and polymorphs; a whitespace-only token coalesces with its seams; `options.ts` is the mapped address type alone; `RenderDefaults` is gone; the whitespace vocabulary is the grammar's `_whitespace` supertype (python adds `double_newline`) |
+| commits | `abb52b860` step 2 + whitespace token · `5eb71fe14` tsconfig · `fb2b98e81` step 3 · `7db5e094f` step 4 · the whitespace supertype is the commit that amends this handoff |
 | next | the render-options plan's remaining items; typescript/python grammars are still `@ts-nocheck` |
 
 Gates on every commit: `validate:native` identical to the previous runs — rust
@@ -81,6 +81,43 @@ default maps in `collectSitePreferences` are gone, and the emitters' signatures
 no longer carry it. Generated output was byte-identical across the removal,
 manifests and the bundled `grammar.js` aside.
 
+**The whitespace vocabulary belongs to the grammar.** `SPACING_ARMS` and
+`WHITESPACE_ARMS` are gone. Each grammar declares a hidden supertype
+`_whitespace` — listed under `supertypes:` and written as a choice over its
+whitespace externals — and `compiler/model/whitespace-arms.ts` reads every
+arm list from it: `whitespaceArmsOf` (all members, each named by the visible
+alias `visibleExternals` registers) for flanks, edges and seams,
+`spacingArmsOf` (less `indent`/`dedent`, `DEPTH_ARMS`) for separator gaps.
+The generated `SpacingArm`/`WhitespaceArm` unions, `whitespaceTextOf` and the
+options-block arm checks all derive from the same list. Python adds
+`_double_newline` (`string('\n\n\n')`) and its `module` rule prefers it
+after every top-level `function_definition`, `class_definition` and
+`decorated_definition`; the writer's `seam_rank` is now the newline count,
+so the widest run wins without a named table. The example renders two blank
+lines between the class and the function that follows it.
+
+Getting the supertype through the compiler took four fixes. A hidden rule
+nothing references is pruned by **three** reachability walks — evaluate's
+`prunePlaceholderOrphans` (now run after the metadata callbacks, with the
+declared supertypes protected), the rule catalog (`buildRuleCatalog` now
+takes `roots` and shares `util/reachable-rules.ts` instead of its own walk)
+and link's `pruneUnreachableRules` (`ctx.supertypes` join externals and
+extras as roots). tree-sitter accepts the supertype but leaves it out of
+`node-types.json`, since its members never appear in a parse; the model
+builds it from the rule. Python's members are all fixed-text tokens (its
+indent and dedent are role externals stripped at link), so
+`emitSupertypeUnionDeclarations` now counts token members, whose kind-id
+aliases follow — `Whitespace` in `types.ts` is then the same kind-id union
+`options.ts` has as `WhitespaceArm` (renamed: the package index re-exports
+both modules, and the two names collided). Under the supertype the whitespace kinds reclassify from
+visible `pattern` leaves with `buildTight(text)` factories to hidden
+parameterless tokens; no other supertype's union changed. Link also stamps
+the supertype's aliased members as `variantArms`, which `markUserFacing`
+reads as variant children — that put `ir.indent`, `ir.dedent` and their
+coercions on the IR surface and tripped the examples-verify builder
+ratchet; the whitespace supertype's arms are now excluded there, since a
+whitespace kind is chosen by an options address and never authored.
+
 ## Facts worth keeping
 
 - An `options:` block addresses a kind by its **public** name: `expression`,
@@ -95,6 +132,9 @@ manifests and the bundled `grammar.js` aside.
   continuing with cached dist" line is what that error looks like.
 - `git commit -- $files` with a newline-separated variable is one pathspec;
   list the paths inline.
+- An empty `_whitespace` supertype means the grammar renders no whitespace:
+  `whitespaceSymbols` returns nothing and both spacing passes hand the
+  rules back untouched. A missing supertype is a build error.
 
 ## Commands
 

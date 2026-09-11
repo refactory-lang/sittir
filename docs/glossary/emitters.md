@@ -6483,6 +6483,13 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * @param nodeMap - The assembled node map.
  * @param generatedTypes - Mutable set of emitted type names; updated in place.
  * @throws {Error} If a supertype has zero subtypes or a subtype is absent from the map.
+ *
+ * A member is written when its type exists: an interface emitted above, or
+ * a token, whose kind-id alias `collectAndEmitTokenTypeAliases` writes
+ * next (membership in a supertype references it). A supertype of nothing
+ * but tokens — python's `_whitespace`, whose members are all fixed-text
+ * externals — is therefore a union of kind ids, the same union `options.ts`
+ * types its whitespace sites with.
  */
 ```
 
@@ -14757,9 +14764,12 @@ ride in the erased-helper block for the splice methods.
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
 Source text for `options.ts`: the type-only import of the enums the sites
-name, `Spacing` (the three whitespace kind ids a separator admits),
-`Whitespace` (the five a seam, edge or flank admits when the grammar
-renders indentation, the same three otherwise), the address tables and
+name, `SpacingArm` (the kind ids of the grammar's `_whitespace` members a
+separator admits, `spacingArmsOf`), `WhitespaceArm` (every member, including
+`indent` and `dedent`, which a seam, edge or flank admits when the grammar
+renders indentation; `whitespaceArmsOf`) — named for the arm they type, since
+`types.ts` already exports the supertype's own `Whitespace` union and the
+package index re-exports both modules — the address tables and
 the `AddressedOptions` type mapped over them (`addressLines`), and
 `Options`, which is that mapped type plus `indent`. Every site is reached
 by its address alone, nested as the path is written; there is no flat
@@ -14768,9 +14778,10 @@ an options object live in the render crate's path table.
 
 ### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
 
-What the module is written from: the spacing and whitespace arm types, so
-a leaf whose arms are exactly one of them is written as `Spacing` or
-`Whitespace` rather than spelled out, and the address tables.
+What the module is written from: the spacing and whitespace arm lists read
+off the grammar's `_whitespace` supertype, so a leaf whose arms are exactly
+one of them is written as `SpacingArm` or `WhitespaceArm` rather than spelled
+out, and the address tables.
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 

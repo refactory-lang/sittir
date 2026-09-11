@@ -34,6 +34,7 @@ export default grammar(
 				[$._attributed_argument]
 			],
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			visibleExternals: (_$) => ({
 				_tight: string(''),
 				_space: string(' '),
@@ -446,6 +447,7 @@ export default grammar(
 				impl_item: { '3/0/0/0': arm.default }
 			},
 			rules: {
+				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
 				// tuple_type's separated list realized as its own kind — the
 				// delimiter is a fact of the list, so the list is a top-level
 				// rule carrying it (hidden rule + visible alias, matching the

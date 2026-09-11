@@ -19,6 +19,7 @@ import type {
 	TokenPattern,
 	Tokens,
 	UseClause,
+	Whitespace,
 	_Literal,
 	_NonSpecialToken,
 	_Path,
@@ -536,6 +537,7 @@ export interface IsGuards {
 	literal(v: { readonly $type: string | number } | number): v is _Literal;
 	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern;
 	path(v: { readonly $type: string | number } | number): v is _Path;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -813,6 +815,7 @@ export interface AssertGuards {
 	literal(v: { readonly $type: string | number } | number): asserts v is _Literal;
 	literalPattern(v: { readonly $type: string | number } | number): asserts v is LiteralPattern;
 	path(v: { readonly $type: string | number } | number): asserts v is _Path;
+	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -858,6 +861,7 @@ const _supertype_pattern_ids = new Set<number>([
 const _supertype_literal_ids = new Set<number>([318, 319, 121, 320, 119, 151]);
 const _supertype_literalPattern_ids = new Set<number>([318, 319, 121, 320, 119, 151, 317]);
 const _supertype_path_ids = new Set<number>([132, 1, 135, 133, 134, 250]);
+const _supertype_whitespace_ids = new Set<number>([161, 162]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),
@@ -1040,7 +1044,8 @@ export const is = {
 	pattern: _sg(_supertype_pattern_ids),
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
-	path: _sg(_supertype_path_ids)
+	path: _sg(_supertype_path_ids),
+	whitespace: _sg(_supertype_whitespace_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1258,7 +1263,8 @@ export const assert = {
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
 	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
-	path: _makeAssert('path', is.path as _AnyGuard)
+	path: _makeAssert('path', is.path as _AnyGuard),
+	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

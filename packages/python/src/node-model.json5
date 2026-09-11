@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 279,
+  "nodeCount": 281,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -13,6 +13,7 @@
     "_simple_pattern",
     "_simple_statement",
     "_statement",
+    "_whitespace",
     "expression",
     "keyword_identifier",
     "parameter",
@@ -24,6 +25,7 @@
     "]",
     "_blankline",
     "_dedent",
+    "_double_newline",
     "_indent",
     "_newline",
     "_space",
@@ -2936,11 +2938,14 @@
     },
     {
       "kind": "_blankline",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Blankline",
-      "factoryName": "blankline",
       "irKey": "blankline",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\" as const",
+      "word": false,
+      "text": "\n\n"
     },
     {
       "kind": "_case_patterns",
@@ -3176,6 +3181,17 @@
       "factoryFields": [
         "element"
       ]
+    },
+    {
+      "kind": "_double_newline",
+      "modelType": "token",
+      "typeName": "DoubleNewline",
+      "irKey": "doubleNewline",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\\n\\n\" as const",
+      "word": false,
+      "text": "\n\n\n"
     },
     {
       "kind": "_except_clause_exception",
@@ -4142,11 +4158,14 @@
     },
     {
       "kind": "_space",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Space",
-      "factoryName": "space",
       "irKey": "space",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\" \" as const",
+      "word": false,
+      "text": " "
     },
     {
       "kind": "_statement",
@@ -4313,11 +4332,14 @@
     },
     {
       "kind": "_tight",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Tight",
-      "factoryName": "tight",
       "irKey": "tight",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\" as const",
+      "word": false,
+      "text": ""
     },
     {
       "kind": "_types",
@@ -4354,6 +4376,21 @@
         "~"
       ],
       "factoryShape": "text"
+    },
+    {
+      "kind": "_whitespace",
+      "modelType": "supertype",
+      "typeName": "Whitespace",
+      "irKey": "whitespace",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "_blankline",
+        "_double_newline",
+        "_newline",
+        "_space",
+        "_tight"
+      ]
     },
     {
       "kind": "_wildcard_pattern",

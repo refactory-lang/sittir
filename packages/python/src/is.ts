@@ -20,7 +20,8 @@ import type {
 	RightHandSide,
 	SimplePattern,
 	SimpleStatement,
-	Statement
+	Statement,
+	Whitespace
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -437,6 +438,7 @@ export interface IsGuards {
 	rightHandSide(v: { readonly $type: string | number } | number): v is RightHandSide;
 	fExpression(v: { readonly $type: string | number } | number): v is FExpression;
 	keywordIdentifier(v: { readonly $type: string | number } | number): v is KeywordIdentifier;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -661,6 +663,7 @@ export interface AssertGuards {
 	rightHandSide(v: { readonly $type: string | number } | number): asserts v is RightHandSide;
 	fExpression(v: { readonly $type: string | number } | number): asserts v is FExpression;
 	keywordIdentifier(v: { readonly $type: string | number } | number): asserts v is KeywordIdentifier;
+	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -671,26 +674,26 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_statement_ids = new Set<number>([113, 134, 140, 141, 142, 145, 148, 157, 161, 137]);
+const _supertype_statement_ids = new Set<number>([114, 135, 141, 142, 143, 146, 149, 158, 162, 138]);
 const _supertype_simpleStatement_ids = new Set<number>([
-	117, 114, 118, 122, 124, 125, 128, 129, 130, 131, 132, 133, 153, 154, 155, 156
+	118, 115, 119, 123, 125, 126, 129, 130, 131, 132, 133, 134, 154, 155, 156, 157
 ]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
-const _supertype_expressions_ids = new Set<number>([164]);
-const _supertype_compoundStatement_ids = new Set<number>([134, 140, 141, 142, 145, 148, 157, 161, 137]);
+const _supertype_expressions_ids = new Set<number>([165]);
+const _supertype_compoundStatement_ids = new Set<number>([135, 141, 142, 143, 146, 149, 158, 162, 138]);
 const _supertype_simplePattern_ids = new Set<number>([
-	173, 172, 168, 256, 255, 169, 230, 229, 74, 75, 76, 265, 174, 165, 264
+	174, 173, 169, 257, 256, 170, 231, 230, 74, 75, 76, 266, 175, 166, 265
 ]);
-const _supertype_parameter_ids = new Set<number>([1, 207, 181, 182, 183, 179, 238, 237, 184]);
-const _supertype_pattern_ids = new Set<number>([1, 204, 203, 183, 179, 180]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([197]);
-const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 228, 126, 185]);
+const _supertype_parameter_ids = new Set<number>([1, 208, 182, 183, 184, 180, 239, 238, 185]);
+const _supertype_pattern_ids = new Set<number>([1, 205, 204, 184, 180, 181]);
+const _supertype_expressionWithinForInClause_ids = new Set<number>([198]);
+const _supertype_expression_ids = new Set<number>([196, 190, 191, 197, 229, 127, 186]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	236, 191, 1, 230, 229, 69, 70, 74, 75, 76, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 224, 223, 64, 183
+	237, 192, 1, 231, 230, 69, 70, 74, 75, 76, 193, 204, 205, 207, 216, 221, 219, 222, 217, 223, 218, 225, 224, 64, 184
 ]);
-const _supertype_leftHandSide_ids = new Set<number>([200]);
-const _supertype_rightHandSide_ids = new Set<number>([164, 198, 199, 200, 202]);
-const _supertype_fExpression_ids = new Set<number>([164, 200, 202]);
+const _supertype_leftHandSide_ids = new Set<number>([201]);
+const _supertype_rightHandSide_ids = new Set<number>([165, 199, 200, 201, 203]);
+const _supertype_fExpression_ids = new Set<number>([165, 201, 203]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 
 export const is = {
@@ -841,7 +844,8 @@ export const is = {
 	leftHandSide: _sg(_supertype_leftHandSide_ids),
 	rightHandSide: _sg(_supertype_rightHandSide_ids),
 	fExpression: _sg(_supertype_fExpression_ids),
-	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids)
+	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
+	whitespace: _sg(new Set<number>())
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1014,7 +1018,8 @@ export const assert = {
 	leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
 	rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
 	fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
-	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard)
+	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
+	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

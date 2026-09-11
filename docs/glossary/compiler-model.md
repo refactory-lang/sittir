@@ -3460,7 +3460,10 @@ a separator of any other shape, is a build error naming the list.
  * flank arms. Every choice's arms carry the preference label and the
  * resolved default exactly as a declared choice does, so sites, transport
  * fields, the native fill and the list view are all reads of the rule. A
- * grammar that registers no whitespace kinds gets its rules back unchanged.
+ * grammar whose `_whitespace` supertype is empty gets its rules back
+ * unchanged; the arms of every separator gap are that supertype's members
+ * less `indent`/`dedent` (`spacingArmsOf`), the arms of a flank all of them
+ * (`whitespaceArmsOf`).
  * Assemble and the factory surface never see the injected choices. The
  * declared defaults are not validated here: `seamRenderRules`, the pass
  * that follows the seam-stamping dry run, validates them once over every
@@ -3741,12 +3744,13 @@ labels tell them apart, since a flank label never parses as a seam label.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`
 
-```text
-/** The render text of each whitespace kind a grammar declares through
- *  `visibleExternals`: a string for `_tight`, `_space` and `_newline`, the
- *  core writer's indent or dedent mark constant for `_indent` and `_dedent`.
- *  Flanks are injected only when both indentation kinds are declared. */
-```
+The render text of each member of the grammar's `_whitespace` supertype
+(`whitespaceArmsOf`) that `visibleExternals` declares: a string for a
+`string(...)` external (`_tight` is `''`, python's `_double_newline` is
+`'\n\n\n'`), the core writer's indent or dedent mark constant for `_indent`
+and `_dedent`. A visible external outside the supertype is not whitespace
+and is skipped. Flanks are injected only when both indentation kinds are
+declared.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
 
@@ -3821,6 +3825,21 @@ address spells, so a `(supertype)` segment can be compared with a site's
 concrete kind without either side stripping underscores at the comparison.
 Built once per caller and threaded into `matchAddress` and `resolveBindings`
 rather than derived inside them, so the membership has one source.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
+
+The whitespace kinds a grammar renders, in declaration order: the members
+of its `_whitespace` supertype (`WHITESPACE_SUPERTYPE`), each named by the
+visible alias `visibleExternals` registers for it (`tight`, `space`,
+`newline`, `blankline`, `indent`, `dedent`, python's `double_newline`). A
+grammar without the supertype is an error: nothing in codegen lists
+whitespace kinds by name, so every spacing site, `options.ts` union and
+whitespace text is read from here.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::spacingArmsOf`
+
+`whitespaceArmsOf` less the depth movers (`DEPTH_ARMS`): the arms a
+separator gap admits, where moving depth has no meaning.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
 

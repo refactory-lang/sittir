@@ -7478,62 +7478,6 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Built {
 	);
 }
 
-export function buildTight(text: string): T.Tight.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_tight: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Tight as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildSpace(text: string): T.Space.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_space: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Space as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildNewline(text: string): T.Newline.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_newline: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Newline as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildBlankline(text: string): T.Blankline.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_blankline: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Blankline as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildIndent(text: string): T.Indent.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_indent: text must be non-empty`);
@@ -7800,10 +7744,6 @@ export type FluentKindMap = {
 	_block_comment_content: T.BlockCommentContent;
 	_line_doc_content: T.LineDocContent;
 	_error_sentinel: T.ErrorSentinel;
-	_tight: T.Tight;
-	_space: T.Space;
-	_newline: T.Newline;
-	_blankline: T.Blankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 };
@@ -8046,10 +7986,6 @@ export const _factoryMap = {
 	_block_comment_content: buildBlockCommentContent,
 	_line_doc_content: buildLineDocContent,
 	_error_sentinel: buildErrorSentinel,
-	_tight: buildTight,
-	_space: buildSpace,
-	_newline: buildNewline,
-	_blankline: buildBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent
 } as const;

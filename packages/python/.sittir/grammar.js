@@ -5006,8 +5006,9 @@ var grammar_sittir_default = grammar(
         role($._indent, "indent");
         role($._dedent, "dedent");
         role($._newline, "newline");
-        return [...prev ?? [], $._tight, $._space, $._blankline];
+        return [...prev ?? [], $._tight, $._space, $._blankline, $._double_newline];
       },
+      supertypes: ($, previous) => [...previous ?? [], $._whitespace],
       expectTestFailures: {
         "parenthesized_list_splat.parenthesizedListSplat": "dummy stub \u2014 the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects"
       },
@@ -5022,6 +5023,7 @@ var grammar_sittir_default = grammar(
       visibleExternals: (_$) => ({
         _newline: string("\n"),
         _blankline: string("\n\n"),
+        _double_newline: string("\n\n\n"),
         _tight: string(""),
         _space: string(" ")
       }),
@@ -5067,9 +5069,9 @@ var grammar_sittir_default = grammar(
         gap: { separator: preference("tight") },
         module: {
           "statements:/separator": preference("tight"),
-          "statements:/(function_definition)/after": preference("blankline"),
-          "statements:/(class_definition)/after": preference("blankline"),
-          "statements:/(decorated_definition)/after": preference("blankline")
+          "statements:/(function_definition)/after": preference("double_newline"),
+          "statements:/(class_definition)/after": preference("double_newline"),
+          "statements:/(decorated_definition)/after": preference("double_newline")
         },
         _: {
           '_/separator/","/before': preference("tight"),
@@ -5249,6 +5251,7 @@ var grammar_sittir_default = grammar(
         _suite: { 0: variant("inline"), 1: variant("block"), 2: variant("empty") }
       },
       rules: {
+        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_newline, $._indent, $._dedent),
         // Base grammar aliases this arm (`alias($.list_splat_pattern,
         // $.list_splat)`), making primary_expression and list_splat_pattern
         // parse-kind-non-injective; stripping the alias below (needed so

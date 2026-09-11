@@ -144,23 +144,17 @@ pub const DEFAULT_INDENT: &str = "    ";
 
 /// A seam mark's payload, ranked by width so two consecutive payloads
 /// coalesce to the wider: no whitespace, then a run of spaces, then a run
-/// breaking the line once, then a run leaving a blank line behind it.
-/// A blank line outranks a plain newline so a separator asking for one
-/// survives meeting a kind edge that asks only to break the line.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-enum SeamRank {
-    Tight,
-    Space,
-    Newline,
-    BlankLine,
-}
+/// by how many lines it breaks. A blank line outranks a plain newline, and
+/// two blank lines outrank one, so a separator asking for more survives
+/// meeting a kind edge that asks for less. The grammar's whitespace kinds
+/// decide which runs exist; the writer only orders them.
+type SeamRank = usize;
 
 fn seam_rank(text: &str) -> SeamRank {
     match text.matches('\n').count() {
-        0 if text.is_empty() => SeamRank::Tight,
-        0 => SeamRank::Space,
-        1 => SeamRank::Newline,
-        _ => SeamRank::BlankLine,
+        0 if text.is_empty() => 0,
+        0 => 1,
+        breaks => 1 + breaks,
     }
 }
 

@@ -3163,6 +3163,15 @@ export const enum _PathKind {
 	ScopedIdentifier = 'scoped_identifier'
 }
 
+export const enum WhitespaceKind {
+	Tight = '_tight',
+	Space = '_space',
+	Newline = '_newline',
+	Blankline = '_blankline',
+	Indent = '_indent',
+	Dedent = '_dedent'
+}
+
 export const enum NonSpecialTokenKind {
 	_Literal = '_literal',
 	StringLiteral = 'string_literal',
@@ -9711,10 +9720,6 @@ export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
 export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
-export type Tight = Terminal<TSKindId.Tight, string>;
-export type Space = Terminal<TSKindId.Space, string>;
-export type Newline = Terminal<TSKindId.Newline, string>;
-export type Blankline = Terminal<TSKindId.Blankline, string>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
 
@@ -10192,18 +10197,6 @@ export interface LineDocContentTree extends AnyTreeNode {
 }
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
-}
-export interface TightTree extends AnyTreeNode {
-	readonly type: '_tight';
-}
-export interface SpaceTree extends AnyTreeNode {
-	readonly type: '_space';
-}
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
-export interface BlanklineTree extends AnyTreeNode {
-	readonly type: '_blankline';
 }
 export interface IndentTree extends AnyTreeNode {
 	readonly type: '_indent';
@@ -10850,11 +10843,11 @@ export type ExpressionEndingWithBlockTree =
 	| ForExpressionTree
 	| ConstBlockTree;
 
-export type DelimTokens = _NonSpecialToken | DelimTokenTree;
+export type DelimTokens = _NonSpecialToken | Dollar | DelimTokenTree;
 
 export type DelimTokensTree = DelimTokenTreeTree;
 
-export type NonDelimToken = _NonSpecialToken;
+export type NonDelimToken = _NonSpecialToken | Dollar;
 
 export type Condition =
 	| Expression
@@ -11041,6 +11034,10 @@ export type _Path = Self | Identifier | Metavariable | Super | Crate | ScopedIde
 
 export type _PathTree = SelfTree | IdentifierTree | MetavariableTree | SuperTree | CrateTree | ScopedIdentifierTree;
 
+export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
+
+export type WhitespaceTree = IndentTree | DedentTree;
+
 export type NonSpecialToken =
 	| _Literal
 	| StringLiteral
@@ -11102,6 +11099,22 @@ export interface RangePatternWithLeftBareTree extends AnyTreeNode {
 export type StructItemUnit = TSKindId.StructItemUnit;
 export interface StructItemUnitTree extends AnyTreeNode {
 	readonly type: '_struct_item_unit';
+}
+export type Tight = TSKindId.Tight;
+export interface TightTree extends AnyTreeNode {
+	readonly type: '_tight';
+}
+export type Space = TSKindId.Space;
+export interface SpaceTree extends AnyTreeNode {
+	readonly type: '_space';
+}
+export type Newline = TSKindId.Newline;
+export interface NewlineTree extends AnyTreeNode {
+	readonly type: '_newline';
+}
+export type Blankline = TSKindId.Blankline;
+export interface BlanklineTree extends AnyTreeNode {
+	readonly type: '_blankline';
 }
 export type Dollar = TSKindId.Dollar;
 export interface DollarTree extends AnyTreeNode {
@@ -11575,10 +11588,6 @@ export interface KindMap {
 	_block_comment_content: BlockCommentContent;
 	_line_doc_content: LineDocContent;
 	_error_sentinel: ErrorSentinel;
-	_tight: Tight;
-	_space: Space;
-	_newline: Newline;
-	_blankline: Blankline;
 	_indent: Indent;
 	_dedent: Dedent;
 }
@@ -14075,10 +14084,6 @@ export interface ErrorSentinelNs extends LeafNs<
 	ErrorSentinelTree,
 	'_error_sentinel'
 > {}
-export interface TightNs extends LeafNs<Tight, string, Tight.Built, TightTree, '_tight'> {}
-export interface SpaceNs extends LeafNs<Space, string, Space.Built, SpaceTree, '_space'> {}
-export interface NewlineNs extends LeafNs<Newline, string, Newline.Built, NewlineTree, '_newline'> {}
-export interface BlanklineNs extends LeafNs<Blankline, string, Blankline.Built, BlanklineTree, '_blankline'> {}
 export interface IndentNs extends LeafNs<Indent, string, Indent.Built, IndentTree, '_indent'> {}
 export interface DedentNs extends LeafNs<Dedent, string, Dedent.Built, DedentTree, '_dedent'> {}
 
@@ -14332,10 +14337,6 @@ export interface NamespaceMap {
 	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
 	[TSKindId.LineDocContent]: LineDocContentNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
-	[TSKindId.Tight]: TightNs;
-	[TSKindId.Space]: SpaceNs;
-	[TSKindId.Newline]: NewlineNs;
-	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
 }
@@ -19314,66 +19315,6 @@ export namespace ErrorSentinel {
 	export type LooseArgs = ErrorSentinelNs['LooseArgs'];
 	export type Tree = ErrorSentinelNs['Tree'];
 	export type Kind = '_error_sentinel';
-}
-export namespace Tight {
-	export type Config = TightNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Tight;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = TightNs['Loose'];
-	export type LooseConfig = TightNs['LooseConfig'];
-	export type BuildArgs = TightNs['BuildArgs'];
-	export type LooseArgs = TightNs['LooseArgs'];
-	export type Tree = TightNs['Tree'];
-	export type Kind = '_tight';
-}
-export namespace Space {
-	export type Config = SpaceNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Space;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = SpaceNs['Loose'];
-	export type LooseConfig = SpaceNs['LooseConfig'];
-	export type BuildArgs = SpaceNs['BuildArgs'];
-	export type LooseArgs = SpaceNs['LooseArgs'];
-	export type Tree = SpaceNs['Tree'];
-	export type Kind = '_space';
-}
-export namespace Newline {
-	export type Config = NewlineNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Newline;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = NewlineNs['Loose'];
-	export type LooseConfig = NewlineNs['LooseConfig'];
-	export type BuildArgs = NewlineNs['BuildArgs'];
-	export type LooseArgs = NewlineNs['LooseArgs'];
-	export type Tree = NewlineNs['Tree'];
-	export type Kind = '_newline';
-}
-export namespace Blankline {
-	export type Config = BlanklineNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Blankline;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = BlanklineNs['Loose'];
-	export type LooseConfig = BlanklineNs['LooseConfig'];
-	export type BuildArgs = BlanklineNs['BuildArgs'];
-	export type LooseArgs = BlanklineNs['LooseArgs'];
-	export type Tree = BlanklineNs['Tree'];
-	export type Kind = '_blankline';
 }
 export namespace Indent {
 	export type Config = IndentNs['Config'];

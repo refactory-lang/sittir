@@ -29,6 +29,15 @@ as overloads across files the way `declare function` does, and tree-sitter's
 `grammar()` expects a flat `GrammarSchema` base rather than `enrich()`'s
 `{ grammar: { … } }` shape.
 
+### `_whitespace` (`packages/rust/grammar.sittir.ts:450`)
+
+The grammar's whitespace supertype, listed under `supertypes:` and declared
+as a choice over the six whitespace externals, each written as the visible
+alias `visibleExternals` registers. Every spacing site's arms, the generated
+`options.ts` unions and the render crate's whitespace text are read from
+this list (`whitespaceArmsOf` / `spacingArmsOf`); nothing in codegen names a
+whitespace kind.
+
 ### `string` (`packages/rust/grammar.sittir.ts:26`)
 
 `string` is the ONE DSL primitive with no ambient or exported declaration: it

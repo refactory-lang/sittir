@@ -923,6 +923,17 @@ overriding the canonical rule too.
 				// update_expression: postfix vs prefix `++` / `--`.
 ```
 
+### `_whitespace` (`packages/typescript/grammar.sittir.ts:647`)
+
+The grammar's whitespace supertype: `supertypes:` lists it, and the rule is
+a choice over the six whitespace externals (`_tight`, `_space`, `_newline`,
+`_blankline`, `_indent`, `_dedent`), each written as the visible alias
+`visibleExternals` registers. Every spacing site's arms, the generated
+`options.ts` unions and the whitespace text the render crate writes are
+read from this list (`whitespaceArmsOf` / `spacingArmsOf`); nothing in
+codegen names a whitespace kind. A grammar that wants another gap width
+adds an external here, as python does with `_double_newline`.
+
 ### `visibleExternals` (`packages/typescript/grammar.sittir.ts:1092`)
 
 ```text

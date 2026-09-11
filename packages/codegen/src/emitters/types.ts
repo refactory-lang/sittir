@@ -636,9 +636,9 @@ function emitSupertypeUnionDeclarations(
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
-			return { sub, typeName: n.typeName };
+			return { sub, typeName: n.typeName, token: n instanceof AssembledToken };
 		});
-		const members = resolvedSubs.map((r) => r.typeName).filter((t) => generatedTypes.has(t));
+		const members = resolvedSubs.filter((r) => r.token || generatedTypes.has(r.typeName)).map((r) => r.typeName);
 		if (members.length === 0) {
 			throw new Error(
 				`types: supertype '${st.kind}' has no resolvable member types after filtering. ` +
