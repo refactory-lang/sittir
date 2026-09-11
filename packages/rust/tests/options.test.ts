@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 import type { Options } from '../src/options.ts';
 import { Delimiter, TSKindId } from '../src/types.ts';
+import { createEngine, ir } from '../src/index.ts';
 
 it('the emitted Options type is pinned', () => {
 	expect(readFileSync(new URL('../src/options.ts', import.meta.url), 'utf8')).toMatchSnapshot();
@@ -38,4 +39,17 @@ it('types every site by kind id at its address and rejects a wrong member at com
 	expect(bad).toBeDefined();
 	expect(ok.block?.['{']?.after).toBe(TSKindId.Indent);
 	expect(ok.token_tree_punctuation?.['::']?.after).toBe(TSKindId.Tight);
+});
+
+it('engine options set the spacing of a built separated list and per-call options override them', () => {
+	const args = ir.arguments(ir.argumentsElements(ir.identifier('a'), ir.identifier('b')));
+	const tight = createEngine({ options: { arguments_elements: { element: { separator: { ',': { after: TSKindId.Tight } } } } } });
+	const spaced = createEngine({ options: { arguments_elements: { element: { separator: { ',': { after: TSKindId.Space } } } } } });
+	expect(tight.render(args).toString()).toBe('(a,b)');
+	expect(spaced.render(args).toString()).toBe('(a, b)');
+	expect(
+		tight
+			.render(args, { options: { arguments_elements: { element: { separator: { ',': { after: TSKindId.Newline } } } } } })
+			.toString()
+	).toBe('(a,\nb)');
 });

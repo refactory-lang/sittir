@@ -82,7 +82,7 @@ scan_added_lines() {
 if [ "$mode" = "--content" ]; then
   # Scope check mirrors the diff pathspec: code extensions, hand-written dirs.
   case "$content_path" in
-    *.ts|*.mts|*.cts|*.rs) ;;
+    *.ts|*.mts|*.cts|*.rs|*.sh) ;;
     *) exit 0 ;;
   esac
   case "$content_path" in

@@ -30,7 +30,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ### `packages/tools/src/validate/render-bodies.ts::loadRenderBodies`
 
 ```text
-/** Every emitted kind's body; an absent file (a grammar never generated) is an empty catalog. */
+/** Every emitted kind's body. An absent file (a grammar never generated) throws, naming the path from `renderBodiesPath(grammar)`. */
 ```
 
 ### `packages/tools/src/validate/render-bodies.ts::deriveRuleKinds`

@@ -12,7 +12,7 @@ export function renderBodiesPath(grammar: string): string {
 
 export function loadRenderBodies(grammar: string): Map<string, RenderBody> {
 	const path = renderBodiesPath(grammar);
-	if (!existsSync(path)) return new Map();
+	if (!existsSync(path)) throw new Error(`render-bodies: no catalog at ${path} — regenerate with \`sittir gen\``);
 	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Record<string, RenderBody>;
 	return new Map(Object.entries(parsed));
 }
