@@ -240,8 +240,16 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
         None
     } else {
         Some(NodeTrivia {
-            leading: if leading.is_empty() { None } else { Some(leading) },
-            trailing: if trailing.is_empty() { None } else { Some(trailing) },
+            leading: if leading.is_empty() {
+                None
+            } else {
+                Some(leading)
+            },
+            trailing: if trailing.is_empty() {
+                None
+            } else {
+                Some(trailing)
+            },
         })
     }
 }

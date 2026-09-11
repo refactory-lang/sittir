@@ -46,7 +46,10 @@ macro_rules! render_with_trivia {
                 if let Some(ref __leading) = __trivia.leading {
                     for __entry in __leading {
                         let mut __text = ::std::string::String::new();
-                        ::std::fmt::Write::write_fmt(&mut __text, ::std::format_args!("{__entry}"))?;
+                        ::std::fmt::Write::write_fmt(
+                            &mut __text,
+                            ::std::format_args!("{__entry}"),
+                        )?;
                         $dest.write_str(&__text)?;
                         if !__text.ends_with('\n') {
                             $dest.write_str("\n")?;
@@ -61,7 +64,10 @@ macro_rules! render_with_trivia {
                         let mut __ends_line = false;
                         for __entry in __trailing {
                             let mut __text = ::std::string::String::new();
-                            ::std::fmt::Write::write_fmt(&mut __text, ::std::format_args!("{__entry}"))?;
+                            ::std::fmt::Write::write_fmt(
+                                &mut __text,
+                                ::std::format_args!("{__entry}"),
+                            )?;
                             $dest.write_str("\n")?;
                             $dest.write_str(&__text)?;
                             __ends_line = __text.ends_with('\n');
@@ -126,8 +132,7 @@ mod trivia_macro_tests {
             transport_trivia_data: None,
         };
         let mut buf = String::new();
-        let result: std::fmt::Result =
-            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
+        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT");
     }
@@ -141,8 +146,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: std::fmt::Result =
-            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
+        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// hello\nCONTENT");
     }
@@ -156,8 +160,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: std::fmt::Result =
-            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
+        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT\n// end\n");
     }
@@ -171,8 +174,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: std::fmt::Result =
-            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
+        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// top\nCONTENT\n// bottom\n");
     }
@@ -186,8 +188,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: std::fmt::Result =
-            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
+        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "// line 1\n// line 2\nCONTENT");
     }
@@ -201,8 +202,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: std::fmt::Result =
-            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
+        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT\n// end 1\n// end 2\n");
     }
@@ -216,8 +216,7 @@ mod trivia_macro_tests {
             }),
         };
         let mut buf = String::new();
-        let result: std::fmt::Result =
-            render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
+        let result: std::fmt::Result = render_with_trivia!(t, &mut buf, render_mock(&t, &mut buf));
         assert!(result.is_ok());
         assert_eq!(buf, "CONTENT");
     }

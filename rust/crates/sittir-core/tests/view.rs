@@ -104,16 +104,28 @@ fn list<'a>(
 #[test]
 fn between_items_writes_before_token_after() {
     let items = [node("a"), node("b"), node("c")];
-    assert_eq!(list(&items, "", ",", " ", false, false).to_string(), "a, b, c");
-    assert_eq!(list(&items, " ", "|", " ", false, false).to_string(), "a | b | c");
-    assert_eq!(list(&items, "", "", "\n", false, false).to_string(), "a\nb\nc");
+    assert_eq!(
+        list(&items, "", ",", " ", false, false).to_string(),
+        "a, b, c"
+    );
+    assert_eq!(
+        list(&items, " ", "|", " ", false, false).to_string(),
+        "a | b | c"
+    );
+    assert_eq!(
+        list(&items, "", "", "\n", false, false).to_string(),
+        "a\nb\nc"
+    );
     assert_eq!(list(&items, "", "", "", false, false).to_string(), "abc");
 }
 
 #[test]
 fn a_leading_flank_writes_token_then_after_only() {
     let items = [node("A"), node("B")];
-    assert_eq!(list(&items, " ", "|", " ", true, false).to_string(), "| A | B");
+    assert_eq!(
+        list(&items, " ", "|", " ", true, false).to_string(),
+        "| A | B"
+    );
     assert_eq!(list(&items, "", ",", "", true, false).to_string(), ",A,B");
 }
 
@@ -121,7 +133,10 @@ fn a_leading_flank_writes_token_then_after_only() {
 fn a_trailing_flank_writes_before_then_token_only() {
     let items = [node("a"), node("b")];
     assert_eq!(list(&items, "", ",", " ", false, true).to_string(), "a, b,");
-    assert_eq!(list(&items, " ", "|", " ", false, true).to_string(), "a | b |");
+    assert_eq!(
+        list(&items, " ", "|", " ", false, true).to_string(),
+        "a | b |"
+    );
 }
 
 #[test]

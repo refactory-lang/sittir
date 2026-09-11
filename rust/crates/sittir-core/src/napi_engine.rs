@@ -63,12 +63,18 @@ macro_rules! napi_engine {
                         ::napi::Error::from_reason(format!("parse engine format failed: {e}"))
                     })?;
                 let table = match options_json {
-                    Some(json) => $resolve(&json, &$defaults()).map_err(::napi::Error::from_reason)?,
+                    Some(json) => {
+                        $resolve(&json, &$defaults()).map_err(::napi::Error::from_reason)?
+                    }
                     None => $defaults(),
                 };
                 Ok(Self {
-                    engine: $crate::engine::Engine::new(<$grammar as ::std::default::Default>::default(), format, table)
-                        .map_err(::napi::Error::from_reason)?,
+                    engine: $crate::engine::Engine::new(
+                        <$grammar as ::std::default::Default>::default(),
+                        format,
+                        table,
+                    )
+                    .map_err(::napi::Error::from_reason)?,
                     trees: ::std::collections::HashMap::new(),
                     next_tree_id: 0,
                     last_tree_id: None,
@@ -142,9 +148,7 @@ macro_rules! napi_engine {
                             tree_id,
                         })
                         .map_err(|e| {
-                            ::napi::Error::from_reason(format!(
-                                "serialize ParseResult failed: {e}"
-                            ))
+                            ::napi::Error::from_reason(format!("serialize ParseResult failed: {e}"))
                         })?;
                         self.trees.insert(tree_id, parsed);
                         self.last_tree_id = Some(tree_id);
@@ -200,7 +204,8 @@ macro_rules! napi_engine {
                 options: Option<String>,
             ) -> ::napi::Result<String> {
                 let table = match options {
-                    Some(json) => $resolve(&json, self.engine.options()).map_err(::napi::Error::from_reason)?,
+                    Some(json) => $resolve(&json, self.engine.options())
+                        .map_err(::napi::Error::from_reason)?,
                     None => self.engine.options().clone(),
                 };
                 let (source, canonical) = $render_parts(transport, &table).map_err(|e| {
@@ -267,7 +272,9 @@ macro_rules! napi_engine {
                 let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
                     return;
                 };
-                let Ok(tree_id) = u32::try_from(tree_id) else { return };
+                let Ok(tree_id) = u32::try_from(tree_id) else {
+                    return;
+                };
                 self.trees.remove(&tree_id);
                 if self.last_tree_id == Some(tree_id) {
                     self.last_tree_id = None;
@@ -322,7 +329,9 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
     /// could not survive the trip through JavaScript intact.
     const MAX_EXACT: f64 = 9_007_199_254_740_991.0; // 2^53 - 1
     if !value.is_finite() {
-        return Err(napi::Error::from_reason(format!("{label} must be a finite number")));
+        return Err(napi::Error::from_reason(format!(
+            "{label} must be a finite number"
+        )));
     }
     if value < 0.0 {
         return Err(napi::Error::from_reason(format!(

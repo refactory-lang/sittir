@@ -23,7 +23,11 @@ impl FillOptions for List {
 
 #[test]
 fn an_unset_field_takes_the_table_value_and_a_set_field_keeps_its_own() {
-    let table = ResolvedOptions { spacing: vec![168], delimiter: vec![2], ..ResolvedOptions::default() };
+    let table = ResolvedOptions {
+        spacing: vec![168],
+        delimiter: vec![2],
+        ..ResolvedOptions::default()
+    };
     let mut unset = List {
         space_after: None,
         delimiter: None,
@@ -32,7 +36,11 @@ fn an_unset_field_takes_the_table_value_and_a_set_field_keeps_its_own() {
     unset.fill_options(&table);
     assert_eq!(unset.space_after, Some(168));
     assert_eq!(unset.delimiter, Some(2));
-    let mut set = List { space_after: Some(167), delimiter: Some(0), items: vec![] };
+    let mut set = List {
+        space_after: Some(167),
+        delimiter: Some(0),
+        items: vec![],
+    };
     set.fill_options(&table);
     assert_eq!(set.space_after, Some(167));
     assert_eq!(set.delimiter, Some(0));
@@ -40,8 +48,16 @@ fn an_unset_field_takes_the_table_value_and_a_set_field_keeps_its_own() {
 
 #[test]
 fn a_zero_delimiter_default_leaves_the_field_unset() {
-    let table = ResolvedOptions { spacing: vec![168], delimiter: vec![0], ..ResolvedOptions::default() };
-    let mut list = List { space_after: None, delimiter: None, items: vec![] };
+    let table = ResolvedOptions {
+        spacing: vec![168],
+        delimiter: vec![0],
+        ..ResolvedOptions::default()
+    };
+    let mut list = List {
+        space_after: None,
+        delimiter: None,
+        items: vec![],
+    };
     list.fill_options(&table);
     assert_eq!(list.delimiter, None);
 }
