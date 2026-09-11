@@ -3010,7 +3010,7 @@ never per level, and calls `transport.render(&mut w)`.
 
 The `AnyTransport` impl is one match: every kind variant delegates to the
 payload's `Render` (so a struct kind's trivia wrapper fires), and a
-literal variant writes its text via `literalWriteTail`.
+literal variant writes its text via `literalWrite`.
 
 `usedSupertypeNames` limits helper emission to the supertypes some slot
 actually names; `kindIdByKind` lets a list kind with a nonterminal
@@ -15118,10 +15118,3 @@ exists.
 /// seam's own text) rather than ordinary text.
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::literalWriteTail`
-
-```text
-/// A literal's own render tail: the depth arms' stamped identity moves the
-/// writer's depth, a whitespace-only literal is a token seam (survives a
-/// render's end, unlike a seam), and anything else is plain text.
-```
