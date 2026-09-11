@@ -792,6 +792,86 @@ git commit -- packages/codegen/src/emitters docs/glossary/emitters.md rust/crate
 
 ---
 
+### Task 3b: the nested options object spells a literal segment by its token's kind name
+
+**Files:**
+- Modify: `packages/codegen/src/emitters/options.ts` (`nestedKey`, `deriveAddressTables`)
+- Modify: `packages/codegen/src/emitters/render-options-rs.ts` (`segmentIdent` deleted; `structNameOf`, `fieldsOf`, the resolver chain)
+- Modify: `packages/codegen/src/emitters/__tests__/emitter-options.test.ts`
+- Modify: `packages/rust/tests/options.test.ts`, `packages/typescript/tests/options.test.ts`, `packages/python/tests/options.test.ts` (`','` → `comma`)
+- Modify: `docs/glossary/emitters.md` (`options.ts::nestedKey` entry added or rewritten; `options.ts::deriveAddressTables` entry's "joined with `/`" paragraph; `render-options-rs.ts::segmentIdent` entry deleted)
+- Regenerate: `packages/{rust,typescript,python}/src/options.ts`, `rust/crates/sittir-{rust,typescript,python}/src/render/options.rs`
+
+**Interfaces:**
+- Consumes: `AddressBranchEntry.segments` / `AddressLeafEntry.segments` (typed `PreferenceSegment[]`), `findEntryForLiteralText(kindEntries, text)` from `compiler/generated-metadata.ts`, `formatPreferencePath` (canonical spelling, literals quoted).
+- Produces: `nestedKey(segment: PreferenceSegment, kindEntries: readonly KindEntryLike[]): string` — the ONE derivation of a nested object key, shared by the TS type emitter and the Rust struct emitter.
+
+**The rule.** The nested `Options` object (the TypeScript `AddressedOptions` type, the Rust `FromNapiValue`/`ToNapiValue` property names, and what a caller writes at runtime) spells a literal segment by the anonymous token's kind name: `separator: { comma: { after } }`, not `separator: { ',': { after } }`. Canonical address paths are untouched: the grammar's `options:` block keys, `formatPreferencePath`, the `canonical` strings on leaf entries, and every error message keep their quoted literals (`(array)/elements:/separator/","`-style spellings stay exactly as they are today).
+
+Why: the object is typed and written by hand; a bare punctuation key needs quoting in every language and collides with the path join. The kind name is already what the Rust field is called (`segmentIdent` derives it from the same lookup), so after this task one spelling serves the type, the struct, the field and the object, and `segmentIdent`'s literal fallback has nothing left to do.
+
+- [ ] **Step 1: Write the failing emitter test**
+
+In `packages/codegen/src/emitters/__tests__/emitter-options.test.ts`, the fixture already has `{ kind: 'comma', member: 'Comma', symbolName: ',', anon: true }`. Change every expectation that spells the nested key of the `,` segment as `,` to `comma`: the `AddressedOptions` property `'formal_parameters/elements/separator/comma'`, the Rust `obj.get("comma")`, the Rust allowed-key list `&["comma"]`, and the `at` prefix, which stays `(formal_parameters)/elements:/separator` (unchanged: it is a canonical path). Add one assertion that a literal segment whose text has no kind entry makes `deriveAddressTables` throw `options: literal "<text>" has no kind name` (build a site whose path holds a literal `¤` that the fixture's `kindEntries` do not contain).
+
+- [ ] **Step 2: Run it to see it fail**
+
+Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/emitter-options.test.ts`
+Expected: FAIL on the `comma` spellings and on the missing-kind throw.
+
+- [ ] **Step 3: One derivation of the key**
+
+In `packages/codegen/src/emitters/options.ts`:
+
+```ts
+export function nestedKey(segment: PreferenceSegment, kindEntries: readonly KindEntryLike[]): string {
+	switch (segment.kind) {
+		case 'literal': {
+			const entry = findEntryForLiteralText(kindEntries, segment.text);
+			if (entry === undefined) throw new Error(`options: literal ${JSON.stringify(segment.text)} has no kind name`);
+			return entry.kind;
+		}
+		case 'index':
+			return String(segment.value);
+		case 'wildcard':
+			return '_';
+		default:
+			return segment.name;
+	}
+}
+```
+
+`deriveAddressTables` passes its `kindEntries` at both `site.path.map(...)` and `declaredSegments.map(...)` call sites. Add the collision guard the new spelling makes possible: when a branch path or a leaf path is set a second time from segments whose `formatPreferencePath` differs from the first, throw `options: address '<path>' names two segments` (a literal whose kind name equals a sibling slot name would otherwise merge silently). `AddressBranchEntry.path` / `AddressLeafEntry.path` stay the `/`-joined nested keys (now identifier-only for literals); `canonical` and `segments` are unchanged.
+
+In `packages/codegen/src/emitters/render-options-rs.ts`: delete `segmentIdent` and its `findEntryForLiteralText` import; `fieldsOf` uses `rustFieldIdent(key)`; `structNameOf` and the two resolver-chain sites use `rustFieldIdent(nestedKey(segment, kindEntries))`. The struct names must not move (they were already built from the kind name): the generated `options.rs` diff for each grammar contains only `obj.get`/`obj.set` keys and `reject_unknown_keys` allowed lists. The `at` argument stays `formatPreferencePath(s.segments)`.
+
+- [ ] **Step 4: Emitter test green, then regenerate all three grammars**
+
+Run: `pnpm exec vitest run packages/codegen/src/emitters/__tests__/emitter-options.test.ts` → PASS.
+Regenerate (each as its own command): `pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src`, same for `typescript`, `python`. Then `git diff --stat -- packages/*/src rust/crates/*/src` must list ONLY `packages/<g>/src/options.ts` and `rust/crates/sittir-<g>/src/render/options.rs` (six files). Inspect each `options.rs` diff: every hunk is a property-key spelling (`","` → `"comma"`, `"|"` → `"pipe"`, …) inside `obj.get`, `obj.set` or an allowed-key array; no struct name, field ident, `at` string or `resolve` line changes. Inspect each `options.ts` diff: only property keys change.
+
+- [ ] **Step 5: Runtime tests spell the new key**
+
+In the three `packages/<g>/tests/options.test.ts`, replace `','` with `comma` in every nested options object (rust: lines 13, 27; typescript: 13, 15, 20, 28, 43, 44, 49, 52; python: 13, 24 — confirm with a read, the numbers are from the current tree). The unknown-key assertion (`options: (array)/elements:/sideways names no site`) and the kind-id rejection assertion are untouched. Rebuild the native addons and run the full suite: `pnpm run validate:native` (builds), then, as its own call, `pnpm exec vitest run`; then regenerate python once more (the python fixture step runs after vitest per the repo rule) and confirm `git status` shows nothing but the six generated files and the tests.
+
+- [ ] **Step 6: Gates**
+
+`pnpm exec tsc --noEmit -p packages/codegen` → 0 errors; same for `packages/common` and `packages/tools`. `rtk cargo build --workspace` green. `pnpm run validate:history` — the recorded numbers are IDENTICAL to the previous run (rust 147/207/134 of 137, ts 143/193/112 of 114, py 126/142/115 of 116); a moved number stops the task for review (never revert).
+
+- [ ] **Step 7: Glossary**
+
+`docs/glossary/emitters.md`: add or rewrite `### \`packages/codegen/src/emitters/options.ts::nestedKey\`` (one derivation of the object key; literal → kind name; the canonical path keeps the quoted literal; a literal with no kind entry is a codegen error); in the `deriveAddressTables` entry replace the paragraph about `token_tree_punctuation//` (that lossy-join argument no longer describes the code: keys are identifiers, the collision guard is what protects distinctness) and describe the two-segments guard; delete the `render-options-rs.ts::segmentIdent` entry. No explanatory comments in `packages/codegen/src`.
+
+- [ ] **Step 8: Commit (pathspec; never stage `packages/types/.vitest-report.json`, `*-roles.scm`, `sittir-role-interfaces-scm-spec.md`, `packages/tools/validation-history.jsonl`)**
+
+```bash
+git commit -m "feat(options): nested option keys spell a literal by its token's kind name" -- packages/codegen/src/emitters/options.ts packages/codegen/src/emitters/render-options-rs.ts packages/codegen/src/emitters/__tests__/emitter-options.test.ts packages/rust/tests/options.test.ts packages/typescript/tests/options.test.ts packages/python/tests/options.test.ts docs/glossary/emitters.md packages/rust/src/options.ts packages/typescript/src/options.ts packages/python/src/options.ts rust/crates/sittir-rust/src/render/options.rs rust/crates/sittir-typescript/src/render/options.rs rust/crates/sittir-python/src/render/options.rs
+```
+
+The commit message ends with the attribution lines the dispatch names. Validator records (`validation-report.json`-style files the history run writes) are committed separately as `chore(validator): record validation run (...)` exactly as Task 3 did.
+
+---
+
 ### Task 4: Measure, and record the end state
 
 **Files:**
