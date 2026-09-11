@@ -18,6 +18,7 @@ pub mod macros;
 pub mod napi_engine;
 pub mod options;
 pub mod read_node;
+pub mod render;
 pub mod slot;
 pub mod spacing;
 pub mod splice;
@@ -28,6 +29,9 @@ pub mod view;
 // runtime migration design, callers reach this as `sittir_core::KindId`
 // rather than the longer `sittir_core::types::KindId`.
 pub use types::KindId;
+// Flat re-export for the typed render sink — every generated render
+// function and the `Render` impls it calls reach these here.
+pub use render::{Render, RenderError, RenderResult, RenderSink, WhitespaceTable};
 // Flat re-export for the transport slot carrier — generated transport
 // structs name it at every slot position.
 pub use slot::SlotValue;

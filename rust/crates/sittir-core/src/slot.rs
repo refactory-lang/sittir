@@ -75,6 +75,20 @@ impl<T: std::fmt::Display, const ADJACENT: bool> std::fmt::Display for SlotValue
     }
 }
 
+impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render for SlotValue<T, ADJACENT> {
+    fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        match self {
+            Self::Node(node) => node.render(w),
+            Self::Verbatim(text) => {
+                if ADJACENT {
+                    w.adjacent();
+                }
+                w.text(text)
+            }
+        }
+    }
+}
+
 /// `napi_typeof` without the `type_of!` macro, which expands to a bare
 /// `check_status!` that would have to be in scope at every call site.
 ///

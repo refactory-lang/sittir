@@ -164,6 +164,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     last: Option<char>,
     adjacent_next: bool,
     word: &'a WordMatcher,
+    table: Option<&'a crate::render::WhitespaceTable>,
     indent: &'a str,
     depth: usize,
     indent_pending: bool,
@@ -180,6 +181,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             last: None,
             adjacent_next: false,
             word,
+            table: None,
             indent: DEFAULT_INDENT,
             depth: 0,
             indent_pending: false,
@@ -193,6 +195,15 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// The text written once per depth level after every newline.
     pub fn with_indent(mut self, indent: &'a str) -> Self {
         self.indent = indent;
+        self
+    }
+
+    /// The grammar's whitespace vocabulary for [`RenderSink::site`]. A
+    /// writer with none attached treats every site kind as unknown and
+    /// writes nothing for it; every root render (`render_to_string`)
+    /// attaches one.
+    pub fn with_table(mut self, table: &'a crate::render::WhitespaceTable) -> Self {
+        self.table = Some(table);
         self
     }
 
@@ -305,6 +316,79 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
         Ok(())
     }
+
+    /// Shallows the depth. A dedent that arrives while the indent before it
+    /// has had no text written cancels it and its held payload, so an empty
+    /// body renders as its bare delimiters; the caller then writes no
+    /// payload of its own. Returns whether the dedent's own seam should
+    /// still be merged in.
+    fn dedent_keeps_payload(&mut self) -> bool {
+        self.depth = self.depth.saturating_sub(1);
+        if std::mem::replace(&mut self.indent_armed, false) {
+            self.seam = None;
+            self.seam_text.clear();
+            return false;
+        }
+        true
+    }
+}
+
+impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
+    fn text(&mut self, s: &str) -> crate::render::RenderResult {
+        self.write_chunk(s)?;
+        Ok(())
+    }
+
+    fn adjacent(&mut self) {
+        self.adjacent_next = true;
+    }
+
+    /// A site's arm: no arm at all for 0 (the position is directly
+    /// adjacent, the same as [`RenderSink::adjacent`]), a depth move plus
+    /// its line break for the depth arms, otherwise the arm's text as a
+    /// seam. A writer with no table attached treats every other kind as
+    /// unknown and writes nothing.
+    fn site(&mut self, kind: u16) {
+        if kind == 0 {
+            self.adjacent_next = true;
+            return;
+        }
+        let Some(table) = self.table else {
+            return;
+        };
+        if kind == table.indent {
+            self.indent();
+            self.merge_seam("\n");
+        } else if kind == table.dedent {
+            if self.dedent_keeps_payload() {
+                self.merge_seam("\n");
+            }
+        } else {
+            self.merge_seam((table.text_of)(kind));
+        }
+    }
+
+    fn seam(&mut self, text: &str) {
+        self.merge_seam(text);
+    }
+
+    fn token_seam(&mut self, text: &str) {
+        self.merge_seam(text);
+        self.seam_is_token = true;
+    }
+
+    fn indent(&mut self) {
+        self.depth += 1;
+        self.indent_armed = true;
+    }
+
+    fn dedent(&mut self) {
+        self.dedent_keeps_payload();
+    }
+
+    fn ends_line(&self) -> bool {
+        matches!(self.last, None | Some('\n'))
+    }
 }
 
 fn is_mark(c: char) -> bool {
@@ -338,14 +422,10 @@ impl<W: std::fmt::Write + ?Sized> std::fmt::Write for SpacingWriter<'_, W> {
             rest = &rest[end..];
             match mark {
                 INDENT => {
-                    self.depth += 1;
-                    self.indent_armed = true;
+                    crate::render::RenderSink::indent(self);
                 }
                 DEDENT => {
-                    self.depth = self.depth.saturating_sub(1);
-                    if std::mem::replace(&mut self.indent_armed, false) {
-                        self.seam = None;
-                        self.seam_text.clear();
+                    if !self.dedent_keeps_payload() {
                         continue;
                     }
                 }
@@ -677,5 +757,72 @@ mod seam_tests {
         assert_eq!(run(&["\u{FDD2}\n", "\u{FDD2} ", "a"]), "a");
         assert_eq!(run(&["a", "\u{FDD2}\n"]), "a");
         assert_eq!(run(&["a", "\u{FDD2} ", "b", "\u{FDD2} "]), "a b");
+    }
+}
+
+#[cfg(test)]
+mod sink_tests {
+    use super::*;
+    use crate::render::{RenderSink, WhitespaceTable};
+
+    const TIGHT: u16 = 1;
+    const SPACE: u16 = 2;
+    const NEWLINE: u16 = 3;
+    const BLANK: u16 = 4;
+    const INDENT: u16 = 5;
+    const DEDENT: u16 = 6;
+    fn text_of(kind: u16) -> &'static str {
+        match kind { TIGHT => "", SPACE => " ", NEWLINE => "\n", BLANK => "\n\n", INDENT | DEDENT => "\n", _ => "" }
+    }
+    const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: INDENT, dedent: DEDENT };
+
+    fn run(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
+        let mut s = String::new();
+        let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_table(&TABLE).with_indent("  ");
+        f(&mut w);
+        w.finish().unwrap();
+        s
+    }
+
+    #[test]
+    fn a_word_hazard_gets_a_space_and_adjacent_suppresses_it() {
+        assert_eq!(run(|w| { w.text("let").unwrap(); w.text("x").unwrap(); }), "let x");
+        assert_eq!(run(|w| { w.text("let").unwrap(); w.adjacent(); w.text("x").unwrap(); }), "letx");
+    }
+
+    #[test]
+    fn seams_coalesce_to_the_widest_and_drop_at_the_edges() {
+        assert_eq!(run(|w| { w.site(NEWLINE); w.text("a").unwrap(); w.site(SPACE); w.site(BLANK); w.text("b").unwrap(); w.site(NEWLINE); }), "a\n\nb");
+        assert_eq!(run(|w| { w.text("a").unwrap(); w.seam("\n"); w.seam(" "); w.text("b").unwrap(); }), "a\nb");
+    }
+
+    #[test]
+    fn a_token_seam_coalesces_but_survives_the_end() {
+        assert_eq!(run(|w| { w.text("pass").unwrap(); w.token_seam("\n"); w.site(NEWLINE); }), "pass\n");
+        assert_eq!(run(|w| { w.token_seam("\n"); w.text("a").unwrap(); }), "\na");
+    }
+
+    #[test]
+    fn a_tight_site_holds_a_seam_that_still_gets_the_lexical_space() {
+        assert_eq!(run(|w| { w.text("let").unwrap(); w.site(TIGHT); w.text("x").unwrap(); }), "let x");
+        assert_eq!(run(|w| { w.text("a").unwrap(); w.site(0); w.text("b").unwrap(); }), "ab");
+    }
+
+    #[test]
+    fn a_depth_site_indents_and_a_dedent_before_any_text_leaves_a_body_bare() {
+        assert_eq!(run(|w| { w.text("{").unwrap(); w.site(INDENT); w.text("a").unwrap(); w.site(DEDENT); w.text("}").unwrap(); }), "{\n  a\n}");
+        assert_eq!(run(|w| { w.text("{").unwrap(); w.site(INDENT); w.site(DEDENT); w.text("}").unwrap(); }), "{}");
+        assert_eq!(run(|w| { w.text("{").unwrap(); w.indent(); w.seam("\n"); w.text("a").unwrap(); w.dedent(); w.seam("\n"); w.text("}").unwrap(); }), "{\n  a\n}");
+    }
+
+    #[test]
+    fn ends_line_reports_the_last_byte() {
+        let mut s = String::new();
+        let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_table(&TABLE);
+        assert!(w.ends_line());
+        w.text("a").unwrap();
+        assert!(!w.ends_line());
+        w.text("\n").unwrap();
+        assert!(w.ends_line());
     }
 }
