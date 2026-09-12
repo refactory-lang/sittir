@@ -53,6 +53,15 @@ impl sittir_core::read_node::ReadModel for RustGrammar {
     fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
         render::kind_ids::is_text_kind(kind)
     }
+
+    fn is_slot_separator(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: &str,
+        child: sittir_core::types::KindId,
+    ) -> bool {
+        render::kind_ids::is_slot_separator(parent, field, child)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

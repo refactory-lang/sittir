@@ -58,6 +58,15 @@ pub trait ReadModel {
     /// renders from that text, so the text is the node's content and not a
     /// spelling the template could rebuild.
     fn is_text_kind(&self, kind: KindId) -> bool;
+
+    /// Whether `child` is the token that separates the `field` slot's items
+    /// on a `parent` node. Such a token is punctuation the template
+    /// re-emits, not a slot member, so the reader drops it rather than
+    /// seating it beside the items.
+    fn is_slot_separator(&self, parent: KindId, field: &str, child: KindId) -> bool {
+        let _ = (parent, field, child);
+        false
+    }
 }
 
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
@@ -335,6 +344,7 @@ fn read_children(
     let mut fields_acc: IndexMap<String, Vec<NodeData>> = IndexMap::new();
     let mut children_acc: Vec<NodeData> = Vec::new();
     let mut slot_order_acc: Vec<String> = Vec::new();
+    let parent_kind = stamped_kind(&node);
 
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
@@ -346,6 +356,14 @@ fn read_children(
             continue;
         }
         let field_name = node.field_name_for_child(i).map(|s| s.to_string());
+        // A separator is always an anonymous literal token; a named child
+        // that shares its kind id is still a member.
+        if let Some(name) = field_name.as_deref() {
+            if !child.is_named() && model.is_slot_separator(parent_kind, name, stamped_kind(&child))
+            {
+                continue;
+            }
+        }
         let data = if child.child_count() == 0 {
             read_materialized_leaf(child, source, model)
         } else {

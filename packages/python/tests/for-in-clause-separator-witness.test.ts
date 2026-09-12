@@ -29,9 +29,7 @@ describe('for_in_clause right side — a $text-stripped rebuild of a bare-tuple 
 		expect(listComprehension).toBeDefined();
 	});
 
-	it.fails(
-		'OPEN: the native reader delivers the field-tagged separator into a mixedEnum array slot; a deep $text-stripped rebuild renders unknown kind id (comma)',
-		() => {
+	it('renders a deep $text-stripped rebuild of a bare-tuple iterable back to its source', () => {
 			const engine = createEngine();
 			const { root } = engine.diagnostics.parseAndRead(SOURCE, { deep: true });
 			const listComprehension = (
@@ -41,6 +39,5 @@ describe('for_in_clause right side — a $text-stripped rebuild of a bare-tuple 
 			)._statements._simple_statements_elements._simple_statement._list_comprehension;
 			const rendered = engine.render(stripText(listComprehension) as never).toString();
 			expect(rendered).toBe(SOURCE);
-		}
-	);
+	});
 });

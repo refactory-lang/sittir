@@ -2841,6 +2841,21 @@ share one symbol and a repeated `matches!` arm is an error. A `token` kind
 is absent on purpose: its literal is on the model and the transport already
 defaults a missing `$text` to it.
 
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::is_slot_separator`
+
+The generated table behind the reader's separator drop: `(parent kind id,
+tree-sitter field name, separator kind ids)` for every repeated slot whose
+separator the parser field-tags into the slot (python `for_in_clause.right`
+carries its `,`; typescript `for_statement.condition` its `;`). Keyed by the
+tree-sitter field name because that is the string `read_children` has in
+hand; the texts come from `shared.ts::slotSeparatorTexts`, the same source
+the wrap layer's `dropWireDelimiters` expression is formatted from. An
+elidable list (`hasOptionalElements`) has no row: its separators place the
+holes, so the wrap layer splits by them (`splitElidedWrapSlot`) and the
+reader must hand them over. Only an anonymous child is ever dropped — a
+named child sharing the kind id is a member.
+
 ### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
 ```text
@@ -4356,6 +4371,15 @@ wildcard arm appears only when some arm needs it.
  * sync on one predicate rather than each re-deriving it from `modelType`.
  */
 ```
+
+### `packages/codegen/src/emitters/shared.ts::slotSeparatorTexts`
+
+The literal separator texts a repeated slot's values carry — the one source
+of "what separates this slot". The wrap layer's drop expression
+(`separatorIdsExprOf`) and the reader's separator table
+(`kind-id-rust.ts::is_slot_separator`) are both derived from it, so the two
+read paths hand back the same slot contents. `elidedOnly` narrows to the
+values that may be absent, which is the elidable-list form.
 
 ### `packages/codegen/src/emitters/shared.ts::canonicalSeparatedListField`
 
@@ -13080,7 +13104,8 @@ candidate list.
 ```text
 /**
  * Emitted `[<sep kind id>, …]` expression for any `many` slot carrying a
- * separator fact. `elided` selects which values count: true restricts to
+ * separator fact — the texts `slotSeparatorTexts` derives, formatted as
+ * kind ids. `elided` selects which values count: true restricts to
  * `hasOptionalElements` positions (feeding `splitElidedWrapSlot`'s
  * positional split), false takes every separator-bearing value (feeding
  * `dropWireDelimiters`'s flat strip). Throws (via

@@ -953,3 +953,13 @@ export function escForSource(s: string): string {
 		.replace(/\r/g, '\\r')
 		.replace(/\t/g, '\\t');
 }
+
+export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean): string[] {
+	return [
+		...new Set(
+			f.values
+				.filter((v) => (elidedOnly ? v.optionalElement === true : true) && v.separator !== undefined)
+				.map((v) => v.separator as string)
+		)
+	];
+}

@@ -1,6 +1,8 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { findEntryForLiteralText, type GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { hasOptionalElements, isMultiple } from '../compiler/model/node-map.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
+import { slotSeparatorTexts } from './shared.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -75,6 +77,40 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('/// free text for a pattern kind, the literal it holds for an enum kind.');
 	lines.push('pub fn is_text_kind(kind: KindId) -> bool {');
 	lines.push(`    matches!(kind.0, ${textKindIds.length > 0 ? textKindIds.join(' | ') : 'u16::MAX if false'})`);
+	lines.push('}');
+
+	const separatorRows: string[] = [];
+	for (const [, node] of nodeMap.nodes) {
+		const parentId = entries.find((entry) => entry.kind === node.kind)?.id;
+		if (parentId === undefined) continue;
+		for (const slot of node.slots) {
+			// An elidable list keeps its separators on the wire: the wrap layer
+			// splits the holes by their positions instead of dropping them.
+			if (slot.fieldName === undefined || !isMultiple(slot) || hasOptionalElements(slot)) continue;
+			const ids = [
+				...new Set(
+					slotSeparatorTexts(slot, false)
+						.map((text) => findEntryForLiteralText(entries, text)?.id)
+						.filter((id): id is number => id !== undefined)
+				)
+			].sort((a, b) => a - b);
+			if (ids.length === 0) continue;
+			separatorRows.push(`    (${parentId}, ${JSON.stringify(slot.fieldName)}, &[${ids.join(', ')}]),`);
+		}
+	}
+	lines.push('');
+	lines.push('/// (parent kind id, tree-sitter field name, separator kind ids) for every');
+	lines.push('/// repeated slot whose separator the parser field-tags into the slot.');
+	lines.push('/// The reader drops such a child instead of seating it, so a native read');
+	lines.push('/// and a wrapped read hand back the same slot contents.');
+	lines.push('static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[');
+	lines.push(...separatorRows);
+	lines.push('];');
+	lines.push('');
+	lines.push('pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {');
+	lines.push('    SLOT_SEPARATORS');
+	lines.push('        .iter()');
+	lines.push('        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))');
 	lines.push('}');
 
 	lines.push('');

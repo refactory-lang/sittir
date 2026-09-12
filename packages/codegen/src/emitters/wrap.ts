@@ -32,7 +32,8 @@ import {
 	kindEnumAltIdPairs,
 	fieldTypeComponents,
 	collectConcreteStorageKeys,
-	expandToConcreteParseKinds
+	expandToConcreteParseKinds,
+	slotSeparatorTexts
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -642,13 +643,7 @@ function separatorIdsExprOf(
 	elided: boolean
 ): string | undefined {
 	if (!kindEntries) return undefined;
-	const sepTexts = [
-		...new Set(
-			f.values
-				.filter((v) => (elided ? v.optionalElement === true : true) && v.separator !== undefined)
-				.map((v) => v.separator as string)
-		)
-	];
+	const sepTexts = slotSeparatorTexts(f, elided);
 	if (sepTexts.length === 0) return undefined;
 	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
 }

@@ -923,3 +923,27 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 pub fn is_text_kind(kind: KindId) -> bool {
     matches!(kind.0, 1 | 2 | 89 | 90 | 91 | 92 | 96 | 97 | 98 | 99 | 161 | 162 | 163 | 164 | 166 | 302 | 343 | 377 | 378 | 445 | 451)
 }
+
+/// (parent kind id, tree-sitter field name, separator kind ids) for every
+/// repeated slot whose separator the parser field-tags into the slot.
+/// The reader drops such a child instead of seating it, so a native read
+/// and a wrapped read hand back the same slot contents.
+static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
+    (190, "declarators", &[14]),
+    (191, "declarators", &[14]),
+    (254, "expression", &[14]),
+    (288, "type", &[14]),
+    (297, "type", &[14]),
+    (368, "export_specifier", &[14]),
+    (369, "import_specifier", &[14]),
+    (370, "formal_parameter", &[14]),
+    (372, "type", &[14]),
+    (373, "type_parameter", &[14]),
+    (374, "tuple_type_member", &[14]),
+];
+
+pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
+    SLOT_SEPARATORS
+        .iter()
+        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
+}

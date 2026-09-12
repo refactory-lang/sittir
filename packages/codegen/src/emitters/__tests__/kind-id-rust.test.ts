@@ -14,29 +14,31 @@ import { deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generat
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
 
+async function emittedKindIds(grammar: 'rust' | 'typescript' | 'python') {
+	const overridesPath = resolveOverridesPath(grammar);
+	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
+	const raw = await evaluate(entryPath);
+	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
+	const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
+		readFileSync(parserCPath, 'utf8'),
+		`packages/${grammar}/.sittir/src/parser.c`
+	);
+	const linked = link(raw, { generatedIdTables });
+	const nodeMap = assemble(
+		AssembleCtx.from(normalizeGrammar(linked), generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar))
+	);
+	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const idOf = (kind: string): number => {
+		const id = entries.find((entry) => entry.kind === kind)?.id;
+		if (id === undefined) throw new Error(`no kind entry for ${kind}`);
+		return id;
+	};
+	return { source: emitKindIdRust({ grammar, nodeMap, generatedIdTables }), idOf };
+}
+
 describe('is_text_kind', () => {
 	it('names every pattern and enum kind and no token kind', async () => {
-		const grammar = 'rust';
-		const overridesPath = resolveOverridesPath(grammar);
-		const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-		const raw = await evaluate(entryPath);
-		const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
-		const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
-			readFileSync(parserCPath, 'utf8'),
-			`packages/${grammar}/.sittir/src/parser.c`
-		);
-		const linked = link(raw, { generatedIdTables });
-		const nodeMap = assemble(
-			AssembleCtx.from(normalizeGrammar(linked), generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar))
-		);
-		const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-		const idOf = (kind: string): number => {
-			const id = entries.find((entry) => entry.kind === kind)?.id;
-			if (id === undefined) throw new Error(`no kind entry for ${kind}`);
-			return id;
-		};
-
-		const source = emitKindIdRust({ grammar, nodeMap, generatedIdTables });
+		const { source, idOf } = await emittedKindIds('rust');
 		expect(source).toContain('pub fn is_text_kind(kind: KindId) -> bool {');
 		const arms = source.slice(source.indexOf('pub fn is_text_kind'));
 		const ids = new Set(
@@ -50,5 +52,19 @@ describe('is_text_kind', () => {
 		expect(ids.has(idOf('mutable_specifier'))).toBe(false);
 		// function_item is a branch: it rebuilds from its slots.
 		expect(ids.has(idOf('function_item'))).toBe(false);
+	});
+});
+
+describe('is_slot_separator', () => {
+	it("names a slot's field-tagged separator by the parent kind and the field", async () => {
+		const { source, idOf } = await emittedKindIds('python');
+		expect(source).toContain('pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {');
+		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));
+		expect(table).toContain(`(${idOf('for_in_clause')}, "right", &[${idOf('comma')}]),`);
+	});
+	it('leaves an elidable list alone: its separators place the holes', async () => {
+		const { source, idOf } = await emittedKindIds('typescript');
+		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));
+		expect(table).not.toContain(`(${idOf('array')}, `);
 	});
 });
