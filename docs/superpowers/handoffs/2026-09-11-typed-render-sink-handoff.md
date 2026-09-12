@@ -215,6 +215,8 @@ The generated `FromNapiValue` for the `_indent`/`_dedent` token transports defau
 
 ## Next
 
+- Small: a test for `render-options-rs.ts::fieldsOf`'s new diagnostic (a leaf whose sites mix spacing and delimiter throws naming the address); a glossary entry for `packages/tools/tests/emit/dogfood-render-bytes.test.ts`; the dangling `jinjaTemplates` / `JINJA_COND_FULL_RE` glossary headings go with the Askama sweep.
+
 - The remaining ~30 jinja/askama mentions across
   `docs/glossary/{emitters,root,scripts,compiler}.md` (see "Documentation
   swept" above) — per-entry review, since none attach to a source
