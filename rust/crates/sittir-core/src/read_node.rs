@@ -72,9 +72,9 @@ pub fn read_node(
     depth: ReadDepth,
 ) -> NodeData {
     match target {
-        Some(node) => read_ts_node(node, source, node_handle, depth),
+        Some(node) => read_ts_node(node, source, node_handle, node_handle, depth),
         None => {
-            let mut root = read_ts_node(tree.root_node(), source, node_handle, depth);
+            let mut root = read_ts_node(tree.root_node(), source, node_handle, node_handle, depth);
             widen_to_whole_source(&mut root, source);
             root
         }
@@ -111,10 +111,16 @@ fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
 }
 
 /// Read core — converts a tree-sitter `Node` into `NodeData`.
+///
+/// `tree_handle` is any handle this tree minted — the tag a trivia entry's
+/// coordinate carries, since a comment is never addressed on its own and so
+/// never gets a handle of its own. `node_handle` is this node's own handle
+/// when it has one.
 fn read_ts_node(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u64>,
+    tree_handle: Option<u64>,
     depth: ReadDepth,
 ) -> NodeData {
     // Phase B-inverse: numeric ids directly instead of the string kind()
@@ -130,7 +136,8 @@ fn read_ts_node(
         end: byte_range.end as u32,
     };
 
-    let (fields, children, slot_order) = read_children(node, source, node_handle, depth);
+    let (fields, children, slot_order) =
+        read_children(node, source, node_handle, tree_handle, depth);
 
     // Leaf heuristic: no named fields AND no (named) children. The
     // tree-sitter convention is that purely-anonymous terminals are
@@ -163,7 +170,7 @@ fn read_ts_node(
         span: Some(span),
         node_handle,
         child_index: None,
-        trivia_data: compute_trivia(node, source),
+        trivia_data: compute_trivia(node, source, tree_handle),
         slot_order,
     }
 }
@@ -198,7 +205,14 @@ fn read_ts_node(
 /// `read_ts_node`, not shallow stubs) since they are not independently
 /// addressable through the normal `_<slot>`/`$other` handle+child-index
 /// navigation -- nothing would ever drill in to hydrate a stub left here.
-fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivia> {
+/// Each entry still carries a coordinate — the tree's tag in `$nodeHandle`
+/// and its own `$span` — so an untouched comment renders as the bytes it
+/// spans, whatever its kind's transport would otherwise need.
+fn compute_trivia(
+    node: tree_sitter::Node<'_>,
+    source: &str,
+    tree_handle: Option<u64>,
+) -> Option<NodeTrivia> {
     // An extra never carries its own trivia -- it IS trivia.
     if node.is_extra() {
         return None;
@@ -208,7 +222,13 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
     let mut cursor = node.prev_sibling();
     while let Some(sib) = cursor {
         if sib.is_extra() {
-            leading.push(read_ts_node(sib, source, None, ReadDepth::Deep));
+            leading.push(read_ts_node(
+                sib,
+                source,
+                tree_handle,
+                tree_handle,
+                ReadDepth::Deep,
+            ));
             cursor = sib.prev_sibling();
         } else if sib.is_named() {
             break;
@@ -223,7 +243,13 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
     let mut cursor = node.next_sibling();
     while let Some(sib) = cursor {
         if sib.is_extra() {
-            trailing.push(read_ts_node(sib, source, None, ReadDepth::Deep));
+            trailing.push(read_ts_node(
+                sib,
+                source,
+                tree_handle,
+                tree_handle,
+                ReadDepth::Deep,
+            ));
             cursor = sib.next_sibling();
         } else if sib.is_named() {
             is_last_named = false;
@@ -276,6 +302,7 @@ fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u64>,
+    tree_handle: Option<u64>,
     depth: ReadDepth,
 ) -> (
     Option<IndexMap<String, FieldValue>>,
@@ -303,7 +330,7 @@ fn read_children(
                 ReadDepth::Shallow => read_child_stub(child, source, node_handle, i as u16),
                 ReadDepth::Deep => NodeData {
                     child_index: Some(i as u16),
-                    ..read_ts_node(child, source, None, ReadDepth::Deep)
+                    ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep)
                 },
             }
         };

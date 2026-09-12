@@ -81,7 +81,7 @@ function isUntouchedSubtree(record: Record<string, unknown>): boolean {
  *  instead of rebuilding from slots. */
 function asCapturedText(record: Record<string, unknown>): Record<string, unknown> {
 	const out: Record<string, unknown> = { $type: record.$type, $text: record.$text };
-	for (const key of ['$source', '$named', '$span', '$nodeHandle', '$childIndex']) {
+	for (const key of ['$source', '$named', '$span', '$nodeHandle', '$childIndex', '$format']) {
 		if (record[key] !== undefined) out[key] = record[key];
 	}
 	return out;
@@ -107,19 +107,22 @@ export type NormalizeNodeStorage = (node: AnyNodeData) => unknown;
  *
  * The wrap surface carries accessor methods and `$with`; only data crosses
  * to napi. This copies the storage (`_`-keys and `$other`) through, drops
- * everything callable, and strips `$text` from every node that carries
- * storage — that node renders from its slots, and text describing a
- * pre-edit spelling must not survive to be emitted instead.
+ * everything callable, and strips `$text` and the coordinate keys
+ * (`$nodeHandle`, `$span`, `$childIndex`) from every node that carries
+ * storage — that node rebuilds from its slots, so neither its pre-edit
+ * text nor the coordinate that would slice that text may cross.
  *
  * Unexpanded child stubs pass through as they are: carrying no storage,
  * they are left un-normalized (there is nothing to reshape) and keep their
- * `$text`, which the transport's slot carrier reproduces verbatim. That is
- * what keeps an untouched subtree's original bytes while its rebuilt
- * siblings render canonically.
+ * coordinate, which the transport's slot carrier slices from the source the
+ * engine still holds. That is what keeps an untouched subtree's original
+ * bytes while its rebuilt siblings render canonically.
  */
 export function toTransportData(node: AnyNodeData, normalize?: NormalizeNodeStorage): AnyNodeData {
 	return projectValue(node, normalize) as AnyNodeData;
 }
+
+const COORDINATE_KEYS = ['$nodeHandle', '$span', '$childIndex'] as const;
 
 function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
 	if (Array.isArray(value)) return value.map((entry) => projectValue(entry, normalize));
@@ -136,7 +139,10 @@ function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefine
 		if (key === '$with' || typeof raw === 'function') continue;
 		out[key] = key.startsWith('_') || key === '$other' ? projectValue(raw, normalize) : raw;
 	}
-	if (hasStructure(out)) delete out.$text;
+	if (hasStructure(out)) {
+		delete out.$text;
+		for (const key of COORDINATE_KEYS) delete out[key];
+	}
 	return out;
 }
 

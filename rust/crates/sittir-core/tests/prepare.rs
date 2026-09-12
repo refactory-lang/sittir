@@ -52,7 +52,7 @@ fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() 
                 encode_handle(7, 0),
                 Span { start: 3, end: 4 },
             )),
-            SlotValue::Node(Leaf),
+            SlotValue::Transport(Leaf),
         ],
     };
     list.prepare(&ctx(&options, &sources)).unwrap();

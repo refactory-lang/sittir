@@ -53,6 +53,14 @@ export interface TreeHandle {
 	 */
 	read?(handle?: number, childIndex?: number, deep?: boolean): AnyNodeData;
 	/**
+	 * Render a node of this tree through the engine that read it. A read
+	 * node's coordinates name that engine's tree, so no other engine can
+	 * slice them; a handle with no engine behind it (a JS-side read, a
+	 * factory-built tree) leaves this unset and renders through the
+	 * grammar's default engine.
+	 */
+	render?(node: AnyNodeData): string;
+	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).
 	 * Callers can also set this manually to apply a house-style config.

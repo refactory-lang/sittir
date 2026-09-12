@@ -407,7 +407,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 	});
 
 	it('marks unguarded required template fields as hard-required', () => {
-		const files = emittedTemplates({ function_item: concat(slot('name'), text(' '), slot('text')) });
+		const files = emittedTemplates({ function_item: concat(slot('name'), text(' ')) });
 
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: {

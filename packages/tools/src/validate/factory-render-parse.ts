@@ -593,7 +593,7 @@ export async function validateFactoryRenderParse(
 	} else {
 		try {
 			const probeTree = parser.parse('') as TSTree;
-			const probeHandle = buildReadHandle(grammar, probeTree, '', backend, undefined);
+			const probeHandle = await buildReadHandle(grammar, probeTree, '', backend, undefined);
 			if (!probeHandle.read) {
 				readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
 			}
@@ -628,7 +628,7 @@ export async function validateFactoryRenderParse(
 		// left child fields as unresolved stubs — the root cause of the
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
-		const handle = buildReadHandle(grammar, tree1, entry.source, backend, undefined);
+		const handle = await buildReadHandle(grammar, tree1, entry.source, backend, undefined);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
 		const seen = new Set<string>();

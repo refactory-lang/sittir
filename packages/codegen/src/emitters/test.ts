@@ -552,6 +552,7 @@ function resolveConcreteKind(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	const seen = new Set<string>();
+	const enumCandidates: string[] = [];
 	const nonLeafCandidates: string[] = [];
 	const queue = [...candidates];
 	while (queue.length > 0) {
@@ -565,12 +566,12 @@ function resolveConcreteKind(
 			continue;
 		}
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
-		if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
-			return current;
-		}
-		nonLeafCandidates.push(current);
+		if (current.startsWith('_')) continue;
+		if (node.modelType === 'pattern' || node.modelType === 'token') return current;
+		if (node.modelType === 'enum') enumCandidates.push(current);
+		else nonLeafCandidates.push(current);
 	}
-	return nonLeafCandidates[0] ?? candidates[0] ?? '';
+	return nonLeafCandidates[0] ?? enumCandidates[0] ?? candidates[0] ?? '';
 }
 
 const MAX_DUMMY_DEPTH = 6;

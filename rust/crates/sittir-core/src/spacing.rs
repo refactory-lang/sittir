@@ -650,23 +650,6 @@ mod sink_tests {
     }
 
     #[test]
-    fn a_verbatim_slot_renders_through_the_sink_and_keeps_its_adjacency() {
-        struct LetX;
-        impl Render for LetX {
-            fn render(&self, w: &mut dyn RenderSink) -> crate::render::RenderResult {
-                w.text("let")?;
-                let slot: crate::slot::SlotValue<&str, true> =
-                    crate::slot::SlotValue::Verbatim("x".to_owned());
-                slot.render(w)
-            }
-        }
-        let out =
-            crate::render::render_to_string(&LetX, WordMatcher::default_ident(), &TABLE, "  ")
-                .unwrap();
-        assert_eq!(out, "letx");
-    }
-
-    #[test]
     fn ends_line_reports_the_last_byte() {
         let mut s = String::new();
         let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_table(&TABLE);

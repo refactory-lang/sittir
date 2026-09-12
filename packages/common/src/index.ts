@@ -1,6 +1,6 @@
 export { readNode } from './readNode.ts';
 export type { TreeHandle } from './readNode.ts';
-export { replace, bindRange, replaceField, applyEdits } from './edit.ts';
+export { replace, bindRange, replaceField, applyEdits, toEditAt } from './edit.ts';
 export { toCst } from './cst.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';
 export { withMetrics, recordFfi, dumpMetrics, metricsEnabled } from './metrics.ts';

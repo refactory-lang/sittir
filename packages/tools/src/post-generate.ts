@@ -85,8 +85,10 @@ export async function emitParityFixtures(grammar: string): Promise<void> {
 	}
 
 	writeFile(fxPath, serializeFixtures(extracted.fixtures));
+	const dropped =
+		extracted.unreproducible > 0 ? `; ${extracted.unreproducible} render left out: not reproducible without the tree` : '';
 	console.log(
-		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
+		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds${dropped})`
 	);
 	// Surface FR-011 coverage gap warnings as non-fatal stderr messages.
 	for (const w of extracted.warnings) {

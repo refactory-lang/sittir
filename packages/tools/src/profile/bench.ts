@@ -16,12 +16,9 @@
  * `NODE_ENV` is respected.
  */
 
-import { resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createRequire } from 'node:module';
 
 import type { AnyNodeData } from '@sittir/types';
-import type { TSTree } from '../validate/common.ts';
+import { boundaryModulePath, type TSTree } from '../validate/common.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 type Grammar = (typeof GRAMMARS)[number];
@@ -66,14 +63,6 @@ async function loadBenchmarkRuntime(): Promise<BenchmarkRuntime> {
 		treeHandle: validate.treeHandle
 	}));
 	return benchmarkRuntimePromise;
-}
-
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-const requireFromHere = createRequire(import.meta.url);
-void requireFromHere;
-
-function boundaryPathFor(grammar: Grammar): string {
-	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
 }
 
 export interface MemoryDelta {
@@ -158,7 +147,7 @@ async function collectNodeData(grammar: Grammar): Promise<AnyNodeData[]> {
 
 async function loadNativeRender(grammar: Grammar): Promise<((node: unknown) => string) | null> {
 	ensureBenchmarkNodeEnv();
-	const path = boundaryPathFor(grammar);
+	const path = boundaryModulePath(grammar);
 	try {
 		const mod = await import(path);
 		const render = (mod as { render?: unknown }).render;

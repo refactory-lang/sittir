@@ -36,6 +36,7 @@ import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts'
 import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
+import { boundaryModulePath } from '../validate/common.ts';
 import { load } from '../codegen-surface.ts';
 
 const { renderModuleFixturesPath } = await load('renderModulePaths');
@@ -153,11 +154,6 @@ interface ParityRenderer {
 	render: (node: unknown) => string;
 }
 
-/** Resolved per-grammar boundary path used for native parity render. */
-function boundaryPathFor(grammar: Grammar): string {
-	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
-}
-
 /**
  * Type of the dynamic-import function injected by tests. Kept narrow on
  * purpose — tests pass in a stub that resolves or rejects to exercise
@@ -183,7 +179,7 @@ export async function loadBoundaryRender(
 	grammar: Grammar,
 	importFn: BoundaryImporter = (p) => import(p)
 ): Promise<(node: unknown) => string> {
-	const boundaryPath = boundaryPathFor(grammar);
+	const boundaryPath = boundaryModulePath(grammar);
 	let mod: unknown;
 	try {
 		mod = await importFn(boundaryPath);

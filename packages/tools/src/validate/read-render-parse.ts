@@ -423,6 +423,57 @@ export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: Any
 }
 
 /**
+ * A render fixture's input, detached from the engine that read it. A
+ * coordinate names the tree its engine still holds, so it means nothing
+ * in another process: every `$nodeHandle`/`$childIndex` is dropped. A
+ * storage-less leaf kind (`isLeafKind`) keeps its identity with its own
+ * bytes as `$text` (sliced from `source` when the reader captured none);
+ * a storage-less compound keeps only its identity and rebuilds from its
+ * empty slots, and a storage-less trivia entry becomes its text.
+ */
+export function selfContainedRenderInput(
+	data: unknown,
+	source: string,
+	isLeafKind: (kindId: number) => boolean
+): unknown {
+	const textOf = (record: Record<string, unknown>): string | undefined => {
+		if (typeof record.$text === 'string') return record.$text;
+		const span = record.$span as { start: number; end: number } | undefined;
+		return span === undefined ? undefined : source.slice(span.start, span.end);
+	};
+	const hasStorage = (record: Record<string, unknown>): boolean =>
+		Object.keys(record).some((key) => key.startsWith('_') || key === '$other');
+	const walkTrivia = (entries: unknown): unknown => {
+		if (!Array.isArray(entries)) return entries;
+		return entries.map((entry) => {
+			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>)) return walk(entry);
+			return textOf(entry as Record<string, unknown>) ?? walk(entry);
+		});
+	};
+	const walk = (value: unknown): unknown => {
+		if (Array.isArray(value)) return value.map(walk);
+		if (value === null || typeof value !== 'object') return value;
+		const record = value as Record<string, unknown>;
+		const out: Record<string, unknown> = {};
+		for (const [key, raw] of Object.entries(record)) {
+			if (key === '$nodeHandle' || key === '$childIndex') continue;
+			if (key === '$_trivia' && raw !== null && typeof raw === 'object') {
+				const sides = raw as Record<string, unknown>;
+				out[key] = { ...sides, leading: walkTrivia(sides.leading), trailing: walkTrivia(sides.trailing) };
+			} else {
+				out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
+			}
+		}
+		if (!hasStorage(out) && typeof out.$type === 'number' && isLeafKind(out.$type) && out.$text === undefined) {
+			const text = textOf(out);
+			if (text !== undefined) out.$text = text;
+		}
+		return out;
+	};
+	return walk(data);
+}
+
+/**
  * Locate the reparsed target node at the exact byte offset where the rendered
  * fragment was spliced into the wrapper.
  *
@@ -470,10 +521,9 @@ export function findReparsedNodeAtOffset(
 export interface RenderFixture {
 	kind: 'render';
 	grammar: string;
-	/** NodeData input — the deep-read result from readTreeNode, ready
-	 *  for the grammar boundary render path (native transport when
-	 *  `backend === 'native'`, TS `render()` otherwise). Serialized to
-	 *  JSON verbatim. */
+	/** NodeData input — the deep-read result from readTreeNode, made
+	 *  self-contained by `selfContainedRenderInput` so the boundary render
+	 *  path can take it in any process. Serialized to JSON verbatim. */
 	input: unknown;
 	/** The string the TS engine produced for `input`. Parity gate
 	 *  asserts the Rust engine produces the same bytes. */
@@ -573,6 +623,12 @@ export async function validateReadRenderParse(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const { modelTypes } = await loadNodeModel(grammar);
+	const isLeafKind = (kindId: number): boolean => {
+		const name = kindNameFromId?.(kindId);
+		const modelType = name === undefined ? undefined : modelTypes[name];
+		return modelType === 'pattern' || modelType === 'token' || modelType === 'keyword' || modelType === 'enum';
+	};
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
@@ -639,7 +695,7 @@ export async function validateReadRenderParse(
 			// wrappers; display names are resolved per candidate below, only at
 			// the WASM `.type` seams. Build the native read handle and walk the
 			// WRAPPED tree ONCE.
-			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+			const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 			const candidatesByKind = new Map<
 				string,
 				{ start: number; end: number; node: WrappedNodeData; displayKind: string }[]
@@ -913,7 +969,7 @@ export async function validateReadRenderParse(
 								options.onFixture({
 									kind: 'render',
 									grammar,
-									input: data,
+									input: selfContainedRenderInput(data, entry.source, isLeafKind),
 									expectedOutput: rendered
 								});
 								options.onFixture({

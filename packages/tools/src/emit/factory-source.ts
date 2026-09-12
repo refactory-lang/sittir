@@ -571,7 +571,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 	const readTreeNode = await loadReadTreeNode(grammar);
 	if (!readTreeNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
 	const kindIdFromName = await loadKindIdFromName(grammar);
-	const handle = buildReadHandle(grammar, tree, source, 'native', kindIdFromName);
+	const handle = await buildReadHandle(grammar, tree, source, 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
 	const typesPath = TYPES_MODULE_PATHS[grammar];
 	if (!typesPath) throw new Error(`emit-factory-source: no types module for ${grammar}`);

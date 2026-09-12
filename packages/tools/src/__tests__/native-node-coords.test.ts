@@ -25,7 +25,7 @@ describe('native node coords', () => {
 		parser.setLanguage(lang);
 		const tree = parser.parse(entry.source);
 		if (!tree) throw new Error('expected parser to return a tree');
-		const handle = buildReadHandle(grammar, tree, entry.source, 'native');
+		const handle = await buildReadHandle(grammar, tree, entry.source, 'native');
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		if (!kindNameFromId) throw new Error('expected rust kindNameFromId resolver');
 
@@ -64,7 +64,7 @@ describe('native node coords', () => {
 		parser.setLanguage(lang);
 		const tree = parser.parse(source);
 		if (!tree) throw new Error('expected parser to return a tree');
-		const handle = buildReadHandle(grammar, tree, source, 'native');
+		const handle = await buildReadHandle(grammar, tree, source, 'native');
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
 
@@ -90,7 +90,7 @@ describe('native node coords', () => {
 		parser.setLanguage(lang);
 		const tree = parser.parse(source);
 		if (!tree) throw new Error('expected parser to return a tree');
-		const handle = buildReadHandle(grammar, tree, source, 'native');
+		const handle = await buildReadHandle(grammar, tree, source, 'native');
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
 

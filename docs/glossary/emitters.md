@@ -288,7 +288,8 @@ The seated child edges of one slot, keyed by the child kind each belongs to.
 
 The seating for every repeat slot the parent holds: one walk per slot that
 writes each element's seated arm into that element's own trailing-edge field
-before the fill descends into it.
+before the fill descends into it. Only a `Transport` element is seated; a
+`Coord` element renders its own bytes, gap included.
 
 The walk skips the last element. A child's edge is written at the end of its
 own body and cannot know whether a sibling follows, so seating the final
@@ -299,7 +300,7 @@ makes "a sibling gap belongs to the child before it" literally true: element
 *i* is seated only when there is an *i+1*.
 
 The seating is applied here rather than inside the element enum's own
-`fill_options` because only the parent's walk knows an element's position.
+`prepare` because only the parent's walk knows an element's position.
 
 ### `packages/codegen/src/emitters/render-module.ts::seatVariantArms`
 
@@ -2972,10 +2973,10 @@ Surface`
 Writes one slot value directly, with no template, for the fallback render
 of a kind that has no body. `expr` names the slot's `SlotValue` carrier:
 the concrete and supertype classes call their own `render_<kind>` function,
-so they unwrap through `node_or_write`, which writes the verbatim arm
-itself and yields the node only when there is one. The heterogeneous
-classes call `.render(w)` directly, which the carrier implements, so they
-need no unwrap.
+so they unwrap through `transport_or_write`, which slices the coordinate
+arm itself and yields the transport only when there is one. The
+heterogeneous classes call `.render(w)` directly, which the carrier
+implements, so they need no unwrap.
 
 ### `packages/codegen/src/emitters/render-module.ts::mergeTemplateSurfaceFromBody`
 
@@ -2996,14 +2997,18 @@ match arm names it.
 `render_transport_dispatch` takes `&dyn Render` rather than
 `&AnyTransport` so the root's own `SlotValue` carrier renders through the
 same single `SpacingWriter` wrap; a second entry point would be a second
-place the root seam policy could drift. It builds the writer with
-`.with_table(&options::WHITESPACE)` so `w.site(...)` resolves against this
-grammar's whitespace vocabulary, wraps the output `String` in it once,
-never per level, and calls `transport.render(&mut w)`.
+place the root seam policy could drift. It takes the render context and
+builds the writer from it: `.with_table(&options::WHITESPACE)` so
+`w.site(...)` resolves against this grammar's whitespace vocabulary,
+`.with_indent(&ctx.options.indent)`, and `.with_sources(ctx.sources)` so a
+`Coord` slot slices its bytes from the tree the engine still holds. It wraps
+the output `String` once, never per level, and calls
+`transport.render(&mut w)`.
 
 The `AnyTransport` impl is one match: every kind variant delegates to the
-payload's `Render` (so a struct kind's trivia wrapper fires), and a
-literal variant writes its text via `literalWrite`.
+payload's `Render` (so a struct kind's trivia wrapper fires), a literal
+variant writes its text via `literalWrite`, and the `Verbatim` variant
+writes its text.
 
 `usedSupertypeNames` limits helper emission to the supertypes some slot
 actually names; `kindIdByKind` lets a list kind with a nonterminal
@@ -3016,6 +3021,16 @@ held at the end of the tree is dropped, so a root node gains no edge
 whitespace.
 
 Takes the generated kind entries so the emitted `with_literal_merge_pairs` table is derived from the tokens the parser actually lexes (`literalMergePairs`), not from every literal the transport projection carries.
+
+### `packages/codegen/src/emitters/render-module.ts::renderTransportEntry`
+
+The render entry the napi engine calls: `RenderRoot` is the root in the
+same `SlotValue` carrier every slot position uses, and
+`render_transport_parts(mut transport, ctx)` runs the prepare walk over the
+whole tree (`Prepare::prepare(&mut transport, ctx)?`) before a single byte
+is written, then renders through `render_transport_dispatch` with the same
+context. A coordinate the sources cannot resolve fails here, before the
+writer exists.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
 
@@ -3147,8 +3162,8 @@ that skipped the fill.
 
 ### `packages/codegen/src/emitters/render-module.ts::buildTypedTemplateBody`
 
-The statements of a kind's render function: the captured-text fast path,
-one local per slot the body names, then the body printed by `printRustBody`.
+The statements of a kind's render function: one local per slot the body
+names, then the body printed by `printRustBody`.
 The locals are the views; the body's sink calls reference them by name. A
 seam is not bound as a local at all: `printRustBody` prints it directly as
 `w.site(node.<field>.unwrap_or(0))`, resolved through the field's own
@@ -3175,20 +3190,17 @@ template, `templateOf(struct.flanks.get(name))`:
   stamped spacing sites, and `leading`/`trailing` from the list's delimiter
   facts.
 
-`variant` and `text` bind when the body names them. A body that names a
+`variant` binds when the body names it. A body that names a
 slot the transport has no field for is a codegen error raised here, with
 the fields the transport does have, rather than a Rust compile error in
 generated code.
 
-#### the captured-text fast path
-
-The shallow validator reads only `$type` and `$text` for nested nodes.
-With per-slot `Option<…>` fields those nodes deserialize with every slot
-`None`, so the body would render empty content; when every slot is empty
-and the transport carries `$text`, that text is written instead. It is
-emitted only when every slot is checkable (`Option<T>`, `Option<Vec<T>>`,
-`Vec<T>`, or an `Option<bool>` primitive); a required singular slot is
-always present, so the check would be dead code.
+There is no captured-text fast path. A compound transport carries no
+text: a node that arrives with storage renders from its storage, and an
+untouched node arrives as a coordinate the slot carrier slices. The path
+that once returned a compound's `$text` when every slot was empty
+returned before the body's `dedent`, and leaked depth for the rest of the
+render.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitHashFiles`
 
@@ -3423,40 +3435,19 @@ inherent `write_fmt`, and the render root spells the trait call in full.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitTransportEnumFromNapiValueBody`
 
-```text
-/**
- * Emit the `from_napi_value` body shared by supertype and per-slot transport
- * enums: strict three-shape dispatch on `napi_typeof` (raw u16 kind_id /
- * bare string → Verbatim / object with numeric `$type`).
- *
- * The typeof dispatch (see `renderTransportValueTypeHelper`) replaces the
- * earlier sequential probing, which crashed on deep recursive inputs. It
- * also keeps bare-string semantics exact: `Object::from_napi_value`
- * SUCCEEDS on a JS string (property access auto-boxes primitives), so any
- * ordering that probes Object before String would swallow bare strings
- * into a "$type property missing" error instead of the Verbatim arm.
- *
- * @param enumName - Rust enum name, e.g. `PatternTransport`.
- * @param kindIdArms - shared `match kind_id` arms (must end with a
- *   catch-all `other =>` arm so the match is exhaustive over u16).
- * @param admitsVerbatim - whether the enum has a `Verbatim` variant; gates
- *   the bare-string arm (bare strings carry no kind tag).
- */
-```
+The `from_napi_value` body shared by supertype, per-slot and trivia
+transport enums: a strict shape dispatch on `napi_typeof`. A number is a
+raw u16 kind id; an object carries a numeric `$type`; when
+`admitsVerbatim`, a string is `Verbatim(VerbatimTransport { text })`; every
+other shape is an error naming the shapes the enum accepts. It is a
+dispatch, not a trial: no arm probes a second decoder when the first
+fails.
 
-#### body
-
-```text
-// (a) Raw u16 input: kind_id sent directly (value-less kinds).
-```
-
-#### body
-
-```text
-// (b) Object with numeric $type: strict kind_id dispatch. A bare string
-//     carries no kind tag and is not this enum's to hold — the slot's
-//     `SlotValue` carrier takes it as verbatim text instead.
-```
+`kindIdArms` are the shared `match kind_id` arms and must end with a
+catch-all `other =>` arm so the match is exhaustive over u16.
+`admitsVerbatim` is true only when the enum has a `Verbatim` variant —
+i.e. a member of the slot is pattern-modeled — so a bare string in any
+other slot is refused rather than guessed at.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitAliasUnwrapRecurseArm`
 
@@ -3638,7 +3629,11 @@ is bounded by the supertype's subtype count, not the grammar.
 /**
  * Emit a `{TypeName}ChildTransportSlot` per-slot children enum for a heterogeneous
  * children slot. The enum has one variant per concrete child kind; each variant
- * wraps the concrete transport struct (boxed for non-leaf kinds).
+ * wraps the concrete transport struct (boxed for non-leaf kinds). When a
+ * member is pattern-modeled the enum also admits `Verbatim(VerbatimTransport)`
+ * — a bare string in that slot is text with no kind of its own — with a
+ * prepare arm, a render arm, a bridge arm to `AnyTransport::Verbatim`, and
+ * the string shape in its `from_napi_value`.
  *
  * Mirrors `emitSupertypeTransportEnum` but is derived from the specific child
  * kinds in a slot rather than grammar supertype membership.
@@ -3921,19 +3916,14 @@ is bounded by the supertype's subtype count, not the grammar.
 /**
  * `TriviaTransport` — one variant per grammar-`extras` kind (comments, line
  * continuations, …), sourced from `nodeMap.extras` (stamped from
- * `RawGrammar.extras`, DRY: never a hand-maintained kind list here), plus a
- * `Verbatim(VerbatimTransport)` fallback shared with every other transport
- * enum's bare-string/decode-failure path.
+ * `RawGrammar.extras`, DRY: never a hand-maintained kind list here). It admits
+ * no verbatim text: a read-side extras node arrives as a coordinate the slot
+ * carrier slices, never as a bare string.
  *
  * Typed variants are needed because a factory-constructed trivia node (e.g.
  * `F.buildLineComment(...)`) carries the SAME wrapped wire shape as any other
  * node (`_content`, `$type`, …) and must render through its own template —
- * a text-only trivia carrier would silently drop that structure. The
- * `Verbatim` fallback exists because a READ-side extras stub (produced by
- * `read_node.rs`'s trivia routing) carries raw/unwrapped keys the typed
- * struct's `#[napi(object)]`-derived `FromNapiValue` cannot deserialize —
- * decode failure there is expected, not a bug, so it falls back to the
- * verbatim source text instead of erroring.
+ * a text-only trivia carrier would silently drop that structure.
  *
  * `TransportTrivia` (leading/trailing `Vec<TriviaTransport>`) replaces the
  * old grammar-agnostic `sittir_core::types::TransportTrivia`, which could
@@ -3941,6 +3931,16 @@ is bounded by the supertype's subtype count, not the grammar.
  * trivia at render time.
  */
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransport`
+
+`VerbatimTransport { text }`, emitted once per grammar: text that is a
+slot's content with no kind of its own — a bare string in a slot whose
+members all render from their own text, where the variant tag is
+render-invisible and picking one would be a guess. It renders its text and
+is inert under `Prepare`. Only an enum with a pattern-modeled member
+carries a `Verbatim` arm; `AnyTransport`'s own `from_napi_value` never
+accepts a bare string, because the root of a render is never free text.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransportStruct`
 
@@ -3979,100 +3979,44 @@ is bounded by the supertype's subtype count, not the grammar.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportNapiImpls`
 
-```text
-/**
- * Emit manual napi `FromNapiValue` + `ToNapiValue` impls for a leaf
- * transport struct. Two cfg-gated `FromNapiValue` variants are emitted:
- *
- * - `#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`
- *   reads the napi value as a plain JS string and constructs the struct
- *   with only `text` populated (metadata fields are `None` / default).
- *   JS callers in release mode send a bare string for leaf fields.
- *
- * - `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
- *   reads the napi value as a JS object and extracts the full set of
- *   metadata fields (`$text`, `$source`, `$named`, `$span`, `$nodeId`).
- *   JS callers in debug mode send the complete transport object.
- *
- * `ToNapiValue` is a no-op stub in both modes. Transport is receive-only
- * (JS→Rust); the stub satisfies `#[napi(object)]` field bounds on parent
- * branch structs that embed these leaf types.
- *
- * @param structName - Rust struct name, e.g. `IdentifierTransport`.
- * @param named - Whether this leaf node is named in tree-sitter. Tokens are always
- *   anonymous (`false`); patterns and keywords are always named (`true`). Used to
- *   hardcode `transport_named` in non-debug mode so the children filter
- *   `.filter(|t| t.transport_named().unwrap_or(true))` works correctly without
- *   needing to read `$named` from the JS object.
- */
-```
+Manual napi `FromNapiValue` + `ToNapiValue` impls for a leaf transport
+struct. Two cfg-gated `FromNapiValue` variants are emitted:
 
-#### body
+- `#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`
+  dispatches on `napi_typeof` (never probing `String::from_napi_value` on a
+  non-string; see `sittir_core::slot::transport_value_type`): a bare
+  string is the text; a number is a value-less leaf sent as its kind id and
+  takes `defaultTextLiteral`; a boolean-presence leaf takes
+  `booleanLiteral`; anything else is read as an object carrying `$text`
+  and `$_trivia`. The struct is built from `text` and the trivia capture.
+- `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
+  reads the full object: `$text` plus every `TRANSPORT_METADATA_FIELDS`
+  entry by its `jsName`.
 
-```text
-// Release mode: read plain JS string — no metadata round-trip.
-// transport_named is hardcoded (not read from JS) because named/anonymous
-// is a grammar-level fact that never changes at runtime.
-```
+A coordinate never reaches these impls: the slot's `SlotValue` carrier
+takes an object carrying `$nodeHandle` before the leaf type is asked.
 
-#### body
-
-```text
-// typeof dispatch — never probe String::from_napi_value on a non-string
-// (its failure path JSON.stringify's Object inputs; see sittir_core::slot::transport_value_type).
-```
-
-#### body
-
-```text
-// Debug mode: read full metadata object — same shape as #[napi(object)] would derive.
-```
-
-#### body
-
-```text
-// ToNapiValue stub — transport is JS→Rust only; this impl satisfies the
-// trait bound required by #[napi(object)] on parent branch structs whose
-// fields embed this leaf transport type.
-```
+`ToNapiValue` is a no-op stub in both modes. Transport is receive-only
+(JS→Rust); the stub satisfies `#[napi(object)]` field bounds on parent
+branch structs that embed these leaf types.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportMetadataFields`
 
-```text
-/**
- * Emit struct field declarations with `#[cfg_attr(feature = "napi-bindings", napi(js_name = "..."))]`
- * attributes for branch/group/polymorph transport structs that carry
- * `#[napi(object)]` on the struct.
- *
- * @param includeText - true for branch structs (adds `transport_text`).
- */
-```
-
-#### body
-
-```text
-// source, named — always first
-```
-
-#### body
-
-```text
-// remaining fields: span, nodeHandle, childIndex, triviaData
-```
+The `#[napi(js_name = …)]`-attributed field declarations a compound
+transport struct (`#[napi(object)]`) carries besides its slots: one line
+pair per `TRANSPORT_METADATA_FIELDS` entry. A compound declares no text
+field — its content is its slots, and a node that arrives with storage
+renders from that storage.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportPlainFields`
 
-```text
-/**
- * Plain struct fields for leaf/keyword/token transport structs. Unlike
- * branch structs, these do not carry `#[napi(object)]` on the struct itself,
- * so individual field `cfg_attr(napi(...))` attributes would have no proc-macro
- * to consume them and could confuse napi-derive. Plain field declarations are
- * used instead; `FromNapiValue` is emitted manually below the struct definition
- * (via `renderLeafTransportNapiImpls`), reading the JS property names with the
- * `$`-prefixed keys explicitly.
- */
-```
+Plain struct fields for leaf/keyword/token transport structs: the metadata
+fields, then `text: String` — the leaf's own content, not metadata. Unlike
+branch structs, these do not carry `#[napi(object)]` on the struct itself,
+so individual field `cfg_attr(napi(...))` attributes would have no
+proc-macro to consume them; `FromNapiValue` is emitted manually below the
+struct definition (`renderLeafTransportNapiImpls`), reading the JS
+property names with the `$`-prefixed keys explicitly.
 
 ### `packages/codegen/src/emitters/render-module.ts::rustTransportSlotType`
 
@@ -4284,14 +4228,15 @@ is bounded by the supertype's subtype count, not the grammar.
 
 ### `packages/codegen/src/emitters/render-module.ts::armSeamSupport`
 
-The per-grammar `Seamed<T>` carrier and the `ArmSeams` trait it fills
+The per-grammar `Seamed<T>` carrier and the `ArmSeams` trait it prepares
 through. It is generated beside the transports rather than living in
 `sittir-core` because its `Render` impl resolves the grammar's own site ids
 through `w.site(...)`, which core's writer already does generically —
 `Seamed` just calls it before and after the value. `Seamed` holds the value
-and the two resolved whitespace kind ids; every position that already
-accepted the enum accepts it unchanged, because the enum's public name
-becomes an alias for it.
+and the two resolved whitespace kind ids, filled from `ctx.options.spacing`
+in its `Prepare` impl; every position that already accepted the enum
+accepts it unchanged, because the enum's public name becomes an alias for
+it.
 
 ### `packages/codegen/src/emitters/render-module.ts::armSeamPairsOf`
 
@@ -8130,26 +8075,8 @@ two agree. The delimiter is stamped the same way, `Delimiter.None` included.
 
 ### `packages/codegen/src/emitters/render-module.ts::TransportMetadataField`
 
-```text
-/**
- * Single source of truth for transport struct metadata fields.
- * Every transport struct (branch, leaf, polymorph) carries these
- * metadata fields. All emission helpers that produce struct field
- * declarations, `None` initialisers, `obj.get(...)` reads, or
- * `transport.<field>` bridge accesses derive from this array.
- *
- * @remarks
- * `jsName` is the `$`-prefixed JS property name on the wire.
- * `rustName` is the Rust struct field name.
- * `rustType` is the Rust type for the struct field declaration.
- * `bridgeMap` (optional) is an inline `.map(...)` transformation
- * applied when reading the field value in the transport-to-NodeData
- * bridge function. When absent the field is passed through directly.
- * `needsExplicitTypeAnnotation` flags fields whose `obj.get(...)` call
- * in the manual `FromNapiValue` impl requires a leading type annotation
- * (e.g. `let x: Option<Foo> = obj.get(...)?;`).
- */
-```
+One transport metadata field: `jsName` is the `$`-prefixed JS property
+name on the wire, `rustName` the Rust struct field, `rustType` its type.
 
 ### `packages/codegen/src/emitters/render-module.ts::enumTypeName`
 
@@ -8560,33 +8487,13 @@ two agree. The delimiter is stamped the same way, `Delimiter.None` included.
 
 ### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS`
 
-```text
-/**
- * Metadata fields shared by all transport structs.
- *
- * `transport_text` is intentionally absent — it is present on branch
- * transport structs (which always include it) but NOT on leaf structs
- * (which use a plain `text: String` field instead). It is added
- * conditionally by `renderTransportMetadataFields`.
- */
-```
-
-#### body
-
-```text
-// $nodeHandle (u32) + $childIndex (u16) replace $nodeId. napi-rs 3 passes
-// these as f64 from JS; converted at the transport boundary.
-```
-
-### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_TEXT_FIELD`
-
-```text
-/**
- * The `transport_text` field, conditional on branch structs. Kept
- * separate from `TRANSPORT_METADATA_FIELDS` because leaf structs use
- * a plain `text: String` instead.
- */
-```
+The metadata fields every transport struct carries besides its content:
+one entry, `$_trivia` → `transport_trivia_data: Option<TransportTrivia>`.
+Every emission helper that produces the field declarations, the `None`
+initialisers or the `obj.get(...)` reads derives from this array. A
+transport carries no coordinate fields: a coordinate is the `Coord` arm of
+the slot's `SlotValue` carrier, never a field on the transport it would
+otherwise have been.
 
 ### `packages/codegen/src/emitters/render-module.ts::LITERAL_TO_VARIANT_NAME`
 
@@ -13750,6 +13657,12 @@ candidate list.
 // leafOnly=false because their impls can match coerced inputs greedily.
 ```
 
+A supertype whose concrete expansion (`supertypeAdmitsVerbatim`) holds a
+pattern-modeled kind admits `Verbatim(VerbatimTransport)` beside its
+members: a prepare arm, a bridge arm to `AnyTransport::Verbatim`, the
+string shape in `from_napi_value`, and a render arm in the supertype's
+render helper.
+
 #### body
 
 ```text
@@ -13834,6 +13747,12 @@ candidate list.
 // render helper (declared later by emitSupertypeRenderHelper; forward fn
 // references are fine at Rust module scope).
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::supertypeAdmitsVerbatim`
+
+Whether a supertype's concrete expansion (`expandConcreteTransportKinds`)
+holds a pattern-modeled kind — the one predicate behind the supertype
+enum's `Verbatim` arm and its render helper's, so the two cannot disagree.
 
 ### `packages/codegen/src/emitters/render-module.ts::collectConcreteTransportKindIds`
 
@@ -14221,17 +14140,16 @@ candidate list.
 
 ### `packages/codegen/src/emitters/render-module.ts::leafDefaultTextLiteral`
 
-#### body
+The text a value-less leaf takes when it arrives over napi as a bare kind
+id (`scalar_leaf_value` in sittir-core serialises anonymous single-leaf
+fields that way): a token's own text, or a pattern's single fixed literal
+(`_semicolon` → ";"). Content-bearing patterns (identifier, number, …)
+have no default — they come in on the string path and must stay there.
 
-```text
-// Patterns whose sole realisation is a single fixed anonymous literal
-// (e.g. `_semicolon` → ";", `||` → "||") arrive over NAPI as a bare u16
-// kind-id rather than a string, because scalar_leaf_value in sittir-core
-// serialises anonymous single-leaf fields that way.  Accept the u16 branch
-// only for patterns that carry a known fixed literal (`fixedLiteralText`);
-// content-bearing patterns (identifier, number, …) must never collapse to a
-// constant — they come in on the String path and must stay on that path.
-```
+A depth token (`isDepthText`) has no default either: its render never
+reads `text` — the depth fact is the kind id the sink dispatches on
+(`w.indent()` / `w.dedent(seam)` through `literalWrite`), so the sentinel
+would only be carried to be ignored.
 
 ### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS.jsName`
 
@@ -14999,6 +14917,12 @@ the kind catalog is in hand, so the render emitter never re-derives it.
  */
 ```
 
+### `packages/codegen/src/emitters/render-options-rs.ts::allowed`
+
+`allowed(site) -> &'static [u16]`: the arms a spacing site admits, read
+off the `SPACING_SITES` row the resolver already carries. The prepare
+walk's gap classification asks it which measured gap a site may take.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::structNameOf`
 
 ```text
@@ -15202,18 +15126,27 @@ the kind catalog is in hand, so the render emitter never re-derives it.
  *  `_newline` have one spelling. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::fillOptionsEnumImpl`
+### `packages/codegen/src/emitters/render-module.ts::prepareEnumImpl`
 
-```text
-/** A `FillOptions` impl for a generated enum: payload variants delegate,
- *  unit variants (literals) do nothing. */
-```
+A `Prepare` impl for a generated enum: payload variants delegate to the
+payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
+is the tail expression, so the impl's result is whichever arm ran.
 
-### `packages/codegen/src/emitters/render-module.ts::noopFillOptionsImpl`
+### `packages/codegen/src/emitters/render-module.ts::PREPARE_MOD`
 
-```text
-/** A `FillOptions` impl for a type that owns no slots (leaf enums). */
-```
+The core module path the generated `Prepare` impls name, spelled once.
+
+### `packages/codegen/src/emitters/render-module.ts::PREPARE_SIG`
+
+The one signature every generated `prepare` shares:
+`fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>`.
+An impl whose body never reads the context binds it as `_ctx` by string
+replacement on this constant, so the two spellings cannot drift.
+
+### `packages/codegen/src/emitters/render-module.ts::inertPrepareImpl`
+
+A `Prepare` impl for a type that owns no slots and no coordinates (leaf
+enums, `VerbatimTransport`): `Ok(())`.
 
 ### `packages/codegen/src/emitters/render-module.ts::spacingFieldExprs`
 
@@ -15223,24 +15156,23 @@ the kind catalog is in hand, so the render emitter never re-derives it.
  *  never a token seam site; absent means the view writes nothing there. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::fillOptionsStructImpl`
+### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
-```text
-/**
- * A transport struct's `FillOptions` impl: each of the kind's own spacing
- * fields takes the table value when unset, a separated list takes its
- * `delimiter` when the table's flank is non-zero and the field unset, then
- * every slot field recurses. A wire-carried value always wins.
- */
-```
+A transport struct's `Prepare` impl. It fills this kind's own facts first
+— each of its spacing fields takes the table value when unset, the seating
+loops write each element's seated arm into the element's own trailing-edge
+field, and a separated list takes its `delimiter` from the delimiter table
+and its `separator_kind` from its separator site when unset — and only
+then walks the children (every slot field's `prepare(ctx)?`). The order is
+load-bearing: a seat is a `get_or_insert` on the child's field, and the
+child's own prepare fills that same field with the child's global default,
+so the parent must seat before the child sees it. A wire-carried value
+always wins; a coordinate that names no tree or a span outside its source
+is the walk's error, not the render's.
 
 A list's delimiter is filled from the table like any spacing site, zero
 included: the table's value is the grammar's declared default or a render
 option, and the transport's own value still wins.
-
-A separated list with a choice separator also takes `separator_kind` from
-its separator site when unset, so a built node's `_separator` and a
-resolved `<kind>.<slot>_separator` option reach the render the same way.
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 

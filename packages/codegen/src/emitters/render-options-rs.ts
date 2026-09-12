@@ -416,6 +416,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        _ => "",');
 	L.push('    }');
 	L.push('}', '');
+	L.push("pub fn allowed(site: usize) -> &'static [u16] {", '    SPACING_SITES[site].4', '}', '');
 	L.push(
 		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };',
 		''

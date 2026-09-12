@@ -29,6 +29,8 @@ import {
 	type RoundTripFixture
 } from './read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
+import { loadNativeEngine } from './common.ts';
+import type { AnyNodeData } from '@sittir/types';
 
 const { renderModuleFixturesPath } = await load('renderModulePaths');
 
@@ -47,6 +49,9 @@ export interface ExtractResult {
 	/** Render + round-trip counts for diagnostic logging. */
 	renderCount: number;
 	roundTripCount: number;
+	/** Render fixtures left out because their input, detached from the tree
+	 *  the validator rendered it from, no longer renders the validated bytes. */
+	unreproducible: number;
 	/** Kinds covered by at least one roundtrip fixture. */
 	coveredKinds: Set<string>;
 	/**
@@ -76,6 +81,19 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 	const warnings: string[] = [];
 	let renderCount = 0;
 	let roundTripCount = 0;
+	let unreproducible = 0;
+
+	const engine = await loadNativeEngine(grammar);
+	const reproduces = (fx: RenderFixture): boolean => {
+		if (JSON.stringify(fx.input).includes('"$nodeHandle"')) {
+			throw new Error(`parity-fixtures[${grammar}]: a render fixture input still carries a coordinate`);
+		}
+		try {
+			return engine.render(fx.input as AnyNodeData).toString() === fx.expectedOutput;
+		} catch {
+			return false;
+		}
+	};
 
 	await validateReadRenderParse(grammar, {
 		backend: 'native',
@@ -85,12 +103,17 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 		// kinds (rust: 900 fixtures / 69 kinds vs 277 / 41 shallow).
 		recursive: true,
 		onFixture: (fx) => {
-			fixtures.push(fx);
-			if (fx.kind === 'render') renderCount++;
-			else {
+			if (fx.kind === 'render') {
+				if (!reproduces(fx)) {
+					unreproducible++;
+					return;
+				}
+				renderCount++;
+			} else {
 				roundTripCount++;
 				coveredKinds.add(fx.pattern);
 			}
+			fixtures.push(fx);
 		}
 	});
 
@@ -122,7 +145,7 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 		);
 	}
 
-	return { grammar, fixtures, renderCount, roundTripCount, coveredKinds, warnings };
+	return { grammar, fixtures, renderCount, roundTripCount, unreproducible, coveredKinds, warnings };
 }
 
 /**

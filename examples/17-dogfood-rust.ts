@@ -152,7 +152,14 @@ export function displayImpl() {
 									path: { kind: 'scoped_identifier', path: 'std', name: 'fmt' },
 									name: 'Formatter',
 								},
-								typeArguments: ["'_"],
+								// GAP L6 (coercion): a `typeArguments: [...]` array collapses to its
+								// first string in the list envelope slot, which admits no text.
+								typeArguments: ir.typeArguments.strict(
+									ir.typeArgumentsElements.strict(
+										{ delimiter: Delimiter.None },
+										{ content: ir.lifetime.strict(ir.identifier('_')) }
+									)
+								),
 							},
 						}),
 					})
@@ -243,13 +250,27 @@ export function applyEditsFn() {
 				ir.parameter({
 					mutableSpecifier: true,
 					name: 'edits',
-					type: { kind: 'generic_type', type: 'Vec', typeArguments: ['Edit'] },
+					type: {
+						kind: 'generic_type',
+						type: 'Vec',
+						// GAP L6 (coercion): see above.
+						typeArguments: ir.typeArguments.strict(
+							ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, { content: 'Edit' })
+						),
+					},
 				})
 			),
 			returnType: {
 				kind: 'generic_type',
 				type: 'Result',
-				typeArguments: ['String', 'SpliceError'],
+				// GAP L6 (coercion): see above.
+				typeArguments: ir.typeArguments.strict(
+					ir.typeArgumentsElements.strict(
+						{ delimiter: Delimiter.None },
+						{ content: 'String' },
+						{ content: 'SpliceError' }
+					)
+				),
 			},
 			body: ir.block.strict({
 				statements: [
@@ -283,11 +304,16 @@ export function applyEditsFn() {
 						pattern: 'buf',
 						value: ir.callExpression({
 							function: { kind: 'scoped_identifier', path: 'String', name: 'from' },
-							arguments: ['source'],
+							// GAP L6 (coercion): see above.
+							arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'source')),
 						}),
 					}),
 				],
-				trailingExpression: ir.callExpression({ function: 'Ok', arguments: ['buf'] }),
+				// GAP L6 (coercion): see above.
+				trailingExpression: ir.callExpression({
+					function: 'Ok',
+					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'buf')),
+				}),
 			}),
 		})
 		.$trivia({

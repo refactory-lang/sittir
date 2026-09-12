@@ -383,20 +383,20 @@ describe('render options on transports', () => {
 
 	it('a list fills its own fields from its own site indices; its owner only recurses', async () => {
 		const src = await getTypescriptTransportRs();
-		const listImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersElementsTransport {'));
+		const listImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransport {'));
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);'
+			'self.formal_parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);'
 		);
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
+			'self.formal_parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
 		);
-		expect(listFill).toContain('self.delimiter.get_or_insert(table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);');
-		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
+		expect(listFill).toContain('self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);');
+		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
-		expect(ownerFill).toContain('self.formal_parameters_elements.fill_options(table);');
+		expect(ownerFill).toContain('self.formal_parameters_elements.prepare(ctx)?;');
 		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
-		expect(ownerFill).toContain('self.lparen_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);');
+		expect(ownerFill).toContain('self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);');
 	});
 
 	it('the list view is built from the transport fields and never from a separator literal', async () => {
@@ -414,8 +414,8 @@ describe('render options on transports', () => {
 		const body = extractStructBody(src, 'ArgumentsTransport');
 		expect(body).toContain('napi(js_name = "_lparen_after")');
 		expect(body).toContain('pub lparen_after: Option<u16>,');
-		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for ArgumentsTransport {'));
-		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).toContain('self.lparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);');
+		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsTransport {'));
+		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).toContain('self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);');
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).not.toContain('let lparen_after');
@@ -431,11 +431,11 @@ describe('render options on transports', () => {
 		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/w\.site\(node\.statement_block_before\.unwrap_or\(0\)\);/);
 	});
 
-	it('the render entry fills the tree from the table before dispatch', async () => {
+	it('the render entry prepares the tree through the context before dispatch', async () => {
 		const src = await getTypescriptTransportRs();
 		expect(src).toContain('pub fn render_transport_parts(');
-		expect(src).toContain('    table: &::sittir_core::options::ResolvedOptions,');
-		expect(src).toContain('    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);');
+		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
+		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;');
 	});
 });
 
@@ -444,33 +444,71 @@ describe('the typed sink replaces the mark-based Display path', () => {
 	it('renders through the typed sink and writes no mark character', async () => {
 		const transportRs = await getRustTemplatesRs();
 		expect(transportRs).not.toContain('impl ::std::fmt::Display for');
-		// The depth arms' stamped model identity (dsl/primitives/spacing.ts
-		// INDENT_TEXT/DEDENT_TEXT) legitimately keeps these code points as a
-		// read-path FromNapiValue default \$text, unrelated to rendering. Strip
-		// only on the lines that ARE that default (the \`unwrap_or_else\`/
-		// \`ValueType::Number\` fallback lines), so a mark reaching a render call
-		// on any other line still fails this assertion.
-		const depthDefaultLine = /unwrap_or_else\(\|\||ValueType::Number =>/;
-		const withoutStampedIdentityDefaults = transportRs
-			.split('\n')
-			.map((line) =>
-				depthDefaultLine.test(line)
-					? line.replaceAll(JSON.stringify('\u{FDD0}\n'), '""').replaceAll(JSON.stringify('\u{FDD1}\n'), '""')
-					: line
-			)
-			.join('\n');
-		expect(withoutStampedIdentityDefaults).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
 		expect(transportRs).not.toContain('mark_adjacent');
 		expect(transportRs).toContain('impl ::sittir_core::render::Render for FunctionItemTransport {');
 		expect(transportRs).toContain(
 			'fn render_function_item(node: &FunctionItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
 		);
 		expect(transportRs).toContain(
-			'pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {'
+			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(transportRs).toContain(
-			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent)'
+			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
 		);
+	});
+
+	it('carries every slot as Coord or Transport and never a bare string', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toContain('SlotValue::Node(');
+		expect(transportRs).not.toContain('SlotValue::Verbatim(');
+		expect(transportRs).toContain('SlotValue::Transport(');
+	});
+
+	it('declares no inert metadata on transports', async () => {
+		const transportRs = await getRustTemplatesRs();
+		for (const field of [
+			'transport_span',
+			'transport_node_handle',
+			'transport_child_index',
+			'transport_source',
+			'transport_named'
+		]) {
+			expect(transportRs).not.toContain(`pub ${field}:`);
+		}
+		expect(transportRs).toContain('pub transport_trivia_data: Option<TransportTrivia>');
+		expect(transportRs).not.toContain('pub transport_text: Option<String>');
+	});
+
+	it('reads a depth token off its kind and not off a sentinel default', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(transportRs).toContain('{ w.dedent("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }');
+	});
+
+	it('prepares every transport through the render context and renders with its sources', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toContain('FillOptions');
+		expect(transportRs).toContain('impl ::sittir_core::prepare::Prepare for FunctionItemTransport {');
+		expect(transportRs).toContain(
+			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
+		);
+		expect(transportRs).toContain('.get_or_insert(ctx.options.spacing[options::');
+		expect(transportRs).toContain(
+			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+		);
+		expect(transportRs).toContain(
+			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
+		);
+	});
+
+	it('admits verbatim text only where a slot admits a pattern kind', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).toContain('pub struct VerbatimTransport {');
+		// FunctionItem.name admits identifier and metavariable, both pattern-modeled.
+		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
+		// MacroDefinition.content admits three envelopes and no pattern kind.
+		expect(transportRs).toMatch(/pub enum MacroDefinitionContentTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 
 	it('binds a list view over site ids and writes a seam site as a call', async () => {

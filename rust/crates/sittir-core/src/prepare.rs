@@ -25,8 +25,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         match self {
             SlotValue::Coord(coord) => coord.resolve(ctx.sources).map(|_| ()),
-            SlotValue::Node(node) => node.prepare(ctx),
-            SlotValue::Verbatim(_) => Ok(()),
+            SlotValue::Transport(t) => t.prepare(ctx),
         }
     }
 }

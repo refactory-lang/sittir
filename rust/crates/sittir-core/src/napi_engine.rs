@@ -211,12 +211,17 @@ macro_rules! napi_engine {
                 let resolved;
                 let table = match options {
                     Some(opts) => {
-                        resolved = $resolve(&opts, self.engine.options()).map_err(::napi::Error::from_reason)?;
+                        resolved = $resolve(&opts, self.engine.options())
+                            .map_err(::napi::Error::from_reason)?;
                         &resolved
                     }
                     None => self.engine.options(),
                 };
-                let (source, canonical) = $render_parts(transport, table).map_err(|e| {
+                let ctx = $crate::prepare::RenderContext {
+                    options: table,
+                    sources: &self.trees,
+                };
+                let (source, canonical) = $render_parts(transport, &ctx).map_err(|e| {
                     ::napi::Error::from_reason(format!("render_transport failed: {e}"))
                 })?;
                 // A node knows which tree it came from, but the wrap layer
