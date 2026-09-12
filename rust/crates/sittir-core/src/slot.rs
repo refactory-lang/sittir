@@ -28,6 +28,20 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     Verbatim(String),
 }
 
+/// The one derivation of "emit slot text": an `ADJACENT` slot suppresses
+/// the seam space before it, then the text writes verbatim. Shared by
+/// `node_or_write` and `Render for SlotValue`, the two write paths a slot
+/// value can take.
+fn write_verbatim<const ADJACENT: bool>(
+    text: &str,
+    w: &mut dyn crate::render::RenderSink,
+) -> crate::render::RenderResult {
+    if ADJACENT {
+        w.adjacent();
+    }
+    w.text(text)
+}
+
 impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     /// The node this slot holds, or `None` when it holds verbatim text.
     pub fn node(&self) -> Option<&T> {
@@ -47,10 +61,7 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
         match self {
             Self::Node(node) => Ok(Some(node)),
             Self::Verbatim(text) => {
-                if ADJACENT {
-                    w.adjacent();
-                }
-                w.text(text)?;
+                write_verbatim::<ADJACENT>(text, w)?;
                 Ok(None)
             }
         }
@@ -63,12 +74,7 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
             Self::Node(node) => node.render(w),
-            Self::Verbatim(text) => {
-                if ADJACENT {
-                    w.adjacent();
-                }
-                w.text(text)
-            }
+            Self::Verbatim(text) => write_verbatim::<ADJACENT>(text, w),
         }
     }
 }

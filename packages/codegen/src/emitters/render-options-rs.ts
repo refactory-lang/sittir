@@ -3,7 +3,7 @@ import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { admitsDepth } from '../compiler/model/render-rules.ts';
-import { DEDENT_TEXT, INDENT_TEXT, isDepthText } from '../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toPascal } from './kind-discriminant.ts';
@@ -176,24 +176,6 @@ function structNameOf(segments: readonly PreferenceSegment[], kindEntries: reado
 	return `${segments.map((segment) => rustTypeIdent(toPascal(nestedKey(segment, kindEntries)))).join('')}Options`;
 }
 
-function segmentEq(a: PreferenceSegment, b: PreferenceSegment): boolean {
-	if (a.kind !== b.kind) return false;
-	switch (a.kind) {
-		case 'literal':
-			return a.text === (b as typeof a).text;
-		case 'index':
-			return a.value === (b as typeof a).value;
-		case 'wildcard':
-			return true;
-		default:
-			return a.name === (b as { name: string }).name;
-	}
-}
-
-function segmentsEq(a: readonly PreferenceSegment[], b: readonly PreferenceSegment[]): boolean {
-	return a.length === b.length && a.every((s, i) => segmentEq(s, b[i]!));
-}
-
 type SiteIndex = ReadonlyMap<string, readonly SitePath[]>;
 
 function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
@@ -209,8 +191,7 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 
 function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
 	return leaf.canonical.map((segments) => {
-		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
-		const site = bucket.find((p) => segmentsEq(p.segments, segments));
+		const site = siteIndex.get(formatPreferencePath(segments))?.[0];
 		if (site === undefined) throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is no site`);
 		return site;
 	});
@@ -261,8 +242,11 @@ function fieldsOf(
 		const ident = rustFieldIdent(key);
 		if (child.branch !== undefined) return { key, ident, type: `Option<${structNameOf(child.branch.segments, kindEntries)}>` };
 		const refs = siteRefsOf(child.leaf!, siteIndex);
-		const isDelimiter = refs.length > 0 && refs.every((r) => r.site === 'delimiter');
-		return { key, ident, type: isDelimiter ? 'Option<u8>' : 'Option<u16>' };
+		const delimiterRefs = refs.filter((r) => r.site === 'delimiter').length;
+		if (delimiterRefs > 0 && delimiterRefs < refs.length) {
+			throw new Error(`options.rs: address '${child.leaf!.path}' mixes spacing and delimiter sites`);
+		}
+		return { key, ident, type: delimiterRefs > 0 ? 'Option<u8>' : 'Option<u16>' };
 	});
 }
 
@@ -427,7 +411,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
-		L.push(`        ${w.id} => ${rustStringLiteral(isDepthText(w.text) ? '\n' : w.text)},`);
+		L.push(`        ${w.id} => ${rustStringLiteral(depthBreakOf(w.text))},`);
 	}
 	L.push('        _ => "",');
 	L.push('    }');

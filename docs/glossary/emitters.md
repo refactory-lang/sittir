@@ -3065,6 +3065,13 @@ transport's `Render`) and every literal-transport-variant arm
 so a newline terminator renders the same whether it arrived as a kind id
 or as a node.
 
+The DEDENT arm here (`w.dedent()`, no seam) differs from
+`SpacingWriter::site(DEDENT)`, which always merges a break seam after
+dedenting: this route only calls `w.seam` when a body payload follows the
+dedent at that edge. No grammar exercises both routes on the same edge
+today, so the difference is inert; a future grammar that mixes them would
+need one route's break behavior reconciled with the other's.
+
 ```text
 /// The one classification a literal's render call makes, whether the value
 /// is known at codegen time (`valueExpr` a Rust string literal) or read at
@@ -5062,6 +5069,13 @@ for it.
 Whether a fixed text is nothing but whitespace: the one predicate behind
 every site that decides a text is structural whitespace rather than
 token text.
+
+### `packages/codegen/src/emitters/render-body.ts::tokenSeam`
+
+The body node for a whitespace-only literal that is a token the source
+holds, not inter-node whitespace the writer invents: a token seam merges
+into the seam text around it like any other seam, but survives a render's
+end where a plain seam is dropped. `literalBody`'s sole caller.
 
 ### `packages/codegen/src/emitters/render-body.ts::literalBody`
 
@@ -10482,6 +10496,18 @@ those off into the boundary's seam list before reading the edges, so a
 statically spaced boundary is written by the seam and never by both the
 seam and a literal space.
 
+#### body
+
+```text
+// NEWLINE renders as `text('\n')` directly rather than through
+// `literalBody`: `isWhitespaceOnly('\n')` is true, so routing it through
+// `literalBody` would emit a token seam (`w.token_seam`) instead of plain
+// text — a token seam survives a render's end where a plain seam is
+// dropped, which would change what a trailing NEWLINE rule does at the
+// end of a render. NEWLINE content is exactly this rule's text, not an
+// inter-node seam, so `text` is the correct call.
+```
+
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
 
 ```text
@@ -14979,27 +15005,15 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 ```text
 /** The site(s) a leaf's `canonical` entries name, looked up in a `SiteIndex`
  *  (`siteIndexOf`) built once per emit and keyed by each site's own
- *  canonical address; a hash-bucket hit is confirmed with `segmentsEq`
- *  before it is trusted, never by comparing formatted strings. One entry
- *  for an ordinary site, every bound site for a declaration reached through
- *  bindings. A canonical entry naming no site is a codegen-time error. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::segmentEq`
-
-```text
-/** Structural equality of two address segments — same `kind`, and same
- *  `text`/`value`/`name` for the segment kinds that carry one. A `wildcard`
- *  segment always matches, mirroring the DSL's own wildcard semantics. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::segmentsEq`
-
-```text
-/** Structural equality of two segment lists: same length, `segmentEq` at
- *  every position. The only correct way to compare two addresses — the
- *  joined `nestedKey` string and the canonical string are both lossy when a
- *  literal segment's own text contains the path separator. */
+ *  canonical address. `formatPreferencePath` is a bijection over the
+ *  `PreferenceSegment` vocabulary — every kind's syntax marker (quotes,
+ *  parens, colon suffix, digits, `_`, bare identifier) is mutually
+ *  exclusive — so the first hash-bucket entry at a formatted key is the
+ *  site, with no separate segment-equality check; `childIndexOf` and
+ *  `directChildrenOf` key on the same formatted string with the same
+ *  assumption. One entry for an ordinary site, every bound site for a
+ *  declaration reached through bindings. A canonical entry naming no site
+ *  is a codegen-time error. */
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SiteIndex`
@@ -15014,11 +15028,8 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 
 ```text
 /** Builds a `SiteIndex`: every `plan.sitePaths` entry keyed by
- *  `formatPreferencePath` of its own `segments`. A hash-bucket hit is a
- *  candidate only — the caller still confirms it against the segment list
- *  it is actually looking for (`segmentsEq`) before trusting it, since two
- *  structurally different addresses could in principle format to the same
- *  string. */
+ *  `formatPreferencePath` of its own `segments` — the canonical string
+ *  identity `siteRefsOf`, `childIndexOf` and `directChildrenOf` all share. */
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DirectChild`
@@ -15051,8 +15062,11 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 ```text
 /** The fields of the struct at `prefix`, in the branch's own child order:
  *  a child that is itself a branch nests that branch's struct; a leaf
- *  child's field width comes from whether every site its `canonical`
- *  entries name is a delimiter site. */
+ *  child's field width is `u8` when every site its `canonical` entries name
+ *  is a delimiter site, `u16` when none is. A leaf whose sites mix
+ *  delimiter and spacing sites is a codegen-time error naming the address —
+ *  resolving it silently as `u16` would only surface as a cargo type
+ *  mismatch downstream, far from the address that caused it. */
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::emitOptionsStructs`

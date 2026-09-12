@@ -298,6 +298,12 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// a depth move plus its line break for the depth arms, otherwise the
     /// arm's text as a seam. A writer with no table attached treats every
     /// other kind as unknown and writes nothing.
+    ///
+    /// The DEDENT arm always merges a break seam after dedenting, unlike the
+    /// generated literal `w.dedent()` route in a rendered body, which only
+    /// follows with a seam when a payload is present at that edge. No
+    /// grammar exercises both routes on the same edge, so the two are free
+    /// to diverge on whether a trailing break is unconditional.
     fn site(&mut self, kind: u16) {
         if kind == 0 {
             return;

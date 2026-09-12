@@ -3366,6 +3366,29 @@ parents.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::literalRuleValue`
+
+```text
+/**
+ * The literal text a grammar-JSON rule node stands for, when the node is
+ * itself a bare `STRING` or an unnamed `ALIAS` wrapping one — the two rule
+ * shapes tree-sitter treats as a literal for aliasing purposes. Returns
+ * `undefined` for every other rule shape.
+ */
+```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::walkGrammarNode`
+
+```text
+/**
+ * One pass over the grammar-JSON rule tree, collecting every `STRING`
+ * value, every named-ALIAS target name, and every unnamed-ALIAS-of-a-SYMBOL
+ * pair (the literal-rule chain `findEntryForLiteralText` falls back to).
+ * Recurses into arrays and every object value uniformly, since a rule tree
+ * has no fixed shape by node type.
+ */
+```
+
 ### `packages/codegen/src/compiler/inline-sets.ts::loadGrammarJsonInlineList`
 
 ```text

@@ -1,4 +1,4 @@
-import { isDepthText, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
+import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 
 export function isWhitespaceOnly(text: string): boolean {
 	return text.trim() === '';
@@ -482,7 +482,7 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 			case 'indent':
 				flush();
 				lines.push(`${pad}w.indent();`);
-				lines.push(`${pad}w.seam(${rustStringLiteral(payload === '' ? '\n' : payload)});`);
+				lines.push(`${pad}w.seam(${rustStringLiteral(payload === '' ? DEPTH_BREAK : payload)});`);
 				break;
 			case 'dedent':
 				flush();

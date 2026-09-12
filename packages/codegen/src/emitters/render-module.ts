@@ -1,4 +1,4 @@
-import { parseSeamLabel, isDepthText, INDENT_TEXT } from '../dsl/primitives/spacing.ts';
+import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -523,7 +523,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 function literalWrite(valueExpr: string, fixed: string | undefined): string {
 	if (fixed !== undefined && isDepthText(fixed)) {
 		return fixed === INDENT_TEXT
-			? `{ w.indent(); w.seam("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }`
+			? `{ w.indent(); w.seam(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`
 			: `{ w.dedent(); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
 	}
 	if (fixed !== undefined && isWhitespaceOnly(fixed)) {

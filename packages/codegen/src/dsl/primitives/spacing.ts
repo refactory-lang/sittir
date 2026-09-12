@@ -2,8 +2,12 @@ export const WHITESPACE_SUPERTYPE = '_whitespace';
 export const DEPTH_ARMS = ['indent', 'dedent'] as const;
 export const INDENT_TEXT = '\u{FDD0}\n';
 export const DEDENT_TEXT = '\u{FDD1}\n';
+export const DEPTH_BREAK = '\n';
 export function isDepthText(text: string): boolean {
 	return text === INDENT_TEXT || text === DEDENT_TEXT;
+}
+export function depthBreakOf(text: string): string {
+	return isDepthText(text) ? DEPTH_BREAK : text;
 }
 export type SpacingArm = string;
 export type WhitespaceArm = string;

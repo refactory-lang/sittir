@@ -10,7 +10,7 @@ import {
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-arms.ts';
-import { addressSegments, addressSites, matchAddress } from '../compiler/model/site-addresses.ts';
+import { addressSegments, addressSites, matchAddress, type AddressedSite } from '../compiler/model/site-addresses.ts';
 import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
 
@@ -81,7 +81,7 @@ export function deriveAddressTables(
 	const leaves = new Map<string, { type: string; canonical: (readonly PreferenceSegment[])[]; segments: readonly PreferenceSegment[] }>();
 	const roots = new Set<string>();
 	let depth = 0;
-	const setSegments = (path: string, segments: readonly PreferenceSegment[]): void => {
+	const assertSameSegments = (path: string, segments: readonly PreferenceSegment[]): void => {
 		const prior = branchSegments.get(path) ?? leaves.get(path)?.segments;
 		if (prior !== undefined && formatPreferencePath(prior) !== formatPreferencePath(segments)) {
 			throw new Error(`options: address '${path}' names two segments`);
@@ -93,7 +93,7 @@ export function deriveAddressTables(
 		roots.add(keys[0]!);
 		for (let i = 0; i < keys.length - 1; i++) {
 			const path = keys.slice(0, i + 1).join('/');
-			setSegments(path, site.path.slice(0, i + 1));
+			assertSameSegments(path, site.path.slice(0, i + 1));
 			branchSegments.set(path, site.path.slice(0, i + 1));
 			const children = branches.get(path) ?? new Set<string>();
 			children.add(keys[i + 1]!);
@@ -103,15 +103,15 @@ export function deriveAddressTables(
 		const path = keys.join('/');
 		const prior = leaves.get(path);
 		if (prior !== undefined && prior.type !== type) throw new Error(`options: address '${path}' resolves to two types`);
-		setSegments(path, site.path);
+		assertSameSegments(path, site.path);
 		leaves.set(path, { type, canonical: [site.path], segments: site.path });
 	}
 	if (declared !== undefined) {
 		const addressed = addressSites(sites, kindEntries);
-		const reached = new Map<string, SitePreference[]>();
+		const reached = new Map<string, AddressedSite<SitePreference>[]>();
 		for (const binding of declared.bindings) {
 			const hits = matchAddress(addressSegments(binding.address), addressed, membersOf);
-			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...(hits as unknown as SitePreference[])]);
+			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...hits]);
 		}
 		for (const declaration of declared.declarations) {
 			if (matchAddress(addressSegments(declaration.path), addressed, membersOf).length > 0) continue;
@@ -123,16 +123,16 @@ export function deriveAddressTables(
 			roots.add(keys[0]!);
 			for (let i = 0; i < keys.length - 1; i++) {
 				const at = keys.slice(0, i + 1).join('/');
-				setSegments(at, declaredSegments.slice(0, i + 1));
+				assertSameSegments(at, declaredSegments.slice(0, i + 1));
 				branchSegments.set(at, declaredSegments.slice(0, i + 1));
 				const children = branches.get(at) ?? new Set<string>();
 				children.add(keys[i + 1]!);
 				branches.set(at, children);
 			}
-			setSegments(keys.join('/'), declaredSegments);
+			assertSameSegments(keys.join('/'), declaredSegments);
 			leaves.set(keys.join('/'), {
 				type: unionOf(bound.map((site) => site.arms.map(armType).join(' | '))),
-				canonical: bound.map((site) => (site as unknown as { readonly path: readonly PreferenceSegment[] }).path),
+				canonical: bound.map((site) => site.path),
 				segments: declaredSegments
 			});
 		}

@@ -272,8 +272,6 @@ describe('emitConsts', () => {
 		expect(output).toContain('";": 2,');
 		expect(output).not.toContain('export const enum TSKindId {');
 		expect(output).toContain('"missing": 99,');
-		// ...while FIELD rows keep the nodeMap-derived universe: the same
-		// name in the fieldIds table stays excluded.
 		expect(output).not.toContain('FieldMissing');
 		expect(output).toContain('export const enum TSFieldId {');
 		expect(output).toContain('FieldItem = 7,');
