@@ -209,6 +209,10 @@ are recorded here as next steps, not fixed in this task.
 
 Rendering a deep `parseAndRead` node straight back through `engine.render` gives the same bytes at head as at the last pre-sink commit (measured in a temporary worktree with the same probe), so byte identity holds on that path too. Those bytes are wrong on both sides: python indentation escalates and never returns after a function body (the reader delivers `_indent`/`_dedent` as tokens the transport renders as text, so depth never moves), and typescript decorator seams and the class-body brace seam do not apply (the reader stamps no sites). The validator's counts compare no bytes on the read path, which is why neither shows up. Both belong to the source-coordinates plan's prepare walk, and a byte-level read-render check belongs beside the validator's counts.
 
+### Depth tokens still carry the sentinel text on the wire
+
+The generated `FromNapiValue` for the `_indent`/`_dedent` token transports defaults `$text` to the depth text (`"\u{FDD0}\n"` / `"\u{FDD1}\n"`, six sites in `rust/crates/sittir-rust/src/render/transport.rs`, mirrored in the other grammars), and the render body reads the depth fact off that string rather than off the kind. It is the last place the retired mark encoding survives, and why the mark-absence test strips those lines. The source-coordinates plan's depth-from-coordinates work removes it; until then a depth token is a text-carrying transport whose text is never written.
+
 ## Next
 
 - The remaining ~30 jinja/askama mentions across
