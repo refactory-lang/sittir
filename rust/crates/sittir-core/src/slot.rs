@@ -205,18 +205,6 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let value_type = unsafe { transport_value_type(env, napi_val)? };
-        if value_type == ::napi::ValueType::Object {
-            let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-            if let Some(handle) = obj.get::<f64>("$nodeHandle")? {
-                let handle = crate::napi_engine::checked_index(handle, "$nodeHandle")?;
-                let span: Span = obj.get("$span")?.ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "coordinate with $nodeHandle {handle} carries no $span"
-                    ))
-                })?;
-                return Ok(Self::Coord(NodeCoordinate::new(handle, span)));
-            }
-        }
         let attempt = unsafe { T::from_napi_value(env, napi_val) };
         let error = match attempt {
             Ok(node) => return Ok(Self::Node(node)),
@@ -228,7 +216,22 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
             })),
             ::napi::ValueType::Object => match unsafe { captured_source_text(env, napi_val)? } {
                 Some(text) => Ok(Self::Verbatim(text)),
-                None => Err(error),
+                None => {
+                    let obj =
+                        unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+                    match obj.get::<f64>("$nodeHandle")? {
+                        Some(handle) => {
+                            let handle = crate::napi_engine::checked_index(handle, "$nodeHandle")?;
+                            let span: Span = obj.get("$span")?.ok_or_else(|| {
+                                ::napi::Error::from_reason(format!(
+                                    "coordinate with $nodeHandle {handle} carries no $span"
+                                ))
+                            })?;
+                            Ok(Self::Coord(NodeCoordinate::new(handle, span)))
+                        }
+                        None => Err(error),
+                    }
+                }
             },
             _ => Err(error),
         }
