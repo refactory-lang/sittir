@@ -152,8 +152,9 @@ export function displayImpl() {
 									path: { kind: 'scoped_identifier', path: 'std', name: 'fmt' },
 									name: 'Formatter',
 								},
-								// GAP L6 (coercion): a `typeArguments: [...]` array collapses to its
-								// first string in the list envelope slot, which admits no text.
+								// A `typeArguments: [...]` array would collapse to its first string in
+								// the list envelope slot, which admits no text (the list-envelope
+								// coercion gap in docs/factory-surface-issues.md), so the list is built.
 								typeArguments: ir.typeArguments.strict(
 									ir.typeArgumentsElements.strict(
 										{ delimiter: Delimiter.None },
@@ -253,7 +254,7 @@ export function applyEditsFn() {
 					type: {
 						kind: 'generic_type',
 						type: 'Vec',
-						// GAP L6 (coercion): see above.
+						// The list is built for the same reason as the type arguments above.
 						typeArguments: ir.typeArguments.strict(
 							ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, { content: 'Edit' })
 						),
@@ -263,7 +264,7 @@ export function applyEditsFn() {
 			returnType: {
 				kind: 'generic_type',
 				type: 'Result',
-				// GAP L6 (coercion): see above.
+				// The list is built for the same reason as the type arguments above.
 				typeArguments: ir.typeArguments.strict(
 					ir.typeArgumentsElements.strict(
 						{ delimiter: Delimiter.None },
@@ -304,12 +305,12 @@ export function applyEditsFn() {
 						pattern: 'buf',
 						value: ir.callExpression({
 							function: { kind: 'scoped_identifier', path: 'String', name: 'from' },
-							// GAP L6 (coercion): see above.
+							// The list is built for the same reason as the type arguments above.
 							arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'source')),
 						}),
 					}),
 				],
-				// GAP L6 (coercion): see above.
+				// The list is built for the same reason as the type arguments above.
 				trailingExpression: ir.callExpression({
 					function: 'Ok',
 					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'buf')),

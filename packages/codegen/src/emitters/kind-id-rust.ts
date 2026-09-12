@@ -84,8 +84,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		const parentId = entries.find((entry) => entry.kind === node.kind)?.id;
 		if (parentId === undefined) continue;
 		for (const slot of node.slots) {
-			// An elidable list keeps its separators on the wire: the wrap layer
-			// splits the holes by their positions instead of dropping them.
 			if (slot.fieldName === undefined || !isMultiple(slot) || hasOptionalElements(slot)) continue;
 			const ids = [
 				...new Set(

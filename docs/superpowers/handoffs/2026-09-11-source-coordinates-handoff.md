@@ -48,10 +48,17 @@ Spec, now at its end state: `docs/superpowers/specs/2026-08-26-text-content-vs-s
 ## Rulings made in this task
 
 - **Tree ids are process-wide.** Per-engine ids from 0 meant two engines each
-  held a tree 0, so the cross-engine test could not fail. `engine::claim_tree_id`
-  is one `AtomicU32` for the process; ids are never reused; exhausting them is
-  refused. Tests that assumed "this engine's first tree is 0" now read
-  `treeId` from `parseAndRead`'s JSON (`tree-identity-and-verbatim.test.ts`).
+  held a tree 0, so the cross-engine test could not fail. Every grammar's
+  addon is its own linked image, so a counter in Rust static memory would
+  still be one counter per addon: the napi engine claims each id from
+  `globalThis.__sittirNextTreeId`, the one owner every addon shares
+  (`engine::claim_tree_id_from` holds the rule; the in-image
+  `claim_tree_id` serves engines built in Rust alone). Ids are never reused
+  and both claims stay pinned once exhausted. Tests that assumed "this
+  engine's first tree is 0" now read `treeId` from `parseAndRead`'s JSON
+  (`tree-identity-and-verbatim.test.ts`); a rust node handed to a
+  typescript engine is refused
+  (`packages/tools/tests/cross-grammar-coordinate-identity.test.ts`).
 - **A descendant's trivia never blocks a fold.** The first byte-axis run
   showed both deep reads diverging (rust: the blank line after a `//!` block
   moved, first difference at byte 310; typescript: tab indentation rendered
@@ -141,6 +148,18 @@ is next touched; the stale header comment that described a shallow `$text`
 short-circuit is corrected in this task.
 
 ## Open, carried forward
+
+- **typescript C-style `for` loses its semicolons.** `for_statement.condition`
+  is a singular field wrapping `seq(_expressions, ';')`: the reader seats the
+  `;` beside the expression (the separator table covers repeated slots only),
+  and the render body prints no `;` after `condition` or `increment`, so a
+  provenance-detached rebuild of `for (let i = 0; i < 3; i++) {}` renders
+  `for (let i = 0;i < 3 i++) {}`. Coordinate folding hides it from the
+  read-render-parse counts and the parity gate keeps no such fixture.
+  Witness: `packages/typescript/tests/for-statement-terminator.test.ts`
+  (`it.fails`). The fix is a grammar patch that names the two `;` as slots of
+  the statement (the terminator shape `expression_statement` has), which is
+  roles work, not a reader change.
 
 - `applyEdits` in `packages/common/src/edit.ts` slices an `Edit`'s byte
   positions as string indices (the native path applies bytes). Pre-existing;

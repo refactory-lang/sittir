@@ -110,16 +110,39 @@ pub const MAX_TREE_ID: u32 = (1u32 << (53 - HANDLE_INDEX_BITS)) - 1;
 
 static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
 
-/// Mint the next tree id for this process. One counter serves every engine,
-/// so no two engines ever hold a tree under the same id: a coordinate names
-/// its tree unambiguously, and an engine handed another engine's coordinate
-/// finds no such tree and refuses it rather than slicing whatever tree sits
-/// at that index in its own table. Ids are never reused — a stale handle
-/// must not come back to life under a later tree — so a process that parses
-/// past `MAX_TREE_ID` trees gets `None`.
+/// Mint the next tree id from this linked image's counter. One counter
+/// serves every engine the image holds, so no two of them ever hold a tree
+/// under the same id: a coordinate names its tree unambiguously, and an
+/// engine handed another engine's coordinate finds no such tree and refuses
+/// it rather than slicing whatever tree sits at that index in its own table.
+/// Ids are never reused — a stale handle must not come back to life under a
+/// later tree — so once `MAX_TREE_ID` is claimed every later claim gets
+/// `None` and the counter stays put. Each grammar's addon is its own image
+/// with its own copy of this counter; the napi engine therefore claims from
+/// the JavaScript process instead (`claim_tree_id_from`), and this counter
+/// serves engines built in Rust alone.
 pub fn claim_tree_id() -> Option<u32> {
-    let id = NEXT_TREE_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    (id <= MAX_TREE_ID).then_some(id)
+    NEXT_TREE_ID
+        .fetch_update(
+            std::sync::atomic::Ordering::Relaxed,
+            std::sync::atomic::Ordering::Relaxed,
+            |next| (next <= MAX_TREE_ID).then_some(next + 1),
+        )
+        .ok()
+}
+
+/// Mint the next tree id from a counter shared by every image in the
+/// process. `next` is the last value the owner recorded (none on the first
+/// claim); the id and the value to record come back together, or nothing
+/// once `MAX_TREE_ID` has been claimed — the owner then records nothing, so
+/// the counter stays put and no id is ever reused.
+pub fn claim_tree_id_from(next: Option<f64>) -> Option<(u32, f64)> {
+    let next = next.unwrap_or(0.0);
+    if !(0.0..=MAX_TREE_ID as f64).contains(&next) || next.fract() != 0.0 {
+        return None;
+    }
+    let id = next as u32;
+    Some((id, f64::from(id) + 1.0))
 }
 
 /// Pack a tree id and a node index into one self-identifying handle.

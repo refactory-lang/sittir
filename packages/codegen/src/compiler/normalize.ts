@@ -250,7 +250,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 	resetSlotGroupingDiagnostics();
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
 	const rules = applyNormalizationPasses(linked.rules, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
-	const normalizedRules = flattenRules(rules);
+	const normalizedRules = flattenRules(rules, linked.wordMatcher);
 	for (let pass = 0; pass < 8; pass++) {
 		const keepRef = computeKeepRef(normalizedRules);
 		const changed = inlineHiddenSeqRefs(normalizedRules, ctx, keepRef);
@@ -298,7 +298,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			ctx,
 			preserveKinds.size > 0 ? preserveKinds : undefined
 		);
-		const aliasBodiesRender = flattenRules(aliasBodiesNormalized);
+		const aliasBodiesRender = flattenRules(aliasBodiesNormalized, linked.wordMatcher);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
 			rules: aliasBodiesRender
