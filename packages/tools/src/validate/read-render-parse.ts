@@ -11,7 +11,7 @@
 import { writeSync } from 'node:fs';
 
 import type { AnyNodeData } from '@sittir/types';
-import { stripStructuralNodeText } from '@sittir/common';
+import { stripStructuralProvenance } from '@sittir/common';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -795,7 +795,7 @@ export async function validateReadRenderParse(
 						data =
 							recursive !== true && cand.node.$nodeHandle != null && cand.node.$childIndex != null && handle.read
 								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
-								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
+								: (stripStructuralProvenance(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({
 							name: `${entry.name} [${kind}]`,

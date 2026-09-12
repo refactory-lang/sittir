@@ -9057,7 +9057,9 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
  *                id.
  *   - `isTree` / `isNode` — shape guards with overloaded signatures that
  *                narrow through NamespaceMap when the kind is known or
- *                fall back to AnyTreeNode / AnyNodeData when it isn't.
+ *                fall back to AnyTreeNode / AnyNodeData when it isn't. A
+ *                node is storage (`_` keys), text content (`$text`), or a
+ *                coordinate into the tree it was read from (`$nodeHandle`).
  *   - `assert` — mirror of `is` with `asserts v is T` signatures, throws
  *                TypeError on mismatch. Runtime wraps `is` — no
  *                duplicated kind-check logic.
@@ -13032,7 +13034,9 @@ candidate list.
 // `$text`/`$span`/`$type` — exactly the bare-leaf shape the
 // transport side already accepts for such members — so treat the
 // node itself as the resolved member instead of requiring a named
-// child that will never surface.
+// child that will never surface. The same holds for an occurrence
+// that arrived as a coordinate (`$nodeHandle`, no storage): the
+// transport slices its bytes from the tree, so it is its own member.
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::isFieldBackedSeparatedList`

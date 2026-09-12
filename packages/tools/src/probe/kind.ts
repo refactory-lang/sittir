@@ -107,7 +107,7 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
-import { stripStructuralNodeText, toTransportData } from '@sittir/common';
+import { stripStructuralProvenance, toTransportData } from '@sittir/common';
 import type { SittirEngine } from '@sittir/common/engine';
 // ---------------------------------------------------------------------------
 // CLI
@@ -904,7 +904,7 @@ export function materializeProbeWrappedNodeData(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
-	return stripStructuralNodeText(materializeWrappedNodeData(root, onAccessorThrow));
+	return stripStructuralProvenance(materializeWrappedNodeData(root, onAccessorThrow));
 }
 
 export function resolveNativeTraceNodeData(
@@ -933,7 +933,7 @@ async function readProbeNodeData(
 		const handle = nativeEngine.diagnostics.parseAndRead(source).tree;
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
-			const legacyDeepNodeData = stripStructuralNodeText(await deepReadProbeNode(handle, undefined, undefined));
+			const legacyDeepNodeData = stripStructuralProvenance(await deepReadProbeNode(handle, undefined, undefined));
 			const deepReadTreeNodeRaw = readTreeNodeFn ? readTreeNodeFn(handle) : undefined;
 			const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
 			return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
@@ -946,7 +946,7 @@ async function readProbeNodeData(
 				) ?? null;
 			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
 				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
-				const legacyDeepNodeData = stripStructuralNodeText(
+				const legacyDeepNodeData = stripStructuralProvenance(
 					await deepReadProbeNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
 				);
 				const deepReadTreeNodeRaw = readTreeNodeFn
@@ -963,7 +963,7 @@ async function readProbeNodeData(
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
 		const targetHandle = getTargetHandle(target);
 		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
-		const legacyDeepNodeData = stripStructuralNodeText(
+		const legacyDeepNodeData = stripStructuralProvenance(
 			targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target
 		);
 		const deepReadTreeNodeRaw =

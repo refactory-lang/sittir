@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "047dbddb25dad347452051917379ccfdd3fd77e1dabf56cc96ef06405d4d16e9",
+  "source_hash": "15cf5d12379f5a9faaa5c2379e391409c9612b758bf0306e0f105c184bde1754",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "643f81b2c8d7f35b8e89cb943637a9126d2ae2cd6d740a085a5c95bfc8746854",
     "packages/rust/.sittir/grammar.js": "4e54e8dd7b2beaaeaa93775672e9fb0b3aa06294b2096dec7e2d38b542eaff1f",
@@ -31,13 +31,13 @@
     "packages/rust/src/hash.ts": "65979d76bbfccbac41a0138c9d3796fc03f46380852e8a13c5720e125c233332",
     "packages/rust/src/index.ts": "dde8f93f6c1ee1f11445d8814046d1a2935cbc3166266058f75e29326c3e200c",
     "packages/rust/src/ir.ts": "9b0ab3c7663075bc3fa867cbdbd22e87d85a8c6ea925aa674f0dd032ab4d7e4c",
-    "packages/rust/src/is.ts": "a2b15dd95641a9bedc440c51e3e77d048c5862790716df68f5c97498e43505f4",
+    "packages/rust/src/is.ts": "d7377147f58c6dcc46f85bb3020fc85b352f9ea1db326c8b4cb368f9b8df9000",
     "packages/rust/src/node-model.json5": "a47f6935d915c88ec2c86822bfbdf1d605fac4346a0fa383c114be0160fbc727",
     "packages/rust/src/options.ts": "230e03af8f0e7f2651ae9415f511776648f5493e818a0393ca6b45e84c8148b2",
     "packages/rust/src/render-engine.ts": "12ce561e3efabe0a8d224a37899f181a692c17ed8232a4d7bf6bae192de0321d",
     "packages/rust/src/types.ts": "aa9584c4d84b090791f0851557afe6e899ffed4d9a2f3a8ad2754303768b1c72",
     "packages/rust/src/utils.ts": "18adac2ac975353a79bda454a772b70f08a229eb9d06af3bf360fc62c2d84c8d",
-    "packages/rust/src/wrap.ts": "c9f8e7f9f536b8d67383a11c0e37f935abdef6b46d9f9725ff55de4b6bc32844",
+    "packages/rust/src/wrap.ts": "707ddc822124380751a9745afa68267f41784dfaadc76b810016ffc699260aaf",
     "rust/crates/sittir-rust/index.d.ts": "b7bdd76a3220a06b4f0b11d10fd6ac72a464ec46f7679573ba290e076343cf47",
     "rust/crates/sittir-rust/index.js": "65870d2849ecee2c83c421e32039918e09f25dfe01828f8cea710a7e31e5a48d",
     "rust/crates/sittir-rust/src/lib.rs": "8f70764195f8548bb359a1a65c34e28d36fd442a65e63e09dc2d6a7deed9f8a7",

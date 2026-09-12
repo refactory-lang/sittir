@@ -367,7 +367,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		`  data = _keepModelledSlots(data, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
 		`  const kindKeyed = _firstKindKeyedWrapChild(data, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
 		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)});`,
-		`  if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {`,
+		`  if (filtered === undefined && (typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)) {`,
 		`    return drillInSelf<T.${node.typeName}>(data as T.${node.typeName}, tree);`,
 		`  }`,
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,

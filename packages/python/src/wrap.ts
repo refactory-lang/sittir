@@ -944,7 +944,10 @@ export function wrapStatement(
 			'decorated_definition',
 			'match_statement'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Statement>(data as T.Statement, tree);
 	}
 	return drillIn<T.Statement>(
@@ -1604,7 +1607,10 @@ export function wrapNamedExpressionLhs(
 		| readonly T.NamedExpressionLhs[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.NamedExpressionLhs>(data as T.NamedExpressionLhs, tree);
 	}
 	return drillIn<T.NamedExpressionLhs>(
@@ -4074,7 +4080,10 @@ export function wrapSimplePattern(
 			'_wildcard_pattern',
 			'wildcard_pattern'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.SimplePattern>(data as T.SimplePattern, tree);
 	}
 	return drillIn<T.SimplePattern>(
@@ -4545,7 +4554,10 @@ export function wrapParameter(
 			'positional_separator',
 			'dictionary_splat_pattern'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Parameter>(data as T.Parameter, tree);
 	}
 	return drillIn<T.Parameter>(
@@ -4590,7 +4602,10 @@ export function wrapPattern(
 			'tuple_pattern',
 			'list_pattern'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Pattern>(data as T.Pattern, tree);
 	}
 	return drillIn<T.Pattern>(
@@ -4870,7 +4885,10 @@ export function wrapExpressionWithinForInClause(
 		| readonly T.ExpressionWithinForInClause[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['expression', 'lambda_within_for_in_clause']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.ExpressionWithinForInClause>(data as T.ExpressionWithinForInClause, tree);
 	}
 	return drillIn<T.ExpressionWithinForInClause>(
@@ -4921,7 +4939,10 @@ export function wrapExpression(
 			'named_expression',
 			'as_pattern'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Expression>(data as T.Expression, tree);
 	}
 	return drillIn<T.Expression>(
@@ -5023,7 +5044,10 @@ export function wrapPrimaryExpression(
 			'ellipsis',
 			'list_splat_pattern'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.PrimaryExpression>(data as T.PrimaryExpression, tree);
 	}
 	return drillIn<T.PrimaryExpression>(
@@ -5613,7 +5637,10 @@ export function wrapRightHandSide(
 			'pattern_list',
 			'yield'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.RightHandSide>(data as T.RightHandSide, tree);
 	}
 	return drillIn<T.RightHandSide>(
@@ -7425,7 +7452,10 @@ export function wrapFExpression(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['expression', 'expression_list', 'pattern_list', 'yield']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.FExpression>(data as T.FExpression, tree);
 	}
 	return drillIn<T.FExpression>(

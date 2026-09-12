@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type WrappedNodeData } from '../../src/validate/common.ts';
-import { stripStructuralNodeText } from '@sittir/common';
+import { stripStructuralProvenance } from '@sittir/common';
 import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../../src/probe/kind.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
@@ -49,7 +49,7 @@ describe('probe-kind native trace helpers', () => {
 			_children: []
 		};
 
-		const stripped = asRecord(stripStructuralNodeText(nodeData));
+		const stripped = asRecord(stripStructuralProvenance(nodeData));
 
 		expect(stripped).not.toHaveProperty('$text');
 		expect(stripped._children).toEqual([]);

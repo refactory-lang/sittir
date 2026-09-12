@@ -1497,7 +1497,10 @@ export function wrapModuleExportName(
 		| readonly T.ModuleExportName[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', 'string']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.ModuleExportName>(data as T.ModuleExportName, tree);
 	}
 	return drillIn<T.ModuleExportName>(
@@ -1566,7 +1569,10 @@ export function wrapDeclaration(
 			'import_alias',
 			'ambient_declaration'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Declaration>(data as T.Declaration, tree);
 	}
 	return drillIn<T.Declaration>(
@@ -1904,7 +1910,10 @@ export function wrapStatement(
 			'empty_statement',
 			'labeled_statement'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Statement>(data as T.Statement, tree);
 	}
 	return drillIn<T.Statement>(
@@ -3427,7 +3436,10 @@ export function wrapExpression(
 			'new_expression',
 			'yield_expression'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Expression>(data as T.Expression, tree);
 	}
 	return drillIn<T.Expression>(
@@ -3529,7 +3541,10 @@ export function wrapPrimaryExpression(
 			'call_expression',
 			'non_null_expression'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.PrimaryExpression>(data as T.PrimaryExpression, tree);
 	}
 	return drillIn<T.PrimaryExpression>(
@@ -4643,7 +4658,10 @@ export function wrapFormalParameter(
 		| readonly T.FormalParameter[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['required_parameter', 'optional_parameter']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.FormalParameter>(data as T.FormalParameter, tree);
 	}
 	return drillIn<T.FormalParameter>(
@@ -5088,7 +5106,10 @@ export function wrap_LhsExpression(
 			'array_pattern',
 			'non_null_expression'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T._LhsExpression>(data as T._LhsExpression, tree);
 	}
 	return drillIn<T._LhsExpression>(
@@ -5247,7 +5268,10 @@ export function wrapAugmentedAssignmentLhs(
 			'parenthesized_expression',
 			'non_null_expression'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.AugmentedAssignmentLhs>(data as T.AugmentedAssignmentLhs, tree);
 	}
 	return drillIn<T.AugmentedAssignmentLhs>(
@@ -5445,7 +5469,10 @@ export function wrapDestructuringPattern(
 		| readonly T.DestructuringPattern[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['object_pattern', 'array_pattern']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.DestructuringPattern>(data as T.DestructuringPattern, tree);
 	}
 	return drillIn<T.DestructuringPattern>(
@@ -6505,7 +6532,10 @@ export function wrapPattern(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['_lhs_expression', 'lhs_expression', 'rest_pattern']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Pattern>(data as T.Pattern, tree);
 	}
 	return drillIn<T.Pattern>(
@@ -7303,7 +7333,10 @@ export function wrapPropertyName(
 			'number',
 			'computed_property_name'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.PropertyName>(data as T.PropertyName, tree);
 	}
 	return drillIn<T.PropertyName>(
@@ -7387,7 +7420,10 @@ export function wrapStatementIdentifier(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.StatementIdentifier>(data as T.StatementIdentifier, tree);
 	}
 	return drillIn<T.StatementIdentifier>(
@@ -7415,7 +7451,10 @@ export function wrapShorthandPropertyIdentifier(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.ShorthandPropertyIdentifier>(data as T.ShorthandPropertyIdentifier, tree);
 	}
 	return drillIn<T.ShorthandPropertyIdentifier>(
@@ -7443,7 +7482,10 @@ export function wrapShorthandPropertyIdentifierPattern(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.ShorthandPropertyIdentifierPattern>(data as T.ShorthandPropertyIdentifierPattern, tree);
 	}
 	return drillIn<T.ShorthandPropertyIdentifierPattern>(
@@ -7469,7 +7511,10 @@ export function wrap_PropertyIdentifier(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T._PropertyIdentifier>(data as T._PropertyIdentifier, tree);
 	}
 	return drillIn<T._PropertyIdentifier>(
@@ -7737,7 +7782,10 @@ export function wrapImportIdentifier(
 		| readonly T.ImportIdentifier[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', 'type_keyword']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.ImportIdentifier>(data as T.ImportIdentifier, tree);
 	}
 	return drillIn<T.ImportIdentifier>(
@@ -10160,7 +10208,10 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 			'_type_query_call_expression_in_type_annotation',
 			'type_query_call_expression_in_type_annotation'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Type>(data as T.Type, tree);
 	}
 	return drillIn<T.Type>(
@@ -10354,7 +10405,10 @@ export function wrapTupleTypeMember(
 			'rest_type',
 			'type'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.TupleTypeMember>(data as T.TupleTypeMember, tree);
 	}
 	return drillIn<T.TupleTypeMember>(
@@ -10515,7 +10569,10 @@ export function wrapPrimaryType(
 			'intersection_type',
 			'union_type'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.PrimaryType>(data as T.PrimaryType, tree);
 	}
 	return drillIn<T.PrimaryType>(
@@ -15493,7 +15550,10 @@ export function wrapLhsExpression(
 			'array_pattern',
 			'non_null_expression'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.LhsExpression>(data as T.LhsExpression, tree);
 	}
 	return drillIn<T.LhsExpression>(
@@ -15519,7 +15579,10 @@ export function wrapPropertyIdentifier(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.PropertyIdentifier>(data as T.PropertyIdentifier, tree);
 	}
 	return drillIn<T.PropertyIdentifier>(

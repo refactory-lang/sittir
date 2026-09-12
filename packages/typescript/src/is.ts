@@ -1416,5 +1416,5 @@ export function isNode(v: { readonly $type: string | number } | number): boolean
 	if (typeof v === 'number') return false;
 	const o = v as Record<string, unknown>;
 	const hasFields = Object.keys(o).some((k) => k.startsWith('_'));
-	return hasFields || typeof o['$text'] === 'string';
+	return hasFields || typeof o['$text'] === 'string' || typeof o['$nodeHandle'] === 'number';
 }

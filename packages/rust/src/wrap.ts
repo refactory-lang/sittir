@@ -1646,7 +1646,10 @@ export function wrapStatement(
 			'extern_crate_declaration',
 			'static_item'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Statement>(data as T.Statement, tree);
 	}
 	return drillIn<T.Statement>(
@@ -2015,7 +2018,10 @@ export function wrapTokenPattern(
 			'_non_special_token',
 			'non_special_token'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.TokenPattern>(data as T.TokenPattern, tree);
 	}
 	return drillIn<T.TokenPattern>(
@@ -2655,7 +2661,10 @@ export function wrap_NonSpecialToken(
 			'_token_keywords',
 			'token_keywords'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T._NonSpecialToken>(data as T._NonSpecialToken, tree);
 	}
 	return drillIn<T._NonSpecialToken>(
@@ -4973,7 +4982,10 @@ export function wrapUseClause(
 			'scoped_use_list',
 			'use_wildcard'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.UseClause>(data as T.UseClause, tree);
 	}
 	return drillIn<T.UseClause>(
@@ -5463,7 +5475,10 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 			'_primitive_type',
 			'primitive_type'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Type>(data as T.Type, tree);
 	}
 	return drillIn<T.Type>(
@@ -6602,7 +6617,10 @@ export function wrapExpressionExceptRange(
 			'for_expression',
 			'const_block'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.ExpressionExceptRange>(data as T.ExpressionExceptRange, tree);
 	}
 	return drillIn<T.ExpressionExceptRange>(
@@ -6770,7 +6788,10 @@ export function wrapExpression(
 			'const_block',
 			'range_expression'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Expression>(data as T.Expression, tree);
 	}
 	return drillIn<T.Expression>(
@@ -6875,7 +6896,10 @@ export function wrapDelimTokens(
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(data.$other, ['_non_special_token', 'non_special_token', 'dollar', 'delim_token_tree']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.DelimTokens>(data as T.DelimTokens, tree);
 	}
 	return drillIn<T.DelimTokens>(
@@ -6901,7 +6925,10 @@ export function wrapNonDelimToken(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['_non_special_token', 'non_special_token', 'dollar']);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.NonDelimToken>(data as T.NonDelimToken, tree);
 	}
 	return drillIn<T.NonDelimToken>(
@@ -8338,7 +8365,10 @@ export function wrapCondition(
 			'_let_chain',
 			'let_chain'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Condition>(data as T.Condition, tree);
 	}
 	return drillIn<T.Condition>(
@@ -9790,7 +9820,10 @@ export function wrapPattern(
 			'_wildcard_pattern',
 			'wildcard_pattern'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Pattern>(data as T.Pattern, tree);
 	}
 	return drillIn<T.Pattern>(
@@ -10274,7 +10307,10 @@ export function wrapLiteral(
 			'integer_literal',
 			'float_literal'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.Literal>(data as T.Literal, tree);
 	}
 	return drillIn<T.Literal>(
@@ -10322,7 +10358,10 @@ export function wrapLiteralPattern(
 			'float_literal',
 			'negative_literal'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.LiteralPattern>(data as T.LiteralPattern, tree);
 	}
 	return drillIn<T.LiteralPattern>(
@@ -14539,7 +14578,10 @@ export function wrapNonSpecialToken(
 			'_token_keywords',
 			'token_keywords'
 		]);
-	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+	if (
+		filtered === undefined &&
+		(typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)
+	) {
 		return drillInSelf<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
 	}
 	return drillIn<T.NonSpecialToken>(
