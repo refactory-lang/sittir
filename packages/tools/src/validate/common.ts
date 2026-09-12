@@ -320,10 +320,10 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLoadResult {
 		return { engine: _cachedNativeEngine.engine };
 	}
 
-	// Staleness gate: a binary older than the crate's generated src/templates
-	// would validate stale code (Askama bakes templates at compile time).
-	// Throws loudly; absence of a binary is tolerated (module load below
-	// fails → null → caller reports "engine unavailable").
+	// Staleness gate: a binary older than the crate's generated render source
+	// would validate stale code. Throws loudly; absence of a binary is
+	// tolerated (module load below fails → null → caller reports "engine
+	// unavailable").
 	assertNativeBinaryFresh(repoRoot, grammar);
 
 	// Match probe-kind's loader — try the package name, then fall

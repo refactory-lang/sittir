@@ -73,22 +73,38 @@ before/after difference in means:
 | typescript | 13,769 (8.0%) | 2,172 (1.4%) | 14,572 (8.5%) |
 | python | 8,180 (4.4%) | 6,845 (4.2%) | 24,579 (13.2%) |
 
-The before/after difference exceeds each condition's own run-to-run
-variance for all three grammars, so this is not noise. It is also the
-**opposite of the expected direction**: the plan's goal predicted a
-throughput gain from removing the per-chunk mark scan; measured, HEAD is
-consistently 8–13% slower than the pre-sink commit. `before` run 1 for
-rust/typescript is a low outlier relative to its own runs 2–3 (possibly a
-cold-cache effect from the freshly-built worktree binary); using only runs
-2–3 as `before`'s baseline widens the gap further, it does not close it.
-Plausible cause, not diagnosed further here (out of this task's scope,
-which is documentation): the mark path's per-chunk scan is gone, but the
-sink path pays a dispatch through `dyn RenderSink` at every one of the
-seven calls per body node where the old path wrote through a monomorphic
-`fmt::Write`, and the per-address options struct (Task 3) adds a
-deserialize/typed-field-access step the flat JSON-path table didn't have.
-Reported as measured, not adapted to fit the hypothesis — the dispatcher
-should decide whether this regression is worth a follow-up investigation.
+**This 8–13% gap is a measurement artifact, not the sink** — see
+`.superpowers/sdd/2026-09-11-typed-render-sink-plan/research-render-perf.md`
+for the full investigation. `Cargo.lock` is gitignored (`.gitignore:56`),
+so the "before" build's fresh `git worktree` resolved napi-rs 3.12.4 while
+the "after" `.node` in the shared tree was already built against napi-rs
+3.8.5. napi 3.12.4 reads a JS object field via `napi_get_named_property`
+(V8's inline-name cache) instead of 3.8.5's `Object::get(&str)`, which
+builds a JS string per key then calls `napi_get_property` — with ~4,201
+generated transport fields read one property at a time per render, that
+version difference alone is worth +16–19% on unrelated, byte-identical
+output.
+
+Rebuilt at a matched napi version the sink is a small **win**, not a
+regression:
+
+| source revision | napi-rs | renders/sec (rust) | vs pre-sink at same napi |
+| --- | --- | --- | --- |
+| `2d8771e0b` pre-sink | 3.8.5 | 150,483 | — |
+| `5b634c3e2` HEAD | 3.8.5 | 151,177 | +0.5% |
+| `2d8771e0b` pre-sink | 3.12.4 | 174,406 | — |
+| `5b634c3e2` HEAD | 3.12.4 | 179,399 | +2.9% |
+
+Both deltas sit inside the ±3–5% run-to-run spread measured on this
+workload, so the honest reading is "no measurable regression, and likely a
+small win" rather than "8–13% slower." A sampled profile (`sample`, 8 s at
+1 ms) is the sharper instrument here: it shows `SlotValue<AnyTransport>::from_napi_value`
+at 98.7% of a native render call, the whole render half at 2.65%, and the
+typed sink itself at 0.71% of runtime at HEAD, down from 1.81% pre-sink
+(sink self-time fell ~61% per render; `render_transport_parts` as a whole
+fell ~35%). Every mechanism this section originally suspected — `dyn
+RenderSink` dispatch, per-call seam bookkeeping, the per-address options
+struct — is bounded by that 2.65% and is not where render time goes.
 
 ## Keyword and literal naming (Task 3b, recorded here as the state Task 4 documents)
 
@@ -101,10 +117,15 @@ should decide whether this regression is worth a follow-up investigation.
   its C suffix, verified against `grammar.json`. A named rule whose body is
   exactly a bare `STRING` or an unnamed `ALIAS` owns its literal
   (`literalRule`).
-- `findEntryForLiteralText` matches `literalText` only. There is no
-  kind-name coincidence path anywhere — the two that existed
+- `findEntryForLiteralText` matches `literalText` only. The two ad hoc
+  kind-name coincidence paths this sink work removed
   (`options.ts::nestedKey`'s identifier shortcut, `factory-source.ts::memberIdOfText`)
-  are gone.
+  are gone; one remains by design, not by oversight —
+  `generated-metadata.ts::findEntryForPatternValue` falls back to a
+  kind-name match for a PATTERN rule's regex source, since a PATTERN's
+  value may name a kind directly rather than always being literal text
+  the way a STRING's is (see its glossary entry in
+  `docs/glossary/compiler.md`, and `link.ts:~469`, its one call site).
 - Nested render-option keys spell a literal by its token's kind name
   (`separator: { comma: … }`, `class: { class_keyword: … }`). Canonical
   address paths and grammar `options:` keys keep quoted literals
@@ -145,6 +166,14 @@ entries were retired along with it.
   separately from `render-body.ts`'s IR, not derived from the retired
   jinja templates, and a name absent from the transport struct means the
   generated Rust body references a field that does not exist.
+- Two glossary mentions were rewritten above, not "every mention of
+  jinja/askama": roughly thirty jinja/askama mentions remain across
+  `docs/glossary/{emitters,root,scripts,compiler}.md` (17/7/2/4
+  respectively) — filed as a follow-up under "Next", not swept here. None
+  of the declarations they attach to are still named `jinjaTemplates` or
+  `JINJA_COND_FULL_RE`; those names are already gone from source, so the
+  remaining mentions describe retired behavior under a current name and
+  need per-entry review rather than a mechanical rename.
 - `docs/superpowers/plans/2026-09-11-source-coordinates-plan.md`: header
   gained a "Carried in" paragraph (see "Open defect carried forward"
   above).
@@ -182,14 +211,58 @@ Rendering a deep `parseAndRead` node straight back through `engine.render` gives
 
 ## Next
 
+- The remaining ~30 jinja/askama mentions across
+  `docs/glossary/{emitters,root,scripts,compiler}.md` (see "Documentation
+  swept" above) — per-entry review, since none attach to a source
+  declaration still named `jinjaTemplates`/`JINJA_COND_FULL_RE`.
 - Review-triage items deferred to the user, from
   `.superpowers/sdd/2026-09-11-typed-render-sink-plan/pr-comment-triage.md`:
   item 5 (sub-factories forwarded child), item 11 (rust `arguments` slot
   collision), item 18 (formatter-normalized example comparison).
-- The benchmark regression above: worth a follow-up profile
-  (`dyn RenderSink` dispatch cost per call vs. the removed per-chunk scan;
-  the Task 3 options-struct deserialize path) before accepting 8–13%
-  slower as the sink's permanent cost.
+- Track `Cargo.lock` and bump napi-rs to ≥3.12.4 — measured +16–19%
+  throughput on unchanged, byte-identical output, and the only way a
+  native before/after benchmark in this repo is reproducible (a fresh
+  `git worktree` silently resolves a different napi than the shared
+  tree's already-built `.node`, which is exactly what produced the
+  apparent 8–13% regression above). A repo-policy decision for the user,
+  not made here.
+- A transport-text fast-path bug, pre-existing and not introduced by this
+  branch: `render-module.ts:~820-825` emits an unconditional early
+  `return w.text(text)` for a leaf transport's own text, which skips the
+  body's `w.dedent()` — for python `render_block`
+  (`transport.rs:~45500`), `render_suite_block` already opened the indent
+  before that fast path returns, so a verbatim/empty block leaks depth +1
+  for the rest of the render. This is a read-path indentation escalation;
+  the writer's `debug_assert_eq!(depth, 0)` in `SpacingWriter::finish`
+  never runs in a release addon, so it does not fail loudly today. Fix
+  direction: refuse the fast path when the body holds depth nodes, plus a
+  debug-build render smoke test that would catch the assertion.
+- A byte-comparing read→render axis beside the validator's AST-match,
+  whitespace-blind counts: `packages/tools/tests/emit/dogfood-render-bytes.test.ts`
+  (added this round) is a first instance: it renders a `.$render()` of a
+  factory rebuild and compares against a committed fixture byte-for-byte.
+  Extending the same shape to a read→rebuild→render round trip would catch
+  a whitespace regression the validator's node-shape counts cannot see.
+- The dedent-route unification for the source-coordinates plan's
+  coordinates work: `SpacingWriter::site(DEDENT)`
+  (`rust/crates/sittir-core/src/spacing.rs::site`) always merges a break
+  seam after dedenting, while the generated literal `w.dedent()` route
+  (`render-module.ts::literalWrite`) only follows with a seam when a body
+  payload is present at that edge. No grammar exercises both routes on the
+  same edge today, so this is currently inert; folding the two into one
+  derivation is worth doing before a coordinate-carrying render makes the
+  difference observable.
+- Any further render-throughput work belongs in the transport crossing,
+  not the writer: `SlotValue<AnyTransport>::from_napi_value` is 98.7% of a
+  native render call (~4,201 generated fields read one
+  `napi_get_named_property` at a time), against the sink's 0.71%. Render
+  by tree handle against a resident native tree instead of
+  re-materialising the JS object graph per call — the direction
+  `docs/superpowers/plans/2026-09-11-source-coordinates-plan.md` already
+  points at — is the real lever; do not micro-optimise the sink itself
+  (`#[inline]` measured ~0.2% of runtime, and a generic `Render::render<W>`
+  is blocked by the `&dyn Render` uses in `sittir-core/src/render.rs` and
+  every generated `render_transport_dispatch`).
 - `docs/superpowers/plans/2026-09-11-source-coordinates-plan.md` lands on
   this sink next: its `NodeCoordinate` needs no attached source, and
   `RenderSink::slice` reads the tree through the context — the render

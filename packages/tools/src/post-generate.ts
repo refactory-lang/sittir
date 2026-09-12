@@ -46,8 +46,8 @@ function writeFile(path: string, content: string): void {
  *
  * MUST run after the napi rebuild (which `runCodegen` performs before returning):
  * the validator's wrapped-tree candidate walk requires the NATIVE engine, and
- * Askama bakes the just-emitted templates into the .node at compile time, so
- * extracting before the rebuild would capture fixtures against stale templates.
+ * the generated render bodies compile into the .node at build time, so
+ * extracting before the rebuild would capture fixtures against a stale binary.
  *
  * The FR-011 required-kinds gate lives in `extractParityFixtures` — it throws
  * when the corpus doesn't cover the exception kinds, so regen fails loudly rather
