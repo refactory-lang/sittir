@@ -160,13 +160,12 @@ export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData, O extends
 }
 
 /**
- * What a whole-source parse always stamps on its root and on nothing else
- * reliably: the root's span and the captured source text. Every other read
- * node carries both only optionally.
+ * What a whole-source parse always stamps on its root: the span covering the
+ * whole file. The text is the tree's, reachable as `tree.source`; every other
+ * read node carries its span only.
  */
 export interface ParsedRoot {
 	readonly $span: { start: number; end: number };
-	readonly $text: string;
 }
 
 export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {

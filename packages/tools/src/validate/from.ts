@@ -10,6 +10,7 @@
  */
 
 import type { AnyNodeData } from '@sittir/types';
+import { sliceSpan } from '@sittir/common';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
 	loadStorageKindNameFromId,
@@ -433,11 +434,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							);
 						}
 					} else if (shape === 'text') {
-						// readData.$text is absent on branch nodes (gated by
-						// SITTIR_DEBUG_TEXT). For text-shaped factories, fall back to
-						// slicing the source span directly when $text is absent.
-						const textForFactory =
-							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
+						// A text-shaped factory takes the node's bytes, which its span
+						// addresses whether or not the reader captured them as `$text`.
+						const textForFactory = readData.$span ? sliceSpan(entry.source, readData.$span) : (readData.$text ?? '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else if (shape === 'elements') {
 						// separatedList factory: spread with a LEADING optional

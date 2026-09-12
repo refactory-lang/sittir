@@ -59,6 +59,24 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`    }`);
 	lines.push(`}`);
 
+	const textKindIds = [
+		...new Set(
+			entries
+				.filter((entry) => {
+					const modelType = nodeMap.nodes.get(entry.kind)?.modelType;
+					return modelType === 'pattern' || modelType === 'enum';
+				})
+				.map((entry) => entry.id)
+		)
+	].sort((a, b) => a - b);
+	lines.push('');
+	lines.push('/// Whether the reader captures a named node of this kind as text: its');
+	lines.push("/// template renders from that text, so the text is the node's content —");
+	lines.push('/// free text for a pattern kind, the literal it holds for an enum kind.');
+	lines.push('pub fn is_text_kind(kind: KindId) -> bool {');
+	lines.push(`    matches!(kind.0, ${textKindIds.length > 0 ? textKindIds.join(' | ') : 'u16::MAX if false'})`);
+	lines.push('}');
+
 	lines.push('');
 
 	return lines.join('\n');

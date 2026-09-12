@@ -11,7 +11,7 @@
 import { writeSync } from 'node:fs';
 
 import type { AnyNodeData } from '@sittir/types';
-import { stripStructuralProvenance } from '@sittir/common';
+import { spanSlicer, stripStructuralProvenance } from '@sittir/common';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -436,10 +436,11 @@ export function selfContainedRenderInput(
 	source: string,
 	isLeafKind: (kindId: number) => boolean
 ): unknown {
+	const slice = spanSlicer(source);
 	const textOf = (record: Record<string, unknown>): string | undefined => {
 		if (typeof record.$text === 'string') return record.$text;
 		const span = record.$span as { start: number; end: number } | undefined;
-		return span === undefined ? undefined : source.slice(span.start, span.end);
+		return span === undefined ? undefined : slice(span);
 	};
 	const hasStorage = (record: Record<string, unknown>): boolean =>
 		Object.keys(record).some((key) => key.startsWith('_') || key === '$other');

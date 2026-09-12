@@ -13,20 +13,9 @@
  * → compiled parser), so tree-sitter itself surfaces those fields.
  *
  * No recursion — lazy getters in wrap.ts call readNode again when needed.
- *
- * Branch `$text` is omitted by default (branches reconstruct their text
- * via the render template). Set `SITTIR_DEBUG_TEXT=1` to include `$text`
- * on branch nodes for debugging purposes.
  */
 
 import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
-
-/**
- * Whether to emit `$text` on branch nodes (those carrying named slot storage
- * or `$other`). Read once at module load from the environment.
- * Enable with `SITTIR_DEBUG_TEXT=1`.
- */
-const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === '1';
 
 /**
  * A handle to the parsed tree, providing node navigation via handle + childIndex.
@@ -255,10 +244,9 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	const result: AnyNodeData = {
 		$type: resolveKindId(node.type),
 		$source: 0,
-		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
-		// Leaf nodes (no named slots, no `$other`) always carry $text so the
-		// render fast-path and all leaf-consuming callers work correctly.
-		$text: !hasStructure || DEBUG_TEXT ? node.text() : undefined,
+		// A leaf (no named slots, no `$other`) carries its text; a structural
+		// node is addressed by its span.
+		$text: !hasStructure ? node.text() : undefined,
 		$other: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
 		$nodeHandle: parentHandle,

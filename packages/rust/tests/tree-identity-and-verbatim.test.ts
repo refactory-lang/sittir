@@ -88,10 +88,10 @@ describe('untouched parses render verbatim', () => {
 	it('spans the whole file on the root, including leading trivia', () => {
 		const engine = createEngine();
 		const source = '\n\n  fn a() {}\n';
-		const root = engine.parse(source);
+		const { root, tree } = engine.diagnostics.parseAndRead(source);
 
 		expect(root.$span).toEqual({ start: 0, end: source.length });
-		expect(root.$text).toBe(source);
+		expect(tree.source).toBe(source);
 	});
 });
 

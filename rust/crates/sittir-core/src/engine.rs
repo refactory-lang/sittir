@@ -14,16 +14,15 @@
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::read_node::{read_node, ReadDepth};
+use crate::read_node::{read_node, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::types::{Edit, FormatRecord, NodeData, Source};
 use std::collections::HashMap;
-use std::marker::PhantomData;
 use std::sync::Arc;
 
 /// Grammar-specific hooks used by the shared native engine.
-pub trait EngineGrammar: Copy {
+pub trait EngineGrammar: Copy + ReadModel {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
     fn render_module_hash(self) -> &'static str;
 }
@@ -83,7 +82,8 @@ impl NodeCoord {
 /// re-resolution is fast and fully sound — and pushing a coordinate no
 /// longer clones an O(depth) `Vec`.
 pub struct ParsedTree<G: EngineGrammar> {
-    _grammar: PhantomData<G>,
+    /// The grammar's read facts, consulted by every read of this tree.
+    grammar: G,
     /// The parsed tree-sitter tree.
     tree: tree_sitter::Tree,
     source: Arc<str>,
@@ -181,7 +181,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// Read the root node of the parsed tree into a `NodeData`.
     pub fn read_root(&mut self, depth: ReadDepth) -> NodeData {
         let handle = self.push_coord(NodeCoord::root());
-        read_node(&self.tree, &self.source, None, Some(handle), depth)
+        read_node(
+            &self.tree,
+            &self.source,
+            None,
+            Some(handle),
+            depth,
+            &self.grammar,
+        )
     }
 
     /// Whether this tree minted `handle`.
@@ -235,6 +242,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             Some(child_node),
             Some(encode_handle(self.tree_id, new_index)),
             depth,
+            &self.grammar,
         );
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
@@ -335,7 +343,7 @@ impl<G: EngineGrammar> Engine<G> {
         })?;
         let format = extract_format(&source, &tree);
         Ok(ParsedTree {
-            _grammar: PhantomData,
+            grammar: self.grammar,
             tree,
             source: Arc::from(source.as_str()),
             format,
@@ -429,6 +437,12 @@ mod tests {
 
     #[derive(Clone, Copy)]
     struct TestGrammar;
+
+    impl ReadModel for TestGrammar {
+        fn is_text_kind(&self, _: crate::types::KindId) -> bool {
+            true
+        }
+    }
 
     impl EngineGrammar for TestGrammar {
         fn configure_parser(

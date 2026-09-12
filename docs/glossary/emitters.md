@@ -2824,6 +2824,23 @@ lifted into that arm.
 // see `wrap.ts::_keepModelledSlots`.)
 ```
 
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::is_text_kind`
+
+The generated predicate behind the reader's text gate: `true` for exactly
+the kind ids whose model class is `pattern` (free text) or `enum` (a named
+node holding one of its literals — its transport decodes which one from the
+text, since the node carries no storage). The model class is the fact,
+not tree-sitter's rule type — a `token(seq(…))`, an `alias(pattern)` or an
+external-scanner symbol renders from free text while its rule is not
+`PATTERN`. The table is keyed by the id `collectKindEntries` resolved, never
+by the model kind name, because an alias puts a model kind on a different
+parser symbol (rust `_outer_block_doc_comment_marker` reaches the tree as
+`outer_doc_comment_marker`); the ids are deduped because two model kinds can
+share one symbol and a repeated `matches!` arm is an error. A `token` kind
+is absent on purpose: its literal is on the model and the transport already
+defaults a missing `$text` to it.
+
 ### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
 ```text

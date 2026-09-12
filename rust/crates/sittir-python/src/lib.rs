@@ -48,6 +48,13 @@ impl EngineGrammar for PythonGrammar {
     }
 }
 
+#[cfg(feature = "napi-bindings")]
+impl sittir_core::read_node::ReadModel for PythonGrammar {
+    fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
+        render::kind_ids::is_text_kind(kind)
+    }
+}
+
 // The engine class itself — parse, read, render, edits, and the live-tree
 // table — is defined once in `sittir_core::napi_engine`.
 #[cfg(feature = "napi-bindings")]

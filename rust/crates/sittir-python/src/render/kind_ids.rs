@@ -652,3 +652,10 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         _ => "<unknown>",
     }
 }
+
+/// Whether the reader captures a named node of this kind as text: its
+/// template renders from that text, so the text is the node's content —
+/// free text for a pattern kind, the literal it holds for an enum kind.
+pub fn is_text_kind(kind: KindId) -> bool {
+    matches!(kind.0, 1 | 65 | 68 | 69 | 70 | 77 | 78 | 102 | 103 | 104 | 105 | 106 | 107 | 116 | 254)
+}

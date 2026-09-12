@@ -83,12 +83,10 @@ export interface AnyNodeData {
 	 * populated — the render fast-path short-circuits to `$text` without
 	 * walking children.
 	 *
-	 * **Branch nodes** (`_<name>` storage and/or `$other` present): omitted by
-	 * default. Branches reconstruct their text via the render template,
-	 * so carrying `$text` is redundant and confusing. Set the environment
-	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/common` to
-	 * include `$text` on branch nodes (read once at module load time in
-	 * `readNode.ts`).
+	 * **Branch nodes** (`_<name>` storage and/or `$other` present): absent.
+	 * A branch rebuilds its text from its slots through the render template,
+	 * and an untouched one is addressed by its `$span`. `$text` is present on
+	 * anonymous tokens and on the kinds the grammar models as text.
 	 *
 	 * Factory-built nodes never set `$text`; the `$TEXT` template
 	 * variable falls back to a best-effort field+children concatenation.

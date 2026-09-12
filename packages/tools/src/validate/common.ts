@@ -16,7 +16,7 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/common';
+import { readNode as readNodeFn, dumpMetrics, metricsEnabled, sliceSpan } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
@@ -1591,6 +1591,7 @@ interface ReadNodeLike {
 	// hidden/synthetic kinds (e.g. "_suite") that have no parser.c entry.
 	readonly $type?: string | number;
 	readonly $text?: string;
+	readonly $span?: { readonly start: number; readonly end: number };
 	readonly $nodeHandle?: number;
 	readonly $childIndex?: number;
 	readonly $other?: unknown | readonly unknown[];
@@ -1739,9 +1740,20 @@ function soleWrappedNode(drilled: ReadNodeLike, opts: NodeToConfigOpts): ReadNod
 
 /**
  * Whether a node holds its own contents rather than being a lazy read stub.
- * A stub carries its handle and nothing else; text, slot keys, `$children`
- * or `$other` all mean the node has already been materialized.
+ * A stub carries its coordinate and nothing else; a leaf's text, slot keys,
+ * `$children` or `$other` all mean the node has already been materialized.
  */
+/**
+ * The bytes a read node stands for: its captured text when the reader kept
+ * one (an anonymous token, a text kind), otherwise the span it was read at,
+ * sliced from the tree's source. Empty only when neither is known.
+ */
+function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
+	if (typeof node.$text === 'string') return node.$text;
+	const source = opts.tree?.source;
+	return node.$span !== undefined && source !== undefined ? sliceSpan(source, node.$span) : '';
+}
+
 function carriesOwnContents(c: ReadNodeLike): boolean {
 	if (c.$text !== undefined || c.$other !== undefined) return true;
 	const rec = c as unknown as Record<string, unknown>;
@@ -1908,7 +1920,7 @@ function projectArmSlot(
 	if (typeof value === 'number' || modelType === 'token') return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
-		const args = [typeof value === 'string' ? value : (drillReadNode(value as ReadNodeLike, opts).$text ?? '')];
+		const args = [typeof value === 'string' ? value : readNodeText(drillReadNode(value as ReadNodeLike, opts), opts)];
 		out[key] = args;
 		return setRoute(seat.mount, args);
 	}
@@ -2049,7 +2061,7 @@ function buildWithFactory(
 	// the factory accepts the raw source span because external-scanner
 	// delimiters can't be reconstructed from children.
 	if (shape === 'text') {
-		return carryTrivia(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(referenceData.$text ?? ''));
+		return carryTrivia(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)));
 	}
 	const config = nodeToConfig(referenceData, opts);
 	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));

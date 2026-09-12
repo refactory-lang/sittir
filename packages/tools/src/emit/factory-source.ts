@@ -9,6 +9,7 @@ import {
 } from '../validate/common.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
 import type { NodeTrivia as ReadTrivia } from '@sittir/types';
+import { sliceSpan } from '@sittir/common';
 
 export interface PrintContext {
 	readonly grammar: string;
@@ -24,6 +25,8 @@ export interface PrintContext {
 	readonly keywordKinds?: ReadonlySet<string>;
 	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
+	/** The source the read came from: the bytes a span addresses. */
+	readonly source?: string;
 }
 
 export interface NodeTrivia {
@@ -46,6 +49,7 @@ export class Printed {
 export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
+	readonly $span?: { readonly start: number; readonly end: number };
 	readonly $nodeHandle?: number;
 	readonly $_trivia?: ReadTrivia;
 }
@@ -101,7 +105,7 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
-		return reindent(value.source, depth) + triviaSuffix(triviaOf(value), ctx);
+		return reindent(value.source, depth) + triviaSuffix(triviaOf(value, ctx.source), ctx);
 	}
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);
@@ -151,11 +155,19 @@ function printListOptions(options: Record<string, unknown>, ctx: PrintContext): 
 	return `{ ${parts.join(', ')} }`;
 }
 
-export function triviaOf(node: ReadNodeLike | undefined): NodeTrivia | undefined {
+/**
+ * A node's attached comments as text. A trivia entry carries its text when the
+ * reader captured one; otherwise its span addresses the bytes in `source`.
+ */
+export function triviaOf(node: ReadNodeLike | undefined, source?: string): NodeTrivia | undefined {
 	const trivia = node?.$_trivia;
 	if (!trivia) return undefined;
+	const textOf = (entry: ReadNodeLike): string | undefined => {
+		if (typeof entry.$text === 'string') return entry.$text;
+		return entry.$span !== undefined && source !== undefined ? sliceSpan(source, entry.$span) : undefined;
+	};
 	const texts = (list: readonly unknown[] | undefined): string[] =>
-		(list ?? []).map((t) => (t as ReadNodeLike).$text).filter((t): t is string => typeof t === 'string');
+		(list ?? []).map((t) => textOf(t as ReadNodeLike)).filter((t): t is string => typeof t === 'string');
 	const leading = texts(trivia.leading);
 	const trailing = texts(trivia.trailing);
 	return leading.length === 0 && trailing.length === 0 ? undefined : { leading, trailing };
@@ -376,7 +388,7 @@ export function printFactorySource(
 	if (!(printed instanceof Printed)) {
 		throw new Error(`emit-factory-source: no factory for root kind '${rootKind}'`);
 	}
-	return printed.source + triviaSuffix(triviaOf(printed), ctx);
+	return printed.source + triviaSuffix(triviaOf(printed, ctx.source), ctx);
 }
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -608,6 +620,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
+		source,
 		delimiterArmOfId: (id) => {
 			const member = memberOf(types.Delimiter, id);
 			return member === undefined ? undefined : `Delimiter.${member}`;

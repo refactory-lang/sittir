@@ -24,7 +24,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 12,
               "end": 14
@@ -63,7 +62,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 32,
               "end": 34
@@ -158,7 +156,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 12,
           "end": 14
@@ -213,7 +210,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 32,
           "end": 34
@@ -293,7 +289,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 12,
         "end": 14
@@ -319,7 +314,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 32,
         "end": 34
@@ -694,7 +688,6 @@
                     "$type": 264,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 77,
                       "end": 79
@@ -901,7 +894,6 @@
           "$type": 264,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 77,
             "end": 79
@@ -1125,7 +1117,6 @@
             "$type": 264,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 77,
               "end": 79
@@ -1234,7 +1225,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 77,
           "end": 79
@@ -1312,7 +1302,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 77,
         "end": 79
@@ -1688,7 +1677,6 @@
             "$type": 356,
             "$source": 0,
             "$named": true,
-            "$text": "_",
             "$span": {
               "start": 4,
               "end": 5
@@ -1718,11 +1706,11 @@
                 "$type": 268,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 17,
                   "end": 19
-                }
+                },
+                "$text": "()"
               }
             }
           },
@@ -1762,7 +1750,6 @@
         "$type": 356,
         "$source": 0,
         "$named": true,
-        "$text": "_",
         "$span": {
           "start": 4,
           "end": 5
@@ -1792,11 +1779,11 @@
             "$type": 268,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 17,
               "end": 19
-            }
+            },
+            "$text": "()"
           }
         }
       },
@@ -1850,11 +1837,11 @@
           "$type": 268,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 17,
             "end": 19
-          }
+          },
+          "$text": "()"
         }
       }
     },
@@ -2332,11 +2319,11 @@
                         "$type": 268,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
                         "$span": {
                           "start": 39,
                           "end": 41
-                        }
+                        },
+                        "$text": "()"
                       },
                       "$other": [
                         101
@@ -2506,11 +2493,11 @@
                   "$type": 268,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 39,
                     "end": 41
-                  }
+                  },
+                  "$text": "()"
                 },
                 "$other": [
                   101
@@ -2668,11 +2655,11 @@
                 "$type": 268,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 39,
                   "end": 41
-                }
+                },
+                "$text": "()"
               },
               "$other": [
                 101
@@ -2767,11 +2754,11 @@
         "$type": 268,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 39,
           "end": 41
-        }
+        },
+        "$text": "()"
       },
       "$other": [
         101
@@ -2905,7 +2892,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 89,
                 "end": 92
@@ -3166,7 +3152,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 89,
             "end": 92
@@ -3208,7 +3193,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 89,
           "end": 92
@@ -3279,7 +3263,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 47,
                 "end": 50
@@ -3390,7 +3373,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 47,
             "end": 50
@@ -3432,7 +3414,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 47,
           "end": 50
@@ -3475,7 +3456,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 7,
           "end": 9
@@ -3668,7 +3648,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 138,
           "end": 140
@@ -3798,7 +3777,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 183,
           "end": 185
@@ -3813,8 +3791,24 @@
           "$source": 0,
           "$named": true,
           "_type": [
-            "u32",
-            "u16"
+            {
+              "$type": 32,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 190,
+                "end": 193
+              }
+            },
+            {
+              "$type": 30,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 195,
+                "end": 198
+              }
+            }
           ],
           "$other": [
             137
@@ -3917,7 +3911,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 230,
           "end": 232
@@ -3931,7 +3924,6 @@
           "$type": 261,
           "$source": 0,
           "$named": true,
-          "$text": "return",
           "$span": {
             "start": 239,
             "end": 245
@@ -4003,7 +3995,6 @@
                       "$type": 217,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 270,
                         "end": 272
@@ -4287,7 +4278,6 @@
                 "$type": 218,
                 "$source": 0,
                 "$named": true,
-                "$text": "self",
                 "$span": {
                   "start": 359,
                   "end": 363
@@ -4589,7 +4579,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 7,
         "end": 9
@@ -4749,7 +4738,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 138,
         "end": 140
@@ -4775,7 +4763,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 183,
         "end": 185
@@ -4801,7 +4788,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 230,
         "end": 232
@@ -4853,7 +4839,6 @@
                     "$type": 217,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 270,
                       "end": 272
@@ -4970,7 +4955,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 270,
         "end": 272
@@ -5123,7 +5107,6 @@
               "$type": 218,
               "$source": 0,
               "$named": true,
-              "$text": "self",
               "$span": {
                 "start": 359,
                 "end": 363
@@ -5589,7 +5572,6 @@
         "$type": 261,
         "$source": 0,
         "$named": true,
-        "$text": "return",
         "$span": {
           "start": 239,
           "end": 245
@@ -5860,7 +5842,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 270,
               "end": 272
@@ -6328,7 +6309,6 @@
       "$type": 261,
       "$source": 0,
       "$named": true,
-      "$text": "return",
       "$span": {
         "start": 239,
         "end": 245
@@ -6555,8 +6535,24 @@
         "$source": 0,
         "$named": true,
         "_type": [
-          "u32",
-          "u16"
+          {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 190,
+              "end": 193
+            }
+          },
+          {
+            "$type": 30,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 195,
+              "end": 198
+            }
+          }
         ],
         "$other": [
           137
@@ -6635,7 +6631,6 @@
           "$type": 217,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 270,
             "end": 272
@@ -6878,7 +6873,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 270,
           "end": 272
@@ -7458,7 +7452,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 13,
               "end": 15
@@ -7515,7 +7508,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 13,
           "end": 15
@@ -7557,7 +7549,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 13,
         "end": 15
@@ -7691,7 +7682,15 @@
                             "$source": 0,
                             "$named": true,
                             "_type": [
-                              "usize"
+                              {
+                                "$type": 39,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 45,
+                                  "end": 50
+                                }
+                              }
                             ],
                             "_delimiter": 0
                           },
@@ -7846,7 +7845,15 @@
                         "$source": 0,
                         "$named": true,
                         "_type": [
-                          "usize"
+                          {
+                            "$type": 39,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 45,
+                              "end": 50
+                            }
+                          }
                         ],
                         "_delimiter": 0
                       },
@@ -8073,7 +8080,15 @@
                       "$source": 0,
                       "$named": true,
                       "_type": [
-                        "usize"
+                        {
+                          "$type": 39,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 45,
+                            "end": 50
+                          }
+                        }
                       ],
                       "_delimiter": 0
                     },
@@ -8156,7 +8171,15 @@
                     "$source": 0,
                     "$named": true,
                     "_type": [
-                      "usize"
+                      {
+                        "$type": 39,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 45,
+                          "end": 50
+                        }
+                      }
                     ],
                     "_delimiter": 0
                   },
@@ -8212,7 +8235,15 @@
         "$source": 0,
         "$named": true,
         "_type": [
-          "usize"
+          {
+            "$type": 39,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 45,
+              "end": 50
+            }
+          }
         ],
         "_delimiter": 0
       },
@@ -9730,7 +9761,6 @@
               "$type": 236,
               "$source": 0,
               "$named": true,
-              "$text": "use<>",
               "$span": {
                 "start": 51,
                 "end": 56
@@ -9878,7 +9908,6 @@
           "$type": 236,
           "$source": 0,
           "$named": true,
-          "$text": "use<>",
           "$span": {
             "start": 51,
             "end": 56
@@ -10035,7 +10064,6 @@
         "$type": 236,
         "$source": 0,
         "$named": true,
-        "$text": "use<>",
         "$span": {
           "start": 51,
           "end": 56
@@ -10233,7 +10261,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 9,
               "end": 11
@@ -10284,7 +10311,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 9,
           "end": 11
@@ -10328,7 +10354,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 9,
         "end": 11
@@ -10423,7 +10448,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 17,
           "end": 19
@@ -10533,7 +10557,6 @@
                 "$type": 219,
                 "$source": 0,
                 "$named": true,
-                "$text": "...",
                 "$span": {
                   "start": 68,
                   "end": 71
@@ -10695,7 +10718,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 17,
         "end": 19
@@ -10753,7 +10775,6 @@
               "$type": 219,
               "$source": 0,
               "$named": true,
-              "$text": "...",
               "$span": {
                 "start": 68,
                 "end": 71
@@ -10999,7 +11020,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 79,
           "end": 82
@@ -11098,7 +11118,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 229,
           "end": 231
@@ -11168,7 +11187,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 229,
                   "end": 231
@@ -11211,7 +11229,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 229,
         "end": 231
@@ -11851,7 +11868,6 @@
                       "$type": 264,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 45,
                         "end": 47
@@ -11875,7 +11891,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 51,
                     "end": 53
@@ -12020,7 +12035,6 @@
                             "$type": 264,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 152,
                               "end": 154
@@ -12048,7 +12062,6 @@
                           "$type": 291,
                           "$source": 0,
                           "$named": true,
-                          "$text": "break",
                           "$span": {
                             "start": 164,
                             "end": 169
@@ -12089,7 +12102,6 @@
                     "$type": 292,
                     "$source": 0,
                     "$named": true,
-                    "$text": "continue",
                     "$span": {
                       "start": 182,
                       "end": 190
@@ -12216,7 +12228,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 45,
                     "end": 47
@@ -12240,7 +12251,6 @@
               "$type": 264,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 51,
                 "end": 53
@@ -12401,7 +12411,6 @@
                         "$type": 264,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
                         "$span": {
                           "start": 152,
                           "end": 154
@@ -12429,7 +12438,6 @@
                       "$type": 291,
                       "$source": 0,
                       "$named": true,
-                      "$text": "break",
                       "$span": {
                         "start": 164,
                         "end": 169
@@ -12470,7 +12478,6 @@
                 "$type": 292,
                 "$source": 0,
                 "$named": true,
-                "$text": "continue",
                 "$span": {
                   "start": 182,
                   "end": 190
@@ -12543,7 +12550,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 152,
                     "end": 154
@@ -12571,7 +12577,6 @@
                 "$type": 291,
                 "$source": 0,
                 "$named": true,
-                "$text": "break",
                 "$span": {
                   "start": 164,
                   "end": 169
@@ -12738,7 +12743,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 45,
                   "end": 47
@@ -12762,7 +12766,6 @@
             "$type": 264,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 51,
               "end": 53
@@ -12819,7 +12822,6 @@
               "$type": 264,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 45,
                 "end": 47
@@ -12843,7 +12845,6 @@
           "$type": 264,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 51,
             "end": 53
@@ -12892,7 +12893,6 @@
             "$type": 264,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 45,
               "end": 47
@@ -12916,7 +12916,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 51,
           "end": 53
@@ -12952,7 +12951,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 45,
           "end": 47
@@ -13038,7 +13036,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 152,
           "end": 154
@@ -13078,7 +13075,6 @@
           "$type": 264,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 45,
             "end": 47
@@ -13118,7 +13114,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 45,
         "end": 47
@@ -13144,7 +13139,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 51,
         "end": 53
@@ -13210,7 +13204,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 152,
         "end": 154
@@ -13333,7 +13326,6 @@
                       "$type": 264,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 152,
                         "end": 154
@@ -13361,7 +13353,6 @@
                     "$type": 291,
                     "$source": 0,
                     "$named": true,
-                    "$text": "break",
                     "$span": {
                       "start": 164,
                       "end": 169
@@ -13402,7 +13393,6 @@
               "$type": 292,
               "$source": 0,
               "$named": true,
-              "$text": "continue",
               "$span": {
                 "start": 182,
                 "end": 190
@@ -13457,7 +13447,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 152,
                   "end": 154
@@ -13485,7 +13474,6 @@
               "$type": 291,
               "$source": 0,
               "$named": true,
-              "$text": "break",
               "$span": {
                 "start": 164,
                 "end": 169
@@ -13619,7 +13607,6 @@
       "$type": 291,
       "$source": 0,
       "$named": true,
-      "$text": "break",
       "$span": {
         "start": 164,
         "end": 169
@@ -13645,7 +13632,6 @@
       "$type": 292,
       "$source": 0,
       "$named": true,
-      "$text": "continue",
       "$span": {
         "start": 182,
         "end": 190
@@ -14150,7 +14136,6 @@
                       "$type": 370,
                       "$source": 0,
                       "$named": true,
-                      "$text": "pub",
                       "$span": {
                         "start": 49,
                         "end": 52
@@ -14186,7 +14171,6 @@
                       "$type": 370,
                       "$source": 0,
                       "$named": true,
-                      "$text": "pub",
                       "$span": {
                         "start": 67,
                         "end": 70
@@ -14388,7 +14372,6 @@
                     "$type": 370,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pub",
                     "$span": {
                       "start": 148,
                       "end": 151
@@ -14547,7 +14530,6 @@
                     "$type": 370,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pub",
                     "$span": {
                       "start": 201,
                       "end": 204
@@ -14558,11 +14540,11 @@
                   "$type": 231,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 205,
                     "end": 207
-                  }
+                  },
+                  "$text": "()"
                 },
                 "$slotOrder": [
                   "visibility_modifier",
@@ -14607,7 +14589,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 49,
           "end": 52
@@ -14638,7 +14619,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 67,
           "end": 70
@@ -14669,7 +14649,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 148,
           "end": 151
@@ -14700,7 +14679,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 201,
           "end": 204
@@ -14772,7 +14750,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -14805,7 +14782,6 @@
                         "$type": 370,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pub",
                         "$span": {
                           "start": 39,
                           "end": 42
@@ -14856,7 +14832,6 @@
                         "$type": 370,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pub",
                         "$span": {
                           "start": 81,
                           "end": 84
@@ -14907,7 +14882,6 @@
                         "$type": 370,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pub",
                         "$span": {
                           "start": 124,
                           "end": 127
@@ -15030,7 +15004,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -15063,7 +15036,6 @@
                     "$type": 370,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pub",
                     "$span": {
                       "start": 39,
                       "end": 42
@@ -15114,7 +15086,6 @@
                     "$type": 370,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pub",
                     "$span": {
                       "start": 81,
                       "end": 84
@@ -15165,7 +15136,6 @@
                     "$type": 370,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pub",
                     "$span": {
                       "start": 124,
                       "end": 127
@@ -15282,7 +15252,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -15313,7 +15282,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 39,
           "end": 42
@@ -15344,7 +15312,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 81,
           "end": 84
@@ -15375,7 +15342,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 124,
           "end": 127
@@ -15982,7 +15948,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -16114,7 +16079,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 47,
                 "end": 50
@@ -16457,7 +16421,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -16605,7 +16568,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 47,
             "end": 50
@@ -16942,7 +16904,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -16973,7 +16934,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 47,
           "end": 50
@@ -17371,7 +17331,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -17478,7 +17437,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -17579,7 +17537,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -17619,7 +17576,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -17840,7 +17796,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 82,
                 "end": 85
@@ -17890,7 +17845,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 119,
               "end": 121
@@ -17961,7 +17915,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -18198,7 +18151,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 82,
             "end": 85
@@ -18248,7 +18200,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 119,
           "end": 121
@@ -18313,7 +18264,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -18344,7 +18294,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 82,
           "end": 85
@@ -18808,7 +18757,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 119,
         "end": 121
@@ -21753,7 +21701,6 @@
                             "$type": 217,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 71,
                               "end": 73
@@ -22006,7 +21953,6 @@
                         "$type": 217,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
                         "$span": {
                           "start": 71,
                           "end": 73
@@ -22242,7 +22188,6 @@
                       "$type": 217,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 71,
                         "end": 73
@@ -22348,7 +22293,6 @@
                     "$type": 217,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 71,
                       "end": 73
@@ -22441,7 +22385,6 @@
                   "$type": 217,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 71,
                     "end": 73
@@ -22521,7 +22464,6 @@
                 "$type": 217,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 71,
                   "end": 73
@@ -22588,7 +22530,6 @@
               "$type": 217,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 71,
                 "end": 73
@@ -22642,7 +22583,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 71,
           "end": 73
@@ -22684,7 +22624,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 71,
         "end": 73
@@ -22836,7 +22775,6 @@
             "$type": 198,
             "$source": 0,
             "$named": true,
-            "$text": "where",
             "$span": {
               "start": 48,
               "end": 53
@@ -22846,17 +22784,16 @@
             "$type": 231,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 56,
               "end": 58
-            }
+            },
+            "$text": "()"
           },
           "_trailing_where_clause": {
             "$type": 198,
             "$source": 0,
             "$named": true,
-            "$text": "where",
             "$span": {
               "start": 59,
               "end": 64
@@ -23033,7 +22970,6 @@
         "$type": 198,
         "$source": 0,
         "$named": true,
-        "$text": "where",
         "$span": {
           "start": 48,
           "end": 53
@@ -23043,17 +22979,16 @@
         "$type": 231,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 56,
           "end": 58
-        }
+        },
+        "$text": "()"
       },
       "_trailing_where_clause": {
         "$type": 198,
         "$source": 0,
         "$named": true,
-        "$text": "where",
         "$span": {
           "start": 59,
           "end": 64
@@ -23217,7 +23152,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 7,
               "end": 9
@@ -23271,7 +23205,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 7,
           "end": 9
@@ -23318,7 +23251,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 7,
         "end": 9
@@ -23573,7 +23505,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 19,
           "end": 21
@@ -23614,7 +23545,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 19,
         "end": 21
@@ -24637,7 +24567,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 42,
               "end": 44
@@ -24709,7 +24638,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 79,
               "end": 81
@@ -25045,7 +24973,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 42,
           "end": 44
@@ -25091,7 +25018,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 79,
           "end": 81
@@ -25132,7 +25058,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 42,
         "end": 44
@@ -25158,7 +25083,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 79,
         "end": 81
@@ -25361,11 +25285,7 @@
         "$type": 395,
         "$source": 0,
         "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 101,
-          "end": 103
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "()"
@@ -25392,11 +25312,7 @@
         "$type": 395,
         "$source": 0,
         "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 104,
-          "end": 106
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "()"
@@ -25595,7 +25511,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 157,
           "end": 160
@@ -25708,7 +25623,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 6,
         "end": 8
@@ -26272,7 +26186,6 @@
                             "$type": 218,
                             "$source": 0,
                             "$named": true,
-                            "$text": "self",
                             "$span": {
                               "start": 54,
                               "end": 58
@@ -26637,7 +26550,6 @@
                         "$type": 218,
                         "$source": 0,
                         "$named": true,
-                        "$text": "self",
                         "$span": {
                           "start": 54,
                           "end": 58
@@ -27011,7 +26923,6 @@
                 "$type": 218,
                 "$source": 0,
                 "$named": true,
-                "$text": "self",
                 "$span": {
                   "start": 54,
                   "end": 58
@@ -27290,7 +27201,6 @@
               "$type": 218,
               "$source": 0,
               "$named": true,
-              "$text": "self",
               "$span": {
                 "start": 54,
                 "end": 58
@@ -29059,7 +28969,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -29222,7 +29131,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -29271,7 +29179,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -30569,7 +30476,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 33,
         "end": 35
@@ -30624,7 +30530,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 111,
           "end": 113
@@ -30685,7 +30590,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 111,
         "end": 113
@@ -30724,7 +30628,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -30894,7 +30797,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -31074,7 +30976,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -31367,7 +31268,6 @@
                           "$type": 218,
                           "$source": 0,
                           "$named": true,
-                          "$text": "self",
                           "$span": {
                             "start": 50,
                             "end": 54
@@ -31541,7 +31441,6 @@
                       "$type": 218,
                       "$source": 0,
                       "$named": true,
-                      "$text": "self",
                       "$span": {
                         "start": 50,
                         "end": 54
@@ -31765,7 +31664,6 @@
                 "$type": 218,
                 "$source": 0,
                 "$named": true,
-                "$text": "self",
                 "$span": {
                   "start": 50,
                   "end": 54
@@ -31860,7 +31758,6 @@
               "$type": 218,
               "$source": 0,
               "$named": true,
-              "$text": "self",
               "$span": {
                 "start": 50,
                 "end": 54
@@ -33826,7 +33723,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -33867,11 +33763,7 @@
                     "$type": 397,
                     "$source": 0,
                     "$named": true,
-                    "$text": "{}",
-                    "$span": {
-                      "start": 42,
-                      "end": 44
-                    }
+                    "_delim_tokens": []
                   }
                 },
                 "$other": [
@@ -33974,7 +33866,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -34015,11 +33906,7 @@
                 "$type": 397,
                 "$source": 0,
                 "$named": true,
-                "$text": "{}",
-                "$span": {
-                  "start": 42,
-                  "end": 44
-                }
+                "_delim_tokens": []
               }
             },
             "$other": [
@@ -34116,7 +34003,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -34152,11 +34038,7 @@
           "$type": 397,
           "$source": 0,
           "$named": true,
-          "$text": "{}",
-          "$span": {
-            "start": 42,
-            "end": 44
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -34191,11 +34073,7 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
-        "$text": "{}",
-        "$span": {
-          "start": 42,
-          "end": 44
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "{}"
@@ -34341,7 +34219,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -34447,7 +34324,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -34547,7 +34423,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -35040,7 +34915,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -35497,7 +35371,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 182,
               "end": 184
@@ -35557,7 +35430,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 208,
               "end": 210
@@ -35736,7 +35608,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -35921,7 +35792,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -37389,7 +37259,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 182,
           "end": 184
@@ -37465,7 +37334,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 208,
           "end": 210
@@ -37634,7 +37502,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 182,
         "end": 184
@@ -37660,7 +37527,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 208,
         "end": 210
@@ -39272,7 +39138,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -39284,7 +39149,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 8,
               "end": 10
@@ -39338,7 +39202,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 29,
               "end": 31
@@ -39392,7 +39255,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 49,
               "end": 51
@@ -39446,7 +39308,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 70,
               "end": 72
@@ -39522,7 +39383,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 97,
               "end": 99
@@ -39574,7 +39434,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -39586,7 +39445,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 8,
           "end": 10
@@ -39656,7 +39514,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 29,
           "end": 31
@@ -39726,7 +39583,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 49,
           "end": 51
@@ -39796,7 +39652,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 70,
           "end": 72
@@ -39888,7 +39743,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 97,
           "end": 99
@@ -39934,7 +39788,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -40139,7 +39992,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 8,
         "end": 10
@@ -40165,7 +40017,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 29,
         "end": 31
@@ -40191,7 +40042,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 49,
         "end": 51
@@ -40217,7 +40067,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 70,
         "end": 72
@@ -40243,7 +40092,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 97,
         "end": 99
@@ -42222,7 +42070,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 376,
                 "end": 379
@@ -42354,7 +42201,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 417,
               "end": 419
@@ -42955,7 +42801,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 417,
           "end": 419
@@ -44007,7 +43852,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 417,
         "end": 419
@@ -46145,7 +45989,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 376,
             "end": 379
@@ -46263,7 +46106,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 376,
           "end": 379
@@ -46432,7 +46274,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 63,
               "end": 65
@@ -46781,7 +46622,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 63,
           "end": 65
@@ -46823,7 +46663,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 63,
         "end": 65
@@ -47874,7 +47713,6 @@
               "$type": 370,
               "$source": 0,
               "$named": true,
-              "$text": "pub",
               "$span": {
                 "start": 0,
                 "end": 3
@@ -48040,7 +47878,6 @@
           "$type": 370,
           "$source": 0,
           "$named": true,
-          "$text": "pub",
           "$span": {
             "start": 0,
             "end": 3
@@ -48200,7 +48037,6 @@
         "$type": 370,
         "$source": 0,
         "$named": true,
-        "$text": "pub",
         "$span": {
           "start": 0,
           "end": 3
@@ -48393,7 +48229,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 33,
               "end": 35
@@ -48446,7 +48281,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 33,
           "end": 35
@@ -48492,7 +48326,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 33,
         "end": 35
@@ -48550,7 +48383,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 7,
               "end": 9
@@ -48617,7 +48449,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 7,
           "end": 9
@@ -48677,7 +48508,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 7,
         "end": 9
@@ -48754,7 +48584,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 7,
               "end": 9
@@ -48856,7 +48685,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 7,
           "end": 9
@@ -48951,7 +48779,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 7,
         "end": 9
@@ -49752,7 +49579,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 8,
                     "end": 10
@@ -49846,7 +49672,6 @@
           "$type": 264,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 8,
             "end": 10
@@ -49924,7 +49749,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 8,
           "end": 10
@@ -49985,7 +49809,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 8,
         "end": 10
@@ -52961,7 +52784,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 3,
                   "end": 5
@@ -53119,7 +52941,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 3,
           "end": 5
@@ -53271,7 +53092,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 3,
         "end": 5
@@ -54599,11 +54419,11 @@
               "$type": 268,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 0,
                 "end": 2
-              }
+              },
+              "$text": "()"
             },
             "$other": [
               2
@@ -55908,7 +55728,6 @@
                         "$type": 264,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
                         "$span": {
                           "start": 33,
                           "end": 35
@@ -56006,7 +55825,6 @@
                     "$type": 264,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 33,
                       "end": 35
@@ -56097,7 +55915,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 33,
                     "end": 35
@@ -56153,7 +55970,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 33,
           "end": 35
@@ -56184,7 +56000,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 33,
         "end": 35
@@ -56220,7 +56035,6 @@
             "$type": 217,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 7,
               "end": 9
@@ -56519,7 +56333,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 7,
           "end": 9
@@ -56656,7 +56469,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 7,
         "end": 9
@@ -59902,7 +59714,6 @@
                       "$type": 356,
                       "$source": 0,
                       "$named": true,
-                      "$text": "_",
                       "$span": {
                         "start": 135,
                         "end": 136
@@ -60353,7 +60164,6 @@
                       "$type": 356,
                       "$source": 0,
                       "$named": true,
-                      "$text": "_",
                       "$span": {
                         "start": 452,
                         "end": 453
@@ -60756,7 +60566,6 @@
                 "$type": 356,
                 "$source": 0,
                 "$named": true,
-                "$text": "_",
                 "$span": {
                   "start": 135,
                   "end": 136
@@ -61217,7 +61026,6 @@
                 "$type": 356,
                 "$source": 0,
                 "$named": true,
-                "$text": "_",
                 "$span": {
                   "start": 452,
                   "end": 453
@@ -62246,7 +62054,6 @@
                   "$type": 356,
                   "$source": 0,
                   "$named": true,
-                  "$text": "_",
                   "$span": {
                     "start": 452,
                     "end": 453
@@ -66270,7 +66077,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 21,
                     "end": 23
@@ -66351,7 +66157,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 41,
                   "end": 43
@@ -66488,7 +66293,6 @@
           "$type": 264,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 21,
             "end": 23
@@ -66692,7 +66496,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 21,
           "end": 23
@@ -66767,7 +66570,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 41,
           "end": 43
@@ -66861,7 +66663,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 21,
         "end": 23
@@ -66887,7 +66688,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 41,
         "end": 43
@@ -66984,7 +66784,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 12,
                   "end": 14
@@ -67040,7 +66839,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 12,
           "end": 14
@@ -67101,7 +66899,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 12,
         "end": 14
@@ -67639,7 +67436,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 4,
                   "end": 6
@@ -67720,7 +67516,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 17,
                   "end": 19
@@ -67761,7 +67556,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 24,
                   "end": 26
@@ -67815,7 +67609,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 34,
                   "end": 36
@@ -67871,7 +67664,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 4,
           "end": 6
@@ -67955,7 +67747,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 17,
           "end": 19
@@ -67999,7 +67790,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 24,
           "end": 26
@@ -68056,7 +67846,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 34,
           "end": 36
@@ -68270,7 +68059,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 4,
         "end": 6
@@ -68296,7 +68084,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 17,
         "end": 19
@@ -68322,7 +68109,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 24,
         "end": 26
@@ -68348,7 +68134,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 34,
         "end": 36
@@ -68746,11 +68531,7 @@
                         "$type": 396,
                         "$source": 0,
                         "$named": true,
-                        "$text": "[]",
-                        "$span": {
-                          "start": 7,
-                          "end": 9
-                        }
+                        "_delim_tokens": []
                       }
                     },
                     "$other": [
@@ -68775,7 +68556,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 15,
                   "end": 17
@@ -68838,11 +68618,7 @@
                 "$type": 396,
                 "$source": 0,
                 "$named": true,
-                "$text": "[]",
-                "$span": {
-                  "start": 7,
-                  "end": 9
-                }
+                "_delim_tokens": []
               }
             },
             "$other": [
@@ -68867,7 +68643,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 15,
           "end": 17
@@ -68919,11 +68694,7 @@
               "$type": 396,
               "$source": 0,
               "$named": true,
-              "$text": "[]",
-              "$span": {
-                "start": 7,
-                "end": 9
-              }
+              "_delim_tokens": []
             }
           },
           "$other": [
@@ -68973,11 +68744,7 @@
           "$type": 396,
           "$source": 0,
           "$named": true,
-          "$text": "[]",
-          "$span": {
-            "start": 7,
-            "end": 9
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -69012,11 +68779,7 @@
         "$type": 396,
         "$source": 0,
         "$named": true,
-        "$text": "[]",
-        "$span": {
-          "start": 7,
-          "end": 9
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "[]"
@@ -69039,7 +68802,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 15,
         "end": 17
@@ -69109,7 +68871,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 17,
                   "end": 19
@@ -69178,7 +68939,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 17,
           "end": 19
@@ -69282,7 +69042,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 17,
         "end": 19
@@ -69374,7 +69133,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 18,
                   "end": 20
@@ -69442,7 +69200,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 30,
                   "end": 32
@@ -69533,7 +69290,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 18,
           "end": 20
@@ -69604,7 +69360,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 30,
           "end": 32
@@ -69782,7 +69537,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 18,
         "end": 20
@@ -69808,7 +69562,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 30,
         "end": 32
@@ -72870,7 +72623,6 @@
                           "$type": 261,
                           "$source": 0,
                           "$named": true,
-                          "$text": "return",
                           "$span": {
                             "start": 72,
                             "end": 78
@@ -73038,7 +72790,6 @@
                   "$type": 261,
                   "$source": 0,
                   "$named": true,
-                  "$text": "return",
                   "$span": {
                     "start": 72,
                     "end": 78
@@ -73179,7 +72930,6 @@
               "$type": 261,
               "$source": 0,
               "$named": true,
-              "$text": "return",
               "$span": {
                 "start": 72,
                 "end": 78
@@ -73474,7 +73224,6 @@
       "$type": 261,
       "$source": 0,
       "$named": true,
-      "$text": "return",
       "$span": {
         "start": 72,
         "end": 78
@@ -73524,7 +73273,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 26,
                     "end": 28
@@ -73598,7 +73346,6 @@
               "$type": 264,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 26,
                 "end": 28
@@ -73664,7 +73411,6 @@
             "$type": 264,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 26,
               "end": 28
@@ -73714,7 +73460,6 @@
           "$type": 264,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 26,
             "end": 28
@@ -73756,7 +73501,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 26,
           "end": 28
@@ -73787,7 +73531,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 26,
         "end": 28
@@ -74069,7 +73812,6 @@
                       "$type": 264,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 111,
                         "end": 113
@@ -74323,7 +74065,6 @@
             "$type": 264,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 111,
               "end": 113
@@ -74664,7 +74405,6 @@
           "$type": 264,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 111,
             "end": 113
@@ -75134,7 +74874,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 111,
           "end": 113
@@ -75291,7 +75030,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 111,
         "end": 113
@@ -75382,7 +75120,6 @@
                   "$type": 264,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 111,
                     "end": 113
@@ -75506,7 +75243,6 @@
                 "$type": 264,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 111,
                   "end": 113
@@ -77309,11 +77045,7 @@
                   "$type": 395,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
-                  "$span": {
-                    "start": 2,
-                    "end": 4
-                  }
+                  "_delim_tokens": []
                 }
               },
               "$other": [
@@ -77350,11 +77082,7 @@
                   "$type": 396,
                   "$source": 0,
                   "$named": true,
-                  "$text": "[]",
-                  "$span": {
-                    "start": 8,
-                    "end": 10
-                  }
+                  "_delim_tokens": []
                 }
               },
               "$other": [
@@ -77391,11 +77119,7 @@
                   "$type": 397,
                   "$source": 0,
                   "$named": true,
-                  "$text": "{}",
-                  "$span": {
-                    "start": 14,
-                    "end": 16
-                  }
+                  "_delim_tokens": []
                 }
               },
               "$other": [
@@ -77445,11 +77169,7 @@
                   "$type": 395,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
-                  "$span": {
-                    "start": 23,
-                    "end": 25
-                  }
+                  "_delim_tokens": []
                 }
               },
               "$other": [
@@ -77512,11 +77232,7 @@
                   "$type": 397,
                   "$source": 0,
                   "$named": true,
-                  "$text": "{}",
-                  "$span": {
-                    "start": 35,
-                    "end": 37
-                  }
+                  "_delim_tokens": []
                 }
               },
               "$other": [
@@ -77563,11 +77279,7 @@
           "$type": 395,
           "$source": 0,
           "$named": true,
-          "$text": "()",
-          "$span": {
-            "start": 2,
-            "end": 4
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -77607,11 +77319,7 @@
           "$type": 396,
           "$source": 0,
           "$named": true,
-          "$text": "[]",
-          "$span": {
-            "start": 8,
-            "end": 10
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -77651,11 +77359,7 @@
           "$type": 397,
           "$source": 0,
           "$named": true,
-          "$text": "{}",
-          "$span": {
-            "start": 14,
-            "end": 16
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -77708,11 +77412,7 @@
           "$type": 395,
           "$source": 0,
           "$named": true,
-          "$text": "()",
-          "$span": {
-            "start": 23,
-            "end": 25
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -77778,11 +77478,7 @@
           "$type": 397,
           "$source": 0,
           "$named": true,
-          "$text": "{}",
-          "$span": {
-            "start": 35,
-            "end": 37
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -77817,11 +77513,7 @@
         "$type": 395,
         "$source": 0,
         "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 2,
-          "end": 4
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "()"
@@ -77848,11 +77540,7 @@
         "$type": 396,
         "$source": 0,
         "$named": true,
-        "$text": "[]",
-        "$span": {
-          "start": 8,
-          "end": 10
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "[]"
@@ -77879,11 +77567,7 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
-        "$text": "{}",
-        "$span": {
-          "start": 14,
-          "end": 16
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "{}"
@@ -77910,11 +77594,7 @@
         "$type": 395,
         "$source": 0,
         "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 23,
-          "end": 25
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "()"
@@ -77941,11 +77621,7 @@
         "$type": 397,
         "$source": 0,
         "$named": true,
-        "$text": "{}",
-        "$span": {
-          "start": 35,
-          "end": 37
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "{}"
@@ -78465,51 +78141,6 @@
     "wrappedOffset": 0
   },
   {
-    "kind": "render",
-    "grammar": "rust",
-    "input": {
-      "$type": 246,
-      "$source": 0,
-      "$named": true,
-      "_macro": "a",
-      "_arguments": {
-        "$type": 247,
-        "$source": 0,
-        "$named": true,
-        "_content": {
-          "$type": 395,
-          "$source": 0,
-          "$named": true,
-          "_delim_tokens": [
-            {
-              "$type": 176,
-              "$source": 0,
-              "$named": true,
-              "$text": "'",
-              "$span": {
-                "start": 89,
-                "end": 90
-              }
-            },
-            "lifetime"
-          ],
-          "$other": [
-            7,
-            8
-          ]
-        }
-      },
-      "$other": [
-        48
-      ],
-      "$slotOrder": [
-        "macro",
-        "arguments"
-      ]
-    },
-    "expectedOutput": "a!('lifetime)"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "a!('lifetime)",
@@ -78684,11 +78315,7 @@
                 "$type": 395,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
-                "$span": {
-                  "start": 135,
-                  "end": 137
-                }
+                "_delim_tokens": []
               }
             }
           ],
@@ -79186,38 +78813,6 @@
     "wrappedOffset": 15
   },
   {
-    "kind": "render",
-    "grammar": "rust",
-    "input": {
-      "$type": 247,
-      "$source": 0,
-      "$named": true,
-      "_content": {
-        "$type": 395,
-        "$source": 0,
-        "$named": true,
-        "_delim_tokens": [
-          {
-            "$type": 176,
-            "$source": 0,
-            "$named": true,
-            "$text": "'",
-            "$span": {
-              "start": 89,
-              "end": 90
-            }
-          },
-          "lifetime"
-        ],
-        "$other": [
-          7,
-          8
-        ]
-      }
-    },
-    "expectedOutput": "('lifetime)"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "('lifetime)",
@@ -79348,11 +78943,7 @@
               "$type": 395,
               "$source": 0,
               "$named": true,
-              "$text": "()",
-              "$span": {
-                "start": 135,
-                "end": 137
-              }
+              "_delim_tokens": []
             }
           }
         ],
@@ -79386,11 +78977,7 @@
         "$type": 395,
         "$source": 0,
         "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 135,
-          "end": 137
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "()"
@@ -79718,15 +79305,80 @@
     "wrappedOffset": 15
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 163,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 246,
+          "$source": 0,
+          "$named": true,
+          "_macro": "ok",
+          "_arguments": {
+            "$type": 247,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 397,
+              "$source": 0,
+              "$named": true,
+              "_delim_tokens": []
+            }
+          },
+          "$other": [
+            48
+          ],
+          "$slotOrder": [
+            "macro",
+            "arguments"
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "ok!{}"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "ok! {\n  // one\n  /* two */\n}",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "ok!{\n  // one\n  /* two */\n}",
-    "expectedReparseTree": "(source_file statements: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_brace (line_comment (line_comment_content)) (block_comment)))))",
-    "wrappedText": "ok!{\n  // one\n  /* two */\n}",
+    "expectedSourceOut": "ok!{}",
+    "expectedReparseTree": "(source_file statements: (macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_brace))))",
+    "wrappedText": "ok!{}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 246,
+      "$source": 0,
+      "$named": true,
+      "_macro": "ok",
+      "_arguments": {
+        "$type": 247,
+        "$source": 0,
+        "$named": true,
+        "_content": {
+          "$type": 397,
+          "$source": 0,
+          "$named": true,
+          "_delim_tokens": []
+        }
+      },
+      "$other": [
+        48
+      ],
+      "$slotOrder": [
+        "macro",
+        "arguments"
+      ]
+    },
+    "expectedOutput": "ok!{}"
   },
   {
     "kind": "roundtrip",
@@ -79734,10 +79386,26 @@
     "sourceIn": "ok! {\n  // one\n  /* two */\n}",
     "pattern": "macro_invocation",
     "edits": [],
-    "expectedSourceOut": "ok!{\n  // one\n  /* two */\n}",
-    "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_brace (line_comment (line_comment_content)) (block_comment))))",
-    "wrappedText": "ok!{\n  // one\n  /* two */\n}",
+    "expectedSourceOut": "ok!{}",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) arguments: (token_tree (delim_token_tree_brace)))",
+    "wrappedText": "ok!{}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 247,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 397,
+        "$source": 0,
+        "$named": true,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "{}"
   },
   {
     "kind": "roundtrip",
@@ -79745,9 +79413,9 @@
     "sourceIn": "{\n  // one\n  /* two */\n}",
     "pattern": "delim_token_tree",
     "edits": [],
-    "expectedSourceOut": "{\n  // one\n  /* two */\n}",
-    "expectedReparseTree": "(token_tree (delim_token_tree_brace (line_comment (line_comment_content)) (block_comment)))",
-    "wrappedText": "fn _f() { mac! {\n  // one\n  /* two */\n} }",
+    "expectedSourceOut": "{}",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
+    "wrappedText": "fn _f() { mac! {} }",
     "wrappedOffset": 15
   },
   {
@@ -82268,7 +81936,6 @@
                                 "$type": 356,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "_",
                                 "$span": {
                                   "start": 95,
                                   "end": 96
@@ -82419,7 +82086,6 @@
                             "$type": 356,
                             "$source": 0,
                             "$named": true,
-                            "$text": "_",
                             "$span": {
                               "start": 147,
                               "end": 148
@@ -82775,7 +82441,6 @@
                           "$type": 356,
                           "$source": 0,
                           "$named": true,
-                          "$text": "_",
                           "$span": {
                             "start": 95,
                             "end": 96
@@ -82937,7 +82602,6 @@
                       "$type": 356,
                       "$source": 0,
                       "$named": true,
-                      "$text": "_",
                       "$span": {
                         "start": 147,
                         "end": 148
@@ -83199,7 +82863,6 @@
                 "$type": 356,
                 "$source": 0,
                 "$named": true,
-                "$text": "_",
                 "$span": {
                   "start": 95,
                   "end": 96
@@ -83505,7 +83168,6 @@
             "$type": 356,
             "$source": 0,
             "$named": true,
-            "$text": "_",
             "$span": {
               "start": 147,
               "end": 148
@@ -83910,11 +83572,11 @@
                               "$type": 308,
                               "$source": 0,
                               "$named": true,
-                              "$text": "..",
                               "$span": {
                                 "start": 16,
                                 "end": 18
-                              }
+                              },
+                              "$text": ".."
                             }
                           ],
                           "$other": [
@@ -83968,11 +83630,11 @@
                               "$type": 308,
                               "$source": 0,
                               "$named": true,
-                              "$text": "..",
                               "$span": {
                                 "start": 30,
                                 "end": 32
-                              }
+                              },
+                              "$text": ".."
                             }
                           ],
                           "_delimiter": 0
@@ -84060,11 +83722,11 @@
                             "$type": 308,
                             "$source": 0,
                             "$named": true,
-                            "$text": "..",
                             "$span": {
                               "start": 53,
                               "end": 55
-                            }
+                            },
+                            "$text": ".."
                           }
                         ],
                         "$other": [
@@ -84166,11 +83828,11 @@
                         "$type": 308,
                         "$source": 0,
                         "$named": true,
-                        "$text": "..",
                         "$span": {
                           "start": 16,
                           "end": 18
-                        }
+                        },
+                        "$text": ".."
                       }
                     ],
                     "$other": [
@@ -84224,11 +83886,11 @@
                         "$type": 308,
                         "$source": 0,
                         "$named": true,
-                        "$text": "..",
                         "$span": {
                           "start": 30,
                           "end": 32
-                        }
+                        },
+                        "$text": ".."
                       }
                     ],
                     "_delimiter": 0
@@ -84316,11 +83978,11 @@
                       "$type": 308,
                       "$source": 0,
                       "$named": true,
-                      "$text": "..",
                       "$span": {
                         "start": 53,
                         "end": 55
-                      }
+                      },
+                      "$text": ".."
                     }
                   ],
                   "$other": [
@@ -84397,11 +84059,11 @@
             "$type": 308,
             "$source": 0,
             "$named": true,
-            "$text": "..",
             "$span": {
               "start": 16,
               "end": 18
-            }
+            },
+            "$text": ".."
           }
         ],
         "$other": [
@@ -84444,11 +84106,11 @@
             "$type": 308,
             "$source": 0,
             "$named": true,
-            "$text": "..",
             "$span": {
               "start": 30,
               "end": 32
-            }
+            },
+            "$text": ".."
           }
         ],
         "_delimiter": 0
@@ -84524,11 +84186,11 @@
             "$type": 308,
             "$source": 0,
             "$named": true,
-            "$text": "..",
             "$span": {
               "start": 53,
               "end": 55
-            }
+            },
+            "$text": ".."
           }
         ],
         "$other": [
@@ -84649,7 +84311,6 @@
                                     "$type": 356,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "_",
                                     "$span": {
                                       "start": 18,
                                       "end": 19
@@ -84694,11 +84355,11 @@
                                     "$type": 308,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "..",
                                     "$span": {
                                       "start": 29,
                                       "end": 31
-                                    }
+                                    },
+                                    "$text": ".."
                                   }
                                 ],
                                 "_delimiter": 0
@@ -85337,7 +84998,6 @@
                       "$type": 356,
                       "$source": 0,
                       "$named": true,
-                      "$text": "_",
                       "$span": {
                         "start": 254,
                         "end": 255
@@ -85451,7 +85111,6 @@
                               "$type": 356,
                               "$source": 0,
                               "$named": true,
-                              "$text": "_",
                               "$span": {
                                 "start": 18,
                                 "end": 19
@@ -85496,11 +85155,11 @@
                               "$type": 308,
                               "$source": 0,
                               "$named": true,
-                              "$text": "..",
                               "$span": {
                                 "start": 29,
                                 "end": 31
-                              }
+                              },
+                              "$text": ".."
                             }
                           ],
                           "_delimiter": 0
@@ -86150,7 +85809,6 @@
                 "$type": 356,
                 "$source": 0,
                 "$named": true,
-                "$text": "_",
                 "$span": {
                   "start": 254,
                   "end": 255
@@ -86239,7 +85897,6 @@
                   "$type": 356,
                   "$source": 0,
                   "$named": true,
-                  "$text": "_",
                   "$span": {
                     "start": 18,
                     "end": 19
@@ -86284,11 +85941,11 @@
                   "$type": 308,
                   "$source": 0,
                   "$named": true,
-                  "$text": "..",
                   "$span": {
                     "start": 29,
                     "end": 31
-                  }
+                  },
+                  "$text": ".."
                 }
               ],
               "_delimiter": 0
@@ -86588,7 +86245,6 @@
               "$type": 356,
               "$source": 0,
               "$named": true,
-              "$text": "_",
               "$span": {
                 "start": 18,
                 "end": 19
@@ -86649,11 +86305,11 @@
               "$type": 308,
               "$source": 0,
               "$named": true,
-              "$text": "..",
               "$span": {
                 "start": 29,
                 "end": 31
-              }
+              },
+              "$text": ".."
             }
           ],
           "_delimiter": 0
@@ -86911,7 +86567,6 @@
             "$type": 356,
             "$source": 0,
             "$named": true,
-            "$text": "_",
             "$span": {
               "start": 18,
               "end": 19
@@ -86959,11 +86614,11 @@
             "$type": 308,
             "$source": 0,
             "$named": true,
-            "$text": "..",
             "$span": {
               "start": 29,
               "end": 31
-            }
+            },
+            "$text": ".."
           }
         ],
         "_delimiter": 0
@@ -88198,7 +87853,6 @@
                     "$type": 264,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 273,
                       "end": 275
@@ -88451,11 +88105,7 @@
                         "$type": 395,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
-                        "$span": {
-                          "start": 345,
-                          "end": 347
-                        }
+                        "_delim_tokens": []
                       }
                     },
                     "$other": [
@@ -88479,11 +88129,7 @@
                         "$type": 395,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
-                        "$span": {
-                          "start": 352,
-                          "end": 354
-                        }
+                        "_delim_tokens": []
                       }
                     },
                     "$other": [
@@ -88507,11 +88153,11 @@
                 "$type": 268,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 357,
                   "end": 359
-                }
+                },
+                "$text": "()"
               },
               "$other": [
                 67,
@@ -88747,11 +88393,7 @@
                   "$type": 395,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
-                  "$span": {
-                    "start": 345,
-                    "end": 347
-                  }
+                  "_delim_tokens": []
                 }
               },
               "$other": [
@@ -88775,11 +88417,7 @@
                   "$type": 395,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
-                  "$span": {
-                    "start": 352,
-                    "end": 354
-                  }
+                  "_delim_tokens": []
                 }
               },
               "$other": [
@@ -88803,11 +88441,11 @@
           "$type": 268,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 357,
             "end": 359
-          }
+          },
+          "$text": "()"
         },
         "$other": [
           67,
@@ -89571,11 +89209,7 @@
               "$type": 395,
               "$source": 0,
               "$named": true,
-              "$text": "()",
-              "$span": {
-                "start": 345,
-                "end": 347
-              }
+              "_delim_tokens": []
             }
           },
           "$other": [
@@ -89599,11 +89233,7 @@
               "$type": 395,
               "$source": 0,
               "$named": true,
-              "$text": "()",
-              "$span": {
-                "start": 352,
-                "end": 354
-              }
+              "_delim_tokens": []
             }
           },
           "$other": [
@@ -90495,7 +90125,6 @@
         "$type": 264,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 273,
           "end": 275
@@ -90694,7 +90323,6 @@
       "$type": 264,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 273,
         "end": 275
@@ -91693,7 +91321,6 @@
             "$type": 264,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 273,
               "end": 275
@@ -92459,11 +92086,7 @@
           "$type": 395,
           "$source": 0,
           "$named": true,
-          "$text": "()",
-          "$span": {
-            "start": 345,
-            "end": 347
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -92503,11 +92126,7 @@
           "$type": 395,
           "$source": 0,
           "$named": true,
-          "$text": "()",
-          "$span": {
-            "start": 352,
-            "end": 354
-          }
+          "_delim_tokens": []
         }
       },
       "$other": [
@@ -92542,11 +92161,7 @@
         "$type": 395,
         "$source": 0,
         "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 345,
-          "end": 347
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "()"
@@ -92573,11 +92188,7 @@
         "$type": 395,
         "$source": 0,
         "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 352,
-          "end": 354
-        }
+        "_delim_tokens": []
       }
     },
     "expectedOutput": "()"
@@ -92815,7 +92426,6 @@
                             "$type": 356,
                             "$source": 0,
                             "$named": true,
-                            "$text": "_",
                             "$span": {
                               "start": 112,
                               "end": 113
@@ -93084,7 +92694,6 @@
                             "$type": 356,
                             "$source": 0,
                             "$named": true,
-                            "$text": "_",
                             "$span": {
                               "start": 223,
                               "end": 224
@@ -93372,7 +92981,6 @@
                         "$type": 356,
                         "$source": 0,
                         "$named": true,
-                        "$text": "_",
                         "$span": {
                           "start": 112,
                           "end": 113
@@ -93657,7 +93265,6 @@
                         "$type": 356,
                         "$source": 0,
                         "$named": true,
-                        "$text": "_",
                         "$span": {
                           "start": 223,
                           "end": 224
@@ -94066,7 +93673,6 @@
                       "$type": 356,
                       "$source": 0,
                       "$named": true,
-                      "$text": "_",
                       "$span": {
                         "start": 112,
                         "end": 113
@@ -94323,7 +93929,6 @@
                       "$type": 356,
                       "$source": 0,
                       "$named": true,
-                      "$text": "_",
                       "$span": {
                         "start": 223,
                         "end": 224
@@ -94927,7 +94532,6 @@
                 "$type": 356,
                 "$source": 0,
                 "$named": true,
-                "$text": "_",
                 "$span": {
                   "start": 112,
                   "end": 113
@@ -95146,7 +94750,6 @@
                 "$type": 356,
                 "$source": 0,
                 "$named": true,
-                "$text": "_",
                 "$span": {
                   "start": 223,
                   "end": 224
@@ -95664,7 +95267,6 @@
                       "$type": 356,
                       "$source": 0,
                       "$named": true,
-                      "$text": "_",
                       "$span": {
                         "start": 35,
                         "end": 36
@@ -95810,7 +95412,6 @@
                 "$type": 356,
                 "$source": 0,
                 "$named": true,
-                "$text": "_",
                 "$span": {
                   "start": 35,
                   "end": 36
@@ -95929,11 +95530,11 @@
             "$type": 231,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 9,
               "end": 11
-            }
+            },
+            "$text": "()"
           },
           "$other": [
             58,
@@ -95972,11 +95573,11 @@
         "$type": 231,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 9,
           "end": 11
-        }
+        },
+        "$text": "()"
       },
       "$other": [
         58,
@@ -96023,7 +95624,15 @@
               "$source": 0,
               "$named": true,
               "_type": [
-                "i32",
+                {
+                  "$type": 33,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 10,
+                    "end": 13
+                  }
+                },
                 "String"
               ],
               "$other": [
@@ -96078,7 +95687,15 @@
           "$source": 0,
           "$named": true,
           "_type": [
-            "i32",
+            {
+              "$type": 33,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 10,
+                "end": 13
+              }
+            },
             "String"
           ],
           "$other": [
@@ -96126,7 +95743,15 @@
         "$source": 0,
         "$named": true,
         "_type": [
-          "i32",
+          {
+            "$type": 33,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 10,
+              "end": 13
+            }
+          },
           "String"
         ],
         "$other": [
@@ -98680,7 +98305,6 @@
                         "$type": 373,
                         "$source": 0,
                         "$named": true,
-                        "$text": "fn",
                         "$span": {
                           "start": 30,
                           "end": 32
@@ -98807,7 +98431,6 @@
                         "$type": 373,
                         "$source": 0,
                         "$named": true,
-                        "$text": "fn",
                         "$span": {
                           "start": 80,
                           "end": 82
@@ -99281,7 +98904,6 @@
               "$type": 373,
               "$source": 0,
               "$named": true,
-              "$text": "fn",
               "$span": {
                 "start": 218,
                 "end": 220
@@ -99393,7 +99015,6 @@
                     "$type": 373,
                     "$source": 0,
                     "$named": true,
-                    "$text": "fn",
                     "$span": {
                       "start": 30,
                       "end": 32
@@ -99536,7 +99157,6 @@
                     "$type": 373,
                     "$source": 0,
                     "$named": true,
-                    "$text": "fn",
                     "$span": {
                       "start": 80,
                       "end": 82
@@ -99892,7 +99512,6 @@
                   "$type": 373,
                   "$source": 0,
                   "$named": true,
-                  "$text": "fn",
                   "$span": {
                     "start": 30,
                     "end": 32
@@ -100051,7 +99670,6 @@
                   "$type": 373,
                   "$source": 0,
                   "$named": true,
-                  "$text": "fn",
                   "$span": {
                     "start": 80,
                     "end": 82
@@ -100542,7 +100160,6 @@
           "$type": 373,
           "$source": 0,
           "$named": true,
-          "$text": "fn",
           "$span": {
             "start": 30,
             "end": 32
@@ -100648,7 +100265,6 @@
           "$type": 373,
           "$source": 0,
           "$named": true,
-          "$text": "fn",
           "$span": {
             "start": 80,
             "end": 82
@@ -100985,7 +100601,6 @@
         "$type": 373,
         "$source": 0,
         "$named": true,
-        "$text": "fn",
         "$span": {
           "start": 30,
           "end": 32
@@ -101048,7 +100663,6 @@
         "$type": 373,
         "$source": 0,
         "$named": true,
-        "$text": "fn",
         "$span": {
           "start": 80,
           "end": 82
@@ -101347,7 +100961,6 @@
         "$type": 373,
         "$source": 0,
         "$named": true,
-        "$text": "fn",
         "$span": {
           "start": 218,
           "end": 220
@@ -102116,7 +101729,6 @@
           "$type": 373,
           "$source": 0,
           "$named": true,
-          "$text": "fn",
           "$span": {
             "start": 218,
             "end": 220
@@ -102340,7 +101952,6 @@
               "$type": 217,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 66,
                 "end": 68
@@ -102565,7 +102176,6 @@
           "$type": 217,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 66,
             "end": 68
@@ -102768,7 +102378,6 @@
         "$type": 217,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 66,
           "end": 68
@@ -102909,7 +102518,6 @@
       "$type": 217,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 66,
         "end": 68

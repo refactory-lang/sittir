@@ -8,3 +8,4 @@ export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export { assertRenderableNodeData, isRenderableNodeData } from './native-boundary.ts';
 export { normalizeNativeReadNode } from './native-read.ts';
 export { toTransportData, stripStructuralProvenance, markEdited } from './transport-data.ts';
+export { sliceSpan, spanSlicer, type ByteSpan } from './span.ts';

@@ -669,7 +669,6 @@
               "$type": 206,
               "$source": 0,
               "$named": true,
-              "$text": ":",
               "$span": {
                 "start": 2,
                 "end": 3
@@ -784,7 +783,16 @@
                 "stop"
               ]
             },
-            "..."
+            {
+              "$type": 64,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 18,
+                "end": 21
+              },
+              "$text": "..."
+            }
           ],
           "$other": [
             6
@@ -842,7 +850,6 @@
             "$type": 206,
             "$source": 0,
             "$named": true,
-            "$text": ":",
             "$span": {
               "start": 2,
               "end": 3
@@ -947,7 +954,16 @@
               "stop"
             ]
           },
-          "..."
+          {
+            "$type": 64,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 18,
+              "end": 21
+            },
+            "$text": "..."
+          }
         ],
         "$other": [
           6
@@ -1416,7 +1432,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 119,
                                       "end": 121
@@ -1752,7 +1767,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 119,
             "end": 121
@@ -1940,7 +1954,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 119,
           "end": 121
@@ -2091,7 +2104,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 119,
         "end": 121
@@ -2248,7 +2260,6 @@
                                 "$type": 161,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "()",
                                 "$span": {
                                   "start": 119,
                                   "end": 121
@@ -2478,7 +2489,6 @@
                 "$type": 161,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 119,
                   "end": 121
@@ -2617,7 +2627,6 @@
                     "$type": 161,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 5,
                       "end": 7
@@ -2840,7 +2849,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 5,
             "end": 7
@@ -3046,7 +3054,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 5,
           "end": 7
@@ -3231,7 +3238,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 5,
         "end": 7
@@ -3692,7 +3698,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 92,
               "end": 94
@@ -4135,7 +4140,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 92,
           "end": 94
@@ -4371,7 +4375,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 92,
         "end": 94
@@ -6005,7 +6008,6 @@
                             "$type": 218,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 3,
                               "end": 5
@@ -6072,7 +6074,6 @@
                             "$type": 219,
                             "$source": 0,
                             "$named": true,
-                            "$text": "{}",
                             "$span": {
                               "start": 11,
                               "end": 13
@@ -6278,7 +6279,6 @@
                   "$type": 218,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 3,
                     "end": 5
@@ -6344,7 +6344,6 @@
                   "$type": 219,
                   "$source": 0,
                   "$named": true,
-                  "$text": "{}",
                   "$span": {
                     "start": 11,
                     "end": 13
@@ -6534,7 +6533,6 @@
                 "$type": 218,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 3,
                   "end": 5
@@ -6595,7 +6593,6 @@
                 "$type": 219,
                 "$source": 0,
                 "$named": true,
-                "$text": "{}",
                 "$span": {
                   "start": 11,
                   "end": 13
@@ -6769,7 +6766,6 @@
               "$type": 218,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 3,
                 "end": 5
@@ -6820,7 +6816,6 @@
               "$type": 219,
               "$source": 0,
               "$named": true,
-              "$text": "{}",
               "$span": {
                 "start": 11,
                 "end": 13
@@ -6960,7 +6955,6 @@
         "$type": 218,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 3,
           "end": 5
@@ -7040,7 +7034,6 @@
       "$type": 218,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 3,
         "end": 5
@@ -7066,7 +7059,6 @@
       "$type": 219,
       "$source": 0,
       "$named": true,
-      "$text": "{}",
       "$span": {
         "start": 11,
         "end": 13
@@ -8864,7 +8856,6 @@
                       "$type": 161,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 1,
                         "end": 3
@@ -8987,7 +8978,6 @@
             "$type": 161,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 1,
               "end": 3
@@ -9096,7 +9086,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 1,
             "end": 3
@@ -9277,7 +9266,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 1,
           "end": 3
@@ -9308,7 +9296,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 1,
         "end": 3
@@ -13505,7 +13492,6 @@
                       "$type": 216,
                       "$source": 0,
                       "$named": true,
-                      "$text": "[]",
                       "$span": {
                         "start": 26,
                         "end": 28
@@ -13607,7 +13593,6 @@
             "$type": 216,
             "$source": 0,
             "$named": true,
-            "$text": "[]",
             "$span": {
               "start": 26,
               "end": 28
@@ -13695,7 +13680,6 @@
           "$type": 216,
           "$source": 0,
           "$named": true,
-          "$text": "[]",
           "$span": {
             "start": 26,
             "end": 28
@@ -13807,7 +13791,6 @@
       "$type": 216,
       "$source": 0,
       "$named": true,
-      "$text": "[]",
       "$span": {
         "start": 26,
         "end": 28
@@ -18226,7 +18209,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 11,
               "end": 13
@@ -18258,7 +18240,6 @@
                           "$type": 203,
                           "$source": 0,
                           "$named": true,
-                          "$text": "yield",
                           "$span": {
                             "start": 17,
                             "end": 22
@@ -18564,7 +18545,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 11,
           "end": 13
@@ -18596,7 +18576,6 @@
                       "$type": 203,
                       "$source": 0,
                       "$named": true,
-                      "$text": "yield",
                       "$span": {
                         "start": 17,
                         "end": 22
@@ -18895,7 +18874,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 11,
         "end": 13
@@ -18925,7 +18903,6 @@
         "$type": 203,
         "$source": 0,
         "$named": true,
-        "$text": "yield",
         "$span": {
           "start": 17,
           "end": 22
@@ -22118,7 +22095,6 @@
                       "$type": 161,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 27,
                         "end": 29
@@ -22313,7 +22289,6 @@
             "$type": 161,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 27,
               "end": 29
@@ -22521,7 +22496,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 27,
             "end": 29
@@ -22635,7 +22609,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 27,
           "end": 29
@@ -22716,7 +22689,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 27,
         "end": 29
@@ -22931,7 +22903,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 5,
               "end": 7
@@ -23098,7 +23069,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 5,
           "end": 7
@@ -23258,7 +23228,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 5,
         "end": 7
@@ -30949,7 +30918,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 163,
               "end": 165
@@ -33511,7 +33479,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 163,
           "end": 165
@@ -33856,7 +33823,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 163,
         "end": 165
@@ -34040,15 +34006,573 @@
     "wrappedOffset": 1
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 112,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "f\"",
+                  "_content": [
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "a "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "b",
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": []
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "format_specifier"
+                      ]
+                    },
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        " "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "c",
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": []
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "format_specifier"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "content",
+                    "content",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "f\"",
+                  "_content": [
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "b",
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          19
+                        ],
+                        "_content": [
+                          {
+                            "$type": 233,
+                            "$source": 0,
+                            "$named": true,
+                            "_expression": {
+                              "$type": 204,
+                              "$source": 0,
+                              "$named": true,
+                              "_object": "c",
+                              "_attribute": "d",
+                              "$other": [
+                                3
+                              ],
+                              "$slotOrder": [
+                                "object",
+                                "attribute"
+                              ]
+                            },
+                            "$other": [
+                              46,
+                              47
+                            ]
+                          },
+                          {
+                            "$type": 233,
+                            "$source": 0,
+                            "$named": true,
+                            "_expression": {
+                              "$type": 204,
+                              "$source": 0,
+                              "$named": true,
+                              "_object": "d",
+                              "_attribute": "e",
+                              "$other": [
+                                3
+                              ],
+                              "$slotOrder": [
+                                "object",
+                                "attribute"
+                              ]
+                            },
+                            "$other": [
+                              46,
+                              47
+                            ]
+                          }
+                        ]
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "format_specifier"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "f\"",
+                  "_content": [
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "a",
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": []
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "format_specifier"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "f\"",
+                  "_content": [
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "a",
+                      "_eq_marker": true,
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "eq_marker"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "f\"",
+                  "_content": [
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "a",
+                      "_eq_marker": true,
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": []
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "eq_marker",
+                        "format_specifier"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "f\"",
+                  "_content": [
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "value",
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          19
+                        ],
+                        "_content": [
+                          {
+                            "$type": 233,
+                            "$source": 0,
+                            "$named": true,
+                            "_expression": {
+                              "$type": 192,
+                              "$source": 0,
+                              "$named": true,
+                              "_left": "width",
+                              "_operator": 49,
+                              "_right": "padding",
+                              "$slotOrder": [
+                                "left",
+                                "operator",
+                                "right"
+                              ]
+                            },
+                            "_type_conversion": "!r",
+                            "$other": [
+                              46,
+                              47
+                            ],
+                            "$slotOrder": [
+                              "expression",
+                              "type_conversion"
+                            ]
+                          },
+                          {
+                            "$type": 233,
+                            "$source": 0,
+                            "$named": true,
+                            "_expression": "precision",
+                            "$other": [
+                              46,
+                              47
+                            ]
+                          }
+                        ]
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "format_specifier"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "f\"a {b: } {c: }\"\nf\"{b: {c.d}{d.e}}\"\nf\"{a: }\"\nf\"{a=}\"\nf\"{a=: }\"\nf\"{value: {width + padding!r}{precision}}\"\n"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "f\"a {b:2} {c:34.5}\"\nf\"{b:{c.d}.{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value:{width + padding!r}.{precision}}\"",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "f\"a {b:2} {c:34.5}\"\nf\"{b: {c.d}{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value: {width + padding!r}{precision}}\"\n",
+    "expectedSourceOut": "f\"a {b: } {c: }\"\nf\"{b: {c.d}{d.e}}\"\nf\"{a: }\"\nf\"{a=}\"\nf\"{a=: }\"\nf\"{value: {width + padding!r}{precision}}\"\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (attribute object: (identifier) attribute: (identifier))) (format_expression expression: (attribute object: (identifier) attribute: (identifier))))) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion)) (format_expression expression: (identifier)))) string_end: (string_end)))) (newline)))",
-    "wrappedText": "f\"a {b:2} {c:34.5}\"\nf\"{b: {c.d}{d.e}}\"\nf\"{a:#06x}\"\nf\"{a=}\"\nf\"{a=:.2f}\"\nf\"{value: {width + padding!r}{precision}}\"\n",
+    "wrappedText": "f\"a {b: } {c: }\"\nf\"{b: {c.d}{d.e}}\"\nf\"{a: }\"\nf\"{a=}\"\nf\"{a=: }\"\nf\"{value: {width + padding!r}{precision}}\"\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 126,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 232,
+            "$source": 0,
+            "$named": true,
+            "_content": [
+              "a "
+            ]
+          },
+          {
+            "$type": 233,
+            "$source": 0,
+            "$named": true,
+            "_expression": "b",
+            "_format_specifier": {
+              "$type": 236,
+              "$source": 0,
+              "$named": true,
+              "_content": []
+            },
+            "$other": [
+              46,
+              47
+            ],
+            "$slotOrder": [
+              "expression",
+              "format_specifier"
+            ]
+          },
+          {
+            "$type": 232,
+            "$source": 0,
+            "$named": true,
+            "_content": [
+              " "
+            ]
+          },
+          {
+            "$type": 233,
+            "$source": 0,
+            "$named": true,
+            "_expression": "c",
+            "_format_specifier": {
+              "$type": 236,
+              "$source": 0,
+              "$named": true,
+              "_content": []
+            },
+            "$other": [
+              46,
+              47
+            ],
+            "$slotOrder": [
+              "expression",
+              "format_specifier"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$slotOrder": [
+          "string_start",
+          "content",
+          "content",
+          "content",
+          "content",
+          "string_end"
+        ]
+      }
+    },
+    "expectedOutput": "f\"a {b: } {c: }\""
   },
   {
     "kind": "roundtrip",
@@ -34056,9 +34580,9 @@
     "sourceIn": "f\"a {b:2} {c:34.5}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "f\"a {b:2} {c:34.5}\"",
+    "expectedSourceOut": "f\"a {b: } {c: }\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))",
-    "wrappedText": "f\"a {b:2} {c:34.5}\"",
+    "wrappedText": "f\"a {b: } {c: }\"",
     "wrappedOffset": 0
   },
   {
@@ -34167,14 +34691,58 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 126,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 233,
+            "$source": 0,
+            "$named": true,
+            "_expression": "a",
+            "_format_specifier": {
+              "$type": 236,
+              "$source": 0,
+              "$named": true,
+              "_content": []
+            },
+            "$other": [
+              46,
+              47
+            ],
+            "$slotOrder": [
+              "expression",
+              "format_specifier"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$slotOrder": [
+          "string_start",
+          "content",
+          "string_end"
+        ]
+      }
+    },
+    "expectedOutput": "f\"{a: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "f\"{a:#06x}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "f\"{a:#06x}\"",
+    "expectedSourceOut": "f\"{a: }\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))",
-    "wrappedText": "f\"{a:#06x}\"",
+    "wrappedText": "f\"{a: }\"",
     "wrappedOffset": 0
   },
   {
@@ -34228,14 +34796,60 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 126,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 233,
+            "$source": 0,
+            "$named": true,
+            "_expression": "a",
+            "_eq_marker": true,
+            "_format_specifier": {
+              "$type": 236,
+              "$source": 0,
+              "$named": true,
+              "_content": []
+            },
+            "$other": [
+              46,
+              47
+            ],
+            "$slotOrder": [
+              "expression",
+              "eq_marker",
+              "format_specifier"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$slotOrder": [
+          "string_start",
+          "content",
+          "string_end"
+        ]
+      }
+    },
+    "expectedOutput": "f\"{a=: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "f\"{a=:.2f}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "f\"{a=:.2f}\"",
+    "expectedSourceOut": "f\"{a=: }\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))",
-    "wrappedText": "f\"{a=:.2f}\"",
+    "wrappedText": "f\"{a=: }\"",
     "wrappedOffset": 0
   },
   {
@@ -34335,14 +34949,92 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$named": true,
+          "_content": [
+            "a "
+          ]
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "b",
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "format_specifier"
+          ]
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$named": true,
+          "_content": [
+            " "
+          ]
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "c",
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "format_specifier"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$slotOrder": [
+        "string_start",
+        "content",
+        "content",
+        "content",
+        "content",
+        "string_end"
+      ]
+    },
+    "expectedOutput": "f\"a {b: } {c: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "f\"a {b:2} {c:34.5}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"a {b:2} {c:34.5}\"",
+    "expectedSourceOut": "f\"a {b: } {c: }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
-    "wrappedText": "_ = f\"a {b:2} {c:34.5}\"",
+    "wrappedText": "_ = f\"a {b: } {c: }\"",
     "wrappedOffset": 4
   },
   {
@@ -34446,14 +35138,53 @@
     "wrappedOffset": 4
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "a",
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "format_specifier"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$slotOrder": [
+        "string_start",
+        "content",
+        "string_end"
+      ]
+    },
+    "expectedOutput": "f\"{a: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "f\"{a:#06x}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"{a:#06x}\"",
+    "expectedSourceOut": "f\"{a: }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
-    "wrappedText": "_ = f\"{a:#06x}\"",
+    "wrappedText": "_ = f\"{a: }\"",
     "wrappedOffset": 4
   },
   {
@@ -34502,14 +35233,55 @@
     "wrappedOffset": 4
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "a",
+          "_eq_marker": true,
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "eq_marker",
+            "format_specifier"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$slotOrder": [
+        "string_start",
+        "content",
+        "string_end"
+      ]
+    },
+    "expectedOutput": "f\"{a=: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "f\"{a=:.2f}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"{a=:.2f}\"",
+    "expectedSourceOut": "f\"{a=: }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
-    "wrappedText": "_ = f\"{a=:.2f}\"",
+    "wrappedText": "_ = f\"{a=: }\"",
     "wrappedOffset": 4
   },
   {
@@ -34693,14 +35465,455 @@
     "wrappedOffset": 4
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 112,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "t\"",
+                  "_content": [
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "Hello, "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "first_name",
+                      "$other": [
+                        46,
+                        47
+                      ]
+                    },
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        " "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "last_name",
+                      "$other": [
+                        46,
+                        47
+                      ]
+                    },
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "!"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "content",
+                    "content",
+                    "content",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "t\"",
+                  "_content": [
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "a "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "b",
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": []
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "format_specifier"
+                      ]
+                    },
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        " "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "c",
+                      "_format_specifier": {
+                        "$type": 236,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": []
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ],
+                      "$slotOrder": [
+                        "expression",
+                        "format_specifier"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "content",
+                    "content",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "tr\"",
+                  "_content": [
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "Path: "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "path",
+                      "$other": [
+                        46,
+                        47
+                      ]
+                    },
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "\\n"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "content",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "t\"\"\"",
+                  "_content": [
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "\nMulti-line template\nwith "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": "variable",
+                      "$other": [
+                        46,
+                        47
+                      ]
+                    },
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "\n"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"\"\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "content",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "t\"",
+                  "_content": [
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "$slotOrder": [
+                        "string_fragment",
+                        "escape_interpolation",
+                        "string_fragment",
+                        "escape_interpolation",
+                        "string_fragment"
+                      ],
+                      "_content": [
+                        "Use ",
+                        "{{",
+                        "braces",
+                        "}}",
+                        " to escape"
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "t\"",
+                  "_content": [
+                    {
+                      "$type": 232,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        "Result: "
+                      ]
+                    },
+                    {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_expression": {
+                        "$type": 192,
+                        "$source": 0,
+                        "$named": true,
+                        "_left": "a",
+                        "_operator": 49,
+                        "_right": "b",
+                        "$slotOrder": [
+                          "left",
+                          "operator",
+                          "right"
+                        ]
+                      },
+                      "$other": [
+                        46,
+                        47
+                      ]
+                    }
+                  ],
+                  "_string_end": "\"",
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "t\"Hello, {first_name} {last_name}!\"\nt\"a {b: } {c: }\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "t\"Hello, {first_name} {last_name}!\"\nt\"a {b:2} {c:34.5}\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "t\"Hello, {first_name} {last_name}!\"\nt\"a {b:2} {c:34.5}\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n",
+    "expectedSourceOut": "t\"Hello, {first_name} {last_name}!\"\nt\"a {b: } {c: }\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier)) content: (string_content (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment) (escape_interpolation) (string_fragment) (escape_interpolation) (string_fragment)) string_end: (string_end)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (binary_operator left: (identifier) right: (identifier))) string_end: (string_end)))) (newline)))",
-    "wrappedText": "t\"Hello, {first_name} {last_name}!\"\nt\"a {b:2} {c:34.5}\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n",
+    "wrappedText": "t\"Hello, {first_name} {last_name}!\"\nt\"a {b: } {c: }\"\ntr\"Path: {path}\\n\"\nt\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"\nt\"Use {{braces}} to escape\"\nt\"Result: {a + b}\"\n",
     "wrappedOffset": 0
   },
   {
@@ -34787,14 +36000,97 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 126,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "t\"",
+        "_content": [
+          {
+            "$type": 232,
+            "$source": 0,
+            "$named": true,
+            "_content": [
+              "a "
+            ]
+          },
+          {
+            "$type": 233,
+            "$source": 0,
+            "$named": true,
+            "_expression": "b",
+            "_format_specifier": {
+              "$type": 236,
+              "$source": 0,
+              "$named": true,
+              "_content": []
+            },
+            "$other": [
+              46,
+              47
+            ],
+            "$slotOrder": [
+              "expression",
+              "format_specifier"
+            ]
+          },
+          {
+            "$type": 232,
+            "$source": 0,
+            "$named": true,
+            "_content": [
+              " "
+            ]
+          },
+          {
+            "$type": 233,
+            "$source": 0,
+            "$named": true,
+            "_expression": "c",
+            "_format_specifier": {
+              "$type": 236,
+              "$source": 0,
+              "$named": true,
+              "_content": []
+            },
+            "$other": [
+              46,
+              47
+            ],
+            "$slotOrder": [
+              "expression",
+              "format_specifier"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$slotOrder": [
+          "string_start",
+          "content",
+          "content",
+          "content",
+          "content",
+          "string_end"
+        ]
+      }
+    },
+    "expectedOutput": "t\"a {b: } {c: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "t\"a {b:2} {c:34.5}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "t\"a {b:2} {c:34.5}\"",
+    "expectedSourceOut": "t\"a {b: } {c: }\"",
     "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))",
-    "wrappedText": "t\"a {b:2} {c:34.5}\"",
+    "wrappedText": "t\"a {b: } {c: }\"",
     "wrappedOffset": 0
   },
   {
@@ -35122,14 +36418,92 @@
     "wrappedOffset": 4
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "t\"",
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$named": true,
+          "_content": [
+            "a "
+          ]
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "b",
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "format_specifier"
+          ]
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$named": true,
+          "_content": [
+            " "
+          ]
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "c",
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "format_specifier"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$slotOrder": [
+        "string_start",
+        "content",
+        "content",
+        "content",
+        "content",
+        "string_end"
+      ]
+    },
+    "expectedOutput": "t\"a {b: } {c: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "t\"a {b:2} {c:34.5}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "t\"a {b:2} {c:34.5}\"",
+    "expectedSourceOut": "t\"a {b: } {c: }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
-    "wrappedText": "_ = t\"a {b:2} {c:34.5}\"",
+    "wrappedText": "_ = t\"a {b: } {c: }\"",
     "wrappedOffset": 4
   },
   {
@@ -37213,7 +38587,6 @@
                           "$type": 218,
                           "$source": 0,
                           "$named": true,
-                          "$text": "()",
                           "$span": {
                             "start": 17,
                             "end": 19
@@ -37270,7 +38643,6 @@
                           "$type": 216,
                           "$source": 0,
                           "$named": true,
-                          "$text": "[]",
                           "$span": {
                             "start": 23,
                             "end": 25
@@ -37524,7 +38896,6 @@
                             "$type": 161,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 52,
                               "end": 54
@@ -37661,7 +39032,6 @@
                 "$type": 218,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 17,
                   "end": 19
@@ -37717,7 +39087,6 @@
                 "$type": 216,
                 "$source": 0,
                 "$named": true,
-                "$text": "[]",
                 "$span": {
                   "start": 23,
                   "end": 25
@@ -37967,7 +39336,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 52,
                     "end": 54
@@ -38123,7 +39491,6 @@
               "$type": 218,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 17,
                 "end": 19
@@ -38174,7 +39541,6 @@
               "$type": 216,
               "$source": 0,
               "$named": true,
-              "$text": "[]",
               "$span": {
                 "start": 23,
                 "end": 25
@@ -38212,7 +39578,6 @@
       "$type": 216,
       "$source": 0,
       "$named": true,
-      "$text": "[]",
       "$span": {
         "start": 23,
         "end": 25
@@ -38430,7 +39795,6 @@
                 "$type": 161,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 52,
                   "end": 54
@@ -38477,7 +39841,6 @@
         "$type": 218,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 17,
           "end": 19
@@ -38511,7 +39874,6 @@
         "$type": 216,
         "$source": 0,
         "$named": true,
-        "$text": "[]",
         "$span": {
           "start": 23,
           "end": 25
@@ -38673,7 +40035,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 52,
             "end": 54
@@ -38708,7 +40069,6 @@
       "$type": 218,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 17,
         "end": 19
@@ -38860,7 +40220,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 52,
           "end": 54
@@ -38891,7 +40250,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 52,
         "end": 54
@@ -39315,7 +40673,6 @@
                             "$type": 161,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 148,
                               "end": 150
@@ -39753,7 +41110,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 148,
                     "end": 150
@@ -40162,7 +41518,6 @@
                 "$type": 161,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 148,
                   "end": 150
@@ -40398,7 +41753,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 148,
           "end": 150
@@ -40429,7 +41783,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 148,
         "end": 150
@@ -40543,7 +41896,6 @@
                   "$type": 219,
                   "$source": 0,
                   "$named": true,
-                  "$text": "{}",
                   "$span": {
                     "start": 13,
                     "end": 15
@@ -40588,7 +41940,6 @@
                           "$type": 219,
                           "$source": 0,
                           "$named": true,
-                          "$text": "{}",
                           "$span": {
                             "start": 19,
                             "end": 21
@@ -40842,7 +42193,6 @@
                             "$type": 161,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 52,
                               "end": 54
@@ -40969,7 +42319,6 @@
         "$type": 219,
         "$source": 0,
         "$named": true,
-        "$text": "{}",
         "$span": {
           "start": 13,
           "end": 15
@@ -41013,7 +42362,6 @@
                 "$type": 219,
                 "$source": 0,
                 "$named": true,
-                "$text": "{}",
                 "$span": {
                   "start": 19,
                   "end": 21
@@ -41263,7 +42611,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 52,
                     "end": 54
@@ -41371,7 +42718,6 @@
       "$type": 219,
       "$source": 0,
       "$named": true,
-      "$text": "{}",
       "$span": {
         "start": 13,
         "end": 15
@@ -41410,7 +42756,6 @@
               "$type": 219,
               "$source": 0,
               "$named": true,
-              "$text": "{}",
               "$span": {
                 "start": 19,
                 "end": 21
@@ -41448,7 +42793,6 @@
       "$type": 219,
       "$source": 0,
       "$named": true,
-      "$text": "{}",
       "$span": {
         "start": 19,
         "end": 21
@@ -41666,7 +43010,6 @@
                 "$type": 161,
                 "$source": 0,
                 "$named": true,
-                "$text": "()",
                 "$span": {
                   "start": 52,
                   "end": 54
@@ -41835,7 +43178,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 52,
           "end": 54
@@ -41866,7 +43208,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 52,
         "end": 54
@@ -42531,7 +43872,6 @@
                           "$type": 219,
                           "$source": 0,
                           "$named": true,
-                          "$text": "{}",
                           "$span": {
                             "start": 13,
                             "end": 15
@@ -42643,7 +43983,6 @@
                 "$type": 219,
                 "$source": 0,
                 "$named": true,
-                "$text": "{}",
                 "$span": {
                   "start": 13,
                   "end": 15
@@ -42736,7 +44075,6 @@
               "$type": 219,
               "$source": 0,
               "$named": true,
-              "$text": "{}",
               "$span": {
                 "start": 13,
                 "end": 15
@@ -42778,7 +44116,6 @@
         "$type": 219,
         "$source": 0,
         "$named": true,
-        "$text": "{}",
         "$span": {
           "start": 13,
           "end": 15
@@ -42808,7 +44145,6 @@
       "$type": 219,
       "$source": 0,
       "$named": true,
-      "$text": "{}",
       "$span": {
         "start": 13,
         "end": 15
@@ -43573,7 +44909,6 @@
                   "$type": 218,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 0,
                     "end": 2
@@ -43749,7 +45084,6 @@
         "$type": 218,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 0,
           "end": 2
@@ -43908,7 +45242,6 @@
       "$type": 218,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 0,
         "end": 2
@@ -45587,14 +46920,407 @@
     "wrappedOffset": 2
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 112,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 199,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "x",
+                  "$slotOrder": [
+                    "left",
+                    "assignment_eq"
+                  ],
+                  "_content": {
+                    "$type": 269,
+                    "$source": 0,
+                    "$named": true,
+                    "_right": {
+                      "$type": 231,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": "\"",
+                      "_content": [
+                        {
+                          "$type": 232,
+                          "$source": 0,
+                          "$named": true,
+                          "$slotOrder": [
+                            "string_fragment",
+                            "escape_sequence",
+                            "string_fragment",
+                            "escape_sequence",
+                            "string_fragment"
+                          ],
+                          "_content": [
+                            "a",
+                            "\\n",
+                            "b",
+                            "\\t",
+                            "c"
+                          ]
+                        }
+                      ],
+                      "_string_end": "\"",
+                      "$slotOrder": [
+                        "string_start",
+                        "content",
+                        "string_end"
+                      ]
+                    },
+                    "$other": [
+                      40
+                    ]
+                  }
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 199,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "y",
+                  "$slotOrder": [
+                    "left",
+                    "assignment_eq"
+                  ],
+                  "_content": {
+                    "$type": 269,
+                    "$source": 0,
+                    "$named": true,
+                    "_right": {
+                      "$type": 231,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": "'",
+                      "_content": [
+                        {
+                          "$type": 232,
+                          "$source": 0,
+                          "$named": true,
+                          "$slotOrder": [
+                            "string_fragment",
+                            "escape_sequence",
+                            "string_fragment",
+                            "escape_sequence",
+                            "string_fragment"
+                          ],
+                          "_content": [
+                            "It",
+                            "\\'",
+                            "s",
+                            "\\t",
+                            "tabbed"
+                          ]
+                        }
+                      ],
+                      "_string_end": "'",
+                      "$slotOrder": [
+                        "string_start",
+                        "content",
+                        "string_end"
+                      ]
+                    },
+                    "$other": [
+                      40
+                    ]
+                  }
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 199,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "z",
+                  "$slotOrder": [
+                    "left",
+                    "assignment_eq"
+                  ],
+                  "_content": {
+                    "$type": 269,
+                    "$source": 0,
+                    "$named": true,
+                    "_right": {
+                      "$type": 231,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": "\"",
+                      "_content": [
+                        {
+                          "$type": 232,
+                          "$source": 0,
+                          "$named": true,
+                          "$slotOrder": [
+                            "string_fragment",
+                            "not_escape_sequence",
+                            "string_fragment"
+                          ],
+                          "_content": [
+                            "bad ",
+                            235,
+                            "q escape"
+                          ]
+                        }
+                      ],
+                      "_string_end": "\"",
+                      "$slotOrder": [
+                        "string_start",
+                        "content",
+                        "string_end"
+                      ]
+                    },
+                    "$other": [
+                      40
+                    ]
+                  }
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 199,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "a",
+                  "$slotOrder": [
+                    "left",
+                    "assignment_eq"
+                  ],
+                  "_content": {
+                    "$type": 269,
+                    "$source": 0,
+                    "$named": true,
+                    "_right": {
+                      "$type": 231,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": "f\"",
+                      "_content": [
+                        {
+                          "$type": 233,
+                          "$source": 0,
+                          "$named": true,
+                          "_expression": "x",
+                          "_format_specifier": {
+                            "$type": 236,
+                            "$source": 0,
+                            "$named": true,
+                            "_content": []
+                          },
+                          "$other": [
+                            46,
+                            47
+                          ],
+                          "$slotOrder": [
+                            "expression",
+                            "format_specifier"
+                          ]
+                        }
+                      ],
+                      "_string_end": "\"",
+                      "$slotOrder": [
+                        "string_start",
+                        "content",
+                        "string_end"
+                      ]
+                    },
+                    "$other": [
+                      40
+                    ]
+                  }
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        },
+        {
+          "$type": 114,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 126,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 199,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "b",
+                  "$slotOrder": [
+                    "left",
+                    "assignment_eq"
+                  ],
+                  "_content": {
+                    "$type": 269,
+                    "$source": 0,
+                    "$named": true,
+                    "_right": {
+                      "$type": 231,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": "f\"",
+                      "_content": [
+                        {
+                          "$type": 232,
+                          "$source": 0,
+                          "$named": true,
+                          "_content": [
+                            "pre"
+                          ]
+                        },
+                        {
+                          "$type": 233,
+                          "$source": 0,
+                          "$named": true,
+                          "_expression": "val",
+                          "_format_specifier": {
+                            "$type": 236,
+                            "$source": 0,
+                            "$named": true,
+                            "_content": []
+                          },
+                          "$other": [
+                            46,
+                            47
+                          ],
+                          "$slotOrder": [
+                            "expression",
+                            "format_specifier"
+                          ]
+                        },
+                        {
+                          "$type": 232,
+                          "$source": 0,
+                          "$named": true,
+                          "_content": [
+                            "post"
+                          ]
+                        }
+                      ],
+                      "_string_end": "\"",
+                      "$slotOrder": [
+                        "string_start",
+                        "content",
+                        "content",
+                        "content",
+                        "string_end"
+                      ]
+                    },
+                    "$other": [
+                      40
+                    ]
+                  }
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "x = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x: }\"\nb = f\"pre{val: }post\"\n"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "x = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x:>10}\"\nb = f\"pre{val:.2f}post\"",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "x = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x:>10}\"\nb = f\"pre{val:.2f}post\"\n",
+    "expectedSourceOut": "x = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x: }\"\nb = f\"pre{val: }post\"\n",
     "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence) (string_fragment) (escape_sequence) (string_fragment)) string_end: (string_end)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence) (string_fragment) (escape_sequence) (string_fragment)) string_end: (string_end)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content (string_fragment) (not_escape_sequence) (string_fragment)) string_end: (string_end)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) string_end: (string_end)))))) (newline)))",
-    "wrappedText": "x = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x:>10}\"\nb = f\"pre{val:.2f}post\"\n",
+    "wrappedText": "x = \"a\\nb\\tc\"\ny = 'It\\'s\\ttabbed'\nz = \"bad \\q escape\"\na = f\"{x: }\"\nb = f\"pre{val: }post\"\n",
     "wrappedOffset": 0
   },
   {
@@ -45810,15 +47536,157 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 126,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 199,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "$slotOrder": [
+          "left",
+          "assignment_eq"
+        ],
+        "_content": {
+          "$type": 269,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_string_start": "f\"",
+            "_content": [
+              {
+                "$type": 233,
+                "$source": 0,
+                "$named": true,
+                "_expression": "x",
+                "_format_specifier": {
+                  "$type": 236,
+                  "$source": 0,
+                  "$named": true,
+                  "_content": []
+                },
+                "$other": [
+                  46,
+                  47
+                ],
+                "$slotOrder": [
+                  "expression",
+                  "format_specifier"
+                ]
+              }
+            ],
+            "_string_end": "\"",
+            "$slotOrder": [
+              "string_start",
+              "content",
+              "string_end"
+            ]
+          },
+          "$other": [
+            40
+          ]
+        }
+      }
+    },
+    "expectedOutput": "a = f\"{x: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "a = f\"{x:>10}\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "a = f\"{x:>10}\"",
+    "expectedSourceOut": "a = f\"{x: }\"",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end)))))",
-    "wrappedText": "a = f\"{x:>10}\"",
+    "wrappedText": "a = f\"{x: }\"",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 126,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 199,
+        "$source": 0,
+        "$named": true,
+        "_left": "b",
+        "$slotOrder": [
+          "left",
+          "assignment_eq"
+        ],
+        "_content": {
+          "$type": 269,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_string_start": "f\"",
+            "_content": [
+              {
+                "$type": 232,
+                "$source": 0,
+                "$named": true,
+                "_content": [
+                  "pre"
+                ]
+              },
+              {
+                "$type": 233,
+                "$source": 0,
+                "$named": true,
+                "_expression": "val",
+                "_format_specifier": {
+                  "$type": 236,
+                  "$source": 0,
+                  "$named": true,
+                  "_content": []
+                },
+                "$other": [
+                  46,
+                  47
+                ],
+                "$slotOrder": [
+                  "expression",
+                  "format_specifier"
+                ]
+              },
+              {
+                "$type": 232,
+                "$source": 0,
+                "$named": true,
+                "_content": [
+                  "post"
+                ]
+              }
+            ],
+            "_string_end": "\"",
+            "$slotOrder": [
+              "string_start",
+              "content",
+              "content",
+              "content",
+              "string_end"
+            ]
+          },
+          "$other": [
+            40
+          ]
+        }
+      }
+    },
+    "expectedOutput": "b = f\"pre{val: }post\""
   },
   {
     "kind": "roundtrip",
@@ -45826,9 +47694,9 @@
     "sourceIn": "b = f\"pre{val:.2f}post\"",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "b = f\"pre{val:.2f}post\"",
+    "expectedSourceOut": "b = f\"pre{val: }post\"",
     "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) string_end: (string_end)))))",
-    "wrappedText": "b = f\"pre{val:.2f}post\"",
+    "wrappedText": "b = f\"pre{val: }post\"",
     "wrappedOffset": 0
   },
   {
@@ -46029,15 +47897,147 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 199,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "$slotOrder": [
+        "left",
+        "assignment_eq"
+      ],
+      "_content": {
+        "$type": 269,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_string_start": "f\"",
+          "_content": [
+            {
+              "$type": 233,
+              "$source": 0,
+              "$named": true,
+              "_expression": "x",
+              "_format_specifier": {
+                "$type": 236,
+                "$source": 0,
+                "$named": true,
+                "_content": []
+              },
+              "$other": [
+                46,
+                47
+              ],
+              "$slotOrder": [
+                "expression",
+                "format_specifier"
+              ]
+            }
+          ],
+          "_string_end": "\"",
+          "$slotOrder": [
+            "string_start",
+            "content",
+            "string_end"
+          ]
+        },
+        "$other": [
+          40
+        ]
+      }
+    },
+    "expectedOutput": "a = f\"{x: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "a = f\"{x:>10}\"",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "a = f\"{x:>10}\"",
+    "expectedSourceOut": "a = f\"{x: }\"",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))))",
-    "wrappedText": "a = f\"{x:>10}\"",
+    "wrappedText": "a = f\"{x: }\"",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 199,
+      "$source": 0,
+      "$named": true,
+      "_left": "b",
+      "$slotOrder": [
+        "left",
+        "assignment_eq"
+      ],
+      "_content": {
+        "$type": 269,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_string_start": "f\"",
+          "_content": [
+            {
+              "$type": 232,
+              "$source": 0,
+              "$named": true,
+              "_content": [
+                "pre"
+              ]
+            },
+            {
+              "$type": 233,
+              "$source": 0,
+              "$named": true,
+              "_expression": "val",
+              "_format_specifier": {
+                "$type": 236,
+                "$source": 0,
+                "$named": true,
+                "_content": []
+              },
+              "$other": [
+                46,
+                47
+              ],
+              "$slotOrder": [
+                "expression",
+                "format_specifier"
+              ]
+            },
+            {
+              "$type": 232,
+              "$source": 0,
+              "$named": true,
+              "_content": [
+                "post"
+              ]
+            }
+          ],
+          "_string_end": "\"",
+          "$slotOrder": [
+            "string_start",
+            "content",
+            "content",
+            "content",
+            "string_end"
+          ]
+        },
+        "$other": [
+          40
+        ]
+      }
+    },
+    "expectedOutput": "b = f\"pre{val: }post\""
   },
   {
     "kind": "roundtrip",
@@ -46045,9 +48045,9 @@
     "sourceIn": "b = f\"pre{val:.2f}post\"",
     "pattern": "assignment",
     "edits": [],
-    "expectedSourceOut": "b = f\"pre{val:.2f}post\"",
+    "expectedSourceOut": "b = f\"pre{val: }post\"",
     "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) string_end: (string_end))))",
-    "wrappedText": "b = f\"pre{val:.2f}post\"",
+    "wrappedText": "b = f\"pre{val: }post\"",
     "wrappedOffset": 0
   },
   {
@@ -46194,15 +48194,111 @@
     "wrappedOffset": 4
   },
   {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "x",
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "format_specifier"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$slotOrder": [
+        "string_start",
+        "content",
+        "string_end"
+      ]
+    },
+    "expectedOutput": "f\"{x: }\""
+  },
+  {
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "f\"{x:>10}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"{x:>10}\"",
+    "expectedSourceOut": "f\"{x: }\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
-    "wrappedText": "_ = f\"{x:>10}\"",
+    "wrappedText": "_ = f\"{x: }\"",
     "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$named": true,
+          "_content": [
+            "pre"
+          ]
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$named": true,
+          "_expression": "val",
+          "_format_specifier": {
+            "$type": 236,
+            "$source": 0,
+            "$named": true,
+            "_content": []
+          },
+          "$other": [
+            46,
+            47
+          ],
+          "$slotOrder": [
+            "expression",
+            "format_specifier"
+          ]
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$named": true,
+          "_content": [
+            "post"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$slotOrder": [
+        "string_start",
+        "content",
+        "content",
+        "content",
+        "string_end"
+      ]
+    },
+    "expectedOutput": "f\"pre{val: }post\""
   },
   {
     "kind": "roundtrip",
@@ -46210,9 +48306,9 @@
     "sourceIn": "f\"pre{val:.2f}post\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"pre{val:.2f}post\"",
+    "expectedSourceOut": "f\"pre{val: }post\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (string_fragment)) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content (string_fragment)) string_end: (string_end))",
-    "wrappedText": "_ = f\"pre{val:.2f}post\"",
+    "wrappedText": "_ = f\"pre{val: }post\"",
     "wrappedOffset": 4
   },
   {
@@ -46254,7 +48350,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 19,
                     "end": 21
@@ -46438,7 +48533,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 85,
                                       "end": 87
@@ -46575,7 +48669,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 136,
                                       "end": 138
@@ -47008,7 +49101,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 19,
           "end": 21
@@ -47044,7 +49136,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 85,
           "end": 87
@@ -47093,7 +49184,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 136,
           "end": 138
@@ -47362,7 +49452,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 19,
         "end": 21
@@ -47388,7 +49477,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 85,
         "end": 87
@@ -47414,7 +49502,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 136,
         "end": 138
@@ -47758,7 +49845,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 85,
             "end": 87
@@ -47812,7 +49898,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 136,
             "end": 138
@@ -48145,7 +50230,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 19,
                     "end": 21
@@ -48417,7 +50501,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 19,
           "end": 21
@@ -48569,7 +50652,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 19,
         "end": 21
@@ -48769,7 +50851,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 19,
                     "end": 21
@@ -48985,11 +51066,11 @@
                           "$type": 132,
                           "$source": 0,
                           "$named": true,
-                          "$text": "pass",
                           "$span": {
                             "start": 117,
                             "end": 121
-                          }
+                          },
+                          "$text": "pass"
                         }
                       ],
                       "_delimiter": 0
@@ -49101,11 +51182,11 @@
                           "$type": 132,
                           "$source": 0,
                           "$named": true,
-                          "$text": "pass",
                           "$span": {
                             "start": 151,
                             "end": 155
-                          }
+                          },
+                          "$text": "pass"
                         }
                       ],
                       "_delimiter": 0
@@ -49300,7 +51381,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 19,
           "end": 21
@@ -49361,7 +51441,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 19,
         "end": 21
@@ -49696,7 +51775,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 19,
                     "end": 21
@@ -50273,11 +52351,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 190,
                                   "end": 194
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -50351,7 +52429,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 19,
           "end": 21
@@ -50520,7 +52597,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 19,
         "end": 21
@@ -51244,7 +53320,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 19,
                     "end": 21
@@ -51630,7 +53705,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 19,
           "end": 21
@@ -51778,7 +53852,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 19,
         "end": 21
@@ -52601,11 +54674,11 @@
                   "$type": 132,
                   "$source": 0,
                   "$named": true,
-                  "$text": "pass",
                   "$span": {
                     "start": 121,
                     "end": 125
-                  }
+                  },
+                  "$text": "pass"
                 }
               ],
               "_delimiter": 0
@@ -53523,11 +55596,11 @@
               "$type": 132,
               "$source": 0,
               "$named": true,
-              "$text": "pass",
               "$span": {
                 "start": 121,
                 "end": 125
-              }
+              },
+              "$text": "pass"
             }
           ],
           "_delimiter": 0
@@ -56207,11 +58280,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 34,
                                   "end": 38
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -56294,11 +58367,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 67,
                                   "end": 71
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -56410,11 +58483,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 107,
                                   "end": 111
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -56502,11 +58575,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 139,
                                   "end": 143
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -56579,11 +58652,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 173,
                                   "end": 177
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -56645,11 +58718,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 199,
                                   "end": 203
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -57597,8 +59670,26 @@
             "$source": 0,
             "$named": true,
             "_subject": [
-              "...",
-              "..."
+              {
+                "$type": 64,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 6,
+                  "end": 9
+                },
+                "$text": "..."
+              },
+              {
+                "$type": 64,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 11,
+                  "end": 14
+                },
+                "$text": "..."
+              }
             ],
             "$other": [
               6
@@ -57689,7 +59780,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 52,
                                       "end": 54
@@ -57808,7 +59898,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 52,
           "end": 54
@@ -57839,7 +59928,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 52,
         "end": 54
@@ -58945,7 +61033,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 15,
                     "end": 17
@@ -59310,7 +61397,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 141,
                                       "end": 143
@@ -59472,7 +61558,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 205,
                                       "end": 207
@@ -59583,11 +61668,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 249,
                                   "end": 253
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "$_trivia": {
@@ -59797,7 +61882,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 15,
           "end": 17
@@ -59894,7 +61978,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 141,
           "end": 143
@@ -59943,7 +62026,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 205,
           "end": 207
@@ -60140,7 +62222,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 15,
         "end": 17
@@ -60204,7 +62285,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 141,
         "end": 143
@@ -60230,7 +62310,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 205,
         "end": 207
@@ -60589,7 +62668,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 141,
             "end": 143
@@ -60643,7 +62721,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 205,
             "end": 207
@@ -60854,7 +62931,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 15,
                     "end": 17
@@ -61101,7 +63177,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 15,
           "end": 17
@@ -61210,7 +63285,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 15,
         "end": 17
@@ -61431,7 +63505,6 @@
                   "$type": 161,
                   "$source": 0,
                   "$named": true,
-                  "$text": "()",
                   "$span": {
                     "start": 15,
                     "end": 17
@@ -61720,11 +63793,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 143,
                                   "end": 147
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "$_trivia": {
@@ -61803,7 +63876,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 15,
           "end": 17
@@ -61912,7 +63984,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 15,
         "end": 17
@@ -62965,7 +65036,6 @@
                                             "$type": 161,
                                             "$source": 0,
                                             "$named": true,
-                                            "$text": "()",
                                             "$span": {
                                               "start": 326,
                                               "end": 328
@@ -64001,7 +66071,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 326,
             "end": 328
@@ -64336,7 +66405,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 326,
           "end": 328
@@ -64688,7 +66756,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 326,
         "end": 328
@@ -67416,7 +69483,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 53,
                                       "end": 55
@@ -67522,7 +69588,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 121,
                                       "end": 123
@@ -67673,7 +69738,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 176,
                                       "end": 178
@@ -67863,7 +69927,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 234,
                                       "end": 236
@@ -68065,7 +70128,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 309,
                                       "end": 311
@@ -68217,7 +70279,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 379,
                                       "end": 381
@@ -68408,7 +70469,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 452,
                                       "end": 454
@@ -68611,7 +70671,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 542,
                                       "end": 544
@@ -68887,7 +70946,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 53,
             "end": 55
@@ -68928,7 +70986,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 121,
             "end": 123
@@ -68969,7 +71026,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 176,
             "end": 178
@@ -69010,7 +71066,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 234,
             "end": 236
@@ -69051,7 +71106,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 309,
             "end": 311
@@ -69092,7 +71146,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 379,
             "end": 381
@@ -69133,7 +71186,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 452,
             "end": 454
@@ -69174,7 +71226,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 542,
             "end": 544
@@ -69211,7 +71262,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 53,
           "end": 55
@@ -69247,7 +71297,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 121,
           "end": 123
@@ -69283,7 +71332,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 176,
           "end": 178
@@ -69319,7 +71367,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 234,
           "end": 236
@@ -69355,7 +71402,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 309,
           "end": 311
@@ -69391,7 +71437,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 379,
           "end": 381
@@ -69427,7 +71472,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 452,
           "end": 454
@@ -69463,7 +71507,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 542,
           "end": 544
@@ -69494,7 +71537,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 53,
         "end": 55
@@ -69520,7 +71562,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 121,
         "end": 123
@@ -69546,7 +71587,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 176,
         "end": 178
@@ -69572,7 +71612,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 234,
         "end": 236
@@ -69598,7 +71637,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 309,
         "end": 311
@@ -69624,7 +71662,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 379,
         "end": 381
@@ -69650,7 +71687,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 452,
         "end": 454
@@ -69676,7 +71712,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 542,
         "end": 544
@@ -69779,11 +71814,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 36,
                                   "end": 40
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -69877,11 +71912,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 74,
                                   "end": 78
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -70007,11 +72042,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 121,
                                   "end": 125
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -70087,11 +72122,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 154,
                                   "end": 158
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -70165,11 +72200,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 186,
                                   "end": 190
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -70328,11 +72363,11 @@
                                 "$type": 132,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "pass",
                                 "$span": {
                                   "start": 39,
                                   "end": 43
-                                }
+                                },
+                                "$text": "pass"
                               }
                             ],
                             "_delimiter": 0
@@ -73147,11 +75182,11 @@
                         "$type": 132,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pass",
                         "$span": {
                           "start": 14,
                           "end": 18
-                        }
+                        },
+                        "$text": "pass"
                       }
                     ],
                     "_delimiter": 0
@@ -73174,11 +75209,11 @@
                         "$type": 133,
                         "$source": 0,
                         "$named": true,
-                        "$text": "break",
                         "$span": {
                           "start": 21,
                           "end": 26
-                        }
+                        },
+                        "$text": "break"
                       }
                     ],
                     "_delimiter": 0
@@ -73201,11 +75236,11 @@
                         "$type": 134,
                         "$source": 0,
                         "$named": true,
-                        "$text": "continue",
                         "$span": {
                           "start": 29,
                           "end": 37
-                        }
+                        },
+                        "$text": "continue"
                       }
                     ],
                     "_delimiter": 0
@@ -73263,7 +75298,6 @@
                 "$type": 129,
                 "$source": 0,
                 "$named": true,
-                "$text": "return",
                 "$span": {
                   "start": 0,
                   "end": 6
@@ -76890,7 +78924,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 11,
               "end": 13
@@ -77778,7 +79811,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 11,
           "end": 13
@@ -78786,7 +80818,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 11,
         "end": 13
@@ -80395,11 +82426,11 @@
                         "$type": 132,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pass",
                         "$span": {
                           "start": 51,
                           "end": 55
-                        }
+                        },
+                        "$text": "pass"
                       }
                     ],
                     "_delimiter": 0
@@ -80493,11 +82524,11 @@
                         "$type": 132,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pass",
                         "$span": {
                           "start": 79,
                           "end": 83
-                        }
+                        },
+                        "$text": "pass"
                       }
                     ],
                     "_delimiter": 0
@@ -80529,7 +82560,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 90,
               "end": 92
@@ -80609,22 +82639,22 @@
                   "$type": 238,
                   "$source": 0,
                   "$named": true,
-                  "$text": "/",
                   "$span": {
                     "start": 120,
                     "end": 121
-                  }
+                  },
+                  "$text": "/"
                 },
                 "j",
                 {
                   "$type": 239,
                   "$source": 0,
                   "$named": true,
-                  "$text": "*",
                   "$span": {
                     "start": 126,
                     "end": 127
-                  }
+                  },
+                  "$text": "*"
                 },
                 {
                   "$type": 182,
@@ -80941,7 +82971,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 211,
               "end": 213
@@ -80969,11 +82998,11 @@
                         "$type": 132,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pass",
                         "$span": {
                           "start": 219,
                           "end": 223
-                        }
+                        },
+                        "$text": "pass"
                       }
                     ],
                     "_delimiter": 0
@@ -81221,11 +83250,11 @@
                     "$type": 132,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pass",
                     "$span": {
                       "start": 51,
                       "end": 55
-                    }
+                    },
+                    "$text": "pass"
                   }
                 ],
                 "_delimiter": 0
@@ -81335,11 +83364,11 @@
                     "$type": 132,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pass",
                     "$span": {
                       "start": 79,
                       "end": 83
-                    }
+                    },
+                    "$text": "pass"
                   }
                 ],
                 "_delimiter": 0
@@ -81387,7 +83416,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 90,
           "end": 92
@@ -81483,22 +83511,22 @@
               "$type": 238,
               "$source": 0,
               "$named": true,
-              "$text": "/",
               "$span": {
                 "start": 120,
                 "end": 121
-              }
+              },
+              "$text": "/"
             },
             "j",
             {
               "$type": 239,
               "$source": 0,
               "$named": true,
-              "$text": "*",
               "$span": {
                 "start": 126,
                 "end": 127
-              }
+              },
+              "$text": "*"
             },
             {
               "$type": 182,
@@ -81847,7 +83875,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 211,
           "end": 213
@@ -81875,11 +83902,11 @@
                     "$type": 132,
                     "$source": 0,
                     "$named": true,
-                    "$text": "pass",
                     "$span": {
                       "start": 219,
                       "end": 223
-                    }
+                    },
+                    "$text": "pass"
                   }
                 ],
                 "_delimiter": 0
@@ -82104,7 +84131,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 90,
         "end": 92
@@ -82145,22 +84171,22 @@
             "$type": 238,
             "$source": 0,
             "$named": true,
-            "$text": "/",
             "$span": {
               "start": 120,
               "end": 121
-            }
+            },
+            "$text": "/"
           },
           "j",
           {
             "$type": 239,
             "$source": 0,
             "$named": true,
-            "$text": "*",
             "$span": {
               "start": 126,
               "end": 127
-            }
+            },
+            "$text": "*"
           },
           {
             "$type": 182,
@@ -82259,7 +84285,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 211,
         "end": 213
@@ -82440,22 +84465,22 @@
           "$type": 238,
           "$source": 0,
           "$named": true,
-          "$text": "/",
           "$span": {
             "start": 120,
             "end": 121
-          }
+          },
+          "$text": "/"
         },
         "j",
         {
           "$type": 239,
           "$source": 0,
           "$named": true,
-          "$text": "*",
           "$span": {
             "start": 126,
             "end": 127
-          }
+          },
+          "$text": "*"
         },
         {
           "$type": 182,
@@ -83294,7 +85319,6 @@
                       "$type": 161,
                       "$source": 0,
                       "$named": true,
-                      "$text": "()",
                       "$span": {
                         "start": 220,
                         "end": 222
@@ -83484,7 +85508,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 220,
           "end": 222
@@ -83515,7 +85538,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 220,
         "end": 222
@@ -83648,7 +85670,6 @@
             "$type": 161,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 44,
               "end": 46
@@ -83676,11 +85697,11 @@
                         "$type": 132,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pass",
                         "$span": {
                           "start": 50,
                           "end": 54
-                        }
+                        },
+                        "$text": "pass"
                       }
                     ],
                     "_delimiter": 0
@@ -83780,7 +85801,6 @@
                                 "$type": 129,
                                 "$source": 0,
                                 "$named": true,
-                                "$text": "return",
                                 "$span": {
                                   "start": 98,
                                   "end": 104
@@ -83891,11 +85911,11 @@
                         "$type": 132,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pass",
                         "$span": {
                           "start": 138,
                           "end": 142
-                        }
+                        },
+                        "$text": "pass"
                       }
                     ],
                     "_delimiter": 0
@@ -83989,11 +86009,11 @@
                         "$type": 132,
                         "$source": 0,
                         "$named": true,
-                        "$text": "pass",
                         "$span": {
                           "start": 170,
                           "end": 174
-                        }
+                        },
+                        "$text": "pass"
                       }
                     ],
                     "_delimiter": 0
@@ -84166,7 +86186,6 @@
                     "$type": 129,
                     "$source": 0,
                     "$named": true,
-                    "$text": "return",
                     "$span": {
                       "start": 98,
                       "end": 104
@@ -84331,7 +86350,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 44,
         "end": 46
@@ -84639,7 +86657,6 @@
                     "$type": 150,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 22,
                       "end": 24
@@ -84768,7 +86785,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 22,
           "end": 24
@@ -84839,7 +86855,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 22,
         "end": 24
@@ -85050,7 +87065,6 @@
                         "$type": 150,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
                         "$span": {
                           "start": 41,
                           "end": 43
@@ -85125,7 +87139,6 @@
                             "$type": 161,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 56,
                               "end": 58
@@ -85155,7 +87168,6 @@
                         "$type": 150,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
                         "$span": {
                           "start": 72,
                           "end": 74
@@ -85305,7 +87317,6 @@
               "$type": 150,
               "$source": 0,
               "$named": true,
-              "$text": "()",
               "$span": {
                 "start": 119,
                 "end": 121
@@ -85696,7 +87707,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 56,
           "end": 58
@@ -85761,7 +87771,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 56,
         "end": 58
@@ -85870,7 +87879,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 41,
           "end": 43
@@ -85947,7 +87955,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 72,
           "end": 74
@@ -86024,7 +88031,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 119,
           "end": 121
@@ -86095,7 +88101,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 41,
         "end": 43
@@ -86121,7 +88126,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 72,
         "end": 74
@@ -86147,7 +88151,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 119,
         "end": 121
@@ -86253,7 +88256,6 @@
                 "$type": 131,
                 "$source": 0,
                 "$named": true,
-                "$text": "raise",
                 "$span": {
                   "start": 0,
                   "end": 5
@@ -87328,7 +89330,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 68,
               "end": 70
@@ -87559,7 +89560,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 68,
           "end": 70
@@ -87695,7 +89695,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 68,
         "end": 70
@@ -88171,7 +90170,6 @@
                     "$type": 219,
                     "$source": 0,
                     "$named": true,
-                    "$text": "{}",
                     "$span": {
                       "start": 79,
                       "end": 81
@@ -88486,7 +90484,6 @@
       "$type": 219,
       "$source": 0,
       "$named": true,
-      "$text": "{}",
       "$span": {
         "start": 79,
         "end": 81
@@ -88549,7 +90546,6 @@
                             "$type": 161,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 13,
                               "end": 15
@@ -88591,7 +90587,6 @@
                             "$type": 161,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 23,
                               "end": 25
@@ -88620,7 +90615,6 @@
                     "$type": 150,
                     "$source": 0,
                     "$named": true,
-                    "$text": "()",
                     "$span": {
                       "start": 37,
                       "end": 39
@@ -88657,7 +90651,6 @@
                                     "$type": 161,
                                     "$source": 0,
                                     "$named": true,
-                                    "$text": "()",
                                     "$span": {
                                       "start": 52,
                                       "end": 54
@@ -88712,7 +90705,6 @@
                             "$type": 161,
                             "$source": 0,
                             "$named": true,
-                            "$text": "()",
                             "$span": {
                               "start": 62,
                               "end": 64
@@ -88776,7 +90768,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 13,
             "end": 15
@@ -88817,7 +90808,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 23,
             "end": 25
@@ -88858,7 +90848,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 52,
             "end": 54
@@ -88899,7 +90888,6 @@
           "$type": 161,
           "$source": 0,
           "$named": true,
-          "$text": "()",
           "$span": {
             "start": 62,
             "end": 64
@@ -88936,7 +90924,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 13,
           "end": 15
@@ -88972,7 +90959,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 23,
           "end": 25
@@ -89008,7 +90994,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 52,
           "end": 54
@@ -89044,7 +91029,6 @@
         "$type": 161,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 62,
           "end": 64
@@ -89075,7 +91059,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 13,
         "end": 15
@@ -89101,7 +91084,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 23,
         "end": 25
@@ -89127,7 +91109,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 52,
         "end": 54
@@ -89153,7 +91134,6 @@
       "$type": 161,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 62,
         "end": 64
@@ -89184,7 +91164,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 37,
           "end": 39
@@ -89221,7 +91200,6 @@
                         "$type": 161,
                         "$source": 0,
                         "$named": true,
-                        "$text": "()",
                         "$span": {
                           "start": 52,
                           "end": 54
@@ -89274,7 +91252,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 37,
         "end": 39
@@ -92441,7 +94418,6 @@
             "$type": 150,
             "$source": 0,
             "$named": true,
-            "$text": "()",
             "$span": {
               "start": 29,
               "end": 31
@@ -92917,7 +94893,6 @@
         "$type": 150,
         "$source": 0,
         "$named": true,
-        "$text": "()",
         "$span": {
           "start": 29,
           "end": 31
@@ -94362,7 +96337,6 @@
       "$type": 150,
       "$source": 0,
       "$named": true,
-      "$text": "()",
       "$span": {
         "start": 29,
         "end": 31
