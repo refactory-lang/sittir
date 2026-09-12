@@ -23,7 +23,11 @@ fn text_of(kind: u16) -> &'static str {
         _ => "",
     }
 }
-const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: INDENT, dedent: DEDENT };
+const TABLE: WhitespaceTable = WhitespaceTable {
+    text_of,
+    indent: INDENT,
+    dedent: DEDENT,
+};
 const ALL: &[u16] = &[TIGHT, SPACE, NEWLINE, BLANKLINE, INDENT, DEDENT];
 
 struct Sources(HashMap<u32, Arc<str>>);
@@ -45,8 +49,14 @@ fn whitespace_classifies_by_seam_rank_and_never_to_a_depth_arm() {
     assert_eq!(classify_whitespace("\n    ", ALL, &TABLE), Some(NEWLINE));
     assert_eq!(classify_whitespace("\n\n", ALL, &TABLE), Some(BLANKLINE));
     // Wider than anything admitted: the widest admitted arm below it.
-    assert_eq!(classify_whitespace("\n\n\n\n", ALL, &TABLE), Some(BLANKLINE));
-    assert_eq!(classify_whitespace("\n\n", &[TIGHT, NEWLINE], &TABLE), Some(NEWLINE));
+    assert_eq!(
+        classify_whitespace("\n\n\n\n", ALL, &TABLE),
+        Some(BLANKLINE)
+    );
+    assert_eq!(
+        classify_whitespace("\n\n", &[TIGHT, NEWLINE], &TABLE),
+        Some(NEWLINE)
+    );
     // The depth arms spell "\n" too, and are still never a gap's class.
     assert_eq!(classify_whitespace("\n", &[INDENT, DEDENT], &TABLE), None);
 }
@@ -82,7 +92,12 @@ fn a_comma_list_takes_the_majority_of_its_gaps_per_side() {
     //            0123456789012
     let source = "f(a, b, c ,d)";
     let sources = Sources(HashMap::from([(1, Arc::from(source))]));
-    let (a, b, c, d) = (coord(1, 2, 3), coord(1, 5, 6), coord(1, 8, 9), coord(1, 11, 12));
+    let (a, b, c, d) = (
+        coord(1, 2, 3),
+        coord(1, 5, 6),
+        coord(1, 8, 9),
+        coord(1, 11, 12),
+    );
     let items = [Some(&a), Some(&b), Some(&c), Some(&d)];
     // gaps: ", " -> ("", " ") | ", " -> ("", " ") | " ," -> (" ", "")
     // before: [TIGHT, TIGHT, SPACE] -> TIGHT ; after: [SPACE, SPACE, TIGHT] -> SPACE
@@ -122,10 +137,25 @@ fn an_unseparated_repeat_classifies_the_whole_gap_on_one_side() {
 
 #[test]
 fn a_pair_that_is_not_two_ordered_coordinates_of_one_tree_contributes_nothing() {
-    let sources = Sources(HashMap::from([(1, Arc::from("a, b")), (2, Arc::from("x,y"))]));
+    let sources = Sources(HashMap::from([
+        (1, Arc::from("a, b")),
+        (2, Arc::from("x,y")),
+    ]));
     let (a, b, x) = (coord(1, 0, 1), coord(1, 3, 4), coord(2, 0, 1));
-    assert_eq!(classify_list_gaps(&[Some(&b), Some(&a)], &sources, ",", ALL, ALL, &TABLE), (None, None));
-    assert_eq!(classify_list_gaps(&[Some(&a), Some(&x)], &sources, ",", ALL, ALL, &TABLE), (None, None));
-    assert_eq!(classify_list_gaps(&[Some(&a)], &sources, ",", ALL, ALL, &TABLE), (None, None));
-    assert_eq!(classify_list_gaps(&[], &sources, ",", ALL, ALL, &TABLE), (None, None));
+    assert_eq!(
+        classify_list_gaps(&[Some(&b), Some(&a)], &sources, ",", ALL, ALL, &TABLE),
+        (None, None)
+    );
+    assert_eq!(
+        classify_list_gaps(&[Some(&a), Some(&x)], &sources, ",", ALL, ALL, &TABLE),
+        (None, None)
+    );
+    assert_eq!(
+        classify_list_gaps(&[Some(&a)], &sources, ",", ALL, ALL, &TABLE),
+        (None, None)
+    );
+    assert_eq!(
+        classify_list_gaps(&[], &sources, ",", ALL, ALL, &TABLE),
+        (None, None)
+    );
 }

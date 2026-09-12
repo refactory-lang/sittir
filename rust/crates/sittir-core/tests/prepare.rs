@@ -40,12 +40,18 @@ fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<
 
 #[test]
 fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() {
-    let options = ResolvedOptions { spacing: vec![168], ..ResolvedOptions::default() };
+    let options = ResolvedOptions {
+        spacing: vec![168],
+        ..ResolvedOptions::default()
+    };
     let sources = Sources(HashMap::from([(7, Arc::from("fn a() {}"))]));
     let mut list = List {
         space_after: None,
         items: vec![
-            SlotValue::Coord(NodeCoordinate::new(encode_handle(7, 0), Span { start: 3, end: 4 })),
+            SlotValue::Coord(NodeCoordinate::new(
+                encode_handle(7, 0),
+                Span { start: 3, end: 4 },
+            )),
             SlotValue::Node(Leaf),
         ],
     };
@@ -55,9 +61,15 @@ fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() 
 
 #[test]
 fn a_set_site_keeps_its_wire_value() {
-    let options = ResolvedOptions { spacing: vec![168], ..ResolvedOptions::default() };
+    let options = ResolvedOptions {
+        spacing: vec![168],
+        ..ResolvedOptions::default()
+    };
     let sources = Sources(HashMap::new());
-    let mut list = List { space_after: Some(167), items: vec![] };
+    let mut list = List {
+        space_after: Some(167),
+        items: vec![],
+    };
     list.prepare(&ctx(&options, &sources)).unwrap();
     assert_eq!(list.space_after, Some(167));
 }
@@ -90,7 +102,10 @@ fn a_span_outside_its_tree_fails_the_walk() {
 
 #[test]
 fn a_nested_container_is_walked_to_the_bottom() {
-    let options = ResolvedOptions { spacing: vec![168], ..ResolvedOptions::default() };
+    let options = ResolvedOptions {
+        spacing: vec![168],
+        ..ResolvedOptions::default()
+    };
     let sources = Sources(HashMap::new());
     let handle = encode_handle(4, 1);
     let mut nested: Option<Box<Vec<SlotValue<Leaf>>>> = Some(Box::new(vec![SlotValue::Coord(

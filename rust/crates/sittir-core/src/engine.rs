@@ -15,9 +15,9 @@
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
 use crate::read_node::{read_node, ReadDepth};
+use crate::render::SourceTable;
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::types::{Edit, FormatRecord, NodeData, Source};
-use crate::render::SourceTable;
 use std::collections::HashMap;
 use std::marker::PhantomData;
 use std::sync::Arc;
