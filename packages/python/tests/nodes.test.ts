@@ -2652,17 +2652,15 @@ describe('keyword_pattern sub-factories', () => {
 	it('classPattern builds the parent', () => {
 		const node = ir.keywordPattern.classPattern({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [
-				{
-					name: {
-						$type: TSKindId.DottedName,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_names: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-					} as any
-				}
-			]
+			value: {
+				name: {
+					$type: TSKindId.DottedName,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_names: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				} as any
+			}
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBeDefined();
@@ -2671,7 +2669,7 @@ describe('keyword_pattern sub-factories', () => {
 	it('splatPattern builds the parent', () => {
 		const node = ir.keywordPattern.splatPattern({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ operator: '*', name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
+			value: { operator: '*', name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBeDefined();
@@ -3520,7 +3518,7 @@ describe('lambda_within_for_in_clause', () => {
 describe('lambda_within_for_in_clause sub-factories', () => {
 	it('lambdaWithinForInClause builds the parent', () => {
 		const node = ir.lambdaWithinForInClause.lambdaWithinForInClause({
-			body: [{ body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
+			body: { body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }
 		});
 		expect(node.$type).toBe(TSKindId.LambdaWithinForInClause);
 		expect((node as any).body()).toBeDefined();

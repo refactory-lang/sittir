@@ -5,14 +5,14 @@ export function rebuildFormatGenerated() {
 	return ir.program.strict({
 		statements: [ir.importStatement.clauseFrom.strict({
 			importClause: TSKindId.TypeKeyword,
-			fromClause: [{
+			fromClause: {
 				importClause: ir.importClause.strict(ir.namedImports.strict({ delimiter: Delimiter.None }, ir.importSpecifier.strict({
 					content: ir.identifier("FormatRecord"),
 				}), ir.importSpecifier.strict({
 					content: ir.identifier("FormatTrivia"),
 				}))),
 				source: ir.string.single.strict(ir.unescapedSingleStringFragment("@sittir/types")),
-			}],
+			},
 			terminator: TSKindId.Semi,
 		}), ir.exportStatement.strict(ir.exportStatementDefault.declaration.strict({
 			content: ir.functionDeclaration.strict({

@@ -2907,15 +2907,15 @@ export const complexPattern: typeof B.complexPattern & {
 
 const keywordPattern$classPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
 	};
 const keywordPattern$splatPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
 	};
 const keywordPattern$star =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3047,21 +3047,25 @@ const keywordPattern$wildcardPattern =
 export const keywordPattern: typeof B.keywordPattern & {
 	classPattern: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof classPattern.strict> }
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof classPattern.strict>[0];
+			}
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof classPattern.coerce>;
+				value: ArgsOf<typeof classPattern.coerce>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	splatPattern: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildSplatPattern> }
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildSplatPattern>[0];
+			}
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToSplatPattern>;
+				value: ArgsOf<typeof C.coerceToSplatPattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 		star: {
@@ -4762,20 +4766,20 @@ export const comparisonOperator: typeof B.comparisonOperator & {
 
 const lambdaWithinForInClause$lambdaWithinForInClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 export const lambdaWithinForInClause: typeof B.lambdaWithinForInClause & {
 	lambdaWithinForInClause: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildLambdaWithinForInClause>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildLambdaWithinForInClause>;
+				body: ArgsOf<typeof F.buildLambdaWithinForInClause>[0];
 			}
 		) => ReturnType<typeof F.buildLambdaWithinForInClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToLambdaWithinForInClause>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToLambdaWithinForInClause>;
+				body: ArgsOf<typeof C.coerceToLambdaWithinForInClause>[0];
 			}
 		) => ReturnType<typeof C.coerceToLambdaWithinForInClause>;
 	};

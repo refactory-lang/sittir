@@ -14403,7 +14403,7 @@ group factory is emitted; a parent with only seats still enters the map.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
-Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
+Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), config seat (a path-empty config-shaped arm that does not merge, `seatsConfigChild`: the child's config object sits whole under the slot key, `{ function: { macro, arguments }, arguments }`), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
 
 ### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
 
@@ -14470,7 +14470,7 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  instead of an entry: two or more claimants land on the same name at the
  *  same nearest depth. `shared-key` is recorded beside an entry that is
  *  kept: a config-shaped arm whose merged keys (`keys`) are also slots of
- *  the parent, so its wrapper seats the child's arguments under the slot
+ *  the parent, so its wrapper takes the child's config whole under the slot
  *  key instead of merging — the regen log names every such arm. `claimants`
  *  lists what the diagnostic is about — `'<literal>'` for a value arm,
  *  `<kind>` for a direct node arm, `<child>.<path>` for a flattened one. */
@@ -14643,6 +14643,15 @@ the overlay builds each one (`elementsShape`); an element that is not a
 config of that group — a built node, a kind id — passes through. A parent
 may have several; each gets its own wire, composed in slot order.
 
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatsConfigChild`
+
+Whether a sub-factory's wrapper takes its child's config whole under the
+slot key: a direct (path-empty) node arm whose child is config-shaped and
+that does not merge (`merges` false — a key it would merge is also the
+parent's). The one predicate behind the config-seat wrapper shape, the
+test emitter's call spelling and the seat stamp the node model carries for
+the validator, so all three spell the same call.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::configKeysOf`
 
 A compound's config keys, the one list both the config-shaped arm merge
@@ -14658,8 +14667,9 @@ prints, after its own emission and collision filters), never a fresh
 exports: `arm` with the mount name when the wire set carries a sub-factory
 for that value (a node arm on the child, or a value arm on the leaf's
 text — marked `seated` when the arm's child is config-shaped but the
-wrapper seats its arguments under the slot key rather than merging them,
-which is how the validator knows to spell the call), `splice` when the slot
+wrapper takes its config whole under the slot key rather than merging its
+keys (`seatsConfigChild`), which is how the validator knows to spell the
+call), `splice` when the slot
 is the wire set's splice seat, `elements` when the slot is one of its
 elements seats; `undefined` for a value that is not a hoisted kind, or
 whose parent has no wire set, or that no seating reaches. The validators' `ir-render-parse` and the example emitter consume
@@ -14760,9 +14770,9 @@ residual keys of the parent; `undefined` when the arm is not config-shaped
 (`armIsConfigShaped`) and so never merges. An empty list means the arm
 merges its child's config keys into the parent's config
 (`ir.callExpression.unaryExpression({ operator, operand, arguments })`); a
-non-empty one means the wrapper seats the child's arguments under the slot
-key as a tuple instead
-(`ir.callExpression.macroInvocation({ function: [{ macro, arguments }], arguments })`),
+non-empty one means the wrapper takes the child's config whole under the
+slot key instead
+(`ir.callExpression.macroInvocation({ function: { macro, arguments }, arguments })`),
 since a merged config could not say which of the two owners a shared key
 fills. `resolveCandidates` stamps the answer on the entry as `merges` and
 records the non-empty case as a `shared-key` diagnostic.

@@ -13,6 +13,7 @@ import { valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
 import {
 	armConfigKeys,
+	seatsConfigChild,
 	configKeysOf,
 	elementsSeatOf,
 	spliceSeatOf,
@@ -461,7 +462,8 @@ function shape(
 	k: string,
 	positional: boolean,
 	mergeKeys: readonly string[] | undefined,
-	m: string
+	m: string,
+	seatsConfig = false
 ): WireShape {
 	if (sub.arm.via === 'value') {
 		if (sub.residual.length === 0) {
@@ -523,6 +525,18 @@ function shape(
 				`	};`
 			],
 			paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0])`
+		};
+	}
+	if (seatsConfig) {
+		return {
+			method: [
+				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
+				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & { ${k}: ArgsOf<CF>[0] }): ReturnType<PF> => {`,
+				`		const { ${k}: seated, ...rest } = config;`,
+				`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(seated) });`,
+				`	};`
+			],
+			paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}>[0] })`
 		};
 	}
 	return {
@@ -731,7 +745,7 @@ function emitSub(
 		sub.arm.path.length === 0 && sub.residual.length > 0 && sub.merges
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
-	const s = shape(sub, k, positional, mergeKeys, m);
+	const s = shape(sub, k, positional, mergeKeys, m, seatsConfigChild(sub, nodeMap));
 	const typeFor = (pRef: string, cRef: string): string => `${s.paramFor(pRef, cRef)} => ReturnType<typeof ${pRef}>`;
 	return {
 		method: s.method,

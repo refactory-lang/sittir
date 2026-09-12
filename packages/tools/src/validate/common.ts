@@ -1050,8 +1050,8 @@ export interface Seat {
 	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
 	readonly mount?: string;
 	/** An arm whose config-shaped child is handed to the wrapper as its own
-	 *  argument tuple under the slot key, because a key it would merge is also
-	 *  a slot of the parent. */
+	 *  config under the slot key, because a key it would merge is also a slot
+	 *  of the parent. */
 	readonly seated?: true;
 }
 
@@ -1915,8 +1915,8 @@ function carryElementTrivia(element: ReadNodeLike, config: Record<string, unknow
  * a nested arm inside it extends the route, since a variant minted inside
  * another variant's rule is spelled inside it (`withLeft.withRight`). A seat
  * the model marks `seated` — a key it would merge is also the parent's —
- * and any other child hand the route their own factory arguments under the
- * slot.
+ * keeps its config whole under the slot; any other child hands the route
+ * its own factory arguments under the slot.
  */
 function projectArmSlot(
 	seat: Seat,
@@ -1951,8 +1951,9 @@ function projectArmSlot(
 	const nested = armRouteOf(config);
 	const mount = nested === undefined ? seat.mount : `${seat.mount}.${nested.mount}`;
 	const parentShape = opts.factoryShapes?.[parentKind] ?? 'config';
-	if (parentShape === 'config' && childShape === 'config' && seat.seated !== true) {
-		Object.assign(out, config);
+	if (parentShape === 'config' && childShape === 'config') {
+		if (seat.seated === true) out[key] = config;
+		else Object.assign(out, config);
 		return setRoute(mount, undefined);
 	}
 	const args = factoryArgs(seat.kind, childShape, config, child, inner);

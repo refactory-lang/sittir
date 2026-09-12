@@ -492,8 +492,7 @@ export function seatOf(
 				: text !== undefined && e.arm.storage.text === text)
 	);
 	if (arm !== undefined) {
-		const seated = arm.arm.via === 'node' && !arm.merges && classifyFactoryShape(child, nodeMap) === 'config';
-		return seated
+		return seatsConfigChild(arm, nodeMap)
 			? { kind: child.kind, shape: 'arm', mount: arm.name, seated: true }
 			: { kind: child.kind, shape: 'arm', mount: arm.name };
 	}
@@ -507,6 +506,15 @@ export function seatOf(
 		return { kind: child.kind, shape: 'tuple' };
 	}
 	return undefined;
+}
+
+export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {
+	return (
+		sub.arm.via === 'node' &&
+		sub.arm.path.length === 0 &&
+		!sub.merges &&
+		classifyFactoryShape(sub.arm.child, nodeMap) === 'config'
+	);
 }
 
 export function configKeysOf(node: AssembledNode): readonly string[] {

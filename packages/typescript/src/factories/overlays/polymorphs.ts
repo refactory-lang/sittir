@@ -1448,20 +1448,20 @@ export const exportSpecifier: typeof B.exportSpecifier & {
 
 const importStatement$clauseFrom =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'fromClause'> & { fromClause: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'fromClause'> & { fromClause: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { fromClause: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, fromClause: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, fromClause: _c(child)(seated) });
 	};
 export const importStatement: typeof B.importStatement & {
 	clauseFrom: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildImportStatement>[0], 'fromClause'> & {
-				fromClause: ArgsOf<typeof F.buildImportStatementClauseFrom>;
+				fromClause: ArgsOf<typeof F.buildImportStatementClauseFrom>[0];
 			}
 		) => ReturnType<typeof F.buildImportStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToImportStatement>[0], 'fromClause'> & {
-				fromClause: ArgsOf<typeof C.coerceToImportStatementClauseFrom>;
+				fromClause: ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0];
 			}
 		) => ReturnType<typeof C.coerceToImportStatement>;
 	};
@@ -2356,9 +2356,9 @@ const decoratorMemberExpression$identifier =
 	};
 const decoratorMemberExpression$decoratorMemberExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'object'> & { object: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'object'> & { object: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { object: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, object: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, object: _c(child)(seated) });
 	};
 export const decoratorMemberExpression: typeof B.decoratorMemberExpression & {
 	identifier: {
@@ -2376,12 +2376,12 @@ export const decoratorMemberExpression: typeof B.decoratorMemberExpression & {
 	decoratorMemberExpression: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildDecoratorMemberExpression>[0], 'object'> & {
-				object: ArgsOf<typeof F.buildDecoratorMemberExpression>;
+				object: ArgsOf<typeof F.buildDecoratorMemberExpression>[0];
 			}
 		) => ReturnType<typeof F.buildDecoratorMemberExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToDecoratorMemberExpression>[0], 'object'> & {
-				object: ArgsOf<typeof C.coerceToDecoratorMemberExpression>;
+				object: ArgsOf<typeof C.coerceToDecoratorMemberExpression>[0];
 			}
 		) => ReturnType<typeof C.coerceToDecoratorMemberExpression>;
 	};
@@ -3474,9 +3474,9 @@ const nestedIdentifier$identifier =
 	};
 const nestedIdentifier$nestedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'object'> & { object: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'object'> & { object: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { object: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, object: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, object: _c(child)(seated) });
 	};
 export const nestedIdentifier: typeof B.nestedIdentifier & {
 	identifier: {
@@ -3494,12 +3494,12 @@ export const nestedIdentifier: typeof B.nestedIdentifier & {
 	nestedIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildNestedIdentifier>[0], 'object'> & {
-				object: ArgsOf<typeof F.buildNestedIdentifier>;
+				object: ArgsOf<typeof F.buildNestedIdentifier>[0];
 			}
 		) => ReturnType<typeof F.buildNestedIdentifier>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToNestedIdentifier>[0], 'object'> & {
-				object: ArgsOf<typeof C.coerceToNestedIdentifier>;
+				object: ArgsOf<typeof C.coerceToNestedIdentifier>[0];
 			}
 		) => ReturnType<typeof C.coerceToNestedIdentifier>;
 	};
@@ -4192,20 +4192,20 @@ const _callExpressionCall: {
 
 const _callExpressionTemplateCall$newExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) });
 	};
 const _callExpressionTemplateCall: {
 	newExpression: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildCallExpressionTemplateCall>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildNewExpression>;
+				function: ArgsOf<typeof F.buildNewExpression>[0];
 			}
 		) => ReturnType<typeof F.buildCallExpressionTemplateCall>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToCallExpressionTemplateCall>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToNewExpression>;
+				function: ArgsOf<typeof C.coerceToNewExpression>[0];
 			}
 		) => ReturnType<typeof C.coerceToCallExpressionTemplateCall>;
 	};
@@ -4930,9 +4930,9 @@ const binaryExpression$instanceof =
 		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
 const binaryExpression$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4951,9 +4951,9 @@ const binaryExpression$ampAmp$appliedCoerce: (
 );
 const binaryExpression$ampAmp$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$ampAmp$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4972,9 +4972,9 @@ const binaryExpression$pipePipe$appliedCoerce: (
 );
 const binaryExpression$pipePipe$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$pipePipe$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4990,9 +4990,9 @@ const binaryExpression$gtGt$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$gtGt(C.coerceToBinaryExpression, TSKindId.GtGt);
 const binaryExpression$gtGt$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$gtGt$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5011,9 +5011,9 @@ const binaryExpression$gtGtGt$appliedCoerce: (
 );
 const binaryExpression$gtGtGt$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$gtGtGt$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5029,9 +5029,9 @@ const binaryExpression$ltLt$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$ltLt(C.coerceToBinaryExpression, TSKindId.LtLt);
 const binaryExpression$ltLt$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$ltLt$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5047,9 +5047,9 @@ const binaryExpression$amp$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$amp(C.coerceToBinaryExpression, TSKindId.Amp);
 const binaryExpression$amp$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$amp$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5065,9 +5065,9 @@ const binaryExpression$caret$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$caret(C.coerceToBinaryExpression, TSKindId.Caret);
 const binaryExpression$caret$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$caret$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5083,9 +5083,9 @@ const binaryExpression$pipe$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$pipe(C.coerceToBinaryExpression, TSKindId.Pipe);
 const binaryExpression$pipe$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$pipe$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5101,9 +5101,9 @@ const binaryExpression$plus$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$plus(C.coerceToBinaryExpression, TSKindId.Plus);
 const binaryExpression$plus$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$plus$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5119,9 +5119,9 @@ const binaryExpression$dash$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$dash(C.coerceToBinaryExpression, TSKindId.Dash);
 const binaryExpression$dash$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$dash$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5137,9 +5137,9 @@ const binaryExpression$star$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$star(C.coerceToBinaryExpression, TSKindId.Star);
 const binaryExpression$star$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$star$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5155,9 +5155,9 @@ const binaryExpression$slash$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$slash(C.coerceToBinaryExpression, TSKindId.Slash);
 const binaryExpression$slash$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$slash$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5176,9 +5176,9 @@ const binaryExpression$percent$appliedCoerce: (
 );
 const binaryExpression$percent$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$percent$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5197,9 +5197,9 @@ const binaryExpression$starStar$appliedCoerce: (
 );
 const binaryExpression$starStar$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$starStar$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5215,9 +5215,9 @@ const binaryExpression$lt$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$lt(C.coerceToBinaryExpression, TSKindId.Lt);
 const binaryExpression$lt$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$lt$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5233,9 +5233,9 @@ const binaryExpression$ltEq$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$ltEq(C.coerceToBinaryExpression, TSKindId.LtEq);
 const binaryExpression$ltEq$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$ltEq$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5251,9 +5251,9 @@ const binaryExpression$eqEq$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$eqEq(C.coerceToBinaryExpression, TSKindId.EqEq);
 const binaryExpression$eqEq$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$eqEq$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5272,9 +5272,9 @@ const binaryExpression$eqEqEq$appliedCoerce: (
 );
 const binaryExpression$eqEqEq$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$eqEqEq$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5293,9 +5293,9 @@ const binaryExpression$bangEq$appliedCoerce: (
 );
 const binaryExpression$bangEq$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$bangEq$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5314,9 +5314,9 @@ const binaryExpression$bangEqEq$appliedCoerce: (
 );
 const binaryExpression$bangEqEq$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$bangEqEq$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5332,9 +5332,9 @@ const binaryExpression$gtEq$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$gtEq(C.coerceToBinaryExpression, TSKindId.GtEq);
 const binaryExpression$gtEq$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$gtEq$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5350,9 +5350,9 @@ const binaryExpression$gt$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToBinaryExpression> = binaryExpression$gt(C.coerceToBinaryExpression, TSKindId.Gt);
 const binaryExpression$gt$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$gt$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5374,9 +5374,9 @@ const binaryExpression$qmarkQmark$appliedCoerce: (
 );
 const binaryExpression$qmarkQmark$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$qmarkQmark$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5398,9 +5398,9 @@ const binaryExpression$instanceof$appliedCoerce: (
 );
 const binaryExpression$instanceof$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { binaryExpressionIn: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) });
 	};
 const binaryExpression$instanceof$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5419,12 +5419,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$ampAmp$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$ampAmp$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$ampAmp$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$ampAmp$appliedCoerce>;
 		};
@@ -5451,12 +5451,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$pipePipe$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$pipePipe$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$pipePipe$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$pipePipe$appliedCoerce>;
 		};
@@ -5483,12 +5483,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gtGt$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gtGt$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gtGt$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gtGt$appliedCoerce>;
 		};
@@ -5515,12 +5515,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gtGtGt$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gtGtGt$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gtGtGt$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gtGtGt$appliedCoerce>;
 		};
@@ -5547,12 +5547,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$ltLt$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$ltLt$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$ltLt$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$ltLt$appliedCoerce>;
 		};
@@ -5579,12 +5579,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$amp$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$amp$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$amp$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$amp$appliedCoerce>;
 		};
@@ -5611,12 +5611,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$caret$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$caret$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$caret$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$caret$appliedCoerce>;
 		};
@@ -5643,12 +5643,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$pipe$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$pipe$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$pipe$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$pipe$appliedCoerce>;
 		};
@@ -5675,12 +5675,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$plus$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$plus$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$plus$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$plus$appliedCoerce>;
 		};
@@ -5707,12 +5707,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$dash$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$dash$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$dash$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$dash$appliedCoerce>;
 		};
@@ -5739,12 +5739,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$star$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$star$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$star$appliedCoerce>;
 		};
@@ -5771,12 +5771,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$slash$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$slash$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$slash$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$slash$appliedCoerce>;
 		};
@@ -5803,12 +5803,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$percent$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$percent$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$percent$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$percent$appliedCoerce>;
 		};
@@ -5835,12 +5835,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$starStar$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$starStar$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$starStar$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$starStar$appliedCoerce>;
 		};
@@ -5867,12 +5867,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$lt$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$lt$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$lt$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$lt$appliedCoerce>;
 		};
@@ -5899,12 +5899,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$ltEq$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$ltEq$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$ltEq$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$ltEq$appliedCoerce>;
 		};
@@ -5931,12 +5931,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$eqEq$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$eqEq$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$eqEq$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$eqEq$appliedCoerce>;
 		};
@@ -5963,12 +5963,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$eqEqEq$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$eqEqEq$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$eqEqEq$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$eqEqEq$appliedCoerce>;
 		};
@@ -5995,12 +5995,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$bangEq$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$bangEq$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$bangEq$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$bangEq$appliedCoerce>;
 		};
@@ -6027,12 +6027,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$bangEqEq$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$bangEqEq$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$bangEqEq$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$bangEqEq$appliedCoerce>;
 		};
@@ -6059,12 +6059,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gtEq$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gtEq$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gtEq$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gtEq$appliedCoerce>;
 		};
@@ -6091,12 +6091,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gt$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gt$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$gt$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$gt$appliedCoerce>;
 		};
@@ -6123,12 +6123,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$qmarkQmark$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$qmarkQmark$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$qmarkQmark$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$qmarkQmark$appliedCoerce>;
 		};
@@ -6155,12 +6155,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 		in: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$instanceof$applied>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$instanceof$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof binaryExpression$instanceof$appliedCoerce>[0], 'binaryExpressionIn'> & {
-					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+					binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 				}
 			) => ReturnType<typeof binaryExpression$instanceof$appliedCoerce>;
 		};
@@ -6180,12 +6180,12 @@ export const binaryExpression: typeof B.binaryExpression & {
 	in: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
-				binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>;
+				binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
 			}
 		) => ReturnType<typeof F.buildBinaryExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
-				binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>;
+				binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
 			}
 		) => ReturnType<typeof C.coerceToBinaryExpression>;
 		privatePropertyIdentifier: {

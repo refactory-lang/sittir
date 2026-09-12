@@ -350,30 +350,28 @@ describe('import_statement sub-factories', () => {
 	it('clauseFrom builds the parent', () => {
 		const node = ir.importStatement.clauseFrom({
 			terminator: '\n',
-			fromClause: [
-				{
-					importClause: {
-						$type: TSKindId.ImportClause,
+			fromClause: {
+				importClause: {
+					$type: TSKindId.ImportClause,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: {
+						$type: TSKindId.NamespaceImport,
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_content: {
-							$type: TSKindId.NamespaceImport,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					} as any,
-					source: {
-						$type: TSKindId.String,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 					} as any
-				}
-			]
+				} as any,
+				source: {
+					$type: TSKindId.String,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			}
 		});
 		expect(node.$type).toBe(TSKindId.ImportStatement);
 		expect((node as any).fromClause()?.$type).toBe(TSKindId.ImportStatementClauseFrom);
@@ -1718,12 +1716,10 @@ describe('nested_identifier sub-factories', () => {
 	it('nestedIdentifier builds the parent', () => {
 		const node = ir.nestedIdentifier.nestedIdentifier({
 			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			object: [
-				{
-					object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
+			object: {
+				object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			}
 		});
 		expect(node.$type).toBe(TSKindId.NestedIdentifier);
 		expect((node as any).object()?.$type).toBe(TSKindId.NestedIdentifier);
@@ -2265,7 +2261,7 @@ describe('call_expression sub-factories', () => {
 	it('templateCall.newExpression builds the parent', () => {
 		const node = ir.callExpression.templateCall.newExpression({
 			arguments: { $type: TSKindId.TemplateString, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ constructor_: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
+			function: { constructor_: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).content()?.$type).toBe(TSKindId.CallExpressionTemplateCall);
@@ -2820,12 +2816,10 @@ describe('binary_expression sub-factories', () => {
 	});
 	it('in builds the parent', () => {
 		const node = ir.binaryExpression.in({
-			binaryExpressionIn: [
-				{
-					left: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
-					right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-				}
-			]
+			binaryExpressionIn: {
+				left: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
+				right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			}
 		});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		expect((node as any).binaryExpressionIn()?.$type).toBe(TSKindId.BinaryExpressionIn);
@@ -3217,12 +3211,10 @@ describe('decorator_member_expression sub-factories', () => {
 	it('decoratorMemberExpression builds the parent', () => {
 		const node = ir.decoratorMemberExpression.decoratorMemberExpression({
 			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			object: [
-				{
-					object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
+			object: {
+				object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			}
 		});
 		expect(node.$type).toBe(TSKindId.DecoratorMemberExpression);
 		expect((node as any).object()?.$type).toBe(TSKindId.DecoratorMemberExpression);
