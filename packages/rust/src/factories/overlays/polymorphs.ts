@@ -201,6 +201,22 @@ const expressionStatement$ifExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$ifExpressionLetCondition =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$whileExpressionLetCondition =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$ifExpressionLetChain =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$whileExpressionLetChain =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const expressionStatement$matchExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -253,6 +269,20 @@ export const expressionStatement: typeof B.expressionStatement & {
 	ifExpression: {
 		strict: (...args: ArgsOf<typeof F.buildIfExpression>) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToIfExpression>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		letCondition: {
+			strict: (
+				...args: ArgsOf<typeof ifExpression.letCondition.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof ifExpression.letCondition.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		letChain: {
+			strict: (...args: ArgsOf<typeof ifExpression.letChain.strict>) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof ifExpression.letChain.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
 	};
 	matchExpression: {
 		strict: (...args: ArgsOf<typeof F.buildMatchExpression>) => ReturnType<typeof F.buildExpressionStatement>;
@@ -261,6 +291,22 @@ export const expressionStatement: typeof B.expressionStatement & {
 	whileExpression: {
 		strict: (...args: ArgsOf<typeof F.buildWhileExpression>) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToWhileExpression>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		letCondition: {
+			strict: (
+				...args: ArgsOf<typeof whileExpression.letCondition.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof whileExpression.letCondition.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		letChain: {
+			strict: (
+				...args: ArgsOf<typeof whileExpression.letChain.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof whileExpression.letChain.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
 	};
 	loopExpression: {
 		strict: (...args: ArgsOf<typeof F.buildLoopExpression>) => ReturnType<typeof F.buildExpressionStatement>;
@@ -302,7 +348,21 @@ export const expressionStatement: typeof B.expressionStatement & {
 	},
 	ifExpression: {
 		strict: expressionStatement$ifExpression(F.buildExpressionStatement, F.buildIfExpression),
-		coerce: expressionStatement$ifExpression(C.coerceToExpressionStatement, C.coerceToIfExpression)
+		coerce: expressionStatement$ifExpression(C.coerceToExpressionStatement, C.coerceToIfExpression),
+		letCondition: {
+			strict: expressionStatement$ifExpressionLetCondition(
+				F.buildExpressionStatement,
+				ifExpression.letCondition.strict
+			),
+			coerce: expressionStatement$ifExpressionLetCondition(
+				C.coerceToExpressionStatement,
+				ifExpression.letCondition.coerce
+			)
+		},
+		letChain: {
+			strict: expressionStatement$ifExpressionLetChain(F.buildExpressionStatement, ifExpression.letChain.strict),
+			coerce: expressionStatement$ifExpressionLetChain(C.coerceToExpressionStatement, ifExpression.letChain.coerce)
+		}
 	},
 	matchExpression: {
 		strict: expressionStatement$matchExpression(F.buildExpressionStatement, F.buildMatchExpression),
@@ -310,7 +370,24 @@ export const expressionStatement: typeof B.expressionStatement & {
 	},
 	whileExpression: {
 		strict: expressionStatement$whileExpression(F.buildExpressionStatement, F.buildWhileExpression),
-		coerce: expressionStatement$whileExpression(C.coerceToExpressionStatement, C.coerceToWhileExpression)
+		coerce: expressionStatement$whileExpression(C.coerceToExpressionStatement, C.coerceToWhileExpression),
+		letCondition: {
+			strict: expressionStatement$whileExpressionLetCondition(
+				F.buildExpressionStatement,
+				whileExpression.letCondition.strict
+			),
+			coerce: expressionStatement$whileExpressionLetCondition(
+				C.coerceToExpressionStatement,
+				whileExpression.letCondition.coerce
+			)
+		},
+		letChain: {
+			strict: expressionStatement$whileExpressionLetChain(F.buildExpressionStatement, whileExpression.letChain.strict),
+			coerce: expressionStatement$whileExpressionLetChain(
+				C.coerceToExpressionStatement,
+				whileExpression.letChain.coerce
+			)
+		}
 	},
 	loopExpression: {
 		strict: expressionStatement$loopExpression(F.buildExpressionStatement, F.buildLoopExpression),
@@ -5607,6 +5684,18 @@ const structExpression$crate =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
 	};
+const structExpression$scopedTypeIdentifierInExpressionPositionScopedIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+	};
+const structExpression$genericTypeWithTurbofishScopedIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+	};
 const structExpression$genericTypeWithTurbofish =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -5686,6 +5775,18 @@ export const structExpression: typeof B.structExpression & {
 				}
 			) => ReturnType<typeof C.coerceToStructExpression>;
 		};
+		scopedIdentifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.scopedIdentifier.strict>;
+				}
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.scopedIdentifier.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
 	};
 	genericTypeWithTurbofish: {
 		strict: (
@@ -5696,6 +5797,18 @@ export const structExpression: typeof B.structExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> &
 				ArgsOf<typeof C.coerceToGenericTypeWithTurbofish>[0]
 		) => ReturnType<typeof C.coerceToStructExpression>;
+		scopedIdentifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof genericTypeWithTurbofish.scopedIdentifier.strict>;
+				}
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof genericTypeWithTurbofish.scopedIdentifier.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
 	};
 } = {
 	...B.structExpression,
@@ -5733,11 +5846,31 @@ export const structExpression: typeof B.structExpression & {
 		crate: {
 			strict: structExpression$crate(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.crate.strict),
 			coerce: structExpression$crate(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.crate.coerce)
+		},
+		scopedIdentifier: {
+			strict: structExpression$scopedTypeIdentifierInExpressionPositionScopedIdentifier(
+				F.buildStructExpression,
+				scopedTypeIdentifierInExpressionPosition.scopedIdentifier.strict
+			),
+			coerce: structExpression$scopedTypeIdentifierInExpressionPositionScopedIdentifier(
+				C.coerceToStructExpression,
+				scopedTypeIdentifierInExpressionPosition.scopedIdentifier.coerce
+			)
 		}
 	},
 	genericTypeWithTurbofish: {
 		strict: structExpression$genericTypeWithTurbofish(F.buildStructExpression, F.buildGenericTypeWithTurbofish),
-		coerce: structExpression$genericTypeWithTurbofish(C.coerceToStructExpression, C.coerceToGenericTypeWithTurbofish)
+		coerce: structExpression$genericTypeWithTurbofish(C.coerceToStructExpression, C.coerceToGenericTypeWithTurbofish),
+		scopedIdentifier: {
+			strict: structExpression$genericTypeWithTurbofishScopedIdentifier(
+				F.buildStructExpression,
+				genericTypeWithTurbofish.scopedIdentifier.strict
+			),
+			coerce: structExpression$genericTypeWithTurbofishScopedIdentifier(
+				C.coerceToStructExpression,
+				genericTypeWithTurbofish.scopedIdentifier.coerce
+			)
+		}
 	}
 };
 
@@ -5751,6 +5884,30 @@ const callExpression$unaryExpression =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+const callExpression$unaryExpressionDash =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const callExpression$binaryExpressionDash =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const callExpression$unaryExpressionStar =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const callExpression$binaryExpressionStar =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
 	};
 const callExpression$bang =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6210,6 +6367,30 @@ const callExpression$ifExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
+const callExpression$ifExpressionLetCondition =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const callExpression$whileExpressionLetCondition =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const callExpression$ifExpressionLetChain =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
+const callExpression$whileExpressionLetChain =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...(seated as readonly unknown[])) });
+	};
 const callExpression$matchExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -6269,6 +6450,30 @@ export const callExpression: typeof B.callExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToUnaryExpression>[0]
 		) => ReturnType<typeof C.coerceToCallExpression>;
+		dash: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof unaryExpression.dash.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof unaryExpression.dash.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
+		star: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof unaryExpression.star.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof unaryExpression.star.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
 		bang: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
@@ -6348,6 +6553,30 @@ export const callExpression: typeof B.callExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToBinaryExpression>[0]
 		) => ReturnType<typeof C.coerceToCallExpression>;
+		dash: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof binaryExpression.dash.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof binaryExpression.dash.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
+		star: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof binaryExpression.star.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof binaryExpression.star.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
 		ampAmp: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
@@ -6949,6 +7178,30 @@ export const callExpression: typeof B.callExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToIfExpression>[0]
 		) => ReturnType<typeof C.coerceToCallExpression>;
+		letCondition: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof ifExpression.letCondition.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof ifExpression.letCondition.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
+		letChain: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof ifExpression.letChain.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof ifExpression.letChain.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
 	};
 	matchExpression: {
 		strict: (
@@ -6967,6 +7220,30 @@ export const callExpression: typeof B.callExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToWhileExpression>[0]
 		) => ReturnType<typeof C.coerceToCallExpression>;
+		letCondition: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof whileExpression.letCondition.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof whileExpression.letCondition.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
+		letChain: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof whileExpression.letChain.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof whileExpression.letChain.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
 	};
 	loopExpression: {
 		strict: (
@@ -7003,6 +7280,14 @@ export const callExpression: typeof B.callExpression & {
 	unaryExpression: {
 		strict: callExpression$unaryExpression(F.buildCallExpression, F.buildUnaryExpression),
 		coerce: callExpression$unaryExpression(C.coerceToCallExpression, C.coerceToUnaryExpression),
+		dash: {
+			strict: callExpression$unaryExpressionDash(F.buildCallExpression, unaryExpression.dash.strict),
+			coerce: callExpression$unaryExpressionDash(C.coerceToCallExpression, unaryExpression.dash.coerce)
+		},
+		star: {
+			strict: callExpression$unaryExpressionStar(F.buildCallExpression, unaryExpression.star.strict),
+			coerce: callExpression$unaryExpressionStar(C.coerceToCallExpression, unaryExpression.star.coerce)
+		},
 		bang: {
 			strict: callExpression$bang(F.buildCallExpression, unaryExpression.bang.strict),
 			coerce: callExpression$bang(C.coerceToCallExpression, unaryExpression.bang.coerce)
@@ -7031,6 +7316,14 @@ export const callExpression: typeof B.callExpression & {
 	binaryExpression: {
 		strict: callExpression$binaryExpression(F.buildCallExpression, F.buildBinaryExpression),
 		coerce: callExpression$binaryExpression(C.coerceToCallExpression, C.coerceToBinaryExpression),
+		dash: {
+			strict: callExpression$binaryExpressionDash(F.buildCallExpression, binaryExpression.dash.strict),
+			coerce: callExpression$binaryExpressionDash(C.coerceToCallExpression, binaryExpression.dash.coerce)
+		},
+		star: {
+			strict: callExpression$binaryExpressionStar(F.buildCallExpression, binaryExpression.star.strict),
+			coerce: callExpression$binaryExpressionStar(C.coerceToCallExpression, binaryExpression.star.coerce)
+		},
 		ampAmp: {
 			strict: callExpression$ampAmp(F.buildCallExpression, binaryExpression.ampAmp.strict),
 			coerce: callExpression$ampAmp(C.coerceToCallExpression, binaryExpression.ampAmp.coerce)
@@ -7270,7 +7563,15 @@ export const callExpression: typeof B.callExpression & {
 	},
 	ifExpression: {
 		strict: callExpression$ifExpression(F.buildCallExpression, F.buildIfExpression),
-		coerce: callExpression$ifExpression(C.coerceToCallExpression, C.coerceToIfExpression)
+		coerce: callExpression$ifExpression(C.coerceToCallExpression, C.coerceToIfExpression),
+		letCondition: {
+			strict: callExpression$ifExpressionLetCondition(F.buildCallExpression, ifExpression.letCondition.strict),
+			coerce: callExpression$ifExpressionLetCondition(C.coerceToCallExpression, ifExpression.letCondition.coerce)
+		},
+		letChain: {
+			strict: callExpression$ifExpressionLetChain(F.buildCallExpression, ifExpression.letChain.strict),
+			coerce: callExpression$ifExpressionLetChain(C.coerceToCallExpression, ifExpression.letChain.coerce)
+		}
 	},
 	matchExpression: {
 		strict: callExpression$matchExpression(F.buildCallExpression, F.buildMatchExpression),
@@ -7278,7 +7579,15 @@ export const callExpression: typeof B.callExpression & {
 	},
 	whileExpression: {
 		strict: callExpression$whileExpression(F.buildCallExpression, F.buildWhileExpression),
-		coerce: callExpression$whileExpression(C.coerceToCallExpression, C.coerceToWhileExpression)
+		coerce: callExpression$whileExpression(C.coerceToCallExpression, C.coerceToWhileExpression),
+		letCondition: {
+			strict: callExpression$whileExpressionLetCondition(F.buildCallExpression, whileExpression.letCondition.strict),
+			coerce: callExpression$whileExpressionLetCondition(C.coerceToCallExpression, whileExpression.letCondition.coerce)
+		},
+		letChain: {
+			strict: callExpression$whileExpressionLetChain(F.buildCallExpression, whileExpression.letChain.strict),
+			coerce: callExpression$whileExpressionLetChain(C.coerceToCallExpression, whileExpression.letChain.coerce)
+		}
 	},
 	loopExpression: {
 		strict: callExpression$loopExpression(F.buildCallExpression, F.buildLoopExpression),
@@ -7477,6 +7786,30 @@ const matchArm$ifExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
+const matchArm$ifExpressionLetCondition =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const matchArm$whileExpressionLetCondition =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const matchArm$ifExpressionLetChain =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const matchArm$whileExpressionLetChain =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
 const matchArm$matchExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -7584,6 +7917,30 @@ export const matchArm: typeof B.matchArm & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMatchArm>[0], 'content'> & ArgsOf<typeof C.coerceToIfExpression>[0]
 		) => ReturnType<typeof C.coerceToMatchArm>;
+		letCondition: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof ifExpression.letCondition.strict>;
+				}
+			) => ReturnType<typeof F.buildMatchArm>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof ifExpression.letCondition.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToMatchArm>;
+		};
+		letChain: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof ifExpression.letChain.strict>;
+				}
+			) => ReturnType<typeof F.buildMatchArm>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof ifExpression.letChain.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToMatchArm>;
+		};
 	};
 	matchExpression: {
 		strict: (
@@ -7600,6 +7957,30 @@ export const matchArm: typeof B.matchArm & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMatchArm>[0], 'content'> & ArgsOf<typeof C.coerceToWhileExpression>[0]
 		) => ReturnType<typeof C.coerceToMatchArm>;
+		letCondition: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof whileExpression.letCondition.strict>;
+				}
+			) => ReturnType<typeof F.buildMatchArm>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof whileExpression.letCondition.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToMatchArm>;
+		};
+		letChain: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof whileExpression.letChain.strict>;
+				}
+			) => ReturnType<typeof F.buildMatchArm>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToMatchArm>[0], 'content'> & {
+					content: ArgsOf<typeof whileExpression.letChain.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToMatchArm>;
+		};
 	};
 	loopExpression: {
 		strict: (
@@ -7659,7 +8040,15 @@ export const matchArm: typeof B.matchArm & {
 	},
 	ifExpression: {
 		strict: matchArm$ifExpression(F.buildMatchArm, F.buildIfExpression),
-		coerce: matchArm$ifExpression(C.coerceToMatchArm, C.coerceToIfExpression)
+		coerce: matchArm$ifExpression(C.coerceToMatchArm, C.coerceToIfExpression),
+		letCondition: {
+			strict: matchArm$ifExpressionLetCondition(F.buildMatchArm, ifExpression.letCondition.strict),
+			coerce: matchArm$ifExpressionLetCondition(C.coerceToMatchArm, ifExpression.letCondition.coerce)
+		},
+		letChain: {
+			strict: matchArm$ifExpressionLetChain(F.buildMatchArm, ifExpression.letChain.strict),
+			coerce: matchArm$ifExpressionLetChain(C.coerceToMatchArm, ifExpression.letChain.coerce)
+		}
 	},
 	matchExpression: {
 		strict: matchArm$matchExpression(F.buildMatchArm, F.buildMatchExpression),
@@ -7667,7 +8056,15 @@ export const matchArm: typeof B.matchArm & {
 	},
 	whileExpression: {
 		strict: matchArm$whileExpression(F.buildMatchArm, F.buildWhileExpression),
-		coerce: matchArm$whileExpression(C.coerceToMatchArm, C.coerceToWhileExpression)
+		coerce: matchArm$whileExpression(C.coerceToMatchArm, C.coerceToWhileExpression),
+		letCondition: {
+			strict: matchArm$whileExpressionLetCondition(F.buildMatchArm, whileExpression.letCondition.strict),
+			coerce: matchArm$whileExpressionLetCondition(C.coerceToMatchArm, whileExpression.letCondition.coerce)
+		},
+		letChain: {
+			strict: matchArm$whileExpressionLetChain(F.buildMatchArm, whileExpression.letChain.strict),
+			coerce: matchArm$whileExpressionLetChain(C.coerceToMatchArm, whileExpression.letChain.coerce)
+		}
 	},
 	loopExpression: {
 		strict: matchArm$loopExpression(F.buildMatchArm, F.buildLoopExpression),

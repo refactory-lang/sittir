@@ -14755,9 +14755,24 @@ with two pure literal enum slots (`import_statement`: the `type` modifier and
  *  What survives deconfliction is grouped by name: the claimant nearest
  *  the parent (the smallest `depth`) wins when it is alone at that depth —
  *  a direct arm over a flattened one, a child's own arm over one reached
- *  through the child's flattening — and a tie at the nearest depth is
- *  reported as a diagnostic and dropped. */
+ *  through the child's flattening. A tie at the nearest depth among
+ *  flattened claimants reached through DIFFERENT children, each hosted by
+ *  a direct arm on that child, keeps every one of them (`hostedApart`):
+ *  they mount under their hosts, so their spellings never meet. Any other
+ *  tie is reported as a diagnostic and dropped. */
 ```
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::hostedApart`
+
+The one way a nearest-depth tie survives: every tied claimant is a flattened
+arm, no two reach the parent through the same child, and each child has a
+direct arm among the candidates to host it. Each survivor takes the flat
+name `<host><Leaf>` (`genericTypeWithTurbofishScopedIdentifier`) so the
+wire set holds no duplicate name, and the overlay nests it under its host as
+`host.leaf` (`ir.structExpression.genericTypeWithTurbofish.scopedIdentifier`),
+the spelling `emittedArmPath` derives. A tie with two claimants through one
+child, or with a claimant no direct arm hosts, has no such home and stays
+ambiguous.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
 

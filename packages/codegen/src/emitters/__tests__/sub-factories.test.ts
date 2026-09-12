@@ -177,6 +177,43 @@ function ambiguousNodeMap(): NodeMap {
 	return buildNodeMap(rules);
 }
 
+function sameHostNodeMap(): NodeMap {
+	const rules: Record<string, Rule<'evaluate'>> = {
+		grandparent_c: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'parent_c' },
+				{ type: SYMBOL, name: 'leaf_c' }
+			]
+		},
+		parent_c: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'twin_a' },
+				{ type: SYMBOL, name: 'twin_b' }
+			]
+		},
+		twin_a: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'twin' },
+				{ type: SYMBOL, name: 'leaf_c' }
+			]
+		},
+		twin_b: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'twin' },
+				{ type: SYMBOL, name: 'other_c' }
+			]
+		},
+		twin: { type: PATTERN, value: '[a-z]+' },
+		leaf_c: { type: PATTERN, value: '[0-9]+' },
+		other_c: { type: PATTERN, value: '[A-Z]+' }
+	};
+	return buildNodeMap(rules);
+}
+
 function depthNodeMap(): NodeMap {
 	const rules: Record<string, Rule<'evaluate'>> = {
 		grandparent_d: {
@@ -306,16 +343,26 @@ describe('sub-factories — subFactoriesOf', () => {
 		expect(armConfigKeys(set.entries.find((e) => e.name === 'leafB')!, nodeMap)).toEqual(['x', 'y']);
 	});
 
-	it('two flattened claimants for the same name produce an ambiguous diagnostic naming both full paths', () => {
+	it('two flattened claimants for the same name hosted by different direct arms are both kept, named by their host', () => {
 		const nodeMap = ambiguousNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_b')!, nodeMap);
+		expect(set.diagnostics).toEqual([]);
 		expect(set.entries.some((e) => e.name === 'sharedLeaf')).toBe(false);
+		expect(nodeArmOf(set.entries, 'parentXSharedLeaf')).toMatchObject({ path: ['sharedLeaf'] });
+		expect(nodeArmOf(set.entries, 'parentXSharedLeaf').child.kind).toBe('parent_x');
+		expect(nodeArmOf(set.entries, 'parentYSharedLeaf').child.kind).toBe('parent_y');
+	});
+
+	it('two flattened claimants for the same name reached through one child stay ambiguous', () => {
+		const nodeMap = sameHostNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_c')!, nodeMap);
+		expect(set.entries.some((e) => e.name === 'twin')).toBe(false);
 		expect(set.diagnostics).toEqual([
 			{
-				parent: 'grandparent_b',
-				name: 'sharedLeaf',
+				parent: 'grandparent_c',
+				name: 'twin',
 				reason: 'ambiguous',
-				claimants: ['parent_x.sharedLeaf', 'parent_y.sharedLeaf']
+				claimants: ['parent_c.twinATwin', 'parent_c.twinBTwin']
 			}
 		]);
 	});

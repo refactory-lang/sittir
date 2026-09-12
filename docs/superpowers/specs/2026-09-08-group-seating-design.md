@@ -120,8 +120,9 @@ any single-valued slot of the parent mounts under its arm name, regardless
 of how many other choice slots the parent has. The arm name is the variant
 annotation when there is one and the parent-prefix-stripped kind otherwise,
 exactly as `kindArmName` derives it today. A key shared between the arm and
-the parent's residual seats the arm's arguments under the seat key as a
-tuple instead of merging them (`armMergesConfig`); it drops nothing.
+the parent's residual (`sharedKeysOf`, stamped on the entry as `merges`
+false) seats the arm's config whole under the seat key instead of merging
+its keys; it drops nothing.
 
 This mounts the eleven unmounted arms: rust `range_pattern` left_with_right;
 typescript `export_statement` default_clause_from, default_kw,

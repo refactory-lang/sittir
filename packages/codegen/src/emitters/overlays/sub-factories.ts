@@ -310,31 +310,61 @@ function resolveCandidates(
 
 	const entries: SubFactory[] = [];
 	const diagnostics: SubFactoryDiagnostic[] = [];
-	for (const [name, list] of byName) {
-		const nearest = Math.min(...list.map((c) => c.entry.depth));
-		const winners = list.filter((c) => c.entry.depth === nearest);
-		if (winners.length !== 1) {
-			diagnostics.push({
-				parent: node.kind,
-				name,
-				reason: 'ambiguous',
-				claimants: list.map((c) => c.claimant)
-			});
-			continue;
-		}
-		const winner = winners[0]!;
+	const settle = (winner: Candidate): void => {
 		const shared = sharedKeysOf(winner.entry, nodeMap, { isEmitted }, nextVisiting);
 		if (shared === undefined) {
 			entries.push(winner.entry);
-			continue;
+			return;
 		}
 		entries.push({ ...winner.entry, merges: shared.length === 0 });
 		if (shared.length > 0) {
-			diagnostics.push({ parent: node.kind, name, reason: 'shared-key', claimants: [winner.claimant], keys: shared });
+			diagnostics.push({
+				parent: node.kind,
+				name: winner.name,
+				reason: 'shared-key',
+				claimants: [winner.claimant],
+				keys: shared
+			});
 		}
+	};
+	for (const [name, list] of byName) {
+		const nearest = Math.min(...list.map((c) => c.entry.depth));
+		const winners = list.filter((c) => c.entry.depth === nearest);
+		if (winners.length === 1) {
+			settle(winners[0]!);
+			continue;
+		}
+		const apart = hostedApart(winners, deconflicted);
+		if (apart !== undefined) {
+			for (const c of apart) settle(c);
+			continue;
+		}
+		diagnostics.push({
+			parent: node.kind,
+			name,
+			reason: 'ambiguous',
+			claimants: list.map((c) => c.claimant)
+		});
 	}
 
 	return { entries, diagnostics };
+}
+
+function hostedApart(winners: readonly Candidate[], candidates: readonly Candidate[]): Candidate[] | undefined {
+	const children = new Set<string>();
+	const apart: Candidate[] = [];
+	for (const c of winners) {
+		const arm = c.entry.arm;
+		if (arm.via !== 'node' || arm.path.length === 0 || children.has(arm.child.kind)) return undefined;
+		const host = candidates.find(
+			(h) => h.entry.arm.via === 'node' && h.entry.arm.path.length === 0 && h.entry.arm.child === arm.child
+		);
+		if (host === undefined) return undefined;
+		children.add(arm.child.kind);
+		const name = host.name + c.name.charAt(0).toUpperCase() + c.name.slice(1);
+		apart.push({ ...c, name, entry: { ...c.entry, name } });
+	}
+	return apart;
 }
 
 const cache = new WeakMap<NodeMap, WeakMap<IsEmittedPredicate, Map<string, SubFactorySet>>>();

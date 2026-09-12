@@ -584,7 +584,7 @@ they need no entry in `transforms`.
 				// list is the same visible `import_list` the bare arm shows.
 ```
 
-### `renderAs` (`packages/python/grammar.sittir.ts:57`)
+### `renderAs` (`packages/python/grammar.sittir.ts:48`)
 
 ```text
 			// String-interior scanner tokens: the external scanner claims their
@@ -599,7 +599,7 @@ they need no entry in `transforms`.
 			// pattern).
 ```
 
-### `import_from_statement` (`packages/python/grammar.sittir.ts:219`)
+### `import_from_statement` (`packages/python/grammar.sittir.ts:196`)
 
 ```text
 				// import_from_statement: 1 field(s)
@@ -613,7 +613,7 @@ they need no entry in `transforms`.
 				// requires at least one value" for `from a import (b, c)`.
 ```
 
-### `splat_type` (`packages/python/grammar.sittir.ts:255`)
+### `splat_type` (`packages/python/grammar.sittir.ts:227`)
 
 ```text
 					// Same star position as splat_pattern above — the choice of
@@ -622,7 +622,7 @@ they need no entry in `transforms`.
 					// dropped the star from renders).
 ```
 
-### `_suite` (`packages/python/grammar.sittir.ts:301`)
+### `_suite` (`packages/python/grammar.sittir.ts:268`)
 
 ```text
 				// A suite is one of three forms: simple statements on the same
@@ -635,7 +635,7 @@ they need no entry in `transforms`.
 				// being dropped by emitChoice's union-slot routing.
 ```
 
-### `primary_expression` (`packages/python/grammar.sittir.ts:317`)
+### `primary_expression` (`packages/python/grammar.sittir.ts:273`)
 
 ```text
 				// Base grammar aliases this arm (`alias($.list_splat_pattern,
@@ -652,7 +652,7 @@ they need no entry in `transforms`.
 				// fork dies at `=` there, leaving no tie to break.
 ```
 
-### `string_content` (`packages/python/grammar.sittir.ts:336`)
+### `string_content` (`packages/python/grammar.sittir.ts:282`)
 
 ```text
 				// `string_content`'s plain-text runs (`_string_content`) and
@@ -668,7 +668,7 @@ they need no entry in `transforms`.
 				// named tokens (`unescaped_double_string_fragment`).
 ```
 
-### `format_specifier` (`packages/python/grammar.sittir.ts:365`)
+### `format_specifier` (`packages/python/grammar.sittir.ts:295`)
 
 ```text
 				// `format_specifier`'s text run behaves immediate — its regex
