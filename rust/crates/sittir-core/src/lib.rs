@@ -11,12 +11,14 @@
 //!   kind templates interpolate.
 
 pub mod boundary;
+pub mod classify;
 pub mod engine;
 pub mod format;
 pub mod macros;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;
+pub mod prepare;
 pub mod read_node;
 pub mod render;
 pub mod slot;
@@ -38,6 +40,7 @@ pub use render::{
 };
 // Flat re-export for the transport slot carrier — generated transport
 // structs name it at every slot position.
+pub use prepare::{Prepare, RenderContext};
 pub use slot::{NodeCoordinate, SlotValue};
 // Flat re-export for the read-expansion selector — grammar crates thread
 // it from the napi surface into `ParsedTree`.

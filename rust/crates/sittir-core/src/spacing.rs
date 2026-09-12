@@ -115,9 +115,9 @@ pub const DEFAULT_INDENT: &str = "    ";
 /// two blank lines outrank one, so a separator asking for more survives
 /// meeting a kind edge that asks for less. The grammar's whitespace kinds
 /// decide which runs exist; the writer only orders them.
-type SeamRank = usize;
+pub type SeamRank = usize;
 
-fn seam_rank(text: &str) -> SeamRank {
+pub fn seam_rank(text: &str) -> SeamRank {
     match text.matches('\n').count() {
         0 if text.is_empty() => 0,
         0 => 1,

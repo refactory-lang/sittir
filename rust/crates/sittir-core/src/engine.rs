@@ -17,7 +17,10 @@ use crate::options::ResolvedOptions;
 use crate::read_node::{read_node, ReadDepth};
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::types::{Edit, FormatRecord, NodeData, Source};
+use crate::render::SourceTable;
+use std::collections::HashMap;
 use std::marker::PhantomData;
+use std::sync::Arc;
 
 /// Grammar-specific hooks used by the shared native engine.
 pub trait EngineGrammar: Copy {
@@ -83,7 +86,7 @@ pub struct ParsedTree<G: EngineGrammar> {
     _grammar: PhantomData<G>,
     /// The parsed tree-sitter tree.
     tree: tree_sitter::Tree,
-    source: String,
+    source: Arc<str>,
     format: Option<FormatRecord>,
     /// Identity this tree stamps into every handle it mints. Distinct per
     /// parse, so a handle names the tree it belongs to and cannot be spent
@@ -334,7 +337,7 @@ impl<G: EngineGrammar> Engine<G> {
         Ok(ParsedTree {
             _grammar: PhantomData,
             tree,
-            source,
+            source: Arc::from(source.as_str()),
             format,
             tree_id,
             nodes: Vec::new(),
@@ -517,5 +520,13 @@ mod tests {
             .unwrap();
 
         assert_eq!(rendered, "canonical");
+    }
+}
+
+/// The engine's live trees as the render context's source table: a handle's
+/// tag names the tree, and the tree owns the source its spans index into.
+impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
+    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+        self.get(&tree_id).map(|tree| &tree.source)
     }
 }
