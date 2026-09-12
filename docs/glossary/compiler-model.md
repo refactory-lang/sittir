@@ -1131,6 +1131,10 @@ can't be unified.
 	 */
 ```
 
+Joins with the word matcher the node was assembled under (`wordMatcher`,
+handed in by `assemble` from the normalized grammar), the same matcher the
+flatten and simplify joins use.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text

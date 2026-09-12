@@ -1,6 +1,6 @@
 // A rebuilt node whose list items are still coordinates renders the class
-// its source spelled, by majority, in place of the engine's option. Gate 8:
-// blank lines survive an append, and a tight comma list survives a replace.
+// its source spelled, by majority, in place of the engine's option: blank
+// lines survive an append, and a tight comma list survives a replace.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '../src/engine.js';
 import { ir } from '../src/ir.js';
