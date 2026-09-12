@@ -13,7 +13,6 @@ import { valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
 import {
 	armConfigKeys,
-	armIsConfigShaped,
 	configKeysOf,
 	elementsSeatOf,
 	spliceSeatOf,
@@ -159,7 +158,11 @@ export function collectPolymorphWires(
 		}
 		visiting.delete(node.kind);
 		for (const d of set.diagnostics) {
-			warn(`[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`);
+			warn(
+				d.reason === 'shared-key'
+					? `[codegen] ${node.kind}: sub-factory ${d.name} seated, not merged (${d.reason}: ${(d.keys ?? []).join(', ')}): ${d.claimants.join(', ')}`
+					: `[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`
+			);
 		}
 		const subs = set.entries.filter((sub) => {
 			if (sub.arm.via === 'value') return true;
@@ -725,9 +728,7 @@ function emitSub(
 	const c = childRefs(sub, wires.keyByKind, wires.coerceEmitted, (kind) => seatBearing(wires, kind, parent.kind), wires);
 	if (c === undefined) return undefined;
 	const mergeKeys =
-		sub.arm.path.length === 0 &&
-		sub.residual.length > 0 &&
-		armIsConfigShaped(sub, nodeMap, { isEmitted: wires.isEmitted })
+		sub.arm.path.length === 0 && sub.residual.length > 0 && sub.merges
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
 	const s = shape(sub, k, positional, mergeKeys, m);
@@ -762,6 +763,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		const seated = composeSeats(seats, wireSet, wires, methods);
 		const armEntries = new Map<string, ArmEntry>();
 		const flat: { line: string; type: string }[] = [];
+		const built: { sub: SubFactory; entry: ArmEntry }[] = [];
 		for (const sub of wireSet.subs) {
 			const emission = emitSub(wireSet.node, wireSet.parentKey, sub, wires, nodeMap, seated?.refs);
 			if (emission === undefined) continue;
@@ -775,17 +777,18 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				emission.coerceType === undefined
 					? `strict: ${emission.strictType}`
 					: `strict: ${emission.strictType}; coerce: ${emission.coerceType}`;
-			const under = nestingArmOf(sub, wireSet.subs);
 			const entry: ArmEntry = { sub, line: body, type: bodyType, children: new Map() };
-			if (under === undefined) {
-				armEntries.set(sub.name, entry);
+			built.push({ sub, entry });
+			if (nestingArmOf(sub, wireSet.subs) === undefined) armEntries.set(sub.name, entry);
+		}
+		for (const { sub, entry } of built) {
+			const under = nestingArmOf(sub, wireSet.subs);
+			if (under === undefined) continue;
+			const host = armEntries.get(under.host);
+			if (host === undefined) {
+				flat.push({ line: `	${sub.name}: { ${entry.line} },`, type: `	${sub.name}: { ${entry.type} };` });
 			} else {
-				const host = armEntries.get(under.host);
-				if (host === undefined) {
-					flat.push({ line: `	${sub.name}: { ${body} },`, type: `	${sub.name}: { ${bodyType} };` });
-				} else {
-					host.children.set(under.key, entry);
-				}
+				host.children.set(under.key, entry);
 			}
 		}
 		composeAcrossSlots(wireSet, wires, nodeMap, seated?.refs, armEntries, methods);

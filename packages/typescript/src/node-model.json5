@@ -9961,7 +9961,13 @@
               "multiplicity": "optional",
               "name": "_binary_expression_in",
               "parseKind": "binary_expression_in",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_binary_expression_in",
+                "shape": "arm",
+                "mount": "in",
+                "seated": true
+              }
             }
           ]
         }
@@ -14830,7 +14836,13 @@
               "multiplicity": "single",
               "name": "_import_statement_clause_from",
               "parseKind": "import_statement_clause_from",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_import_statement_clause_from",
+                "shape": "arm",
+                "mount": "clauseFrom",
+                "seated": true
+              }
             },
             {
               "kind": "node-ref",
