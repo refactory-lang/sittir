@@ -16,21 +16,23 @@ function hasStructure(record: Record<string, unknown>): boolean {
 
 /**
  * Whether nothing under `value` was rebuilt: it still spans the bytes it was
- * read from, its comments are not attached separately, and the same holds
- * all the way down. A kind id, a boolean or a bare string in a slot is inert
- * — the parent's own coordinate is what places it, and an edit that put it
- * there detached that coordinate at the setter.
+ * read from, and the same holds all the way down. A kind id, a boolean or a
+ * bare string in a slot is inert — the parent's own coordinate is what
+ * places it, and an edit that put it there detached that coordinate at the
+ * setter.
  *
  * A span is the whole requirement because a deep read hands its descendants
  * a span and no handle: only the node that emits the coordinate needs to
- * name the tree.
+ * name the tree. A descendant's attached comments do not keep an ancestor
+ * from folding: they lie inside the ancestor's span, so its bytes carry
+ * them — only a node's OWN trivia sits outside its span, which is why
+ * `foldsToCoordinate` refuses that node and no other.
  */
 function isUntouchedBelow(value: unknown): boolean {
 	if (Array.isArray(value)) return value.every(isUntouchedBelow);
 	if (value === undefined || value === null || typeof value !== 'object') return true;
 	const record = value as Record<string, unknown>;
 	if (!isRecord(record.$span)) return false;
-	if (record.$_trivia != null) return false;
 	for (const [key, child] of Object.entries(record)) {
 		if (!isStorageKey(key)) continue;
 		if (!isUntouchedBelow(child)) return false;
@@ -46,6 +48,7 @@ function isUntouchedBelow(value: unknown): boolean {
  */
 function foldsToCoordinate(record: Record<string, unknown>): boolean {
 	if (typeof record.$nodeHandle !== 'number' || !isRecord(record.$span)) return false;
+	if (record.$_trivia != null) return false;
 	return isUntouchedBelow(record);
 }
 

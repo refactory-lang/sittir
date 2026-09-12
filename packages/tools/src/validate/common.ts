@@ -1408,6 +1408,21 @@ export async function loadStorageKindNameFromId(
 	}
 }
 
+/**
+ * The model's own classification of a kind as a leaf — a `pattern`, `token`,
+ * `keyword` or `enum` kind carries text, not storage — keyed by kind id.
+ * Unknown ids (and a grammar with no node model) are not leaves.
+ */
+export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) => boolean> {
+	const kindNameFromId = await loadKindNameFromId(grammar);
+	const { modelTypes } = await loadNodeModel(grammar);
+	return (kindId) => {
+		const name = kindNameFromId?.(kindId);
+		const modelType = name === undefined ? undefined : modelTypes[name];
+		return modelType === 'pattern' || modelType === 'token' || modelType === 'keyword' || modelType === 'enum';
+	};
+}
+
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
 	const typesModulePath = TYPES_MODULE_PATHS[grammar];
 	if (!typesModulePath) return undefined;

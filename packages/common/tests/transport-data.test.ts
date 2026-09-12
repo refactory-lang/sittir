@@ -92,7 +92,7 @@ describe('toTransportData', () => {
 		expect(out._a).toEqual(stub(0, 4, 0));
 	});
 
-	it('does not fold a node that carries trivia, at any depth', () => {
+	it('does not fold a node whose own trivia sits outside its span, but folds over a child that carries some', () => {
 		const withOwnTrivia = {
 			$type: 3,
 			$source: 0,
@@ -106,15 +106,24 @@ describe('toTransportData', () => {
 		expect(own.$nodeHandle).toBeUndefined();
 		expect(own.$_trivia).toBeDefined();
 
+		// A child's comments lie inside the parent's span: the parent's bytes
+		// carry them, so a deep read of a commented file still folds like a
+		// shallow one.
 		const withChildTrivia = {
 			$type: 3,
 			$source: 0,
 			$named: true,
 			$span: { start: 0, end: 8 },
 			$nodeHandle: 0,
-			_a: { ...deep(0, 8, {}), $_trivia: { leading: [leaf('// c', 0)] } }
+			_a: { ...deep(5, 8, {}), $_trivia: { leading: [leaf('// c', 0)] } }
 		};
-		expect((toTransportData(withChildTrivia as never) as Record<string, unknown>).$nodeHandle).toBeUndefined();
+		expect(toTransportData(withChildTrivia as never)).toEqual({
+			$type: 3,
+			$source: 0,
+			$named: true,
+			$span: { start: 0, end: 8 },
+			$nodeHandle: 0
+		});
 	});
 
 	it('never lets a structural node cross with $text or a stale coordinate', () => {

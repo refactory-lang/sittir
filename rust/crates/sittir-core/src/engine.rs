@@ -102,11 +102,25 @@ pub struct ParsedTree<G: EngineGrammar> {
 /// Handles cross into JavaScript as JSON numbers and come back as doubles, so
 /// the two fields together must stay inside the 53-bit range where a double
 /// still counts integers exactly. 32 bits of index (4B nodes in one tree) and
-/// 21 of tree id (2M parses on one engine) spends that budget exactly.
+/// 21 of tree id (2M parses in one process) spends that budget exactly.
 const HANDLE_INDEX_BITS: u32 = 32;
 const HANDLE_INDEX_MASK: u64 = (1u64 << HANDLE_INDEX_BITS) - 1;
 /// Largest tree id that still fits beside an index in an exact double.
 pub const MAX_TREE_ID: u32 = (1u32 << (53 - HANDLE_INDEX_BITS)) - 1;
+
+static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+
+/// Mint the next tree id for this process. One counter serves every engine,
+/// so no two engines ever hold a tree under the same id: a coordinate names
+/// its tree unambiguously, and an engine handed another engine's coordinate
+/// finds no such tree and refuses it rather than slicing whatever tree sits
+/// at that index in its own table. Ids are never reused — a stale handle
+/// must not come back to life under a later tree — so a process that parses
+/// past `MAX_TREE_ID` trees gets `None`.
+pub fn claim_tree_id() -> Option<u32> {
+    let id = NEXT_TREE_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    (id <= MAX_TREE_ID).then_some(id)
+}
 
 /// Pack a tree id and a node index into one self-identifying handle.
 pub fn encode_handle(tree_id: u32, index: u32) -> u64 {

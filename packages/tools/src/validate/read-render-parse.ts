@@ -30,6 +30,7 @@ import {
 	materializeWrappedNodeData,
 	emitValidatorMetrics,
 	loadNodeModel,
+	loadIsLeafKind,
 	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
@@ -38,15 +39,11 @@ import {
 } from './common.ts';
 
 /**
- * Build the set of `$type` values the validator should deep-read,
- * scoped to kinds that participate in variant() adoption (parents and
- * their child kinds). Other kinds stay on the shallow `$text`
- * short-circuit to preserve baseline rtPass numbers.
- *
- * Sources the set from the grammar's emitted `node-model.json5`
- * polymorphVariants section (PR-K; the codegen artifact that records which
- * kinds went through Link's push-down). Returns an empty set when no
- * variant adoption exists in the grammar.
+ * The kinds that participate in variant() adoption (each override-defined
+ * parent and every child kind it dispatches to), from the node model's
+ * `polymorphVariants`. Every candidate is deep-read regardless; this set
+ * only decides which candidates render inside a reparse wrapper. Empty
+ * when the grammar has no variant adoption.
  */
 /**
  * Owner-kind → visible variant child kinds, from the node model's
@@ -67,10 +64,8 @@ export async function loadVariantChildKindsByOwner(grammar: string): Promise<Rea
 }
 
 export async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
-	// PR-K: read the typed `polymorphVariants` map directly instead of
-	// regex-scanning raw JSON. Only `definedBy: 'override'` descriptors carry a
-	// `childKind` map (the first-named-child dispatch table); each such parent
-	// and every child kind it dispatches to participates in variant() adoption.
+	// Only `definedBy: 'override'` descriptors carry a `childKind` map (the
+	// first-named-child dispatch table).
 	const { polymorphVariants } = await loadNodeModel(grammar);
 	const kinds = new Set<string>();
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
@@ -526,8 +521,8 @@ export interface RenderFixture {
 	 *  self-contained by `selfContainedRenderInput` so the boundary render
 	 *  path can take it in any process. Serialized to JSON verbatim. */
 	input: unknown;
-	/** The string the TS engine produced for `input`. Parity gate
-	 *  asserts the Rust engine produces the same bytes. */
+	/** The bytes the engine rendered for `input` when the fixture was
+	 *  captured; the parity gate asserts a fresh render reproduces them. */
 	expectedOutput: string;
 }
 
@@ -624,12 +619,7 @@ export async function validateReadRenderParse(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
-	const { modelTypes } = await loadNodeModel(grammar);
-	const isLeafKind = (kindId: number): boolean => {
-		const name = kindNameFromId?.(kindId);
-		const modelType = name === undefined ? undefined : modelTypes[name];
-		return modelType === 'pattern' || modelType === 'token' || modelType === 'keyword' || modelType === 'enum';
-	};
+	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);

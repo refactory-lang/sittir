@@ -48,7 +48,6 @@ macro_rules! napi_engine {
             /// Every tree still reachable from JavaScript, keyed by the id its
             /// handles carry. Entries leave only via `disposeTree`/`dispose`.
             trees: ::std::collections::HashMap<u32, $crate::ParsedTree<$grammar>>,
-            next_tree_id: u32,
             /// Newest parse, for `render` calls that do not name a tree.
             last_tree_id: Option<u32>,
         }
@@ -81,7 +80,6 @@ macro_rules! napi_engine {
                     )
                     .map_err(::napi::Error::from_reason)?,
                     trees: ::std::collections::HashMap::new(),
-                    next_tree_id: 0,
                     last_tree_id: None,
                 })
             }
@@ -311,21 +309,16 @@ macro_rules! napi_engine {
 
         impl SittirEngine {
             /// Take the next tree id, refusing to wrap.
-            ///
-            /// Ids share a handle's bits with the node index, so they cannot
-            /// run forever; reusing one would make a stale handle look valid
-            /// against the tree that took its id, which is the exact failure
-            /// the tag exists to prevent. Refusing is the honest end state.
+            /// A tree id comes from the process-wide counter, so a coordinate
+            /// minted by one engine names no tree in any other; ids are never
+            /// reused, so exhausting them is the honest end state.
             fn claim_tree_id(&mut self) -> ::napi::Result<u32> {
-                if self.next_tree_id > $crate::engine::MAX_TREE_ID {
-                    return Err(::napi::Error::from_reason(format!(
-                        "engine exhausted its {} tree ids; construct a new engine",
+                $crate::engine::claim_tree_id().ok_or_else(|| {
+                    ::napi::Error::from_reason(format!(
+                        "this process exhausted its {} tree ids",
                         $crate::engine::MAX_TREE_ID
-                    )));
-                }
-                let id = self.next_tree_id;
-                self.next_tree_id += 1;
-                Ok(id)
+                    ))
+                })
             }
         }
     };

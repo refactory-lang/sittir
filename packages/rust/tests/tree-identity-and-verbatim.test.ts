@@ -96,6 +96,9 @@ describe('untouched parses render verbatim', () => {
 });
 
 describe('parsed trees are released', () => {
+	/** The id of the tree a raw native read retained, from the JSON it returns. */
+	const treeIdOf = (read: string): number => (JSON.parse(read) as { treeId: number }).treeId;
+
 	/** The native engine the boundary talks to, so its tree table is visible. */
 	function nativeEngine() {
 		const status = getActiveBackend();
@@ -107,14 +110,15 @@ describe('parsed trees are released', () => {
 		if (!native) return;
 
 		expect(native.liveTreeCount).toBe(0);
-		for (let i = 0; i < 20; i += 1) native.parseAndRead(`fn f${i}() {}`);
+		const first = treeIdOf(native.parseAndRead('fn f0() {}'));
+		for (let i = 1; i < 20; i += 1) native.parseAndRead(`fn f${i}() {}`);
 		expect(native.liveTreeCount).toBe(20);
 
-		native.disposeTree(0);
+		native.disposeTree(first);
 		expect(native.liveTreeCount).toBe(19);
 		// Dropping the same tree twice is not an error: the registry cannot
 		// know whether a tree was already released.
-		native.disposeTree(0);
+		native.disposeTree(first);
 		expect(native.liveTreeCount).toBe(19);
 
 		native.dispose();
@@ -125,15 +129,16 @@ describe('parsed trees are released', () => {
 		const native = nativeEngine();
 		if (!native) return;
 
-		native.parseAndRead('fn a() {}');
+		const treeId = treeIdOf(native.parseAndRead('fn a() {}'));
 		expect(native.liveTreeCount).toBe(1);
 		// `as` saturates, so an unchecked cast would turn both of these into
-		// 0 — which names a real tree, and a live one.
+		// 0 — a tree id, and the live one when this is the process's first
+		// parse.
 		native.disposeTree(Number.NaN);
 		native.disposeTree(-1);
 		expect(native.liveTreeCount).toBe(1);
 
-		native.disposeTree(0);
+		native.disposeTree(treeId);
 		expect(native.liveTreeCount).toBe(0);
 	});
 

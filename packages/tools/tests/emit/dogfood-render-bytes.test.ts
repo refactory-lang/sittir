@@ -21,3 +21,25 @@ describe('dogfood rebuild render bytes', () => {
 		});
 	}
 });
+
+// The read path's byte axis: `validate:history` compares AST shape, never
+// bytes, so a read that renders the wrong whitespace survives it. An
+// untouched tree folds to the root's coordinate at either depth and renders
+// the source byte for byte.
+const READ_CASES = [
+	['rust', '@sittir/rust', 'rust/crates/sittir-core/src/render.rs'],
+	['typescript', '@sittir/typescript', 'packages/common/src/transport-data.ts'],
+	['python', '@sittir/python', 'tests/format-roundtrip/fixtures/python-4space.py']
+] as const;
+
+describe('read then render is byte-exact', () => {
+	for (const [grammar, pkg, file] of READ_CASES) {
+		it(`${grammar}: a shallow and a deep read of ${file} both render its bytes`, async () => {
+			const { createEngine } = (await import(pkg)) as { createEngine: () => { parse(source: string, options?: { deep?: boolean }): { $render(): string } } };
+			const source = readFileSync(ROOT + file, 'utf8');
+			const engine = createEngine();
+			expect(engine.parse(source).$render()).toBe(source);
+			expect(engine.parse(source, { deep: true }).$render()).toBe(source);
+		});
+	}
+});
