@@ -6349,10 +6349,13 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 #### body
 
 ```text
-// Mirrors 2026-07-18's original (pre-split) KIND_NAMES rule: prefer
-// the parser's own display name over the raw catalog key, except
-// for anonymous tokens (their symbolName carries literal
-// punctuation text, e.g. "+", not a kind name).
+// Prefers the parser's own display name (`entry.symbolName`) over
+// the raw catalog key for every entry that carries one, anonymous
+// tokens included — matching `kind_name_from_id`
+// (kind-id-rust.ts) and `buildKindIdByKind` (render-module.ts),
+// the other two consumers of this same parser-display fact. A
+// per-row anon guard here would make KIND_DISPLAY_NAMES disagree
+// with those two on the display name for the same kind id.
 ```
 
 #### body
