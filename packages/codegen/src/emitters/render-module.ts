@@ -525,7 +525,7 @@ function literalWrite(valueExpr: string, fixed: string | undefined): string {
 	if (fixed !== undefined && isDepthText(fixed)) {
 		return fixed === INDENT_TEXT
 			? `{ w.indent(); w.seam(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`
-			: `{ w.dedent(); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+			: `{ w.dedent(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
 	}
 	if (fixed !== undefined && isWhitespaceOnly(fixed)) {
 		return `{ w.token_seam(${valueExpr}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;

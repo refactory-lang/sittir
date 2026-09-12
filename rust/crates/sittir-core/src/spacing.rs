@@ -307,12 +307,6 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// a depth move plus its line break for the depth arms, otherwise the
     /// arm's text as a seam. A writer with no table attached treats every
     /// other kind as unknown and writes nothing.
-    ///
-    /// The DEDENT arm always merges a break seam after dedenting, unlike the
-    /// generated literal `w.dedent()` route in a rendered body, which only
-    /// follows with a seam when a payload is present at that edge. No
-    /// grammar exercises both routes on the same edge, so the two are free
-    /// to diverge on whether a trailing break is unconditional.
     fn site(&mut self, kind: u16) {
         if kind == 0 {
             return;
@@ -324,12 +318,15 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(table) = self.table else {
             return;
         };
-        if kind == table.indent {
-            self.indent();
-        } else if kind == table.dedent && !self.dedent() {
+        let text = (table.text_of)(kind);
+        if kind == table.dedent {
+            self.dedent(text);
             return;
         }
-        self.merge_seam((table.text_of)(kind));
+        if kind == table.indent {
+            self.indent();
+        }
+        self.merge_seam(text);
     }
 
     fn seam(&mut self, text: &str) {
@@ -358,21 +355,16 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.indent_armed = true;
     }
 
-    /// Shallows the depth. A dedent that arrives while the indent before it
-    /// has had no text written cancels it and its held payload, so an empty
-    /// body renders as its bare delimiters; the caller then writes no
-    /// payload of its own. Returns whether a payload may still follow (the
-    /// indent it closes had text written) — the printer's own seam call for
-    /// this dedent is conditioned on it, since a cancelled indent drops any
-    /// payload the mark path would have dropped too.
-    fn dedent(&mut self) -> bool {
+    fn dedent(&mut self, seam: &str) {
         self.depth = self.depth.saturating_sub(1);
         if std::mem::replace(&mut self.indent_armed, false) {
             self.seam = None;
             self.seam_text.clear();
-            return false;
+            return;
         }
-        true
+        if !seam.is_empty() {
+            self.merge_seam(seam);
+        }
     }
 
     fn ends_line(&self) -> bool {
@@ -631,8 +623,7 @@ mod sink_tests {
                 w.indent();
                 w.seam("\n");
                 w.text("a").unwrap();
-                w.dedent();
-                w.seam("\n");
+                w.dedent("\n");
                 w.text("}").unwrap();
             }),
             "{\n  a\n}"
@@ -650,10 +641,8 @@ mod sink_tests {
                 w.indent();
                 w.seam("\n\n");
                 w.text("c").unwrap();
-                w.dedent();
-                w.seam("\n");
-                w.dedent();
-                w.seam("\n");
+                w.dedent("\n");
+                w.dedent("\n");
                 w.text("d").unwrap();
             }),
             "a\n  b\n\n    c\nd"
@@ -695,9 +684,7 @@ mod sink_tests {
                 w.text("{").unwrap();
                 w.indent();
                 w.seam("\n");
-                if w.dedent() {
-                    w.seam("\n");
-                }
+                w.dedent("\n");
                 w.text("}").unwrap();
             }),
             "{}"
@@ -708,9 +695,7 @@ mod sink_tests {
                 w.indent();
                 w.seam("\n");
                 w.text("a").unwrap();
-                if w.dedent() {
-                    w.seam("\n");
-                }
+                w.dedent("\n");
                 w.text("}").unwrap();
             }),
             "{\n  a\n}"
@@ -752,8 +737,7 @@ mod sink_tests {
         assert_eq!(
             run(|w| {
                 w.text("a").unwrap();
-                w.dedent();
-                w.seam("\n");
+                w.dedent("\n");
                 w.text("b").unwrap();
             }),
             "a\nb"
@@ -803,9 +787,7 @@ mod sink_tests {
     fn a_dedent_below_zero_saturates() {
         let mut s = String::new();
         let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_indent("  ");
-        if w.dedent() {
-            w.seam("\n");
-        }
+        w.dedent("\n");
         w.text("x").unwrap();
         w.indent();
         w.seam("\n");

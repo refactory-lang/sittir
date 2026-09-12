@@ -487,9 +487,9 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 			case 'dedent':
 				flush();
 				if (payload !== '') {
-					lines.push(`${pad}if w.dedent() { w.seam(${rustStringLiteral(payload)}); }`);
+					lines.push(`${pad}w.dedent(${rustStringLiteral(payload)});`);
 				} else {
-					lines.push(`${pad}w.dedent();`);
+					lines.push(`${pad}w.dedent("");`);
 				}
 				break;
 			case 'tokenSeam':

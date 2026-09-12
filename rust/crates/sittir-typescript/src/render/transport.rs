@@ -66046,7 +66046,7 @@ pub struct DedentTransport {
 
 impl ::sittir_core::render::Render for DedentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.dedent(); Ok::<(), ::sittir_core::render::RenderError>(()) })
+        render_with_trivia!(self, w, { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -85324,7 +85324,7 @@ fn render_indent(t: &IndentTransport, w: &mut dyn ::sittir_core::render::RenderS
 }
 
 fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    { w.dedent(); Ok::<(), ::sittir_core::render::RenderError>(()) }
+    { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
 fn render_template_chars(t: &TemplateCharsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {

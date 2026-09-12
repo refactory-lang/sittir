@@ -196,7 +196,7 @@ describe('printRustBody', () => {
 			'    w.indent();',
 			'    w.seam("\\n");',
 			'    block.render(w)?;',
-			'    w.dedent();',
+			'    w.dedent("");',
 			'    Ok(())'
 		]);
 	});
@@ -207,7 +207,7 @@ describe('printRustBody', () => {
 			'    w.indent();',
 			'    w.seam("  \\n");',
 			'    w.text("a")?;',
-			'    w.dedent();',
+			'    w.dedent("");',
 			'    Ok(())'
 		]);
 	});

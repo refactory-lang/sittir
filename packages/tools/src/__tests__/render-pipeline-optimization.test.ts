@@ -474,12 +474,9 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.transportRs.contents).toContain('render_required_child_parent(');
 	});
 
-	it('removes the shared prepare bridge and direct NodeData render path (PR-E2 bridge-sunset)', () => {
-		const coreLib = readFileSync(resolve(repoRoot, 'rust/crates/sittir-core/src/lib.rs'), 'utf8');
+	it('renders through the transport path only, with no NodeData render bridge', () => {
 		const rustNapi = readFileSync(resolve(repoRoot, 'rust/crates/sittir-rust/src/lib.rs'), 'utf8');
 
-		expect(coreLib).not.toContain('pub mod prepare;');
-		// render_nodedata_into retired (PR-E2) — lib.rs uses transport path only.
 		expect(rustNapi).not.toContain('render_nodedata_into');
 		expect(rustNapi).not.toContain('build_template_context');
 		expect(rustNapi).toContain('render_transport_parts');

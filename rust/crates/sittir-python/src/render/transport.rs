@@ -45518,7 +45518,7 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
     };
     w.site(node.block_before.unwrap_or(0));
     statements.render(w)?;
-    w.dedent();
+    w.dedent("");
     w.site(node.block_after.unwrap_or(0));
     Ok(())
 }
@@ -47150,7 +47150,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
     w.indent();
     w.seam("\n");
     alternative.render(w)?;
-    w.dedent();
+    w.dedent("");
     w.site(node.match_block_block_after.unwrap_or(0));
     Ok(())
 }

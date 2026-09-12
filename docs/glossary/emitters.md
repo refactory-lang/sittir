@@ -3084,6 +3084,8 @@ need one route's break behavior reconciled with the other's.
 /// `valueExpr` as plain text.
 ```
 
+The dedent arm hands the sink the break it should merge (`w.dedent("\n")`), so the cancel rule lives in the writer and the emitter states only what the break is; the body printer's dedent node does the same with its payload (`w.dedent(<payload>)`, or `w.dedent("")` when nothing follows). There is no second route that decides whether a break may follow a dedent.
+
 ### `packages/codegen/src/emitters/render-module.ts::literalWriteArm`
 
 `literalWrite` plus the immediate case: an immediate literal calls

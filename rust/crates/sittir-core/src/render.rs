@@ -101,9 +101,13 @@ pub trait RenderSink {
         .into())
     }
     fn indent(&mut self);
-    /// Shallows the depth; returns whether a payload may still follow (the
-    /// indent it closes had text written).
-    fn dedent(&mut self) -> bool;
+    /// Shallows the depth and merges `seam` after it. A dedent that arrives
+    /// while the indent before it has had no text written cancels that
+    /// indent, its held payload, and this seam, so an empty body renders as
+    /// its bare delimiters. An empty seam merges nothing. This is the only
+    /// place the "may a break follow a dedent" question is answered — a
+    /// caller never asks it.
+    fn dedent(&mut self, seam: &str);
     fn ends_line(&self) -> bool;
 }
 
