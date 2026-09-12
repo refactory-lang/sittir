@@ -176,6 +176,10 @@ byte-identical.
 Items 2 and 3 are grammar option-default gaps, not writer defects; they
 are recorded here as next steps, not fixed in this task.
 
+### The read path is unchanged, and was already wrong
+
+Rendering a deep `parseAndRead` node straight back through `engine.render` gives the same bytes at head as at the last pre-sink commit (measured in a temporary worktree with the same probe), so byte identity holds on that path too. Those bytes are wrong on both sides: python indentation escalates and never returns after a function body (the reader delivers `_indent`/`_dedent` as tokens the transport renders as text, so depth never moves), and typescript decorator seams and the class-body brace seam do not apply (the reader stamps no sites). The validator's counts compare no bytes on the read path, which is why neither shows up. Both belong to the source-coordinates plan's prepare walk, and a byte-level read-render check belongs beside the validator's counts.
+
 ## Next
 
 - Review-triage items deferred to the user, from
