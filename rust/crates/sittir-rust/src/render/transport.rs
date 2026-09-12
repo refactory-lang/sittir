@@ -40179,6 +40179,12 @@ impl ::sittir_core::render::Render for SourceFileTransport {
 
 impl ::sittir_core::prepare::Prepare for SourceFileTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.statements_separator_space.is_none() { self.statements_separator_space = before; }
+            let _ = after;
+        }
         self.statements_end.get_or_insert(ctx.options.spacing[options::SITE_SOURCE_FILE_STATEMENTS_END]);
         self.statements_start.get_or_insert(ctx.options.spacing[options::SITE_SOURCE_FILE_STATEMENTS_START]);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE]);
@@ -40724,6 +40730,12 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = before; }
+            let _ = after;
+        }
         self.operator_before.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_PATTERN_OPERATOR_BEFORE]);
         self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_PATTERN_OPERATOR_AFTER]);
         self.token_patterns_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_END]);
@@ -41066,6 +41078,12 @@ impl ::sittir_core::render::Render for TokenRepetitionTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenRepetitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.tokens_separator_space.is_none() { self.tokens_separator_space = before; }
+            let _ = after;
+        }
         self.operator_before.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_OPERATOR_BEFORE]);
         self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_OPERATOR_AFTER]);
         self.tokens_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_TOKENS_END]);
@@ -41493,6 +41511,12 @@ impl ::sittir_core::render::Render for DeclarationListTransport {
 
 impl ::sittir_core::prepare::Prepare for DeclarationListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.declarations.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.declarations_separator_space.is_none() { self.declarations_separator_space = before; }
+            let _ = after;
+        }
         self.declarations_end.get_or_insert(ctx.options.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_END]);
         self.declarations_start.get_or_insert(ctx.options.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_START]);
         self.declarations_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE]);
@@ -42611,6 +42635,12 @@ impl ::sittir_core::render::Render for FunctionModifiersTransport {
 
 impl ::sittir_core::prepare::Prepare for FunctionModifiersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.modifier.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.modifier_separator_space.is_none() { self.modifier_separator_space = before; }
+            let _ = after;
+        }
         self.modifier_end.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_MODIFIERS_MODIFIER_END]);
         self.modifier_start.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_MODIFIERS_MODIFIER_START]);
         self.modifier_separator_space.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE]);
@@ -43006,6 +43036,12 @@ impl ::sittir_core::render::Render for TraitBoundsTransport {
 
 impl ::sittir_core::prepare::Prepare for TraitBoundsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.bounds.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "+", options::allowed(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.bounds_separator_space_before.is_none() { self.bounds_separator_space_before = before; }
+            if self.bounds_separator_space_after.is_none() { self.bounds_separator_space_after = after; }
+        }
         self.bounds_end.get_or_insert(ctx.options.spacing[options::SITE_TRAIT_BOUNDS_BOUNDS_END]);
         self.bounds_start.get_or_insert(ctx.options.spacing[options::SITE_TRAIT_BOUNDS_BOUNDS_START]);
         self.bounds_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_BEFORE]);
@@ -46601,6 +46637,12 @@ impl ::sittir_core::render::Render for TupleExpressionTransport {
 
 impl ::sittir_core::prepare::Prepare for TupleExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attributes_separator_space.is_none() { self.attributes_separator_space = before; }
+            let _ = after;
+        }
         self.attributes_end.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_START]);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE]);
@@ -46874,6 +46916,12 @@ impl ::sittir_core::render::Render for ShorthandFieldInitializerTransport {
 
 impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attributes_separator_space.is_none() { self.attributes_separator_space = before; }
+            let _ = after;
+        }
         self.attributes_end.get_or_insert(ctx.options.spacing[options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(ctx.options.spacing[options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_START]);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE]);
@@ -46950,6 +46998,12 @@ impl ::sittir_core::render::Render for FieldInitializerTransport {
 
 impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = before; }
+            let _ = after;
+        }
         self.attribute_item_end.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_END]);
         self.attribute_item_start.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_START]);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
@@ -47198,6 +47252,12 @@ impl ::sittir_core::render::Render for LetChainTransport {
 
 impl ::sittir_core::prepare::Prepare for LetChainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.right.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.right_separator_space_before.is_none() { self.right_separator_space_before = before; }
+            if self.right_separator_space_after.is_none() { self.right_separator_space_after = after; }
+        }
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE]);
         self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER]);
         self.amp_amp_before.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_AMP_AMP_BEFORE]);
@@ -47588,6 +47648,12 @@ impl ::sittir_core::render::Render for MatchArmTransport {
 
 impl ::sittir_core::prepare::Prepare for MatchArmTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attributes_separator_space.is_none() { self.attributes_separator_space = before; }
+            let _ = after;
+        }
         self.attributes_end.get_or_insert(ctx.options.spacing[options::SITE_MATCH_ARM_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(ctx.options.spacing[options::SITE_MATCH_ARM_ATTRIBUTES_START]);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE]);
@@ -47682,6 +47748,12 @@ impl ::sittir_core::render::Render for LastMatchArmTransport {
 
 impl ::sittir_core::prepare::Prepare for LastMatchArmTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attributes_separator_space.is_none() { self.attributes_separator_space = before; }
+            let _ = after;
+        }
         self.attributes_end.get_or_insert(ctx.options.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(ctx.options.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_START]);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE]);
@@ -48146,6 +48218,12 @@ impl ::sittir_core::render::Render for ClosureParametersTransport {
 
 impl ::sittir_core::prepare::Prepare for ClosureParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.parameters.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.parameters_separator_space_before.is_none() { self.parameters_separator_space_before = before; }
+            if self.parameters_separator_space_after.is_none() { self.parameters_separator_space_after = after; }
+        }
         self.parameters_end.get_or_insert(ctx.options.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_END]);
         self.parameters_start.get_or_insert(ctx.options.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_START]);
         self.parameters_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE]);
@@ -48880,6 +48958,12 @@ impl ::sittir_core::render::Render for BlockTransport {
 
 impl ::sittir_core::prepare::Prepare for BlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.statements.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.statements_separator_space.is_none() { self.statements_separator_space = before; }
+            let _ = after;
+        }
         self.statements_end.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_END]);
         self.statements_start.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_START]);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE]);
@@ -52133,6 +52217,12 @@ impl ::sittir_core::render::Render for MacroRulesTransport {
 
 impl ::sittir_core::prepare::Prepare for MacroRulesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.macro_rule.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ";", options::allowed(options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.macro_rule_separator_space_before.is_none() { self.macro_rule_separator_space_before = before; }
+            if self.macro_rule_separator_space_after.is_none() { self.macro_rule_separator_space_after = after; }
+        }
         self.macro_rule_end.get_or_insert(ctx.options.spacing[options::SITE_MACRO_RULES_MACRO_RULE_END]);
         self.macro_rule_start.get_or_insert(ctx.options.spacing[options::SITE_MACRO_RULES_MACRO_RULE_START]);
         self.macro_rule_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_MACRO_RULES_MACRO_RULE_SEPARATOR_SPACE_BEFORE]);
@@ -52207,6 +52297,12 @@ impl ::sittir_core::render::Render for EnumVariantListElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for EnumVariantListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -52281,6 +52377,12 @@ impl ::sittir_core::render::Render for FieldDeclarationListElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -52355,6 +52457,12 @@ impl ::sittir_core::render::Render for OrderedFieldDeclarationListElementsTransp
 
 impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -52429,6 +52537,12 @@ impl ::sittir_core::render::Render for WherePredicatesTransport {
 
 impl ::sittir_core::prepare::Prepare for WherePredicatesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.where_predicate.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.where_predicate_separator_space_before.is_none() { self.where_predicate_separator_space_before = before; }
+            if self.where_predicate_separator_space_after.is_none() { self.where_predicate_separator_space_after = after; }
+        }
         self.where_predicate_end.get_or_insert(ctx.options.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_END]);
         self.where_predicate_start.get_or_insert(ctx.options.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_START]);
         self.where_predicate_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE]);
@@ -52503,6 +52617,12 @@ impl ::sittir_core::render::Render for TypeParametersElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -52577,6 +52697,12 @@ impl ::sittir_core::render::Render for UseClausesTransport {
 
 impl ::sittir_core::prepare::Prepare for UseClausesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.use_clause.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.use_clause_separator_space_before.is_none() { self.use_clause_separator_space_before = before; }
+            if self.use_clause_separator_space_after.is_none() { self.use_clause_separator_space_after = after; }
+        }
         self.use_clause_end.get_or_insert(ctx.options.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_END]);
         self.use_clause_start.get_or_insert(ctx.options.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_START]);
         self.use_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_USE_CLAUSES_USE_CLAUSE_SEPARATOR_SPACE_BEFORE]);
@@ -52669,6 +52795,12 @@ impl ::sittir_core::render::Render for ParametersElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -52743,6 +52875,12 @@ impl ::sittir_core::render::Render for LifetimesTransport {
 
 impl ::sittir_core::prepare::Prepare for LifetimesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.lifetime.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.lifetime_separator_space_before.is_none() { self.lifetime_separator_space_before = before; }
+            if self.lifetime_separator_space_after.is_none() { self.lifetime_separator_space_after = after; }
+        }
         self.lifetime_end.get_or_insert(ctx.options.spacing[options::SITE_LIFETIMES_LIFETIME_END]);
         self.lifetime_start.get_or_insert(ctx.options.spacing[options::SITE_LIFETIMES_LIFETIME_START]);
         self.lifetime_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LIFETIMES_LIFETIME_SEPARATOR_SPACE_BEFORE]);
@@ -52817,6 +52955,12 @@ impl ::sittir_core::render::Render for UseBoundsElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for UseBoundsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_USE_BOUNDS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -52897,6 +53041,12 @@ impl ::sittir_core::render::Render for TypeArgumentsElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -52971,6 +53121,12 @@ impl ::sittir_core::render::Render for ArgumentsElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -53045,6 +53201,12 @@ impl ::sittir_core::render::Render for FieldInitializerListElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -53131,6 +53293,12 @@ impl ::sittir_core::render::Render for TuplePatternElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -53286,6 +53454,12 @@ impl ::sittir_core::render::Render for PatternsTransport {
 
 impl ::sittir_core::prepare::Prepare for PatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.pattern.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.pattern_separator_space_before.is_none() { self.pattern_separator_space_before = before; }
+            if self.pattern_separator_space_after.is_none() { self.pattern_separator_space_after = after; }
+        }
         self.pattern_end.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_PATTERN_END]);
         self.pattern_start.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_PATTERN_START]);
         self.pattern_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE]);
@@ -53453,6 +53627,12 @@ impl ::sittir_core::render::Render for StructPatternElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for StructPatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -54099,6 +54279,12 @@ impl ::sittir_core::render::Render for TupleTypeElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for TupleTypeElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.type_.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.type_separator_space_before.is_none() { self.type_separator_space_before = before; }
+            if self.type_separator_space_after.is_none() { self.type_separator_space_after = after; }
+        }
         self.type_end.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_END]);
         self.type_start.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_START]);
         self.type_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_TYPE_ELEMENTS_TYPE_SEPARATOR_SPACE_BEFORE]);
@@ -54212,6 +54398,12 @@ impl ::sittir_core::render::Render for TupleExpressionElementsTransport {
 
 impl ::sittir_core::prepare::Prepare for TupleExpressionElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.element.iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }
+            if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }
+        }
         self.element_end.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_END]);
         self.element_start.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_START]);
         self.element_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE]);
@@ -55910,6 +56102,12 @@ impl ::sittir_core::render::Render for ArrayExpressionSemiTransport {
 
 impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attributes_separator_space.is_none() { self.attributes_separator_space = before; }
+            let _ = after;
+        }
         self.attributes_end.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_START]);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE]);
@@ -55995,6 +56193,12 @@ impl ::sittir_core::render::Render for ArrayExpressionListTransport {
 
 impl ::sittir_core::prepare::Prepare for ArrayExpressionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attributes.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attributes_separator_space.is_none() { self.attributes_separator_space = before; }
+            let _ = after;
+        }
         self.attributes_end.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_END]);
         self.attributes_start.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_START]);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE]);
@@ -57435,6 +57639,12 @@ impl ::sittir_core::render::Render for TokenTreePatternParenTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = before; }
+            let _ = after;
+        }
         self.token_patterns_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_END]);
         self.token_patterns_start.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_START]);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE]);
@@ -57547,6 +57757,12 @@ impl ::sittir_core::render::Render for TokenTreePatternBracketTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = before; }
+            let _ = after;
+        }
         self.token_patterns_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_END]);
         self.token_patterns_start.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_START]);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE]);
@@ -57659,6 +57875,12 @@ impl ::sittir_core::render::Render for TokenTreePatternBraceTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.token_patterns.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.token_patterns_separator_space.is_none() { self.token_patterns_separator_space = before; }
+            let _ = after;
+        }
         self.token_patterns_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_END]);
         self.token_patterns_start.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_START]);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE]);
@@ -57771,6 +57993,12 @@ impl ::sittir_core::render::Render for TokenTreeParenTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenTreeParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.tokens_separator_space.is_none() { self.tokens_separator_space = before; }
+            let _ = after;
+        }
         self.tokens_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_END]);
         self.tokens_start.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_START]);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE]);
@@ -57889,6 +58117,12 @@ impl ::sittir_core::render::Render for TokenTreeBracketTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenTreeBracketTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.tokens_separator_space.is_none() { self.tokens_separator_space = before; }
+            let _ = after;
+        }
         self.tokens_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_END]);
         self.tokens_start.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_START]);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE]);
@@ -58007,6 +58241,12 @@ impl ::sittir_core::render::Render for TokenTreeBraceTransport {
 
 impl ::sittir_core::prepare::Prepare for TokenTreeBraceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.tokens_separator_space.is_none() { self.tokens_separator_space = before; }
+            let _ = after;
+        }
         self.tokens_end.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_END]);
         self.tokens_start.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_START]);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE]);
@@ -58125,6 +58365,12 @@ impl ::sittir_core::render::Render for DelimTokenTreeParenTransport {
 
 impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.delim_tokens_separator_space.is_none() { self.delim_tokens_separator_space = before; }
+            let _ = after;
+        }
         self.delim_tokens_end.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_END]);
         self.delim_tokens_start.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_START]);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE]);
@@ -58231,6 +58477,12 @@ impl ::sittir_core::render::Render for DelimTokenTreeBracketTransport {
 
 impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.delim_tokens_separator_space.is_none() { self.delim_tokens_separator_space = before; }
+            let _ = after;
+        }
         self.delim_tokens_end.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_END]);
         self.delim_tokens_start.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_START]);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE]);
@@ -58337,6 +58589,12 @@ impl ::sittir_core::render::Render for DelimTokenTreeBraceTransport {
 
 impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.delim_tokens.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.delim_tokens_separator_space.is_none() { self.delim_tokens_separator_space = before; }
+            let _ = after;
+        }
         self.delim_tokens_end.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_END]);
         self.delim_tokens_start.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_START]);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE]);
@@ -59123,6 +59381,12 @@ impl ::sittir_core::render::Render for AttributedFieldDeclarationTransport {
 
 impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = before; }
+            let _ = after;
+        }
         self.attribute_item_end.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_END]);
         self.attribute_item_start.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_START]);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
@@ -59193,6 +59457,12 @@ impl ::sittir_core::render::Render for AttributedEnumVariantTransport {
 
 impl ::sittir_core::prepare::Prepare for AttributedEnumVariantTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = before; }
+            let _ = after;
+        }
         self.attribute_item_end.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_END]);
         self.attribute_item_start.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_START]);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
@@ -59314,6 +59584,12 @@ impl ::sittir_core::render::Render for AttributedTypeParameterTransport {
 
 impl ::sittir_core::prepare::Prepare for AttributedTypeParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = before; }
+            let _ = after;
+        }
         self.attribute_item_end.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_END]);
         self.attribute_item_start.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_START]);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
@@ -59384,6 +59660,12 @@ impl ::sittir_core::render::Render for AttributedArgumentTransport {
 
 impl ::sittir_core::prepare::Prepare for AttributedArgumentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = before; }
+            let _ = after;
+        }
         self.attribute_item_end.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_END]);
         self.attribute_item_start.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_START]);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
@@ -59456,6 +59738,12 @@ impl ::sittir_core::render::Render for AttributedOrderedFieldTransport {
 
 impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.attribute_item.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.attribute_item_separator_space.is_none() { self.attribute_item_separator_space = before; }
+            let _ = after;
+        }
         self.attribute_item_end.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_END]);
         self.attribute_item_start.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_START]);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE]);
@@ -59578,6 +59866,12 @@ impl ::sittir_core::render::Render for MatchBlockArmsTransport {
 
 impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.match_arm.as_deref().unwrap_or(&[]).iter().map(|item| item.coord()).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.match_arm_separator_space.is_none() { self.match_arm_separator_space = before; }
+            let _ = after;
+        }
         self.match_arm_end.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_END]);
         self.match_arm_start.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_START]);
         self.match_arm_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE]);

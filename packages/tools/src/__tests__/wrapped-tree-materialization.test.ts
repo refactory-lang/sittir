@@ -344,8 +344,10 @@ describe('wrapped tree materialization', () => {
 			// affects RENDER output, not this structural layer.
 			expect(() => declarationArm.content()).not.toThrow();
 
+			// A read leaf materializes as itself — its text and the coordinate
+			// it was read at — not as bare text.
 			const declaration = asRecord(materializeWrappedNodeData(declarationArm.content()));
-			expect(declaration._name).toBe('readFile');
+			expect(asRecord(declaration._name).$text).toBe('readFile');
 		}
 	);
 

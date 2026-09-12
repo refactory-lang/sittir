@@ -133,6 +133,15 @@ describe('toTransportData', () => {
 		expect(out.$span).toBeUndefined();
 	});
 
+	it('sends a leaf that kept its trivia as itself, never as a coordinate', () => {
+		const withTrivia = { ...leaf('2', 12), $nodeHandle: 12, $childIndex: 1, $_trivia: { trailing: [leaf('# two', 14)] } };
+		const out = toTransportData(withTrivia as never) as Record<string, unknown>;
+		expect(out.$nodeHandle).toBeUndefined();
+		expect(out.$childIndex).toBeUndefined();
+		expect(out.$text).toBe('2');
+		expect(out.$_trivia).toBeDefined();
+	});
+
 	it('leaves a kind id or a boolean in a slot inert', () => {
 		const node = {
 			$type: 3,

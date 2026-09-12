@@ -25,9 +25,12 @@
 //!   addressed by its span.
 //! - `$span`       — `{start, end}` from `node.byte_range()`.
 //! - `$nodeHandle` — current node handle on the returned node; parent
-//!   handle on child stubs.
-//! - `$childIndex` — position within parent's children array on child
-//!   stubs. `None` on the returned node itself.
+//!   handle on every child of a shallow read (stubs and leaves alike), so
+//!   an untouched child is a coordinate into its tree; on a deep read only
+//!   the leaves carry one, the tree's tag, since nothing is re-read.
+//! - `$childIndex` — position within parent's children array on a shallow
+//!   read's children and a deep read's expanded children. `None` on the
+//!   returned node itself and on a deep read's leaves.
 
 use crate::types::{FieldValue, KindId, NodeData, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
@@ -133,7 +136,9 @@ fn widen_to_whole_source(root: &mut NodeData, source: &str) {
 /// The alias/display symbol is presentation: a role the node plays at its
 /// position, which the position (the consuming slot) already encodes —
 /// acceptance sets and slot keying carry the source ids so no consumer
-/// needs the display symbol as identity.
+/// needs the display symbol as identity — a transport accepts every
+/// identity the parser can show as one of its members, the display kind
+/// of an anonymous token included.
 fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
     KindId(node.grammar_id())
 }
@@ -365,7 +370,16 @@ fn read_children(
             }
         }
         let data = if child.child_count() == 0 {
-            read_materialized_leaf(child, source, model)
+            // A leaf keeps a coordinate at either depth. Under a shallow read
+            // it is a child like any stub — the parent's handle and its index,
+            // which the wrap layer may re-read. Under a deep read nothing is
+            // re-read, so it carries the tree's tag and no index, as a trivia
+            // entry does: enough to fold and slice, never a stub's shape.
+            let (handle, child_index) = match depth {
+                ReadDepth::Shallow => (node_handle, Some(i as u16)),
+                ReadDepth::Deep => (tree_handle, None),
+            };
+            read_materialized_leaf(child, source, model, handle, child_index)
         } else {
             match depth {
                 ReadDepth::Shallow => {
@@ -480,6 +494,8 @@ fn read_materialized_leaf(
     child: tree_sitter::Node<'_>,
     source: &str,
     model: &dyn ReadModel,
+    handle: Option<u64>,
+    child_index: Option<u16>,
 ) -> NodeData {
     let byte_range = child.byte_range();
     NodeData {
@@ -493,8 +509,8 @@ fn read_materialized_leaf(
             start: byte_range.start as u32,
             end: byte_range.end as u32,
         }),
-        node_handle: None,
-        child_index: None,
+        node_handle: handle,
+        child_index,
         trivia_data: None,
         slot_order: None,
     }

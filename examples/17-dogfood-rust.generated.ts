@@ -128,7 +128,7 @@ export function rebuildSpliceGenerated() {
 										macro: ir.identifier("write"),
 										arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
 											stringOpen: ir.stringLiteralOpen("\""),
-											elements: [ir.escapeSequence("invalid edit range: start={start}, end={end}")],
+											elements: [ir.stringContent("invalid edit range: start={start}, end={end}")],
 										})),
 									}),
 								}),
@@ -150,7 +150,7 @@ export function rebuildSpliceGenerated() {
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
 										stringOpen: ir.stringLiteralOpen("\""),
-										elements: [ir.escapeSequence("edit out of bounds: end={end} > source length={source_len}")],
+										elements: [ir.stringContent("edit out of bounds: end={end} > source length={source_len}")],
 									})),
 								})],
 							})],
@@ -172,7 +172,7 @@ export function rebuildSpliceGenerated() {
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
 										stringOpen: ir.stringLiteralOpen("\""),
-										elements: [ir.escapeSequence("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
 									})),
 								}),
 								comma: true,
@@ -208,7 +208,7 @@ export function rebuildSpliceGenerated() {
 					type: ir.genericType.strict({
 						type: ir.identifier("Vec"),
 						typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-							content: "Edit",
+							content: ir.identifier("Edit"),
 						})),
 					}),
 				}),
@@ -216,9 +216,9 @@ export function rebuildSpliceGenerated() {
 			returnType: ir.genericType.strict({
 				type: ir.identifier("Result"),
 				typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-					content: "String",
+					content: ir.identifier("String"),
 				}, {
-					content: "SpliceError",
+					content: ir.identifier("SpliceError"),
 				})),
 			}),
 			body: ir.block.strict({
@@ -442,7 +442,7 @@ export function rebuildSpliceGenerated() {
 							name: ir.identifier("from"),
 						}),
 						arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
-							expression: "source",
+							expression: ir.identifier("source"),
 						})),
 					}),
 				}), ir.expressionStatement.strict(ir.forExpression.strict({
@@ -492,7 +492,7 @@ export function rebuildSpliceGenerated() {
 				trailingExpression: ir.callExpression.strict({
 					function: ir.identifier("Ok"),
 					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
-						expression: "buf",
+						expression: ir.identifier("buf"),
 					})),
 				}),
 			}),

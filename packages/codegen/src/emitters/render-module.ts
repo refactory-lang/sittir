@@ -59,7 +59,8 @@ import {
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
 	literalMergePairs,
-	fieldTypeComponents
+	fieldTypeComponents,
+	slotSeparatorTexts
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -73,7 +74,12 @@ import {
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
-import { collectSitePreferences, publicKindName, type SitePreference } from '../compiler/model/site-preferences.ts';
+import {
+	collectSitePreferences,
+	publicKindName,
+	type SitePreference,
+	type SpacingSide
+} from '../compiler/model/site-preferences.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
@@ -1747,8 +1753,13 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
 		if (literalId !== undefined) acceptedIds.push(literalId);
 	}
-	const terminalIds = nodeMap?.terminalAliasWireIds?.get(kind);
-	if (terminalIds !== undefined) {
+	// An anonymous token the parser shows as a kind in this member's closure
+	// arrives under the token's own id (`print` shown as `identifier`,
+	// nested under `primary_expression`), so every concrete kind's terminal
+	// aliases are accepted here, not only the member's own.
+	for (const aliasedKind of [kind, ...concreteKindsOf(kind, nodeMap)]) {
+		const terminalIds = nodeMap?.terminalAliasWireIds?.get(aliasedKind);
+		if (terminalIds === undefined) continue;
 		for (const id of terminalIds) if (!acceptedIds.includes(id)) acceptedIds.push(id);
 	}
 	return acceptedIds;
@@ -2533,6 +2544,59 @@ function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | u
 	return plan.spacingSites.find((site) => site.kind === kind && site.role === 'separator');
 }
 
+function listGapSitesOf(
+	plan: RenderPlan,
+	node: AssembledNode,
+	slot: string
+): { readonly before?: SpacingSite; readonly after?: SpacingSite; readonly gap?: SpacingSite } {
+	const kind = publicKindName(node.kind);
+	const of = (side: SpacingSide) =>
+		plan.spacingSites.find((s) => s.kind === kind && s.slot === slot && s.side === side && s.seat === undefined);
+	return { before: of('before'), after: of('after'), gap: of('gap') };
+}
+
+function listGapTokenOf(field: AssembledNonterminal): string | undefined {
+	const texts = slotSeparatorTexts(field, false);
+	return texts.length === 1 ? texts[0] : undefined;
+}
+
+function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] {
+	const body: string[] = [];
+	const slotModel = renderSlotModelOf(node);
+	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
+		if (!isMultiple(field)) continue;
+		const sites = listGapSitesOf(plan, node, field.name);
+		const first = sites.gap ?? sites.before;
+		if (first === undefined && sites.after === undefined) continue;
+		const token = sites.gap !== undefined ? '' : listGapTokenOf(field);
+		if (token === undefined) continue;
+		const ident = rustFieldIdent(field.storageName);
+		const items = isRequired(field) ? `self.${ident}.iter()` : `self.${ident}.as_deref().unwrap_or(&[]).iter()`;
+		const each = hasOptionalElements(field) ? 'item.as_ref().and_then(|i| i.coord())' : 'item.coord()';
+		const allowedOf = (site: SpacingSite | undefined) =>
+			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
+		body.push(
+			`        {`,
+			`            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = ${items}.map(|item| ${each}).collect();`,
+			`            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE);`
+		);
+		if (first !== undefined) {
+			const f = rustFieldIdent(first.fieldIdent);
+			body.push(`            if self.${f}.is_none() { self.${f} = before; }`);
+		} else {
+			body.push(`            let _ = before;`);
+		}
+		if (sites.after !== undefined) {
+			const a = rustFieldIdent(sites.after.fieldIdent);
+			body.push(`            if self.${a}.is_none() { self.${a} = after; }`);
+		} else {
+			body.push(`            let _ = after;`);
+		}
+		body.push(`        }`);
+	}
+	return body;
+}
+
 function spacingFieldExprs(
 	plan: RenderPlan,
 	node: AssembledNode | undefined,
@@ -2662,6 +2726,7 @@ function prepareStructImpl(
 ): string[] {
 	const body: string[] = [];
 	if (isCompound) {
+		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}]);`);
 		}

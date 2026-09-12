@@ -125,9 +125,14 @@ function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefine
 		if (key === '$with' || typeof raw === 'function') continue;
 		out[key] = key.startsWith('_') || key === '$other' ? projectValue(raw, normalize) : raw;
 	}
+	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
+	// crosses as itself, and a storage-bearing node rebuilds from its slots
+	// with neither its pre-edit text nor the span that would slice it.
+	delete out.$nodeHandle;
+	delete out.$childIndex;
 	if (hasStructure(out)) {
 		delete out.$text;
-		for (const key of COORDINATE_KEYS) delete out[key];
+		delete out.$span;
 	}
 	return out;
 }

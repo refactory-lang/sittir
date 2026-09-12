@@ -96,7 +96,7 @@ export function rebuildFormatGenerated() {
 							left: ir.memberExpression.strict({
 								object: ir.identifier("boundary"),
 								separator: TSKindId.Dot,
-								property: ir.privatePropertyIdentifier("leading"),
+								property: ir.identifier("leading"),
 							}),
 							operator: TSKindId.QmarkQmark,
 							right: ir.string.single.strict(),
@@ -111,7 +111,7 @@ export function rebuildFormatGenerated() {
 							left: ir.memberExpression.strict({
 								object: ir.identifier("boundary"),
 								separator: TSKindId.Dot,
-								property: ir.privatePropertyIdentifier("trailing"),
+								property: ir.identifier("trailing"),
 							}),
 							operator: TSKindId.QmarkQmark,
 							right: ir.string.single.strict(),
@@ -155,10 +155,10 @@ export function rebuildFormatGenerated() {
 								left: ir.memberExpression.strict({
 									object: ir.identifier("trivia"),
 									separator: TSKindId.Dot,
-									property: ir.privatePropertyIdentifier("length"),
+									property: ir.identifier("length"),
 								}),
 								operator: TSKindId.EqEqEq,
-								right: ir.identifier("0"),
+								right: ir.number("0"),
 							}),
 						}),
 					}),
@@ -174,20 +174,20 @@ export function rebuildFormatGenerated() {
 							function: ir.memberExpression.strict({
 								object: ir.array.strict(ir.spreadElement.strict(ir.identifier("trivia"))),
 								separator: TSKindId.Dot,
-								property: ir.privatePropertyIdentifier("sort"),
+								property: ir.identifier("sort"),
 							}),
 							arguments: ir.arguments.strict(ir.arrowFunction.strict({
 								body: ir.binaryExpression.strict({
 									left: ir.memberExpression.strict({
 										object: ir.identifier("b"),
 										separator: TSKindId.Dot,
-										property: ir.privatePropertyIdentifier("offset"),
+										property: ir.identifier("offset"),
 									}),
 									operator: TSKindId.Dash,
 									right: ir.memberExpression.strict({
 										object: ir.identifier("a"),
 										separator: TSKindId.Dot,
-										property: ir.privatePropertyIdentifier("offset"),
+										property: ir.identifier("offset"),
 									}),
 								}),
 								content: ir.callSignature.strict({
@@ -220,22 +220,22 @@ export function rebuildFormatGenerated() {
 									function: ir.memberExpression.strict({
 										object: ir.identifier("Math"),
 										separator: TSKindId.Dot,
-										property: ir.privatePropertyIdentifier("max"),
+										property: ir.identifier("max"),
 									}),
-									arguments: ir.arguments.strict(ir.identifier("0"), ir.callExpression.call.strict({
+									arguments: ir.arguments.strict(ir.number("0"), ir.callExpression.call.strict({
 										function: ir.memberExpression.strict({
 											object: ir.identifier("Math"),
 											separator: TSKindId.Dot,
-											property: ir.privatePropertyIdentifier("min"),
+											property: ir.identifier("min"),
 										}),
 										arguments: ir.arguments.strict(ir.memberExpression.strict({
 											object: ir.identifier("item"),
 											separator: TSKindId.Dot,
-											property: ir.privatePropertyIdentifier("offset"),
+											property: ir.identifier("offset"),
 										}), ir.memberExpression.strict({
 											object: ir.identifier("result"),
 											separator: TSKindId.Dot,
-											property: ir.privatePropertyIdentifier("length"),
+											property: ir.identifier("length"),
 										})),
 									})),
 								}),
@@ -250,15 +250,15 @@ export function rebuildFormatGenerated() {
 											function: ir.memberExpression.strict({
 												object: ir.identifier("result"),
 												separator: TSKindId.Dot,
-												property: ir.privatePropertyIdentifier("slice"),
+												property: ir.identifier("slice"),
 											}),
-											arguments: ir.arguments.strict(ir.identifier("0"), ir.identifier("offset")),
+											arguments: ir.arguments.strict(ir.number("0"), ir.identifier("offset")),
 										}),
 										operator: TSKindId.Plus,
 										right: ir.memberExpression.strict({
 											object: ir.identifier("item"),
 											separator: TSKindId.Dot,
-											property: ir.privatePropertyIdentifier("text"),
+											property: ir.identifier("text"),
 										}),
 									}),
 									operator: TSKindId.Plus,
@@ -266,7 +266,7 @@ export function rebuildFormatGenerated() {
 										function: ir.memberExpression.strict({
 											object: ir.identifier("result"),
 											separator: TSKindId.Dot,
-											property: ir.privatePropertyIdentifier("slice"),
+											property: ir.identifier("slice"),
 										}),
 										arguments: ir.arguments.strict(ir.identifier("offset")),
 									}),
@@ -309,7 +309,7 @@ export function rebuildFormatGenerated() {
 								arguments: ir.arguments.strict(ir.memberExpression.strict({
 									object: ir.identifier("format"),
 									separator: TSKindId.Dot,
-									property: ir.privatePropertyIdentifier("trivia"),
+									property: ir.identifier("trivia"),
 								}), ir.identifier("editStart"), ir.identifier("delta")),
 							}),
 						})],
@@ -323,7 +323,7 @@ export function rebuildFormatGenerated() {
 								arguments: ir.arguments.strict(ir.memberExpression.strict({
 									object: ir.identifier("format"),
 									separator: TSKindId.Dot,
-									property: ir.privatePropertyIdentifier("kinds"),
+									property: ir.identifier("kinds"),
 								}), ir.identifier("editStart"), ir.identifier("delta")),
 							}),
 						})],
@@ -392,7 +392,7 @@ export function rebuildFormatGenerated() {
 						function: ir.memberExpression.strict({
 							object: ir.identifier("trivia"),
 							separator: TSKindId.Dot,
-							property: ir.privatePropertyIdentifier("map"),
+							property: ir.identifier("map"),
 						}),
 						arguments: ir.arguments.strict(ir.arrowFunction.strict({
 							body: ir.statementBlock.strict({
@@ -402,7 +402,7 @@ export function rebuildFormatGenerated() {
 											left: ir.memberExpression.strict({
 												object: ir.identifier("item"),
 												separator: TSKindId.Dot,
-												property: ir.privatePropertyIdentifier("offset"),
+												property: ir.identifier("offset"),
 											}),
 											operator: TSKindId.Lt,
 											right: ir.identifier("editStart"),
@@ -420,7 +420,7 @@ export function rebuildFormatGenerated() {
 											left: ir.memberExpression.strict({
 												object: ir.identifier("item"),
 												separator: TSKindId.Dot,
-												property: ir.privatePropertyIdentifier("offset"),
+												property: ir.identifier("offset"),
 											}),
 											operator: TSKindId.Plus,
 											right: ir.identifier("delta"),
@@ -429,14 +429,14 @@ export function rebuildFormatGenerated() {
 									terminator: TSKindId.Semi,
 								}), ir.returnStatement.strict({
 									expression: ir.object.strict(ir.spreadElement.strict(ir.identifier("item")), ir.pair.strict({
-										key: ir.privatePropertyIdentifier("offset"),
+										key: ir.identifier("offset"),
 										value: ir.callExpression.call.strict({
 											function: ir.memberExpression.strict({
 												object: ir.identifier("Math"),
 												separator: TSKindId.Dot,
-												property: ir.privatePropertyIdentifier("max"),
+												property: ir.identifier("max"),
 											}),
-											arguments: ir.arguments.strict(ir.identifier("0"), ir.identifier("newOffset")),
+											arguments: ir.arguments.strict(ir.number("0"), ir.identifier("newOffset")),
 										}),
 									})),
 									terminator: TSKindId.Semi,
@@ -508,7 +508,7 @@ export function rebuildFormatGenerated() {
 						function: ir.memberExpression.strict({
 							object: ir.identifier("Object"),
 							separator: TSKindId.Dot,
-							property: ir.privatePropertyIdentifier("entries"),
+							property: ir.identifier("entries"),
 						}),
 						arguments: ir.arguments.strict(ir.identifier("kinds")),
 					}),

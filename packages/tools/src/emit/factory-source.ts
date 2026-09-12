@@ -207,6 +207,18 @@ function printVerbatimText(
 	return text;
 }
 
+/**
+ * The text a slot value stands for when it is text: a bare string, or a read
+ * leaf — a node with `$text`, no storage and no attached trivia — which the
+ * reader hands over as itself, coordinate included. A leaf carrying trivia
+ * keeps its node form so the trivia prints with it.
+ */
+function textLeafValue(v: unknown): string | undefined {
+	if (typeof v === 'string') return v;
+	if (!isPlainObject(v) || typeof v.$text !== 'string' || v.$other != null || v.$_trivia != null) return undefined;
+	return Object.keys(v).some((key) => key.startsWith('_')) ? undefined : v.$text;
+}
+
 function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unknown {
 	if (!isPlainObject(config)) return config;
 	const out: Record<string, unknown> = {};
@@ -218,8 +230,10 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 		const leaf = textLeafOfSlot(kind, property, ctx);
 		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
 		const storage = ctx.slotStorage?.[kind]?.[property];
-		const wrap = (v: unknown): unknown =>
-			typeof v === 'string' ? printVerbatimText(v, leaf, ctx, kinds, storage) : v;
+		const wrap = (v: unknown): unknown => {
+			const text = textLeafValue(v);
+			return text === undefined ? v : printVerbatimText(text, leaf, ctx, kinds, storage);
+		};
 		out[property] = Array.isArray(value) ? value.map(wrap) : wrap(value);
 	}
 	return out;
@@ -254,13 +268,14 @@ function wrapSeatedConfig(kind: string, config: unknown, ctx: PrintContext): unk
 }
 
 function wrapDirectArg(kind: string, value: unknown, ctx: PrintContext): unknown {
-	if (typeof value !== 'string') return value;
+	const text = textLeafValue(value);
+	if (text === undefined) return value;
 	const properties = Object.keys(ctx.slotKinds?.[kind] ?? {});
 	const property = properties.length === 1 ? properties[0] : undefined;
 	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, ctx);
 	const kinds = property === undefined ? [] : (ctx.slotKinds?.[kind]?.[property] ?? []);
 	const storage = property === undefined ? undefined : ctx.slotStorage?.[kind]?.[property];
-	return printVerbatimText(value, leaf, ctx, kinds, storage);
+	return printVerbatimText(text, leaf, ctx, kinds, storage);
 }
 
 function camelCase(kind: string): string {
@@ -271,15 +286,15 @@ export function printingFactoryMap(
 	realShapes: Record<string, FactoryShape>,
 	kindIdOfName: (kind: string) => number | undefined,
 	ctx: PrintContext
-): Record<string, (...args: unknown[]) => Printed> {
-	const map: Record<string, (...args: unknown[]) => Printed> = {};
+): Record<string, (...args: unknown[]) => Printed | string> {
+	const map: Record<string, (...args: unknown[]) => Printed | string> = {};
 	const kinds = Object.keys(realShapes);
 	for (const kind of kinds) {
 		const shape: FactoryShape = realShapes[kind]!;
 		const path = ctx.irPathOfKind(kind);
 		const id = kindIdOfName(kind) ?? kind;
 		const publicName = kind.replace(/^_+/, '');
-		const entry = (...args: unknown[]): Printed => {
+		const entry = (...args: unknown[]): Printed | string => {
 			switch (shape) {
 				case 'text': {
 					const text = String(args[0] ?? '');
@@ -287,6 +302,10 @@ export function printingFactoryMap(
 						const member = ctx.memberIdOfText?.(text);
 						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
 					}
+					// A hidden text kind has no factory on `ir` (the model's key for it
+					// names nothing emitted): it hands its text to the parent, whose
+					// slot prints it through the public text kind it declares.
+					if (kind.startsWith('_')) return text;
 					return new Printed(id, `${path}(${JSON.stringify(text)})`, kind);
 				}
 				case 'direct':
@@ -336,7 +355,7 @@ export function printingFactoryMap(
  * one `ir-render-parse` builds rather than a second derivation of it.
  */
 export function printingIrSurface(
-	map: Record<string, (...args: unknown[]) => Printed>,
+	map: Record<string, (...args: unknown[]) => Printed | string>,
 	kindIdOfName: (kind: string) => number | undefined,
 	modelTypes: Record<string, string>,
 	ctx: PrintContext
@@ -363,7 +382,7 @@ function mountPrinter(
 	parentKind: string,
 	id: number | string,
 	ctx: PrintContext
-): (...args: unknown[]) => Printed {
+): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
 		const printed = args.map((a) =>
 			printValue(

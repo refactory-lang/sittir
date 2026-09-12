@@ -124,6 +124,8 @@ describe('deriveChildrenKinds', () => {
 /** Cache for the rust emitRenderModule output. */
 let _rustTemplatesRs: string | undefined;
 let _typescriptTransportRs: string | undefined;
+/** The rust kind entries the cached emit was produced from. */
+let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
 
 async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
 	const grammarJsPath = resolveGrammarJsPath(grammar);
@@ -141,6 +143,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar)));
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap) };
 	const spacedRules = spaceRenderRules(rulesConfig);
 	stampStaticSpacing(nodeMap, grammar, spacedRules);
@@ -441,6 +444,31 @@ describe('render options on transports', () => {
 
 
 describe('the typed sink replaces the mark-based Display path', () => {
+	it('accepts a token the parser shows as a nested member kind under the token id', async () => {
+		// rust shows the `default` keyword as an `identifier` (`_reserved_identifier`);
+		// an expression slot must decode `{ $type: <default>, $text }` through the
+		// nesting that reaches `identifier`.
+		const transportRs = await getRustTemplatesRs();
+		const tokenId = _rustKindEntries?.find((entry) => entry.literalText === 'default' || entry.symbolName === 'default')?.id;
+		expect(tokenId).toBeDefined();
+		const from = transportRs.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {');
+		expect(from).toBeGreaterThan(-1);
+		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		expect(body).toContain(`${tokenId} => Ok(Self::`);
+	});
+	it('classifies a rebuilt list from the gaps between its coordinates before the table fills it', async () => {
+		const transportRs = await getRustTemplatesRs();
+		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
+		expect(from).toBeGreaterThan(-1);
+		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		expect(body).toContain('::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ","');
+		expect(body).toContain('&options::WHITESPACE)');
+		// The class taken from the source beats the table and loses to the wire:
+		// the classification precedes every `get_or_insert` fill of the same site.
+		expect(body.indexOf('classify_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
+		expect(body).toContain('if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }');
+		expect(body).toContain('if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }');
+	});
 	it('renders through the typed sink and writes no mark character', async () => {
 		const transportRs = await getRustTemplatesRs();
 		expect(transportRs).not.toContain('impl ::std::fmt::Display for');

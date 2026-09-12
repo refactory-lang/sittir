@@ -13877,6 +13877,12 @@ enum's `Verbatim` arm and its render helper's, so the two cannot disagree.
  * `_NonSpecialTokenTransport`, and a reserved identifier's member id
  * reaches its leaf decoder through `ExpressionTransport` and
  * `PrimaryExpressionTransport`.
+ *
+ * The same holds for a terminal alias: an anonymous token the parser
+ * shows as a kind in the member's closure arrives under the token's own
+ * id (python's `print` shown as `identifier`, nested under
+ * `primary_expression`), so the terminal-alias wire ids of every concrete
+ * kind in the closure are accepted, not only the member's own.
  */
 ```
 
@@ -15204,7 +15210,10 @@ enums, `VerbatimTransport`): `Ok(())`.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
-A transport struct's `Prepare` impl. It fills this kind's own facts first
+A transport struct's `Prepare` impl. It first lets the source speak for its
+repeated slots (`listGapClassification`: the gaps between items that are
+still coordinates become the site value when the wire left it empty), then
+fills this kind's own facts
 — each of its spacing fields takes the table value when unset, the seating
 loops write each element's seated arm into the element's own trailing-edge
 field, and a separated list takes its `delimiter` from the delimiter table
@@ -15219,6 +15228,37 @@ is the walk's error, not the render's.
 A list's delimiter is filled from the table like any spacing site, zero
 included: the table's value is the grammar's declared default or a render
 option, and the transport's own value still wins.
+
+
+### `packages/codegen/src/emitters/render-module.ts::listGapSitesOf`
+
+The un-seated spacing sites of one repeated slot on a kind, by side: `gap`
+for an unseparated repeat (the whole gap is one site), `before`/`after` for
+a separated one (the bytes on each side of the token). Seated sites belong
+to the item kinds and are filled by `seatLoops`; the flank and seam sites
+of the list are not gaps between items.
+
+### `packages/codegen/src/emitters/render-module.ts::listGapTokenOf`
+
+The one literal that separates a slot's items, or `undefined` when the slot
+has none or has several — a choice separator is per instance, so the bytes
+around it are not one site's spelling. Derived from
+`shared.ts::slotSeparatorTexts`, the same source the reader table and the
+wrap drop expression use.
+
+### `packages/codegen/src/emitters/render-module.ts::listGapClassification`
+
+The block a generated `prepare` runs before it fills any site from the
+option table: for every repeated slot with a gap site, collect the items'
+coordinates (`SlotValue::coord`, `None` for a rebuilt item) and let
+`sittir_core::classify::classify_list_gaps` measure the source bytes between
+surviving neighbours, then take the majority class per side into the site
+field only when the wire left it empty. Precedence for a list site is
+therefore: the value the wire carried, the class of the source gaps, the
+engine's option table, the grammar's default. The block precedes the
+`get_or_insert` fills because a fill would make the class unreachable; it
+does not wait for the children's `prepare` (the seats must run before the
+children, and the classifier resolves the coordinates it measures itself).
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 
