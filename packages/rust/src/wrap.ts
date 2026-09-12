@@ -7651,7 +7651,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 123, false: 124, self: 132, '( )': 268 }
+				{ true: 123, false: 124, self: 132, '()': 268 }
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,

@@ -22675,8 +22675,8 @@ fn meta_property_content_transport_slot_to_any(t: MetaPropertyContentTransportSl
 impl ::sittir_core::render::Render for MetaPropertyContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MetaPropertyContentTransportSlot::Literal80_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74 => w.text("new . target"),
-            MetaPropertyContentTransportSlot::Literal81_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61 => w.text("import . meta"),
+            MetaPropertyContentTransportSlot::Literal80_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74 => w.text("new.target"),
+            MetaPropertyContentTransportSlot::Literal81_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61 => w.text("import.meta"),
         }
     }
 }
@@ -64877,11 +64877,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyNewTargetTransport {
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "new . target".to_string(),
+            ::napi::ValueType::Number => "new.target".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "new . target".to_string())
+                obj.get("$text")?.unwrap_or_else(|| "new.target".to_string())
             }
         };
         Ok(Self {
@@ -64903,7 +64903,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyNewTargetTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "new . target".to_string());
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "new.target".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -64984,11 +64984,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyImportMetaTransport 
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "import . meta".to_string(),
+            ::napi::ValueType::Number => "import.meta".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "import . meta".to_string())
+                obj.get("$text")?.unwrap_or_else(|| "import.meta".to_string())
             }
         };
         Ok(Self {
@@ -65010,7 +65010,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyImportMetaTransport 
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "import . meta".to_string());
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "import.meta".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -82050,6 +82050,7 @@ fn render_switch_statement(node: &SwitchStatementTransport, w: &mut dyn ::sittir
     w.adjacent();
     w.site(node.switch_keyword_after.unwrap_or(0));
     value.render(w)?;
+    w.adjacent();
     body.render(w)?;
     w.site(node.switch_statement_after.unwrap_or(0));
     Ok(())
@@ -83469,6 +83470,7 @@ fn render_import_require_clause(node: &ImportRequireClauseTransport, w: &mut dyn
     w.site(node.require_keyword_after.unwrap_or(0));
     w.site(node.lparen_before.unwrap_or(0));
     w.text("(")?;
+    w.adjacent();
     w.site(node.lparen_after.unwrap_or(0));
     source.render(w)?;
     w.site(node.rparen_before.unwrap_or(0));
@@ -83938,6 +83940,7 @@ fn render_optional_tuple_parameter(node: &OptionalTupleParameterTransport, w: &m
     name.render(w)?;
     w.site(node.qmark_before.unwrap_or(0));
     w.text("?")?;
+    w.adjacent();
     w.site(node.qmark_after.unwrap_or(0));
     type_.render(w)?;
     w.site(node.optional_tuple_parameter_after.unwrap_or(0));
@@ -84405,6 +84408,7 @@ fn render_index_signature(node: &IndexSignatureTransport, w: &mut dyn ::sittir_c
     content.render(w)?;
     w.site(node.rbrack_before.unwrap_or(0));
     w.text("]")?;
+    w.adjacent();
     w.site(node.rbrack_after.unwrap_or(0));
     type_.render(w)?;
     w.site(node.index_signature_after.unwrap_or(0));
@@ -84698,6 +84702,7 @@ fn render_import_clause_group(node: &ImportClauseGroupTransport, w: &mut dyn ::s
     w.site(node.import_clause_group_before.unwrap_or(0));
     w.site(node.comma_before.unwrap_or(0));
     w.text(",")?;
+    w.adjacent();
     w.site(node.comma_after.unwrap_or(0));
     content.render(w)?;
     w.site(node.import_clause_group_after.unwrap_or(0));
@@ -85122,6 +85127,7 @@ fn render_export_statement_default_from(node: &ExportStatementDefaultFromTranspo
     w.adjacent();
     w.site(node.export_keyword_after.unwrap_or(0));
     content.render(w)?;
+    w.adjacent();
     automatic_semicolon.render(w)?;
     w.site(node.export_statement_default_from_after.unwrap_or(0));
     Ok(())
@@ -85238,6 +85244,7 @@ fn render_variable_declarator_definite(node: &VariableDeclaratorDefiniteTranspor
     name.render(w)?;
     w.site(node.bang_before.unwrap_or(0));
     w.text("!")?;
+    w.adjacent();
     w.site(node.bang_after.unwrap_or(0));
     type_.render(w)?;
     w.site(node.variable_declarator_definite_after.unwrap_or(0));
@@ -86562,8 +86569,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal77_74_69_6c_64_65 => w.text("~"),
             AnyTransport::Literal78_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => w.text("void"),
             AnyTransport::Literal79_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => w.text("delete"),
-            AnyTransport::Literal80_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74 => w.text("new . target"),
-            AnyTransport::Literal81_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61 => w.text("import . meta"),
+            AnyTransport::Literal80_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_6e_65_77_5f_74_61_72_67_65_74 => w.text("new.target"),
+            AnyTransport::Literal81_5f_6d_65_74_61_5f_70_72_6f_70_65_72_74_79_5f_69_6d_70_6f_72_74_5f_6d_65_74_61 => w.text("import.meta"),
             AnyTransport::Literal82_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
             AnyTransport::Literal83_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => w.text("static"),
             AnyTransport::Literal84_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => w.text("override"),

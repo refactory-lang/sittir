@@ -499,6 +499,9 @@
 			"name": "content"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "automatic_semicolon"
 		},
@@ -973,6 +976,9 @@
 		{
 			"kind": "text",
 			"text": ","
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -1450,6 +1456,9 @@
 		{
 			"kind": "text",
 			"text": "!"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -4461,6 +4470,9 @@
 			"text": "("
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "seam",
 			"field": "lparen_after"
 		},
@@ -4635,6 +4647,9 @@
 		{
 			"kind": "text",
 			"text": "]"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -6099,6 +6114,9 @@
 			"text": "?"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "seam",
 			"field": "qmark_after"
 		},
@@ -7216,6 +7234,9 @@
 		{
 			"kind": "slot",
 			"name": "value"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",

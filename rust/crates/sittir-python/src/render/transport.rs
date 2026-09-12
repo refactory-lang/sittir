@@ -45054,6 +45054,7 @@ fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_c
     subjects.render(w)?;
     w.site(node.colon_before.unwrap_or(0));
     w.text(":")?;
+    w.adjacent();
     w.site(node.colon_after.unwrap_or(0));
     body.render(w)?;
     w.site(node.match_statement_after.unwrap_or(0));
@@ -45432,6 +45433,7 @@ fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, w: &m
     w.site(node.parenthesized_list_splat_before.unwrap_or(0));
     w.site(node.lparen_before.unwrap_or(0));
     w.text("(")?;
+    w.adjacent();
     w.site(node.lparen_after.unwrap_or(0));
     content.render(w)?;
     w.site(node.rparen_before.unwrap_or(0));
@@ -47671,7 +47673,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (47, 61), (60, 61), (60, 62), (62, 61), (64, 61), (91, 94), (93, 43), (94, 61), (94, 123), (123, 125), (124, 61), (125, 92)]); // "!=" "%=" "&=" "*=" "+=" "-=" "/=" "<=" "<>" ">=" "@=" "[^" "]+" "^=" "^{" "{}" "|=" "}\\"
+.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (47, 61), (60, 61), (60, 62), (62, 61), (64, 61), (94, 61), (124, 61)]); // "!=" "%=" "&=" "*=" "+=" "-=" "/=" "<=" "<>" ">=" "@=" "^=" "|="
 
 /// Render a transport tree to text. Takes the trait rather than
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through

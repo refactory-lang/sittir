@@ -40,6 +40,7 @@ import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import { flanksOf, isSeamChoice, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
+import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import {
 	ADJACENT,
 	DEDENT as DEDENT_BODY,
@@ -71,6 +72,7 @@ export interface EmitTemplatesConfig {
 	nodeMap: NodeMap;
 	renderRules?: RenderRules;
 	grammarSha?: string;
+	kindEntries?: readonly KindEntryLike[];
 }
 
 export interface EmittedTemplates {
@@ -191,7 +193,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			})(),
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
-					literalMergePairs(getTransportProjection(config.nodeMap).literals).map(([a, b]) => a * 128 + b)
+					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(([a, b]) => a * 128 + b)
 				);
 				return (l: string, r: string) =>
 					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
@@ -202,7 +204,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const combos = new Set<string>();
 				const lefts = new Set<string>();
 				const rights = new Set<string>();
-				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals)) {
+				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? [])) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
 					lefts.add(String.fromCharCode(a));
 					rights.add(String.fromCharCode(b));

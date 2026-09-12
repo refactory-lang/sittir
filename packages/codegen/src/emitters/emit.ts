@@ -146,7 +146,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries && renderRules && sitePreferences
 			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
 			: undefined;
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'

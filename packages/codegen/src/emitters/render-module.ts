@@ -94,6 +94,7 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
+import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 
 export type Grammar = 'rust' | 'typescript' | 'python';
 const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
@@ -558,7 +559,8 @@ function renderTypedDispatch(
 	nodeMap: NodeMap,
 	usedSupertypeNames: ReadonlySet<string> = new Set(),
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
@@ -576,7 +578,7 @@ function renderTypedDispatch(
 	}
 
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
-	const mergePairs = literalMergePairs(literals);
+	const mergePairs = literalMergePairs(literals, kindEntries ?? []);
 	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
 	lines.push(
 		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
@@ -1110,7 +1112,7 @@ function renderTransportSupport(
 			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)),
 			'',
 			'',
-			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan),
+			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan, kindEntries),
 			...renderTransportEntry()
 		].join('\n')
 	);

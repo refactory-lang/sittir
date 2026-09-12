@@ -38,7 +38,8 @@ import {
 	valueParseKindsOf,
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
-import { matchesWordShape } from '../util/word-matcher.ts';
+import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
+import { findEntryForKindName, type KindEntryLike, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
 import { publicKindName } from '../compiler/model/render-rules.ts';
 
 export function isSlotBearingCompound(
@@ -920,30 +921,18 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 }
 
 export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
-	const src = wordMatcher.source.replace(/\$$/, '');
-	const flags = wordMatcher.flags.replace(/[gm]/g, '');
-	let anchored: RegExp;
-	try {
-		anchored = new RegExp(`^(?:${src})`, flags);
-	} catch {
-		anchored = /^\w/;
-	}
-	const joins = (pair: string): boolean => {
-		const m = pair.match(anchored);
-		return !!(m && m[0] !== undefined && m[0].length > 1);
-	};
-	const table: boolean[] = Array.from({ length: 128 }, () => false);
-	for (let i = 0; i < 128; i++) {
-		const c = String.fromCharCode(i);
-		table[i] = joins(`a${c}`) || joins(`${c}a`);
-	}
-	return table;
+	const isWord = wordCharClass(wordMatcher);
+	return Array.from({ length: 128 }, (_, i) => isWord(String.fromCharCode(i)));
 }
 
-export function literalMergePairs(literals: readonly { readonly text: string }[]): [number, number][] {
+export function literalMergePairs(
+	literals: readonly { readonly text: string }[],
+	kindEntries: readonly KindEntryLike[]
+): [number, number][] {
 	const excluded = /[A-Za-z0-9_\s]/;
 	const pairs = new Set<number>();
 	for (const literal of literals) {
+		if (findEntryForLiteralText(kindEntries, literal.text) === undefined) continue;
 		if (literal.text.length < 2) continue;
 		for (let i = 0; i + 1 < literal.text.length; i++) {
 			const a = literal.text.charCodeAt(i);

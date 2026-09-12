@@ -6192,7 +6192,7 @@ export function wrapMetaProperty(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ 'new . target': 413, 'import . meta': 414 }
+				{ 'new.target': 413, 'import.meta': 414 }
 			),
 
 			content() {

@@ -7031,9 +7031,9 @@
         "hoisted": true
       },
       "isParameterless": true,
-      "stampExpression": "\"import . meta\" as const",
+      "stampExpression": "\"import.meta\" as const",
       "word": false,
-      "text": "import . meta"
+      "text": "import.meta"
     },
     {
       "kind": "_meta_property_new_target",
@@ -7045,9 +7045,9 @@
         "hoisted": true
       },
       "isParameterless": true,
-      "stampExpression": "\"new . target\" as const",
+      "stampExpression": "\"new.target\" as const",
       "word": false,
-      "text": "new . target"
+      "text": "new.target"
     },
     {
       "kind": "_module_export_name",

@@ -3954,6 +3954,8 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
+The SEQ join inserts a space only where the lexer needs one: when the last character of the left part and the first of the right are both word characters under `wordCharClass`. A punctuation pair joins tight (`seq('(', ')')` is `()`, not `( )`), a word pair keeps its space (`raw const`), and a `tokenized` context means the parts are one lexeme, so no seam exists at all. The joiner is the same question the render sink answers at write time; there is no fixed joiner string.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::FixedLiteralCtx`
 
 ```text

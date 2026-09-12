@@ -51,10 +51,10 @@ export type LeafStringMap = {
 		| 'tt'
 		| 'ty'
 		| 'vis';
-	[TSKindId.UnitType]: '( )';
+	[TSKindId.UnitType]: '()';
 	[TSKindId.NeverType]: '!';
 	[TSKindId.MutableSpecifier]: 'mut';
-	[TSKindId.UnitExpression]: '( )';
+	[TSKindId.UnitExpression]: '()';
 	[TSKindId.RemainingFieldPattern]: '..';
 	[TSKindId.BooleanLiteral]: 'true' | 'false';
 	['_reserved_identifier']: 'default' | 'union' | 'gen';
@@ -6286,7 +6286,7 @@ export interface CallExpression {
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<
-					'true' | 'false' | 'self' | '( )',
+					'true' | 'false' | 'self' | '()',
 					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.UnitExpression
 			  >
 			| UnaryExpression
@@ -14136,7 +14136,7 @@ export interface EmptyStatementNs extends KeywordNs<
 	EmptyStatementTree,
 	'empty_statement'
 > {}
-export interface UnitTypeNs extends KeywordNs<TSKindId.UnitType, '( )', UnitTypeTree, 'unit_type'> {}
+export interface UnitTypeNs extends KeywordNs<TSKindId.UnitType, '()', UnitTypeTree, 'unit_type'> {}
 export interface NeverTypeNs extends KeywordNs<TSKindId.NeverType, '!', NeverTypeTree, 'never_type'> {}
 export interface MutableSpecifierNs extends KeywordNs<
 	TSKindId.MutableSpecifier,
@@ -14146,7 +14146,7 @@ export interface MutableSpecifierNs extends KeywordNs<
 > {}
 export interface UnitExpressionNs extends KeywordNs<
 	TSKindId.UnitExpression,
-	'( )',
+	'()',
 	UnitExpressionTree,
 	'unit_expression'
 > {}

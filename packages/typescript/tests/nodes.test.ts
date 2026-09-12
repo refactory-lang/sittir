@@ -3075,7 +3075,7 @@ describe('meta_property', () => {
 	it('factory produces correct type', () => {
 		const node = ir.metaProperty({
 			$type: TSKindId.MetaPropertyNewTarget,
-			$text: 'new . target',
+			$text: 'new.target',
 			$source: 2,
 			$named: true
 		} as any);

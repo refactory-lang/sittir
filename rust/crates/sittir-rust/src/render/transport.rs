@@ -18732,7 +18732,7 @@ impl ::sittir_core::render::Render for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::ForExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ConstBlock(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::Literal19_73_65_6c_66 => w.text("self"),
-            CallExpressionFunctionTransportSlot::Literal81_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => w.text("( )"),
+            CallExpressionFunctionTransportSlot::Literal81_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => w.text("()"),
         }
     }
 }
@@ -44949,11 +44949,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "( )".to_string(),
+            ::napi::ValueType::Number => "()".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "( )".to_string())
+                obj.get("$text")?.unwrap_or_else(|| "()".to_string())
             }
         };
         Ok(Self {
@@ -44975,7 +44975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "( )".to_string());
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "()".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -47399,11 +47399,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "( )".to_string(),
+            ::napi::ValueType::Number => "()".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "( )".to_string())
+                obj.get("$text")?.unwrap_or_else(|| "()".to_string())
             }
         };
         Ok(Self {
@@ -47425,7 +47425,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "( )".to_string());
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "()".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -77825,6 +77825,7 @@ fn render_macro_rule(node: &MacroRuleTransport, w: &mut dyn ::sittir_core::rende
     left.render(w)?;
     w.site(node.eq_gt_before.unwrap_or(0));
     w.text("=>")?;
+    w.adjacent();
     w.site(node.eq_gt_after.unwrap_or(0));
     right.render(w)?;
     w.site(node.macro_rule_after.unwrap_or(0));
@@ -78638,6 +78639,7 @@ fn render_scoped_use_list(node: &ScopedUseListTransport, w: &mut dyn ::sittir_co
     path.render(w)?;
     w.site(node.colon_colon_before.unwrap_or(0));
     w.text("::")?;
+    w.adjacent();
     w.site(node.colon_colon_after.unwrap_or(0));
     list.render(w)?;
     w.site(node.scoped_use_list_after.unwrap_or(0));
@@ -78863,6 +78865,7 @@ fn render_for_lifetimes(node: &ForLifetimesTransport, w: &mut dyn ::sittir_core:
     w.site(node.for_keyword_after.unwrap_or(0));
     w.site(node.lt_before.unwrap_or(0));
     w.text("<")?;
+    w.adjacent();
     w.site(node.lt_after.unwrap_or(0));
     lifetimes.render(w)?;
     w.site(node.gt_before.unwrap_or(0));
@@ -78916,6 +78919,7 @@ fn render_generic_function(node: &GenericFunctionTransport, w: &mut dyn ::sittir
     function.render(w)?;
     w.site(node.colon_colon_before.unwrap_or(0));
     w.text("::")?;
+    w.adjacent();
     w.site(node.colon_colon_after.unwrap_or(0));
     type_arguments.render(w)?;
     w.site(node.generic_function_after.unwrap_or(0));
@@ -78939,6 +78943,7 @@ fn render_generic_type_with_turbofish(node: &GenericTypeWithTurbofishTransport, 
     type_.render(w)?;
     w.site(node.colon_colon_before.unwrap_or(0));
     w.text("::")?;
+    w.adjacent();
     w.site(node.colon_colon_after.unwrap_or(0));
     type_arguments.render(w)?;
     w.site(node.generic_type_with_turbofish_after.unwrap_or(0));
@@ -79082,6 +79087,7 @@ fn render_macro_invocation(node: &MacroInvocationTransport, w: &mut dyn ::sittir
     macro_.render(w)?;
     w.site(node.bang_before.unwrap_or(0));
     w.text("!")?;
+    w.adjacent();
     w.site(node.bang_after.unwrap_or(0));
     arguments.render(w)?;
     w.site(node.macro_invocation_after.unwrap_or(0));
@@ -79892,6 +79898,7 @@ fn render_generic_pattern(node: &GenericPatternTransport, w: &mut dyn ::sittir_c
     content.render(w)?;
     w.site(node.colon_colon_before.unwrap_or(0));
     w.text("::")?;
+    w.adjacent();
     w.site(node.colon_colon_after.unwrap_or(0));
     type_arguments.render(w)?;
     w.site(node.generic_pattern_after.unwrap_or(0));
@@ -82283,7 +82290,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (42, 63), (43, 42), (43, 61), (45, 61), (46, 61), (47, 61), (60, 61), (62, 61), (63, 93), (91, 94), (93, 43), (94, 43), (94, 61), (124, 61)]); // "!=" "%=" "&=" "*=" "*?" "+*" "+=" "-=" ".=" "/=" "<=" ">=" "?]" "[^" "]+" "^+" "^=" "|="
+.with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (46, 61), (47, 61), (60, 61), (62, 61), (94, 61), (124, 61)]); // "!=" "%=" "&=" "*=" "+=" "-=" ".=" "/=" "<=" ">=" "^=" "|="
 
 /// Render a transport tree to text. Takes the trait rather than
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through
@@ -82782,7 +82789,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal78_63_61_72_65_74_5f_65_71 => w.text("^="),
             AnyTransport::Literal79_6c_74_5f_6c_74_5f_65_71 => w.text("<<="),
             AnyTransport::Literal80_67_74_5f_67_74_5f_65_71 => w.text(">>="),
-            AnyTransport::Literal81_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => w.text("( )"),
+            AnyTransport::Literal81_75_6e_69_74_5f_65_78_70_72_65_73_73_69_6f_6e => w.text("()"),
             AnyTransport::Literal82_63_6f_6d_6d_61 => w.text(","),
             AnyTransport::Literal83_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => w.text("static"),
             AnyTransport::Literal84_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),

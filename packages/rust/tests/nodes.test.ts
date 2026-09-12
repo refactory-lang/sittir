@@ -4657,7 +4657,7 @@ describe('call_expression sub-factories', () => {
 	it('unitExpression builds the parent', () => {
 		const node = ir.callExpression.unitExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.UnitExpression, $text: '( )', $source: 2, $named: true } as any]
+			function: [{ $type: TSKindId.UnitExpression, $text: '()', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBe(TSKindId.UnitExpression);

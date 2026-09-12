@@ -3015,6 +3015,8 @@ which flushes only a whitespace-token payload; a plain seam payload still
 held at the end of the tree is dropped, so a root node gains no edge
 whitespace.
 
+Takes the generated kind entries so the emitted `with_literal_merge_pairs` table is derived from the tokens the parser actually lexes (`literalMergePairs`), not from every literal the transport projection carries.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
 
 ```text
@@ -5287,6 +5289,8 @@ the parent's.
  */
 ```
 
+Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex probe of its own, so the table and the fixed-literal join can never disagree about a character.
+
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
 A stable SHA-256 hex digest over a set of named files, sorted by name with
@@ -5314,6 +5318,8 @@ the same table, never from `node.renderRule`, so the injected whitespace
 choices are in front of the walk. A run without them (a unit fixture, a
 diagnostic probe) falls back to the normalized rules, which are the same
 rules before injection.
+
+`kindEntries` are the generated kind entries the merge-pair inventory is gated on (`literalMergePairs`); a run without them (a unit fixture) has no merge pairs, which is what the fixtures that stub `isLiteralMergePair` expect.
 
 ### `packages/codegen/src/emitters/templates.ts::separatorTokenOf`
 
@@ -9487,6 +9493,8 @@ there, not by the hoisted flag here.
  * (templates.ts).
  */
 ```
+
+The inventory is the set of literals a parser token spells: a literal counts only when `findEntryForLiteralText` finds a kind entry for its text (an anonymous symbol or a named literal rule). A collapsed sequence's fixed text (`unit_expression`'s `()`) and a PATTERN's regex source are not lexer tokens and contribute no pairs; before this gate they did, and the writer spaced `(` from `)` and `{` from `}` for a hazard no token creates. The kind entries come from the caller: `renderTypedDispatch` receives them, `EmitTemplatesConfig.kindEntries` carries them into the template emitter.
 
 ### `packages/codegen/src/emitters/shared.ts::escForSource`
 

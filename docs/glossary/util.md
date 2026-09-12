@@ -60,6 +60,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/util/word-matcher.ts::wordCharClass`
+
+The one word-character predicate on the codegen side, the twin of the render
+sink's per-character `WordMatcher::is_word`: does `c` continue a word token
+under the Link-pinned `wordMatcher`? Derived by asking the matcher whether it
+consumes two characters when `c` sits beside a plain letter, so the predicate
+follows the grammar's own identifier pattern rather than a fixed class. The
+emitted ASCII table (`wordCharAsciiTable`) and the fixed-literal join
+(`collectFixedLiteral`) both read it; nothing else decides word-ness. Without a
+matcher the class is `\w+`.
+
 ### `packages/codegen/src/util/word-matcher.ts::ruleToRegexSource`
 
 ```text
