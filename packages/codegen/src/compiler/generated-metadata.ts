@@ -92,18 +92,20 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 
 interface GrammarFacts {
 	readonly aliasTargetNames: ReadonlySet<string>;
+	readonly aliasedRuleNames: ReadonlySet<string>;
 	readonly stringLiterals: ReadonlySet<string>;
 	readonly literalRules: ReadonlyMap<string, string>;
 }
 
 function collectGrammarFacts(grammarJson: unknown): GrammarFacts {
 	const aliasTargetNames = new Set<string>();
+	const aliasedRuleNames = new Set<string>();
 	const stringLiterals = new Set<string>();
 	const literalRules = new Map<string, string>();
 	const rules = (grammarJson as { rules?: Record<string, unknown> } | undefined)?.rules;
 	if (rules) {
 		for (const [name, rule] of Object.entries(rules)) {
-			walkGrammarNode(rule, aliasTargetNames, stringLiterals);
+			walkGrammarNode(rule, aliasTargetNames, aliasedRuleNames, stringLiterals);
 			if (
 				rule !== null &&
 				typeof rule === 'object' &&
@@ -114,12 +116,17 @@ function collectGrammarFacts(grammarJson: unknown): GrammarFacts {
 			}
 		}
 	}
-	return { aliasTargetNames, stringLiterals, literalRules };
+	return { aliasTargetNames, aliasedRuleNames, stringLiterals, literalRules };
 }
 
-function walkGrammarNode(node: unknown, aliasTargetNames: Set<string>, stringLiterals: Set<string>): void {
+function walkGrammarNode(
+	node: unknown,
+	aliasTargetNames: Set<string>,
+	aliasedRuleNames: Set<string>,
+	stringLiterals: Set<string>
+): void {
 	if (Array.isArray(node)) {
-		for (const child of node) walkGrammarNode(child, aliasTargetNames, stringLiterals);
+		for (const child of node) walkGrammarNode(child, aliasTargetNames, aliasedRuleNames, stringLiterals);
 		return;
 	}
 	if (node === null || typeof node !== 'object') return;
@@ -127,8 +134,10 @@ function walkGrammarNode(node: unknown, aliasTargetNames: Set<string>, stringLit
 	if (record.type === 'STRING' && typeof record.value === 'string') stringLiterals.add(record.value);
 	if (record.type === 'ALIAS' && record.named === true && typeof record.value === 'string') {
 		aliasTargetNames.add(record.value);
+		const content = record.content as Record<string, unknown> | undefined;
+		if (content?.type === 'SYMBOL' && typeof content.name === 'string') aliasedRuleNames.add(content.name);
 	}
-	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargetNames, stringLiterals);
+	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargetNames, aliasedRuleNames, stringLiterals);
 }
 
 interface SymbolTextFacts {
@@ -158,8 +167,12 @@ function resolveSymbolTextFacts(
 			continue;
 		}
 		if (cName.startsWith('sym_')) {
-			const literalValue = grammar.literalRules.get(cName.slice('sym_'.length));
-			if (literalValue !== undefined) result.set(cName, { text: literalValue, literalRule: true });
+			const ruleName = cName.slice('sym_'.length);
+			const literalValue = grammar.literalRules.get(ruleName);
+			const hiddenAliasTarget = ruleName.startsWith('_') && grammar.aliasedRuleNames.has(ruleName);
+			if (literalValue !== undefined && !hiddenAliasTarget) {
+				result.set(cName, { text: literalValue, literalRule: true });
+			}
 		}
 	}
 	return result;

@@ -221,6 +221,61 @@ static const char * const ts_field_names[] = {
 		expect(entries.find((entry) => entry.id === 13)?.kind).toBe('underscore2');
 	});
 
+	it("keeps a named alias's display name over a hidden rule sharing its anon token, and vice versa", async () => {
+		const grammarJson = {
+			rules: {
+				_wildcard_pattern: { type: 'STRING', value: '_' },
+				complex_pattern: {
+					type: 'CHOICE',
+					members: [
+						{
+							type: 'ALIAS',
+							content: { type: 'SYMBOL', name: '_wildcard_pattern' },
+							named: true,
+							value: 'wildcard_pattern'
+						}
+					]
+				}
+			}
+		};
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+enum ts_symbol_identifiers {
+  sym__wildcard_pattern = 265,
+  anon_sym__ = 12,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym__wildcard_pattern] = "wildcard_pattern",
+  [anon_sym__] = "_",
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c',
+			grammarJson
+		);
+		const entries = collectGeneratedKindEntries(tables);
+
+		// The alias's display name survives on the hidden rule's own row: it is
+		// not clobbered by the underlying literal text of the rule it wraps.
+		const wildcardEntry = entries.find((entry) => entry.kind === '_wildcard_pattern');
+		expect(wildcardEntry?.id).toBe(265);
+		expect(wildcardEntry?.symbolName).toBe('wildcard_pattern');
+		expect(wildcardEntry?.literalRule).toBeUndefined();
+
+		// The plain underscore token keeps its own row and text, unaffected by
+		// the alias sharing the same literal character.
+		const underscoreEntry = entries.find((entry) => entry.kind === 'underscore');
+		expect(underscoreEntry?.id).toBe(12);
+		expect(underscoreEntry?.anon).toBe(true);
+	});
+
 	it('throws when two distinct anonymous symbols derive the same key', async () => {
 		const source = `
 enum ts_symbol_identifiers {

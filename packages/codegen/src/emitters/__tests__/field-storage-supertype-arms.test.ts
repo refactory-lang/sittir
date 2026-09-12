@@ -16,7 +16,7 @@ import { enumArmsOf, resolveFieldStorageInfo, kindEnumTextIdPairs } from '../sha
 const kindEntries = [
 	{ id: 1, kind: 'u8', symbolName: 'u8', anon: true, alias: 'primitive_type' },
 	{ id: 2, kind: 'bool', symbolName: 'bool', anon: true, alias: 'primitive_type' },
-	{ id: 3, kind: 'self', symbolName: 'self', anon: false }
+	{ id: 3, kind: 'self', symbolName: 'self', anon: false, literalRule: true }
 ];
 
 // token_tree: seq(field('tokens', repeat($._token))); _token is a supertype over

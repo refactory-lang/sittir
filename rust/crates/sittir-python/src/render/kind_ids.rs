@@ -595,7 +595,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         262 => "print_chevron_arguments", // "_print_chevron_arguments"
         263 => "print_statement_chevron", // "print_statement_chevron"
         264 => "print_statement_plain", // "print_statement_plain"
-        265 => "_", // "_wildcard_pattern"
+        265 => "wildcard_pattern", // "_wildcard_pattern"
         266 => "simple_pattern_negative", // "_simple_pattern_negative"
         267 => "except_clause_exception_list", // "_except_clause_exception_list"
         268 => "except_clause_exception", // "_except_clause_exception"

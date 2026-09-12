@@ -600,7 +600,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
-		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id ?? idOfName.get(text),
+		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
 		delimiterArmOfId: (id) => {
 			const member = memberOf(types.Delimiter, id);
 			return member === undefined ? undefined : `Delimiter.${member}`;

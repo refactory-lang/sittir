@@ -1009,7 +1009,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[262, 'print_chevron_arguments'],
 	[263, 'print_statement_chevron'],
 	[264, 'print_statement_plain'],
-	[265, '_'],
+	[265, 'wildcard_pattern'],
 	[266, 'simple_pattern_negative'],
 	[267, 'except_clause_exception_list'],
 	[268, 'except_clause_exception'],
@@ -1936,6 +1936,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PrintArguments;
 		case 'print_chevron_arguments':
 			return TSKindId.PrintChevronArguments;
+		case 'wildcard_pattern':
+			return TSKindId.WildcardPattern;
 		case 'simple_pattern_negative':
 			return TSKindId.SimplePatternNegative;
 		case 'except_clause_exception_list':

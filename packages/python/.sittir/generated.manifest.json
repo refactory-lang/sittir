@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "af051eaf946dd02b3efb95ca840bf220440e4dd2ea9b0bb59da92b42c6c203a8",
+  "source_hash": "8c384cdfb7d2ab6b46e2e76af872fba63efd08f5a8c0357612d600dd6427a365",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "9aef21fe7f0338e33096be83679d9bef96e6073be42c4b8bce4954901dee44a3",
     "packages/python/.sittir/grammar.js": "245ede56f0b42ca083c9b68799555a3bfe48a6d907a82c4e60e3abc59f7cffca",
@@ -35,14 +35,14 @@
     "packages/python/src/node-model.json5": "1ee980430e6506add6d110b6e604e3d6e8e039670c6f4c8cfd3f7701e9527032",
     "packages/python/src/options.ts": "9a0f6a984faaa7e885b2491f73af39fbb9e2caeb324d77df93f90daa2c1832c2",
     "packages/python/src/render-engine.ts": "fcc45ec4608a066a7491d575700c3f1d704dfcf4048c8883feeb659a9b569018",
-    "packages/python/src/types.ts": "75d18b3761297ad4b3cb5088a2aa851a7d50031b8b03c15c5685773937c4f8f4",
+    "packages/python/src/types.ts": "1992c28bc663ea0b02999f6a4f63806b08da0723f23153545e5f46e974cb2984",
     "packages/python/src/utils.ts": "91eeb57378c3c69dbdef34333ef56a0ecb5a4eff742db1a4f290430e0c4eeee0",
     "packages/python/src/wrap.ts": "83f82d824028a814a6b4cbc3a184f3baa5146314659bf53d6286d9bbbce1af34",
     "rust/crates/sittir-python/index.d.ts": "ed22ca7d7ce0ceee0e87e179b211d99ba3df01736d7a0604e340eb1f3abbdefe",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "6ca0a8a2c3cc45b0e6dec1743059d24db52c71d635a40decaca39232f750f3b3",
     "rust/crates/sittir-python/src/render/hash.rs": "5f3375f3d826cc81d57de4599041655c1e5b0737b32a9b6b944598a80e166187",
-    "rust/crates/sittir-python/src/render/kind_ids.rs": "c26602e4a8a3b6fe7c3ee7e2d72b7dfe33f9716c69cb1c89709a43fa043265d0",
+    "rust/crates/sittir-python/src/render/kind_ids.rs": "95cdacf2230f0116bfd756f6f1d8cdda62f1e1c145cdd5a2a23479f844646962",
     "rust/crates/sittir-python/src/render/mod.rs": "dfc0341bd2d54b5bcb07095803e9fe77872288f84f839adbf7b032be3a2eb4e6",
     "rust/crates/sittir-python/src/render/options.rs": "244a1b47fd0946db1828bf42cf78dfc67df3b0d142d5fc34f080e776d980259b",
     "rust/crates/sittir-python/src/render/transport.rs": "ca587bbba287c5d869b63ddbeddb43c96a9d427e6a819e7827b9c059dab002db"

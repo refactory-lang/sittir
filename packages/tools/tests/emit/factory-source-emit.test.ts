@@ -24,3 +24,16 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 		expect(source).not.toContain('tokenTreePunctuation');
 	});
 });
+
+describe('emitFactorySourceText (real python grammar)', () => {
+	it('resolves an identifier by text, never by name coincidence with a kind', async () => {
+		const source = await emitFactorySourceText(
+			'python',
+			'def f(x: list) -> None:\n    return None\n',
+			'rebuildF'
+		);
+		expect(source).toContain('ir.identifier("list")');
+		expect(source).toContain('TSKindId.None');
+		expect(source).not.toContain('TSKindId.List');
+	});
+});

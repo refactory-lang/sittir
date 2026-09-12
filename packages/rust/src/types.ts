@@ -1505,13 +1505,13 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[353, 'token_tree_punctuation'],
 	[354, '_token_keywords'],
 	[355, '_use_wildcard_clause'],
-	[356, '_'],
-	[357, '..'],
+	[356, 'wildcard_pattern'],
+	[357, 'range_expression_bare'],
 	[358, 'reference_expression_raw_const'],
 	[359, 'reference_expression_raw_mut'],
 	[360, 'unsafe'],
 	[361, 'impl_item_body'],
-	[362, ';'],
+	[362, 'impl_item_semi'],
 	[363, 'impl_item_positive_clause'],
 	[364, 'impl_item_negative_clause'],
 	[365, 'array_expression_semi'],
@@ -1523,15 +1523,15 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[371, 'visibility_modifier_pub_in_path'],
 	[372, 'function_type_trait_form'],
 	[373, 'function_type_fn_form'],
-	[374, ';'],
+	[374, 'mod_item_external'],
 	[375, 'or_pattern_binary'],
 	[376, 'or_pattern_prefix'],
-	[377, 'const'],
+	[377, 'pointer_type_const'],
 	[378, 'range_expression_binary'],
 	[379, 'range_expression_postfix'],
 	[380, 'range_expression_prefix'],
 	[381, 'expression_statement_with_semi'],
-	[382, ';'],
+	[382, 'foreign_mod_item_semi'],
 	[383, 'match_arm_with_comma'],
 	[384, 'line_comment_regular_dslash'],
 	[385, 'line_comment_doc_outer'],
@@ -1553,11 +1553,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[401, 'macro_definition_brace'],
 	[402, 'range_pattern_prefix'],
 	[403, 'range_pattern_with_left_with_right'],
-	[404, '..'],
+	[404, 'range_pattern_with_left_bare'],
 	[405, 'range_pattern_with_left'],
 	[406, 'struct_item_brace'],
 	[407, 'struct_item_tuple'],
-	[408, ';'],
+	[408, 'struct_item_unit'],
 	[409, 'attributed_field_declaration'],
 	[410, 'attributed_enum_variant'],
 	[411, 'attributed_parameter'],
@@ -2784,12 +2784,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TupleExpressionElements;
 		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
+		case 'wildcard_pattern':
+			return TSKindId.WildcardPattern;
+		case 'range_expression_bare':
+			return TSKindId.RangeExpressionBare;
 		case 'reference_expression_raw_const':
 			return TSKindId.ReferenceExpressionRawConst;
 		case 'reference_expression_raw_mut':
 			return TSKindId.ReferenceExpressionRawMut;
 		case 'impl_item_body':
 			return TSKindId.ImplItemBody;
+		case 'impl_item_semi':
+			return TSKindId.ImplItemSemi;
 		case 'impl_item_positive_clause':
 			return TSKindId.ImplItemPositiveClause;
 		case 'impl_item_negative_clause':
@@ -2812,10 +2818,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FunctionTypeTraitForm;
 		case 'function_type_fn_form':
 			return TSKindId.FunctionTypeFnForm;
+		case 'mod_item_external':
+			return TSKindId.ModItemExternal;
 		case 'or_pattern_binary':
 			return TSKindId.OrPatternBinary;
 		case 'or_pattern_prefix':
 			return TSKindId.OrPatternPrefix;
+		case 'pointer_type_const':
+			return TSKindId.PointerTypeConst;
 		case 'range_expression_binary':
 			return TSKindId.RangeExpressionBinary;
 		case 'range_expression_postfix':
@@ -2824,6 +2834,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RangeExpressionPrefix;
 		case 'expression_statement_with_semi':
 			return TSKindId.ExpressionStatementWithSemi;
+		case 'foreign_mod_item_semi':
+			return TSKindId.ForeignModItemSemi;
 		case 'match_arm_with_comma':
 			return TSKindId.MatchArmWithComma;
 		case 'line_comment_regular_dslash':
@@ -2866,12 +2878,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RangePatternPrefix;
 		case 'range_pattern_with_left_with_right':
 			return TSKindId.RangePatternWithLeftWithRight;
+		case 'range_pattern_with_left_bare':
+			return TSKindId.RangePatternWithLeftBare;
 		case 'range_pattern_with_left':
 			return TSKindId.RangePatternWithLeft;
 		case 'struct_item_brace':
 			return TSKindId.StructItemBrace;
 		case 'struct_item_tuple':
 			return TSKindId.StructItemTuple;
+		case 'struct_item_unit':
+			return TSKindId.StructItemUnit;
 		case 'attributed_field_declaration':
 			return TSKindId.AttributedFieldDeclaration;
 		case 'attributed_enum_variant':
