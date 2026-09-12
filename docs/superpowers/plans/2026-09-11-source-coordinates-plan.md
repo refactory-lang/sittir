@@ -12,6 +12,8 @@
 
 **Lands on:** `docs/superpowers/plans/2026-09-11-typed-render-sink-plan.md`. Every render function already takes `w: &mut dyn RenderSink`, every transport implements `Render`, and the options object crosses as a struct. This plan assumes that state.
 
+**Carried in:** the native reader delivers a field-tagged separator into a mixedEnum array slot (python `for_in_clause.right`, and the singular sibling typescript `for_statement.condition`, which drops its `;` terminator the same way) because wrap's `resolveSlotDrillExprs` drops wire delimiters by separator id for every separated `many` slot but never runs on the native read path. The validator's read-render-parse deep-read only walks a chosen kind set, so it does not see the drop either — that blind spot is carried in along with the defect. Witness: `packages/python/tests/for-in-clause-separator-witness.test.ts` (`it.fails`). This plan's coordinate/gap-classification work is the first place a fix has the right shape to land. Also carried in: blank lines between statements render dropped in all three grammars (python module statements, rust items, typescript statements) even where a `(_)/after: blankline` declaration exists — trivia this plan's gap classification is meant to carry.
+
 ## Global Constraints
 
 - Generated outputs are never hand-edited: `packages/{rust,typescript,python}/src/*`, `packages/*/.sittir/*`, `rust/crates/sittir-{rust,typescript,python}/src/render/*` come from `SITTIR_NATIVE_DEBUG=0 pnpm exec tsx packages/cli/src/cli.ts gen --grammar <g> --all --output packages/<g>/src`. The hand-written crate roots `rust/crates/sittir-<g>/src/lib.rs` are edited by hand.

@@ -9970,10 +9970,10 @@ there, not by the hoisted flag here.
  * `$VAR` → `{{ var }}` translation, and separator-filter selection are
  * all collapsed into that one chokepoint.
  *
- * These emitted files are the canonical authored templates under
- * `packages/{lang}/templates/`. The native Askama copies under
- * `rust/crates/sittir-{lang}/templates/` are derived later by
- * `cli.ts` from this source of truth; never edit those copies by hand.
+ * These emitted files are templates under `packages/{lang}/templates/`
+ * for the retired jinja render pipeline. The live Rust render engine
+ * under `rust/crates/sittir-{lang}/src/render/` is generated separately,
+ * by `render-module.ts` from the render-body IR — not from these files.
  */
 ```
 
@@ -10625,8 +10625,8 @@ lifted out of every arm and emitted once after the gates.
 // dict_pattern_group1's `_key_value_pattern` kv arm). The
 // body's FIRST slot reference is the arm's discriminating
 // presence key, validated against the owning node's slots
-// (never gate on a name absent from the transport struct — an
-// Askama compile error):
+// (never gate on a name absent from the transport struct — the
+// generated Rust body would reference a field that does not exist):
 //  - no reference → nothing gateable (pure-literal arm) → skip;
 //  - reference IS the union slot → the arm is union-covered
 //    (e.g. ts rest_pattern's member_expression arm) — emitting
