@@ -33,11 +33,12 @@ pub use types::KindId;
 // the trait a rendered value implements against it, and the one-writer
 // one-render root call.
 pub use render::{
-    render_to_string, Render, RenderError, RenderResult, RenderSink, WhitespaceTable,
+    render_to_string, CoordinateError, Render, RenderError, RenderResult, RenderSink, SourceTable,
+    WhitespaceTable,
 };
 // Flat re-export for the transport slot carrier — generated transport
 // structs name it at every slot position.
-pub use slot::SlotValue;
+pub use slot::{NodeCoordinate, SlotValue};
 // Flat re-export for the read-expansion selector — grammar crates thread
 // it from the napi surface into `ParsedTree`.
 pub use read_node::ReadDepth;

@@ -106,7 +106,7 @@ const HANDLE_INDEX_MASK: u64 = (1u64 << HANDLE_INDEX_BITS) - 1;
 pub const MAX_TREE_ID: u32 = (1u32 << (53 - HANDLE_INDEX_BITS)) - 1;
 
 /// Pack a tree id and a node index into one self-identifying handle.
-fn encode_handle(tree_id: u32, index: u32) -> u64 {
+pub fn encode_handle(tree_id: u32, index: u32) -> u64 {
     ((tree_id as u64) << HANDLE_INDEX_BITS) | index as u64
 }
 

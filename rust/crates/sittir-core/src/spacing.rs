@@ -139,6 +139,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam: Option<SeamRank>,
     seam_text: String,
     seam_is_token: bool,
+    sources: Option<&'a dyn crate::render::SourceTable>,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -156,6 +157,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam: None,
             seam_text: String::new(),
             seam_is_token: false,
+            sources: None,
         }
     }
 
@@ -168,6 +170,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// The grammar's whitespace vocabulary for [`crate::render::RenderSink::site`].
     /// A render that resolves sites must attach one; a writer with none
     /// attached is a debug-mode bug, not a supported no-table mode.
+    /// The live trees this render may slice. A writer with none refuses every
+    /// coordinate rather than writing nothing in its place.
+    pub fn with_sources(mut self, sources: &'a dyn crate::render::SourceTable) -> Self {
+        self.sources = Some(sources);
+        self
+    }
+
     pub fn with_table(mut self, table: &'a crate::render::WhitespaceTable) -> Self {
         self.table = Some(table);
         self
@@ -330,6 +339,18 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn token_seam(&mut self, text: &str) {
         self.merge_seam(text);
         self.seam_is_token = true;
+    }
+
+    fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
+        let sources = self
+            .sources
+            .ok_or(crate::render::CoordinateError::UnknownTree {
+                handle: coord.handle,
+                tree_id: coord.tree_id(),
+            })?;
+        let text = coord.resolve(sources)?;
+        self.write_chunk(text)?;
+        Ok(())
     }
 
     fn indent(&mut self) {

@@ -5,18 +5,21 @@
 //! output.
 
 use std::fmt;
+use std::sync::Arc;
 
 use crate::spacing::{SpacingWriter, WordMatcher};
 
 #[derive(Debug)]
 pub enum RenderError {
     Fmt(fmt::Error),
+    Coordinate(CoordinateError),
 }
 
 impl fmt::Display for RenderError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
+            Self::Coordinate(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -26,6 +29,12 @@ impl std::error::Error for RenderError {}
 impl From<fmt::Error> for RenderError {
     fn from(e: fmt::Error) -> Self {
         Self::Fmt(e)
+    }
+}
+
+impl From<CoordinateError> for RenderError {
+    fn from(e: CoordinateError) -> Self {
+        Self::Coordinate(e)
     }
 }
 
@@ -39,12 +48,58 @@ pub struct WhitespaceTable {
     pub dedent: u16,
 }
 
+/// The live trees a render may slice, keyed by the tag a handle carries.
+pub trait SourceTable {
+    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>>;
+}
+
+/// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
+/// a coordinate is only meaningful beside the tree that minted it, and the
+/// handle is the only thing that names that tree.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CoordinateError {
+    /// The handle's tag names no tree this engine holds: read elsewhere,
+    /// already disposed, or never parsed.
+    UnknownTree {
+        handle: u64,
+        tree_id: u32,
+    },
+    BadSpan {
+        handle: u64,
+        detail: String,
+    },
+}
+
+impl fmt::Display for CoordinateError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnknownTree { handle, tree_id } => write!(
+                f,
+                "handle {handle} names tree {tree_id}, which this engine does not hold (never parsed, disposed, or read by another engine)"
+            ),
+            Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
+        }
+    }
+}
+
+impl std::error::Error for CoordinateError {}
+
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
     fn adjacent(&mut self);
     fn site(&mut self, kind: u16);
     fn seam(&mut self, text: &str);
     fn token_seam(&mut self, text: &str);
+    /// Write the bytes a coordinate names, from the tree table this writer
+    /// holds. The default refuses: a sink with no source table cannot answer
+    /// a coordinate, and answering it as empty would silently delete source.
+    fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
+        Err(CoordinateError::UnknownTree {
+            handle: coord.handle,
+            tree_id: coord.tree_id(),
+        }
+        .into())
+    }
     fn indent(&mut self);
     /// Shallows the depth; returns whether a payload may still follow (the
     /// indent it closes had text written).
