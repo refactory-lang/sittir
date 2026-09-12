@@ -23,10 +23,9 @@ import type { Rule, StringRule } from '../../types/rule.ts';
 
 const kindEntries: readonly GeneratedKindEntry[] = [
 	{ kind: 'identifier', id: 1 },
-	// Named rule `type` and its anon keyword twin — the #129 collision pair.
 	{ kind: 'type', id: 2 },
-	{ kind: 'type_keyword', id: 3, symbolName: 'type', anon: true },
-	{ kind: 'lt', id: 4, symbolName: '<', anon: true },
+	{ kind: 'type_keyword', id: 3, symbolName: 'type', literalText: 'type', anon: true },
+	{ kind: 'lt', id: 4, symbolName: '<', literalText: '<', anon: true },
 	{ kind: '_simple_statements', id: 5 },
 	{ kind: 'block', id: 6 }
 ];
@@ -63,7 +62,7 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 		expect(v).toMatchObject({ value: '<', resolvedKind: 'lt', resolvedKindId: 4, parseKindId: 4 });
 	});
 
-	it('a STRING whose text collides with a NAMED rule stamps the ANON twin id (#129 pin)', () => {
+	it('a STRING whose text collides with a NAMED rule stamps the ANON twin id', () => {
 		const rule: Rule = { type: STRING, value: 'type' };
 		const [v] = deriveValuesForRule(rule, ctx, 'single');
 		// resolvedKind is the anon token's kind — and the id is the anon id
@@ -165,8 +164,7 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 
 describe('AssembledKeyword / AssembledToken — construction-time id stamp', () => {
 	it('AssembledKeyword reads resolvedKindId from the stamp, not the catalog', () => {
-		// Catalog resolves 'type' to the ANON twin id 3 (#129 pin, see above) —
-		// the stamp deliberately disagrees.
+		// Catalog resolves 'type' to the ANON twin id 3 — the stamp deliberately disagrees.
 		const rule: StringRule = { type: STRING, value: 'type', resolvedKindId: 999 };
 		const node = new AssembledKeyword('type', rule as unknown as StringRule<'link'>, { kindEntries });
 		expect(node.resolvedKindId).toBe(999);

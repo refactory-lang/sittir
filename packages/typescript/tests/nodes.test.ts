@@ -2364,7 +2364,7 @@ describe('member_expression sub-factories', () => {
 			separator: [{ $type: TSKindId.OptionalChain, $text: '?.', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.MemberExpression);
-		expect((node as any).separator()).toBeDefined();
+		expect((node as any).separator()).toBe(TSKindId.OptionalChain);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3403,7 +3403,7 @@ describe('rest_pattern sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.RestPattern);
-		expect((node as any).lhsExpression()).toBeDefined();
+		expect((node as any).lhsExpression()).toBe(TSKindId.Undefined);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -4481,7 +4481,7 @@ describe('required_parameter sub-factories', () => {
 			pattern: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.RequiredParameter);
-		expect((node as any).pattern()).toBeDefined();
+		expect((node as any).pattern()).toBe(TSKindId.This);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4508,7 +4508,7 @@ describe('optional_parameter sub-factories', () => {
 			pattern: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.OptionalParameter);
-		expect((node as any).pattern()).toBeDefined();
+		expect((node as any).pattern()).toBe(TSKindId.This);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4587,7 +4587,7 @@ describe('asserts sub-factories', () => {
 	it('this builds the parent', () => {
 		const node = ir.asserts.this({ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.Asserts);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.This);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -5068,7 +5068,7 @@ describe('type_predicate sub-factories', () => {
 			name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.TypePredicate);
-		expect((node as any).name()).toBeDefined();
+		expect((node as any).name()).toBe(TSKindId.This);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -5194,7 +5194,7 @@ describe('type_query sub-factories', () => {
 	it('this builds the parent', () => {
 		const node = ir.typeQuery.this({ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.TypeQuery);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.This);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -5278,19 +5278,19 @@ describe('literal_type sub-factories', () => {
 	it('true builds the parent', () => {
 		const node = ir.literalType.true({ $type: TSKindId.True, $text: 'true', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.LiteralType);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.True);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('false builds the parent', () => {
 		const node = ir.literalType.false({ $type: TSKindId.False, $text: 'false', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.LiteralType);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.False);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('null builds the parent', () => {
 		const node = ir.literalType.null({ $type: TSKindId.Null, $text: 'null', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.LiteralType);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.Null);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('undefined builds the parent', () => {
@@ -5301,7 +5301,7 @@ describe('literal_type sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.LiteralType);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.Undefined);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

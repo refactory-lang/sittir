@@ -8,10 +8,10 @@ const kindEntries = [
 	{ kind: 'tight', member: 'Tight', id: 167 },
 	{ kind: 'space', member: 'Space', id: 168 },
 	{ kind: 'newline', member: 'Newline', id: 169 },
-	{ kind: 'semi', member: 'Semi', id: 20, symbolName: ';', anon: true },
+	{ kind: 'semi', member: 'Semi', id: 20, symbolName: ';', literalText: ';', anon: true },
 	{ kind: 'automatic_semicolon', member: 'AutomaticSemicolon', id: 160 },
-	{ kind: 'lparen', member: 'Lparen', id: 21, symbolName: '(', anon: true },
-	{ kind: 'rparen', member: 'Rparen', id: 22, symbolName: ')', anon: true }
+	{ kind: 'lparen', member: 'Lparen', id: 21, symbolName: '(', literalText: '(', anon: true },
+	{ kind: 'rparen', member: 'Rparen', id: 22, symbolName: ')', literalText: ')', anon: true }
 ];
 const BASE_KIND_ENTRIES = kindEntries;
 
@@ -88,7 +88,7 @@ describe('planRenderOptions', () => {
 	});
 
 	it('a separator site rides the spacing table under its kind and fills separator_kind', () => {
-		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', anon: true }];
+		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }];
 		const site: SitePreference = {
 			kind: 'object_type_content',
 			slot: 'content',
@@ -124,7 +124,7 @@ describe('planRenderOptions', () => {
 
 describe('renderOptionsRs', () => {
 	it('emits one struct per address branch, a strict deserializer and a straight-line resolver', () => {
-		const kindEntries = [...BASE_KIND_ENTRIES, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', anon: true }];
+		const kindEntries = [...BASE_KIND_ENTRIES, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }];
 		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
 		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);

@@ -551,7 +551,14 @@ function catalogEntriesOf(tables: GeneratedIdTables | undefined): GeneratedKindE
 	return rows.map(([kind, value]) =>
 		typeof value === 'number'
 			? { kind, id: value }
-			: { kind, id: value.id ?? -1, symbolName: value.parser?.symbolName, anon: value.parser?.anon }
+			: {
+					kind,
+					id: value.id ?? -1,
+					symbolName: value.parser?.symbolName,
+					literalText: value.parser?.literalText,
+					literalRule: value.parser?.literalRule,
+					anon: value.parser?.anon
+				}
 	);
 }
 

@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
 
 export function toPascal(kind: string): string {
 	return kind
@@ -16,7 +16,7 @@ export interface KindEnumEntry {
 	readonly id: number;
 	readonly parseId?: number;
 	readonly symbolName?: string;
-	readonly alias?: string;
+	readonly literalText?: string;
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
 }
@@ -50,13 +50,10 @@ export function collectKindEntries(
 		}
 		seenMembers.set(member, kind);
 		const literalRule = row.parser?.literalRule || undefined;
-		const symbolName =
-			row.parser?.symbolName !== undefined && (row.parser.symbolName !== kind || literalRule === true)
-				? row.parser.symbolName
-				: undefined;
-		const alias = row.parser?.aliasedSymbolName;
+		const symbolName = symbolNameIsNotable(row.parser?.symbolName, kind, literalRule) ? row.parser?.symbolName : undefined;
+		const literalText = row.parser?.literalText;
 		const anon = row.parser?.anon ?? false;
-		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, alias, anon: anon || undefined, literalRule });
+		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, literalText, anon: anon || undefined, literalRule });
 	}
 	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
 	return entries;
@@ -127,7 +124,7 @@ interface CatalogRow {
 		readonly cSymbol: string;
 		readonly parserName: string;
 		readonly symbolName?: string;
-		readonly aliasedSymbolName?: string;
+		readonly literalText?: string;
 		readonly literalRule?: boolean;
 		readonly anon: boolean;
 		readonly aux: boolean;

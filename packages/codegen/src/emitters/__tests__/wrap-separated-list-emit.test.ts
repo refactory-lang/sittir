@@ -35,8 +35,8 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 1, kind: 'member_list', member: 'MemberList' },
 	{ id: 2, kind: 'member', member: 'Member' },
-	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', anon: true },
-	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', anon: true }
+	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true },
+	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', literalText: ';', anon: true }
 ];
 
 describe('wrap emitter — separatedList', () => {

@@ -808,7 +808,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[61, 'is_keyword'],
 	[62, 'lambda_keyword'],
 	[63, 'yield_keyword'],
-	[64, '...'],
+	[64, 'ellipsis'],
 	[65, 'escape_sequence'],
 	[66, 'bslash'],
 	[67, 'format_specifier_token1'],
@@ -818,9 +818,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[71, 'print_keyword'],
 	[72, 'async_keyword'],
 	[73, 'await_keyword'],
-	[74, 'True'],
-	[75, 'False'],
-	[76, 'None'],
+	[74, 'true'],
+	[75, 'false'],
+	[76, 'none'],
 	[77, 'comment'],
 	[78, 'line_continuation'],
 	[79, 'semi'],
@@ -866,7 +866,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[119, 'import_from_statement'],
 	[120, 'import_list'],
 	[121, 'aliased_import'],
-	[122, '*'],
+	[122, 'wildcard_import'],
 	[123, 'print_statement'],
 	[124, 'chevron'],
 	[125, 'assert_statement'],
@@ -982,9 +982,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[235, 'not_escape_sequence'],
 	[236, 'format_specifier'],
 	[237, 'await'],
-	[238, '/'],
-	[239, '*'],
-	[240, 'async'],
+	[238, 'positional_separator'],
+	[239, 'keyword_separator'],
+	[240, '_kw_async_marker'],
 	[241, 'simple_statements_elements'],
 	[242, 'subjects'],
 	[243, 'case_patterns'],
@@ -1822,20 +1822,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Tilde;
 		case 'is':
 			return TSKindId.IsKeyword;
-		case '...':
-			return TSKindId.Ellipsis;
 		case '\\':
 			return TSKindId.Bslash;
 		case 'print':
 			return TSKindId.PrintKeyword;
 		case 'async':
 			return TSKindId.AsyncKeyword;
-		case 'True':
-			return TSKindId.True;
-		case 'False':
-			return TSKindId.False;
-		case 'None':
-			return TSKindId.None;
 		case ';':
 			return TSKindId.Semi;
 		case '->':
@@ -4089,7 +4081,9 @@ export interface ComparisonOperatorComparator {
 			| TSKindId.Gt
 			| TSKindId.LtGt
 			| TSKindId.InKeyword
+			| TSKindId._NotIn
 			| TSKindId.IsKeyword
+			| TSKindId._IsNot
 		>;
 		readonly primary_expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>

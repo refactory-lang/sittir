@@ -1030,7 +1030,7 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		// lookup in this function.
 		const entries: GeneratedKindEntry[] = [
 			{ kind: 'type', id: 3 }, // a NAMED kind spelled the same as the literal
-			{ kind: 'type_keyword', id: 4, anon: true, symbolName: 'type' } // the actual anon token for 'type'
+			{ kind: 'type_keyword', id: 4, anon: true, symbolName: 'type', literalText: 'type' } // the actual anon token for 'type'
 		];
 		const misses = noMisses();
 		const rule: Rule<'link'> = { type: STRING, value: 'type' };
@@ -1040,9 +1040,9 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(result.kindId).toBe(4);
 	});
 
-	it('stamps resolvedKindId on a STRING/PATTERN leaf via the same anon-token-first chain', () => {
+	it('stamps resolvedKindId on a STRING via literal text, and on a PATTERN via literal text or kind name', () => {
 		const entries: GeneratedKindEntry[] = [
-			{ kind: 'comma', id: 11, anon: true, symbolName: ',' },
+			{ kind: 'comma', id: 11, anon: true, symbolName: ',', literalText: ',' },
 			{ kind: 'digits', id: 12 }
 		];
 		const misses = noMisses();

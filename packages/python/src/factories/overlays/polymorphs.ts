@@ -4252,7 +4252,15 @@ const _comparisonOperatorComparator$in =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operators'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, operators: value });
+const _comparisonOperatorComparator$notIn =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operators'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operators: value });
 const _comparisonOperatorComparator$is =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operators'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operators: value });
+const _comparisonOperatorComparator$isNot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'operators'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, operators: value });
@@ -4321,7 +4329,23 @@ const _comparisonOperatorComparator: {
 			config: OmitEach<ArgsOf<typeof C.coerceToComparisonOperatorComparator>[0], 'operators'>
 		) => ReturnType<typeof C.coerceToComparisonOperatorComparator>;
 	};
+	notIn: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildComparisonOperatorComparator>[0], 'operators'>
+		) => ReturnType<typeof F.buildComparisonOperatorComparator>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToComparisonOperatorComparator>[0], 'operators'>
+		) => ReturnType<typeof C.coerceToComparisonOperatorComparator>;
+	};
 	is: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildComparisonOperatorComparator>[0], 'operators'>
+		) => ReturnType<typeof F.buildComparisonOperatorComparator>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToComparisonOperatorComparator>[0], 'operators'>
+		) => ReturnType<typeof C.coerceToComparisonOperatorComparator>;
+	};
+	isNot: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildComparisonOperatorComparator>[0], 'operators'>
 		) => ReturnType<typeof F.buildComparisonOperatorComparator>;
@@ -4362,9 +4386,17 @@ const _comparisonOperatorComparator: {
 		strict: _comparisonOperatorComparator$in(F.buildComparisonOperatorComparator, TSKindId.InKeyword),
 		coerce: _comparisonOperatorComparator$in(C.coerceToComparisonOperatorComparator, TSKindId.InKeyword)
 	},
+	notIn: {
+		strict: _comparisonOperatorComparator$notIn(F.buildComparisonOperatorComparator, TSKindId._NotIn),
+		coerce: _comparisonOperatorComparator$notIn(C.coerceToComparisonOperatorComparator, TSKindId._NotIn)
+	},
 	is: {
 		strict: _comparisonOperatorComparator$is(F.buildComparisonOperatorComparator, TSKindId.IsKeyword),
 		coerce: _comparisonOperatorComparator$is(C.coerceToComparisonOperatorComparator, TSKindId.IsKeyword)
+	},
+	isNot: {
+		strict: _comparisonOperatorComparator$isNot(F.buildComparisonOperatorComparator, TSKindId._IsNot),
+		coerce: _comparisonOperatorComparator$isNot(C.coerceToComparisonOperatorComparator, TSKindId._IsNot)
 	}
 };
 

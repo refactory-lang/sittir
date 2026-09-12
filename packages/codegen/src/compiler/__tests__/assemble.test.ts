@@ -990,6 +990,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				cSymbol: `anon_sym_${id}`,
 				parserName: symbolName,
 				symbolName,
+				literalText: symbolName,
 				anon: true,
 				aux: false,
 				alias: false,

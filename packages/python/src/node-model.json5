@@ -3052,7 +3052,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "not in"
+              "value": "not in",
+              "parseKind": "_not_in"
             },
             {
               "kind": "terminal",
@@ -3063,7 +3064,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "is not"
+              "value": "is not",
+              "parseKind": "_is_not"
             }
           ]
         },

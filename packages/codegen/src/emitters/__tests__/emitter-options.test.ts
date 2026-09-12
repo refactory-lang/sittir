@@ -27,8 +27,8 @@ function terminator(kind: string): SitePreference {
 
 describe('renderOptionsModule', () => {
 	const kindEntries = [
-		{ kind: 'comma', member: 'Comma', symbolName: ',', anon: true },
-		{ kind: 'semi', member: 'Semi', symbolName: ';', anon: true },
+		{ kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true },
+		{ kind: 'semi', member: 'Semi', symbolName: ';', literalText: ';', anon: true },
 		{ kind: 'tight', member: 'tight' },
 		{ kind: 'space', member: 'space' },
 		{ kind: 'newline', member: 'newline' }
@@ -72,7 +72,7 @@ describe('renderOptionsModule', () => {
 describe('deriveAddressTables', () => {
 	const addressArm = (arm: PreferenceArm): string => `TSKindId.${arm.kind ?? arm.value}`;
 	const kindEntries = [
-		{ kind: 'lbrace', member: 'Lbrace', symbolName: '{', anon: true },
+		{ kind: 'lbrace', member: 'Lbrace', symbolName: '{', literalText: '{', anon: true },
 		{ kind: 'tight', member: 'Tight' },
 		{ kind: 'space', member: 'Space' }
 	];
@@ -131,7 +131,7 @@ describe('deriveAddressTables', () => {
 	});
 
 	it('rejects a literal and a same-spelled name segment at the same position', () => {
-		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', symbolName: ',', anon: true }];
+		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }];
 		const literalSite: SitePreference = {
 			...site('block', 'lbrace', 'lbrace_after'),
 			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'literal', text: ',' }, { kind: 'name', name: 'after' }]

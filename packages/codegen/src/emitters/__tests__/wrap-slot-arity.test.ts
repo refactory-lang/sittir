@@ -88,8 +88,8 @@ function makeHiddenSupertypeChildrenNodeMap() {
 		'_primitive_type',
 		new AssembledEnum('_primitive_type', primitiveTypeRule, {
 			kindEntries: [
-				{ id: 1, kind: 'u8', symbolName: 'u8', anon: true, alias: 'primitive_type' },
-				{ id: 2, kind: 'bool', symbolName: 'bool', anon: true, alias: 'primitive_type' }
+				{ id: 1, kind: 'u8', symbolName: 'primitive_type', literalText: 'u8', anon: true },
+				{ id: 2, kind: 'bool', symbolName: 'primitive_type', literalText: 'bool', anon: true }
 			]
 		})
 	);

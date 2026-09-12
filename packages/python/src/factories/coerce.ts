@@ -5462,7 +5462,9 @@ export function resolveComparisonOperatorComparator_operators(
 			['>', TSKindId.Gt] as const,
 			['<>', TSKindId.LtGt] as const,
 			['in', TSKindId.InKeyword] as const,
-			['is', TSKindId.IsKeyword] as const
+			['not in', TSKindId._NotIn] as const,
+			['is', TSKindId.IsKeyword] as const,
+			['is not', TSKindId._IsNot] as const
 		]
 	);
 }

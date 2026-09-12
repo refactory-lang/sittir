@@ -2075,19 +2075,19 @@ describe('case_pattern sub-factories', () => {
 	it('true builds the parent', () => {
 		const node = ir.casePattern.true({ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.True);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('false builds the parent', () => {
 		const node = ir.casePattern.false({ $type: TSKindId.False, $text: 'False', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.False);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('none builds the parent', () => {
 		const node = ir.casePattern.none({ $type: TSKindId.None, $text: 'None', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()).toBe(TSKindId.None);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('keywordPattern.negative builds the parent', () => {
@@ -2354,7 +2354,7 @@ describe('keyword_pattern sub-factories', () => {
 			value: [{ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).value()).toBe(TSKindId.True);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('false builds the parent', () => {
@@ -2363,7 +2363,7 @@ describe('keyword_pattern sub-factories', () => {
 			value: [{ $type: TSKindId.False, $text: 'False', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).value()).toBe(TSKindId.False);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('none builds the parent', () => {
@@ -2372,7 +2372,7 @@ describe('keyword_pattern sub-factories', () => {
 			value: [{ $type: TSKindId.None, $text: 'None', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).value()).toBe(TSKindId.None);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negative builds the parent', () => {

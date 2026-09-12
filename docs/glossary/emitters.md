@@ -11182,7 +11182,7 @@ passes the generator's `generatedIdTables` through for that reason.
 // never contain suffix-renamed catalog keys (rust's
 // `block_keyword` — the fragment-specifier keyword, distinct from
 // the `block` rule), so emitters resolving those entries
-// (findKindEntryForLiteral, #129) referenced TSKindId members that
+// (findKindEntryForLiteral) referenced TSKindId members that
 // were never emitted. Fall back to the old list only when no id
 // catalog exists (legacy callers).
 ```

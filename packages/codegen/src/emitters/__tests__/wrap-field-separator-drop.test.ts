@@ -11,7 +11,7 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 1, kind: 'test_node', member: 'TestNode' },
 	{ id: 2, kind: 'identifier', member: 'Identifier' },
 	{ id: 3, kind: 'self', member: 'Self', symbolName: 'self', anon: false },
-	{ id: 4, kind: 'comma', member: 'Comma', symbolName: ',', anon: true }
+	{ id: 4, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }
 ];
 
 // A `many` field with its separator field-tagged inside the slot (the

@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "f6ed22313e05e6c2bdc1af84c5188dc87b90b51052dacb747cbfbc6406d3ab10",
+  "source_hash": "a76f430a1b9a38fe6e58915b3d45ebaacddd015e1720bc76e29023f59c607ce4",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "6c9ac165dbcfcae0c9974cf7b279febce65f2ed9e5ec1fde3d936aa671621211",
     "packages/typescript/.sittir/grammar.js": "87d3484099f0f0ff2a26ccc2e4c890f012588884c2054d79dbecddf401bf5c16",
@@ -26,7 +26,7 @@
     "packages/typescript/src/factories/overlays/polymorphs.ts": "8fd382b6a0bc0b0b4d0d51bed1481b7e22c9a2d61df5f26861e6b32b70eba7ae",
     "packages/typescript/src/factories/overlays/refines.ts": "1a89cdd227fdfd96b6ecc81e502b96f782d474a56ed47379aa2371040c2ff688",
     "packages/typescript/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/typescript/src/factories/raw.ts": "77ef3da901178ff3a6b5ec860d372e2e2b4eaa0cd105a69bb96fce483bf376e1",
+    "packages/typescript/src/factories/raw.ts": "3e1aae5b4d8bc36676af525b23da6a06ef0064bdf7d1e901568112f85644cf9f",
     "packages/typescript/src/grammar.ts": "b55f5f55ff94568f549bc73b33ff2b28c3496fdd780a4855cf6424fa0260ea10",
     "packages/typescript/src/hash.ts": "cd5921d57e17d3c2fbbe5c53fe35caabf4d69a01c2eef4e91380405ecd74c406",
     "packages/typescript/src/index.ts": "dde8f93f6c1ee1f11445d8814046d1a2935cbc3166266058f75e29326c3e200c",
@@ -35,14 +35,14 @@
     "packages/typescript/src/node-model.json5": "c596bb5bb86bb8cafd731ec5e0b39d86c7b624c87c921e9ffc5c455d3292a576",
     "packages/typescript/src/options.ts": "1d5dc5848f5e9e23a4ca0da675537abd544431f6b7a597c8343a3bca04a86058",
     "packages/typescript/src/render-engine.ts": "c2b1e35bcd43cb1e69a8ad49475cb8b5fd9c64dcf6120681c44acb9c3c7dc33f",
-    "packages/typescript/src/types.ts": "65680bd61229b52e834533b27e7ce95710ecf4d928d16e093a24a5b07544f0f2",
+    "packages/typescript/src/types.ts": "f7f730e49b879484e39ce26b0bd3d9dd84451faf3cf830a5538f091b240740ef",
     "packages/typescript/src/utils.ts": "91eeb57378c3c69dbdef34333ef56a0ecb5a4eff742db1a4f290430e0c4eeee0",
     "packages/typescript/src/wrap.ts": "ebd32d5b4273f19d956b01ac7d1c0d01dbd069c1f091fbf30bce044742604182",
     "rust/crates/sittir-typescript/index.d.ts": "e911d345c181cc93333f2305ba2cf90a98f9523d94748e4e29abb7756210451d",
     "rust/crates/sittir-typescript/index.js": "81302159cbccdd486f6a9e17d7103b77d1d0fd14788a674a6a1f43a67b7fbbc9",
     "rust/crates/sittir-typescript/src/lib.rs": "879089e60beb17b76ddbef841af0b9d88f6fc25a080c69eeb6c993a10b4107c6",
     "rust/crates/sittir-typescript/src/render/hash.rs": "960bd40d6c7b454b80a0ab4e71e93f8ee0736a4e5b72c8ad80e51d7f755d4265",
-    "rust/crates/sittir-typescript/src/render/kind_ids.rs": "86a7899af36452622257850b7355334607c03a9019de16047bd67d69d244a29c",
+    "rust/crates/sittir-typescript/src/render/kind_ids.rs": "6f2272c55faf286fb0910de489beca90b2183c4e2804ca41599e010f3f265d19",
     "rust/crates/sittir-typescript/src/render/mod.rs": "bbce90c45f59fb49d0c5ae0c934cb843b9786eb6eecf32300357531fe5ef3517",
     "rust/crates/sittir-typescript/src/render/options.rs": "146eb95f7463d427a10242cfaecfd89ec5b4baada4434bc44a819715bb45c874",
     "rust/crates/sittir-typescript/src/render/transport.rs": "900cd7194bd6c6d1476c6bf55b91ecd3675b2f937f1433f07be288a72b484a9f"

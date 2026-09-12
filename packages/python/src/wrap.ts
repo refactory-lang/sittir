@@ -8985,14 +8985,28 @@ export function wrapComparisonOperatorComparator(
 							TSKindId.Gt,
 							TSKindId.LtGt,
 							TSKindId.InKeyword,
-							TSKindId.IsKeyword
+							TSKindId._NotIn,
+							TSKindId.IsKeyword,
+							TSKindId._IsNot
 						]),
 					'operators',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operators', span: (data as _NodeData).$span }
 				),
-				{ '<': 94, '<=': 95, '==': 96, '!=': 97, '>=': 98, '>': 99, '<>': 100, in: 25, is: 61 }
+				{
+					'<': 94,
+					'<=': 95,
+					'==': 96,
+					'!=': 97,
+					'>=': 98,
+					'>': 99,
+					'<>': 100,
+					in: 25,
+					'not in': 194,
+					is: 61,
+					'is not': 195
+				}
 			),
 			_primary_expression: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(

@@ -381,9 +381,9 @@ pub enum AnyTransport {
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
     Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
-    Literal50_6e_6f_74_20_69_6e,
+    Literal50_5f_6e_6f_74_5f_69_6e,
     Literal51_69_73_5f_6b_65_79_77_6f_72_64,
-    Literal52_69_73_20_6e_6f_74,
+    Literal52_5f_69_73_5f_6e_6f_74,
 }
 
 impl ::sittir_core::options::FillOptions for AnyTransport {
@@ -704,9 +704,9 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal47_67_74 => {}
             AnyTransport::Literal48_6c_74_5f_67_74 => {}
             AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
-            AnyTransport::Literal50_6e_6f_74_20_69_6e => {}
+            AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => {}
             AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
-            AnyTransport::Literal52_69_73_20_6e_6f_74 => {}
+            AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => {}
         }
     }
 }
@@ -1780,10 +1780,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 )),
                 // literal kind: _newline → "\n"
                 317 => Ok(AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65),
-                // literal kind: not in → "not in"
-                194 => Ok(AnyTransport::Literal50_6e_6f_74_20_69_6e),
-                // literal kind: is not → "is not"
-                195 => Ok(AnyTransport::Literal52_69_73_20_6e_6f_74),
+                // literal kind: _not_in → "not in"
+                194 => Ok(AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e),
+                // literal kind: _is_not → "is not"
+                195 => Ok(AnyTransport::Literal52_5f_69_73_5f_6e_6f_74),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in AnyTransport"
                 ))),
@@ -20052,9 +20052,9 @@ pub enum ComparisonOperatorComparatorOperatorsTransportSlot {
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
     Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
-    Literal50_6e_6f_74_20_69_6e,
+    Literal50_5f_6e_6f_74_5f_69_6e,
     Literal51_69_73_5f_6b_65_79_77_6f_72_64,
-    Literal52_69_73_20_6e_6f_74,
+    Literal52_5f_69_73_5f_6e_6f_74,
 }
 
 impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorOperatorsTransportSlot {
@@ -20068,9 +20068,9 @@ impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorOperato
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_6e_6f_74_20_69_6e => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_69_73_20_6e_6f_74 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => {}
         }
     }
 }
@@ -20092,9 +20092,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
                     25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
-                    194 => Ok(Self::Literal50_6e_6f_74_20_69_6e),
+                    194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
                     61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
-                    195 => Ok(Self::Literal52_69_73_20_6e_6f_74),
+                    195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -20114,9 +20114,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
                     25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
-                    194 => Ok(Self::Literal50_6e_6f_74_20_69_6e),
+                    194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
                     61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
-                    195 => Ok(Self::Literal52_69_73_20_6e_6f_74),
+                    195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
                     ))),
@@ -20167,9 +20167,9 @@ fn comparison_operator_comparator_operators_transport_slot_to_any(t: ComparisonO
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => AnyTransport::Literal47_67_74,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => AnyTransport::Literal48_6c_74_5f_67_74,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_6e_6f_74_20_69_6e => AnyTransport::Literal50_6e_6f_74_20_69_6e,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_69_73_20_6e_6f_74 => AnyTransport::Literal52_69_73_20_6e_6f_74,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => AnyTransport::Literal52_5f_69_73_5f_6e_6f_74,
     }
 }
 
@@ -20184,9 +20184,9 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTran
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => w.text(">"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => w.text("<>"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_6e_6f_74_20_69_6e => w.text("not in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_69_73_20_6e_6f_74 => w.text("is not"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
         }
     }
 }
@@ -48003,9 +48003,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal47_67_74 => w.text(">"),
             AnyTransport::Literal48_6c_74_5f_67_74 => w.text("<>"),
             AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
-            AnyTransport::Literal50_6e_6f_74_20_69_6e => w.text("not in"),
+            AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
             AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
-            AnyTransport::Literal52_69_73_20_6e_6f_74 => w.text("is not"),
+            AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
         }
     }
 }

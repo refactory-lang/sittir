@@ -523,7 +523,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	}
 	const seenCases = new Set(entries.map((e) => e.kind));
 	for (const entry of entries) {
-		const parserTypeString = entry.alias ?? entry.symbolName;
+		const parserTypeString = entry.symbolName;
 		if (!parserTypeString) continue;
 		if (seenCases.has(parserTypeString)) continue;
 		seenCases.add(parserTypeString);

@@ -106,7 +106,7 @@ export function planRenderOptions(
 		}
 		if (site.source === 'separator') {
 			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
-			if (defaultEntry?.symbolName === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
+			if (defaultEntry?.literalText === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
 			spacing.push({
 				kind,
 				slot: site.slot,
@@ -118,7 +118,7 @@ export function planRenderOptions(
 				defaultId: idOf(kindEntries, site.defaultArm, at),
 				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
 				role: 'separator',
-				defaultText: defaultEntry.symbolName
+				defaultText: defaultEntry.literalText
 			});
 			continue;
 		}

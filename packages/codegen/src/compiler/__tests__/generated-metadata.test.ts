@@ -221,20 +221,16 @@ static const char * const ts_field_names[] = {
 		expect(entries.find((entry) => entry.id === 13)?.kind).toBe('underscore2');
 	});
 
-	it("keeps a named alias's display name over a hidden rule sharing its anon token, and vice versa", async () => {
+	it("a literal rule's display name naming a NAMED alias elsewhere is the parser-stated alias case; a display name with no named-alias claimant is the plain literal-rule case", async () => {
 		const grammarJson = {
 			rules: {
 				_wildcard_pattern: { type: 'STRING', value: '_' },
+				_kw_pass: { type: 'STRING', value: 'pass' },
 				complex_pattern: {
-					type: 'CHOICE',
-					members: [
-						{
-							type: 'ALIAS',
-							content: { type: 'SYMBOL', name: '_wildcard_pattern' },
-							named: true,
-							value: 'wildcard_pattern'
-						}
-					]
+					type: 'ALIAS',
+					content: { type: 'SYMBOL', name: '_wildcard_pattern' },
+					named: true,
+					value: 'wildcard_pattern'
 				}
 			}
 		};
@@ -242,11 +238,13 @@ static const char * const ts_field_names[] = {
 			`
 enum ts_symbol_identifiers {
   sym__wildcard_pattern = 265,
+  sym__kw_pass = 266,
   anon_sym__ = 12,
 };
 
 static const char * const ts_symbol_names[] = {
   [sym__wildcard_pattern] = "wildcard_pattern",
+  [sym__kw_pass] = "_kw_pass",
   [anon_sym__] = "_",
 };
 
@@ -262,18 +260,66 @@ static const char * const ts_field_names[] = {
 		);
 		const entries = collectGeneratedKindEntries(tables);
 
-		// The alias's display name survives on the hidden rule's own row: it is
-		// not clobbered by the underlying literal text of the rule it wraps.
+		// 'wildcard_pattern' is a NAMED alias target elsewhere in the grammar:
+		// the alias's own display name survives, not clobbered by the literal
+		// text of the hidden rule it wraps.
 		const wildcardEntry = entries.find((entry) => entry.kind === '_wildcard_pattern');
 		expect(wildcardEntry?.id).toBe(265);
 		expect(wildcardEntry?.symbolName).toBe('wildcard_pattern');
 		expect(wildcardEntry?.literalRule).toBeUndefined();
+
+		// '_kw_pass' names no alias anywhere: it is the plain literal-rule
+		// case, and stamps its own text even though its display name
+		// ('_kw_pass') differs from nothing (it equals the rule name here).
+		const kwPassEntry = entries.find((entry) => entry.kind === '_kw_pass');
+		expect(kwPassEntry?.id).toBe(266);
+		expect(kwPassEntry?.literalText).toBe('pass');
+		expect(kwPassEntry?.literalRule).toBe(true);
 
 		// The plain underscore token keeps its own row and text, unaffected by
 		// the alias sharing the same literal character.
 		const underscoreEntry = entries.find((entry) => entry.kind === 'underscore');
 		expect(underscoreEntry?.id).toBe(12);
 		expect(underscoreEntry?.anon).toBe(true);
+	});
+
+	it('stamps a literal rule whose display name differs from its rule name via an UNNAMED alias site elsewhere (no named-alias claimant)', async () => {
+		const grammarJson = {
+			rules: {
+				_is_not: { type: 'SEQ', members: [{ type: 'STRING', value: 'is' }, { type: 'STRING', value: 'not' }] },
+				comparator: {
+					type: 'ALIAS',
+					content: { type: 'SYMBOL', name: '_is_not' },
+					named: false,
+					value: 'is not'
+				}
+			}
+		};
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+enum ts_symbol_identifiers {
+  sym__is_not = 195,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym__is_not] = "is not",
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c',
+			grammarJson
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		const isNotEntry = entries.find((entry) => entry.kind === '_is_not');
+		expect(isNotEntry?.id).toBe(195);
+		expect(isNotEntry?.literalText).toBe('is not');
+		expect(isNotEntry?.literalRule).toBe(true);
 	});
 
 	it('throws when two distinct anonymous symbols derive the same key', async () => {
@@ -297,6 +343,62 @@ static const char * const ts_field_names[] = {
 `;
 		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c')).rejects.toThrow(
 			"generated-metadata: key 'false_keyword' names both 'anon_sym_False' and 'anon_sym_false'"
+		);
+	});
+
+	it('throws when an anonymous token and a named rule derive the same key', async () => {
+		const source = `
+enum ts_symbol_identifiers {
+  sym_true_keyword = 30,
+  anon_sym_true = 31,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym_true_keyword] = "true_keyword",
+  [anon_sym_true] = "true",
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`;
+		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c')).rejects.toThrow(
+			"generated-metadata: key 'true_keyword' names both anonymous token \"true\" (anon_sym_true) and kind 'true_keyword' (sym_true_keyword)"
+		);
+	});
+
+	it('throws when an aliased anonymous token has no matching verbatim literal anywhere in the grammar', async () => {
+		const grammarJson = {
+			rules: {
+				renamed_thing: {
+					type: 'ALIAS',
+					content: { type: 'SYMBOL', name: '_raw_thing' },
+					named: true,
+					value: 'renamed_thing'
+				}
+			}
+		};
+		const source = `
+enum ts_symbol_identifiers {
+  anon_sym_UNVERIFIED = 40,
+};
+
+static const char * const ts_symbol_names[] = {
+  [anon_sym_UNVERIFIED] = "renamed_thing",
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`;
+		await expect(deriveGeneratedIdTablesFromParserCSource(source, 'parser.c', grammarJson)).rejects.toThrow(
+			'generated-metadata: aliased token anon_sym_UNVERIFIED (display "renamed_thing") has no verbatim literal'
 		);
 	});
 });

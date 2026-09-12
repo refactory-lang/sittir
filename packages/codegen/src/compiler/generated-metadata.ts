@@ -26,7 +26,7 @@ export interface GeneratedKindEntry {
 	readonly id: number;
 	readonly parseId?: number;
 	readonly symbolName?: string;
-	readonly alias?: string;
+	readonly literalText?: string;
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
 }
@@ -92,41 +92,43 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 
 interface GrammarFacts {
 	readonly aliasTargetNames: ReadonlySet<string>;
-	readonly aliasedRuleNames: ReadonlySet<string>;
 	readonly stringLiterals: ReadonlySet<string>;
 	readonly literalRules: ReadonlyMap<string, string>;
 }
 
 function collectGrammarFacts(grammarJson: unknown): GrammarFacts {
 	const aliasTargetNames = new Set<string>();
-	const aliasedRuleNames = new Set<string>();
 	const stringLiterals = new Set<string>();
 	const literalRules = new Map<string, string>();
 	const rules = (grammarJson as { rules?: Record<string, unknown> } | undefined)?.rules;
 	if (rules) {
 		for (const [name, rule] of Object.entries(rules)) {
-			walkGrammarNode(rule, aliasTargetNames, aliasedRuleNames, stringLiterals);
-			if (
-				rule !== null &&
-				typeof rule === 'object' &&
-				(rule as Record<string, unknown>).type === 'STRING' &&
-				typeof (rule as Record<string, unknown>).value === 'string'
-			) {
-				literalRules.set(name, (rule as Record<string, unknown>).value as string);
-			}
+			const literalValue = literalRuleValue(rule);
+			if (literalValue !== undefined) literalRules.set(name, literalValue);
+		}
+		for (const rule of Object.values(rules)) {
+			walkGrammarNode(rule, aliasTargetNames, stringLiterals, literalRules);
 		}
 	}
-	return { aliasTargetNames, aliasedRuleNames, stringLiterals, literalRules };
+	return { aliasTargetNames, stringLiterals, literalRules };
+}
+
+function literalRuleValue(rule: unknown): string | undefined {
+	if (rule === null || typeof rule !== 'object') return undefined;
+	const record = rule as Record<string, unknown>;
+	if (record.type === 'STRING' && typeof record.value === 'string') return record.value;
+	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') return record.value;
+	return undefined;
 }
 
 function walkGrammarNode(
 	node: unknown,
 	aliasTargetNames: Set<string>,
-	aliasedRuleNames: Set<string>,
-	stringLiterals: Set<string>
+	stringLiterals: Set<string>,
+	literalRules: Map<string, string>
 ): void {
 	if (Array.isArray(node)) {
-		for (const child of node) walkGrammarNode(child, aliasTargetNames, aliasedRuleNames, stringLiterals);
+		for (const child of node) walkGrammarNode(child, aliasTargetNames, stringLiterals, literalRules);
 		return;
 	}
 	if (node === null || typeof node !== 'object') return;
@@ -134,15 +136,16 @@ function walkGrammarNode(
 	if (record.type === 'STRING' && typeof record.value === 'string') stringLiterals.add(record.value);
 	if (record.type === 'ALIAS' && record.named === true && typeof record.value === 'string') {
 		aliasTargetNames.add(record.value);
-		const content = record.content as Record<string, unknown> | undefined;
-		if (content?.type === 'SYMBOL' && typeof content.name === 'string') aliasedRuleNames.add(content.name);
 	}
-	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargetNames, aliasedRuleNames, stringLiterals);
+	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') {
+		const content = record.content as Record<string, unknown> | undefined;
+		if (content?.type === 'SYMBOL' && typeof content.name === 'string') literalRules.set(content.name, record.value as string);
+	}
+	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargetNames, stringLiterals, literalRules);
 }
 
 interface SymbolTextFacts {
-	readonly text: string;
-	readonly aliasedDisplayName?: string;
+	readonly literalText: string;
 	readonly literalRule?: boolean;
 }
 
@@ -160,22 +163,30 @@ function resolveSymbolTextFacts(
 						`generated-metadata: aliased token ${cName} (display ${JSON.stringify(displayName)}) has no verbatim literal`
 					);
 				}
-				result.set(cName, { text: rawSuffix, aliasedDisplayName: displayName });
+				result.set(cName, { literalText: rawSuffix });
 				continue;
 			}
-			result.set(cName, { text: displayName });
+			result.set(cName, { literalText: displayName });
 			continue;
 		}
 		if (cName.startsWith('sym_')) {
 			const ruleName = cName.slice('sym_'.length);
 			const literalValue = grammar.literalRules.get(ruleName);
-			const hiddenAliasTarget = ruleName.startsWith('_') && grammar.aliasedRuleNames.has(ruleName);
-			if (literalValue !== undefined && !hiddenAliasTarget) {
-				result.set(cName, { text: literalValue, literalRule: true });
-			}
+			if (literalValue === undefined) continue;
+			const isNamedAliasTarget = grammar.aliasTargetNames.has(displayName);
+			if (isNamedAliasTarget) continue;
+			result.set(cName, { literalText: literalValue, literalRule: true });
 		}
 	}
 	return result;
+}
+
+export function symbolNameIsNotable(
+	symbolName: string | undefined,
+	kind: string,
+	literalRule: boolean | undefined
+): boolean {
+	return symbolName !== undefined && (symbolName !== kind || literalRule === true);
 }
 
 export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefined): readonly GeneratedKindEntry[] {
@@ -186,12 +197,10 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 			kind,
 			id: entry.id!,
 			parseId: entry.parseId,
-			symbolName:
-				entry.parser?.symbolName !== undefined &&
-				(entry.parser.symbolName !== kind || entry.parser.literalRule === true)
-					? entry.parser.symbolName
-					: undefined,
-			alias: entry.parser?.aliasedSymbolName,
+			symbolName: symbolNameIsNotable(entry.parser?.symbolName, kind, entry.parser?.literalRule)
+				? entry.parser?.symbolName
+				: undefined,
+			literalText: entry.parser?.literalText,
 			anon: entry.parser?.anon || undefined,
 			literalRule: entry.parser?.literalRule || undefined
 		}));
@@ -200,6 +209,7 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 export interface KindEntryLike {
 	readonly kind: string;
 	readonly symbolName?: string;
+	readonly literalText?: string;
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
 }
@@ -218,14 +228,18 @@ export function findAnonEntryForLiteralText<T extends KindEntryLike>(
 	entries: readonly T[],
 	text: string
 ): T | undefined {
-	return entries.find((entry) => entry.anon === true && entry.symbolName === text);
+	return entries.find((entry) => entry.anon === true && entry.literalText === text);
 }
 
 export function findEntryForLiteralText<T extends KindEntryLike>(entries: readonly T[], text: string): T | undefined {
 	return (
 		findAnonEntryForLiteralText(entries, text) ??
-		entries.find((entry) => entry.literalRule === true && entry.symbolName === text)
+		entries.find((entry) => entry.literalRule === true && entry.literalText === text)
 	);
+}
+
+export function findEntryForPatternValue<T extends KindEntryLike>(entries: readonly T[], value: string): T | undefined {
+	return findEntryForLiteralText(entries, value) ?? findEntryForKindName(entries, value);
 }
 
 function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {
@@ -395,8 +409,8 @@ function createParserMetadata(
 	return {
 		cSymbol: entry.cName,
 		parserName,
-		symbolName: facts ? facts.text : names.get(entry.cName),
-		aliasedSymbolName: facts?.aliasedDisplayName,
+		symbolName: names.get(entry.cName),
+		literalText: facts?.literalText,
 		literalRule: facts?.literalRule,
 		anon: entry.cName.startsWith('anon_sym_'),
 		aux: entry.cName.startsWith('aux_sym_'),
@@ -415,7 +429,7 @@ function deriveSymbolRuntimeName(symbolTextFacts: ReadonlyMap<string, SymbolText
 		if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
 		if (cName.startsWith('anon_sym_')) {
 			const base = cName.slice('anon_sym_'.length).toLowerCase();
-			const text = symbolTextFacts.get(cName)?.text;
+			const text = symbolTextFacts.get(cName)?.literalText;
 			if (text === undefined || cName !== `anon_sym_${text}`) return base;
 			if (/[^_]/.test(text)) return `${base}_keyword`;
 			return text.length <= 1 ? 'underscore' : `underscore${text.length}`;
