@@ -481,7 +481,6 @@ export const ir: {
 	readonly stringStart: typeof F.buildStringStart;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
-	readonly except: typeof F.buildExcept;
 	readonly as: typeof F.asPattern;
 	readonly assert: typeof F.assertStatement;
 	readonly binary: typeof F.binaryOperator;
@@ -700,7 +699,6 @@ export const ir: {
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
-	except: F.buildExcept,
 
 	// Supertype-stripped short aliases
 	as: F.asPattern,

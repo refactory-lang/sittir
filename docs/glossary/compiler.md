@@ -3325,7 +3325,9 @@ parents.
 
 ```text
 /**
- * The ANONYMOUS token whose display text is exactly this string, or
+ * The ANONYMOUS token whose verbatim literal text (`literalText`, never
+ * `symbolName` — that is the parser's display name, which for an aliased
+ * anon token differs from the text it lexes) is exactly this string, or
  * `undefined`. The strict half of the literal-text chain: it answers "does
  * the grammar already lex this text as an anonymous token?" and never falls
  * back to the kind-name chain.
@@ -3342,12 +3344,48 @@ parents.
 ```text
 /**
  * THE literal-text resolution chain — for callers holding a LITERAL TOKEN
- * TEXT (a `STRING` rule's value / enum member text). The anon-scoped
- * symbolName match runs FIRST: the caller holds a literal, so the anonymous
- * token is the correct identity even when a NAMED rule shares the spelling
- * (#129: python's `'type'` keyword vs the `type` rule). Falls back to the
- * full name chain for literals with no anon twin — named terminal keywords
- * (rust `'crate'`/`'self'`) and hidden named compound tokens (`'is not'`).
+ * TEXT (a `STRING` rule's value / enum member text), matched against each
+ * entry's `literalText` (its verbatim text, distinct from `symbolName`, the
+ * parser's display name). The anon-scoped match runs FIRST: the caller holds
+ * a literal, so the anonymous token is the correct identity even when a
+ * NAMED rule shares the spelling (python's `'type'` keyword vs the `type`
+ * rule). Falls back to the literal-rule chain for literals with no anon
+ * twin — a named rule whose body is exactly a bare STRING or an unnamed
+ * ALIAS (rust `'crate'`/`'self'`, python's `'is not'`/`'not in'`).
+ */
+```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForPatternValue`
+
+```text
+/**
+ * A PATTERN rule's value may name either a literal token's text or a kind
+ * directly by name (unlike a STRING, whose value is always literal text).
+ * Tries the literal-text chain first, then falls back to the kind-name
+ * chain.
+ */
+```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::literalRuleValue`
+
+```text
+/**
+ * The literal text a grammar-JSON rule node stands for, when the node is
+ * itself a bare `STRING` or an unnamed `ALIAS` wrapping one — the two rule
+ * shapes tree-sitter treats as a literal for aliasing purposes. Returns
+ * `undefined` for every other rule shape.
+ */
+```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::walkGrammarNode`
+
+```text
+/**
+ * One pass over the grammar-JSON rule tree, collecting every `STRING`
+ * value, every named-ALIAS target name, and every unnamed-ALIAS-of-a-SYMBOL
+ * pair (the literal-rule chain `findEntryForLiteralText` falls back to).
+ * Recurses into arrays and every object value uniformly, since a rule tree
+ * has no fixed shape by node type.
  */
 ```
 
@@ -10288,10 +10326,12 @@ the set from that annotation alone.
 			   not already covered by `existing`, the alias's id — not the hidden
 			   rule's — is what `$type` dispatch must key on for that name.
 			   (Cascade: prefer a real `sym_<name>` under that exact visible name
-			   if one exists elsewhere in the catalog —
-			   `shouldReplaceSymbol`/the anon-swap branch above already handle
-			   that case before we ever get here — falling back to the alias's id
-			   only when nothing else claims the name.) */
+			   if one exists elsewhere in the catalog — `shouldReplaceSymbol`
+			   already handles that case before we ever get here — falling back
+			   to the alias's id only when nothing else claims the name. An
+			   anonymous and a named entry reaching the same key here, after
+			   keyword-suffixing has already run, is a genuine naming collision:
+			   `joinIdNames` throws rather than inventing a second name for it.) */
 ```
 
 #### body
@@ -10305,22 +10345,99 @@ the set from that annotation alone.
 				   on, since that's what tree-sitter really emits. */
 ```
 
-### `packages/codegen/src/compiler/generated-metadata.ts::deriveSymbolRuntimeName`
-
-#### body
+### `packages/codegen/src/compiler/generated-metadata.ts::collectGrammarFacts`
 
 ```text
-/* Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
-	   arrive in parser.c with all-caps tail names. Lowercase them so the
-	   catalog `key` is consistently snake-case across all kinds (aligns with
-	   `call_expression`, `_array_expression_list`, etc.) and the downstream
-	   PascalCase / SCREAMING_SNAKE_CASE conversions produce sane identifiers.
-	   Without this, `LPAREN` stays uppercase, the `toScreamingSnakeCase`
-	   regex inserts `_` before every letter, and the emitted Rust constant
-	   becomes `L_P_A_R_E_N` instead of `LPAREN`. The original C-side name is
-	   preserved in `parser.cSymbol`; the literal punctuation text is
-	   preserved in `parser.symbolName`. */
+/**
+ * Ground truth for a symbol's literal text and alias status, read once from
+ * the compiled grammar.json rather than re-derived per symbol: which
+ * `ALIAS` nodes target a given display name (`aliasTargetNames`), which
+ * `STRING` values exist anywhere in the grammar (`stringLiterals`, used to
+ * verify an aliased anon token's raw C suffix is a real literal, never
+ * guessed), and which named rules are themselves nothing but a literal — a
+ * bare STRING body or an unnamed ALIAS body (`literalRules`, keyed by rule
+ * name). The alias TARGET side is all this collects; whether a given rule
+ * IS the alias source is decided later, at the symbol, by comparing the
+ * parser's own display name against the rule name derived from the C symbol
+ * (see `resolveSymbolTextFacts`) — never by re-walking the grammar tree for
+ * `ALIAS` content a second time.
+ */
 ```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::resolveSymbolTextFacts`
+
+```text
+/**
+ * Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed
+ * into `createParserMetadata`. `symbolName` (the parser's own display name)
+ * is never touched here — it comes straight from `ts_symbol_names[]`
+ * unconditionally, in every case, aliased or not. This resolves the
+ * SEPARATE fact `literalText`: for `anon_sym_*`, the display name itself
+ * when unaliased, or the verified raw C suffix (checked against
+ * `stringLiterals`; throws if it is not a real literal anywhere in the
+ * grammar) when the display name is an alias target. For `sym_*`, present
+ * only when the rule is a bare-literal rule (`literalRules`) AND the
+ * parser's display name for that symbol equals the rule name parsed from
+ * `cName` — a mismatch means tree-sitter compiled this rule's hidden body
+ * into the SAME symbol id as a differently-named alias elsewhere (python's
+ * `_wildcard_pattern` compiling into the `wildcard_pattern` alias symbol),
+ * and the alias's own display name must survive untouched, not be
+ * overwritten by the literal text of the rule it wraps.
+ */
+```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::symbolNameIsNotable`
+
+```text
+/**
+ * Whether a catalog row's `symbolName` is worth emitting alongside `kind`:
+ * either it differs from the kind's own catalog key, or the row is a
+ * literal rule (whose `symbolName` can legitimately equal `kind` while its
+ * `literalText` still differs and needs to travel with the entry). Shared
+ * between `collectGeneratedKindEntries` and `collectKindEntries` so the
+ * exemption is decided once, not re-derived per emitter.
+ */
+```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::deriveSymbolRuntimeName`
+
+Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
+arrive in parser.c with all-caps tail names. Lowercase them so the catalog
+`key` is consistently snake-case across all kinds (aligns with
+`call_expression`, `_array_expression_list`, etc.) and the downstream
+PascalCase / SCREAMING_SNAKE_CASE conversions produce sane identifiers.
+Without this, `LPAREN` stays uppercase, the `toScreamingSnakeCase` regex
+inserts `_` before every letter, and the emitted Rust constant becomes
+`L_P_A_R_E_N` instead of `LPAREN`. The original C-side name is preserved in
+`parser.cSymbol`; the parser's display name is preserved in
+`parser.symbolName`, and the token's own verbatim text — which for an
+aliased anonymous token differs from `symbolName` — is `parser.literalText`.
+
+#### body — keyword tokens
+
+A keyword is not detected by a regex or a word-shape test on the runtime
+name; parser.c already names it that way. An anonymous symbol's own C name
+is `anon_sym_` followed by its literal text verbatim exactly when
+tree-sitter minted that symbol from an identifier-shaped keyword — `class`,
+`expr_2021` — since a symbolic token instead goes through per-character
+name substitution (`anon_sym_COMMA` for `,`, `anon_sym_macro_rules_BANG` for
+`macro_rules!`), which never reproduces the literal text after the
+`anon_sym_` prefix. That exact match (`cName === 'anon_sym_' + literalText`)
+is the one predicate: every keyword token gets the `_keyword` suffix,
+collision with a same-named kind or not — `fn_keyword`, `class_keyword`,
+`u8_keyword`, `tt_keyword`. `_` is punctuation, not a keyword, even though
+its C name matches the exact-text predicate: text made of nothing but
+underscores derives `underscore` (`underscore2` for `__`, one more
+underscore character per further doubling, mirroring tree-sitter's own `LT2`
+convention for a doubled symbolic character) rather than `__keyword` —
+underscore is the one identifier-class character tree-sitter never escapes
+to a symbolic name, so this is the symbolic name it omitted, sitting beside
+`comma`/`lparen`. A symbolic token keeps its plain derived name (`comma`,
+`macro_rules_bang`). This is the ONE derivation of a keyword's runtime name:
+the `TSKindId` member, the kind string, factories, and the nested option key
+`nestedKey` derives all follow from it. If a suffixed name still collides
+with an existing key, `joinIdNames` throws naming both symbols — there is no
+second, id-suffixed fallback.
 
 #### body
 

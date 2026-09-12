@@ -509,28 +509,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'this',
 		'super',
 		'number',
@@ -574,28 +574,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'this',
 		'super',
 		'number',
@@ -632,28 +632,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'this',
 		'super',
 		'number',
@@ -681,28 +681,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'object_pattern',
 		'array_pattern',
 		'non_null_expression'
@@ -712,28 +712,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'subscript_expression',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'identifier',
 		'parenthesized_expression',
 		'non_null_expression'
@@ -749,28 +749,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'object_pattern',
 		'array_pattern',
 		'non_null_expression',
@@ -782,28 +782,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'private_property_identifier',
 		'string',
 		'number',
@@ -813,125 +813,125 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let'
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword'
 	]),
 	_shorthand_property_identifier: new Set([
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let'
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword'
 	]),
 	_shorthand_property_identifier_pattern: new Set([
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let'
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword'
 	]),
 	_property_identifier: new Set([
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let'
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword'
 	]),
-	_import_identifier: new Set(['identifier', 'anon_type']),
+	_import_identifier: new Set(['identifier', 'type_keyword']),
 	type: new Set([
 		'primary_type',
 		'parenthesized_type',
 		'predefined_type',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
 		'unique',
-		'void',
-		'unknown',
-		'never',
-		'anon_object',
+		'void_keyword',
+		'unknown_keyword',
+		'never_keyword',
+		'object_keyword',
 		'identifier',
 		'nested_type_identifier',
 		'generic_type',
@@ -967,16 +967,16 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'primary_type',
 		'parenthesized_type',
 		'predefined_type',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
 		'unique',
-		'void',
-		'unknown',
-		'never',
-		'anon_object',
+		'void_keyword',
+		'unknown_keyword',
+		'never_keyword',
+		'object_keyword',
 		'identifier',
 		'nested_type_identifier',
 		'generic_type',
@@ -1006,16 +1006,16 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	primary_type: new Set([
 		'parenthesized_type',
 		'predefined_type',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
 		'unique',
-		'void',
-		'unknown',
-		'never',
-		'anon_object',
+		'void_keyword',
+		'unknown_keyword',
+		'never_keyword',
+		'object_keyword',
 		'identifier',
 		'nested_type_identifier',
 		'generic_type',
@@ -1055,28 +1055,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let',
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword',
 		'object_pattern',
 		'array_pattern',
 		'non_null_expression'
@@ -1085,28 +1085,28 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
-		'declare',
-		'namespace',
-		'anon_type',
-		'public',
-		'private',
-		'protected',
-		'override',
-		'readonly',
-		'anon_module',
-		'any',
-		'anon_number',
-		'boolean',
-		'anon_string',
-		'symbol',
-		'export',
-		'anon_object',
-		'new',
-		'get',
-		'set',
-		'async',
-		'static',
-		'let'
+		'declare_keyword',
+		'namespace_keyword',
+		'type_keyword',
+		'public_keyword',
+		'private_keyword',
+		'protected_keyword',
+		'override_keyword',
+		'readonly_keyword',
+		'module_keyword',
+		'any_keyword',
+		'number_keyword',
+		'boolean_keyword',
+		'string_keyword',
+		'symbol_keyword',
+		'export_keyword',
+		'object_keyword',
+		'new_keyword',
+		'get_keyword',
+		'set_keyword',
+		'async_keyword',
+		'static_keyword',
+		'let_keyword'
 	])
 };
 
@@ -1191,16 +1191,41 @@ function _filterWrapChildrenByKind<T>(
 	});
 }
 
-// Elidable separated-list positions (array elision, `[a, , b]`): the
-// raw wire array interleaves element entries with the separator token —
-// either as its bare numeric kind id (text-collapsed contexts) or as an
-// anonymous node stub `{ $type: <id>, $named: false }` (node-stub
-// contexts). Segment on those delimiters — each segment is one position
-// holding 0-or-1 element; an empty position stores `undefined`.
-// Idempotent over already-positional storage (a `$with` re-wrap carries
-// no delimiters): with no delimiter present every entry is its own
-// position, `undefined` holes intact.
+// A wire delimiter is a field-tagged separator token: either its bare
+// numeric kind id (text-collapsed contexts) or an anonymous node stub
+// `{ $type: <id>, $named: false }` (node-stub contexts).
 type _WireDelimiter = number | { readonly $type: number; readonly $named: false };
+function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {
+	if (typeof e === 'number') return separatorKindIds.includes(e);
+	if (typeof e === 'object' && e !== null) {
+		const stub = e as { $type?: unknown; $named?: unknown };
+		return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
+	}
+	return false;
+}
+
+// A `many` slot with a separator fact whose separator the parser
+// field-tagged into the slot: the render body re-joins the slot
+// with its own separator, so the wire delimiter is dropped rather
+// than stored.
+// Assumes T itself is never an array type — slot elements are node unions.
+function dropWireDelimiters<T>(
+	value: T | readonly (T | _WireDelimiter)[] | undefined,
+	separatorKindIds: readonly number[]
+): T | readonly T[] | undefined {
+	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
+	if (value == null) return undefined;
+	if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;
+	return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));
+}
+
+// Elidable separated-list positions (array elision, `[a, , b]`): the
+// raw wire array interleaves element entries with the separator token.
+// Segment on those delimiters — each segment is one position holding
+// 0-or-1 element; an empty position stores `undefined`. Idempotent over
+// already-positional storage (a `$with` re-wrap carries no delimiters):
+// with no delimiter present every entry is its own position, `undefined`
+// holes intact.
 function splitElidedWrapSlot<T>(
 	value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,
 	separatorKindIds: readonly number[],
@@ -1212,14 +1237,7 @@ function splitElidedWrapSlot<T>(
 	): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);
 	const items: readonly (T | _WireDelimiter | undefined)[] = value == null ? [] : isSlotList(value) ? value : [value];
 	if (items.length === 0) return [];
-	const isDelimiter = (e: unknown): e is _WireDelimiter => {
-		if (typeof e === 'number') return separatorKindIds.includes(e);
-		if (typeof e === 'object' && e !== null) {
-			const stub = e as { $type?: unknown; $named?: unknown };
-			return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
-		}
-		return false;
-	};
+	const isDelimiter = (e: unknown): e is _WireDelimiter => _isWireDelimiter(e, separatorKindIds);
 	const keepFirst = (seg: readonly (T | undefined)[]): T | undefined => {
 		const present = seg.filter((e): e is T => e !== undefined);
 		const kept = allowedKinds === undefined ? present : _filterWrapChildrenByKind(present, allowedKinds);
@@ -1422,7 +1440,7 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
 			$type: TSKindId.ExportSpecifier as const,
 			_export_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._export_kind ?? readTerminalFromOther(data, [TSKindId.AnonType, TSKindId.Typeof]),
+					data._export_kind ?? readTerminalFromOther(data, [TSKindId.TypeKeyword, TSKindId.TypeofKeyword]),
 					'export_kind',
 					false,
 					data.$type,
@@ -1569,7 +1587,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 			$type: TSKindId.ImportStatement as const,
 			_import_clause: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._import_clause ?? readTerminalFromOther(data, [TSKindId.AnonType, TSKindId.Typeof]),
+					data._import_clause ?? readTerminalFromOther(data, [TSKindId.TypeKeyword, TSKindId.TypeofKeyword]),
 					'import_clause',
 					false,
 					data.$type,
@@ -1715,22 +1733,22 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
 
 export function wrapImportSpecifier(
 	data: T.ImportSpecifier & {
-		readonly _identifier?: T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs;
-		readonly _anon_type?: T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs;
-		readonly _import_specifier_as?: T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs;
+		readonly _identifier?: T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs;
+		readonly _type_keyword?: T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs;
+		readonly _import_specifier_as?: T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_import_kind', '_content', '_identifier', '_anon_type', '_import_specifier_as']);
+	data = _keepModelledSlots(data, ['_import_kind', '_content', '_identifier', '_type_keyword', '_import_specifier_as']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ImportSpecifier as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_anon_type', '_identifier', '_import_specifier_as']),
+			..._omitWrapKeys(data, ['_identifier', '_import_specifier_as', '_type_keyword']),
 			$type: TSKindId.ImportSpecifier as const,
 			_import_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._import_kind ?? readTerminalFromOther(data, [TSKindId.AnonType, TSKindId.Typeof]),
+					data._import_kind ?? readTerminalFromOther(data, [TSKindId.TypeKeyword, TSKindId.TypeofKeyword]),
 					'import_kind',
 					false,
 					data.$type,
@@ -1740,7 +1758,7 @@ export function wrapImportSpecifier(
 			),
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ?? data._identifier ?? data._anon_type ?? data._import_specifier_as,
+					data._content ?? data._identifier ?? data._type_keyword ?? data._import_specifier_as,
 					'content',
 					true,
 					data.$type,
@@ -1753,7 +1771,7 @@ export function wrapImportSpecifier(
 				return this._import_kind;
 			},
 			content() {
-				return drillIn<T.Identifier | TSKindId.AnonType | T.ImportSpecifierAs>(this._content, tree);
+				return drillIn<T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs>(this._content, tree);
 			},
 			$with: {
 				importKind: (v: NonNullable<T.ImportSpecifier['_import_kind']>) =>
@@ -1777,7 +1795,7 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 			$type: TSKindId.ImportAttribute as const,
 			_attribute_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._attribute_kind ?? readTerminalFromOther(data, [TSKindId.With, TSKindId.Assert]),
+					data._attribute_kind ?? readTerminalFromOther(data, [TSKindId.WithKeyword, TSKindId.AssertKeyword]),
 					'attribute_kind',
 					true,
 					data.$type,
@@ -1981,7 +1999,7 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 			...data,
 			$type: TSKindId.VariableDeclaration as const,
 			_declarators: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._declarators, ['variable_declarator']),
+				dropWireDelimiters(data._declarators, [TSKindId.Comma]),
 				true,
 				'declarators',
 				{ tree, nodeType: data.$type, slotName: 'declarators', span: (data as _NodeData).$span }
@@ -2025,7 +2043,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 			$type: TSKindId.LexicalDeclaration as const,
 			_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._kind ?? readTerminalFromOther(data, [TSKindId.Let, TSKindId.Const]),
+					data._kind ?? readTerminalFromOther(data, [TSKindId.LetKeyword, TSKindId.ConstKeyword]),
 					'kind',
 					true,
 					data.$type,
@@ -2034,7 +2052,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 				{ let: 126, const: 129 }
 			),
 			_declarators: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._declarators, ['variable_declarator']),
+				dropWireDelimiters(data._declarators, [TSKindId.Comma]),
 				true,
 				'declarators',
 				{ tree, nodeType: data.$type, slotName: 'declarators', span: (data as _NodeData).$span }
@@ -2470,7 +2488,7 @@ export function wrapForInStatement(
 			),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.In, TSKindId.Of]),
+					data._operator ?? readTerminalFromOther(data, [TSKindId.InKeyword, TSKindId.OfKeyword]),
 					'operator',
 					true,
 					data.$type,
@@ -5366,28 +5384,28 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 				return drillIn<
 					| T.MemberExpression
 					| T.SubscriptExpression
-					| TSKindId.Declare
-					| TSKindId.Namespace
-					| TSKindId.AnonType
-					| TSKindId.Public
-					| TSKindId.Private
-					| TSKindId.Protected
-					| TSKindId.Override
-					| TSKindId.Readonly
-					| TSKindId.AnonModule
-					| TSKindId.Any
-					| TSKindId.AnonNumber
-					| TSKindId.Boolean
-					| TSKindId.AnonString
-					| TSKindId.Symbol
-					| TSKindId.Export
-					| TSKindId.AnonObject
-					| TSKindId.New
-					| TSKindId.Get
-					| TSKindId.Set
-					| TSKindId.Async
-					| TSKindId.Static
-					| TSKindId.Let
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
 					| T.Identifier
 					| T.ParenthesizedExpression
 					| T.NonNullExpression
@@ -5713,7 +5731,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 							TSKindId.GtEq,
 							TSKindId.Gt,
 							TSKindId.QmarkQmark,
-							TSKindId.Instanceof
+							TSKindId.InstanceofKeyword
 						]),
 					'operator',
 					false,
@@ -5837,9 +5855,9 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 							TSKindId.Tilde,
 							TSKindId.Dash,
 							TSKindId.Plus,
-							TSKindId.Typeof,
-							TSKindId.Void,
-							TSKindId.Delete
+							TSKindId.TypeofKeyword,
+							TSKindId.VoidKeyword,
+							TSKindId.DeleteKeyword
 						]),
 					'operator',
 					true,
@@ -5945,7 +5963,7 @@ export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHan
 			...data,
 			$type: TSKindId.SequenceExpression as const,
 			_expression: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._expression, true, 'expression', {
+				normalizeRepeatedWrapSlot(dropWireDelimiters(data._expression, [TSKindId.Comma]), true, 'expression', {
 					tree,
 					nodeType: data.$type,
 					slotName: 'expression',
@@ -6505,28 +6523,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6535,28 +6553,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6565,28 +6583,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6595,28 +6613,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6625,28 +6643,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6655,28 +6673,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6685,28 +6703,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6715,28 +6733,28 @@ export function wrapRestPattern(
 			| T.SubscriptExpression
 			| TSKindId.Undefined
 			| T.Identifier
-			| TSKindId.Declare
-			| TSKindId.Namespace
-			| TSKindId.AnonType
-			| TSKindId.Public
-			| TSKindId.Private
-			| TSKindId.Protected
-			| TSKindId.Override
-			| TSKindId.Readonly
-			| TSKindId.AnonModule
-			| TSKindId.Any
-			| TSKindId.AnonNumber
-			| TSKindId.Boolean
-			| TSKindId.AnonString
-			| TSKindId.Symbol
-			| TSKindId.Export
-			| TSKindId.AnonObject
-			| TSKindId.New
-			| TSKindId.Get
-			| TSKindId.Set
-			| TSKindId.Async
-			| TSKindId.Static
-			| TSKindId.Let
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
 			| T.NonNullExpression;
@@ -6817,28 +6835,28 @@ export function wrapRestPattern(
 					| T.SubscriptExpression
 					| TSKindId.Undefined
 					| T.Identifier
-					| TSKindId.Declare
-					| TSKindId.Namespace
-					| TSKindId.AnonType
-					| TSKindId.Public
-					| TSKindId.Private
-					| TSKindId.Protected
-					| TSKindId.Override
-					| TSKindId.Readonly
-					| TSKindId.AnonModule
-					| TSKindId.Any
-					| TSKindId.AnonNumber
-					| TSKindId.Boolean
-					| TSKindId.AnonString
-					| TSKindId.Symbol
-					| TSKindId.Export
-					| TSKindId.AnonObject
-					| TSKindId.New
-					| TSKindId.Get
-					| TSKindId.Set
-					| TSKindId.Async
-					| TSKindId.Static
-					| TSKindId.Let
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
 					| T.ObjectPattern
 					| T.ArrayPattern
 					| T.NonNullExpression
@@ -6878,7 +6896,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -6920,7 +6938,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 			),
 			_accessor_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star]),
+					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.GetKeyword, TSKindId.SetKeyword, TSKindId.Star]),
 					'accessor_kind',
 					false,
 					data.$type,
@@ -7500,7 +7518,7 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -7710,12 +7728,12 @@ export function wrapImportIdentifier(
 	tree: TreeHandle
 ) {
 	if (typeof data === 'number') return data;
-	data = _keepModelledSlots(data, ['_identifier', '_anon_type']);
-	const kindKeyed = _firstKindKeyedWrapChild(data, ['identifier', 'anon_type']) as
+	data = _keepModelledSlots(data, ['_identifier', '_type_keyword']);
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['identifier', 'type_keyword']) as
 		| T.ImportIdentifier
 		| readonly T.ImportIdentifier[]
 		| undefined;
-	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', 'anon_type']);
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['identifier', 'type_keyword']);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillInSelf<T.ImportIdentifier>(data as T.ImportIdentifier, tree);
 	}
@@ -7811,7 +7829,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -7853,7 +7871,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 			),
 			_accessor_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star]),
+					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.GetKeyword, TSKindId.SetKeyword, TSKindId.Star]),
 					'accessor_kind',
 					false,
 					data.$type,
@@ -8007,7 +8025,7 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -8025,7 +8043,7 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 			),
 			_accessor_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star]),
+					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.GetKeyword, TSKindId.SetKeyword, TSKindId.Star]),
 					'accessor_kind',
 					false,
 					data.$type,
@@ -8424,7 +8442,7 @@ export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			typeAnnotation() {
-				return drillIn<TSKindId.Const | T.Type>(this._type_annotation, tree);
+				return drillIn<TSKindId.ConstKeyword | T.Type>(this._type_annotation, tree);
 			},
 			$with: {
 				expression: (v: NonNullable<T.AsExpression['_expression']>) =>
@@ -8635,7 +8653,7 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.ExtendsClause as const,
 			_extends_clause_single: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._extends_clause_single, ['_extends_clause_single', 'extends_clause_single']),
+				dropWireDelimiters(data._extends_clause_single, [TSKindId.Comma]),
 				true,
 				'extends_clause_single',
 				{ tree, nodeType: data.$type, slotName: 'extends_clause_single', span: (data as _NodeData).$span }
@@ -8733,7 +8751,7 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 			...data,
 			$type: TSKindId.ImplementsClause as const,
 			_type: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._type, true, 'type', {
+				normalizeRepeatedWrapSlot(dropWireDelimiters(data._type, [TSKindId.Comma]), true, 'type', {
 					tree,
 					nodeType: data.$type,
 					slotName: 'type',
@@ -9159,17 +9177,12 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 		{
 			...data,
 			$type: TSKindId.ExtendsTypeClause as const,
-			_type: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._type, [
-					'identifier',
-					'nested_type_identifier',
-					'generic_type',
-					'type_identifier'
-				]),
-				true,
-				'type',
-				{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
-			),
+			_type: normalizeRepeatedWrapSlot(dropWireDelimiters(data._type, [TSKindId.Comma]), true, 'type', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'type',
+				span: (data as _NodeData).$span
+			}),
 
 			types() {
 				return drillInAll<T.Identifier | T.NestedTypeIdentifier | T.GenericType>(
@@ -9464,7 +9477,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -9635,7 +9648,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -10937,16 +10950,16 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
 				return drillIn<
 					| T.Identifier
 					| TSKindId.This
-					| TSKindId.Any
-					| TSKindId.AnonNumber
-					| TSKindId.Boolean
-					| TSKindId.AnonString
-					| TSKindId.Symbol
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
 					| TSKindId.Unique
-					| TSKindId.Void
-					| TSKindId.Unknown
-					| TSKindId.Never
-					| TSKindId.AnonObject
+					| TSKindId.VoidKeyword
+					| TSKindId.UnknownKeyword
+					| TSKindId.NeverKeyword
+					| TSKindId.ObjectKeyword
 				>(this._name, tree);
 			},
 			type() {
@@ -11106,16 +11119,16 @@ export function wrapTypeQuerySubscriptExpression(data: T.TypeQuerySubscriptExpre
 			},
 			index() {
 				return drillIn<
-					| TSKindId.Any
-					| TSKindId.AnonNumber
-					| TSKindId.Boolean
-					| TSKindId.AnonString
-					| TSKindId.Symbol
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
 					| TSKindId.Unique
-					| TSKindId.Void
-					| TSKindId.Unknown
-					| TSKindId.Never
-					| TSKindId.AnonObject
+					| TSKindId.VoidKeyword
+					| TSKindId.UnknownKeyword
+					| TSKindId.NeverKeyword
+					| TSKindId.ObjectKeyword
 					| T.String
 					| T.Number
 				>(this._index, tree);
@@ -11890,7 +11903,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected]),
+						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -12142,21 +12155,21 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle) {
 }
 
 export function wrapConstraint(
-	data: T.Constraint & { readonly _extends?: 'extends' | ':'; readonly _colon?: 'extends' | ':' },
+	data: T.Constraint & { readonly _extends_keyword?: 'extends' | ':'; readonly _colon?: 'extends' | ':' },
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_type', '_extends', '_colon']);
+	data = _keepModelledSlots(data, ['_content', '_type', '_extends_keyword', '_colon']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Constraint as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_colon', '_extends']),
+			..._omitWrapKeys(data, ['_colon', '_extends_keyword']),
 			$type: TSKindId.Constraint as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						data._extends ??
+						data._extends_keyword ??
 						data._colon ??
-						readTerminalFromOther(data, [TSKindId.Extends, TSKindId.Colon]),
+						readTerminalFromOther(data, [TSKindId.ExtendsKeyword, TSKindId.Colon]),
 					'content',
 					true,
 					data.$type,
@@ -13817,28 +13830,28 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			name() {
 				return drillIn<
 					| T.Identifier
-					| TSKindId.Declare
-					| TSKindId.Namespace
-					| TSKindId.AnonType
-					| TSKindId.Public
-					| TSKindId.Private
-					| TSKindId.Protected
-					| TSKindId.Override
-					| TSKindId.Readonly
-					| TSKindId.AnonModule
-					| TSKindId.Any
-					| TSKindId.AnonNumber
-					| TSKindId.Boolean
-					| TSKindId.AnonString
-					| TSKindId.Symbol
-					| TSKindId.Export
-					| TSKindId.AnonObject
-					| TSKindId.New
-					| TSKindId.Get
-					| TSKindId.Set
-					| TSKindId.Async
-					| TSKindId.Static
-					| TSKindId.Let
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
 				>(this._name, tree);
 			},
 			indexType() {
@@ -13921,10 +13934,10 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 			),
 
 			name() {
-				return drillIn<T.Identifier | T.String | TSKindId.AnonType>(this._name, tree);
+				return drillIn<T.Identifier | T.String | TSKindId.TypeKeyword>(this._name, tree);
 			},
 			alias() {
-				return drillIn<T.Identifier | TSKindId.AnonType>(this._alias, tree);
+				return drillIn<T.Identifier | TSKindId.TypeKeyword>(this._alias, tree);
 			},
 			$with: {
 				name: (v: NonNullable<T.ImportSpecifierAs['_name']>) =>
@@ -14652,28 +14665,28 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 
 			parameter() {
 				return drillIn<
-					| TSKindId.Declare
-					| TSKindId.Namespace
-					| TSKindId.AnonType
-					| TSKindId.Public
-					| TSKindId.Private
-					| TSKindId.Protected
-					| TSKindId.Override
-					| TSKindId.Readonly
-					| TSKindId.AnonModule
-					| TSKindId.Any
-					| TSKindId.AnonNumber
-					| TSKindId.Boolean
-					| TSKindId.AnonString
-					| TSKindId.Symbol
-					| TSKindId.Export
-					| TSKindId.AnonObject
-					| TSKindId.New
-					| TSKindId.Get
-					| TSKindId.Set
-					| TSKindId.Async
-					| TSKindId.Static
-					| TSKindId.Let
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
 					| T.Identifier
 				>(this._parameter, tree);
 			},
@@ -14725,18 +14738,18 @@ export function wrapClassHeritageExtendsClause(data: T.ClassHeritageExtendsClaus
 }
 
 export function wrapImportClauseDefaultImport(
-	data: T.ImportClauseDefaultImport & { readonly _anon_type?: T.Identifier | TSKindId.AnonType },
+	data: T.ImportClauseDefaultImport & { readonly _type_keyword?: T.Identifier | TSKindId.TypeKeyword },
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_identifier', '_import_clause_group', '_anon_type']);
+	data = _keepModelledSlots(data, ['_identifier', '_import_clause_group', '_type_keyword']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ImportClauseDefaultImport as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_anon_type']),
+			..._omitWrapKeys(data, ['_type_keyword']),
 			$type: TSKindId.ImportClauseDefaultImport as const,
 			_identifier: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._identifier ?? data._anon_type, 'identifier', true, data.$type, {
+				normalizeSingularWrapSlot(data._identifier ?? data._type_keyword, 'identifier', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'identifier',
@@ -14753,7 +14766,7 @@ export function wrapImportClauseDefaultImport(
 			),
 
 			identifier() {
-				return drillIn<T.Identifier | TSKindId.AnonType>(this._identifier, tree);
+				return drillIn<T.Identifier | TSKindId.TypeKeyword>(this._identifier, tree);
 			},
 			importClauseGroup() {
 				return drillIn<T.ImportClauseGroup | undefined>(this._import_clause_group, tree);
@@ -15391,7 +15404,7 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
 			$type: TSKindId.ForHeaderLetConstKind as const,
 			_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._kind ?? readTerminalFromOther(data, [TSKindId.Let, TSKindId.Const]),
+					data._kind ?? readTerminalFromOther(data, [TSKindId.LetKeyword, TSKindId.ConstKeyword]),
 					'kind',
 					true,
 					data.$type,

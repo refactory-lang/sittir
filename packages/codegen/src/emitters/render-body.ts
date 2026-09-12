@@ -1,26 +1,11 @@
-import { INDENT_TEXT } from '../dsl/primitives/spacing.ts';
-
-export const ADJACENT_MARK = '\u{FFFE}';
-export const INDENT_NEWLINE = INDENT_TEXT;
-export const DEDENT_MARK = '\u{FDD1}';
-export const SEAM_MARK = '\u{FDD2}';
-export const TOKEN_SEAM_MARK = '\u{FDD3}';
+import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 
 export function isWhitespaceOnly(text: string): boolean {
 	return text.trim() === '';
 }
 
-export function seamMarked(text: string): string {
-	return isWhitespaceOnly(text) ? TOKEN_SEAM_MARK + text : text;
-}
-
 export interface TextNode {
 	readonly kind: 'text';
-	readonly text: string;
-}
-
-export interface WhitespaceNode {
-	readonly kind: 'whitespace';
 	readonly text: string;
 }
 
@@ -42,6 +27,19 @@ export interface SeamNode {
 	readonly field: string;
 }
 
+export interface IndentNode {
+	readonly kind: 'indent';
+}
+
+export interface DedentNode {
+	readonly kind: 'dedent';
+}
+
+export interface TokenSeamNode {
+	readonly kind: 'tokenSeam';
+	readonly text: string;
+}
+
 export interface IfArm {
 	readonly test: string;
 	readonly body: Body;
@@ -53,19 +51,35 @@ export interface IfNode {
 	readonly fallback: Body | undefined;
 }
 
-export type BodyNode = TextNode | WhitespaceNode | SlotNode | SpaceNode | AdjacentNode | SeamNode | IfNode;
+export type BodyNode =
+	| TextNode
+	| SlotNode
+	| SpaceNode
+	| AdjacentNode
+	| SeamNode
+	| IfNode
+	| IndentNode
+	| DedentNode
+	| TokenSeamNode;
 export type Body = readonly BodyNode[];
 
 export const EMPTY: Body = [];
 export const SPACE: Body = [{ kind: 'space' }];
 export const ADJACENT: Body = [{ kind: 'adjacent' }];
+export const INDENT: Body = [{ kind: 'indent' }];
+export const DEDENT: Body = [{ kind: 'dedent' }];
 
 export function text(value: string): Body {
 	return value === '' ? EMPTY : [{ kind: 'text', text: value }];
 }
 
-export function whitespace(value: string): Body {
-	return [{ kind: 'whitespace', text: value }];
+export function tokenSeam(text: string): Body {
+	return [{ kind: 'tokenSeam', text }];
+}
+
+export function literalBody(value: string): Body {
+	if (isDepthText(value)) return value === INDENT_TEXT ? INDENT : DEDENT;
+	return isWhitespaceOnly(value) ? tokenSeam(value) : text(value);
 }
 
 export function slot(name: string): Body {
@@ -104,7 +118,7 @@ export function isPlainText(body: Body): boolean {
 }
 
 function opensAsExpression(node: BodyNode): boolean {
-	return node.kind === 'slot' || node.kind === 'whitespace' || node.kind === 'seam';
+	return node.kind === 'slot' || node.kind === 'seam' || node.kind === 'indent' || node.kind === 'dedent' || node.kind === 'tokenSeam';
 }
 
 export function opensAsTag(node: BodyNode): boolean {
@@ -115,21 +129,25 @@ export function isExpression(body: Body): boolean {
 	return body.length > 0 && opensAsExpression(body[0]!) && opensAsExpression(body[body.length - 1]!);
 }
 
+const ADJACENT_EDGE = '\u{FFFE}';
+
 export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 	const node = side === 'starts' ? body[0] : body[body.length - 1];
 	if (node === undefined) return '';
 	switch (node.kind) {
 		case 'text':
 			return side === 'starts' ? node.text[0]! : node.text[node.text.length - 1]!;
-		case 'whitespace':
 		case 'slot':
 		case 'seam':
 		case 'if':
+		case 'indent':
+		case 'dedent':
+		case 'tokenSeam':
 			return side === 'starts' ? '{' : '}';
 		case 'space':
 			return ' ';
 		case 'adjacent':
-			return ADJACENT_MARK;
+			return ADJACENT_EDGE;
 		default: {
 			const _exhaustive: never = node;
 			throw new Error(`edgeChar: unhandled node ${(_exhaustive as BodyNode).kind}`);
@@ -145,14 +163,17 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 	if (a.kind !== b.kind) return false;
 	switch (a.kind) {
 		case 'text':
-		case 'whitespace':
-			return a.text === (b as TextNode | WhitespaceNode).text;
+			return a.text === (b as TextNode).text;
+		case 'tokenSeam':
+			return a.text === (b as TokenSeamNode).text;
 		case 'slot':
 			return a.name === (b as SlotNode).name;
 		case 'seam':
 			return a.field === (b as SeamNode).field;
 		case 'space':
 		case 'adjacent':
+		case 'indent':
+		case 'dedent':
 			return true;
 		case 'if': {
 			const other = b as IfNode;
@@ -215,9 +236,6 @@ export function weight(body: Body): number {
 			case 'text':
 				total += node.text.length;
 				break;
-			case 'whitespace':
-				total += JSON.stringify(node.text).length + EXPRESSION_OVERHEAD;
-				break;
 			case 'slot':
 				total += node.name.length + EXPRESSION_OVERHEAD;
 				break;
@@ -227,6 +245,15 @@ export function weight(body: Body): number {
 			case 'space':
 			case 'adjacent':
 				total += 1;
+				break;
+			case 'indent':
+				total += 2;
+				break;
+			case 'dedent':
+				total += 1;
+				break;
+			case 'tokenSeam':
+				total += node.text.length + 1;
 				break;
 			case 'if':
 				node.arms.forEach((arm, i) => {
@@ -332,14 +359,10 @@ function literalOf(nodes: Body): string | undefined {
 	for (const node of nodes) {
 		switch (node.kind) {
 			case 'text':
-			case 'whitespace':
 				out += node.text;
 				break;
 			case 'space':
 				out += ' ';
-				break;
-			case 'adjacent':
-				out += ADJACENT_MARK;
 				break;
 			default:
 				return undefined;
@@ -405,38 +428,73 @@ export function printRustBody(body: Body, printer: RustBodyPrinter): string[] {
 	return [...printStatements(body, printer, 1), '    Ok(())'];
 }
 
+function splitLeadingWhitespace(text: string): { readonly run: string; readonly rest: string } {
+	let end = 0;
+	while (end < text.length && /\s/.test(text[end]!)) end++;
+	return { run: text.slice(0, end), rest: text.slice(end) };
+}
+
 function printStatements(body: Body, printer: RustBodyPrinter, depth: number): string[] {
 	const pad = '    '.repeat(depth);
 	const lines: string[] = [];
-	let format = '';
-	let interpolated = false;
+	let literal = '';
 	const flush = (): void => {
-		if (format === '') return;
-		lines.push(
-			interpolated ? `${pad}write!(f, ${rustStringLiteral(format)})?;` : `${pad}f.write_str(${rustStringLiteral(format)})?;`
-		);
-		format = '';
-		interpolated = false;
+		if (literal === '') return;
+		lines.push(`${pad}w.text(${rustStringLiteral(literal)})?;`);
+		literal = '';
 	};
-	for (const node of body) {
+	let pendingText: string | undefined;
+	let hasPendingText = false;
+	for (let i = 0; i < body.length; i++) {
+		const node = body[i]!;
+		const next = body[i + 1];
+		let payload = '';
+		if ((node.kind === 'indent' || node.kind === 'dedent' || node.kind === 'tokenSeam') && next?.kind === 'text') {
+			const split = splitLeadingWhitespace(next.text);
+			if (split.run !== '') {
+				payload = split.run;
+				pendingText = split.rest;
+				hasPendingText = true;
+			}
+		}
 		switch (node.kind) {
-			case 'text':
-			case 'whitespace':
-				format += escapeBraces(node.text);
+			case 'text': {
+				const text = hasPendingText ? pendingText! : node.text;
+				hasPendingText = false;
+				literal += text;
 				break;
+			}
 			case 'space':
-				format += ' ';
+				literal += ' ';
 				break;
 			case 'adjacent':
-				format += ADJACENT_MARK;
+				flush();
+				lines.push(`${pad}w.adjacent();`);
 				break;
 			case 'slot':
-				format += `{${printer.field(node.name)}}`;
-				interpolated = true;
+				flush();
+				lines.push(`${pad}${printer.field(node.name)}.render(w)?;`);
 				break;
 			case 'seam':
-				format += `{${printer.field(node.field)}}`;
-				interpolated = true;
+				flush();
+				lines.push(`${pad}w.site(node.${printer.field(node.field)}.unwrap_or(0));`);
+				break;
+			case 'indent':
+				flush();
+				lines.push(`${pad}w.indent();`);
+				lines.push(`${pad}w.seam(${rustStringLiteral(payload === '' ? DEPTH_BREAK : payload)});`);
+				break;
+			case 'dedent':
+				flush();
+				if (payload !== '') {
+					lines.push(`${pad}if w.dedent() { w.seam(${rustStringLiteral(payload)}); }`);
+				} else {
+					lines.push(`${pad}w.dedent();`);
+				}
+				break;
+			case 'tokenSeam':
+				flush();
+				lines.push(`${pad}w.token_seam(${rustStringLiteral(node.text + payload)});`);
 				break;
 			case 'if':
 				flush();

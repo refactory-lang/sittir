@@ -8,6 +8,7 @@
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
 use ::sittir_core::view::{View, ListView, NO_ITEMS};
+use ::sittir_core::render::Render;
 use ::sittir_core::types::{
     FieldValue, OneOrMany, Source, Span, NodeTrivia,
 };
@@ -44,11 +45,12 @@ impl<T: ArmSeams> ::sittir_core::options::FillOptions for Seamed<T> {
     }
 }
 
-impl<T: ::std::fmt::Display> ::std::fmt::Display for Seamed<T> {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(options::spacing_text(self.seam_before.unwrap_or(0)))?;
-        ::std::fmt::Display::fmt(&self.value, f)?;
-        f.write_str(options::spacing_text(self.seam_after.unwrap_or(0)))
+impl<T: ::sittir_core::render::Render> ::sittir_core::render::Render for Seamed<T> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        w.site(self.seam_before.unwrap_or(0));
+        self.value.render(w)?;
+        w.site(self.seam_after.unwrap_or(0));
+        Ok(())
     }
 }
 
@@ -243,57 +245,57 @@ pub enum AnyTransport {
     Space(SpaceTransport),
     Indent(IndentTransport),
     Dedent(DedentTransport),
-    Except(ExceptTransport),
-    Import(ImportTransport),
+    ImportKeyword(ImportKeywordTransport),
     Dot(DotTransport),
-    From(FromTransport),
-    FutureU(FutureUTransport),
-    As(AsTransport),
+    FromKeyword(FromKeywordTransport),
+    FutureUKeyword(FutureUKeywordTransport),
+    AsKeyword(AsKeywordTransport),
     Star(StarTransport),
     GtGt(GtGtTransport),
-    Assert(AssertTransport),
+    AssertKeyword(AssertKeywordTransport),
     ColonEq(ColonEqTransport),
-    Return(ReturnTransport),
-    Del(DelTransport),
-    Raise(RaiseTransport),
-    Pass(PassTransport),
-    Break(BreakTransport),
-    Continue(ContinueTransport),
-    If(IfTransport),
+    ReturnKeyword(ReturnKeywordTransport),
+    DelKeyword(DelKeywordTransport),
+    RaiseKeyword(RaiseKeywordTransport),
+    PassKeyword(PassKeywordTransport),
+    BreakKeyword(BreakKeywordTransport),
+    ContinueKeyword(ContinueKeywordTransport),
+    IfKeyword(IfKeywordTransport),
     Colon(ColonTransport),
-    Elif(ElifTransport),
-    Else(ElseTransport),
-    Match(MatchTransport),
-    Case(CaseTransport),
-    For(ForTransport),
-    In(InTransport),
-    While(WhileTransport),
-    Try(TryTransport),
-    Finally(FinallyTransport),
-    With(WithTransport),
-    Def(DefTransport),
+    ElifKeyword(ElifKeywordTransport),
+    ElseKeyword(ElseKeywordTransport),
+    MatchKeyword(MatchKeywordTransport),
+    CaseKeyword(CaseKeywordTransport),
+    ForKeyword(ForKeywordTransport),
+    InKeyword(InKeywordTransport),
+    WhileKeyword(WhileKeywordTransport),
+    TryKeyword(TryKeywordTransport),
+    ExceptKeyword(ExceptKeywordTransport),
+    FinallyKeyword(FinallyKeywordTransport),
+    WithKeyword(WithKeywordTransport),
+    DefKeyword(DefKeywordTransport),
     DashGt(DashGtTransport),
     Lparen(LparenTransport),
     Rparen(RparenTransport),
     StarStar(StarStarTransport),
-    Global(GlobalTransport),
-    Nonlocal(NonlocalTransport),
-    Exec(ExecTransport),
-    AnonType(AnonTypeTransport),
+    GlobalKeyword(GlobalKeywordTransport),
+    NonlocalKeyword(NonlocalKeywordTransport),
+    ExecKeyword(ExecKeywordTransport),
+    TypeKeyword(TypeKeywordTransport),
     Eq(EqTransport),
-    Class(ClassTransport),
+    ClassKeyword(ClassKeywordTransport),
     Lbrack(LbrackTransport),
     Rbrack(RbrackTransport),
     At(AtTransport),
     Comma(CommaTransport),
     Lbrace(LbraceTransport),
     Rbrace(RbraceTransport),
-    Anonymous(AnonymousTransport),
+    Underscore(UnderscoreTransport),
     Dash(DashTransport),
     Plus(PlusTransport),
-    Not(NotTransport),
-    And(AndTransport),
-    Or(OrTransport),
+    NotKeyword(NotKeywordTransport),
+    AndKeyword(AndKeywordTransport),
+    OrKeyword(OrKeywordTransport),
     Slash(SlashTransport),
     Percent(PercentTransport),
     SlashSlash(SlashSlashTransport),
@@ -301,11 +303,11 @@ pub enum AnyTransport {
     Amp(AmpTransport),
     Caret(CaretTransport),
     LtLt(LtLtTransport),
-    AnonLambda(AnonLambdaTransport),
-    AnonYield(AnonYieldTransport),
+    LambdaKeyword(LambdaKeywordTransport),
+    YieldKeyword(YieldKeywordTransport),
     Bslash(BslashTransport),
-    AnonAwait(AnonAwaitTransport),
-    Async(AsyncTransport),
+    AwaitKeyword(AwaitKeywordTransport),
+    AsyncKeyword(AsyncKeywordTransport),
     Tilde(TildeTransport),
     PlusEq(PlusEqTransport),
     DashEq(DashEqTransport),
@@ -320,7 +322,7 @@ pub enum AnyTransport {
     AmpEq(AmpEqTransport),
     CaretEq(CaretEqTransport),
     PipeEq(PipeEqTransport),
-    Print(PrintTransport),
+    PrintKeyword(PrintKeywordTransport),
     Lt(LtTransport),
     LtEq(LtEqTransport),
     EqEq(EqEqTransport),
@@ -328,7 +330,7 @@ pub enum AnyTransport {
     GtEq(GtEqTransport),
     Gt(GtTransport),
     LtGt(LtGtTransport),
-    Is(IsTransport),
+    IsKeyword(IsKeywordTransport),
     Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
     Literal1_5f_6e_65_77_6c_69_6e_65,
     Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
@@ -339,11 +341,11 @@ pub enum AnyTransport {
     Literal7_6e_6f_6e_65,
     Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
     Literal9_73_74_61_72_5f_73_74_61_72,
-    Literal10_5f,
+    Literal10_75_6e_64_65_72_73_63_6f_72_65,
     Literal11_64_61_73_68,
     Literal12_70_6c_75_73,
-    Literal13_61_6e_64,
-    Literal14_6f_72,
+    Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64,
+    Literal14_6f_72_5f_6b_65_79_77_6f_72_64,
     Literal15_61_74,
     Literal16_73_6c_61_73_68,
     Literal17_70_65_72_63_65_6e_74,
@@ -367,7 +369,7 @@ pub enum AnyTransport {
     Literal35_61_6d_70_5f_65_71,
     Literal36_63_61_72_65_74_5f_65_71,
     Literal37_70_69_70_65_5f_65_71,
-    Literal38_61_6e_6f_6e_5f_74_79_70_65,
+    Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64,
     Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65,
     Literal40_65_71,
     Literal41_5b_5e_7b_7d_5c_6e_5d_2b,
@@ -378,9 +380,9 @@ pub enum AnyTransport {
     Literal46_67_74_5f_65_71,
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
-    Literal49_69_6e,
+    Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
     Literal50_5f_6e_6f_74_5f_69_6e,
-    Literal51_69_73,
+    Literal51_69_73_5f_6b_65_79_77_6f_72_64,
     Literal52_5f_69_73_5f_6e_6f_74,
 }
 
@@ -566,57 +568,57 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Space(t) => t.fill_options(table),
             AnyTransport::Indent(t) => t.fill_options(table),
             AnyTransport::Dedent(t) => t.fill_options(table),
-            AnyTransport::Except(t) => t.fill_options(table),
-            AnyTransport::Import(t) => t.fill_options(table),
+            AnyTransport::ImportKeyword(t) => t.fill_options(table),
             AnyTransport::Dot(t) => t.fill_options(table),
-            AnyTransport::From(t) => t.fill_options(table),
-            AnyTransport::FutureU(t) => t.fill_options(table),
-            AnyTransport::As(t) => t.fill_options(table),
+            AnyTransport::FromKeyword(t) => t.fill_options(table),
+            AnyTransport::FutureUKeyword(t) => t.fill_options(table),
+            AnyTransport::AsKeyword(t) => t.fill_options(table),
             AnyTransport::Star(t) => t.fill_options(table),
             AnyTransport::GtGt(t) => t.fill_options(table),
-            AnyTransport::Assert(t) => t.fill_options(table),
+            AnyTransport::AssertKeyword(t) => t.fill_options(table),
             AnyTransport::ColonEq(t) => t.fill_options(table),
-            AnyTransport::Return(t) => t.fill_options(table),
-            AnyTransport::Del(t) => t.fill_options(table),
-            AnyTransport::Raise(t) => t.fill_options(table),
-            AnyTransport::Pass(t) => t.fill_options(table),
-            AnyTransport::Break(t) => t.fill_options(table),
-            AnyTransport::Continue(t) => t.fill_options(table),
-            AnyTransport::If(t) => t.fill_options(table),
+            AnyTransport::ReturnKeyword(t) => t.fill_options(table),
+            AnyTransport::DelKeyword(t) => t.fill_options(table),
+            AnyTransport::RaiseKeyword(t) => t.fill_options(table),
+            AnyTransport::PassKeyword(t) => t.fill_options(table),
+            AnyTransport::BreakKeyword(t) => t.fill_options(table),
+            AnyTransport::ContinueKeyword(t) => t.fill_options(table),
+            AnyTransport::IfKeyword(t) => t.fill_options(table),
             AnyTransport::Colon(t) => t.fill_options(table),
-            AnyTransport::Elif(t) => t.fill_options(table),
-            AnyTransport::Else(t) => t.fill_options(table),
-            AnyTransport::Match(t) => t.fill_options(table),
-            AnyTransport::Case(t) => t.fill_options(table),
-            AnyTransport::For(t) => t.fill_options(table),
-            AnyTransport::In(t) => t.fill_options(table),
-            AnyTransport::While(t) => t.fill_options(table),
-            AnyTransport::Try(t) => t.fill_options(table),
-            AnyTransport::Finally(t) => t.fill_options(table),
-            AnyTransport::With(t) => t.fill_options(table),
-            AnyTransport::Def(t) => t.fill_options(table),
+            AnyTransport::ElifKeyword(t) => t.fill_options(table),
+            AnyTransport::ElseKeyword(t) => t.fill_options(table),
+            AnyTransport::MatchKeyword(t) => t.fill_options(table),
+            AnyTransport::CaseKeyword(t) => t.fill_options(table),
+            AnyTransport::ForKeyword(t) => t.fill_options(table),
+            AnyTransport::InKeyword(t) => t.fill_options(table),
+            AnyTransport::WhileKeyword(t) => t.fill_options(table),
+            AnyTransport::TryKeyword(t) => t.fill_options(table),
+            AnyTransport::ExceptKeyword(t) => t.fill_options(table),
+            AnyTransport::FinallyKeyword(t) => t.fill_options(table),
+            AnyTransport::WithKeyword(t) => t.fill_options(table),
+            AnyTransport::DefKeyword(t) => t.fill_options(table),
             AnyTransport::DashGt(t) => t.fill_options(table),
             AnyTransport::Lparen(t) => t.fill_options(table),
             AnyTransport::Rparen(t) => t.fill_options(table),
             AnyTransport::StarStar(t) => t.fill_options(table),
-            AnyTransport::Global(t) => t.fill_options(table),
-            AnyTransport::Nonlocal(t) => t.fill_options(table),
-            AnyTransport::Exec(t) => t.fill_options(table),
-            AnyTransport::AnonType(t) => t.fill_options(table),
+            AnyTransport::GlobalKeyword(t) => t.fill_options(table),
+            AnyTransport::NonlocalKeyword(t) => t.fill_options(table),
+            AnyTransport::ExecKeyword(t) => t.fill_options(table),
+            AnyTransport::TypeKeyword(t) => t.fill_options(table),
             AnyTransport::Eq(t) => t.fill_options(table),
-            AnyTransport::Class(t) => t.fill_options(table),
+            AnyTransport::ClassKeyword(t) => t.fill_options(table),
             AnyTransport::Lbrack(t) => t.fill_options(table),
             AnyTransport::Rbrack(t) => t.fill_options(table),
             AnyTransport::At(t) => t.fill_options(table),
             AnyTransport::Comma(t) => t.fill_options(table),
             AnyTransport::Lbrace(t) => t.fill_options(table),
             AnyTransport::Rbrace(t) => t.fill_options(table),
-            AnyTransport::Anonymous(t) => t.fill_options(table),
+            AnyTransport::Underscore(t) => t.fill_options(table),
             AnyTransport::Dash(t) => t.fill_options(table),
             AnyTransport::Plus(t) => t.fill_options(table),
-            AnyTransport::Not(t) => t.fill_options(table),
-            AnyTransport::And(t) => t.fill_options(table),
-            AnyTransport::Or(t) => t.fill_options(table),
+            AnyTransport::NotKeyword(t) => t.fill_options(table),
+            AnyTransport::AndKeyword(t) => t.fill_options(table),
+            AnyTransport::OrKeyword(t) => t.fill_options(table),
             AnyTransport::Slash(t) => t.fill_options(table),
             AnyTransport::Percent(t) => t.fill_options(table),
             AnyTransport::SlashSlash(t) => t.fill_options(table),
@@ -624,11 +626,11 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Amp(t) => t.fill_options(table),
             AnyTransport::Caret(t) => t.fill_options(table),
             AnyTransport::LtLt(t) => t.fill_options(table),
-            AnyTransport::AnonLambda(t) => t.fill_options(table),
-            AnyTransport::AnonYield(t) => t.fill_options(table),
+            AnyTransport::LambdaKeyword(t) => t.fill_options(table),
+            AnyTransport::YieldKeyword(t) => t.fill_options(table),
             AnyTransport::Bslash(t) => t.fill_options(table),
-            AnyTransport::AnonAwait(t) => t.fill_options(table),
-            AnyTransport::Async(t) => t.fill_options(table),
+            AnyTransport::AwaitKeyword(t) => t.fill_options(table),
+            AnyTransport::AsyncKeyword(t) => t.fill_options(table),
             AnyTransport::Tilde(t) => t.fill_options(table),
             AnyTransport::PlusEq(t) => t.fill_options(table),
             AnyTransport::DashEq(t) => t.fill_options(table),
@@ -643,7 +645,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::AmpEq(t) => t.fill_options(table),
             AnyTransport::CaretEq(t) => t.fill_options(table),
             AnyTransport::PipeEq(t) => t.fill_options(table),
-            AnyTransport::Print(t) => t.fill_options(table),
+            AnyTransport::PrintKeyword(t) => t.fill_options(table),
             AnyTransport::Lt(t) => t.fill_options(table),
             AnyTransport::LtEq(t) => t.fill_options(table),
             AnyTransport::EqEq(t) => t.fill_options(table),
@@ -651,7 +653,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::GtEq(t) => t.fill_options(table),
             AnyTransport::Gt(t) => t.fill_options(table),
             AnyTransport::LtGt(t) => t.fill_options(table),
-            AnyTransport::Is(t) => t.fill_options(table),
+            AnyTransport::IsKeyword(t) => t.fill_options(table),
             AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => {}
             AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => {}
             AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => {}
@@ -662,11 +664,11 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal7_6e_6f_6e_65 => {}
             AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => {}
             AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => {}
-            AnyTransport::Literal10_5f => {}
+            AnyTransport::Literal10_75_6e_64_65_72_73_63_6f_72_65 => {}
             AnyTransport::Literal11_64_61_73_68 => {}
             AnyTransport::Literal12_70_6c_75_73 => {}
-            AnyTransport::Literal13_61_6e_64 => {}
-            AnyTransport::Literal14_6f_72 => {}
+            AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => {}
+            AnyTransport::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal15_61_74 => {}
             AnyTransport::Literal16_73_6c_61_73_68 => {}
             AnyTransport::Literal17_70_65_72_63_65_6e_74 => {}
@@ -690,7 +692,7 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal35_61_6d_70_5f_65_71 => {}
             AnyTransport::Literal36_63_61_72_65_74_5f_65_71 => {}
             AnyTransport::Literal37_70_69_70_65_5f_65_71 => {}
-            AnyTransport::Literal38_61_6e_6f_6e_5f_74_79_70_65 => {}
+            AnyTransport::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => {}
             AnyTransport::Literal40_65_71 => {}
             AnyTransport::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => {}
@@ -701,9 +703,9 @@ impl ::sittir_core::options::FillOptions for AnyTransport {
             AnyTransport::Literal46_67_74_5f_65_71 => {}
             AnyTransport::Literal47_67_74 => {}
             AnyTransport::Literal48_6c_74_5f_67_74 => {}
-            AnyTransport::Literal49_69_6e => {}
+            AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => {}
-            AnyTransport::Literal51_69_73 => {}
+            AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
             AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => {}
         }
     }
@@ -1432,29 +1434,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 103 => Ok(AnyTransport::Dedent(
                     DedentTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: except (EXCEPT)
-                28 => Ok(AnyTransport::Except(
-                    ExceptTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: import (IMPORT)
-                2 => Ok(AnyTransport::Import(
-                    ImportTransport::from_napi_value(env, napi_val)?
+                // kind: import_keyword (IMPORT_KEYWORD)
+                2 => Ok(AnyTransport::ImportKeyword(
+                    ImportKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dot (DOT)
                 3 => Ok(AnyTransport::Dot(
                     DotTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: from (FROM)
-                4 => Ok(AnyTransport::From(
-                    FromTransport::from_napi_value(env, napi_val)?
+                // kind: from_keyword (FROM_KEYWORD)
+                4 => Ok(AnyTransport::FromKeyword(
+                    FromKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: __future__ (__FUTURE_U)
-                5 => Ok(AnyTransport::FutureU(
-                    FutureUTransport::from_napi_value(env, napi_val)?
+                // kind: __future___keyword (__FUTURE_U_KEYWORD)
+                5 => Ok(AnyTransport::FutureUKeyword(
+                    FutureUKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: as (AS)
-                7 => Ok(AnyTransport::As(
-                    AsTransport::from_napi_value(env, napi_val)?
+                // kind: as_keyword (AS_KEYWORD)
+                7 => Ok(AnyTransport::AsKeyword(
+                    AsKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: star (STAR)
                 8 => Ok(AnyTransport::Star(
@@ -1464,89 +1462,93 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 9 => Ok(AnyTransport::GtGt(
                     GtGtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: assert (ASSERT)
-                10 => Ok(AnyTransport::Assert(
-                    AssertTransport::from_napi_value(env, napi_val)?
+                // kind: assert_keyword (ASSERT_KEYWORD)
+                10 => Ok(AnyTransport::AssertKeyword(
+                    AssertKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: colon_eq (COLON_EQ)
                 11 => Ok(AnyTransport::ColonEq(
                     ColonEqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: return (RETURN)
-                12 => Ok(AnyTransport::Return(
-                    ReturnTransport::from_napi_value(env, napi_val)?
+                // kind: return_keyword (RETURN_KEYWORD)
+                12 => Ok(AnyTransport::ReturnKeyword(
+                    ReturnKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: del (DEL)
-                13 => Ok(AnyTransport::Del(
-                    DelTransport::from_napi_value(env, napi_val)?
+                // kind: del_keyword (DEL_KEYWORD)
+                13 => Ok(AnyTransport::DelKeyword(
+                    DelKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: raise (RAISE)
-                14 => Ok(AnyTransport::Raise(
-                    RaiseTransport::from_napi_value(env, napi_val)?
+                // kind: raise_keyword (RAISE_KEYWORD)
+                14 => Ok(AnyTransport::RaiseKeyword(
+                    RaiseKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: pass (PASS)
-                15 => Ok(AnyTransport::Pass(
-                    PassTransport::from_napi_value(env, napi_val)?
+                // kind: pass_keyword (PASS_KEYWORD)
+                15 => Ok(AnyTransport::PassKeyword(
+                    PassKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: break (BREAK)
-                16 => Ok(AnyTransport::Break(
-                    BreakTransport::from_napi_value(env, napi_val)?
+                // kind: break_keyword (BREAK_KEYWORD)
+                16 => Ok(AnyTransport::BreakKeyword(
+                    BreakKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: continue (CONTINUE)
-                17 => Ok(AnyTransport::Continue(
-                    ContinueTransport::from_napi_value(env, napi_val)?
+                // kind: continue_keyword (CONTINUE_KEYWORD)
+                17 => Ok(AnyTransport::ContinueKeyword(
+                    ContinueKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: if (IF)
-                18 => Ok(AnyTransport::If(
-                    IfTransport::from_napi_value(env, napi_val)?
+                // kind: if_keyword (IF_KEYWORD)
+                18 => Ok(AnyTransport::IfKeyword(
+                    IfKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: colon (COLON)
                 19 => Ok(AnyTransport::Colon(
                     ColonTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: elif (ELIF)
-                20 => Ok(AnyTransport::Elif(
-                    ElifTransport::from_napi_value(env, napi_val)?
+                // kind: elif_keyword (ELIF_KEYWORD)
+                20 => Ok(AnyTransport::ElifKeyword(
+                    ElifKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: else (ELSE)
-                21 => Ok(AnyTransport::Else(
-                    ElseTransport::from_napi_value(env, napi_val)?
+                // kind: else_keyword (ELSE_KEYWORD)
+                21 => Ok(AnyTransport::ElseKeyword(
+                    ElseKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: match (MATCH)
-                22 => Ok(AnyTransport::Match(
-                    MatchTransport::from_napi_value(env, napi_val)?
+                // kind: match_keyword (MATCH_KEYWORD)
+                22 => Ok(AnyTransport::MatchKeyword(
+                    MatchKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: case (CASE)
-                23 => Ok(AnyTransport::Case(
-                    CaseTransport::from_napi_value(env, napi_val)?
+                // kind: case_keyword (CASE_KEYWORD)
+                23 => Ok(AnyTransport::CaseKeyword(
+                    CaseKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: for (FOR)
-                24 => Ok(AnyTransport::For(
-                    ForTransport::from_napi_value(env, napi_val)?
+                // kind: for_keyword (FOR_KEYWORD)
+                24 => Ok(AnyTransport::ForKeyword(
+                    ForKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: in (IN)
-                25 => Ok(AnyTransport::In(
-                    InTransport::from_napi_value(env, napi_val)?
+                // kind: in_keyword (IN_KEYWORD)
+                25 => Ok(AnyTransport::InKeyword(
+                    InKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: while (WHILE)
-                26 => Ok(AnyTransport::While(
-                    WhileTransport::from_napi_value(env, napi_val)?
+                // kind: while_keyword (WHILE_KEYWORD)
+                26 => Ok(AnyTransport::WhileKeyword(
+                    WhileKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: try (TRY)
-                27 => Ok(AnyTransport::Try(
-                    TryTransport::from_napi_value(env, napi_val)?
+                // kind: try_keyword (TRY_KEYWORD)
+                27 => Ok(AnyTransport::TryKeyword(
+                    TryKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: finally (FINALLY)
-                30 => Ok(AnyTransport::Finally(
-                    FinallyTransport::from_napi_value(env, napi_val)?
+                // kind: except_keyword (EXCEPT_KEYWORD)
+                28 => Ok(AnyTransport::ExceptKeyword(
+                    ExceptKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: with (WITH)
-                31 => Ok(AnyTransport::With(
-                    WithTransport::from_napi_value(env, napi_val)?
+                // kind: finally_keyword (FINALLY_KEYWORD)
+                30 => Ok(AnyTransport::FinallyKeyword(
+                    FinallyKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: def (DEF)
-                32 => Ok(AnyTransport::Def(
-                    DefTransport::from_napi_value(env, napi_val)?
+                // kind: with_keyword (WITH_KEYWORD)
+                31 => Ok(AnyTransport::WithKeyword(
+                    WithKeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: def_keyword (DEF_KEYWORD)
+                32 => Ok(AnyTransport::DefKeyword(
+                    DefKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dash_gt (DASH_GT)
                 80 => Ok(AnyTransport::DashGt(
@@ -1564,29 +1566,29 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 35 => Ok(AnyTransport::StarStar(
                     StarStarTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: global (GLOBAL)
-                36 => Ok(AnyTransport::Global(
-                    GlobalTransport::from_napi_value(env, napi_val)?
+                // kind: global_keyword (GLOBAL_KEYWORD)
+                36 => Ok(AnyTransport::GlobalKeyword(
+                    GlobalKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: nonlocal (NONLOCAL)
-                37 => Ok(AnyTransport::Nonlocal(
-                    NonlocalTransport::from_napi_value(env, napi_val)?
+                // kind: nonlocal_keyword (NONLOCAL_KEYWORD)
+                37 => Ok(AnyTransport::NonlocalKeyword(
+                    NonlocalKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: exec (EXEC)
-                38 => Ok(AnyTransport::Exec(
-                    ExecTransport::from_napi_value(env, napi_val)?
+                // kind: exec_keyword (EXEC_KEYWORD)
+                38 => Ok(AnyTransport::ExecKeyword(
+                    ExecKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_type (ANON_TYPE)
-                39 => Ok(AnyTransport::AnonType(
-                    AnonTypeTransport::from_napi_value(env, napi_val)?
+                // kind: type_keyword (TYPE_KEYWORD)
+                39 => Ok(AnyTransport::TypeKeyword(
+                    TypeKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: eq (EQ)
                 40 => Ok(AnyTransport::Eq(
                     EqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: class (CLASS)
-                41 => Ok(AnyTransport::Class(
-                    ClassTransport::from_napi_value(env, napi_val)?
+                // kind: class_keyword (CLASS_KEYWORD)
+                41 => Ok(AnyTransport::ClassKeyword(
+                    ClassKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lbrack (LBRACK)
                 42 => Ok(AnyTransport::Lbrack(
@@ -1612,9 +1614,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 47 => Ok(AnyTransport::Rbrace(
                     RbraceTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _ (_ANONYMOUS)
-                48 => Ok(AnyTransport::Anonymous(
-                    AnonymousTransport::from_napi_value(env, napi_val)?
+                // kind: underscore (UNDERSCORE)
+                48 => Ok(AnyTransport::Underscore(
+                    UnderscoreTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dash (DASH)
                 50 => Ok(AnyTransport::Dash(
@@ -1624,17 +1626,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 49 => Ok(AnyTransport::Plus(
                     PlusTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: not (NOT)
-                51 => Ok(AnyTransport::Not(
-                    NotTransport::from_napi_value(env, napi_val)?
+                // kind: not_keyword (NOT_KEYWORD)
+                51 => Ok(AnyTransport::NotKeyword(
+                    NotKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: and (AND)
-                52 => Ok(AnyTransport::And(
-                    AndTransport::from_napi_value(env, napi_val)?
+                // kind: and_keyword (AND_KEYWORD)
+                52 => Ok(AnyTransport::AndKeyword(
+                    AndKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: or (OR)
-                53 => Ok(AnyTransport::Or(
-                    OrTransport::from_napi_value(env, napi_val)?
+                // kind: or_keyword (OR_KEYWORD)
+                53 => Ok(AnyTransport::OrKeyword(
+                    OrKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: slash (SLASH)
                 54 => Ok(AnyTransport::Slash(
@@ -1664,25 +1666,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 59 => Ok(AnyTransport::LtLt(
                     LtLtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_lambda (ANON_LAMBDA)
-                62 => Ok(AnyTransport::AnonLambda(
-                    AnonLambdaTransport::from_napi_value(env, napi_val)?
+                // kind: lambda_keyword (LAMBDA_KEYWORD)
+                62 => Ok(AnyTransport::LambdaKeyword(
+                    LambdaKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_yield (ANON_YIELD)
-                63 => Ok(AnyTransport::AnonYield(
-                    AnonYieldTransport::from_napi_value(env, napi_val)?
+                // kind: yield_keyword (YIELD_KEYWORD)
+                63 => Ok(AnyTransport::YieldKeyword(
+                    YieldKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: bslash (BSLASH)
                 66 => Ok(AnyTransport::Bslash(
                     BslashTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: anon_await (ANON_AWAIT)
-                73 => Ok(AnyTransport::AnonAwait(
-                    AnonAwaitTransport::from_napi_value(env, napi_val)?
+                // kind: await_keyword (AWAIT_KEYWORD)
+                73 => Ok(AnyTransport::AwaitKeyword(
+                    AwaitKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: async (ASYNC)
-                72 => Ok(AnyTransport::Async(
-                    AsyncTransport::from_napi_value(env, napi_val)?
+                // kind: async_keyword (ASYNC_KEYWORD)
+                72 => Ok(AnyTransport::AsyncKeyword(
+                    AsyncKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: tilde (TILDE)
                 60 => Ok(AnyTransport::Tilde(
@@ -1740,9 +1742,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 93 => Ok(AnyTransport::PipeEq(
                     PipeEqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: print (PRINT)
-                71 => Ok(AnyTransport::Print(
-                    PrintTransport::from_napi_value(env, napi_val)?
+                // kind: print_keyword (PRINT_KEYWORD)
+                71 => Ok(AnyTransport::PrintKeyword(
+                    PrintKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: lt (LT)
                 94 => Ok(AnyTransport::Lt(
@@ -1772,9 +1774,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 100 => Ok(AnyTransport::LtGt(
                     LtGtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: is (IS)
-                61 => Ok(AnyTransport::Is(
-                    IsTransport::from_napi_value(env, napi_val)?
+                // kind: is_keyword (IS_KEYWORD)
+                61 => Ok(AnyTransport::IsKeyword(
+                    IsKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // literal kind: _newline → "\n"
                 317 => Ok(AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65),
@@ -1838,11 +1840,11 @@ impl ::sittir_core::options::FillOptions for TriviaTransport {
     }
 }
 
-impl ::std::fmt::Display for TriviaTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for TriviaTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TriviaTransport::Comment(t) => ::std::fmt::Display::fmt(t, f),
-            TriviaTransport::LineContinuation(t) => ::std::fmt::Display::fmt(t, f),
+            TriviaTransport::Comment(t) => t.render(w),
+            TriviaTransport::LineContinuation(t) => t.render(w),
         }
     }
 }
@@ -2133,9 +2135,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementTransport> {
     }
 }
 
-impl ::std::fmt::Display for SimpleStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_simple_statement(self, f)
+impl ::sittir_core::render::Render for SimpleStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_simple_statement(self, w)
     }
 }
 
@@ -2378,9 +2380,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterTransport> {
     }
 }
 
-impl ::std::fmt::Display for ParameterTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_parameter(self, f)
+impl ::sittir_core::render::Render for ParameterTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_parameter(self, w)
     }
 }
 
@@ -2581,9 +2583,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternTransport> {
     }
 }
 
-impl ::std::fmt::Display for PatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_pattern(self, f)
+impl ::sittir_core::render::Render for PatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_pattern(self, w)
     }
 }
 
@@ -2926,9 +2928,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionTransport> {
     }
 }
 
-impl ::std::fmt::Display for ExpressionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_expression(self, f)
+impl ::sittir_core::render::Render for ExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_expression(self, w)
     }
 }
 
@@ -3425,9 +3427,9 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
     }
 }
 
-impl ::std::fmt::Display for PrimaryExpressionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_primary_expression(self, f)
+impl ::sittir_core::render::Render for PrimaryExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_primary_expression(self, w)
     }
 }
 
@@ -3598,19 +3600,19 @@ fn module_statements_transport_slot_to_any(t: ModuleStatementsTransportSlot) -> 
     }
 }
 
-impl ::std::fmt::Display for ModuleStatementsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ModuleStatementsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ModuleStatementsTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::IfStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::ForStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::WhileStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::TryStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::WithStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::FunctionDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::ClassDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::DecoratedDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
-            ModuleStatementsTransportSlot::MatchStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+            ModuleStatementsTransportSlot::SimpleStatements(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::IfStatement(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::ForStatement(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::WhileStatement(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::TryStatement(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::WithStatement(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::FunctionDefinition(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::ClassDefinition(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::DecoratedDefinition(inner) => inner.render(w),
+            ModuleStatementsTransportSlot::MatchStatement(inner) => inner.render(w),
         }
     }
 }
@@ -3709,11 +3711,11 @@ fn future_import_statement_content_transport_slot_to_any(t: FutureImportStatemen
     }
 }
 
-impl ::std::fmt::Display for FutureImportStatementContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for FutureImportStatementContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FutureImportStatementContentTransportSlot::ImportList(inner) => ::std::fmt::Display::fmt(inner, f),
-            FutureImportStatementContentTransportSlot::ParenthesizedImportList(inner) => ::std::fmt::Display::fmt(inner, f),
+            FutureImportStatementContentTransportSlot::ImportList(inner) => inner.render(w),
+            FutureImportStatementContentTransportSlot::ParenthesizedImportList(inner) => inner.render(w),
         }
     }
 }
@@ -3812,11 +3814,11 @@ fn import_from_statement_module_name_transport_slot_to_any(t: ImportFromStatemen
     }
 }
 
-impl ::std::fmt::Display for ImportFromStatementModuleNameTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ImportFromStatementModuleNameTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportFromStatementModuleNameTransportSlot::RelativeImport(inner) => ::std::fmt::Display::fmt(inner, f),
-            ImportFromStatementModuleNameTransportSlot::DottedName(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImportFromStatementModuleNameTransportSlot::RelativeImport(inner) => inner.render(w),
+            ImportFromStatementModuleNameTransportSlot::DottedName(inner) => inner.render(w),
         }
     }
 }
@@ -3920,12 +3922,12 @@ fn import_from_statement_content_transport_slot_to_any(t: ImportFromStatementCon
     }
 }
 
-impl ::std::fmt::Display for ImportFromStatementContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ImportFromStatementContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportFromStatementContentTransportSlot::ImportList(inner) => ::std::fmt::Display::fmt(inner, f),
-            ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => ::std::fmt::Display::fmt(inner, f),
-            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => f.write_str("*"),
+            ImportFromStatementContentTransportSlot::ImportList(inner) => inner.render(w),
+            ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => inner.render(w),
+            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => w.text("*"),
         }
     }
 }
@@ -4024,11 +4026,11 @@ fn import_list_name_transport_slot_to_any(t: ImportListNameTransportSlot) -> Any
     }
 }
 
-impl ::std::fmt::Display for ImportListNameTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ImportListNameTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportListNameTransportSlot::DottedName(inner) => ::std::fmt::Display::fmt(inner, f),
-            ImportListNameTransportSlot::AliasedImport(inner) => ::std::fmt::Display::fmt(inner, f),
+            ImportListNameTransportSlot::DottedName(inner) => inner.render(w),
+            ImportListNameTransportSlot::AliasedImport(inner) => inner.render(w),
         }
     }
 }
@@ -4127,11 +4129,11 @@ fn print_statement_content_transport_slot_to_any(t: PrintStatementContentTranspo
     }
 }
 
-impl ::std::fmt::Display for PrintStatementContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for PrintStatementContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PrintStatementContentTransportSlot::PrintStatementChevron(inner) => ::std::fmt::Display::fmt(inner, f),
-            PrintStatementContentTransportSlot::PrintStatementPlain(inner) => ::std::fmt::Display::fmt(inner, f),
+            PrintStatementContentTransportSlot::PrintStatementChevron(inner) => inner.render(w),
+            PrintStatementContentTransportSlot::PrintStatementPlain(inner) => inner.render(w),
         }
     }
 }
@@ -4572,45 +4574,45 @@ fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementCont
     }
 }
 
-impl ::std::fmt::Display for ExpressionStatementContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ExpressionStatementContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExpressionStatementContentTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::ExpressionStatementTuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Assignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::AugmentedAssignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionStatementContentTransportSlot::Yield(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExpressionStatementContentTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::NotOperator(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::BooleanOperator(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Lambda(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Await(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::BinaryOperator(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Identifier(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::String(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Integer(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Float(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::True(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::False(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::None(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::UnaryOperator(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Attribute(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Subscript(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Call(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::List(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::ListComprehension(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Dictionary(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Set(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::SetComprehension(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Tuple(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Ellipsis(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::NamedExpression(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::AsPattern(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::ExpressionStatementTuple(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Assignment(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::AugmentedAssignment(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::Yield(inner) => inner.render(w),
         }
     }
 }
@@ -5024,42 +5026,42 @@ fn return_statement_expressions_transport_slot_to_any(t: ReturnStatementExpressi
     }
 }
 
-impl ::std::fmt::Display for ReturnStatementExpressionsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ReturnStatementExpressionsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ReturnStatementExpressionsTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ReturnStatementExpressionsTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ReturnStatementExpressionsTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::NotOperator(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::BooleanOperator(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Lambda(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Await(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::BinaryOperator(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Identifier(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::String(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Integer(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Float(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::True(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::False(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::None(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::UnaryOperator(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Attribute(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Subscript(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Call(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::List(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::ListComprehension(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Dictionary(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Set(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::SetComprehension(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Tuple(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::Ellipsis(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::AsPattern(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::ExpressionList(inner) => inner.render(w),
         }
     }
 }
@@ -5473,42 +5475,42 @@ fn delete_statement_expressions_transport_slot_to_any(t: DeleteStatementExpressi
     }
 }
 
-impl ::std::fmt::Display for DeleteStatementExpressionsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for DeleteStatementExpressionsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DeleteStatementExpressionsTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            DeleteStatementExpressionsTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
+            DeleteStatementExpressionsTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::NotOperator(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::BooleanOperator(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Lambda(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Await(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::BinaryOperator(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Identifier(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::String(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Integer(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Float(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::True(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::False(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::None(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::UnaryOperator(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Attribute(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Subscript(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Call(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::List(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::ListComprehension(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Dictionary(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Set(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::SetComprehension(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Tuple(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::Ellipsis(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::AsPattern(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::ExpressionList(inner) => inner.render(w),
         }
     }
 }
@@ -5922,42 +5924,42 @@ fn raise_statement_expressions_transport_slot_to_any(t: RaiseStatementExpression
     }
 }
 
-impl ::std::fmt::Display for RaiseStatementExpressionsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for RaiseStatementExpressionsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RaiseStatementExpressionsTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            RaiseStatementExpressionsTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
+            RaiseStatementExpressionsTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::NotOperator(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::BooleanOperator(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Lambda(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Await(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::BinaryOperator(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Identifier(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::String(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Integer(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Float(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::True(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::False(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::None(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::UnaryOperator(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Attribute(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Subscript(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Call(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::List(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::ListComprehension(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Dictionary(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Set(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::SetComprehension(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Tuple(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::Ellipsis(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::AsPattern(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::ExpressionList(inner) => inner.render(w),
         }
     }
 }
@@ -6067,12 +6069,12 @@ fn if_statement_consequence_transport_slot_to_any(t: IfStatementConsequenceTrans
     }
 }
 
-impl ::std::fmt::Display for IfStatementConsequenceTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for IfStatementConsequenceTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IfStatementConsequenceTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            IfStatementConsequenceTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            IfStatementConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
+            IfStatementConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
+            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6171,11 +6173,11 @@ fn if_statement_alternative_transport_slot_to_any(t: IfStatementAlternativeTrans
     }
 }
 
-impl ::std::fmt::Display for IfStatementAlternativeTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for IfStatementAlternativeTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IfStatementAlternativeTransportSlot::ElifClause(inner) => ::std::fmt::Display::fmt(inner, f),
-            IfStatementAlternativeTransportSlot::ElseClause(inner) => ::std::fmt::Display::fmt(inner, f),
+            IfStatementAlternativeTransportSlot::ElifClause(inner) => inner.render(w),
+            IfStatementAlternativeTransportSlot::ElseClause(inner) => inner.render(w),
         }
     }
 }
@@ -6285,12 +6287,12 @@ fn elif_clause_consequence_transport_slot_to_any(t: ElifClauseConsequenceTranspo
     }
 }
 
-impl ::std::fmt::Display for ElifClauseConsequenceTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ElifClauseConsequenceTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
+            ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
+            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6400,12 +6402,12 @@ fn else_clause_body_transport_slot_to_any(t: ElseClauseBodyTransportSlot) -> Any
     }
 }
 
-impl ::std::fmt::Display for ElseClauseBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ElseClauseBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ElseClauseBodyTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            ElseClauseBodyTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            ElseClauseBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
+            ElseClauseBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
+            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6500,11 +6502,11 @@ fn match_block_content_transport_slot_to_any(t: MatchBlockContentTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for MatchBlockContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for MatchBlockContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MatchBlockContentTransportSlot::MatchBlockBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            MatchBlockContentTransportSlot::MatchBlockBlock(inner) => inner.render(w),
+            MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6614,12 +6616,12 @@ fn case_clause_consequence_transport_slot_to_any(t: CaseClauseConsequenceTranspo
     }
 }
 
-impl ::std::fmt::Display for CaseClauseConsequenceTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for CaseClauseConsequenceTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
+            CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
+            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -6705,10 +6707,10 @@ fn for_statement_async_marker_transport_slot_to_any(t: ForStatementAsyncMarkerTr
     }
 }
 
-impl ::std::fmt::Display for ForStatementAsyncMarkerTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForStatementAsyncMarkerTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => f.write_str("async"),
+            ForStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
         }
     }
 }
@@ -6888,16 +6890,16 @@ fn for_statement_left_transport_slot_to_any(t: ForStatementLeftTransportSlot) ->
     }
 }
 
-impl ::std::fmt::Display for ForStatementLeftTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForStatementLeftTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForStatementLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementLeftTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementLeftTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementLeftTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementLeftTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementLeftTransportSlot::ListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementLeftTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ForStatementLeftTransportSlot::Identifier(inner) => inner.render(w),
+            ForStatementLeftTransportSlot::Subscript(inner) => inner.render(w),
+            ForStatementLeftTransportSlot::Attribute(inner) => inner.render(w),
+            ForStatementLeftTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ForStatementLeftTransportSlot::TuplePattern(inner) => inner.render(w),
+            ForStatementLeftTransportSlot::ListPattern(inner) => inner.render(w),
+            ForStatementLeftTransportSlot::PatternList(inner) => inner.render(w),
         }
     }
 }
@@ -7311,42 +7313,42 @@ fn for_statement_right_transport_slot_to_any(t: ForStatementRightTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for ForStatementRightTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForStatementRightTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForStatementRightTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementRightTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ForStatementRightTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            ForStatementRightTransportSlot::NotOperator(inner) => inner.render(w),
+            ForStatementRightTransportSlot::BooleanOperator(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Lambda(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Await(inner) => inner.render(w),
+            ForStatementRightTransportSlot::BinaryOperator(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Identifier(inner) => inner.render(w),
+            ForStatementRightTransportSlot::String(inner) => inner.render(w),
+            ForStatementRightTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Integer(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Float(inner) => inner.render(w),
+            ForStatementRightTransportSlot::True(inner) => inner.render(w),
+            ForStatementRightTransportSlot::False(inner) => inner.render(w),
+            ForStatementRightTransportSlot::None(inner) => inner.render(w),
+            ForStatementRightTransportSlot::UnaryOperator(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Attribute(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Subscript(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Call(inner) => inner.render(w),
+            ForStatementRightTransportSlot::List(inner) => inner.render(w),
+            ForStatementRightTransportSlot::ListComprehension(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Dictionary(inner) => inner.render(w),
+            ForStatementRightTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Set(inner) => inner.render(w),
+            ForStatementRightTransportSlot::SetComprehension(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Tuple(inner) => inner.render(w),
+            ForStatementRightTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ForStatementRightTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            ForStatementRightTransportSlot::Ellipsis(inner) => inner.render(w),
+            ForStatementRightTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ForStatementRightTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            ForStatementRightTransportSlot::NamedExpression(inner) => inner.render(w),
+            ForStatementRightTransportSlot::AsPattern(inner) => inner.render(w),
+            ForStatementRightTransportSlot::ExpressionList(inner) => inner.render(w),
         }
     }
 }
@@ -7456,12 +7458,12 @@ fn for_statement_body_transport_slot_to_any(t: ForStatementBodyTransportSlot) ->
     }
 }
 
-impl ::std::fmt::Display for ForStatementBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForStatementBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForStatementBodyTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementBodyTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            ForStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
+            ForStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
+            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7571,12 +7573,12 @@ fn while_statement_body_transport_slot_to_any(t: WhileStatementBodyTransportSlot
     }
 }
 
-impl ::std::fmt::Display for WhileStatementBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for WhileStatementBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            WhileStatementBodyTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            WhileStatementBodyTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            WhileStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
+            WhileStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
+            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7686,12 +7688,12 @@ fn try_statement_body_transport_slot_to_any(t: TryStatementBodyTransportSlot) ->
     }
 }
 
-impl ::std::fmt::Display for TryStatementBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for TryStatementBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TryStatementBodyTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            TryStatementBodyTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            TryStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
+            TryStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
+            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7777,10 +7779,10 @@ fn except_clause_star_marker_transport_slot_to_any(t: ExceptClauseStarMarkerTran
     }
 }
 
-impl ::std::fmt::Display for ExceptClauseStarMarkerTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ExceptClauseStarMarkerTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExceptClauseStarMarkerTransportSlot::Literal3_73_74_61_72 => f.write_str("*"),
+            ExceptClauseStarMarkerTransportSlot::Literal3_73_74_61_72 => w.text("*"),
         }
     }
 }
@@ -7890,12 +7892,12 @@ fn except_clause_suite_transport_slot_to_any(t: ExceptClauseSuiteTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for ExceptClauseSuiteTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ExceptClauseSuiteTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => inner.render(w),
+            ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => inner.render(w),
+            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8005,12 +8007,12 @@ fn finally_clause_block_transport_slot_to_any(t: FinallyClauseBlockTransportSlot
     }
 }
 
-impl ::std::fmt::Display for FinallyClauseBlockTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for FinallyClauseBlockTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FinallyClauseBlockTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            FinallyClauseBlockTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            FinallyClauseBlockTransportSlot::SimpleStatements(inner) => inner.render(w),
+            FinallyClauseBlockTransportSlot::SuiteBlock(inner) => inner.render(w),
+            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8096,10 +8098,10 @@ fn with_statement_async_marker_transport_slot_to_any(t: WithStatementAsyncMarker
     }
 }
 
-impl ::std::fmt::Display for WithStatementAsyncMarkerTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for WithStatementAsyncMarkerTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            WithStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => f.write_str("async"),
+            WithStatementAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
         }
     }
 }
@@ -8209,12 +8211,12 @@ fn with_statement_body_transport_slot_to_any(t: WithStatementBodyTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for WithStatementBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for WithStatementBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            WithStatementBodyTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            WithStatementBodyTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            WithStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
+            WithStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
+            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8313,11 +8315,11 @@ fn with_clause_content_transport_slot_to_any(t: WithClauseContentTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for WithClauseContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for WithClauseContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            WithClauseContentTransportSlot::WithClauseBare(inner) => ::std::fmt::Display::fmt(inner, f),
-            WithClauseContentTransportSlot::WithClauseParen(inner) => ::std::fmt::Display::fmt(inner, f),
+            WithClauseContentTransportSlot::WithClauseBare(inner) => inner.render(w),
+            WithClauseContentTransportSlot::WithClauseParen(inner) => inner.render(w),
         }
     }
 }
@@ -8403,10 +8405,10 @@ fn function_definition_async_marker_transport_slot_to_any(t: FunctionDefinitionA
     }
 }
 
-impl ::std::fmt::Display for FunctionDefinitionAsyncMarkerTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for FunctionDefinitionAsyncMarkerTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => f.write_str("async"),
+            FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
         }
     }
 }
@@ -8516,12 +8518,12 @@ fn function_definition_body_transport_slot_to_any(t: FunctionDefinitionBodyTrans
     }
 }
 
-impl ::std::fmt::Display for FunctionDefinitionBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for FunctionDefinitionBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
+            FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
+            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8656,11 +8658,11 @@ fn exec_statement_code_transport_slot_to_any(t: ExecStatementCodeTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for ExecStatementCodeTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ExecStatementCodeTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExecStatementCodeTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExecStatementCodeTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExecStatementCodeTransportSlot::String(inner) => inner.render(w),
+            ExecStatementCodeTransportSlot::Identifier(inner) => inner.render(w),
         }
     }
 }
@@ -8770,12 +8772,12 @@ fn class_definition_body_transport_slot_to_any(t: ClassDefinitionBodyTransportSl
     }
 }
 
-impl ::std::fmt::Display for ClassDefinitionBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ClassDefinitionBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
+            ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
+            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8880,11 +8882,11 @@ fn parenthesized_list_splat_content_transport_slot_to_any(t: ParenthesizedListSp
     }
 }
 
-impl ::std::fmt::Display for ParenthesizedListSplatContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ParenthesizedListSplatContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedListSplatContentTransportSlot::ListSplat(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(inner) => inner.render(w),
+            ParenthesizedListSplatContentTransportSlot::ListSplat(inner) => inner.render(w),
         }
     }
 }
@@ -8983,11 +8985,11 @@ fn decorated_definition_definition_transport_slot_to_any(t: DecoratedDefinitionD
     }
 }
 
-impl ::std::fmt::Display for DecoratedDefinitionDefinitionTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for DecoratedDefinitionDefinitionTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
-            DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
+            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.render(w),
+            DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => inner.render(w),
         }
     }
 }
@@ -9097,12 +9099,12 @@ fn suite_content_transport_slot_to_any(t: SuiteContentTransportSlot) -> AnyTrans
     }
 }
 
-impl ::std::fmt::Display for SuiteContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for SuiteContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SuiteContentTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            SuiteContentTransportSlot::SuiteBlock(inner) => ::std::fmt::Display::fmt(inner, f),
-            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
+            SuiteContentTransportSlot::SimpleStatements(inner) => inner.render(w),
+            SuiteContentTransportSlot::SuiteBlock(inner) => inner.render(w),
+            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -9273,19 +9275,19 @@ fn block_statements_transport_slot_to_any(t: BlockStatementsTransportSlot) -> An
     }
 }
 
-impl ::std::fmt::Display for BlockStatementsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for BlockStatementsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BlockStatementsTransportSlot::SimpleStatements(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::IfStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::ForStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::WhileStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::TryStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::WithStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::FunctionDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::ClassDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::DecoratedDefinition(inner) => ::std::fmt::Display::fmt(inner, f),
-            BlockStatementsTransportSlot::MatchStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+            BlockStatementsTransportSlot::SimpleStatements(inner) => inner.render(w),
+            BlockStatementsTransportSlot::IfStatement(inner) => inner.render(w),
+            BlockStatementsTransportSlot::ForStatement(inner) => inner.render(w),
+            BlockStatementsTransportSlot::WhileStatement(inner) => inner.render(w),
+            BlockStatementsTransportSlot::TryStatement(inner) => inner.render(w),
+            BlockStatementsTransportSlot::WithStatement(inner) => inner.render(w),
+            BlockStatementsTransportSlot::FunctionDefinition(inner) => inner.render(w),
+            BlockStatementsTransportSlot::ClassDefinition(inner) => inner.render(w),
+            BlockStatementsTransportSlot::DecoratedDefinition(inner) => inner.render(w),
+            BlockStatementsTransportSlot::MatchStatement(inner) => inner.render(w),
         }
     }
 }
@@ -9380,11 +9382,11 @@ fn expression_list_tail_transport_slot_to_any(t: ExpressionListTailTransportSlot
     }
 }
 
-impl ::std::fmt::Display for ExpressionListTailTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ExpressionListTailTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExpressionListTailTransportSlot::ExpressionListExpressions(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExpressionListTailTransportSlot::Literal4_63_6f_6d_6d_61 => f.write_str(","),
+            ExpressionListTailTransportSlot::ExpressionListExpressions(inner) => inner.render(w),
+            ExpressionListTailTransportSlot::Literal4_63_6f_6d_6d_61 => w.text(","),
         }
     }
 }
@@ -9602,26 +9604,26 @@ fn case_pattern_content_transport_slot_to_any(t: CasePatternContentTransportSlot
     }
 }
 
-impl ::std::fmt::Display for CasePatternContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for CasePatternContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CasePatternContentTransportSlot::CaseAsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::KeywordPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::ClassPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::SplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::UnionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::CaseListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::CaseTuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::DictPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::SimplePatternNegative(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::ComplexPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::DottedName(inner) => ::std::fmt::Display::fmt(inner, f),
-            CasePatternContentTransportSlot::Literal5_74_72_75_65 => f.write_str("True"),
-            CasePatternContentTransportSlot::Literal6_66_61_6c_73_65 => f.write_str("False"),
-            CasePatternContentTransportSlot::Literal7_6e_6f_6e_65 => f.write_str("None"),
-            CasePatternContentTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => f.write_str("_"),
+            CasePatternContentTransportSlot::CaseAsPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::KeywordPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::ClassPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::SplatPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::UnionPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::CaseListPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::CaseTuplePattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::DictPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::String(inner) => inner.render(w),
+            CasePatternContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            CasePatternContentTransportSlot::SimplePatternNegative(inner) => inner.render(w),
+            CasePatternContentTransportSlot::ComplexPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::DottedName(inner) => inner.render(w),
+            CasePatternContentTransportSlot::Literal5_74_72_75_65 => w.text("True"),
+            CasePatternContentTransportSlot::Literal6_66_61_6c_73_65 => w.text("False"),
+            CasePatternContentTransportSlot::Literal7_6e_6f_6e_65 => w.text("None"),
+            CasePatternContentTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
         }
     }
 }
@@ -9821,24 +9823,24 @@ fn union_pattern_patterns_transport_slot_to_any(t: UnionPatternPatternsTransport
     }
 }
 
-impl ::std::fmt::Display for UnionPatternPatternsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for UnionPatternPatternsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnionPatternPatternsTransportSlot::ClassPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::SplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::UnionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::CaseListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::CaseTuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::DictPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::SimplePatternNegative(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::ComplexPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::DottedName(inner) => ::std::fmt::Display::fmt(inner, f),
-            UnionPatternPatternsTransportSlot::Literal5_74_72_75_65 => f.write_str("True"),
-            UnionPatternPatternsTransportSlot::Literal6_66_61_6c_73_65 => f.write_str("False"),
-            UnionPatternPatternsTransportSlot::Literal7_6e_6f_6e_65 => f.write_str("None"),
-            UnionPatternPatternsTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => f.write_str("_"),
+            UnionPatternPatternsTransportSlot::ClassPattern(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::SplatPattern(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::UnionPattern(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::CaseListPattern(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::CaseTuplePattern(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::DictPattern(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::String(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::SimplePatternNegative(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::ComplexPattern(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::DottedName(inner) => inner.render(w),
+            UnionPatternPatternsTransportSlot::Literal5_74_72_75_65 => w.text("True"),
+            UnionPatternPatternsTransportSlot::Literal6_66_61_6c_73_65 => w.text("False"),
+            UnionPatternPatternsTransportSlot::Literal7_6e_6f_6e_65 => w.text("None"),
+            UnionPatternPatternsTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
         }
     }
 }
@@ -10038,24 +10040,24 @@ fn key_value_pattern_key_transport_slot_to_any(t: KeyValuePatternKeyTransportSlo
     }
 }
 
-impl ::std::fmt::Display for KeyValuePatternKeyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for KeyValuePatternKeyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            KeyValuePatternKeyTransportSlot::ClassPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::SplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::UnionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::CaseListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::CaseTuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::DictPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::SimplePatternNegative(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::ComplexPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::DottedName(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeyValuePatternKeyTransportSlot::Literal5_74_72_75_65 => f.write_str("True"),
-            KeyValuePatternKeyTransportSlot::Literal6_66_61_6c_73_65 => f.write_str("False"),
-            KeyValuePatternKeyTransportSlot::Literal7_6e_6f_6e_65 => f.write_str("None"),
-            KeyValuePatternKeyTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => f.write_str("_"),
+            KeyValuePatternKeyTransportSlot::ClassPattern(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::SplatPattern(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::UnionPattern(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::CaseListPattern(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::CaseTuplePattern(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::DictPattern(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::String(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::SimplePatternNegative(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::ComplexPattern(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::DottedName(inner) => inner.render(w),
+            KeyValuePatternKeyTransportSlot::Literal5_74_72_75_65 => w.text("True"),
+            KeyValuePatternKeyTransportSlot::Literal6_66_61_6c_73_65 => w.text("False"),
+            KeyValuePatternKeyTransportSlot::Literal7_6e_6f_6e_65 => w.text("None"),
+            KeyValuePatternKeyTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
         }
     }
 }
@@ -10255,24 +10257,24 @@ fn keyword_pattern_value_transport_slot_to_any(t: KeywordPatternValueTransportSl
     }
 }
 
-impl ::std::fmt::Display for KeywordPatternValueTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for KeywordPatternValueTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            KeywordPatternValueTransportSlot::ClassPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::SplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::UnionPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::CaseListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::CaseTuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::DictPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::SimplePatternNegative(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::ComplexPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::DottedName(inner) => ::std::fmt::Display::fmt(inner, f),
-            KeywordPatternValueTransportSlot::Literal5_74_72_75_65 => f.write_str("True"),
-            KeywordPatternValueTransportSlot::Literal6_66_61_6c_73_65 => f.write_str("False"),
-            KeywordPatternValueTransportSlot::Literal7_6e_6f_6e_65 => f.write_str("None"),
-            KeywordPatternValueTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => f.write_str("_"),
+            KeywordPatternValueTransportSlot::ClassPattern(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::SplatPattern(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::UnionPattern(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::CaseListPattern(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::CaseTuplePattern(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::DictPattern(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::String(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::SimplePatternNegative(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::ComplexPattern(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::DottedName(inner) => inner.render(w),
+            KeywordPatternValueTransportSlot::Literal5_74_72_75_65 => w.text("True"),
+            KeywordPatternValueTransportSlot::Literal6_66_61_6c_73_65 => w.text("False"),
+            KeywordPatternValueTransportSlot::Literal7_6e_6f_6e_65 => w.text("None"),
+            KeywordPatternValueTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
         }
     }
 }
@@ -10363,11 +10365,11 @@ fn splat_pattern_operator_transport_slot_to_any(t: SplatPatternOperatorTransport
     }
 }
 
-impl ::std::fmt::Display for SplatPatternOperatorTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SplatPatternOperatorTransportSlot::Literal3_73_74_61_72 => f.write_str("*"),
-            SplatPatternOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => f.write_str("**"),
+            SplatPatternOperatorTransportSlot::Literal3_73_74_61_72 => w.text("*"),
+            SplatPatternOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => w.text("**"),
         }
     }
 }
@@ -10375,14 +10377,14 @@ impl ::std::fmt::Display for SplatPatternOperatorTransportSlot {
 #[derive(Debug, Clone)]
 pub enum SplatPatternNameTransportSlot {
     Identifier(IdentifierTransport),
-    Literal10_5f,
+    Literal10_75_6e_64_65_72_73_63_6f_72_65,
 }
 
 impl ::sittir_core::options::FillOptions for SplatPatternNameTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             SplatPatternNameTransportSlot::Identifier(t) => t.fill_options(table),
-            SplatPatternNameTransportSlot::Literal10_5f => {}
+            SplatPatternNameTransportSlot::Literal10_75_6e_64_65_72_73_63_6f_72_65 => {}
         }
     }
 }
@@ -10396,7 +10398,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    48 => Ok(Self::Literal10_5f),
+                    48 => Ok(Self::Literal10_75_6e_64_65_72_73_63_6f_72_65),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10429,7 +10431,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in SplatPatternNameTransportSlot")
                 )?;
                 match kind_id {
-                    48 => Ok(Self::Literal10_5f),
+                    48 => Ok(Self::Literal10_75_6e_64_65_72_73_63_6f_72_65),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10494,15 +10496,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternNameTransportSlot>
 fn splat_pattern_name_transport_slot_to_any(t: SplatPatternNameTransportSlot) -> AnyTransport {
     match t {
         SplatPatternNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SplatPatternNameTransportSlot::Literal10_5f => AnyTransport::Literal10_5f,
+        SplatPatternNameTransportSlot::Literal10_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal10_75_6e_64_65_72_73_63_6f_72_65,
     }
 }
 
-impl ::std::fmt::Display for SplatPatternNameTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for SplatPatternNameTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SplatPatternNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            SplatPatternNameTransportSlot::Literal10_5f => f.write_str("_"),
+            SplatPatternNameTransportSlot::Identifier(inner) => inner.render(w),
+            SplatPatternNameTransportSlot::Literal10_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
         }
     }
 }
@@ -10588,10 +10590,10 @@ fn complex_pattern_real_transport_slot_to_any(t: ComplexPatternRealTransportSlot
     }
 }
 
-impl ::std::fmt::Display for ComplexPatternRealTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ComplexPatternRealTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComplexPatternRealTransportSlot::Literal11_64_61_73_68 => f.write_str("-"),
+            ComplexPatternRealTransportSlot::Literal11_64_61_73_68 => w.text("-"),
         }
     }
 }
@@ -10690,11 +10692,11 @@ fn complex_pattern_imaginary_transport_slot_to_any(t: ComplexPatternImaginaryTra
     }
 }
 
-impl ::std::fmt::Display for ComplexPatternImaginaryTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ComplexPatternImaginaryTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComplexPatternImaginaryTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ComplexPatternImaginaryTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
+            ComplexPatternImaginaryTransportSlot::Integer(inner) => inner.render(w),
+            ComplexPatternImaginaryTransportSlot::Float(inner) => inner.render(w),
         }
     }
 }
@@ -10785,11 +10787,11 @@ fn complex_pattern_operator_transport_slot_to_any(t: ComplexPatternOperatorTrans
     }
 }
 
-impl ::std::fmt::Display for ComplexPatternOperatorTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ComplexPatternOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComplexPatternOperatorTransportSlot::Literal12_70_6c_75_73 => f.write_str("+"),
-            ComplexPatternOperatorTransportSlot::Literal11_64_61_73_68 => f.write_str("-"),
+            ComplexPatternOperatorTransportSlot::Literal12_70_6c_75_73 => w.text("+"),
+            ComplexPatternOperatorTransportSlot::Literal11_64_61_73_68 => w.text("-"),
         }
     }
 }
@@ -10888,11 +10890,11 @@ fn complex_pattern_content_transport_slot_to_any(t: ComplexPatternContentTranspo
     }
 }
 
-impl ::std::fmt::Display for ComplexPatternContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ComplexPatternContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComplexPatternContentTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ComplexPatternContentTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
+            ComplexPatternContentTransportSlot::Integer(inner) => inner.render(w),
+            ComplexPatternContentTransportSlot::Float(inner) => inner.render(w),
         }
     }
 }
@@ -11027,11 +11029,11 @@ fn default_parameter_name_transport_slot_to_any(t: DefaultParameterNameTransport
     }
 }
 
-impl ::std::fmt::Display for DefaultParameterNameTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for DefaultParameterNameTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DefaultParameterNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            DefaultParameterNameTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            DefaultParameterNameTransportSlot::Identifier(inner) => inner.render(w),
+            DefaultParameterNameTransportSlot::TuplePattern(inner) => inner.render(w),
         }
     }
 }
@@ -11175,12 +11177,12 @@ fn list_splat_pattern_content_transport_slot_to_any(t: ListSplatPatternContentTr
     }
 }
 
-impl ::std::fmt::Display for ListSplatPatternContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ListSplatPatternContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ListSplatPatternContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ListSplatPatternContentTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ListSplatPatternContentTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
+            ListSplatPatternContentTransportSlot::Identifier(inner) => inner.render(w),
+            ListSplatPatternContentTransportSlot::Subscript(inner) => inner.render(w),
+            ListSplatPatternContentTransportSlot::Attribute(inner) => inner.render(w),
         }
     }
 }
@@ -11324,27 +11326,27 @@ fn dictionary_splat_pattern_content_transport_slot_to_any(t: DictionarySplatPatt
     }
 }
 
-impl ::std::fmt::Display for DictionarySplatPatternContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for DictionarySplatPatternContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DictionarySplatPatternContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            DictionarySplatPatternContentTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            DictionarySplatPatternContentTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
+            DictionarySplatPatternContentTransportSlot::Identifier(inner) => inner.render(w),
+            DictionarySplatPatternContentTransportSlot::Subscript(inner) => inner.render(w),
+            DictionarySplatPatternContentTransportSlot::Attribute(inner) => inner.render(w),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum BooleanOperatorOperatorTransportSlot {
-    Literal13_61_6e_64,
-    Literal14_6f_72,
+    Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64,
+    Literal14_6f_72_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::options::FillOptions for BooleanOperatorOperatorTransportSlot {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
         match self {
-            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => {}
-            BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => {}
+            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => {}
+            BooleanOperatorOperatorTransportSlot::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => {}
         }
     }
 }
@@ -11358,8 +11360,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    52 => Ok(Self::Literal13_61_6e_64),
-                    53 => Ok(Self::Literal14_6f_72),
+                    52 => Ok(Self::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64),
+                    53 => Ok(Self::Literal14_6f_72_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
                     ))),
@@ -11371,8 +11373,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransport
                     ::napi::Error::from_reason("$type property missing in BooleanOperatorOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    52 => Ok(Self::Literal13_61_6e_64),
-                    53 => Ok(Self::Literal14_6f_72),
+                    52 => Ok(Self::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64),
+                    53 => Ok(Self::Literal14_6f_72_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
                     ))),
@@ -11415,16 +11417,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BooleanOperatorOperatorTranspo
 
 fn boolean_operator_operator_transport_slot_to_any(t: BooleanOperatorOperatorTransportSlot) -> AnyTransport {
     match t {
-        BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => AnyTransport::Literal13_61_6e_64,
-        BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => AnyTransport::Literal14_6f_72,
+        BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64,
+        BooleanOperatorOperatorTransportSlot::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal14_6f_72_5f_6b_65_79_77_6f_72_64,
     }
 }
 
-impl ::std::fmt::Display for BooleanOperatorOperatorTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for BooleanOperatorOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64 => f.write_str("and"),
-            BooleanOperatorOperatorTransportSlot::Literal14_6f_72 => f.write_str("or"),
+            BooleanOperatorOperatorTransportSlot::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => w.text("and"),
+            BooleanOperatorOperatorTransportSlot::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => w.text("or"),
         }
     }
 }
@@ -11570,22 +11572,22 @@ fn binary_operator_operator_transport_slot_to_any(t: BinaryOperatorOperatorTrans
     }
 }
 
-impl ::std::fmt::Display for BinaryOperatorOperatorTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for BinaryOperatorOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BinaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => f.write_str("+"),
-            BinaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => f.write_str("-"),
-            BinaryOperatorOperatorTransportSlot::Literal3_73_74_61_72 => f.write_str("*"),
-            BinaryOperatorOperatorTransportSlot::Literal15_61_74 => f.write_str("@"),
-            BinaryOperatorOperatorTransportSlot::Literal16_73_6c_61_73_68 => f.write_str("/"),
-            BinaryOperatorOperatorTransportSlot::Literal17_70_65_72_63_65_6e_74 => f.write_str("%"),
-            BinaryOperatorOperatorTransportSlot::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => f.write_str("//"),
-            BinaryOperatorOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => f.write_str("**"),
-            BinaryOperatorOperatorTransportSlot::Literal19_70_69_70_65 => f.write_str("|"),
-            BinaryOperatorOperatorTransportSlot::Literal20_61_6d_70 => f.write_str("&"),
-            BinaryOperatorOperatorTransportSlot::Literal21_63_61_72_65_74 => f.write_str("^"),
-            BinaryOperatorOperatorTransportSlot::Literal22_6c_74_5f_6c_74 => f.write_str("<<"),
-            BinaryOperatorOperatorTransportSlot::Literal23_67_74_5f_67_74 => f.write_str(">>"),
+            BinaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => w.text("+"),
+            BinaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => w.text("-"),
+            BinaryOperatorOperatorTransportSlot::Literal3_73_74_61_72 => w.text("*"),
+            BinaryOperatorOperatorTransportSlot::Literal15_61_74 => w.text("@"),
+            BinaryOperatorOperatorTransportSlot::Literal16_73_6c_61_73_68 => w.text("/"),
+            BinaryOperatorOperatorTransportSlot::Literal17_70_65_72_63_65_6e_74 => w.text("%"),
+            BinaryOperatorOperatorTransportSlot::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => w.text("//"),
+            BinaryOperatorOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => w.text("**"),
+            BinaryOperatorOperatorTransportSlot::Literal19_70_69_70_65 => w.text("|"),
+            BinaryOperatorOperatorTransportSlot::Literal20_61_6d_70 => w.text("&"),
+            BinaryOperatorOperatorTransportSlot::Literal21_63_61_72_65_74 => w.text("^"),
+            BinaryOperatorOperatorTransportSlot::Literal22_6c_74_5f_6c_74 => w.text("<<"),
+            BinaryOperatorOperatorTransportSlot::Literal23_67_74_5f_67_74 => w.text(">>"),
         }
     }
 }
@@ -11681,12 +11683,12 @@ fn unary_operator_operator_transport_slot_to_any(t: UnaryOperatorOperatorTranspo
     }
 }
 
-impl ::std::fmt::Display for UnaryOperatorOperatorTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for UnaryOperatorOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => f.write_str("+"),
-            UnaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => f.write_str("-"),
-            UnaryOperatorOperatorTransportSlot::Literal24_74_69_6c_64_65 => f.write_str("~"),
+            UnaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => w.text("+"),
+            UnaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => w.text("-"),
+            UnaryOperatorOperatorTransportSlot::Literal24_74_69_6c_64_65 => w.text("~"),
         }
     }
 }
@@ -12100,42 +12102,42 @@ fn lambda_within_for_in_clause_body_transport_slot_to_any(t: LambdaWithinForInCl
     }
 }
 
-impl ::std::fmt::Display for LambdaWithinForInClauseBodyTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for LambdaWithinForInClauseBodyTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LambdaWithinForInClauseBodyTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(inner) => ::std::fmt::Display::fmt(inner, f),
+            LambdaWithinForInClauseBodyTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::NotOperator(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::BooleanOperator(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Lambda(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Await(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::BinaryOperator(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Identifier(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::String(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Integer(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Float(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::True(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::False(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::None(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::UnaryOperator(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Attribute(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Subscript(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Call(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::List(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::ListComprehension(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Dictionary(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Set(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::SetComprehension(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Tuple(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::Ellipsis(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::NamedExpression(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::AsPattern(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(inner) => inner.render(w),
         }
     }
 }
@@ -12315,16 +12317,16 @@ fn assignment_left_transport_slot_to_any(t: AssignmentLeftTransportSlot) -> AnyT
     }
 }
 
-impl ::std::fmt::Display for AssignmentLeftTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AssignmentLeftTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AssignmentLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentLeftTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentLeftTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentLeftTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentLeftTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentLeftTransportSlot::ListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentLeftTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
+            AssignmentLeftTransportSlot::Identifier(inner) => inner.render(w),
+            AssignmentLeftTransportSlot::Subscript(inner) => inner.render(w),
+            AssignmentLeftTransportSlot::Attribute(inner) => inner.render(w),
+            AssignmentLeftTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            AssignmentLeftTransportSlot::TuplePattern(inner) => inner.render(w),
+            AssignmentLeftTransportSlot::ListPattern(inner) => inner.render(w),
+            AssignmentLeftTransportSlot::PatternList(inner) => inner.render(w),
         }
     }
 }
@@ -12432,12 +12434,12 @@ fn assignment_content_transport_slot_to_any(t: AssignmentContentTransportSlot) -
     }
 }
 
-impl ::std::fmt::Display for AssignmentContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AssignmentContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AssignmentContentTransportSlot::AssignmentEq(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentContentTransportSlot::AssignmentType(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentContentTransportSlot::AssignmentTyped(inner) => ::std::fmt::Display::fmt(inner, f),
+            AssignmentContentTransportSlot::AssignmentEq(inner) => inner.render(w),
+            AssignmentContentTransportSlot::AssignmentType(inner) => inner.render(w),
+            AssignmentContentTransportSlot::AssignmentTyped(inner) => inner.render(w),
         }
     }
 }
@@ -12617,16 +12619,16 @@ fn augmented_assignment_left_transport_slot_to_any(t: AugmentedAssignmentLeftTra
     }
 }
 
-impl ::std::fmt::Display for AugmentedAssignmentLeftTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AugmentedAssignmentLeftTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AugmentedAssignmentLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentLeftTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentLeftTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentLeftTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentLeftTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentLeftTransportSlot::ListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentLeftTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
+            AugmentedAssignmentLeftTransportSlot::Identifier(inner) => inner.render(w),
+            AugmentedAssignmentLeftTransportSlot::Subscript(inner) => inner.render(w),
+            AugmentedAssignmentLeftTransportSlot::Attribute(inner) => inner.render(w),
+            AugmentedAssignmentLeftTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            AugmentedAssignmentLeftTransportSlot::TuplePattern(inner) => inner.render(w),
+            AugmentedAssignmentLeftTransportSlot::ListPattern(inner) => inner.render(w),
+            AugmentedAssignmentLeftTransportSlot::PatternList(inner) => inner.render(w),
         }
     }
 }
@@ -12772,22 +12774,22 @@ fn augmented_assignment_operator_transport_slot_to_any(t: AugmentedAssignmentOpe
     }
 }
 
-impl ::std::fmt::Display for AugmentedAssignmentOperatorTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AugmentedAssignmentOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AugmentedAssignmentOperatorTransportSlot::Literal25_70_6c_75_73_5f_65_71 => f.write_str("+="),
-            AugmentedAssignmentOperatorTransportSlot::Literal26_64_61_73_68_5f_65_71 => f.write_str("-="),
-            AugmentedAssignmentOperatorTransportSlot::Literal27_73_74_61_72_5f_65_71 => f.write_str("*="),
-            AugmentedAssignmentOperatorTransportSlot::Literal28_73_6c_61_73_68_5f_65_71 => f.write_str("/="),
-            AugmentedAssignmentOperatorTransportSlot::Literal29_61_74_5f_65_71 => f.write_str("@="),
-            AugmentedAssignmentOperatorTransportSlot::Literal30_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => f.write_str("//="),
-            AugmentedAssignmentOperatorTransportSlot::Literal31_70_65_72_63_65_6e_74_5f_65_71 => f.write_str("%="),
-            AugmentedAssignmentOperatorTransportSlot::Literal32_73_74_61_72_5f_73_74_61_72_5f_65_71 => f.write_str("**="),
-            AugmentedAssignmentOperatorTransportSlot::Literal33_67_74_5f_67_74_5f_65_71 => f.write_str(">>="),
-            AugmentedAssignmentOperatorTransportSlot::Literal34_6c_74_5f_6c_74_5f_65_71 => f.write_str("<<="),
-            AugmentedAssignmentOperatorTransportSlot::Literal35_61_6d_70_5f_65_71 => f.write_str("&="),
-            AugmentedAssignmentOperatorTransportSlot::Literal36_63_61_72_65_74_5f_65_71 => f.write_str("^="),
-            AugmentedAssignmentOperatorTransportSlot::Literal37_70_69_70_65_5f_65_71 => f.write_str("|="),
+            AugmentedAssignmentOperatorTransportSlot::Literal25_70_6c_75_73_5f_65_71 => w.text("+="),
+            AugmentedAssignmentOperatorTransportSlot::Literal26_64_61_73_68_5f_65_71 => w.text("-="),
+            AugmentedAssignmentOperatorTransportSlot::Literal27_73_74_61_72_5f_65_71 => w.text("*="),
+            AugmentedAssignmentOperatorTransportSlot::Literal28_73_6c_61_73_68_5f_65_71 => w.text("/="),
+            AugmentedAssignmentOperatorTransportSlot::Literal29_61_74_5f_65_71 => w.text("@="),
+            AugmentedAssignmentOperatorTransportSlot::Literal30_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => w.text("//="),
+            AugmentedAssignmentOperatorTransportSlot::Literal31_70_65_72_63_65_6e_74_5f_65_71 => w.text("%="),
+            AugmentedAssignmentOperatorTransportSlot::Literal32_73_74_61_72_5f_73_74_61_72_5f_65_71 => w.text("**="),
+            AugmentedAssignmentOperatorTransportSlot::Literal33_67_74_5f_67_74_5f_65_71 => w.text(">>="),
+            AugmentedAssignmentOperatorTransportSlot::Literal34_6c_74_5f_6c_74_5f_65_71 => w.text("<<="),
+            AugmentedAssignmentOperatorTransportSlot::Literal35_61_6d_70_5f_65_71 => w.text("&="),
+            AugmentedAssignmentOperatorTransportSlot::Literal36_63_61_72_65_74_5f_65_71 => w.text("^="),
+            AugmentedAssignmentOperatorTransportSlot::Literal37_70_69_70_65_5f_65_71 => w.text("|="),
         }
     }
 }
@@ -13237,46 +13239,46 @@ fn augmented_assignment_right_transport_slot_to_any(t: AugmentedAssignmentRightT
     }
 }
 
-impl ::std::fmt::Display for AugmentedAssignmentRightTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AugmentedAssignmentRightTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AugmentedAssignmentRightTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Assignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::AugmentedAssignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
-            AugmentedAssignmentRightTransportSlot::Yield(inner) => ::std::fmt::Display::fmt(inner, f),
+            AugmentedAssignmentRightTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::NotOperator(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::BooleanOperator(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Lambda(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Await(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::BinaryOperator(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Identifier(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::String(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Integer(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Float(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::True(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::False(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::None(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::UnaryOperator(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Attribute(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Subscript(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Call(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::List(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::ListComprehension(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Dictionary(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Set(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::SetComprehension(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Tuple(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Ellipsis(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::NamedExpression(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::AsPattern(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::ExpressionList(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Assignment(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::PatternList(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::Yield(inner) => inner.render(w),
         }
     }
 }
@@ -13371,11 +13373,11 @@ fn pattern_list_tail_transport_slot_to_any(t: PatternListTailTransportSlot) -> A
     }
 }
 
-impl ::std::fmt::Display for PatternListTailTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for PatternListTailTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PatternListTailTransportSlot::PatternListPatterns(inner) => ::std::fmt::Display::fmt(inner, f),
-            PatternListTailTransportSlot::Literal4_63_6f_6d_6d_61 => f.write_str(","),
+            PatternListTailTransportSlot::PatternListPatterns(inner) => inner.render(w),
+            PatternListTailTransportSlot::Literal4_63_6f_6d_6d_61 => w.text(","),
         }
     }
 }
@@ -13798,43 +13800,43 @@ fn yield_content_transport_slot_to_any(t: YieldContentTransportSlot) -> AnyTrans
     }
 }
 
-impl ::std::fmt::Display for YieldContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for YieldContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            YieldContentTransportSlot::YieldFromClause(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            YieldContentTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
+            YieldContentTransportSlot::YieldFromClause(inner) => inner.render(w),
+            YieldContentTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            YieldContentTransportSlot::NotOperator(inner) => inner.render(w),
+            YieldContentTransportSlot::BooleanOperator(inner) => inner.render(w),
+            YieldContentTransportSlot::Lambda(inner) => inner.render(w),
+            YieldContentTransportSlot::Await(inner) => inner.render(w),
+            YieldContentTransportSlot::BinaryOperator(inner) => inner.render(w),
+            YieldContentTransportSlot::Identifier(inner) => inner.render(w),
+            YieldContentTransportSlot::String(inner) => inner.render(w),
+            YieldContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            YieldContentTransportSlot::Integer(inner) => inner.render(w),
+            YieldContentTransportSlot::Float(inner) => inner.render(w),
+            YieldContentTransportSlot::True(inner) => inner.render(w),
+            YieldContentTransportSlot::False(inner) => inner.render(w),
+            YieldContentTransportSlot::None(inner) => inner.render(w),
+            YieldContentTransportSlot::UnaryOperator(inner) => inner.render(w),
+            YieldContentTransportSlot::Attribute(inner) => inner.render(w),
+            YieldContentTransportSlot::Subscript(inner) => inner.render(w),
+            YieldContentTransportSlot::Call(inner) => inner.render(w),
+            YieldContentTransportSlot::List(inner) => inner.render(w),
+            YieldContentTransportSlot::ListComprehension(inner) => inner.render(w),
+            YieldContentTransportSlot::Dictionary(inner) => inner.render(w),
+            YieldContentTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            YieldContentTransportSlot::Set(inner) => inner.render(w),
+            YieldContentTransportSlot::SetComprehension(inner) => inner.render(w),
+            YieldContentTransportSlot::Tuple(inner) => inner.render(w),
+            YieldContentTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            YieldContentTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            YieldContentTransportSlot::Ellipsis(inner) => inner.render(w),
+            YieldContentTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            YieldContentTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            YieldContentTransportSlot::NamedExpression(inner) => inner.render(w),
+            YieldContentTransportSlot::AsPattern(inner) => inner.render(w),
+            YieldContentTransportSlot::ExpressionList(inner) => inner.render(w),
         }
     }
 }
@@ -13933,11 +13935,11 @@ fn call_arguments_transport_slot_to_any(t: CallArgumentsTransportSlot) -> AnyTra
     }
 }
 
-impl ::std::fmt::Display for CallArgumentsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for CallArgumentsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CallArgumentsTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            CallArgumentsTransportSlot::ArgumentList(inner) => ::std::fmt::Display::fmt(inner, f),
+            CallArgumentsTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            CallArgumentsTransportSlot::ArgumentList(inner) => inner.render(w),
         }
     }
 }
@@ -14081,12 +14083,12 @@ fn typed_parameter_content_transport_slot_to_any(t: TypedParameterContentTranspo
     }
 }
 
-impl ::std::fmt::Display for TypedParameterContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for TypedParameterContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TypedParameterContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypedParameterContentTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypedParameterContentTransportSlot::DictionarySplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypedParameterContentTransportSlot::Identifier(inner) => inner.render(w),
+            TypedParameterContentTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            TypedParameterContentTransportSlot::DictionarySplatPattern(inner) => inner.render(w),
         }
     }
 }
@@ -14536,46 +14538,46 @@ fn type_content_transport_slot_to_any(t: TypeContentTransportSlot) -> AnyTranspo
     }
 }
 
-impl ::std::fmt::Display for TypeContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for TypeContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TypeContentTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::SplatType(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::GenericType(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::UnionType(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::ConstrainedType(inner) => ::std::fmt::Display::fmt(inner, f),
-            TypeContentTransportSlot::MemberType(inner) => ::std::fmt::Display::fmt(inner, f),
+            TypeContentTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            TypeContentTransportSlot::NotOperator(inner) => inner.render(w),
+            TypeContentTransportSlot::BooleanOperator(inner) => inner.render(w),
+            TypeContentTransportSlot::Lambda(inner) => inner.render(w),
+            TypeContentTransportSlot::Await(inner) => inner.render(w),
+            TypeContentTransportSlot::BinaryOperator(inner) => inner.render(w),
+            TypeContentTransportSlot::Identifier(inner) => inner.render(w),
+            TypeContentTransportSlot::String(inner) => inner.render(w),
+            TypeContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            TypeContentTransportSlot::Integer(inner) => inner.render(w),
+            TypeContentTransportSlot::Float(inner) => inner.render(w),
+            TypeContentTransportSlot::True(inner) => inner.render(w),
+            TypeContentTransportSlot::False(inner) => inner.render(w),
+            TypeContentTransportSlot::None(inner) => inner.render(w),
+            TypeContentTransportSlot::UnaryOperator(inner) => inner.render(w),
+            TypeContentTransportSlot::Attribute(inner) => inner.render(w),
+            TypeContentTransportSlot::Subscript(inner) => inner.render(w),
+            TypeContentTransportSlot::Call(inner) => inner.render(w),
+            TypeContentTransportSlot::List(inner) => inner.render(w),
+            TypeContentTransportSlot::ListComprehension(inner) => inner.render(w),
+            TypeContentTransportSlot::Dictionary(inner) => inner.render(w),
+            TypeContentTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            TypeContentTransportSlot::Set(inner) => inner.render(w),
+            TypeContentTransportSlot::SetComprehension(inner) => inner.render(w),
+            TypeContentTransportSlot::Tuple(inner) => inner.render(w),
+            TypeContentTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            TypeContentTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            TypeContentTransportSlot::Ellipsis(inner) => inner.render(w),
+            TypeContentTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            TypeContentTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            TypeContentTransportSlot::NamedExpression(inner) => inner.render(w),
+            TypeContentTransportSlot::AsPattern(inner) => inner.render(w),
+            TypeContentTransportSlot::SplatType(inner) => inner.render(w),
+            TypeContentTransportSlot::GenericType(inner) => inner.render(w),
+            TypeContentTransportSlot::UnionType(inner) => inner.render(w),
+            TypeContentTransportSlot::ConstrainedType(inner) => inner.render(w),
+            TypeContentTransportSlot::MemberType(inner) => inner.render(w),
         }
     }
 }
@@ -14666,11 +14668,11 @@ fn splat_type_operator_transport_slot_to_any(t: SplatTypeOperatorTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for SplatTypeOperatorTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for SplatTypeOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SplatTypeOperatorTransportSlot::Literal3_73_74_61_72 => f.write_str("*"),
-            SplatTypeOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => f.write_str("**"),
+            SplatTypeOperatorTransportSlot::Literal3_73_74_61_72 => w.text("*"),
+            SplatTypeOperatorTransportSlot::Literal9_73_74_61_72_5f_73_74_61_72 => w.text("**"),
         }
     }
 }
@@ -14678,14 +14680,14 @@ impl ::std::fmt::Display for SplatTypeOperatorTransportSlot {
 #[derive(Debug, Clone)]
 pub enum GenericTypeNameTransportSlot {
     Identifier(IdentifierTransport),
-    Literal38_61_6e_6f_6e_5f_74_79_70_65,
+    Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::options::FillOptions for GenericTypeNameTransportSlot {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         match self {
             GenericTypeNameTransportSlot::Identifier(t) => t.fill_options(table),
-            GenericTypeNameTransportSlot::Literal38_61_6e_6f_6e_5f_74_79_70_65 => {}
+            GenericTypeNameTransportSlot::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => {}
         }
     }
 }
@@ -14699,7 +14701,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    39 => Ok(Self::Literal38_61_6e_6f_6e_5f_74_79_70_65),
+                    39 => Ok(Self::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14729,7 +14731,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in GenericTypeNameTransportSlot")
                 )?;
                 match kind_id {
-                    39 => Ok(Self::Literal38_61_6e_6f_6e_5f_74_79_70_65),
+                    39 => Ok(Self::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14791,15 +14793,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GenericTypeNameTransportSlot> 
 fn generic_type_name_transport_slot_to_any(t: GenericTypeNameTransportSlot) -> AnyTransport {
     match t {
         GenericTypeNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        GenericTypeNameTransportSlot::Literal38_61_6e_6f_6e_5f_74_79_70_65 => AnyTransport::Literal38_61_6e_6f_6e_5f_74_79_70_65,
+        GenericTypeNameTransportSlot::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64,
     }
 }
 
-impl ::std::fmt::Display for GenericTypeNameTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for GenericTypeNameTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GenericTypeNameTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            GenericTypeNameTransportSlot::Literal38_61_6e_6f_6e_5f_74_79_70_65 => f.write_str("type"),
+            GenericTypeNameTransportSlot::Identifier(inner) => inner.render(w),
+            GenericTypeNameTransportSlot::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
         }
     }
 }
@@ -15222,43 +15224,43 @@ fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpres
     }
 }
 
-impl ::std::fmt::Display for ParenthesizedExpressionContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ParenthesizedExpressionContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParenthesizedExpressionContentTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::Yield(inner) => ::std::fmt::Display::fmt(inner, f),
-            ParenthesizedExpressionContentTransportSlot::ListSplat(inner) => ::std::fmt::Display::fmt(inner, f),
+            ParenthesizedExpressionContentTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::NotOperator(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::BooleanOperator(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Lambda(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Await(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Identifier(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::String(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Integer(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Float(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::True(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::False(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::None(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::UnaryOperator(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Attribute(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Subscript(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Call(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::List(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::ListComprehension(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Dictionary(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Set(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::SetComprehension(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Tuple(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Ellipsis(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::Yield(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::ListSplat(inner) => inner.render(w),
         }
     }
 }
@@ -15690,44 +15692,44 @@ fn collection_elements_element_transport_slot_to_any(t: CollectionElementsElemen
     }
 }
 
-impl ::std::fmt::Display for CollectionElementsElementTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for CollectionElementsElementTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CollectionElementsElementTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::Yield(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::ListSplat(inner) => ::std::fmt::Display::fmt(inner, f),
-            CollectionElementsElementTransportSlot::ParenthesizedListSplat(inner) => ::std::fmt::Display::fmt(inner, f),
+            CollectionElementsElementTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::NotOperator(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::BooleanOperator(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Lambda(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Await(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::BinaryOperator(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Identifier(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::String(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Integer(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Float(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::True(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::False(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::None(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::UnaryOperator(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Attribute(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Subscript(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Call(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::List(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::ListComprehension(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Dictionary(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Set(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::SetComprehension(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Tuple(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Ellipsis(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::NamedExpression(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::AsPattern(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::Yield(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::ListSplat(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::ParenthesizedListSplat(inner) => inner.render(w),
         }
     }
 }
@@ -15813,10 +15815,10 @@ fn for_in_clause_async_marker_transport_slot_to_any(t: ForInClauseAsyncMarkerTra
     }
 }
 
-impl ::std::fmt::Display for ForInClauseAsyncMarkerTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForInClauseAsyncMarkerTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForInClauseAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => f.write_str("async"),
+            ForInClauseAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
         }
     }
 }
@@ -15996,16 +15998,16 @@ fn for_in_clause_left_transport_slot_to_any(t: ForInClauseLeftTransportSlot) -> 
     }
 }
 
-impl ::std::fmt::Display for ForInClauseLeftTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForInClauseLeftTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForInClauseLeftTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseLeftTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseLeftTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseLeftTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseLeftTransportSlot::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseLeftTransportSlot::ListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseLeftTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ForInClauseLeftTransportSlot::Identifier(inner) => inner.render(w),
+            ForInClauseLeftTransportSlot::Subscript(inner) => inner.render(w),
+            ForInClauseLeftTransportSlot::Attribute(inner) => inner.render(w),
+            ForInClauseLeftTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ForInClauseLeftTransportSlot::TuplePattern(inner) => inner.render(w),
+            ForInClauseLeftTransportSlot::ListPattern(inner) => inner.render(w),
+            ForInClauseLeftTransportSlot::PatternList(inner) => inner.render(w),
         }
     }
 }
@@ -16419,42 +16421,42 @@ fn for_in_clause_right_transport_slot_to_any(t: ForInClauseRightTransportSlot) -
     }
 }
 
-impl ::std::fmt::Display for ForInClauseRightTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForInClauseRightTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForInClauseRightTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ForInClauseRightTransportSlot::LambdaWithinForInClause(inner) => ::std::fmt::Display::fmt(inner, f),
+            ForInClauseRightTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::NotOperator(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::BooleanOperator(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Lambda(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Await(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::BinaryOperator(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Identifier(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::String(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Integer(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Float(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::True(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::False(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::None(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::UnaryOperator(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Attribute(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Subscript(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Call(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::List(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::ListComprehension(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Dictionary(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Set(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::SetComprehension(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Tuple(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::Ellipsis(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::NamedExpression(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::AsPattern(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::LambdaWithinForInClause(inner) => inner.render(w),
         }
     }
 }
@@ -16540,10 +16542,10 @@ fn for_in_clause_comma_transport_slot_to_any(t: ForInClauseCommaTransportSlot) -
     }
 }
 
-impl ::std::fmt::Display for ForInClauseCommaTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ForInClauseCommaTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForInClauseCommaTransportSlot::Literal4_63_6f_6d_6d_61 => f.write_str(","),
+            ForInClauseCommaTransportSlot::Literal4_63_6f_6d_6d_61 => w.text(","),
         }
     }
 }
@@ -16642,11 +16644,11 @@ fn string_content_transport_slot_to_any(t: StringContentTransportSlot) -> AnyTra
     }
 }
 
-impl ::std::fmt::Display for StringContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for StringContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentTransportSlot::Interpolation(inner) => ::std::fmt::Display::fmt(inner, f),
-            StringContentTransportSlot::StringContent(inner) => { ::sittir_core::spacing::mark_adjacent(f)?; ::std::fmt::Display::fmt(inner, f) },
+            StringContentTransportSlot::Interpolation(inner) => inner.render(w),
+            StringContentTransportSlot::StringContent(inner) => { w.adjacent(); inner.render(w) },
         }
     }
 }
@@ -16759,13 +16761,13 @@ fn string_content_content_transport_slot_to_any(t: StringContentContentTransport
     }
 }
 
-impl ::std::fmt::Display for StringContentContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for StringContentContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(inner) => ::std::fmt::Display::fmt(inner, f),
-            StringContentContentTransportSlot::EscapeSequence(inner) => ::std::fmt::Display::fmt(inner, f),
-            StringContentContentTransportSlot::_StringContent(inner) => ::std::fmt::Display::fmt(inner, f),
-            StringContentContentTransportSlot::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => { ::sittir_core::spacing::mark_adjacent(f)?; f.write_str("\\") },
+            StringContentContentTransportSlot::EscapeInterpolation(inner) => inner.render(w),
+            StringContentContentTransportSlot::EscapeSequence(inner) => inner.render(w),
+            StringContentContentTransportSlot::_StringContent(inner) => inner.render(w),
+            StringContentContentTransportSlot::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => { w.adjacent(); w.text("\\") },
         }
     }
 }
@@ -17197,44 +17199,44 @@ fn interpolation_expression_transport_slot_to_any(t: InterpolationExpressionTran
     }
 }
 
-impl ::std::fmt::Display for InterpolationExpressionTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for InterpolationExpressionTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            InterpolationExpressionTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
-            InterpolationExpressionTransportSlot::Yield(inner) => ::std::fmt::Display::fmt(inner, f),
+            InterpolationExpressionTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::NotOperator(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::BooleanOperator(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Lambda(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Await(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::BinaryOperator(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Identifier(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::String(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Integer(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Float(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::True(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::False(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::None(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::UnaryOperator(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Attribute(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Subscript(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Call(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::List(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::ListComprehension(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Dictionary(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Set(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::SetComprehension(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Tuple(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Ellipsis(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::NamedExpression(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::AsPattern(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::ExpressionList(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::PatternList(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::Yield(inner) => inner.render(w),
         }
     }
 }
@@ -17320,10 +17322,10 @@ fn interpolation_eq_marker_transport_slot_to_any(t: InterpolationEqMarkerTranspo
     }
 }
 
-impl ::std::fmt::Display for InterpolationEqMarkerTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for InterpolationEqMarkerTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            InterpolationEqMarkerTransportSlot::Literal40_65_71 => f.write_str("="),
+            InterpolationEqMarkerTransportSlot::Literal40_65_71 => w.text("="),
         }
     }
 }
@@ -17422,11 +17424,11 @@ fn format_specifier_content_transport_slot_to_any(t: FormatSpecifierContentTrans
     }
 }
 
-impl ::std::fmt::Display for FormatSpecifierContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for FormatSpecifierContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FormatSpecifierContentTransportSlot::Interpolation(inner) => ::std::fmt::Display::fmt(inner, f),
-            FormatSpecifierContentTransportSlot::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => f.write_str("[^{}\\n]+"),
+            FormatSpecifierContentTransportSlot::Interpolation(inner) => inner.render(w),
+            FormatSpecifierContentTransportSlot::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => w.text("[^{}\\n]+"),
         }
     }
 }
@@ -17867,45 +17869,45 @@ fn argument_list_elements_element_transport_slot_to_any(t: ArgumentListElementsE
     }
 }
 
-impl ::std::fmt::Display for ArgumentListElementsElementTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ArgumentListElementsElementTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ArgumentListElementsElementTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::ListSplat(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::DictionarySplat(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::ParenthesizedListSplat(inner) => ::std::fmt::Display::fmt(inner, f),
-            ArgumentListElementsElementTransportSlot::KeywordArgument(inner) => ::std::fmt::Display::fmt(inner, f),
+            ArgumentListElementsElementTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::NotOperator(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::BooleanOperator(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Lambda(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Await(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::BinaryOperator(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Identifier(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::String(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Integer(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Float(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::True(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::False(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::None(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::UnaryOperator(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Attribute(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Subscript(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Call(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::List(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::ListComprehension(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Dictionary(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Set(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::SetComprehension(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Tuple(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::Ellipsis(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::NamedExpression(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::AsPattern(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::ListSplat(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::DictionarySplat(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::ParenthesizedListSplat(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::KeywordArgument(inner) => inner.render(w),
         }
     }
 }
@@ -18004,11 +18006,11 @@ fn dict_pattern_elements_element_transport_slot_to_any(t: DictPatternElementsEle
     }
 }
 
-impl ::std::fmt::Display for DictPatternElementsElementTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for DictPatternElementsElementTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DictPatternElementsElementTransportSlot::KeyValuePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            DictPatternElementsElementTransportSlot::SplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+            DictPatternElementsElementTransportSlot::KeyValuePattern(inner) => inner.render(w),
+            DictPatternElementsElementTransportSlot::SplatPattern(inner) => inner.render(w),
         }
     }
 }
@@ -18422,42 +18424,42 @@ fn subscripts_subscript_transport_slot_to_any(t: SubscriptsSubscriptTransportSlo
     }
 }
 
-impl ::std::fmt::Display for SubscriptsSubscriptTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for SubscriptsSubscriptTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SubscriptsSubscriptTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            SubscriptsSubscriptTransportSlot::Slice(inner) => ::std::fmt::Display::fmt(inner, f),
+            SubscriptsSubscriptTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::NotOperator(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::BooleanOperator(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Lambda(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Await(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::BinaryOperator(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Identifier(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::String(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Integer(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Float(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::True(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::False(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::None(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::UnaryOperator(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Attribute(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Subscript(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Call(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::List(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::ListComprehension(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Dictionary(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Set(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::SetComprehension(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Tuple(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Ellipsis(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::NamedExpression(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::AsPattern(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::Slice(inner) => inner.render(w),
         }
     }
 }
@@ -18556,11 +18558,11 @@ fn dictionary_elements_element_transport_slot_to_any(t: DictionaryElementsElemen
     }
 }
 
-impl ::std::fmt::Display for DictionaryElementsElementTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for DictionaryElementsElementTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DictionaryElementsElementTransportSlot::Pair(inner) => ::std::fmt::Display::fmt(inner, f),
-            DictionaryElementsElementTransportSlot::DictionarySplat(inner) => ::std::fmt::Display::fmt(inner, f),
+            DictionaryElementsElementTransportSlot::Pair(inner) => inner.render(w),
+            DictionaryElementsElementTransportSlot::DictionarySplat(inner) => inner.render(w),
         }
     }
 }
@@ -18659,11 +18661,11 @@ fn comprehension_clauses_content_transport_slot_to_any(t: ComprehensionClausesCo
     }
 }
 
-impl ::std::fmt::Display for ComprehensionClausesContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ComprehensionClausesContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComprehensionClausesContentTransportSlot::ForInClause(inner) => ::std::fmt::Display::fmt(inner, f),
-            ComprehensionClausesContentTransportSlot::IfClause(inner) => ::std::fmt::Display::fmt(inner, f),
+            ComprehensionClausesContentTransportSlot::ForInClause(inner) => inner.render(w),
+            ComprehensionClausesContentTransportSlot::IfClause(inner) => inner.render(w),
         }
     }
 }
@@ -18758,11 +18760,11 @@ fn print_statement_chevron_print_chevron_arguments_transport_slot_to_any(t: Prin
     }
 }
 
-impl ::std::fmt::Display for PrintStatementChevronPrintChevronArgumentsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for PrintStatementChevronPrintChevronArgumentsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => ::std::fmt::Display::fmt(inner, f),
-            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal4_63_6f_6d_6d_61 => f.write_str(","),
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => inner.render(w),
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal4_63_6f_6d_6d_61 => w.text(","),
         }
     }
 }
@@ -18848,10 +18850,10 @@ fn simple_pattern_negative_sign_transport_slot_to_any(t: SimplePatternNegativeSi
     }
 }
 
-impl ::std::fmt::Display for SimplePatternNegativeSignTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for SimplePatternNegativeSignTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SimplePatternNegativeSignTransportSlot::Literal11_64_61_73_68 => f.write_str("-"),
+            SimplePatternNegativeSignTransportSlot::Literal11_64_61_73_68 => w.text("-"),
         }
     }
 }
@@ -18950,11 +18952,11 @@ fn simple_pattern_negative_content_transport_slot_to_any(t: SimplePatternNegativ
     }
 }
 
-impl ::std::fmt::Display for SimplePatternNegativeContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for SimplePatternNegativeContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SimplePatternNegativeContentTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            SimplePatternNegativeContentTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
+            SimplePatternNegativeContentTransportSlot::Integer(inner) => inner.render(w),
+            SimplePatternNegativeContentTransportSlot::Float(inner) => inner.render(w),
         }
     }
 }
@@ -19053,11 +19055,11 @@ fn except_clause_exception_content_transport_slot_to_any(t: ExceptClauseExceptio
     }
 }
 
-impl ::std::fmt::Display for ExceptClauseExceptionContentTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ExceptClauseExceptionContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(inner) => ::std::fmt::Display::fmt(inner, f),
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(inner) => ::std::fmt::Display::fmt(inner, f),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(inner) => inner.render(w),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(inner) => inner.render(w),
         }
     }
 }
@@ -19507,46 +19509,46 @@ fn assignment_eq_right_transport_slot_to_any(t: AssignmentEqRightTransportSlot) 
     }
 }
 
-impl ::std::fmt::Display for AssignmentEqRightTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AssignmentEqRightTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AssignmentEqRightTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Assignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::AugmentedAssignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentEqRightTransportSlot::Yield(inner) => ::std::fmt::Display::fmt(inner, f),
+            AssignmentEqRightTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::NotOperator(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::BooleanOperator(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Lambda(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Await(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::BinaryOperator(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Identifier(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::String(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Integer(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Float(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::True(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::False(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::None(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::UnaryOperator(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Attribute(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Subscript(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Call(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::List(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::ListComprehension(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Dictionary(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Set(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::SetComprehension(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Tuple(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Ellipsis(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::NamedExpression(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::AsPattern(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::ExpressionList(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Assignment(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::PatternList(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::Yield(inner) => inner.render(w),
         }
     }
 }
@@ -19996,46 +19998,46 @@ fn assignment_typed_right_transport_slot_to_any(t: AssignmentTypedRightTransport
     }
 }
 
-impl ::std::fmt::Display for AssignmentTypedRightTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AssignmentTypedRightTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AssignmentTypedRightTransportSlot::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::String(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::True(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::False(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::None(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::List(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::ExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Assignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::AugmentedAssignment(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::PatternList(inner) => ::std::fmt::Display::fmt(inner, f),
-            AssignmentTypedRightTransportSlot::Yield(inner) => ::std::fmt::Display::fmt(inner, f),
+            AssignmentTypedRightTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::NotOperator(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::BooleanOperator(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Lambda(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Await(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::BinaryOperator(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Identifier(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::String(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Integer(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Float(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::True(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::False(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::None(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::UnaryOperator(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Attribute(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Subscript(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Call(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::List(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::ListComprehension(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Dictionary(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Set(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::SetComprehension(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Tuple(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Ellipsis(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::NamedExpression(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::AsPattern(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::ExpressionList(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Assignment(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::PatternList(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::Yield(inner) => inner.render(w),
         }
     }
 }
@@ -20049,9 +20051,9 @@ pub enum ComparisonOperatorComparatorOperatorsTransportSlot {
     Literal46_67_74_5f_65_71,
     Literal47_67_74,
     Literal48_6c_74_5f_67_74,
-    Literal49_69_6e,
+    Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
     Literal50_5f_6e_6f_74_5f_69_6e,
-    Literal51_69_73,
+    Literal51_69_73_5f_6b_65_79_77_6f_72_64,
     Literal52_5f_69_73_5f_6e_6f_74,
 }
 
@@ -20065,9 +20067,9 @@ impl ::sittir_core::options::FillOptions for ComparisonOperatorComparatorOperato
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal46_67_74_5f_65_71 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => {}
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73 => {}
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => {}
             ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => {}
         }
     }
@@ -20089,9 +20091,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     98 => Ok(Self::Literal46_67_74_5f_65_71),
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
-                    25 => Ok(Self::Literal49_69_6e),
+                    25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
                     194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
-                    61 => Ok(Self::Literal51_69_73),
+                    61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
                     195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
@@ -20111,9 +20113,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOper
                     98 => Ok(Self::Literal46_67_74_5f_65_71),
                     99 => Ok(Self::Literal47_67_74),
                     100 => Ok(Self::Literal48_6c_74_5f_67_74),
-                    25 => Ok(Self::Literal49_69_6e),
+                    25 => Ok(Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64),
                     194 => Ok(Self::Literal50_5f_6e_6f_74_5f_69_6e),
-                    61 => Ok(Self::Literal51_69_73),
+                    61 => Ok(Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64),
                     195 => Ok(Self::Literal52_5f_69_73_5f_6e_6f_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComparisonOperatorComparatorOperatorsTransportSlot",
@@ -20164,27 +20166,27 @@ fn comparison_operator_comparator_operators_transport_slot_to_any(t: ComparisonO
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal46_67_74_5f_65_71 => AnyTransport::Literal46_67_74_5f_65_71,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => AnyTransport::Literal47_67_74,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => AnyTransport::Literal48_6c_74_5f_67_74,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e => AnyTransport::Literal49_69_6e,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e,
-        ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73 => AnyTransport::Literal51_69_73,
+        ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64,
         ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => AnyTransport::Literal52_5f_69_73_5f_6e_6f_74,
     }
 }
 
-impl ::std::fmt::Display for ComparisonOperatorComparatorOperatorsTransportSlot {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal42_6c_74 => f.write_str("<"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal43_6c_74_5f_65_71 => f.write_str("<="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal44_65_71_5f_65_71 => f.write_str("=="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal45_62_61_6e_67_5f_65_71 => f.write_str("!="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal46_67_74_5f_65_71 => f.write_str(">="),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => f.write_str(">"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => f.write_str("<>"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e => f.write_str("in"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => f.write_str("not in"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73 => f.write_str("is"),
-            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => f.write_str("is not"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal42_6c_74 => w.text("<"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal43_6c_74_5f_65_71 => w.text("<="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal44_65_71_5f_65_71 => w.text("=="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal45_62_61_6e_67_5f_65_71 => w.text("!="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal46_67_74_5f_65_71 => w.text(">="),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal47_67_74 => w.text(">"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal48_6c_74_5f_67_74 => w.text("<>"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
+            ComparisonOperatorComparatorOperatorsTransportSlot::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
         }
     }
 }
@@ -20213,9 +20215,9 @@ pub struct ModuleTransport {
     pub statements_separator_space: Option<u16>,
 }
 
-impl ::std::fmt::Display for ModuleTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_module(self, f))
+impl ::sittir_core::render::Render for ModuleTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_module(self, w))
     }
 }
 
@@ -20314,9 +20316,9 @@ pub struct SimpleStatementsTransport {
     pub simple_statements_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SimpleStatementsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_simple_statements(self, f))
+impl ::sittir_core::render::Render for SimpleStatementsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_simple_statements(self, w))
     }
 }
 
@@ -20367,26 +20369,26 @@ pub struct ImportStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ::sittir_core::SlotValue<ImportListTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_before"))]
-    pub import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_after"))]
-    pub import_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
+    pub import_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
+    pub import_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_before"))]
     pub import_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_statement_after"))]
     pub import_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ImportStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_import_statement(self, f))
+impl ::sittir_core::render::Render for ImportStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_import_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ImportStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.import_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_BEFORE]);
-        self.import_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_AFTER]);
+        self.import_keyword_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE]);
+        self.import_keyword_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.import_statement_before.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_BEFORE]);
         self.import_statement_after.get_or_insert(table.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_STATEMENT_AFTER]);
         self.import_list.fill_options(table);
@@ -20424,9 +20426,9 @@ pub struct ImportPrefixTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ImportPrefixTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ImportPrefixTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -20545,9 +20547,9 @@ pub struct RelativeImportTransport {
     pub relative_import_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for RelativeImportTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_relative_import(self, f))
+impl ::sittir_core::render::Render for RelativeImportTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_relative_import(self, w))
     }
 }
 
@@ -20599,38 +20601,38 @@ pub struct FutureImportStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<FutureImportStatementContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___before"))]
-    pub future___before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___after"))]
-    pub future___after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_before"))]
-    pub import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_after"))]
-    pub import_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___keyword_before"))]
+    pub future___keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___keyword_after"))]
+    pub future___keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
+    pub import_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
+    pub import_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future_import_statement_before"))]
     pub future_import_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future_import_statement_after"))]
     pub future_import_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for FutureImportStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_future_import_statement(self, f))
+impl ::sittir_core::render::Render for FutureImportStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_future_import_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for FutureImportStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_AFTER]);
-        self.future___before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___BEFORE]);
-        self.future___after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___AFTER]);
-        self.import_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_BEFORE]);
-        self.import_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_AFTER]);
+        self.future___keyword_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE]);
+        self.future___keyword_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER]);
+        self.import_keyword_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE]);
+        self.import_keyword_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.future_import_statement_before.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE_IMPORT_STATEMENT_BEFORE]);
         self.future_import_statement_after.get_or_insert(table.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE_IMPORT_STATEMENT_AFTER]);
         self.content.fill_options(table);
@@ -20678,32 +20680,32 @@ pub struct ImportFromStatementTransport {
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportFromStatementContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_before"))]
-    pub import_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_after"))]
-    pub import_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
+    pub import_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
+    pub import_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_from_statement_before"))]
     pub import_from_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_from_statement_after"))]
     pub import_from_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ImportFromStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_import_from_statement(self, f))
+impl ::sittir_core::render::Render for ImportFromStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_import_from_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ImportFromStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_AFTER]);
-        self.import_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_BEFORE]);
-        self.import_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER]);
+        self.import_keyword_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE]);
+        self.import_keyword_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.import_from_statement_before.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_FROM_STATEMENT_BEFORE]);
         self.import_from_statement_after.get_or_insert(table.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_FROM_STATEMENT_AFTER]);
         self.module_name.fill_options(table);
@@ -20758,9 +20760,9 @@ pub struct ImportListTransport {
     pub name_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ImportListTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_import_list(self, f))
+impl ::sittir_core::render::Render for ImportListTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_import_list(self, w))
     }
 }
 
@@ -20831,26 +20833,26 @@ pub struct AliasedImportTransport {
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_aliased_import_before"))]
     pub aliased_import_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_aliased_import_after"))]
     pub aliased_import_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AliasedImportTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_aliased_import(self, f))
+impl ::sittir_core::render::Render for AliasedImportTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_aliased_import(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for AliasedImportTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER]);
         self.aliased_import_before.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_ALIASED_IMPORT_BEFORE]);
         self.aliased_import_after.get_or_insert(table.spacing[options::SITE_ALIASED_IMPORT_ALIASED_IMPORT_AFTER]);
         self.name.fill_options(table);
@@ -20889,9 +20891,9 @@ pub struct WildcardImportTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for WildcardImportTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for WildcardImportTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -21006,9 +21008,9 @@ pub struct PrintStatementTransport {
     pub content: ::sittir_core::SlotValue<PrintStatementContentTransportSlot>,
 }
 
-impl ::std::fmt::Display for PrintStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_print_statement(self, f))
+impl ::sittir_core::render::Render for PrintStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_print_statement(self, w))
     }
 }
 
@@ -21067,9 +21069,9 @@ pub struct ChevronTransport {
     pub chevron_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ChevronTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_chevron(self, f))
+impl ::sittir_core::render::Render for ChevronTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_chevron(self, w))
     }
 }
 
@@ -21122,32 +21124,32 @@ pub struct AssertStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_before"))]
-    pub assert_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_after"))]
-    pub assert_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_before"))]
     pub expression_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
     pub expression_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_keyword_before"))]
+    pub assert_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_keyword_after"))]
+    pub assert_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_statement_before"))]
     pub assert_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_statement_after"))]
     pub assert_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AssertStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_assert_statement(self, f))
+impl ::sittir_core::render::Render for AssertStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_assert_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for AssertStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.assert_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_BEFORE]);
-        self.assert_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_AFTER]);
         self.expression_separator_space_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
         self.expression_separator_space_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER]);
+        self.assert_keyword_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_BEFORE]);
+        self.assert_keyword_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER]);
         self.assert_statement_before.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_STATEMENT_BEFORE]);
         self.assert_statement_after.get_or_insert(table.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_STATEMENT_AFTER]);
         {
@@ -21290,9 +21292,9 @@ pub struct ExpressionStatementTransport {
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentTransportSlot>,
 }
 
-impl ::std::fmt::Display for ExpressionStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_expression_statement(self, f))
+impl ::sittir_core::render::Render for ExpressionStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_expression_statement(self, w))
     }
 }
 
@@ -21353,9 +21355,9 @@ pub struct NamedExpressionTransport {
     pub named_expression_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for NamedExpressionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_named_expression(self, f))
+impl ::sittir_core::render::Render for NamedExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_named_expression(self, w))
     }
 }
 
@@ -21409,26 +21411,26 @@ pub struct ReturnStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_before"))]
-    pub return_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_after"))]
-    pub return_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_keyword_before"))]
+    pub return_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_keyword_after"))]
+    pub return_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_statement_before"))]
     pub return_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_statement_after"))]
     pub return_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ReturnStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_return_statement(self, f))
+impl ::sittir_core::render::Render for ReturnStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_return_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ReturnStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.return_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_BEFORE]);
-        self.return_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_AFTER]);
+        self.return_keyword_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_BEFORE]);
+        self.return_keyword_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER]);
         self.return_statement_before.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_STATEMENT_BEFORE]);
         self.return_statement_after.get_or_insert(table.spacing[options::SITE_RETURN_STATEMENT_RETURN_STATEMENT_AFTER]);
         self.expressions.fill_options(table);
@@ -21474,26 +21476,26 @@ pub struct DeleteStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: ::sittir_core::SlotValue<DeleteStatementExpressionsTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_before"))]
-    pub del_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_after"))]
-    pub del_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_keyword_before"))]
+    pub del_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_keyword_after"))]
+    pub del_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delete_statement_before"))]
     pub delete_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delete_statement_after"))]
     pub delete_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DeleteStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_delete_statement(self, f))
+impl ::sittir_core::render::Render for DeleteStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_delete_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for DeleteStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.del_before.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_BEFORE]);
-        self.del_after.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_AFTER]);
+        self.del_keyword_before.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_KEYWORD_BEFORE]);
+        self.del_keyword_after.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER]);
         self.delete_statement_before.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DELETE_STATEMENT_BEFORE]);
         self.delete_statement_after.get_or_insert(table.spacing[options::SITE_DELETE_STATEMENT_DELETE_STATEMENT_AFTER]);
         self.expressions.fill_options(table);
@@ -21541,32 +21543,32 @@ pub struct RaiseStatementTransport {
     pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<RaiseStatementExpressionsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_before"))]
-    pub raise_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_after"))]
-    pub raise_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_keyword_before"))]
+    pub raise_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_keyword_after"))]
+    pub raise_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_statement_before"))]
     pub raise_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_statement_after"))]
     pub raise_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for RaiseStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_raise_statement(self, f))
+impl ::sittir_core::render::Render for RaiseStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_raise_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for RaiseStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_AFTER]);
-        self.raise_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_BEFORE]);
-        self.raise_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER]);
+        self.raise_keyword_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_BEFORE]);
+        self.raise_keyword_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER]);
         self.raise_statement_before.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_STATEMENT_BEFORE]);
         self.raise_statement_after.get_or_insert(table.spacing[options::SITE_RAISE_STATEMENT_RAISE_STATEMENT_AFTER]);
         self.cause.fill_options(table);
@@ -21605,9 +21607,9 @@ pub struct PassStatementTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PassStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PassStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -21712,9 +21714,9 @@ pub struct BreakStatementTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for BreakStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for BreakStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -21819,9 +21821,9 @@ pub struct ContinueStatementTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ContinueStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ContinueStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -21940,33 +21942,33 @@ pub struct IfStatementTransport {
     pub alternative: Option<Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative_separator_space"))]
     pub alternative_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_before"))]
-    pub if_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
-    pub if_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_before"))]
+    pub if_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
+    pub if_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_statement_before"))]
     pub if_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_statement_after"))]
     pub if_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for IfStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_if_statement(self, f))
+impl ::sittir_core::render::Render for IfStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_if_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for IfStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.alternative_separator_space.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE]);
-        self.if_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_BEFORE]);
-        self.if_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_COLON_AFTER]);
+        self.if_keyword_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_KEYWORD_BEFORE]);
+        self.if_keyword_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER]);
         self.if_statement_before.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_BEFORE]);
         self.if_statement_after.get_or_insert(table.spacing[options::SITE_IF_STATEMENT_IF_STATEMENT_AFTER]);
         if let Some(seated_items) = self.alternative.as_mut() {
@@ -22035,32 +22037,32 @@ pub struct ElifClauseTransport {
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
     pub consequence: ::sittir_core::SlotValue<ElifClauseConsequenceTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_before"))]
-    pub elif_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_after"))]
-    pub elif_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_keyword_before"))]
+    pub elif_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_keyword_after"))]
+    pub elif_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_clause_before"))]
     pub elif_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_clause_after"))]
     pub elif_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ElifClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_elif_clause(self, f))
+impl ::sittir_core::render::Render for ElifClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_elif_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ElifClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.elif_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_BEFORE]);
-        self.elif_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_COLON_AFTER]);
+        self.elif_keyword_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_BEFORE]);
+        self.elif_keyword_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER]);
         self.elif_clause_before.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_CLAUSE_BEFORE]);
         self.elif_clause_after.get_or_insert(table.spacing[options::SITE_ELIF_CLAUSE_ELIF_CLAUSE_AFTER]);
         self.condition.fill_options(table);
@@ -22107,32 +22109,32 @@ pub struct ElseClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ElseClauseBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_before"))]
-    pub else_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_after"))]
-    pub else_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_before"))]
+    pub else_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_after"))]
+    pub else_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_before"))]
     pub else_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_after"))]
     pub else_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ElseClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_else_clause(self, f))
+impl ::sittir_core::render::Render for ElseClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_else_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ElseClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.else_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_BEFORE]);
-        self.else_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_COLON_AFTER]);
+        self.else_keyword_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_BEFORE]);
+        self.else_keyword_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER]);
         self.else_clause_before.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_CLAUSE_BEFORE]);
         self.else_clause_after.get_or_insert(table.spacing[options::SITE_ELSE_CLAUSE_ELSE_CLAUSE_AFTER]);
         self.body.fill_options(table);
@@ -22180,32 +22182,32 @@ pub struct MatchStatementTransport {
     pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subjects"))]
     pub subjects: ::sittir_core::SlotValue<SubjectsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_before"))]
-    pub match_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_after"))]
-    pub match_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_keyword_before"))]
+    pub match_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_keyword_after"))]
+    pub match_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_statement_before"))]
     pub match_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_statement_after"))]
     pub match_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for MatchStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_match_statement(self, f))
+impl ::sittir_core::render::Render for MatchStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_match_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for MatchStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.match_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_BEFORE]);
-        self.match_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_COLON_AFTER]);
+        self.match_keyword_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_BEFORE]);
+        self.match_keyword_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER]);
         self.match_statement_before.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_STATEMENT_BEFORE]);
         self.match_statement_after.get_or_insert(table.spacing[options::SITE_MATCH_STATEMENT_MATCH_STATEMENT_AFTER]);
         self.body.fill_options(table);
@@ -22254,9 +22256,9 @@ pub struct MatchBlockTransport {
     pub content: ::sittir_core::SlotValue<MatchBlockContentTransportSlot>,
 }
 
-impl ::std::fmt::Display for MatchBlockTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_match_block(self, f))
+impl ::sittir_core::render::Render for MatchBlockTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_match_block(self, w))
     }
 }
 
@@ -22309,32 +22311,32 @@ pub struct CaseClauseTransport {
     pub consequence: ::sittir_core::SlotValue<CaseClauseConsequenceTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_patterns"))]
     pub case_patterns: ::sittir_core::SlotValue<CasePatternsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_before"))]
-    pub case_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_after"))]
-    pub case_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_keyword_before"))]
+    pub case_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_keyword_after"))]
+    pub case_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_clause_before"))]
     pub case_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_clause_after"))]
     pub case_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for CaseClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_case_clause(self, f))
+impl ::sittir_core::render::Render for CaseClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_case_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for CaseClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.case_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_BEFORE]);
-        self.case_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_COLON_AFTER]);
+        self.case_keyword_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_KEYWORD_BEFORE]);
+        self.case_keyword_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER]);
         self.case_clause_before.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_CLAUSE_BEFORE]);
         self.case_clause_after.get_or_insert(table.spacing[options::SITE_CASE_CLAUSE_CASE_CLAUSE_AFTER]);
         self.guard.fill_options(table);
@@ -22390,38 +22392,38 @@ pub struct ForStatementTransport {
     pub body: ::sittir_core::SlotValue<ForStatementBodyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_before"))]
-    pub for_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
-    pub for_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_before"))]
-    pub in_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_before"))]
+    pub for_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_after"))]
+    pub for_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
+    pub in_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
+    pub in_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_before"))]
     pub for_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_statement_after"))]
     pub for_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ForStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_for_statement(self, f))
+impl ::sittir_core::render::Render for ForStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_for_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ForStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.for_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_BEFORE]);
-        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_AFTER]);
-        self.in_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_BEFORE]);
-        self.in_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_COLON_AFTER]);
+        self.for_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_KEYWORD_BEFORE]);
+        self.for_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER]);
+        self.in_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_KEYWORD_BEFORE]);
+        self.in_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_IN_KEYWORD_AFTER]);
         self.for_statement_before.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_BEFORE]);
         self.for_statement_after.get_or_insert(table.spacing[options::SITE_FOR_STATEMENT_FOR_STATEMENT_AFTER]);
         self.async_marker.fill_options(table);
@@ -22475,32 +22477,32 @@ pub struct WhileStatementTransport {
     pub body: ::sittir_core::SlotValue<WhileStatementBodyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_before"))]
-    pub while_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_after"))]
-    pub while_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_keyword_before"))]
+    pub while_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_keyword_after"))]
+    pub while_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_statement_before"))]
     pub while_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_statement_after"))]
     pub while_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for WhileStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_while_statement(self, f))
+impl ::sittir_core::render::Render for WhileStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_while_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for WhileStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.while_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_BEFORE]);
-        self.while_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_COLON_AFTER]);
+        self.while_keyword_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_BEFORE]);
+        self.while_keyword_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER]);
         self.while_statement_before.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE]);
         self.while_statement_after.get_or_insert(table.spacing[options::SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER]);
         self.condition.fill_options(table);
@@ -22556,33 +22558,33 @@ pub struct TryStatementTransport {
     pub finally_clause: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses_separator_space"))]
     pub except_clauses_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_before"))]
-    pub try_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_after"))]
-    pub try_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_keyword_before"))]
+    pub try_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_keyword_after"))]
+    pub try_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_before"))]
     pub try_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_after"))]
     pub try_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TryStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_try_statement(self, f))
+impl ::sittir_core::render::Render for TryStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_try_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for TryStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.except_clauses_separator_space.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE]);
-        self.try_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_BEFORE]);
-        self.try_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_COLON_AFTER]);
+        self.try_keyword_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_KEYWORD_BEFORE]);
+        self.try_keyword_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER]);
         self.try_statement_before.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_BEFORE]);
         self.try_statement_after.get_or_insert(table.spacing[options::SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER]);
         if let Some(seated_items) = self.except_clauses.as_mut() {
@@ -22645,10 +22647,6 @@ pub struct ExceptClauseTransport {
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite"))]
     pub suite: ::sittir_core::SlotValue<ExceptClauseSuiteTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_before"))]
-    pub except_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_after"))]
-    pub except_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_before"))]
     pub star_marker_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_after"))]
@@ -22657,26 +22655,30 @@ pub struct ExceptClauseTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_keyword_before"))]
+    pub except_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_keyword_after"))]
+    pub except_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_before"))]
     pub except_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_after"))]
     pub except_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExceptClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_except_clause(self, f))
+impl ::sittir_core::render::Render for ExceptClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_except_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ExceptClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.except_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_BEFORE]);
-        self.except_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_AFTER]);
         self.star_marker_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE]);
         self.star_marker_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_COLON_AFTER]);
+        self.except_keyword_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_BEFORE]);
+        self.except_keyword_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER]);
         self.except_clause_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_BEFORE]);
         self.except_clause_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_CLAUSE_AFTER]);
         self.star_marker.fill_options(table);
@@ -22724,32 +22726,32 @@ pub struct FinallyClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
     pub block: ::sittir_core::SlotValue<FinallyClauseBlockTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_before"))]
-    pub finally_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_after"))]
-    pub finally_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_keyword_before"))]
+    pub finally_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_keyword_after"))]
+    pub finally_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_before"))]
     pub finally_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_after"))]
     pub finally_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for FinallyClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_finally_clause(self, f))
+impl ::sittir_core::render::Render for FinallyClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_finally_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for FinallyClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.finally_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_BEFORE]);
-        self.finally_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_COLON_AFTER]);
+        self.finally_keyword_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_BEFORE]);
+        self.finally_keyword_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER]);
         self.finally_clause_before.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_BEFORE]);
         self.finally_clause_after.get_or_insert(table.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_AFTER]);
         self.block.fill_options(table);
@@ -22799,32 +22801,32 @@ pub struct WithStatementTransport {
     pub with_clause: ::sittir_core::SlotValue<WithClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<WithStatementBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_before"))]
-    pub with_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_after"))]
-    pub with_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_keyword_before"))]
+    pub with_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_keyword_after"))]
+    pub with_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_statement_before"))]
     pub with_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_statement_after"))]
     pub with_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for WithStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_with_statement(self, f))
+impl ::sittir_core::render::Render for WithStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_with_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for WithStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.with_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_BEFORE]);
-        self.with_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_COLON_AFTER]);
+        self.with_keyword_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE]);
+        self.with_keyword_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER]);
         self.with_statement_before.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE]);
         self.with_statement_after.get_or_insert(table.spacing[options::SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER]);
         self.async_marker.fill_options(table);
@@ -22874,9 +22876,9 @@ pub struct WithClauseTransport {
     pub content: ::sittir_core::SlotValue<WithClauseContentTransportSlot>,
 }
 
-impl ::std::fmt::Display for WithClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_with_clause(self, f))
+impl ::sittir_core::render::Render for WithClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_with_clause(self, w))
     }
 }
 
@@ -22927,9 +22929,9 @@ pub struct WithItemTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
-impl ::std::fmt::Display for WithItemTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_with_item(self, f))
+impl ::sittir_core::render::Render for WithItemTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_with_item(self, w))
     }
 }
 
@@ -22988,10 +22990,6 @@ pub struct FunctionDefinitionTransport {
     pub return_type: Option<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<FunctionDefinitionBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_before"))]
-    pub def_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_after"))]
-    pub def_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
     pub dash_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
@@ -23000,26 +22998,30 @@ pub struct FunctionDefinitionTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_keyword_before"))]
+    pub def_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_keyword_after"))]
+    pub def_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_definition_before"))]
     pub function_definition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_definition_after"))]
     pub function_definition_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for FunctionDefinitionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_function_definition(self, f))
+impl ::sittir_core::render::Render for FunctionDefinitionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_function_definition(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for FunctionDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.def_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_BEFORE]);
-        self.def_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_AFTER]);
         self.dash_gt_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_BEFORE]);
         self.dash_gt_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_COLON_AFTER]);
+        self.def_keyword_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_BEFORE]);
+        self.def_keyword_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_AFTER]);
         self.function_definition_before.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_FUNCTION_DEFINITION_BEFORE]);
         self.function_definition_after.get_or_insert(table.spacing[options::SITE_FUNCTION_DEFINITION_FUNCTION_DEFINITION_AFTER]);
         self.async_marker.fill_options(table);
@@ -23088,9 +23090,9 @@ pub struct ParametersTransport {
     pub parameters_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ParametersTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_parameters(self, f))
+impl ::sittir_core::render::Render for ParametersTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_parameters(self, w))
     }
 }
 
@@ -23149,9 +23151,9 @@ pub struct LambdaParametersTransport {
     pub parameters: ::sittir_core::SlotValue<_ParametersTransport>,
 }
 
-impl ::std::fmt::Display for LambdaParametersTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_lambda_parameters(self, f))
+impl ::sittir_core::render::Render for LambdaParametersTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_lambda_parameters(self, w))
     }
 }
 
@@ -23210,9 +23212,9 @@ pub struct ListSplatTransport {
     pub list_splat_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ListSplatTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_list_splat(self, f))
+impl ::sittir_core::render::Render for ListSplatTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_list_splat(self, w))
     }
 }
 
@@ -23275,9 +23277,9 @@ pub struct DictionarySplatTransport {
     pub dictionary_splat_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DictionarySplatTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dictionary_splat(self, f))
+impl ::sittir_core::render::Render for DictionarySplatTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dictionary_splat(self, w))
     }
 }
 
@@ -23330,32 +23332,32 @@ pub struct GlobalStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names"))]
     pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_before"))]
-    pub global_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_after"))]
-    pub global_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_before"))]
     pub names_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_after"))]
     pub names_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_before"))]
+    pub global_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_after"))]
+    pub global_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_statement_before"))]
     pub global_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_statement_after"))]
     pub global_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for GlobalStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_global_statement(self, f))
+impl ::sittir_core::render::Render for GlobalStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_global_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for GlobalStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.global_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_BEFORE]);
-        self.global_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_AFTER]);
         self.names_separator_space_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE]);
         self.names_separator_space_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER]);
+        self.global_keyword_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_BEFORE]);
+        self.global_keyword_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER]);
         self.global_statement_before.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_STATEMENT_BEFORE]);
         self.global_statement_after.get_or_insert(table.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_STATEMENT_AFTER]);
         self.names.fill_options(table);
@@ -23405,19 +23407,19 @@ pub struct NonlocalStatementTransport {
     pub names_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_after"))]
     pub names_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_before"))]
-    pub nonlocal_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_after"))]
-    pub nonlocal_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_keyword_before"))]
+    pub nonlocal_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_keyword_after"))]
+    pub nonlocal_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_statement_before"))]
     pub nonlocal_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_statement_after"))]
     pub nonlocal_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for NonlocalStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_nonlocal_statement(self, f))
+impl ::sittir_core::render::Render for NonlocalStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_nonlocal_statement(self, w))
     }
 }
 
@@ -23425,8 +23427,8 @@ impl ::sittir_core::options::FillOptions for NonlocalStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.names_separator_space_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE]);
         self.names_separator_space_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER]);
-        self.nonlocal_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_BEFORE]);
-        self.nonlocal_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_AFTER]);
+        self.nonlocal_keyword_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_BEFORE]);
+        self.nonlocal_keyword_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER]);
         self.nonlocal_statement_before.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_STATEMENT_BEFORE]);
         self.nonlocal_statement_after.get_or_insert(table.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_STATEMENT_AFTER]);
         self.names.fill_options(table);
@@ -23474,38 +23476,38 @@ pub struct ExecStatementTransport {
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause"))]
     pub in_clause: Option<Vec<::sittir_core::SlotValue<ExpressionTransport>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_before"))]
-    pub exec_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_after"))]
-    pub exec_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_before"))]
-    pub in_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause_separator_space_before"))]
     pub in_clause_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause_separator_space_after"))]
     pub in_clause_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_keyword_before"))]
+    pub exec_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_keyword_after"))]
+    pub exec_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
+    pub in_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
+    pub in_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_statement_before"))]
     pub exec_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_statement_after"))]
     pub exec_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExecStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_exec_statement(self, f))
+impl ::sittir_core::render::Render for ExecStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_exec_statement(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ExecStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.exec_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_BEFORE]);
-        self.exec_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_AFTER]);
-        self.in_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_BEFORE]);
-        self.in_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_AFTER]);
         self.in_clause_separator_space_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE]);
         self.in_clause_separator_space_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER]);
+        self.exec_keyword_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_BEFORE]);
+        self.exec_keyword_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER]);
+        self.in_keyword_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_KEYWORD_BEFORE]);
+        self.in_keyword_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER]);
         self.exec_statement_before.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_STATEMENT_BEFORE]);
         self.exec_statement_after.get_or_insert(table.spacing[options::SITE_EXEC_STATEMENT_EXEC_STATEMENT_AFTER]);
         if let Some(seated_items) = self.in_clause.as_mut() {
@@ -23652,19 +23654,19 @@ pub struct TypeAliasStatementTransport {
     pub eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
     pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_before"))]
-    pub anon_type_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_type_after"))]
-    pub anon_type_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_keyword_before"))]
+    pub type_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_keyword_after"))]
+    pub type_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_alias_statement_before"))]
     pub type_alias_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_alias_statement_after"))]
     pub type_alias_statement_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TypeAliasStatementTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_type_alias_statement(self, f))
+impl ::sittir_core::render::Render for TypeAliasStatementTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_type_alias_statement(self, w))
     }
 }
 
@@ -23672,8 +23674,8 @@ impl ::sittir_core::options::FillOptions for TypeAliasStatementTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.eq_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE]);
         self.eq_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER]);
-        self.anon_type_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_ANON_TYPE_BEFORE]);
-        self.anon_type_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_ANON_TYPE_AFTER]);
+        self.type_keyword_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_BEFORE]);
+        self.type_keyword_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER]);
         self.type_alias_statement_before.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_BEFORE]);
         self.type_alias_statement_after.get_or_insert(table.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER]);
         self.left.fill_options(table);
@@ -23726,32 +23728,32 @@ pub struct ClassDefinitionTransport {
     pub superclasses: Option<::sittir_core::SlotValue<ArgumentListTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<ClassDefinitionBodyTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_before"))]
-    pub class_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_after"))]
-    pub class_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_keyword_before"))]
+    pub class_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_keyword_after"))]
+    pub class_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_definition_before"))]
     pub class_definition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_definition_after"))]
     pub class_definition_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ClassDefinitionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_class_definition(self, f))
+impl ::sittir_core::render::Render for ClassDefinitionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_class_definition(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ClassDefinitionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.class_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_BEFORE]);
-        self.class_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_AFTER]);
         self.colon_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_COLON_AFTER]);
+        self.class_keyword_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_BEFORE]);
+        self.class_keyword_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER]);
         self.class_definition_before.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_DEFINITION_BEFORE]);
         self.class_definition_after.get_or_insert(table.spacing[options::SITE_CLASS_DEFINITION_CLASS_DEFINITION_AFTER]);
         self.name.fill_options(table);
@@ -23814,9 +23816,9 @@ pub struct TypeParameterTransport {
     pub type_parameter_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TypeParameterTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_type_parameter(self, f))
+impl ::sittir_core::render::Render for TypeParameterTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_type_parameter(self, w))
     }
 }
 
@@ -23885,9 +23887,9 @@ pub struct ParenthesizedListSplatTransport {
     pub parenthesized_list_splat_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ParenthesizedListSplatTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_parenthesized_list_splat(self, f))
+impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_parenthesized_list_splat(self, w))
     }
 }
 
@@ -23956,9 +23958,9 @@ pub struct ArgumentListTransport {
     pub argument_list_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ArgumentListTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_argument_list(self, f))
+impl ::sittir_core::render::Render for ArgumentListTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_argument_list(self, w))
     }
 }
 
@@ -24023,9 +24025,9 @@ pub struct DecoratedDefinitionTransport {
     pub decorated_definition_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DecoratedDefinitionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_decorated_definition(self, f))
+impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_decorated_definition(self, w))
     }
 }
 
@@ -24099,9 +24101,9 @@ pub struct DecoratorTransport {
     pub decorator_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DecoratorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_decorator(self, f))
+impl ::sittir_core::render::Render for DecoratorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_decorator(self, w))
     }
 }
 
@@ -24156,9 +24158,9 @@ pub struct SuiteTransport {
     pub content: ::sittir_core::SlotValue<SuiteContentTransportSlot>,
 }
 
-impl ::std::fmt::Display for SuiteTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_suite(self, f))
+impl ::sittir_core::render::Render for SuiteTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_suite(self, w))
     }
 }
 
@@ -24215,9 +24217,9 @@ pub struct BlockTransport {
     pub block_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for BlockTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_block(self, f))
+impl ::sittir_core::render::Render for BlockTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_block(self, w))
     }
 }
 
@@ -24320,9 +24322,9 @@ pub struct ExpressionListTransport {
     pub expression_list_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExpressionListTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_expression_list(self, f))
+impl ::sittir_core::render::Render for ExpressionListTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_expression_list(self, w))
     }
 }
 
@@ -24380,9 +24382,9 @@ pub struct DottedNameTransport {
     pub names_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DottedNameTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dotted_name(self, f))
+impl ::sittir_core::render::Render for DottedNameTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dotted_name(self, w))
     }
 }
 
@@ -24435,9 +24437,9 @@ pub struct CasePatternTransport {
     pub content: ::sittir_core::SlotValue<Box<CasePatternContentTransportSlot>>,
 }
 
-impl ::std::fmt::Display for CasePatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_case_pattern(self, f))
+impl ::sittir_core::render::Render for CasePatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_case_pattern(self, w))
     }
 }
 
@@ -24492,9 +24494,9 @@ pub struct UnionPatternTransport {
     pub patterns_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for UnionPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_union_pattern(self, f))
+impl ::sittir_core::render::Render for UnionPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_union_pattern(self, w))
     }
 }
 
@@ -24600,9 +24602,9 @@ pub struct DictPatternTransport {
     pub dict_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DictPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dict_pattern(self, f))
+impl ::sittir_core::render::Render for DictPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dict_pattern(self, w))
     }
 }
 
@@ -24669,9 +24671,9 @@ pub struct KeyValuePatternTransport {
     pub key_value_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for KeyValuePatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_key_value_pattern(self, f))
+impl ::sittir_core::render::Render for KeyValuePatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_key_value_pattern(self, w))
     }
 }
 
@@ -24737,9 +24739,9 @@ pub struct KeywordPatternTransport {
     pub keyword_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for KeywordPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_keyword_pattern(self, f))
+impl ::sittir_core::render::Render for KeywordPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_keyword_pattern(self, w))
     }
 }
 
@@ -24805,9 +24807,9 @@ pub struct SplatPatternTransport {
     pub splat_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SplatPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_splat_pattern(self, f))
+impl ::sittir_core::render::Render for SplatPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_splat_pattern(self, w))
     }
 }
 
@@ -24877,9 +24879,9 @@ pub struct ClassPatternTransport {
     pub class_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ClassPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_class_pattern(self, f))
+impl ::sittir_core::render::Render for ClassPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_class_pattern(self, w))
     }
 }
 
@@ -24955,9 +24957,9 @@ pub struct ComplexPatternTransport {
     pub complex_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ComplexPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_complex_pattern(self, f))
+impl ::sittir_core::render::Render for ComplexPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_complex_pattern(self, w))
     }
 }
 
@@ -25035,9 +25037,9 @@ pub struct _ParametersTransport {
     pub parameters_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for _ParametersTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render__parameters(self, f))
+impl ::sittir_core::render::Render for _ParametersTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render__parameters(self, w))
     }
 }
 
@@ -25135,9 +25137,9 @@ pub struct PatternsTransport {
     pub pattern_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PatternsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_patterns(self, f))
+impl ::sittir_core::render::Render for PatternsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_patterns(self, w))
     }
 }
 
@@ -25232,9 +25234,9 @@ pub struct TuplePatternTransport {
     pub tuple_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TuplePatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_tuple_pattern(self, f))
+impl ::sittir_core::render::Render for TuplePatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_tuple_pattern(self, w))
     }
 }
 
@@ -25303,9 +25305,9 @@ pub struct ListPatternTransport {
     pub list_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ListPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_list_pattern(self, f))
+impl ::sittir_core::render::Render for ListPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_list_pattern(self, w))
     }
 }
 
@@ -25372,9 +25374,9 @@ pub struct DefaultParameterTransport {
     pub default_parameter_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DefaultParameterTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_default_parameter(self, f))
+impl ::sittir_core::render::Render for DefaultParameterTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_default_parameter(self, w))
     }
 }
 
@@ -25446,9 +25448,9 @@ pub struct TypedDefaultParameterTransport {
     pub typed_default_parameter_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TypedDefaultParameterTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_typed_default_parameter(self, f))
+impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_typed_default_parameter(self, w))
     }
 }
 
@@ -25515,9 +25517,9 @@ pub struct ListSplatPatternTransport {
     pub list_splat_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ListSplatPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_list_splat_pattern(self, f))
+impl ::sittir_core::render::Render for ListSplatPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_list_splat_pattern(self, w))
     }
 }
 
@@ -25580,9 +25582,9 @@ pub struct DictionarySplatPatternTransport {
     pub dictionary_splat_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DictionarySplatPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dictionary_splat_pattern(self, f))
+impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dictionary_splat_pattern(self, w))
     }
 }
 
@@ -25637,26 +25639,26 @@ pub struct AsPatternTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_pattern_before"))]
     pub as_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_pattern_after"))]
     pub as_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AsPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_as_pattern(self, f))
+impl ::sittir_core::render::Render for AsPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_as_pattern(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for AsPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_KEYWORD_AFTER]);
         self.as_pattern_before.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_PATTERN_BEFORE]);
         self.as_pattern_after.get_or_insert(table.spacing[options::SITE_AS_PATTERN_AS_PATTERN_AFTER]);
         self.expression.fill_options(table);
@@ -25703,26 +25705,26 @@ pub struct NotOperatorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_before"))]
-    pub not_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_after"))]
-    pub not_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_keyword_before"))]
+    pub not_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_keyword_after"))]
+    pub not_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_operator_before"))]
     pub not_operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_operator_after"))]
     pub not_operator_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for NotOperatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_not_operator(self, f))
+impl ::sittir_core::render::Render for NotOperatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_not_operator(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for NotOperatorTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.not_before.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_BEFORE]);
-        self.not_after.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_AFTER]);
+        self.not_keyword_before.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_KEYWORD_BEFORE]);
+        self.not_keyword_after.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER]);
         self.not_operator_before.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_OPERATOR_BEFORE]);
         self.not_operator_after.get_or_insert(table.spacing[options::SITE_NOT_OPERATOR_NOT_OPERATOR_AFTER]);
         self.argument.fill_options(table);
@@ -25778,9 +25780,9 @@ pub struct BooleanOperatorTransport {
     pub boolean_operator_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for BooleanOperatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_boolean_operator(self, f))
+impl ::sittir_core::render::Render for BooleanOperatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_boolean_operator(self, w))
     }
 }
 
@@ -25847,9 +25849,9 @@ pub struct BinaryOperatorTransport {
     pub binary_operator_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for BinaryOperatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_binary_operator(self, f))
+impl ::sittir_core::render::Render for BinaryOperatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_binary_operator(self, w))
     }
 }
 
@@ -25912,9 +25914,9 @@ pub struct UnaryOperatorTransport {
     pub unary_operator_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for UnaryOperatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_unary_operator(self, f))
+impl ::sittir_core::render::Render for UnaryOperatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_unary_operator(self, w))
     }
 }
 
@@ -25976,9 +25978,9 @@ pub struct ComparisonOperatorTransport {
     pub comparison_operator_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ComparisonOperatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_comparison_operator(self, f))
+impl ::sittir_core::render::Render for ComparisonOperatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_comparison_operator(self, w))
     }
 }
 
@@ -26048,19 +26050,19 @@ pub struct LambdaTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_before"))]
-    pub anon_lambda_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_after"))]
-    pub anon_lambda_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_before"))]
+    pub lambda_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_after"))]
+    pub lambda_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_before"))]
     pub lambda_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_after"))]
     pub lambda_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for LambdaTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_lambda(self, f))
+impl ::sittir_core::render::Render for LambdaTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_lambda(self, w))
     }
 }
 
@@ -26068,8 +26070,8 @@ impl ::sittir_core::options::FillOptions for LambdaTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.colon_before.get_or_insert(table.spacing[options::SITE_LAMBDA_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_LAMBDA_COLON_AFTER]);
-        self.anon_lambda_before.get_or_insert(table.spacing[options::SITE_LAMBDA_ANON_LAMBDA_BEFORE]);
-        self.anon_lambda_after.get_or_insert(table.spacing[options::SITE_LAMBDA_ANON_LAMBDA_AFTER]);
+        self.lambda_keyword_before.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_KEYWORD_BEFORE]);
+        self.lambda_keyword_after.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER]);
         self.lambda_before.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_BEFORE]);
         self.lambda_after.get_or_insert(table.spacing[options::SITE_LAMBDA_LAMBDA_AFTER]);
         self.parameters.fill_options(table);
@@ -26122,19 +26124,19 @@ pub struct LambdaWithinForInClauseTransport {
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
     pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_before"))]
-    pub anon_lambda_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_lambda_after"))]
-    pub anon_lambda_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_before"))]
+    pub lambda_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_after"))]
+    pub lambda_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_within_for_in_clause_before"))]
     pub lambda_within_for_in_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_within_for_in_clause_after"))]
     pub lambda_within_for_in_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for LambdaWithinForInClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_lambda_within_for_in_clause(self, f))
+impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_lambda_within_for_in_clause(self, w))
     }
 }
 
@@ -26142,8 +26144,8 @@ impl ::sittir_core::options::FillOptions for LambdaWithinForInClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
         self.colon_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE]);
         self.colon_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER]);
-        self.anon_lambda_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_ANON_LAMBDA_BEFORE]);
-        self.anon_lambda_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_ANON_LAMBDA_AFTER]);
+        self.lambda_keyword_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_BEFORE]);
+        self.lambda_keyword_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER]);
         self.lambda_within_for_in_clause_before.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_BEFORE]);
         self.lambda_within_for_in_clause_after.get_or_insert(table.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER]);
         self.parameters.fill_options(table);
@@ -26198,9 +26200,9 @@ pub struct AssignmentTransport {
     pub assignment_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AssignmentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_assignment(self, f))
+impl ::sittir_core::render::Render for AssignmentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_assignment(self, w))
     }
 }
 
@@ -26262,9 +26264,9 @@ pub struct AugmentedAssignmentTransport {
     pub augmented_assignment_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AugmentedAssignmentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_augmented_assignment(self, f))
+impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_augmented_assignment(self, w))
     }
 }
 
@@ -26325,9 +26327,9 @@ pub struct PatternListTransport {
     pub pattern_list_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PatternListTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_pattern_list(self, f))
+impl ::sittir_core::render::Render for PatternListTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_pattern_list(self, w))
     }
 }
 
@@ -26379,26 +26381,26 @@ pub struct YieldTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<::sittir_core::SlotValue<Box<YieldContentTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_yield_before"))]
-    pub anon_yield_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_yield_after"))]
-    pub anon_yield_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_keyword_before"))]
+    pub yield_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_keyword_after"))]
+    pub yield_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_before"))]
     pub yield_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_after"))]
     pub yield_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for YieldTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_yield(self, f))
+impl ::sittir_core::render::Render for YieldTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_yield(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for YieldTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_yield_before.get_or_insert(table.spacing[options::SITE_YIELD_ANON_YIELD_BEFORE]);
-        self.anon_yield_after.get_or_insert(table.spacing[options::SITE_YIELD_ANON_YIELD_AFTER]);
+        self.yield_keyword_before.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_KEYWORD_BEFORE]);
+        self.yield_keyword_after.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_KEYWORD_AFTER]);
         self.yield_before.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_BEFORE]);
         self.yield_after.get_or_insert(table.spacing[options::SITE_YIELD_YIELD_AFTER]);
         self.content.fill_options(table);
@@ -26456,9 +26458,9 @@ pub struct AttributeTransport {
     pub attribute_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AttributeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_attribute(self, f))
+impl ::sittir_core::render::Render for AttributeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_attribute(self, w))
     }
 }
 
@@ -26528,9 +26530,9 @@ pub struct SubscriptTransport {
     pub subscript_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SubscriptTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_subscript(self, f))
+impl ::sittir_core::render::Render for SubscriptTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_subscript(self, w))
     }
 }
 
@@ -26600,9 +26602,9 @@ pub struct SliceTransport {
     pub slice_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SliceTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_slice(self, f))
+impl ::sittir_core::render::Render for SliceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_slice(self, w))
     }
 }
 
@@ -26649,9 +26651,9 @@ pub struct EllipsisTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for EllipsisTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for EllipsisTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -26772,9 +26774,9 @@ pub struct CallTransport {
     pub call_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for CallTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_call(self, f))
+impl ::sittir_core::render::Render for CallTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_call(self, w))
     }
 }
 
@@ -26838,9 +26840,9 @@ pub struct TypedParameterTransport {
     pub typed_parameter_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TypedParameterTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_typed_parameter(self, f))
+impl ::sittir_core::render::Render for TypedParameterTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_typed_parameter(self, w))
     }
 }
 
@@ -26896,9 +26898,9 @@ pub struct TypeTransport {
     pub content: ::sittir_core::SlotValue<Box<TypeContentTransportSlot>>,
 }
 
-impl ::std::fmt::Display for TypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_type(self, f))
+impl ::sittir_core::render::Render for TypeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_type(self, w))
     }
 }
 
@@ -26959,9 +26961,9 @@ pub struct SplatTypeTransport {
     pub splat_type_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SplatTypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_splat_type(self, f))
+impl ::sittir_core::render::Render for SplatTypeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_splat_type(self, w))
     }
 }
 
@@ -27023,9 +27025,9 @@ pub struct GenericTypeTransport {
     pub generic_type_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for GenericTypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_generic_type(self, f))
+impl ::sittir_core::render::Render for GenericTypeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_generic_type(self, w))
     }
 }
 
@@ -27089,9 +27091,9 @@ pub struct UnionTypeTransport {
     pub union_type_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for UnionTypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_union_type(self, f))
+impl ::sittir_core::render::Render for UnionTypeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_union_type(self, w))
     }
 }
 
@@ -27157,9 +27159,9 @@ pub struct ConstrainedTypeTransport {
     pub constrained_type_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ConstrainedTypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_constrained_type(self, f))
+impl ::sittir_core::render::Render for ConstrainedTypeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_constrained_type(self, w))
     }
 }
 
@@ -27225,9 +27227,9 @@ pub struct MemberTypeTransport {
     pub member_type_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for MemberTypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_member_type(self, f))
+impl ::sittir_core::render::Render for MemberTypeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_member_type(self, w))
     }
 }
 
@@ -27293,9 +27295,9 @@ pub struct KeywordArgumentTransport {
     pub keyword_argument_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for KeywordArgumentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_keyword_argument(self, f))
+impl ::sittir_core::render::Render for KeywordArgumentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_keyword_argument(self, w))
     }
 }
 
@@ -27363,9 +27365,9 @@ pub struct ListTransport {
     pub list_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ListTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_list(self, f))
+impl ::sittir_core::render::Render for ListTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_list(self, w))
     }
 }
 
@@ -27434,9 +27436,9 @@ pub struct SetTransport {
     pub set_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SetTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_set(self, f))
+impl ::sittir_core::render::Render for SetTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_set(self, w))
     }
 }
 
@@ -27505,9 +27507,9 @@ pub struct TupleTransport {
     pub tuple_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TupleTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_tuple(self, f))
+impl ::sittir_core::render::Render for TupleTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_tuple(self, w))
     }
 }
 
@@ -27576,9 +27578,9 @@ pub struct DictionaryTransport {
     pub dictionary_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DictionaryTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dictionary(self, f))
+impl ::sittir_core::render::Render for DictionaryTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dictionary(self, w))
     }
 }
 
@@ -27645,9 +27647,9 @@ pub struct PairTransport {
     pub pair_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PairTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_pair(self, f))
+impl ::sittir_core::render::Render for PairTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_pair(self, w))
     }
 }
 
@@ -27717,9 +27719,9 @@ pub struct ListComprehensionTransport {
     pub list_comprehension_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ListComprehensionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_list_comprehension(self, f))
+impl ::sittir_core::render::Render for ListComprehensionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_list_comprehension(self, w))
     }
 }
 
@@ -27791,9 +27793,9 @@ pub struct DictionaryComprehensionTransport {
     pub dictionary_comprehension_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DictionaryComprehensionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dictionary_comprehension(self, f))
+impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dictionary_comprehension(self, w))
     }
 }
 
@@ -27865,9 +27867,9 @@ pub struct SetComprehensionTransport {
     pub set_comprehension_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SetComprehensionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_set_comprehension(self, f))
+impl ::sittir_core::render::Render for SetComprehensionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_set_comprehension(self, w))
     }
 }
 
@@ -27939,9 +27941,9 @@ pub struct GeneratorExpressionTransport {
     pub generator_expression_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for GeneratorExpressionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_generator_expression(self, f))
+impl ::sittir_core::render::Render for GeneratorExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_generator_expression(self, w))
     }
 }
 
@@ -28011,9 +28013,9 @@ pub struct ParenthesizedExpressionTransport {
     pub parenthesized_expression_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ParenthesizedExpressionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_parenthesized_expression(self, f))
+impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_parenthesized_expression(self, w))
     }
 }
 
@@ -28076,9 +28078,9 @@ pub struct CollectionElementsTransport {
     pub element_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for CollectionElementsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_collection_elements(self, f))
+impl ::sittir_core::render::Render for CollectionElementsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_collection_elements(self, w))
     }
 }
 
@@ -28234,14 +28236,6 @@ pub struct ForInClauseTransport {
     pub right: Vec<::sittir_core::SlotValue<ForInClauseRightTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma"))]
     pub comma: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_before"))]
-    pub for_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_after"))]
-    pub for_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_before"))]
-    pub in_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_after"))]
-    pub in_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_separator_space_before"))]
     pub right_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_separator_space_after"))]
@@ -28250,28 +28244,36 @@ pub struct ForInClauseTransport {
     pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_after"))]
     pub comma_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_before"))]
+    pub for_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_after"))]
+    pub for_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
+    pub in_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
+    pub in_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_clause_before"))]
     pub for_in_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_clause_after"))]
     pub for_in_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ForInClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_for_in_clause(self, f))
+impl ::sittir_core::render::Render for ForInClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_for_in_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ForInClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.for_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_BEFORE]);
-        self.for_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_AFTER]);
-        self.in_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_BEFORE]);
-        self.in_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_AFTER]);
         self.right_separator_space_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE]);
         self.right_separator_space_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER]);
         self.comma_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE]);
         self.comma_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_AFTER]);
+        self.for_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_BEFORE]);
+        self.for_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_AFTER]);
+        self.in_keyword_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_BEFORE]);
+        self.in_keyword_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_AFTER]);
         self.for_in_clause_before.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_BEFORE]);
         self.for_in_clause_after.get_or_insert(table.spacing[options::SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_AFTER]);
         {
@@ -28412,26 +28414,26 @@ pub struct IfClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_before"))]
-    pub if_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
-    pub if_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_before"))]
+    pub if_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
+    pub if_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_clause_before"))]
     pub if_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_clause_after"))]
     pub if_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for IfClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_if_clause(self, f))
+impl ::sittir_core::render::Render for IfClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_if_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for IfClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.if_before.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_BEFORE]);
-        self.if_after.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_AFTER]);
+        self.if_keyword_before.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_KEYWORD_BEFORE]);
+        self.if_keyword_after.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER]);
         self.if_clause_before.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_CLAUSE_BEFORE]);
         self.if_clause_after.get_or_insert(table.spacing[options::SITE_IF_CLAUSE_IF_CLAUSE_AFTER]);
         self.condition.fill_options(table);
@@ -28481,32 +28483,32 @@ pub struct ConditionalExpressionTransport {
     pub condition: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_before"))]
-    pub else_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_after"))]
-    pub else_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_before"))]
-    pub if_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_after"))]
-    pub if_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_before"))]
+    pub else_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_after"))]
+    pub else_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_before"))]
+    pub if_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
+    pub if_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_expression_before"))]
     pub conditional_expression_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_conditional_expression_after"))]
     pub conditional_expression_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ConditionalExpressionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_conditional_expression(self, f))
+impl ::sittir_core::render::Render for ConditionalExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_conditional_expression(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ConditionalExpressionTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.else_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_BEFORE]);
-        self.else_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_AFTER]);
-        self.if_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_BEFORE]);
-        self.if_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_AFTER]);
+        self.else_keyword_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_BEFORE]);
+        self.else_keyword_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER]);
+        self.if_keyword_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE]);
+        self.if_keyword_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_AFTER]);
         self.conditional_expression_before.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_CONDITIONAL_EXPRESSION_BEFORE]);
         self.conditional_expression_after.get_or_insert(table.spacing[options::SITE_CONDITIONAL_EXPRESSION_CONDITIONAL_EXPRESSION_AFTER]);
         self.body.fill_options(table);
@@ -28562,9 +28564,9 @@ pub struct ConcatenatedStringTransport {
     pub concatenated_string_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ConcatenatedStringTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_concatenated_string(self, f))
+impl ::sittir_core::render::Render for ConcatenatedStringTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_concatenated_string(self, w))
     }
 }
 
@@ -28637,9 +28639,9 @@ pub struct StringTransport {
     pub string_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for StringTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_string(self, f))
+impl ::sittir_core::render::Render for StringTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_string(self, w))
     }
 }
 
@@ -28694,9 +28696,9 @@ pub struct StringContentTransport {
     pub content: Option<Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>>,
 }
 
-impl ::std::fmt::Display for StringContentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_string_content(self, f))
+impl ::sittir_core::render::Render for StringContentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_string_content(self, w))
     }
 }
 
@@ -28769,9 +28771,9 @@ pub struct InterpolationTransport {
     pub interpolation_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for InterpolationTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_interpolation(self, f))
+impl ::sittir_core::render::Render for InterpolationTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_interpolation(self, w))
     }
 }
 
@@ -28823,9 +28825,9 @@ pub struct EscapeSequenceTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for EscapeSequenceTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for EscapeSequenceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -28928,9 +28930,9 @@ pub struct NotEscapeSequenceTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for NotEscapeSequenceTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29053,9 +29055,9 @@ pub struct FormatSpecifierTransport {
     pub format_specifier_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for FormatSpecifierTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_format_specifier(self, f))
+impl ::sittir_core::render::Render for FormatSpecifierTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_format_specifier(self, w))
     }
 }
 
@@ -29100,9 +29102,9 @@ pub struct TypeConversionTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for TypeConversionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for TypeConversionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29205,9 +29207,9 @@ pub struct IntegerTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for IntegerTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for IntegerTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29310,9 +29312,9 @@ pub struct FloatTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for FloatTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for FloatTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29415,9 +29417,9 @@ pub struct IdentifierTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for IdentifierTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for IdentifierTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29520,9 +29522,9 @@ pub struct TrueTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for TrueTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for TrueTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29627,9 +29629,9 @@ pub struct FalseTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for FalseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for FalseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29734,9 +29736,9 @@ pub struct NoneTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for NoneTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for NoneTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -29849,26 +29851,26 @@ pub struct AwaitTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_await_before"))]
-    pub anon_await_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_anon_await_after"))]
-    pub anon_await_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_keyword_before"))]
+    pub await_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_keyword_after"))]
+    pub await_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_before"))]
     pub await_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_after"))]
     pub await_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AwaitTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_await(self, f))
+impl ::sittir_core::render::Render for AwaitTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_await(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for AwaitTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.anon_await_before.get_or_insert(table.spacing[options::SITE_AWAIT_ANON_AWAIT_BEFORE]);
-        self.anon_await_after.get_or_insert(table.spacing[options::SITE_AWAIT_ANON_AWAIT_AFTER]);
+        self.await_keyword_before.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_KEYWORD_BEFORE]);
+        self.await_keyword_after.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_KEYWORD_AFTER]);
         self.await_before.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_BEFORE]);
         self.await_after.get_or_insert(table.spacing[options::SITE_AWAIT_AWAIT_AFTER]);
         self.expression.fill_options(table);
@@ -29906,9 +29908,9 @@ pub struct CommentTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for CommentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for CommentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -30011,9 +30013,9 @@ pub struct LineContinuationTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LineContinuationTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LineContinuationTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -30116,9 +30118,9 @@ pub struct PositionalSeparatorTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PositionalSeparatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PositionalSeparatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -30223,9 +30225,9 @@ pub struct KeywordSeparatorTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for KeywordSeparatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for KeywordSeparatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -30330,9 +30332,9 @@ pub struct KwAsyncMarkerTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for KwAsyncMarkerTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for KwAsyncMarkerTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -30488,9 +30490,9 @@ pub struct SimpleStatementsElementsTransport {
     pub simple_statement_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SimpleStatementsElementsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_simple_statements_elements(self, f))
+impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_simple_statements_elements(self, w))
     }
 }
 
@@ -30705,9 +30707,9 @@ pub struct SubjectsTransport {
     pub subject_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SubjectsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_subjects(self, f))
+impl ::sittir_core::render::Render for SubjectsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_subjects(self, w))
     }
 }
 
@@ -30862,9 +30864,9 @@ pub struct CasePatternsTransport {
     pub case_pattern_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for CasePatternsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_case_patterns(self, f))
+impl ::sittir_core::render::Render for CasePatternsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_case_patterns(self, w))
     }
 }
 
@@ -30974,9 +30976,9 @@ pub struct WithClauseWithItemsTransport {
     pub with_item_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for WithClauseWithItemsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_with_clause_with_items(self, f))
+impl ::sittir_core::render::Render for WithClauseWithItemsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_with_clause_with_items(self, w))
     }
 }
 
@@ -31036,9 +31038,9 @@ pub struct TypesTransport {
     pub type_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for TypesTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_types(self, f))
+impl ::sittir_core::render::Render for TypesTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_types(self, w))
     }
 }
 
@@ -31205,9 +31207,9 @@ pub struct ArgumentListElementsTransport {
     pub element_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ArgumentListElementsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_argument_list_elements(self, f))
+impl ::sittir_core::render::Render for ArgumentListElementsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_argument_list_elements(self, w))
     }
 }
 
@@ -31368,9 +31370,9 @@ pub struct ExpressionListExpressionsTransport {
     pub expression_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExpressionListExpressionsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_expression_list_expressions(self, f))
+impl ::sittir_core::render::Render for ExpressionListExpressionsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_expression_list_expressions(self, w))
     }
 }
 
@@ -31525,9 +31527,9 @@ pub struct ListPatternCasePatternsTransport {
     pub case_pattern_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ListPatternCasePatternsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_list_pattern_case_patterns(self, f))
+impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_list_pattern_case_patterns(self, w))
     }
 }
 
@@ -31637,9 +31639,9 @@ pub struct DictPatternElementsTransport {
     pub element_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DictPatternElementsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dict_pattern_elements(self, f))
+impl ::sittir_core::render::Render for DictPatternElementsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dict_pattern_elements(self, w))
     }
 }
 
@@ -31719,9 +31721,9 @@ pub struct PatternListPatternsTransport {
     pub pattern_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PatternListPatternsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_pattern_list_patterns(self, f))
+impl ::sittir_core::render::Render for PatternListPatternsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_pattern_list_patterns(self, w))
     }
 }
 
@@ -31810,9 +31812,9 @@ pub struct SubscriptsTransport {
     pub subscript_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SubscriptsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_subscripts(self, f))
+impl ::sittir_core::render::Render for SubscriptsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_subscripts(self, w))
     }
 }
 
@@ -31964,9 +31966,9 @@ pub struct DictionaryElementsTransport {
     pub element_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for DictionaryElementsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_dictionary_elements(self, f))
+impl ::sittir_core::render::Render for DictionaryElementsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_dictionary_elements(self, w))
     }
 }
 
@@ -32048,9 +32050,9 @@ pub struct SliceGroupTransport {
     pub slice_group_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SliceGroupTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_slice_group(self, f))
+impl ::sittir_core::render::Render for SliceGroupTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_slice_group(self, w))
     }
 }
 
@@ -32158,9 +32160,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorArm {
     }
 }
 
-impl ::std::fmt::Display for UnaryOperatorOperatorArm {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
+impl ::sittir_core::render::Render for UnaryOperatorOperatorArm {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        w.text(match self {
             Self::Plus => "+",
             Self::Minus => "-",
             Self::Tilde => "~",
@@ -32314,9 +32316,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorArm {
     }
 }
 
-impl ::std::fmt::Display for AugmentedAssignmentOperatorArm {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
+impl ::sittir_core::render::Render for AugmentedAssignmentOperatorArm {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        w.text(match self {
             Self::PlusEq => "+=",
             Self::MinusEq => "-=",
             Self::StarEq => "*=",
@@ -32377,26 +32379,26 @@ pub struct ExceptClauseExceptionAsTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_exception_as_before"))]
     pub except_clause_exception_as_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_exception_as_after"))]
     pub except_clause_exception_as_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExceptClauseExceptionAsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_except_clause_exception_as(self, f))
+impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_except_clause_exception_as(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for ExceptClauseExceptionAsTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER]);
         self.except_clause_exception_as_before.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_BEFORE]);
         self.except_clause_exception_as_after.get_or_insert(table.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_EXCEPT_CLAUSE_EXCEPTION_AS_AFTER]);
         self.value.fill_options(table);
@@ -32457,9 +32459,9 @@ pub struct CaseTuplePatternTransport {
     pub case_tuple_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for CaseTuplePatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_case_tuple_pattern(self, f))
+impl ::sittir_core::render::Render for CaseTuplePatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_case_tuple_pattern(self, w))
     }
 }
 
@@ -32528,9 +32530,9 @@ pub struct CaseListPatternTransport {
     pub case_list_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for CaseListPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_case_list_pattern(self, f))
+impl ::sittir_core::render::Render for CaseListPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_case_list_pattern(self, w))
     }
 }
 
@@ -32587,26 +32589,26 @@ pub struct CaseAsPatternTransport {
     pub case_pattern: ::sittir_core::SlotValue<Box<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_before"))]
-    pub as_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_after"))]
-    pub as_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
+    pub as_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
+    pub as_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_as_pattern_before"))]
     pub case_as_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_as_pattern_after"))]
     pub case_as_pattern_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for CaseAsPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_case_as_pattern(self, f))
+impl ::sittir_core::render::Render for CaseAsPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_case_as_pattern(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for CaseAsPatternTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.as_before.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_BEFORE]);
-        self.as_after.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_AFTER]);
+        self.as_keyword_before.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE]);
+        self.as_keyword_after.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER]);
         self.case_as_pattern_before.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_CASE_AS_PATTERN_BEFORE]);
         self.case_as_pattern_after.get_or_insert(table.spacing[options::SITE_CASE_AS_PATTERN_CASE_AS_PATTERN_AFTER]);
         self.case_pattern.fill_options(table);
@@ -32657,9 +32659,9 @@ pub struct ComprehensionClausesTransport {
     pub content_separator_space: Option<u16>,
 }
 
-impl ::std::fmt::Display for ComprehensionClausesTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_comprehension_clauses(self, f))
+impl ::sittir_core::render::Render for ComprehensionClausesTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_comprehension_clauses(self, w))
     }
 }
 
@@ -32742,9 +32744,9 @@ pub struct ParenthesizedImportListTransport {
     pub parenthesized_import_list_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ParenthesizedImportListTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_parenthesized_import_list(self, f))
+impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_parenthesized_import_list(self, w))
     }
 }
 
@@ -32807,9 +32809,9 @@ pub struct PrintArgumentsTransport {
     pub argument_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PrintArgumentsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_print_arguments(self, f))
+impl ::sittir_core::render::Render for PrintArgumentsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_print_arguments(self, w))
     }
 }
 
@@ -32964,9 +32966,9 @@ pub struct PrintChevronArgumentsTransport {
     pub argument_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PrintChevronArgumentsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_print_chevron_arguments(self, f))
+impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_print_chevron_arguments(self, w))
     }
 }
 
@@ -33115,26 +33117,26 @@ pub struct PrintStatementChevronTransport {
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
     pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_before"))]
-    pub print_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_after"))]
-    pub print_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_before"))]
+    pub print_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_after"))]
+    pub print_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_chevron_before"))]
     pub print_statement_chevron_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_chevron_after"))]
     pub print_statement_chevron_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PrintStatementChevronTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_print_statement_chevron(self, f))
+impl ::sittir_core::render::Render for PrintStatementChevronTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_print_statement_chevron(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for PrintStatementChevronTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.print_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_BEFORE]);
-        self.print_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_AFTER]);
+        self.print_keyword_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_BEFORE]);
+        self.print_keyword_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER]);
         self.print_statement_chevron_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_STATEMENT_CHEVRON_BEFORE]);
         self.print_statement_chevron_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_STATEMENT_CHEVRON_AFTER]);
         self.chevron.fill_options(table);
@@ -33181,26 +33183,26 @@ pub struct PrintStatementPlainTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_arguments"))]
     pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_before"))]
-    pub print_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_after"))]
-    pub print_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_before"))]
+    pub print_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_after"))]
+    pub print_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_plain_before"))]
     pub print_statement_plain_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_statement_plain_after"))]
     pub print_statement_plain_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for PrintStatementPlainTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_print_statement_plain(self, f))
+impl ::sittir_core::render::Render for PrintStatementPlainTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_print_statement_plain(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for PrintStatementPlainTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.print_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_BEFORE]);
-        self.print_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_AFTER]);
+        self.print_keyword_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_BEFORE]);
+        self.print_keyword_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER]);
         self.print_statement_plain_before.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_STATEMENT_PLAIN_BEFORE]);
         self.print_statement_plain_after.get_or_insert(table.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_STATEMENT_PLAIN_AFTER]);
         self.print_arguments.fill_options(table);
@@ -33238,9 +33240,9 @@ pub struct WildcardPatternTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for WildcardPatternTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for WildcardPatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -33365,9 +33367,9 @@ pub struct SimplePatternNegativeTransport {
     pub simple_pattern_negative_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SimplePatternNegativeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_simple_pattern_negative(self, f))
+impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_simple_pattern_negative(self, w))
     }
 }
 
@@ -33427,9 +33429,9 @@ pub struct ExceptClauseExceptionListTransport {
     pub value_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExceptClauseExceptionListTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_except_clause_exception_list(self, f))
+impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_except_clause_exception_list(self, w))
     }
 }
 
@@ -33577,9 +33579,9 @@ pub struct ExceptClauseExceptionTransport {
     pub content: ::sittir_core::SlotValue<ExceptClauseExceptionContentTransportSlot>,
 }
 
-impl ::std::fmt::Display for ExceptClauseExceptionTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_except_clause_exception(self, f))
+impl ::sittir_core::render::Render for ExceptClauseExceptionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_except_clause_exception(self, w))
     }
 }
 
@@ -33638,9 +33640,9 @@ pub struct AssignmentEqTransport {
     pub assignment_eq_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AssignmentEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_assignment_eq(self, f))
+impl ::sittir_core::render::Render for AssignmentEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_assignment_eq(self, w))
     }
 }
 
@@ -33703,9 +33705,9 @@ pub struct AssignmentTypeTransport {
     pub assignment_type_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AssignmentTypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_assignment_type(self, f))
+impl ::sittir_core::render::Render for AssignmentTypeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_assignment_type(self, w))
     }
 }
 
@@ -33774,9 +33776,9 @@ pub struct AssignmentTypedTransport {
     pub assignment_typed_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for AssignmentTypedTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_assignment_typed(self, f))
+impl ::sittir_core::render::Render for AssignmentTypedTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_assignment_typed(self, w))
     }
 }
 
@@ -33840,9 +33842,9 @@ pub struct ExpressionStatementTupleTransport {
     pub expression_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ExpressionStatementTupleTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_expression_statement_tuple(self, f))
+impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_expression_statement_tuple(self, w))
     }
 }
 
@@ -33997,9 +33999,9 @@ pub struct WithClauseBareTransport {
     pub with_item_separator_space_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for WithClauseBareTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_with_clause_bare(self, f))
+impl ::sittir_core::render::Render for WithClauseBareTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_with_clause_bare(self, w))
     }
 }
 
@@ -34065,9 +34067,9 @@ pub struct WithClauseParenTransport {
     pub with_clause_paren_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for WithClauseParenTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_with_clause_paren(self, f))
+impl ::sittir_core::render::Render for WithClauseParenTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_with_clause_paren(self, w))
     }
 }
 
@@ -34130,9 +34132,9 @@ pub struct MatchBlockBlockTransport {
     pub match_block_block_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for MatchBlockBlockTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_match_block_block(self, f))
+impl ::sittir_core::render::Render for MatchBlockBlockTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_match_block_block(self, w))
     }
 }
 
@@ -34200,9 +34202,9 @@ pub struct SuiteBlockTransport {
     pub suite_block_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for SuiteBlockTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_suite_block(self, f))
+impl ::sittir_core::render::Render for SuiteBlockTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_suite_block(self, w))
     }
 }
 
@@ -34265,9 +34267,9 @@ pub struct ComparisonOperatorComparatorTransport {
     pub comparison_operator_comparator_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for ComparisonOperatorComparatorTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_comparison_operator_comparator(self, f))
+impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_comparison_operator_comparator(self, w))
     }
 }
 
@@ -34321,26 +34323,26 @@ pub struct YieldFromClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_before"))]
-    pub from_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_after"))]
-    pub from_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
+    pub from_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
+    pub from_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_from_clause_before"))]
     pub yield_from_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_from_clause_after"))]
     pub yield_from_clause_after: Option<u16>,
 }
 
-impl ::std::fmt::Display for YieldFromClauseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, render_yield_from_clause(self, f))
+impl ::sittir_core::render::Render for YieldFromClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_yield_from_clause(self, w))
     }
 }
 
 impl ::sittir_core::options::FillOptions for YieldFromClauseTransport {
     fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
-        self.from_before.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_BEFORE]);
-        self.from_after.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_AFTER]);
+        self.from_keyword_before.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_BEFORE]);
+        self.from_keyword_after.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER]);
         self.yield_from_clause_before.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE]);
         self.yield_from_clause_after.get_or_insert(table.spacing[options::SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER]);
         self.expression.fill_options(table);
@@ -34378,9 +34380,9 @@ pub struct StringStartTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for StringStartTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for StringStartTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -34483,9 +34485,9 @@ pub struct _StringContentTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for _StringContentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for _StringContentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -34588,9 +34590,9 @@ pub struct EscapeInterpolationTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for EscapeInterpolationTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for EscapeInterpolationTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -34693,9 +34695,9 @@ pub struct StringEndTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for StringEndTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for StringEndTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -34798,9 +34800,9 @@ pub struct NewlineTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for NewlineTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, self.text.as_str()].concat()))
+impl ::sittir_core::render::Render for NewlineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -34905,9 +34907,9 @@ pub struct BlanklineTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for BlanklineTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, self.text.as_str()].concat()))
+impl ::sittir_core::render::Render for BlanklineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -35012,9 +35014,9 @@ pub struct DoubleNewlineTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DoubleNewlineTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, self.text.as_str()].concat()))
+impl ::sittir_core::render::Render for DoubleNewlineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -35119,9 +35121,9 @@ pub struct TightTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for TightTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, self.text.as_str()].concat()))
+impl ::sittir_core::render::Render for TightTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -35224,9 +35226,9 @@ pub struct SpaceTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for SpaceTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, self.text.as_str()].concat()))
+impl ::sittir_core::render::Render for SpaceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
@@ -35331,9 +35333,9 @@ pub struct IndentTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for IndentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for IndentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -35436,9 +35438,9 @@ pub struct DedentTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DedentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for DedentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -35531,7 +35533,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ExceptTransport {
+pub struct ImportKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -35541,124 +35543,19 @@ pub struct ExceptTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ExceptTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ImportKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExceptTransport {
+impl ::sittir_core::options::FillOptions for ImportKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExceptTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExceptTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct ImportTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::std::fmt::Display for ImportTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
-    }
-}
-
-impl ::sittir_core::options::FillOptions for ImportTransport {
-    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35687,7 +35584,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ImportKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35713,7 +35610,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImportTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ImportKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -35723,22 +35620,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for ImportTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ImportTransport::from_napi_value(env, napi_val).map(Box::new)
+        ImportKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImportTransport::to_napi_value(env, *val)
+        ImportKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -35753,9 +35650,9 @@ pub struct DotTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DotTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for DotTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -35850,7 +35747,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DotTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct FromTransport {
+pub struct FromKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -35860,19 +35757,19 @@ pub struct FromTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for FromTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for FromKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for FromTransport {
+impl ::sittir_core::options::FillOptions for FromKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35901,7 +35798,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35927,7 +35824,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FromTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for FromKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -35937,27 +35834,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for FromTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FromTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FromKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FromTransport::from_napi_value(env, napi_val).map(Box::new)
+        FromKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FromTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FromKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FromTransport::to_napi_value(env, *val)
+        FromKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct FutureUTransport {
+pub struct FutureUKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -35967,19 +35864,19 @@ pub struct FutureUTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for FutureUTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for FutureUKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for FutureUTransport {
+impl ::sittir_core::options::FillOptions for FutureUKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36008,7 +35905,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FutureUKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36034,7 +35931,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FutureUTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for FutureUKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36044,27 +35941,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for FutureUTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FutureUTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FutureUKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FutureUTransport::from_napi_value(env, napi_val).map(Box::new)
+        FutureUKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureUTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureUKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FutureUTransport::to_napi_value(env, *val)
+        FutureUKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AsTransport {
+pub struct AsKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36074,19 +35971,19 @@ pub struct AsTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AsKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AsTransport {
+impl ::sittir_core::options::FillOptions for AsKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36115,7 +36012,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36141,7 +36038,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AsKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36151,22 +36048,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AsKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AsTransport::from_napi_value(env, napi_val).map(Box::new)
+        AsKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AsKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsTransport::to_napi_value(env, *val)
+        AsKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -36181,9 +36078,9 @@ pub struct StarTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for StarTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for StarTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -36288,9 +36185,9 @@ pub struct GtGtTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for GtGtTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for GtGtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -36385,7 +36282,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GtGtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AssertTransport {
+pub struct AssertKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36395,19 +36292,19 @@ pub struct AssertTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AssertTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AssertKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AssertTransport {
+impl ::sittir_core::options::FillOptions for AssertKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36436,7 +36333,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AssertKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36462,7 +36359,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AssertTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AssertKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36472,22 +36369,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AssertTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AssertTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AssertKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AssertTransport::from_napi_value(env, napi_val).map(Box::new)
+        AssertKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AssertTransport::to_napi_value(env, *val)
+        AssertKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -36502,9 +36399,9 @@ pub struct ColonEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ColonEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ColonEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -36599,7 +36496,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonEqTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ReturnTransport {
+pub struct ReturnKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36609,19 +36506,19 @@ pub struct ReturnTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ReturnTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ReturnKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ReturnTransport {
+impl ::sittir_core::options::FillOptions for ReturnKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36650,7 +36547,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36676,7 +36573,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReturnTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ReturnKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36686,27 +36583,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ReturnTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ReturnKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ReturnTransport::from_napi_value(env, napi_val).map(Box::new)
+        ReturnKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ReturnTransport::to_napi_value(env, *val)
+        ReturnKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct DelTransport {
+pub struct DelKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36716,19 +36613,19 @@ pub struct DelTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DelTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for DelKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for DelTransport {
+impl ::sittir_core::options::FillOptions for DelKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36757,7 +36654,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DelKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36783,7 +36680,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DelTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DelKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36793,27 +36690,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for DelTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DelTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DelKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DelTransport::from_napi_value(env, napi_val).map(Box::new)
+        DelKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DelTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DelKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DelTransport::to_napi_value(env, *val)
+        DelKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct RaiseTransport {
+pub struct RaiseKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36823,19 +36720,19 @@ pub struct RaiseTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for RaiseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for RaiseKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for RaiseTransport {
+impl ::sittir_core::options::FillOptions for RaiseKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36864,7 +36761,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RaiseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36890,7 +36787,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RaiseTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for RaiseKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -36900,27 +36797,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for RaiseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RaiseTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RaiseKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        RaiseTransport::from_napi_value(env, napi_val).map(Box::new)
+        RaiseKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RaiseTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RaiseKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        RaiseTransport::to_napi_value(env, *val)
+        RaiseKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct PassTransport {
+pub struct PassKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -36930,19 +36827,19 @@ pub struct PassTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PassTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PassKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for PassTransport {
+impl ::sittir_core::options::FillOptions for PassKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36971,7 +36868,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -36997,7 +36894,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PassTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for PassKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37007,27 +36904,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for PassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PassTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PassKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PassTransport::from_napi_value(env, napi_val).map(Box::new)
+        PassKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PassTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PassKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PassTransport::to_napi_value(env, *val)
+        PassKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct BreakTransport {
+pub struct BreakKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37037,19 +36934,19 @@ pub struct BreakTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for BreakTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for BreakKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for BreakTransport {
+impl ::sittir_core::options::FillOptions for BreakKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37078,7 +36975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for BreakKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37104,7 +37001,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BreakTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for BreakKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37114,27 +37011,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for BreakTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BreakTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BreakKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BreakTransport::from_napi_value(env, napi_val).map(Box::new)
+        BreakKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BreakTransport::to_napi_value(env, *val)
+        BreakKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ContinueTransport {
+pub struct ContinueKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37144,19 +37041,19 @@ pub struct ContinueTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ContinueTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ContinueKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ContinueTransport {
+impl ::sittir_core::options::FillOptions for ContinueKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37185,7 +37082,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ContinueKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37211,7 +37108,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ContinueTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ContinueKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37221,27 +37118,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ContinueTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ContinueTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ContinueKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ContinueTransport::from_napi_value(env, napi_val).map(Box::new)
+        ContinueKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ContinueTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ContinueKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ContinueTransport::to_napi_value(env, *val)
+        ContinueKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct IfTransport {
+pub struct IfKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37251,19 +37148,19 @@ pub struct IfTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for IfTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for IfKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for IfTransport {
+impl ::sittir_core::options::FillOptions for IfKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37292,7 +37189,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IfKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37318,7 +37215,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IfTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for IfKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37328,22 +37225,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for IfTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IfTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IfKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        IfTransport::from_napi_value(env, napi_val).map(Box::new)
+        IfKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IfTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IfKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        IfTransport::to_napi_value(env, *val)
+        IfKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -37358,9 +37255,9 @@ pub struct ColonTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ColonTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ColonTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -37455,7 +37352,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ElifTransport {
+pub struct ElifKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37465,19 +37362,19 @@ pub struct ElifTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ElifTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ElifKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ElifTransport {
+impl ::sittir_core::options::FillOptions for ElifKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37506,7 +37403,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElifKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37532,7 +37429,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ElifTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ElifKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37542,27 +37439,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ElifTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ElifTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ElifKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ElifTransport::from_napi_value(env, napi_val).map(Box::new)
+        ElifKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ElifTransport::to_napi_value(env, *val)
+        ElifKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ElseTransport {
+pub struct ElseKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37572,19 +37469,19 @@ pub struct ElseTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ElseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ElseKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ElseTransport {
+impl ::sittir_core::options::FillOptions for ElseKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37613,7 +37510,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ElseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37639,7 +37536,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ElseTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ElseKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37649,27 +37546,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ElseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ElseTransport::from_napi_value(env, napi_val).map(Box::new)
+        ElseKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ElseTransport::to_napi_value(env, *val)
+        ElseKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct MatchTransport {
+pub struct MatchKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37679,19 +37576,19 @@ pub struct MatchTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for MatchTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for MatchKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for MatchTransport {
+impl ::sittir_core::options::FillOptions for MatchKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37720,7 +37617,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MatchKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37746,7 +37643,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MatchTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for MatchKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37756,27 +37653,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for MatchTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MatchTransport::from_napi_value(env, napi_val).map(Box::new)
+        MatchKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MatchTransport::to_napi_value(env, *val)
+        MatchKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct CaseTransport {
+pub struct CaseKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37786,19 +37683,19 @@ pub struct CaseTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for CaseTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for CaseKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for CaseTransport {
+impl ::sittir_core::options::FillOptions for CaseKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37827,7 +37724,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for CaseKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37853,7 +37750,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CaseTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for CaseKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37863,27 +37760,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for CaseTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        CaseTransport::from_napi_value(env, napi_val).map(Box::new)
+        CaseKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        CaseTransport::to_napi_value(env, *val)
+        CaseKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ForTransport {
+pub struct ForKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -37893,19 +37790,19 @@ pub struct ForTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ForTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ForKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ForTransport {
+impl ::sittir_core::options::FillOptions for ForKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37934,7 +37831,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ForKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37960,7 +37857,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ForKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37970,27 +37867,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ForTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ForTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ForTransport::from_napi_value(env, napi_val).map(Box::new)
+        ForKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ForTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ForTransport::to_napi_value(env, *val)
+        ForKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct InTransport {
+pub struct InKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38000,19 +37897,19 @@ pub struct InTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for InTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for InKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for InTransport {
+impl ::sittir_core::options::FillOptions for InKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38041,7 +37938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for InKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38067,7 +37964,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for InTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for InKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38077,27 +37974,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for InTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<InKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        InTransport::from_napi_value(env, napi_val).map(Box::new)
+        InKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<InKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        InTransport::to_napi_value(env, *val)
+        InKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct WhileTransport {
+pub struct WhileKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38107,19 +38004,19 @@ pub struct WhileTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for WhileTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for WhileKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for WhileTransport {
+impl ::sittir_core::options::FillOptions for WhileKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38148,7 +38045,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WhileKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38174,7 +38071,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WhileTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for WhileKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38184,27 +38081,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for WhileTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        WhileTransport::from_napi_value(env, napi_val).map(Box::new)
+        WhileKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        WhileTransport::to_napi_value(env, *val)
+        WhileKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct TryTransport {
+pub struct TryKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38214,19 +38111,19 @@ pub struct TryTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for TryTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for TryKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for TryTransport {
+impl ::sittir_core::options::FillOptions for TryKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38255,7 +38152,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TryKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38281,7 +38178,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TryTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for TryKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38291,27 +38188,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for TryTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TryTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TryKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TryTransport::from_napi_value(env, napi_val).map(Box::new)
+        TryKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TryTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TryKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TryTransport::to_napi_value(env, *val)
+        TryKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct FinallyTransport {
+pub struct ExceptKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38321,19 +38218,126 @@ pub struct FinallyTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for FinallyTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ExceptKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for FinallyTransport {
+impl ::sittir_core::options::FillOptions for ExceptKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "except".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "except".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "except".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct FinallyKeywordTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::render::Render for FinallyKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::options::FillOptions for FinallyKeywordTransport {
+    fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38362,7 +38366,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FinallyKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38388,7 +38392,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FinallyTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for FinallyKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38398,27 +38402,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for FinallyTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FinallyTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FinallyKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FinallyTransport::from_napi_value(env, napi_val).map(Box::new)
+        FinallyKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FinallyTransport::to_napi_value(env, *val)
+        FinallyKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct WithTransport {
+pub struct WithKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38428,19 +38432,19 @@ pub struct WithTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for WithTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for WithKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for WithTransport {
+impl ::sittir_core::options::FillOptions for WithKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38469,7 +38473,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for WithKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38495,7 +38499,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WithTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for WithKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38505,27 +38509,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for WithTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WithTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WithKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        WithTransport::from_napi_value(env, napi_val).map(Box::new)
+        WithKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WithTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WithKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        WithTransport::to_napi_value(env, *val)
+        WithKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct DefTransport {
+pub struct DefKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -38535,19 +38539,19 @@ pub struct DefTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DefTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for DefKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for DefTransport {
+impl ::sittir_core::options::FillOptions for DefKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38576,7 +38580,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DefKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -38602,7 +38606,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DefTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DefKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -38612,22 +38616,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for DefTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DefTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DefKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DefTransport::from_napi_value(env, napi_val).map(Box::new)
+        DefKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DefTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DefKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DefTransport::to_napi_value(env, *val)
+        DefKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -38642,9 +38646,9 @@ pub struct DashGtTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DashGtTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for DashGtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -38749,9 +38753,9 @@ pub struct LparenTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LparenTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LparenTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -38856,9 +38860,9 @@ pub struct RparenTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for RparenTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for RparenTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -38963,9 +38967,9 @@ pub struct StarStarTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for StarStarTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for StarStarTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -39060,7 +39064,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StarStarTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct GlobalTransport {
+pub struct GlobalKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39070,19 +39074,19 @@ pub struct GlobalTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for GlobalTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for GlobalKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for GlobalTransport {
+impl ::sittir_core::options::FillOptions for GlobalKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39111,7 +39115,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for GlobalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39137,7 +39141,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GlobalTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for GlobalKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39147,27 +39151,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for GlobalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<GlobalTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GlobalKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        GlobalTransport::from_napi_value(env, napi_val).map(Box::new)
+        GlobalKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<GlobalTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GlobalKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        GlobalTransport::to_napi_value(env, *val)
+        GlobalKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct NonlocalTransport {
+pub struct NonlocalKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39177,19 +39181,19 @@ pub struct NonlocalTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for NonlocalTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for NonlocalKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for NonlocalTransport {
+impl ::sittir_core::options::FillOptions for NonlocalKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39218,7 +39222,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NonlocalKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39244,7 +39248,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NonlocalTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for NonlocalKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39254,27 +39258,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for NonlocalTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NonlocalTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NonlocalKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NonlocalTransport::from_napi_value(env, napi_val).map(Box::new)
+        NonlocalKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NonlocalTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NonlocalKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NonlocalTransport::to_napi_value(env, *val)
+        NonlocalKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ExecTransport {
+pub struct ExecKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39284,19 +39288,19 @@ pub struct ExecTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ExecTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ExecKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ExecTransport {
+impl ::sittir_core::options::FillOptions for ExecKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39325,7 +39329,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ExecKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39351,7 +39355,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExecTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ExecKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39361,27 +39365,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ExecTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExecTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExecKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExecTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExecKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExecTransport::to_napi_value(env, *val)
+        ExecKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonTypeTransport {
+pub struct TypeKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39391,19 +39395,19 @@ pub struct AnonTypeTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AnonTypeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for TypeKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonTypeTransport {
+impl ::sittir_core::options::FillOptions for TypeKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39432,7 +39436,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for TypeKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39458,7 +39462,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonTypeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonTypeTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for TypeKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39468,22 +39472,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonTypeTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonTypeTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonTypeTransport::from_napi_value(env, napi_val).map(Box::new)
+        TypeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonTypeTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonTypeTransport::to_napi_value(env, *val)
+        TypeKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -39498,9 +39502,9 @@ pub struct EqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for EqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for EqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -39595,7 +39599,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EqTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ClassTransport {
+pub struct ClassKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -39605,19 +39609,19 @@ pub struct ClassTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for ClassTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for ClassKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for ClassTransport {
+impl ::sittir_core::options::FillOptions for ClassKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39646,7 +39650,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for ClassKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -39672,7 +39676,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClassTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for ClassKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -39682,22 +39686,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for ClassTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ClassTransport::from_napi_value(env, napi_val).map(Box::new)
+        ClassKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassTransport::to_napi_value(env, *val)
+        ClassKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -39712,9 +39716,9 @@ pub struct LbrackTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LbrackTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LbrackTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -39819,9 +39823,9 @@ pub struct RbrackTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for RbrackTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for RbrackTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -39926,9 +39930,9 @@ pub struct AtTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AtTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -40033,9 +40037,9 @@ pub struct CommaTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for CommaTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for CommaTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -40140,9 +40144,9 @@ pub struct LbraceTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LbraceTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LbraceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -40247,9 +40251,9 @@ pub struct RbraceTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for RbraceTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for RbraceTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -40344,7 +40348,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RbraceTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonymousTransport {
+pub struct UnderscoreTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40354,19 +40358,19 @@ pub struct AnonymousTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AnonymousTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for UnderscoreTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonymousTransport {
+impl ::sittir_core::options::FillOptions for UnderscoreTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40395,7 +40399,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for UnderscoreTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40421,7 +40425,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for UnderscoreTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40431,22 +40435,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonymousTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UnderscoreTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonymousTransport::from_napi_value(env, napi_val).map(Box::new)
+        UnderscoreTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UnderscoreTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonymousTransport::to_napi_value(env, *val)
+        UnderscoreTransport::to_napi_value(env, *val)
     }
 }
 
@@ -40461,9 +40465,9 @@ pub struct DashTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DashTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for DashTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -40568,9 +40572,9 @@ pub struct PlusTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PlusTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PlusTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -40665,7 +40669,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct NotTransport {
+pub struct NotKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40675,19 +40679,19 @@ pub struct NotTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for NotTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for NotKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for NotTransport {
+impl ::sittir_core::options::FillOptions for NotKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40716,7 +40720,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NotKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40742,7 +40746,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NotTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for NotKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40752,27 +40756,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for NotTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NotTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NotKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NotTransport::from_napi_value(env, napi_val).map(Box::new)
+        NotKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NotTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NotKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NotTransport::to_napi_value(env, *val)
+        NotKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AndTransport {
+pub struct AndKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40782,19 +40786,19 @@ pub struct AndTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AndTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AndKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AndTransport {
+impl ::sittir_core::options::FillOptions for AndKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40823,7 +40827,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AndKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40849,7 +40853,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AndTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AndKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40859,27 +40863,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AndTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AndTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AndKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AndTransport::from_napi_value(env, napi_val).map(Box::new)
+        AndKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AndTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AndKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AndTransport::to_napi_value(env, *val)
+        AndKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct OrTransport {
+pub struct OrKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -40889,19 +40893,19 @@ pub struct OrTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for OrTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for OrKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for OrTransport {
+impl ::sittir_core::options::FillOptions for OrKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40930,7 +40934,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OrKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -40956,7 +40960,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OrTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for OrKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -40966,22 +40970,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for OrTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OrTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<OrKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        OrTransport::from_napi_value(env, napi_val).map(Box::new)
+        OrKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OrTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<OrKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        OrTransport::to_napi_value(env, *val)
+        OrKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -40996,9 +41000,9 @@ pub struct SlashTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for SlashTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for SlashTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -41103,9 +41107,9 @@ pub struct PercentTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PercentTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PercentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -41210,9 +41214,9 @@ pub struct SlashSlashTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for SlashSlashTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for SlashSlashTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -41317,9 +41321,9 @@ pub struct PipeTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PipeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PipeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -41424,9 +41428,9 @@ pub struct AmpTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AmpTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AmpTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -41531,9 +41535,9 @@ pub struct CaretTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for CaretTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for CaretTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -41638,9 +41642,9 @@ pub struct LtLtTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LtLtTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LtLtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -41735,7 +41739,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtLtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonLambdaTransport {
+pub struct LambdaKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -41745,19 +41749,19 @@ pub struct AnonLambdaTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AnonLambdaTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LambdaKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonLambdaTransport {
+impl ::sittir_core::options::FillOptions for LambdaKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41786,7 +41790,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LambdaKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41812,7 +41816,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonLambdaTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonLambdaTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LambdaKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -41822,27 +41826,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonLambdaTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonLambdaTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LambdaKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonLambdaTransport::from_napi_value(env, napi_val).map(Box::new)
+        LambdaKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonLambdaTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LambdaKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonLambdaTransport::to_napi_value(env, *val)
+        LambdaKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonYieldTransport {
+pub struct YieldKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -41852,19 +41856,19 @@ pub struct AnonYieldTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AnonYieldTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for YieldKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonYieldTransport {
+impl ::sittir_core::options::FillOptions for YieldKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41893,7 +41897,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for YieldKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -41919,7 +41923,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonYieldTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonYieldTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for YieldKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -41929,22 +41933,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonYieldTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonYieldTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<YieldKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonYieldTransport::from_napi_value(env, napi_val).map(Box::new)
+        YieldKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonYieldTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonYieldTransport::to_napi_value(env, *val)
+        YieldKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -41959,9 +41963,9 @@ pub struct BslashTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for BslashTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for BslashTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -42056,7 +42060,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BslashTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonAwaitTransport {
+pub struct AwaitKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -42066,19 +42070,19 @@ pub struct AnonAwaitTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AnonAwaitTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AwaitKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AnonAwaitTransport {
+impl ::sittir_core::options::FillOptions for AwaitKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42107,7 +42111,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AwaitKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42133,7 +42137,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonAwaitTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonAwaitTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AwaitKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -42143,27 +42147,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonAwaitTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonAwaitTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AwaitKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AnonAwaitTransport::from_napi_value(env, napi_val).map(Box::new)
+        AwaitKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonAwaitTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AwaitKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonAwaitTransport::to_napi_value(env, *val)
+        AwaitKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct AsyncTransport {
+pub struct AsyncKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -42173,19 +42177,19 @@ pub struct AsyncTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AsyncTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AsyncKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for AsyncTransport {
+impl ::sittir_core::options::FillOptions for AsyncKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42214,7 +42218,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -42240,7 +42244,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for AsyncKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -42250,22 +42254,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        AsyncTransport::from_napi_value(env, napi_val).map(Box::new)
+        AsyncKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsyncTransport::to_napi_value(env, *val)
+        AsyncKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -42280,9 +42284,9 @@ pub struct TildeTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for TildeTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for TildeTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -42387,9 +42391,9 @@ pub struct PlusEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PlusEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PlusEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -42494,9 +42498,9 @@ pub struct DashEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for DashEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for DashEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -42601,9 +42605,9 @@ pub struct StarEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for StarEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for StarEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -42708,9 +42712,9 @@ pub struct SlashEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for SlashEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for SlashEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -42815,9 +42819,9 @@ pub struct AtEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AtEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AtEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -42922,9 +42926,9 @@ pub struct SlashSlashEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for SlashSlashEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for SlashSlashEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43029,9 +43033,9 @@ pub struct PercentEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PercentEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PercentEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43136,9 +43140,9 @@ pub struct StarStarEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for StarStarEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for StarStarEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43243,9 +43247,9 @@ pub struct GtGtEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for GtGtEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for GtGtEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43350,9 +43354,9 @@ pub struct LtLtEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LtLtEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LtLtEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43457,9 +43461,9 @@ pub struct AmpEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for AmpEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for AmpEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43564,9 +43568,9 @@ pub struct CaretEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for CaretEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for CaretEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43671,9 +43675,9 @@ pub struct PipeEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PipeEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PipeEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43768,7 +43772,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PipeEqTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct PrintTransport {
+pub struct PrintKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -43778,19 +43782,19 @@ pub struct PrintTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for PrintTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for PrintKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for PrintTransport {
+impl ::sittir_core::options::FillOptions for PrintKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -43819,7 +43823,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PrintKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -43845,7 +43849,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PrintTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for PrintKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -43855,22 +43859,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for PrintTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PrintKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PrintTransport::from_napi_value(env, napi_val).map(Box::new)
+        PrintKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PrintTransport::to_napi_value(env, *val)
+        PrintKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -43885,9 +43889,9 @@ pub struct LtTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LtTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -43992,9 +43996,9 @@ pub struct LtEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LtEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LtEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -44099,9 +44103,9 @@ pub struct EqEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for EqEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for EqEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -44206,9 +44210,9 @@ pub struct BangEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for BangEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for BangEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -44313,9 +44317,9 @@ pub struct GtEqTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for GtEqTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for GtEqTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -44420,9 +44424,9 @@ pub struct GtTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for GtTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for GtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -44527,9 +44531,9 @@ pub struct LtGtTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for LtGtTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for LtGtTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
@@ -44624,7 +44628,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtGtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct IsTransport {
+pub struct IsKeywordTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -44634,19 +44638,19 @@ pub struct IsTransport {
     pub text: String,
 }
 
-impl ::std::fmt::Display for IsTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        render_with_trivia!(self, f, f.write_str(&self.text))
+impl ::sittir_core::render::Render for IsKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::options::FillOptions for IsTransport {
+impl ::sittir_core::options::FillOptions for IsKeywordTransport {
     fn fill_options(&mut self, _table: &::sittir_core::options::ResolvedOptions) {
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44675,7 +44679,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for IsKeywordTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44701,7 +44705,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IsTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for IsKeywordTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -44711,1418 +44715,1594 @@ impl ::napi::bindgen_prelude::ToNapiValue for IsTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IsTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IsKeywordTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        IsTransport::from_napi_value(env, napi_val).map(Box::new)
+        IsKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IsTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IsKeywordTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        IsTransport::to_napi_value(env, *val)
+        IsKeywordTransport::to_napi_value(env, *val)
     }
 }
 
 
 
-fn render_module(node: &ModuleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let statements = ListView {
         items: node.statements.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.statements_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{statements}")?;
+    statements.render(w)?;
     Ok(())
 }
 
-fn render_simple_statements(node: &SimpleStatementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_simple_statements(node: &SimpleStatementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let simple_statements_elements = &node.simple_statements_elements;
-    let simple_statements_before = options::spacing_text(node.simple_statements_before.unwrap_or(0));
-    let simple_statements_after = options::spacing_text(node.simple_statements_after.unwrap_or(0));
-    write!(f, "{simple_statements_before}{simple_statements_elements}\u{FDD3}\n{simple_statements_after}")?;
+    w.site(node.simple_statements_before.unwrap_or(0));
+    simple_statements_elements.render(w)?;
+    w.token_seam("\n");
+    w.site(node.simple_statements_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_import_statement(node: &ImportStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_import_statement(node: &ImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let import_list = &node.import_list;
-    let import_before = options::spacing_text(node.import_before.unwrap_or(0));
-    let import_after = options::spacing_text(node.import_after.unwrap_or(0));
-    let import_statement_before = options::spacing_text(node.import_statement_before.unwrap_or(0));
-    let import_statement_after = options::spacing_text(node.import_statement_after.unwrap_or(0));
-    write!(f, "{import_statement_before}{import_before}import{import_after}{import_list}{import_statement_after}")?;
+    w.site(node.import_statement_before.unwrap_or(0));
+    w.site(node.import_keyword_before.unwrap_or(0));
+    w.text("import")?;
+    w.site(node.import_keyword_after.unwrap_or(0));
+    import_list.render(w)?;
+    w.site(node.import_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_import_prefix(t: &ImportPrefixTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_import_prefix(t: &ImportPrefixTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_relative_import(node: &RelativeImportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_relative_import(node: &RelativeImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = View::new(&node.name, "{}");
     let prefix = &node.prefix;
-    let relative_import_before = options::spacing_text(node.relative_import_before.unwrap_or(0));
-    let relative_import_after = options::spacing_text(node.relative_import_after.unwrap_or(0));
-    write!(f, "{relative_import_before}{prefix}{name}{relative_import_after}")?;
+    w.site(node.relative_import_before.unwrap_or(0));
+    prefix.render(w)?;
+    name.render(w)?;
+    w.site(node.relative_import_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_future_import_statement(node: &FutureImportStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_future_import_statement(node: &FutureImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
-    let future___before = options::spacing_text(node.future___before.unwrap_or(0));
-    let future___after = options::spacing_text(node.future___after.unwrap_or(0));
-    let import_before = options::spacing_text(node.import_before.unwrap_or(0));
-    let import_after = options::spacing_text(node.import_after.unwrap_or(0));
-    let future_import_statement_before = options::spacing_text(node.future_import_statement_before.unwrap_or(0));
-    let future_import_statement_after = options::spacing_text(node.future_import_statement_after.unwrap_or(0));
-    write!(f, "{future_import_statement_before}{from_before}from{from_after}{future___before}__future__{future___after}{import_before}import{import_after}{content}{future_import_statement_after}")?;
+    w.site(node.future_import_statement_before.unwrap_or(0));
+    w.site(node.from_keyword_before.unwrap_or(0));
+    w.text("from")?;
+    w.site(node.from_keyword_after.unwrap_or(0));
+    w.site(node.future___keyword_before.unwrap_or(0));
+    w.text("__future__")?;
+    w.site(node.future___keyword_after.unwrap_or(0));
+    w.site(node.import_keyword_before.unwrap_or(0));
+    w.text("import")?;
+    w.site(node.import_keyword_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.future_import_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_import_from_statement(node: &ImportFromStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_import_from_statement(node: &ImportFromStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let module_name = &node.module_name;
-    let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
-    let import_before = options::spacing_text(node.import_before.unwrap_or(0));
-    let import_after = options::spacing_text(node.import_after.unwrap_or(0));
-    let import_from_statement_before = options::spacing_text(node.import_from_statement_before.unwrap_or(0));
-    let import_from_statement_after = options::spacing_text(node.import_from_statement_after.unwrap_or(0));
-    write!(f, "{import_from_statement_before}{from_before}from{from_after}{module_name}{import_before}import{import_after}{content}{import_from_statement_after}")?;
+    w.site(node.import_from_statement_before.unwrap_or(0));
+    w.site(node.from_keyword_before.unwrap_or(0));
+    w.text("from")?;
+    w.site(node.from_keyword_after.unwrap_or(0));
+    module_name.render(w)?;
+    w.site(node.import_keyword_before.unwrap_or(0));
+    w.text("import")?;
+    w.site(node.import_keyword_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.import_from_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_import_list(node: &ImportListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_import_list(node: &ImportListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.name.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let name = ListView {
         items: &node.name,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.name_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.name_separator_space_after.unwrap_or(0)),
+        before: node.name_separator_space_before.unwrap_or(0),
+        after: node.name_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{name}")?;
+    name.render(w)?;
     Ok(())
 }
 
-fn render_aliased_import(node: &AliasedImportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_aliased_import(node: &AliasedImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
     let name = &node.name;
-    let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
-    let aliased_import_before = options::spacing_text(node.aliased_import_before.unwrap_or(0));
-    let aliased_import_after = options::spacing_text(node.aliased_import_after.unwrap_or(0));
-    write!(f, "{aliased_import_before}{name}{as_before}as{as_after}{alias}{aliased_import_after}")?;
+    w.site(node.aliased_import_before.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.as_keyword_before.unwrap_or(0));
+    w.text("as")?;
+    w.site(node.as_keyword_after.unwrap_or(0));
+    alias.render(w)?;
+    w.site(node.aliased_import_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_wildcard_import(t: &WildcardImportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_wildcard_import(t: &WildcardImportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_print_statement(node: &PrintStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_print_statement(node: &PrintStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_chevron(node: &ChevronTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_chevron(node: &ChevronTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let gt_gt_before = options::spacing_text(node.gt_gt_before.unwrap_or(0));
-    let gt_gt_after = options::spacing_text(node.gt_gt_after.unwrap_or(0));
-    let chevron_before = options::spacing_text(node.chevron_before.unwrap_or(0));
-    let chevron_after = options::spacing_text(node.chevron_after.unwrap_or(0));
-    write!(f, "{chevron_before}{gt_gt_before}>>{gt_gt_after}{expression}{chevron_after}")?;
+    w.site(node.chevron_before.unwrap_or(0));
+    w.site(node.gt_gt_before.unwrap_or(0));
+    w.text(">>")?;
+    w.site(node.gt_gt_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.chevron_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_assert_statement(node: &AssertStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_assert_statement(node: &AssertStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.expression.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let expression = ListView {
         items: &node.expression,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.expression_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.expression_separator_space_after.unwrap_or(0)),
+        before: node.expression_separator_space_before.unwrap_or(0),
+        after: node.expression_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let assert_before = options::spacing_text(node.assert_before.unwrap_or(0));
-    let assert_after = options::spacing_text(node.assert_after.unwrap_or(0));
-    let assert_statement_before = options::spacing_text(node.assert_statement_before.unwrap_or(0));
-    let assert_statement_after = options::spacing_text(node.assert_statement_after.unwrap_or(0));
-    write!(f, "{assert_statement_before}{assert_before}assert{assert_after}{expression}{assert_statement_after}")?;
+    w.site(node.assert_statement_before.unwrap_or(0));
+    w.site(node.assert_keyword_before.unwrap_or(0));
+    w.text("assert")?;
+    w.site(node.assert_keyword_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.assert_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_expression_statement(node: &ExpressionStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_expression_statement(node: &ExpressionStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_named_expression(node: &NamedExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_named_expression(node: &NamedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    let colon_eq_before = options::spacing_text(node.colon_eq_before.unwrap_or(0));
-    let colon_eq_after = options::spacing_text(node.colon_eq_after.unwrap_or(0));
-    let named_expression_before = options::spacing_text(node.named_expression_before.unwrap_or(0));
-    let named_expression_after = options::spacing_text(node.named_expression_after.unwrap_or(0));
-    write!(f, "{named_expression_before}{name}{colon_eq_before}:={colon_eq_after}{value}{named_expression_after}")?;
+    w.site(node.named_expression_before.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.colon_eq_before.unwrap_or(0));
+    w.text(":=")?;
+    w.site(node.colon_eq_after.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.named_expression_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_return_statement(node: &ReturnStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.expressions.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let expressions = View::new(&node.expressions, "{}");
-    let return_before = options::spacing_text(node.return_before.unwrap_or(0));
-    let return_after = options::spacing_text(node.return_after.unwrap_or(0));
-    let return_statement_before = options::spacing_text(node.return_statement_before.unwrap_or(0));
-    let return_statement_after = options::spacing_text(node.return_statement_after.unwrap_or(0));
-    write!(f, "{return_statement_before}{return_before}return{return_after}{expressions}{return_statement_after}")?;
+    w.site(node.return_statement_before.unwrap_or(0));
+    w.site(node.return_keyword_before.unwrap_or(0));
+    w.text("return")?;
+    w.site(node.return_keyword_after.unwrap_or(0));
+    expressions.render(w)?;
+    w.site(node.return_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_delete_statement(node: &DeleteStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_delete_statement(node: &DeleteStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expressions = &node.expressions;
-    let del_before = options::spacing_text(node.del_before.unwrap_or(0));
-    let del_after = options::spacing_text(node.del_after.unwrap_or(0));
-    let delete_statement_before = options::spacing_text(node.delete_statement_before.unwrap_or(0));
-    let delete_statement_after = options::spacing_text(node.delete_statement_after.unwrap_or(0));
-    write!(f, "{delete_statement_before}{del_before}del{del_after}{expressions}{delete_statement_after}")?;
+    w.site(node.delete_statement_before.unwrap_or(0));
+    w.site(node.del_keyword_before.unwrap_or(0));
+    w.text("del")?;
+    w.site(node.del_keyword_after.unwrap_or(0));
+    expressions.render(w)?;
+    w.site(node.delete_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_raise_statement(node: &RaiseStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.cause.is_none() && node.expressions.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let cause = View::new(&node.cause, "{}");
     let expressions = View::new(&node.expressions, "{}");
-    let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
-    let raise_before = options::spacing_text(node.raise_before.unwrap_or(0));
-    let raise_after = options::spacing_text(node.raise_after.unwrap_or(0));
-    let raise_statement_before = options::spacing_text(node.raise_statement_before.unwrap_or(0));
-    let raise_statement_after = options::spacing_text(node.raise_statement_after.unwrap_or(0));
-    write!(f, "{raise_statement_before}{raise_before}raise{raise_after}{expressions}")?;
+    w.site(node.raise_statement_before.unwrap_or(0));
+    w.site(node.raise_keyword_before.unwrap_or(0));
+    w.text("raise")?;
+    w.site(node.raise_keyword_after.unwrap_or(0));
+    expressions.render(w)?;
     if cause.is_present() {
-        write!(f, "{from_before}from{from_after}{cause}")?;
+        w.site(node.from_keyword_before.unwrap_or(0));
+        w.text("from")?;
+        w.site(node.from_keyword_after.unwrap_or(0));
+        cause.render(w)?;
     }
-    write!(f, "{raise_statement_after}")?;
+    w.site(node.raise_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_pass_statement(t: &PassStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_pass_statement(t: &PassStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_break_statement(t: &BreakStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_break_statement(t: &BreakStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_continue_statement(t: &ContinueStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_continue_statement(t: &ContinueStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_if_statement(node: &IfStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = ListView {
         items: node.alternative.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.alternative_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.alternative_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
     let condition = &node.condition;
     let consequence = &node.consequence;
-    let if_before = options::spacing_text(node.if_before.unwrap_or(0));
-    let if_after = options::spacing_text(node.if_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let if_statement_before = options::spacing_text(node.if_statement_before.unwrap_or(0));
-    let if_statement_after = options::spacing_text(node.if_statement_after.unwrap_or(0));
-    write!(f, "{if_statement_before}{if_before}if{if_after}{condition}{colon_before}:{colon_after}{consequence}{alternative}{if_statement_after}")?;
+    w.site(node.if_statement_before.unwrap_or(0));
+    w.site(node.if_keyword_before.unwrap_or(0));
+    w.text("if")?;
+    w.site(node.if_keyword_after.unwrap_or(0));
+    condition.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    consequence.render(w)?;
+    alternative.render(w)?;
+    w.site(node.if_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_elif_clause(node: &ElifClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let condition = &node.condition;
     let consequence = &node.consequence;
-    let elif_before = options::spacing_text(node.elif_before.unwrap_or(0));
-    let elif_after = options::spacing_text(node.elif_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let elif_clause_before = options::spacing_text(node.elif_clause_before.unwrap_or(0));
-    let elif_clause_after = options::spacing_text(node.elif_clause_after.unwrap_or(0));
-    write!(f, "{elif_clause_before}{elif_before}elif{elif_after}{condition}{colon_before}:{colon_after}{consequence}{elif_clause_after}")?;
+    w.site(node.elif_clause_before.unwrap_or(0));
+    w.site(node.elif_keyword_before.unwrap_or(0));
+    w.text("elif")?;
+    w.site(node.elif_keyword_after.unwrap_or(0));
+    condition.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    consequence.render(w)?;
+    w.site(node.elif_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_else_clause(node: &ElseClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_else_clause(node: &ElseClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let else_before = options::spacing_text(node.else_before.unwrap_or(0));
-    let else_after = options::spacing_text(node.else_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let else_clause_before = options::spacing_text(node.else_clause_before.unwrap_or(0));
-    let else_clause_after = options::spacing_text(node.else_clause_after.unwrap_or(0));
-    write!(f, "{else_clause_before}{else_before}else{else_after}{colon_before}:{colon_after}{body}{else_clause_after}")?;
+    w.site(node.else_clause_before.unwrap_or(0));
+    w.site(node.else_keyword_before.unwrap_or(0));
+    w.text("else")?;
+    w.site(node.else_keyword_after.unwrap_or(0));
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.else_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_match_statement(node: &MatchStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let subjects = &node.subjects;
-    let match_before = options::spacing_text(node.match_before.unwrap_or(0));
-    let match_after = options::spacing_text(node.match_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let match_statement_before = options::spacing_text(node.match_statement_before.unwrap_or(0));
-    let match_statement_after = options::spacing_text(node.match_statement_after.unwrap_or(0));
-    write!(f, "{match_statement_before}{match_before}match{match_after}{subjects}{colon_before}:{colon_after}{body}{match_statement_after}")?;
+    w.site(node.match_statement_before.unwrap_or(0));
+    w.site(node.match_keyword_before.unwrap_or(0));
+    w.text("match")?;
+    w.site(node.match_keyword_after.unwrap_or(0));
+    subjects.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.match_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_match_block(node: &MatchBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_match_block(node: &MatchBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_case_clause(node: &CaseClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let case_patterns = &node.case_patterns;
     let consequence = &node.consequence;
     let guard = View::new(&node.guard, "{}");
-    let case_before = options::spacing_text(node.case_before.unwrap_or(0));
-    let case_after = options::spacing_text(node.case_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let case_clause_before = options::spacing_text(node.case_clause_before.unwrap_or(0));
-    let case_clause_after = options::spacing_text(node.case_clause_after.unwrap_or(0));
-    write!(f, "{case_clause_before}{case_before}case{case_after}{case_patterns}{guard}{colon_before}:{colon_after}{consequence}{case_clause_after}")?;
+    w.site(node.case_clause_before.unwrap_or(0));
+    w.site(node.case_keyword_before.unwrap_or(0));
+    w.text("case")?;
+    w.site(node.case_keyword_after.unwrap_or(0));
+    case_patterns.render(w)?;
+    guard.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    consequence.render(w)?;
+    w.site(node.case_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_for_statement(node: &ForStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = View::new(&node.alternative, "{}");
     let async_marker = View::new(&node.async_marker, "{}");
     let body = &node.body;
     let left = &node.left;
     let right = &node.right;
-    let for_before = options::spacing_text(node.for_before.unwrap_or(0));
-    let for_after = options::spacing_text(node.for_after.unwrap_or(0));
-    let in_before = options::spacing_text(node.in_before.unwrap_or(0));
-    let in_after = options::spacing_text(node.in_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let for_statement_before = options::spacing_text(node.for_statement_before.unwrap_or(0));
-    let for_statement_after = options::spacing_text(node.for_statement_after.unwrap_or(0));
-    write!(f, "{for_statement_before}{async_marker}{for_before}for{for_after}{left}{in_before}in{in_after}{right}{colon_before}:{colon_after}{body}{alternative}{for_statement_after}")?;
+    w.site(node.for_statement_before.unwrap_or(0));
+    async_marker.render(w)?;
+    w.site(node.for_keyword_before.unwrap_or(0));
+    w.text("for")?;
+    w.site(node.for_keyword_after.unwrap_or(0));
+    left.render(w)?;
+    w.site(node.in_keyword_before.unwrap_or(0));
+    w.text("in")?;
+    w.site(node.in_keyword_after.unwrap_or(0));
+    right.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    alternative.render(w)?;
+    w.site(node.for_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_while_statement(node: &WhileStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_while_statement(node: &WhileStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = View::new(&node.alternative, "{}");
     let body = &node.body;
     let condition = &node.condition;
-    let while_before = options::spacing_text(node.while_before.unwrap_or(0));
-    let while_after = options::spacing_text(node.while_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let while_statement_before = options::spacing_text(node.while_statement_before.unwrap_or(0));
-    let while_statement_after = options::spacing_text(node.while_statement_after.unwrap_or(0));
-    write!(f, "{while_statement_before}{while_before}while{while_after}{condition}{colon_before}:{colon_after}{body}{alternative}{while_statement_after}")?;
+    w.site(node.while_statement_before.unwrap_or(0));
+    w.site(node.while_keyword_before.unwrap_or(0));
+    w.text("while")?;
+    w.site(node.while_keyword_after.unwrap_or(0));
+    condition.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    alternative.render(w)?;
+    w.site(node.while_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_try_statement(node: &TryStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let else_clause = View::new(&node.else_clause, "{}");
     let except_clauses = ListView {
         items: node.except_clauses.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.except_clauses_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.except_clauses_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
     let finally_clause = View::new(&node.finally_clause, "{}");
-    let try_before = options::spacing_text(node.try_before.unwrap_or(0));
-    let try_after = options::spacing_text(node.try_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let try_statement_before = options::spacing_text(node.try_statement_before.unwrap_or(0));
-    let try_statement_after = options::spacing_text(node.try_statement_after.unwrap_or(0));
-    write!(f, "{try_statement_before}{try_before}try{try_after}{colon_before}:{colon_after}{body}{except_clauses}{else_clause}{finally_clause}{try_statement_after}")?;
+    w.site(node.try_statement_before.unwrap_or(0));
+    w.site(node.try_keyword_before.unwrap_or(0));
+    w.text("try")?;
+    w.site(node.try_keyword_after.unwrap_or(0));
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    except_clauses.render(w)?;
+    else_clause.render(w)?;
+    finally_clause.render(w)?;
+    w.site(node.try_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_except_clause(node: &ExceptClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let exception = View::new(&node.exception, "{}");
     let star_marker = View::new(&node.star_marker, "*");
     let suite = &node.suite;
-    let except_before = options::spacing_text(node.except_before.unwrap_or(0));
-    let except_after = options::spacing_text(node.except_after.unwrap_or(0));
-    let star_marker_before = options::spacing_text(node.star_marker_before.unwrap_or(0));
-    let star_marker_after = options::spacing_text(node.star_marker_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let except_clause_before = options::spacing_text(node.except_clause_before.unwrap_or(0));
-    let except_clause_after = options::spacing_text(node.except_clause_after.unwrap_or(0));
-    write!(f, "{except_clause_before}{except_before}except{except_after}{star_marker_before}{star_marker}{star_marker_after}{exception}{colon_before}:{colon_after}{suite}{except_clause_after}")?;
+    w.site(node.except_clause_before.unwrap_or(0));
+    w.site(node.except_keyword_before.unwrap_or(0));
+    w.text("except")?;
+    w.site(node.except_keyword_after.unwrap_or(0));
+    w.site(node.star_marker_before.unwrap_or(0));
+    star_marker.render(w)?;
+    w.site(node.star_marker_after.unwrap_or(0));
+    exception.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    suite.render(w)?;
+    w.site(node.except_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_finally_clause(node: &FinallyClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_finally_clause(node: &FinallyClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
-    let finally_before = options::spacing_text(node.finally_before.unwrap_or(0));
-    let finally_after = options::spacing_text(node.finally_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let finally_clause_before = options::spacing_text(node.finally_clause_before.unwrap_or(0));
-    let finally_clause_after = options::spacing_text(node.finally_clause_after.unwrap_or(0));
-    write!(f, "{finally_clause_before}{finally_before}finally{finally_after}{colon_before}:{colon_after}{block}{finally_clause_after}")?;
+    w.site(node.finally_clause_before.unwrap_or(0));
+    w.site(node.finally_keyword_before.unwrap_or(0));
+    w.text("finally")?;
+    w.site(node.finally_keyword_after.unwrap_or(0));
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    block.render(w)?;
+    w.site(node.finally_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_with_statement(node: &WithStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let async_marker = View::new(&node.async_marker, "{}");
     let body = &node.body;
     let with_clause = &node.with_clause;
-    let with_before = options::spacing_text(node.with_before.unwrap_or(0));
-    let with_after = options::spacing_text(node.with_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let with_statement_before = options::spacing_text(node.with_statement_before.unwrap_or(0));
-    let with_statement_after = options::spacing_text(node.with_statement_after.unwrap_or(0));
-    write!(f, "{with_statement_before}{async_marker}{with_before}with{with_after}{with_clause}{colon_before}:{colon_after}{body}{with_statement_after}")?;
+    w.site(node.with_statement_before.unwrap_or(0));
+    async_marker.render(w)?;
+    w.site(node.with_keyword_before.unwrap_or(0));
+    w.text("with")?;
+    w.site(node.with_keyword_after.unwrap_or(0));
+    with_clause.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.with_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_with_clause(node: &WithClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_with_clause(node: &WithClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_with_item(node: &WithItemTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_with_item(node: &WithItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let value = &node.value;
-    write!(f, "{value}")?;
+    value.render(w)?;
     Ok(())
 }
 
-fn render_function_definition(node: &FunctionDefinitionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let async_marker = View::new(&node.async_marker, "{}");
     let body = &node.body;
     let name = &node.name;
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let def_before = options::spacing_text(node.def_before.unwrap_or(0));
-    let def_after = options::spacing_text(node.def_after.unwrap_or(0));
-    let dash_gt_before = options::spacing_text(node.dash_gt_before.unwrap_or(0));
-    let dash_gt_after = options::spacing_text(node.dash_gt_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let function_definition_before = options::spacing_text(node.function_definition_before.unwrap_or(0));
-    let function_definition_after = options::spacing_text(node.function_definition_after.unwrap_or(0));
-    write!(f, "{function_definition_before}{async_marker}{def_before}def{def_after}{name}{type_parameters}{parameters}")?;
+    w.site(node.function_definition_before.unwrap_or(0));
+    async_marker.render(w)?;
+    w.site(node.def_keyword_before.unwrap_or(0));
+    w.text("def")?;
+    w.site(node.def_keyword_after.unwrap_or(0));
+    name.render(w)?;
+    type_parameters.render(w)?;
+    parameters.render(w)?;
     if return_type.is_present() {
-        write!(f, "{dash_gt_before}->{dash_gt_after}{return_type}")?;
+        w.site(node.dash_gt_before.unwrap_or(0));
+        w.text("->")?;
+        w.site(node.dash_gt_after.unwrap_or(0));
+        return_type.render(w)?;
     }
-    write!(f, "{colon_before}:{colon_after}{body}{function_definition_after}")?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.function_definition_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_parameters(node: &ParametersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.parameters.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let parameters = View::new(&node.parameters, "{}");
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let parameters_before = options::spacing_text(node.parameters_before.unwrap_or(0));
-    let parameters_after = options::spacing_text(node.parameters_after.unwrap_or(0));
-    write!(f, "{parameters_before}{lparen_before}({lparen_after}{parameters}{rparen_before}){rparen_after}{parameters_after}")?;
+    w.site(node.parameters_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    parameters.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.parameters_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_lambda_parameters(node: &LambdaParametersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_lambda_parameters(node: &LambdaParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let parameters = &node.parameters;
-    write!(f, "{parameters}")?;
+    parameters.render(w)?;
     Ok(())
 }
 
-fn render_list_splat(node: &ListSplatTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_list_splat(node: &ListSplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let star_before = options::spacing_text(node.star_before.unwrap_or(0));
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
-    let list_splat_before = options::spacing_text(node.list_splat_before.unwrap_or(0));
-    let list_splat_after = options::spacing_text(node.list_splat_after.unwrap_or(0));
-    write!(f, "{list_splat_before}{star_before}*{star_after}{expression}{list_splat_after}")?;
+    w.site(node.list_splat_before.unwrap_or(0));
+    w.site(node.star_before.unwrap_or(0));
+    w.text("*")?;
+    w.site(node.star_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.list_splat_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_dictionary_splat(node: &DictionarySplatTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dictionary_splat(node: &DictionarySplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let star_star_before = options::spacing_text(node.star_star_before.unwrap_or(0));
-    let star_star_after = options::spacing_text(node.star_star_after.unwrap_or(0));
-    let dictionary_splat_before = options::spacing_text(node.dictionary_splat_before.unwrap_or(0));
-    let dictionary_splat_after = options::spacing_text(node.dictionary_splat_after.unwrap_or(0));
-    write!(f, "{dictionary_splat_before}{star_star_before}**{star_star_after}{expression}{dictionary_splat_after}")?;
+    w.site(node.dictionary_splat_before.unwrap_or(0));
+    w.site(node.star_star_before.unwrap_or(0));
+    w.text("**")?;
+    w.site(node.star_star_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.dictionary_splat_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_global_statement(node: &GlobalStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_global_statement(node: &GlobalStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.names.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let names = ListView {
         items: &node.names,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.names_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.names_separator_space_after.unwrap_or(0)),
+        before: node.names_separator_space_before.unwrap_or(0),
+        after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let global_before = options::spacing_text(node.global_before.unwrap_or(0));
-    let global_after = options::spacing_text(node.global_after.unwrap_or(0));
-    let global_statement_before = options::spacing_text(node.global_statement_before.unwrap_or(0));
-    let global_statement_after = options::spacing_text(node.global_statement_after.unwrap_or(0));
-    write!(f, "{global_statement_before}{global_before}global{global_after}{names}{global_statement_after}")?;
+    w.site(node.global_statement_before.unwrap_or(0));
+    w.site(node.global_keyword_before.unwrap_or(0));
+    w.text("global")?;
+    w.site(node.global_keyword_after.unwrap_or(0));
+    names.render(w)?;
+    w.site(node.global_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_nonlocal_statement(node: &NonlocalStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.names.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let names = ListView {
         items: &node.names,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.names_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.names_separator_space_after.unwrap_or(0)),
+        before: node.names_separator_space_before.unwrap_or(0),
+        after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let nonlocal_before = options::spacing_text(node.nonlocal_before.unwrap_or(0));
-    let nonlocal_after = options::spacing_text(node.nonlocal_after.unwrap_or(0));
-    let nonlocal_statement_before = options::spacing_text(node.nonlocal_statement_before.unwrap_or(0));
-    let nonlocal_statement_after = options::spacing_text(node.nonlocal_statement_after.unwrap_or(0));
-    write!(f, "{nonlocal_statement_before}{nonlocal_before}nonlocal{nonlocal_after}{names}{nonlocal_statement_after}")?;
+    w.site(node.nonlocal_statement_before.unwrap_or(0));
+    w.site(node.nonlocal_keyword_before.unwrap_or(0));
+    w.text("nonlocal")?;
+    w.site(node.nonlocal_keyword_after.unwrap_or(0));
+    names.render(w)?;
+    w.site(node.nonlocal_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_exec_statement(node: &ExecStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let code = &node.code;
     let in_clause = ListView {
         items: node.in_clause.as_deref().unwrap_or(&[]),
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.in_clause_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.in_clause_separator_space_after.unwrap_or(0)),
+        before: node.in_clause_separator_space_before.unwrap_or(0),
+        after: node.in_clause_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let exec_before = options::spacing_text(node.exec_before.unwrap_or(0));
-    let exec_after = options::spacing_text(node.exec_after.unwrap_or(0));
-    let in_before = options::spacing_text(node.in_before.unwrap_or(0));
-    let in_after = options::spacing_text(node.in_after.unwrap_or(0));
-    let exec_statement_before = options::spacing_text(node.exec_statement_before.unwrap_or(0));
-    let exec_statement_after = options::spacing_text(node.exec_statement_after.unwrap_or(0));
-    write!(f, "{exec_statement_before}{exec_before}exec{exec_after}{code}")?;
+    w.site(node.exec_statement_before.unwrap_or(0));
+    w.site(node.exec_keyword_before.unwrap_or(0));
+    w.text("exec")?;
+    w.site(node.exec_keyword_after.unwrap_or(0));
+    code.render(w)?;
     if in_clause.is_present() {
-        write!(f, "{in_before}in{in_after}{in_clause}")?;
+        w.site(node.in_keyword_before.unwrap_or(0));
+        w.text("in")?;
+        w.site(node.in_keyword_after.unwrap_or(0));
+        in_clause.render(w)?;
     }
-    write!(f, "{exec_statement_after}")?;
+    w.site(node.exec_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_type_alias_statement(node: &TypeAliasStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_type_alias_statement(node: &TypeAliasStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let anon_type_before = options::spacing_text(node.anon_type_before.unwrap_or(0));
-    let anon_type_after = options::spacing_text(node.anon_type_after.unwrap_or(0));
-    let type_alias_statement_before = options::spacing_text(node.type_alias_statement_before.unwrap_or(0));
-    let type_alias_statement_after = options::spacing_text(node.type_alias_statement_after.unwrap_or(0));
-    write!(f, "{type_alias_statement_before}{anon_type_before}type{anon_type_after}{left}{eq_before}={eq_after}{right}{type_alias_statement_after}")?;
+    w.site(node.type_alias_statement_before.unwrap_or(0));
+    w.site(node.type_keyword_before.unwrap_or(0));
+    w.text("type")?;
+    w.site(node.type_keyword_after.unwrap_or(0));
+    left.render(w)?;
+    w.site(node.eq_before.unwrap_or(0));
+    w.text("=")?;
+    w.site(node.eq_after.unwrap_or(0));
+    right.render(w)?;
+    w.site(node.type_alias_statement_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_class_definition(node: &ClassDefinitionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_class_definition(node: &ClassDefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let name = &node.name;
     let superclasses = View::new(&node.superclasses, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
-    let class_before = options::spacing_text(node.class_before.unwrap_or(0));
-    let class_after = options::spacing_text(node.class_after.unwrap_or(0));
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let class_definition_before = options::spacing_text(node.class_definition_before.unwrap_or(0));
-    let class_definition_after = options::spacing_text(node.class_definition_after.unwrap_or(0));
-    write!(f, "{class_definition_before}{class_before}class{class_after}{name}{type_parameters}{superclasses}{colon_before}:{colon_after}{body}{class_definition_after}")?;
+    w.site(node.class_definition_before.unwrap_or(0));
+    w.site(node.class_keyword_before.unwrap_or(0));
+    w.text("class")?;
+    w.site(node.class_keyword_after.unwrap_or(0));
+    name.render(w)?;
+    type_parameters.render(w)?;
+    superclasses.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.class_definition_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_type_parameter(node: &TypeParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_type_parameter(node: &TypeParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let types = &node.types;
-    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
-    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
-    let type_parameter_before = options::spacing_text(node.type_parameter_before.unwrap_or(0));
-    let type_parameter_after = options::spacing_text(node.type_parameter_after.unwrap_or(0));
-    write!(f, "{type_parameter_before}{lbrack_before}[{lbrack_after}{types}{rbrack_before}]{rbrack_after}{type_parameter_after}")?;
+    w.site(node.type_parameter_before.unwrap_or(0));
+    w.site(node.lbrack_before.unwrap_or(0));
+    w.text("[")?;
+    w.site(node.lbrack_after.unwrap_or(0));
+    types.render(w)?;
+    w.site(node.rbrack_before.unwrap_or(0));
+    w.text("]")?;
+    w.site(node.rbrack_after.unwrap_or(0));
+    w.site(node.type_parameter_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let parenthesized_list_splat_before = options::spacing_text(node.parenthesized_list_splat_before.unwrap_or(0));
-    let parenthesized_list_splat_after = options::spacing_text(node.parenthesized_list_splat_after.unwrap_or(0));
-    write!(f, "{parenthesized_list_splat_before}{lparen_before}({lparen_after}{content}{rparen_before}){rparen_after}{parenthesized_list_splat_after}")?;
+    w.site(node.parenthesized_list_splat_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.parenthesized_list_splat_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_argument_list(node: &ArgumentListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_argument_list(node: &ArgumentListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.arguments.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let arguments = View::new(&node.arguments, "{}");
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let argument_list_before = options::spacing_text(node.argument_list_before.unwrap_or(0));
-    let argument_list_after = options::spacing_text(node.argument_list_after.unwrap_or(0));
-    write!(f, "{argument_list_before}{lparen_before}({lparen_after}{arguments}{rparen_before}){rparen_after}{argument_list_after}")?;
+    w.site(node.argument_list_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    arguments.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.argument_list_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_decorated_definition(node: &DecoratedDefinitionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_decorated_definition(node: &DecoratedDefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let decorator = ListView {
         items: &node.decorator,
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.decorator_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.decorator_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
     let definition = &node.definition;
-    let decorated_definition_before = options::spacing_text(node.decorated_definition_before.unwrap_or(0));
-    let decorated_definition_after = options::spacing_text(node.decorated_definition_after.unwrap_or(0));
-    write!(f, "{decorated_definition_before}{decorator}{definition}{decorated_definition_after}")?;
+    w.site(node.decorated_definition_before.unwrap_or(0));
+    decorator.render(w)?;
+    definition.render(w)?;
+    w.site(node.decorated_definition_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_decorator(node: &DecoratorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let at_before = options::spacing_text(node.at_before.unwrap_or(0));
-    let at_after = options::spacing_text(node.at_after.unwrap_or(0));
-    let decorator_before = options::spacing_text(node.decorator_before.unwrap_or(0));
-    let decorator_after = options::spacing_text(node.decorator_after.unwrap_or(0));
-    write!(f, "{decorator_before}{at_before}@{at_after}{expression}\u{FDD3}\n{decorator_after}")?;
+    w.site(node.decorator_before.unwrap_or(0));
+    w.site(node.at_before.unwrap_or(0));
+    w.text("@")?;
+    w.site(node.at_after.unwrap_or(0));
+    expression.render(w)?;
+    w.token_seam("\n");
+    w.site(node.decorator_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_suite(node: &SuiteTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    write!(f, "{}", node.content)?;
+fn render_suite(node: &SuiteTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    node.content.render(w)?;
     Ok(())
 }
 
-fn render_block(node: &BlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let statements = ListView {
         items: node.statements.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.statements_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.statements_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let block_before = options::spacing_text(node.block_before.unwrap_or(0));
-    let block_after = options::spacing_text(node.block_after.unwrap_or(0));
-    write!(f, "{block_before}{statements}\u{FDD1}\n{block_after}")?;
+    w.site(node.block_before.unwrap_or(0));
+    statements.render(w)?;
+    w.dedent();
+    w.site(node.block_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_expression_list(node: &ExpressionListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_expression_list(node: &ExpressionListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
     let tail = &node.tail;
-    let expression_list_before = options::spacing_text(node.expression_list_before.unwrap_or(0));
-    let expression_list_after = options::spacing_text(node.expression_list_after.unwrap_or(0));
-    write!(f, "{expression_list_before}{expression}{tail}{expression_list_after}")?;
+    w.site(node.expression_list_before.unwrap_or(0));
+    expression.render(w)?;
+    tail.render(w)?;
+    w.site(node.expression_list_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_dotted_name(node: &DottedNameTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dotted_name(node: &DottedNameTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.names.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let names = ListView {
         items: &node.names,
         template: "{}",
         token: ".",
-        before: options::spacing_text(node.names_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.names_separator_space_after.unwrap_or(0)),
+        before: node.names_separator_space_before.unwrap_or(0),
+        after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{names}")?;
+    names.render(w)?;
     Ok(())
 }
 
-fn render_case_pattern(node: &CasePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_case_pattern(node: &CasePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_union_pattern(node: &UnionPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_union_pattern(node: &UnionPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.patterns.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let patterns = ListView {
         items: &node.patterns,
         template: "{}",
         token: "|",
-        before: options::spacing_text(node.patterns_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.patterns_separator_space_after.unwrap_or(0)),
+        before: node.patterns_separator_space_before.unwrap_or(0),
+        after: node.patterns_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{patterns}")?;
+    patterns.render(w)?;
     Ok(())
 }
 
-fn render_dict_pattern(node: &DictPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dict_pattern(node: &DictPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.dict_pattern_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let dict_pattern_elements = View::new(&node.dict_pattern_elements, "{}");
-    let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
-    let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let dict_pattern_before = options::spacing_text(node.dict_pattern_before.unwrap_or(0));
-    let dict_pattern_after = options::spacing_text(node.dict_pattern_after.unwrap_or(0));
-    write!(f, "{dict_pattern_before}{lbrace_before}{{{lbrace_after}{dict_pattern_elements}{rbrace_before}}}{rbrace_after}{dict_pattern_after}")?;
+    w.site(node.dict_pattern_before.unwrap_or(0));
+    w.site(node.lbrace_before.unwrap_or(0));
+    w.text("{")?;
+    w.site(node.lbrace_after.unwrap_or(0));
+    dict_pattern_elements.render(w)?;
+    w.site(node.rbrace_before.unwrap_or(0));
+    w.text("}")?;
+    w.site(node.rbrace_after.unwrap_or(0));
+    w.site(node.dict_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_key_value_pattern(node: &KeyValuePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_key_value_pattern(node: &KeyValuePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let key = &node.key;
     let value = &node.value;
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let key_value_pattern_before = options::spacing_text(node.key_value_pattern_before.unwrap_or(0));
-    let key_value_pattern_after = options::spacing_text(node.key_value_pattern_after.unwrap_or(0));
-    write!(f, "{key_value_pattern_before}{key}{colon_before}:{colon_after}{value}{key_value_pattern_after}")?;
+    w.site(node.key_value_pattern_before.unwrap_or(0));
+    key.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.key_value_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_keyword_pattern(node: &KeywordPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_keyword_pattern(node: &KeywordPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let keyword_pattern_before = options::spacing_text(node.keyword_pattern_before.unwrap_or(0));
-    let keyword_pattern_after = options::spacing_text(node.keyword_pattern_after.unwrap_or(0));
-    write!(f, "{keyword_pattern_before}{name}{eq_before}={eq_after}{value}{keyword_pattern_after}")?;
+    w.site(node.keyword_pattern_before.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.eq_before.unwrap_or(0));
+    w.text("=")?;
+    w.site(node.eq_after.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.keyword_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_splat_pattern(node: &SplatPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_splat_pattern(node: &SplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let operator = &node.operator;
-    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
-    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
-    let splat_pattern_before = options::spacing_text(node.splat_pattern_before.unwrap_or(0));
-    let splat_pattern_after = options::spacing_text(node.splat_pattern_after.unwrap_or(0));
-    write!(f, "{splat_pattern_before}{operator_before}{operator}{operator_after}{name}{splat_pattern_after}")?;
+    w.site(node.splat_pattern_before.unwrap_or(0));
+    w.site(node.operator_before.unwrap_or(0));
+    operator.render(w)?;
+    w.site(node.operator_after.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.splat_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_class_pattern(node: &ClassPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_class_pattern(node: &ClassPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = View::new(&node.arguments, "{}");
     let name = &node.name;
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let class_pattern_before = options::spacing_text(node.class_pattern_before.unwrap_or(0));
-    let class_pattern_after = options::spacing_text(node.class_pattern_after.unwrap_or(0));
-    write!(f, "{class_pattern_before}{name}{lparen_before}({lparen_after}{arguments}{rparen_before}){rparen_after}{class_pattern_after}")?;
+    w.site(node.class_pattern_before.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    arguments.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.class_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_complex_pattern(node: &ComplexPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_complex_pattern(node: &ComplexPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let imaginary = &node.imaginary;
     let operator = &node.operator;
     let real = View::new(&node.real, "-");
-    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
-    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
-    let real_before = options::spacing_text(node.real_before.unwrap_or(0));
-    let real_after = options::spacing_text(node.real_after.unwrap_or(0));
-    let complex_pattern_before = options::spacing_text(node.complex_pattern_before.unwrap_or(0));
-    let complex_pattern_after = options::spacing_text(node.complex_pattern_after.unwrap_or(0));
-    write!(f, "{complex_pattern_before}{real_before}{real}{real_after}{imaginary}{operator_before}{operator}{operator_after}{content}{complex_pattern_after}")?;
+    w.site(node.complex_pattern_before.unwrap_or(0));
+    w.site(node.real_before.unwrap_or(0));
+    real.render(w)?;
+    w.site(node.real_after.unwrap_or(0));
+    imaginary.render(w)?;
+    w.site(node.operator_before.unwrap_or(0));
+    operator.render(w)?;
+    w.site(node.operator_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.complex_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render__parameters(node: &_ParametersTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render__parameters(node: &_ParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.parameter.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let parameter = ListView {
         items: &node.parameter,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.parameter_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.parameter_separator_space_after.unwrap_or(0)),
+        before: node.parameter_separator_space_before.unwrap_or(0),
+        after: node.parameter_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let parameters_before = options::spacing_text(node.parameters_before.unwrap_or(0));
-    let parameters_after = options::spacing_text(node.parameters_after.unwrap_or(0));
-    write!(f, "{parameter}")?;
+    parameter.render(w)?;
     Ok(())
 }
 
-fn render_patterns(node: &PatternsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let pattern = ListView {
         items: &node.pattern,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.pattern_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.pattern_separator_space_after.unwrap_or(0)),
+        before: node.pattern_separator_space_before.unwrap_or(0),
+        after: node.pattern_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{pattern}")?;
+    pattern.render(w)?;
     Ok(())
 }
 
-fn render_tuple_pattern(node: &TuplePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let patterns = View::new(&node.patterns, "{}");
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let tuple_pattern_before = options::spacing_text(node.tuple_pattern_before.unwrap_or(0));
-    let tuple_pattern_after = options::spacing_text(node.tuple_pattern_after.unwrap_or(0));
-    write!(f, "{tuple_pattern_before}{lparen_before}({lparen_after}{patterns}{rparen_before}){rparen_after}{tuple_pattern_after}")?;
+    w.site(node.tuple_pattern_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    patterns.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.tuple_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_list_pattern(node: &ListPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_list_pattern(node: &ListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let patterns = View::new(&node.patterns, "{}");
-    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
-    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
-    let list_pattern_before = options::spacing_text(node.list_pattern_before.unwrap_or(0));
-    let list_pattern_after = options::spacing_text(node.list_pattern_after.unwrap_or(0));
-    write!(f, "{list_pattern_before}{lbrack_before}[{lbrack_after}{patterns}{rbrack_before}]{rbrack_after}{list_pattern_after}")?;
+    w.site(node.list_pattern_before.unwrap_or(0));
+    w.site(node.lbrack_before.unwrap_or(0));
+    w.text("[")?;
+    w.site(node.lbrack_after.unwrap_or(0));
+    patterns.render(w)?;
+    w.site(node.rbrack_before.unwrap_or(0));
+    w.text("]")?;
+    w.site(node.rbrack_after.unwrap_or(0));
+    w.site(node.list_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_default_parameter(node: &DefaultParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_default_parameter(node: &DefaultParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let default_parameter_before = options::spacing_text(node.default_parameter_before.unwrap_or(0));
-    let default_parameter_after = options::spacing_text(node.default_parameter_after.unwrap_or(0));
-    write!(f, "{default_parameter_before}{name}{eq_before}={eq_after}{value}{default_parameter_after}")?;
+    w.site(node.default_parameter_before.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.eq_before.unwrap_or(0));
+    w.text("=")?;
+    w.site(node.eq_after.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.default_parameter_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let type_ = &node.type_;
     let value = &node.value;
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let typed_default_parameter_before = options::spacing_text(node.typed_default_parameter_before.unwrap_or(0));
-    let typed_default_parameter_after = options::spacing_text(node.typed_default_parameter_after.unwrap_or(0));
-    write!(f, "{typed_default_parameter_before}{name}{colon_before}:{colon_after}{type_}{eq_before}={eq_after}{value}{typed_default_parameter_after}")?;
+    w.site(node.typed_default_parameter_before.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    type_.render(w)?;
+    w.site(node.eq_before.unwrap_or(0));
+    w.text("=")?;
+    w.site(node.eq_after.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.typed_default_parameter_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_list_splat_pattern(node: &ListSplatPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_list_splat_pattern(node: &ListSplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let star_before = options::spacing_text(node.star_before.unwrap_or(0));
-    let star_after = options::spacing_text(node.star_after.unwrap_or(0));
-    let list_splat_pattern_before = options::spacing_text(node.list_splat_pattern_before.unwrap_or(0));
-    let list_splat_pattern_after = options::spacing_text(node.list_splat_pattern_after.unwrap_or(0));
-    write!(f, "{list_splat_pattern_before}{star_before}*{star_after}{content}{list_splat_pattern_after}")?;
+    w.site(node.list_splat_pattern_before.unwrap_or(0));
+    w.site(node.star_before.unwrap_or(0));
+    w.text("*")?;
+    w.site(node.star_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.list_splat_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let star_star_before = options::spacing_text(node.star_star_before.unwrap_or(0));
-    let star_star_after = options::spacing_text(node.star_star_after.unwrap_or(0));
-    let dictionary_splat_pattern_before = options::spacing_text(node.dictionary_splat_pattern_before.unwrap_or(0));
-    let dictionary_splat_pattern_after = options::spacing_text(node.dictionary_splat_pattern_after.unwrap_or(0));
-    write!(f, "{dictionary_splat_pattern_before}{star_star_before}**{star_star_after}{content}{dictionary_splat_pattern_after}")?;
+    w.site(node.dictionary_splat_pattern_before.unwrap_or(0));
+    w.site(node.star_star_before.unwrap_or(0));
+    w.text("**")?;
+    w.site(node.star_star_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.dictionary_splat_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_as_pattern(node: &AsPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_as_pattern(node: &AsPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
     let expression = &node.expression;
-    let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
-    let as_pattern_before = options::spacing_text(node.as_pattern_before.unwrap_or(0));
-    let as_pattern_after = options::spacing_text(node.as_pattern_after.unwrap_or(0));
-    write!(f, "{as_pattern_before}{expression}{as_before}as{as_after}{alias}{as_pattern_after}")?;
+    w.site(node.as_pattern_before.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.as_keyword_before.unwrap_or(0));
+    w.text("as")?;
+    w.site(node.as_keyword_after.unwrap_or(0));
+    alias.render(w)?;
+    w.site(node.as_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_not_operator(node: &NotOperatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_not_operator(node: &NotOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
-    let not_before = options::spacing_text(node.not_before.unwrap_or(0));
-    let not_after = options::spacing_text(node.not_after.unwrap_or(0));
-    let not_operator_before = options::spacing_text(node.not_operator_before.unwrap_or(0));
-    let not_operator_after = options::spacing_text(node.not_operator_after.unwrap_or(0));
-    write!(f, "{not_operator_before}{not_before}not{not_after}{argument}{not_operator_after}")?;
+    w.site(node.not_operator_before.unwrap_or(0));
+    w.site(node.not_keyword_before.unwrap_or(0));
+    w.text("not")?;
+    w.site(node.not_keyword_after.unwrap_or(0));
+    argument.render(w)?;
+    w.site(node.not_operator_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_boolean_operator(node: &BooleanOperatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_boolean_operator(node: &BooleanOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    let boolean_operator_before = options::spacing_text(node.boolean_operator_before.unwrap_or(0));
-    let boolean_operator_after = options::spacing_text(node.boolean_operator_after.unwrap_or(0));
-    write!(f, "{boolean_operator_before}{left}{operator}{right}{boolean_operator_after}")?;
+    w.site(node.boolean_operator_before.unwrap_or(0));
+    left.render(w)?;
+    operator.render(w)?;
+    right.render(w)?;
+    w.site(node.boolean_operator_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_binary_operator(node: &BinaryOperatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_binary_operator(node: &BinaryOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
-    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
-    let binary_operator_before = options::spacing_text(node.binary_operator_before.unwrap_or(0));
-    let binary_operator_after = options::spacing_text(node.binary_operator_after.unwrap_or(0));
-    write!(f, "{binary_operator_before}{left}{operator_before}{operator}{operator_after}{right}{binary_operator_after}")?;
+    w.site(node.binary_operator_before.unwrap_or(0));
+    left.render(w)?;
+    w.site(node.operator_before.unwrap_or(0));
+    operator.render(w)?;
+    w.site(node.operator_after.unwrap_or(0));
+    right.render(w)?;
+    w.site(node.binary_operator_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_unary_operator(node: &UnaryOperatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_unary_operator(node: &UnaryOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
     let operator = &node.operator;
-    let unary_operator_before = options::spacing_text(node.unary_operator_before.unwrap_or(0));
-    let unary_operator_after = options::spacing_text(node.unary_operator_after.unwrap_or(0));
-    write!(f, "{unary_operator_before}{operator}{argument}{unary_operator_after}")?;
+    w.site(node.unary_operator_before.unwrap_or(0));
+    operator.render(w)?;
+    argument.render(w)?;
+    w.site(node.unary_operator_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_comparison_operator(node: &ComparisonOperatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_comparison_operator(node: &ComparisonOperatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let comparators = ListView {
         items: &node.comparators,
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.comparators_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.comparators_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
     let left = &node.left;
-    let comparison_operator_before = options::spacing_text(node.comparison_operator_before.unwrap_or(0));
-    let comparison_operator_after = options::spacing_text(node.comparison_operator_after.unwrap_or(0));
-    write!(f, "{comparison_operator_before}{left}{comparators}{comparison_operator_after}")?;
+    w.site(node.comparison_operator_before.unwrap_or(0));
+    left.render(w)?;
+    comparators.render(w)?;
+    w.site(node.comparison_operator_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_lambda(node: &LambdaTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_lambda(node: &LambdaTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let anon_lambda_before = options::spacing_text(node.anon_lambda_before.unwrap_or(0));
-    let anon_lambda_after = options::spacing_text(node.anon_lambda_after.unwrap_or(0));
-    let lambda_before = options::spacing_text(node.lambda_before.unwrap_or(0));
-    let lambda_after = options::spacing_text(node.lambda_after.unwrap_or(0));
-    write!(f, "{lambda_before}{anon_lambda_before}lambda{anon_lambda_after}{parameters}{colon_before}:{colon_after}{body}{lambda_after}")?;
+    w.site(node.lambda_before.unwrap_or(0));
+    w.site(node.lambda_keyword_before.unwrap_or(0));
+    w.text("lambda")?;
+    w.site(node.lambda_keyword_after.unwrap_or(0));
+    parameters.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.lambda_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let parameters = View::new(&node.parameters, "{}");
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let anon_lambda_before = options::spacing_text(node.anon_lambda_before.unwrap_or(0));
-    let anon_lambda_after = options::spacing_text(node.anon_lambda_after.unwrap_or(0));
-    let lambda_within_for_in_clause_before = options::spacing_text(node.lambda_within_for_in_clause_before.unwrap_or(0));
-    let lambda_within_for_in_clause_after = options::spacing_text(node.lambda_within_for_in_clause_after.unwrap_or(0));
-    write!(f, "{lambda_within_for_in_clause_before}{anon_lambda_before}lambda{anon_lambda_after}{parameters}{colon_before}:{colon_after}{body}{lambda_within_for_in_clause_after}")?;
+    w.site(node.lambda_within_for_in_clause_before.unwrap_or(0));
+    w.site(node.lambda_keyword_before.unwrap_or(0));
+    w.text("lambda")?;
+    w.site(node.lambda_keyword_after.unwrap_or(0));
+    parameters.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.lambda_within_for_in_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_assignment(node: &AssignmentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_assignment(node: &AssignmentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let left = &node.left;
-    let assignment_before = options::spacing_text(node.assignment_before.unwrap_or(0));
-    let assignment_after = options::spacing_text(node.assignment_after.unwrap_or(0));
-    write!(f, "{assignment_before}{left}{content}{assignment_after}")?;
+    w.site(node.assignment_before.unwrap_or(0));
+    left.render(w)?;
+    content.render(w)?;
+    w.site(node.assignment_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_augmented_assignment(node: &AugmentedAssignmentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_augmented_assignment(node: &AugmentedAssignmentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let operator = &node.operator;
     let right = &node.right;
-    let augmented_assignment_before = options::spacing_text(node.augmented_assignment_before.unwrap_or(0));
-    let augmented_assignment_after = options::spacing_text(node.augmented_assignment_after.unwrap_or(0));
-    write!(f, "{augmented_assignment_before}{left}{operator}{right}{augmented_assignment_after}")?;
+    w.site(node.augmented_assignment_before.unwrap_or(0));
+    left.render(w)?;
+    operator.render(w)?;
+    right.render(w)?;
+    w.site(node.augmented_assignment_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_pattern_list(node: &PatternListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_pattern_list(node: &PatternListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = &node.pattern;
     let tail = &node.tail;
-    let pattern_list_before = options::spacing_text(node.pattern_list_before.unwrap_or(0));
-    let pattern_list_after = options::spacing_text(node.pattern_list_after.unwrap_or(0));
-    write!(f, "{pattern_list_before}{pattern}{tail}{pattern_list_after}")?;
+    w.site(node.pattern_list_before.unwrap_or(0));
+    pattern.render(w)?;
+    tail.render(w)?;
+    w.site(node.pattern_list_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_yield(node: &YieldTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_yield(node: &YieldTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.content.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let content = View::new(&node.content, "{}");
-    let anon_yield_before = options::spacing_text(node.anon_yield_before.unwrap_or(0));
-    let anon_yield_after = options::spacing_text(node.anon_yield_after.unwrap_or(0));
-    let yield_before = options::spacing_text(node.yield_before.unwrap_or(0));
-    let yield_after = options::spacing_text(node.yield_after.unwrap_or(0));
-    write!(f, "{yield_before}{anon_yield_before}yield{anon_yield_after}{content}{yield_after}")?;
+    w.site(node.yield_before.unwrap_or(0));
+    w.site(node.yield_keyword_before.unwrap_or(0));
+    w.text("yield")?;
+    w.site(node.yield_keyword_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.yield_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_attribute(node: &AttributeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_attribute(node: &AttributeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute = &node.attribute;
     let object = &node.object;
-    let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
-    let attribute_before = options::spacing_text(node.attribute_before.unwrap_or(0));
-    let attribute_after = options::spacing_text(node.attribute_after.unwrap_or(0));
-    write!(f, "{attribute_before}{object}{dot_before}.{dot_after}{attribute}{attribute_after}")?;
+    w.site(node.attribute_before.unwrap_or(0));
+    object.render(w)?;
+    w.site(node.dot_before.unwrap_or(0));
+    w.text(".")?;
+    w.site(node.dot_after.unwrap_or(0));
+    attribute.render(w)?;
+    w.site(node.attribute_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_subscript(node: &SubscriptTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_subscript(node: &SubscriptTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let subscripts = &node.subscripts;
     let value = &node.value;
-    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
-    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
-    let subscript_before = options::spacing_text(node.subscript_before.unwrap_or(0));
-    let subscript_after = options::spacing_text(node.subscript_after.unwrap_or(0));
-    write!(f, "{subscript_before}{value}{lbrack_before}[{lbrack_after}{subscripts}{rbrack_before}]{rbrack_after}{subscript_after}")?;
+    w.site(node.subscript_before.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.lbrack_before.unwrap_or(0));
+    w.text("[")?;
+    w.site(node.lbrack_after.unwrap_or(0));
+    subscripts.render(w)?;
+    w.site(node.rbrack_before.unwrap_or(0));
+    w.text("]")?;
+    w.site(node.rbrack_after.unwrap_or(0));
+    w.site(node.subscript_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_slice(node: &SliceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_slice(node: &SliceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.start.is_none() && node.stop.is_none() && node.step.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let start = View::new(&node.start, "{}");
     let step = View::new(&node.step, "{}");
     let stop = View::new(&node.stop, "{}");
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let slice_before = options::spacing_text(node.slice_before.unwrap_or(0));
-    let slice_after = options::spacing_text(node.slice_after.unwrap_or(0));
-    write!(f, "{slice_before}{start}{colon_before}:{colon_after}{stop}{step}{slice_after}")?;
+    w.site(node.slice_before.unwrap_or(0));
+    start.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    stop.render(w)?;
+    step.render(w)?;
+    w.site(node.slice_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_ellipsis(t: &EllipsisTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_ellipsis(t: &EllipsisTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_call(node: &CallTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_call(node: &CallTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = &node.arguments;
     let function = &node.function;
-    let call_before = options::spacing_text(node.call_before.unwrap_or(0));
-    let call_after = options::spacing_text(node.call_after.unwrap_or(0));
-    write!(f, "{call_before}{function}{arguments}{call_after}")?;
+    w.site(node.call_before.unwrap_or(0));
+    function.render(w)?;
+    arguments.render(w)?;
+    w.site(node.call_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_typed_parameter(node: &TypedParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_typed_parameter(node: &TypedParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let type_ = &node.type_;
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let typed_parameter_before = options::spacing_text(node.typed_parameter_before.unwrap_or(0));
-    let typed_parameter_after = options::spacing_text(node.typed_parameter_after.unwrap_or(0));
-    write!(f, "{typed_parameter_before}{content}{colon_before}:{colon_after}{type_}{typed_parameter_after}")?;
+    w.site(node.typed_parameter_before.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    type_.render(w)?;
+    w.site(node.typed_parameter_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_type(node: &TypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_type(node: &TypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_splat_type(node: &SplatTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_splat_type(node: &SplatTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let operator = &node.operator;
-    let operator_before = options::spacing_text(node.operator_before.unwrap_or(0));
-    let operator_after = options::spacing_text(node.operator_after.unwrap_or(0));
-    let splat_type_before = options::spacing_text(node.splat_type_before.unwrap_or(0));
-    let splat_type_after = options::spacing_text(node.splat_type_after.unwrap_or(0));
-    write!(f, "{splat_type_before}{operator_before}{operator}{operator_after}{name}{splat_type_after}")?;
+    w.site(node.splat_type_before.unwrap_or(0));
+    w.site(node.operator_before.unwrap_or(0));
+    operator.render(w)?;
+    w.site(node.operator_after.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.splat_type_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_generic_type(node: &GenericTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_generic_type(node: &GenericTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let type_parameter = &node.type_parameter;
-    let generic_type_before = options::spacing_text(node.generic_type_before.unwrap_or(0));
-    let generic_type_after = options::spacing_text(node.generic_type_after.unwrap_or(0));
-    write!(f, "{generic_type_before}{name}{type_parameter}{generic_type_after}")?;
+    w.site(node.generic_type_before.unwrap_or(0));
+    name.render(w)?;
+    type_parameter.render(w)?;
+    w.site(node.generic_type_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_union_type(node: &UnionTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_union_type(node: &UnionTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = &node.right;
-    let pipe_before = options::spacing_text(node.pipe_before.unwrap_or(0));
-    let pipe_after = options::spacing_text(node.pipe_after.unwrap_or(0));
-    let union_type_before = options::spacing_text(node.union_type_before.unwrap_or(0));
-    let union_type_after = options::spacing_text(node.union_type_after.unwrap_or(0));
-    write!(f, "{union_type_before}{left}{pipe_before}|{pipe_after}{right}{union_type_after}")?;
+    w.site(node.union_type_before.unwrap_or(0));
+    left.render(w)?;
+    w.site(node.pipe_before.unwrap_or(0));
+    w.text("|")?;
+    w.site(node.pipe_after.unwrap_or(0));
+    right.render(w)?;
+    w.site(node.union_type_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_constrained_type(node: &ConstrainedTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_constrained_type(node: &ConstrainedTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let base_type = &node.base_type;
     let constraint = &node.constraint;
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let constrained_type_before = options::spacing_text(node.constrained_type_before.unwrap_or(0));
-    let constrained_type_after = options::spacing_text(node.constrained_type_after.unwrap_or(0));
-    write!(f, "{constrained_type_before}{base_type}{colon_before}:{colon_after}{constraint}{constrained_type_after}")?;
+    w.site(node.constrained_type_before.unwrap_or(0));
+    base_type.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    constraint.render(w)?;
+    w.site(node.constrained_type_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_member_type(node: &MemberTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_member_type(node: &MemberTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let base_type = &node.base_type;
     let name = &node.name;
-    let dot_before = options::spacing_text(node.dot_before.unwrap_or(0));
-    let dot_after = options::spacing_text(node.dot_after.unwrap_or(0));
-    let member_type_before = options::spacing_text(node.member_type_before.unwrap_or(0));
-    let member_type_after = options::spacing_text(node.member_type_after.unwrap_or(0));
-    write!(f, "{member_type_before}{base_type}{dot_before}.{dot_after}{name}{member_type_after}")?;
+    w.site(node.member_type_before.unwrap_or(0));
+    base_type.render(w)?;
+    w.site(node.dot_before.unwrap_or(0));
+    w.text(".")?;
+    w.site(node.dot_after.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.member_type_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_keyword_argument(node: &KeywordArgumentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_keyword_argument(node: &KeywordArgumentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let value = &node.value;
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let keyword_argument_before = options::spacing_text(node.keyword_argument_before.unwrap_or(0));
-    let keyword_argument_after = options::spacing_text(node.keyword_argument_after.unwrap_or(0));
-    write!(f, "{keyword_argument_before}{name}{eq_before}={eq_after}{value}{keyword_argument_after}")?;
+    w.site(node.keyword_argument_before.unwrap_or(0));
+    name.render(w)?;
+    w.site(node.eq_before.unwrap_or(0));
+    w.text("=")?;
+    w.site(node.eq_after.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.keyword_argument_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_list(node: &ListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.collection_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let collection_elements = View::new(&node.collection_elements, "{}");
-    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
-    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
-    let list_before = options::spacing_text(node.list_before.unwrap_or(0));
-    let list_after = options::spacing_text(node.list_after.unwrap_or(0));
-    write!(f, "{list_before}{lbrack_before}[{lbrack_after}{collection_elements}{rbrack_before}]{rbrack_after}{list_after}")?;
+    w.site(node.list_before.unwrap_or(0));
+    w.site(node.lbrack_before.unwrap_or(0));
+    w.text("[")?;
+    w.site(node.lbrack_after.unwrap_or(0));
+    collection_elements.render(w)?;
+    w.site(node.rbrack_before.unwrap_or(0));
+    w.text("]")?;
+    w.site(node.rbrack_after.unwrap_or(0));
+    w.site(node.list_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_set(node: &SetTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_set(node: &SetTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let collection_elements = &node.collection_elements;
-    let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
-    let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let set_before = options::spacing_text(node.set_before.unwrap_or(0));
-    let set_after = options::spacing_text(node.set_after.unwrap_or(0));
-    write!(f, "{set_before}{lbrace_before}{{{lbrace_after}{collection_elements}{rbrace_before}}}{rbrace_after}{set_after}")?;
+    w.site(node.set_before.unwrap_or(0));
+    w.site(node.lbrace_before.unwrap_or(0));
+    w.text("{")?;
+    w.site(node.lbrace_after.unwrap_or(0));
+    collection_elements.render(w)?;
+    w.site(node.rbrace_before.unwrap_or(0));
+    w.text("}")?;
+    w.site(node.rbrace_after.unwrap_or(0));
+    w.site(node.set_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_tuple(node: &TupleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_tuple(node: &TupleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.collection_elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let collection_elements = View::new(&node.collection_elements, "{}");
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let tuple_before = options::spacing_text(node.tuple_before.unwrap_or(0));
-    let tuple_after = options::spacing_text(node.tuple_after.unwrap_or(0));
-    write!(f, "{tuple_before}{lparen_before}({lparen_after}{collection_elements}{rparen_before}){rparen_after}{tuple_after}")?;
+    w.site(node.tuple_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    collection_elements.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.tuple_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_dictionary(node: &DictionaryTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dictionary(node: &DictionaryTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.entries.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let entries = View::new(&node.entries, "{}");
-    let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
-    let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let dictionary_before = options::spacing_text(node.dictionary_before.unwrap_or(0));
-    let dictionary_after = options::spacing_text(node.dictionary_after.unwrap_or(0));
-    write!(f, "{dictionary_before}{lbrace_before}{{{lbrace_after}{entries}{rbrace_before}}}{rbrace_after}{dictionary_after}")?;
+    w.site(node.dictionary_before.unwrap_or(0));
+    w.site(node.lbrace_before.unwrap_or(0));
+    w.text("{")?;
+    w.site(node.lbrace_after.unwrap_or(0));
+    entries.render(w)?;
+    w.site(node.rbrace_before.unwrap_or(0));
+    w.text("}")?;
+    w.site(node.rbrace_after.unwrap_or(0));
+    w.site(node.dictionary_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_pair(node: &PairTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_pair(node: &PairTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let key = &node.key;
     let value = &node.value;
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let pair_before = options::spacing_text(node.pair_before.unwrap_or(0));
-    let pair_after = options::spacing_text(node.pair_after.unwrap_or(0));
-    write!(f, "{pair_before}{key}{colon_before}:{colon_after}{value}{pair_after}")?;
+    w.site(node.pair_before.unwrap_or(0));
+    key.render(w)?;
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    value.render(w)?;
+    w.site(node.pair_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_list_comprehension(node: &ListComprehensionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
-    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
-    let list_comprehension_before = options::spacing_text(node.list_comprehension_before.unwrap_or(0));
-    let list_comprehension_after = options::spacing_text(node.list_comprehension_after.unwrap_or(0));
-    write!(f, "{list_comprehension_before}{lbrack_before}[{lbrack_after}{body}{comprehension_clauses}{rbrack_before}]{rbrack_after}{list_comprehension_after}")?;
+    w.site(node.list_comprehension_before.unwrap_or(0));
+    w.site(node.lbrack_before.unwrap_or(0));
+    w.text("[")?;
+    w.site(node.lbrack_after.unwrap_or(0));
+    body.render(w)?;
+    comprehension_clauses.render(w)?;
+    w.site(node.rbrack_before.unwrap_or(0));
+    w.text("]")?;
+    w.site(node.rbrack_after.unwrap_or(0));
+    w.site(node.list_comprehension_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
-    let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let dictionary_comprehension_before = options::spacing_text(node.dictionary_comprehension_before.unwrap_or(0));
-    let dictionary_comprehension_after = options::spacing_text(node.dictionary_comprehension_after.unwrap_or(0));
-    write!(f, "{dictionary_comprehension_before}{lbrace_before}{{{lbrace_after}{body}{comprehension_clauses}{rbrace_before}}}{rbrace_after}{dictionary_comprehension_after}")?;
+    w.site(node.dictionary_comprehension_before.unwrap_or(0));
+    w.site(node.lbrace_before.unwrap_or(0));
+    w.text("{")?;
+    w.site(node.lbrace_after.unwrap_or(0));
+    body.render(w)?;
+    comprehension_clauses.render(w)?;
+    w.site(node.rbrace_before.unwrap_or(0));
+    w.text("}")?;
+    w.site(node.rbrace_after.unwrap_or(0));
+    w.site(node.dictionary_comprehension_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_set_comprehension(node: &SetComprehensionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
-    let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let set_comprehension_before = options::spacing_text(node.set_comprehension_before.unwrap_or(0));
-    let set_comprehension_after = options::spacing_text(node.set_comprehension_after.unwrap_or(0));
-    write!(f, "{set_comprehension_before}{lbrace_before}{{{lbrace_after}{body}{comprehension_clauses}{rbrace_before}}}{rbrace_after}{set_comprehension_after}")?;
+    w.site(node.set_comprehension_before.unwrap_or(0));
+    w.site(node.lbrace_before.unwrap_or(0));
+    w.text("{")?;
+    w.site(node.lbrace_after.unwrap_or(0));
+    body.render(w)?;
+    comprehension_clauses.render(w)?;
+    w.site(node.rbrace_before.unwrap_or(0));
+    w.text("}")?;
+    w.site(node.rbrace_after.unwrap_or(0));
+    w.site(node.set_comprehension_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_generator_expression(node: &GeneratorExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let comprehension_clauses = &node.comprehension_clauses;
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let generator_expression_before = options::spacing_text(node.generator_expression_before.unwrap_or(0));
-    let generator_expression_after = options::spacing_text(node.generator_expression_after.unwrap_or(0));
-    write!(f, "{generator_expression_before}{lparen_before}({lparen_after}{body}{comprehension_clauses}{rparen_before}){rparen_after}{generator_expression_after}")?;
+    w.site(node.generator_expression_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    body.render(w)?;
+    comprehension_clauses.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.generator_expression_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let parenthesized_expression_before = options::spacing_text(node.parenthesized_expression_before.unwrap_or(0));
-    let parenthesized_expression_after = options::spacing_text(node.parenthesized_expression_after.unwrap_or(0));
-    write!(f, "{parenthesized_expression_before}{lparen_before}({lparen_after}{content}{rparen_before}){rparen_after}{parenthesized_expression_after}")?;
+    w.site(node.parenthesized_expression_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.parenthesized_expression_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_collection_elements(node: &CollectionElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_collection_elements(node: &CollectionElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let element = ListView {
         items: &node.element,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        before: node.element_separator_space_before.unwrap_or(0),
+        after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{element}")?;
+    element.render(w)?;
     Ok(())
 }
 
-fn render_for_in_clause(node: &ForInClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let async_marker = View::new(&node.async_marker, "{}");
     let comma = View::new(&node.comma, ",");
     let left = &node.left;
@@ -46130,1312 +46310,1359 @@ fn render_for_in_clause(node: &ForInClauseTransport, f: &mut ::std::fmt::Formatt
         items: &node.right,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.right_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.right_separator_space_after.unwrap_or(0)),
+        before: node.right_separator_space_before.unwrap_or(0),
+        after: node.right_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let for_before = options::spacing_text(node.for_before.unwrap_or(0));
-    let for_after = options::spacing_text(node.for_after.unwrap_or(0));
-    let in_before = options::spacing_text(node.in_before.unwrap_or(0));
-    let in_after = options::spacing_text(node.in_after.unwrap_or(0));
-    let comma_before = options::spacing_text(node.comma_before.unwrap_or(0));
-    let comma_after = options::spacing_text(node.comma_after.unwrap_or(0));
-    let for_in_clause_before = options::spacing_text(node.for_in_clause_before.unwrap_or(0));
-    let for_in_clause_after = options::spacing_text(node.for_in_clause_after.unwrap_or(0));
-    write!(f, "{for_in_clause_before}{async_marker}{for_before}for{for_after}{left}{in_before}in{in_after}{right}{comma_before}{comma}{comma_after}{for_in_clause_after}")?;
+    w.site(node.for_in_clause_before.unwrap_or(0));
+    async_marker.render(w)?;
+    w.site(node.for_keyword_before.unwrap_or(0));
+    w.text("for")?;
+    w.site(node.for_keyword_after.unwrap_or(0));
+    left.render(w)?;
+    w.site(node.in_keyword_before.unwrap_or(0));
+    w.text("in")?;
+    w.site(node.in_keyword_after.unwrap_or(0));
+    right.render(w)?;
+    w.site(node.comma_before.unwrap_or(0));
+    comma.render(w)?;
+    w.site(node.comma_after.unwrap_or(0));
+    w.site(node.for_in_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_if_clause(node: &IfClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_if_clause(node: &IfClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let condition = &node.condition;
-    let if_before = options::spacing_text(node.if_before.unwrap_or(0));
-    let if_after = options::spacing_text(node.if_after.unwrap_or(0));
-    let if_clause_before = options::spacing_text(node.if_clause_before.unwrap_or(0));
-    let if_clause_after = options::spacing_text(node.if_clause_after.unwrap_or(0));
-    write!(f, "{if_clause_before}{if_before}if{if_after}{condition}{if_clause_after}")?;
+    w.site(node.if_clause_before.unwrap_or(0));
+    w.site(node.if_keyword_before.unwrap_or(0));
+    w.text("if")?;
+    w.site(node.if_keyword_after.unwrap_or(0));
+    condition.render(w)?;
+    w.site(node.if_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_conditional_expression(node: &ConditionalExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_conditional_expression(node: &ConditionalExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = &node.alternative;
     let body = &node.body;
     let condition = &node.condition;
-    let else_before = options::spacing_text(node.else_before.unwrap_or(0));
-    let else_after = options::spacing_text(node.else_after.unwrap_or(0));
-    let if_before = options::spacing_text(node.if_before.unwrap_or(0));
-    let if_after = options::spacing_text(node.if_after.unwrap_or(0));
-    let conditional_expression_before = options::spacing_text(node.conditional_expression_before.unwrap_or(0));
-    let conditional_expression_after = options::spacing_text(node.conditional_expression_after.unwrap_or(0));
-    write!(f, "{conditional_expression_before}{body}{if_before}if{if_after}{condition}{else_before}else{else_after}{alternative}{conditional_expression_after}")?;
+    w.site(node.conditional_expression_before.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.if_keyword_before.unwrap_or(0));
+    w.text("if")?;
+    w.site(node.if_keyword_after.unwrap_or(0));
+    condition.render(w)?;
+    w.site(node.else_keyword_before.unwrap_or(0));
+    w.text("else")?;
+    w.site(node.else_keyword_after.unwrap_or(0));
+    alternative.render(w)?;
+    w.site(node.conditional_expression_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_concatenated_string(node: &ConcatenatedStringTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.string.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let string = ListView {
         items: &node.string,
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.string_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.string_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let concatenated_string_before = options::spacing_text(node.concatenated_string_before.unwrap_or(0));
-    let concatenated_string_after = options::spacing_text(node.concatenated_string_after.unwrap_or(0));
-    write!(f, "{concatenated_string_before}{string}{concatenated_string_after}")?;
+    w.site(node.concatenated_string_before.unwrap_or(0));
+    string.render(w)?;
+    w.site(node.concatenated_string_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_string(node: &StringTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
         items: node.content.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: "",
+        before: 0,
+        after: 0,
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
     let string_end = &node.string_end;
     let string_start = &node.string_start;
-    let string_before = options::spacing_text(node.string_before.unwrap_or(0));
-    let string_after = options::spacing_text(node.string_after.unwrap_or(0));
-    write!(f, "{string_before}{string_start}{content}{string_end}{string_after}")?;
+    w.site(node.string_before.unwrap_or(0));
+    string_start.render(w)?;
+    content.render(w)?;
+    string_end.render(w)?;
+    w.site(node.string_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_string_content(node: &StringContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.content.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let content = ListView {
         items: node.content.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: "",
+        before: 0,
+        after: 0,
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_interpolation(node: &InterpolationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let eq_marker = View::new(&node.eq_marker, "=");
     let expression = &node.expression;
     let format_specifier = View::new(&node.format_specifier, "{}");
     let type_conversion = View::new(&node.type_conversion, "{}");
-    let eq_marker_before = options::spacing_text(node.eq_marker_before.unwrap_or(0));
-    let eq_marker_after = options::spacing_text(node.eq_marker_after.unwrap_or(0));
-    let lbrace_before = options::spacing_text(node.lbrace_before.unwrap_or(0));
-    let lbrace_after = options::spacing_text(node.lbrace_after.unwrap_or(0));
-    let rbrace_before = options::spacing_text(node.rbrace_before.unwrap_or(0));
-    let rbrace_after = options::spacing_text(node.rbrace_after.unwrap_or(0));
-    let interpolation_before = options::spacing_text(node.interpolation_before.unwrap_or(0));
-    let interpolation_after = options::spacing_text(node.interpolation_after.unwrap_or(0));
-    write!(f, "{interpolation_before}{lbrace_before}{{{lbrace_after}{expression}{eq_marker_before}{eq_marker}{eq_marker_after}{type_conversion}{format_specifier}{rbrace_before}}}{rbrace_after}{interpolation_after}")?;
+    w.site(node.interpolation_before.unwrap_or(0));
+    w.site(node.lbrace_before.unwrap_or(0));
+    w.text("{")?;
+    w.site(node.lbrace_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.eq_marker_before.unwrap_or(0));
+    eq_marker.render(w)?;
+    w.site(node.eq_marker_after.unwrap_or(0));
+    type_conversion.render(w)?;
+    format_specifier.render(w)?;
+    w.site(node.rbrace_before.unwrap_or(0));
+    w.text("}")?;
+    w.site(node.rbrace_after.unwrap_or(0));
+    w.site(node.interpolation_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_escape_sequence(t: &EscapeSequenceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(f)?;
-    f.write_str(&t.text)
+fn render_escape_sequence(t: &EscapeSequenceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.adjacent();
+    w.text(&t.text)
 }
 
-fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(f)?;
-    f.write_str(&t.text)
+fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.adjacent();
+    w.text(&t.text)
 }
 
-fn render_format_specifier(node: &FormatSpecifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.content.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let content = ListView {
         items: node.content.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: "",
+        before: 0,
+        after: 0,
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let format_specifier_before = options::spacing_text(node.format_specifier_before.unwrap_or(0));
-    let format_specifier_after = options::spacing_text(node.format_specifier_after.unwrap_or(0));
-    write!(f, "{format_specifier_before}{colon_before}:{colon_after}{content}{format_specifier_after}")?;
+    w.site(node.format_specifier_before.unwrap_or(0));
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.format_specifier_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_type_conversion(t: &TypeConversionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_type_conversion(t: &TypeConversionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_integer(t: &IntegerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_integer(t: &IntegerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_float(t: &FloatTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_float(t: &FloatTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_identifier(t: &IdentifierTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_identifier(t: &IdentifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_true(t: &TrueTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_true(t: &TrueTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_false(t: &FalseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_false(t: &FalseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_none(t: &NoneTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_none(t: &NoneTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_await(node: &AwaitTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_await(node: &AwaitTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let anon_await_before = options::spacing_text(node.anon_await_before.unwrap_or(0));
-    let anon_await_after = options::spacing_text(node.anon_await_after.unwrap_or(0));
-    let await_before = options::spacing_text(node.await_before.unwrap_or(0));
-    let await_after = options::spacing_text(node.await_after.unwrap_or(0));
-    write!(f, "{await_before}{anon_await_before}await{anon_await_after}{expression}{await_after}")?;
+    w.site(node.await_before.unwrap_or(0));
+    w.site(node.await_keyword_before.unwrap_or(0));
+    w.text("await")?;
+    w.site(node.await_keyword_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.await_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_comment(t: &CommentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_comment(t: &CommentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_line_continuation(t: &LineContinuationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_line_continuation(t: &LineContinuationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_positional_separator(t: &PositionalSeparatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_positional_separator(t: &PositionalSeparatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_keyword_separator(t: &KeywordSeparatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_keyword_separator(t: &KeywordSeparatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_kw_async_marker(t: &KwAsyncMarkerTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_kw_async_marker(t: &KwAsyncMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.simple_statement.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let simple_statement = ListView {
         items: &node.simple_statement,
         template: "{}",
         token: ";",
-        before: options::spacing_text(node.simple_statement_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.simple_statement_separator_space_after.unwrap_or(0)),
+        before: node.simple_statement_separator_space_before.unwrap_or(0),
+        after: node.simple_statement_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{simple_statement}")?;
+    simple_statement.render(w)?;
     Ok(())
 }
 
-fn render_subjects(node: &SubjectsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_subjects(node: &SubjectsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.subject.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let subject = ListView {
         items: &node.subject,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.subject_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.subject_separator_space_after.unwrap_or(0)),
+        before: node.subject_separator_space_before.unwrap_or(0),
+        after: node.subject_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{subject}")?;
+    subject.render(w)?;
     Ok(())
 }
 
-fn render_case_patterns(node: &CasePatternsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_case_patterns(node: &CasePatternsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.case_pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let case_pattern = ListView {
         items: &node.case_pattern,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.case_pattern_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.case_pattern_separator_space_after.unwrap_or(0)),
+        before: node.case_pattern_separator_space_before.unwrap_or(0),
+        after: node.case_pattern_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{case_pattern}")?;
+    case_pattern.render(w)?;
     Ok(())
 }
 
-fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.with_item.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let with_item = ListView {
         items: &node.with_item,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.with_item_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.with_item_separator_space_after.unwrap_or(0)),
+        before: node.with_item_separator_space_before.unwrap_or(0),
+        after: node.with_item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{with_item}")?;
+    with_item.render(w)?;
     Ok(())
 }
 
-fn render_types(node: &TypesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.type_.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let type_ = ListView {
         items: &node.type_,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.type_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.type_separator_space_after.unwrap_or(0)),
+        before: node.type_separator_space_before.unwrap_or(0),
+        after: node.type_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{type_}")?;
+    type_.render(w)?;
     Ok(())
 }
 
-fn render_argument_list_elements(node: &ArgumentListElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_argument_list_elements(node: &ArgumentListElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let element = ListView {
         items: &node.element,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        before: node.element_separator_space_before.unwrap_or(0),
+        after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{element}")?;
+    element.render(w)?;
     Ok(())
 }
 
-fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.expression.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let expression = ListView {
         items: &node.expression,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.expression_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.expression_separator_space_after.unwrap_or(0)),
+        before: node.expression_separator_space_before.unwrap_or(0),
+        after: node.expression_separator_space_after.unwrap_or(0),
         leading: true,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{expression}")?;
+    expression.render(w)?;
     Ok(())
 }
 
-fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.case_pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let case_pattern = ListView {
         items: &node.case_pattern,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.case_pattern_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.case_pattern_separator_space_after.unwrap_or(0)),
+        before: node.case_pattern_separator_space_before.unwrap_or(0),
+        after: node.case_pattern_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{case_pattern}")?;
+    case_pattern.render(w)?;
     Ok(())
 }
 
-fn render_dict_pattern_elements(node: &DictPatternElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dict_pattern_elements(node: &DictPatternElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let element = ListView {
         items: &node.element,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        before: node.element_separator_space_before.unwrap_or(0),
+        after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{element}")?;
+    element.render(w)?;
     Ok(())
 }
 
-fn render_pattern_list_patterns(node: &PatternListPatternsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_pattern_list_patterns(node: &PatternListPatternsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.pattern.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let pattern = ListView {
         items: &node.pattern,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.pattern_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.pattern_separator_space_after.unwrap_or(0)),
+        before: node.pattern_separator_space_before.unwrap_or(0),
+        after: node.pattern_separator_space_after.unwrap_or(0),
         leading: true,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{pattern}")?;
+    pattern.render(w)?;
     Ok(())
 }
 
-fn render_subscripts(node: &SubscriptsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_subscripts(node: &SubscriptsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.subscript.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let subscript = ListView {
         items: &node.subscript,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.subscript_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.subscript_separator_space_after.unwrap_or(0)),
+        before: node.subscript_separator_space_before.unwrap_or(0),
+        after: node.subscript_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{subscript}")?;
+    subscript.render(w)?;
     Ok(())
 }
 
-fn render_dictionary_elements(node: &DictionaryElementsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_dictionary_elements(node: &DictionaryElementsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.element.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let element = ListView {
         items: &node.element,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.element_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.element_separator_space_after.unwrap_or(0)),
+        before: node.element_separator_space_before.unwrap_or(0),
+        after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{element}")?;
+    element.render(w)?;
     Ok(())
 }
 
-fn render_slice_group(node: &SliceGroupTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_slice_group(node: &SliceGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.expression.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let expression = View::new(&node.expression, "{}");
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let slice_group_before = options::spacing_text(node.slice_group_before.unwrap_or(0));
-    let slice_group_after = options::spacing_text(node.slice_group_after.unwrap_or(0));
-    write!(f, "{slice_group_before}{colon_before}:{colon_after}{expression}{slice_group_after}")?;
+    w.site(node.slice_group_before.unwrap_or(0));
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.slice_group_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    ::std::fmt::Display::fmt(t, f)
+fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    t.render(w)
 }
 
-fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    ::std::fmt::Display::fmt(t, f)
+fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    t.render(w)
 }
 
-fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = View::new(&node.alias, "{}");
     let value = &node.value;
-    let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
-    let except_clause_exception_as_before = options::spacing_text(node.except_clause_exception_as_before.unwrap_or(0));
-    let except_clause_exception_as_after = options::spacing_text(node.except_clause_exception_as_after.unwrap_or(0));
-    write!(f, "{except_clause_exception_as_before}{value}")?;
+    w.site(node.except_clause_exception_as_before.unwrap_or(0));
+    value.render(w)?;
     if alias.is_present() {
-        write!(f, "{as_before}as{as_after}{alias}")?;
+        w.site(node.as_keyword_before.unwrap_or(0));
+        w.text("as")?;
+        w.site(node.as_keyword_after.unwrap_or(0));
+        alias.render(w)?;
     }
-    write!(f, "{except_clause_exception_as_after}")?;
+    w.site(node.except_clause_exception_as_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.list_pattern_case_patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let case_tuple_pattern_before = options::spacing_text(node.case_tuple_pattern_before.unwrap_or(0));
-    let case_tuple_pattern_after = options::spacing_text(node.case_tuple_pattern_after.unwrap_or(0));
-    write!(f, "{case_tuple_pattern_before}{lparen_before}({lparen_after}{list_pattern_case_patterns}{rparen_before}){rparen_after}{case_tuple_pattern_after}")?;
+    w.site(node.case_tuple_pattern_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    list_pattern_case_patterns.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.case_tuple_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_case_list_pattern(node: &CaseListPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.list_pattern_case_patterns.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
-    let lbrack_before = options::spacing_text(node.lbrack_before.unwrap_or(0));
-    let lbrack_after = options::spacing_text(node.lbrack_after.unwrap_or(0));
-    let rbrack_before = options::spacing_text(node.rbrack_before.unwrap_or(0));
-    let rbrack_after = options::spacing_text(node.rbrack_after.unwrap_or(0));
-    let case_list_pattern_before = options::spacing_text(node.case_list_pattern_before.unwrap_or(0));
-    let case_list_pattern_after = options::spacing_text(node.case_list_pattern_after.unwrap_or(0));
-    write!(f, "{case_list_pattern_before}{lbrack_before}[{lbrack_after}{list_pattern_case_patterns}{rbrack_before}]{rbrack_after}{case_list_pattern_after}")?;
+    w.site(node.case_list_pattern_before.unwrap_or(0));
+    w.site(node.lbrack_before.unwrap_or(0));
+    w.text("[")?;
+    w.site(node.lbrack_after.unwrap_or(0));
+    list_pattern_case_patterns.render(w)?;
+    w.site(node.rbrack_before.unwrap_or(0));
+    w.text("]")?;
+    w.site(node.rbrack_after.unwrap_or(0));
+    w.site(node.case_list_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_case_as_pattern(node: &CaseAsPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_case_as_pattern(node: &CaseAsPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let case_pattern = &node.case_pattern;
     let identifier = &node.identifier;
-    let as_before = options::spacing_text(node.as_before.unwrap_or(0));
-    let as_after = options::spacing_text(node.as_after.unwrap_or(0));
-    let case_as_pattern_before = options::spacing_text(node.case_as_pattern_before.unwrap_or(0));
-    let case_as_pattern_after = options::spacing_text(node.case_as_pattern_after.unwrap_or(0));
-    write!(f, "{case_as_pattern_before}{case_pattern}{as_before}as{as_after}{identifier}{case_as_pattern_after}")?;
+    w.site(node.case_as_pattern_before.unwrap_or(0));
+    case_pattern.render(w)?;
+    w.site(node.as_keyword_before.unwrap_or(0));
+    w.text("as")?;
+    w.site(node.as_keyword_after.unwrap_or(0));
+    identifier.render(w)?;
+    w.site(node.case_as_pattern_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_comprehension_clauses(node: &ComprehensionClausesTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_comprehension_clauses(node: &ComprehensionClausesTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.content.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let content = ListView {
         items: node.content.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.content_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.content_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let import_list = &node.import_list;
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let parenthesized_import_list_before = options::spacing_text(node.parenthesized_import_list_before.unwrap_or(0));
-    let parenthesized_import_list_after = options::spacing_text(node.parenthesized_import_list_after.unwrap_or(0));
-    write!(f, "{parenthesized_import_list_before}{lparen_before}({lparen_after}{import_list}{rparen_before}){rparen_after}{parenthesized_import_list_after}")?;
+    w.site(node.parenthesized_import_list_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    import_list.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.parenthesized_import_list_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_print_arguments(node: &PrintArgumentsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_print_arguments(node: &PrintArgumentsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.argument.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let argument = ListView {
         items: &node.argument,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.argument_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.argument_separator_space_after.unwrap_or(0)),
+        before: node.argument_separator_space_before.unwrap_or(0),
+        after: node.argument_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{argument}")?;
+    argument.render(w)?;
     Ok(())
 }
 
-fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.argument.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let argument = ListView {
         items: &node.argument,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.argument_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.argument_separator_space_after.unwrap_or(0)),
+        before: node.argument_separator_space_before.unwrap_or(0),
+        after: node.argument_separator_space_after.unwrap_or(0),
         leading: true,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{argument}")?;
+    argument.render(w)?;
     Ok(())
 }
 
-fn render_print_statement_chevron(node: &PrintStatementChevronTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_print_statement_chevron(node: &PrintStatementChevronTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let chevron = &node.chevron;
     let print_chevron_arguments = View::new(&node.print_chevron_arguments, "{}");
-    let print_before = options::spacing_text(node.print_before.unwrap_or(0));
-    let print_after = options::spacing_text(node.print_after.unwrap_or(0));
-    let print_statement_chevron_before = options::spacing_text(node.print_statement_chevron_before.unwrap_or(0));
-    let print_statement_chevron_after = options::spacing_text(node.print_statement_chevron_after.unwrap_or(0));
-    write!(f, "{print_statement_chevron_before}{print_before}print\u{FFFE}{print_after}{chevron}{print_chevron_arguments}{print_statement_chevron_after}")?;
+    w.site(node.print_statement_chevron_before.unwrap_or(0));
+    w.site(node.print_keyword_before.unwrap_or(0));
+    w.text("print")?;
+    w.adjacent();
+    w.site(node.print_keyword_after.unwrap_or(0));
+    chevron.render(w)?;
+    print_chevron_arguments.render(w)?;
+    w.site(node.print_statement_chevron_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_print_statement_plain(node: &PrintStatementPlainTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_print_statement_plain(node: &PrintStatementPlainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let print_arguments = &node.print_arguments;
-    let print_before = options::spacing_text(node.print_before.unwrap_or(0));
-    let print_after = options::spacing_text(node.print_after.unwrap_or(0));
-    let print_statement_plain_before = options::spacing_text(node.print_statement_plain_before.unwrap_or(0));
-    let print_statement_plain_after = options::spacing_text(node.print_statement_plain_after.unwrap_or(0));
-    write!(f, "{print_statement_plain_before}{print_before}print{print_after}{print_arguments}{print_statement_plain_after}")?;
+    w.site(node.print_statement_plain_before.unwrap_or(0));
+    w.site(node.print_keyword_before.unwrap_or(0));
+    w.text("print")?;
+    w.site(node.print_keyword_after.unwrap_or(0));
+    print_arguments.render(w)?;
+    w.site(node.print_statement_plain_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_wildcard_pattern(t: &WildcardPatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_wildcard_pattern(t: &WildcardPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let sign = View::new(&node.sign, "-");
-    let sign_before = options::spacing_text(node.sign_before.unwrap_or(0));
-    let sign_after = options::spacing_text(node.sign_after.unwrap_or(0));
-    let simple_pattern_negative_before = options::spacing_text(node.simple_pattern_negative_before.unwrap_or(0));
-    let simple_pattern_negative_after = options::spacing_text(node.simple_pattern_negative_after.unwrap_or(0));
-    write!(f, "{simple_pattern_negative_before}{sign_before}{sign}{sign_after}{content}{simple_pattern_negative_after}")?;
+    w.site(node.simple_pattern_negative_before.unwrap_or(0));
+    w.site(node.sign_before.unwrap_or(0));
+    sign.render(w)?;
+    w.site(node.sign_after.unwrap_or(0));
+    content.render(w)?;
+    w.site(node.simple_pattern_negative_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_except_clause_exception_list(node: &ExceptClauseExceptionListTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_except_clause_exception_list(node: &ExceptClauseExceptionListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.value.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let value = ListView {
         items: &node.value,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.value_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.value_separator_space_after.unwrap_or(0)),
+        before: node.value_separator_space_before.unwrap_or(0),
+        after: node.value_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{value}")?;
+    value.render(w)?;
     Ok(())
 }
 
-fn render_except_clause_exception(node: &ExceptClauseExceptionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_except_clause_exception(node: &ExceptClauseExceptionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    write!(f, "{content}")?;
+    content.render(w)?;
     Ok(())
 }
 
-fn render_assignment_eq(node: &AssignmentEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_assignment_eq(node: &AssignmentEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let right = &node.right;
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let assignment_eq_before = options::spacing_text(node.assignment_eq_before.unwrap_or(0));
-    let assignment_eq_after = options::spacing_text(node.assignment_eq_after.unwrap_or(0));
-    write!(f, "{assignment_eq_before}{eq_before}={eq_after}{right}{assignment_eq_after}")?;
+    w.site(node.assignment_eq_before.unwrap_or(0));
+    w.site(node.eq_before.unwrap_or(0));
+    w.text("=")?;
+    w.site(node.eq_after.unwrap_or(0));
+    right.render(w)?;
+    w.site(node.assignment_eq_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_assignment_type(node: &AssignmentTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_assignment_type(node: &AssignmentTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let type_ = &node.type_;
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let assignment_type_before = options::spacing_text(node.assignment_type_before.unwrap_or(0));
-    let assignment_type_after = options::spacing_text(node.assignment_type_after.unwrap_or(0));
-    write!(f, "{assignment_type_before}{colon_before}:{colon_after}{type_}{assignment_type_after}")?;
+    w.site(node.assignment_type_before.unwrap_or(0));
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    type_.render(w)?;
+    w.site(node.assignment_type_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_assignment_typed(node: &AssignmentTypedTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_assignment_typed(node: &AssignmentTypedTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let right = &node.right;
     let type_ = &node.type_;
-    let colon_before = options::spacing_text(node.colon_before.unwrap_or(0));
-    let colon_after = options::spacing_text(node.colon_after.unwrap_or(0));
-    let eq_before = options::spacing_text(node.eq_before.unwrap_or(0));
-    let eq_after = options::spacing_text(node.eq_after.unwrap_or(0));
-    let assignment_typed_before = options::spacing_text(node.assignment_typed_before.unwrap_or(0));
-    let assignment_typed_after = options::spacing_text(node.assignment_typed_after.unwrap_or(0));
-    write!(f, "{assignment_typed_before}{colon_before}:{colon_after}{type_}{eq_before}={eq_after}{right}{assignment_typed_after}")?;
+    w.site(node.assignment_typed_before.unwrap_or(0));
+    w.site(node.colon_before.unwrap_or(0));
+    w.text(":")?;
+    w.site(node.colon_after.unwrap_or(0));
+    type_.render(w)?;
+    w.site(node.eq_before.unwrap_or(0));
+    w.text("=")?;
+    w.site(node.eq_after.unwrap_or(0));
+    right.render(w)?;
+    w.site(node.assignment_typed_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.expression.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let expression = ListView {
         items: &node.expression,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.expression_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.expression_separator_space_after.unwrap_or(0)),
+        before: node.expression_separator_space_before.unwrap_or(0),
+        after: node.expression_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{expression}")?;
+    expression.render(w)?;
     Ok(())
 }
 
-fn render_with_clause_bare(node: &WithClauseBareTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_with_clause_bare(node: &WithClauseBareTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.with_item.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let with_item = ListView {
         items: &node.with_item,
         template: "{}",
         token: ",",
-        before: options::spacing_text(node.with_item_separator_space_before.unwrap_or(0)),
-        after: options::spacing_text(node.with_item_separator_space_after.unwrap_or(0)),
+        before: node.with_item_separator_space_before.unwrap_or(0),
+        after: node.with_item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    write!(f, "{with_item}")?;
+    with_item.render(w)?;
     Ok(())
 }
 
-fn render_with_clause_paren(node: &WithClauseParenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_with_clause_paren(node: &WithClauseParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let with_clause_with_items = &node.with_clause_with_items;
-    let lparen_before = options::spacing_text(node.lparen_before.unwrap_or(0));
-    let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));
-    let rparen_before = options::spacing_text(node.rparen_before.unwrap_or(0));
-    let rparen_after = options::spacing_text(node.rparen_after.unwrap_or(0));
-    let with_clause_paren_before = options::spacing_text(node.with_clause_paren_before.unwrap_or(0));
-    let with_clause_paren_after = options::spacing_text(node.with_clause_paren_after.unwrap_or(0));
-    write!(f, "{with_clause_paren_before}{lparen_before}({lparen_after}{with_clause_with_items}{rparen_before}){rparen_after}{with_clause_paren_after}")?;
+    w.site(node.with_clause_paren_before.unwrap_or(0));
+    w.site(node.lparen_before.unwrap_or(0));
+    w.text("(")?;
+    w.site(node.lparen_after.unwrap_or(0));
+    with_clause_with_items.render(w)?;
+    w.site(node.rparen_before.unwrap_or(0));
+    w.text(")")?;
+    w.site(node.rparen_after.unwrap_or(0));
+    w.site(node.with_clause_paren_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_match_block_block(node: &MatchBlockBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     if node.alternative.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
-            return f.write_str(text);
+            return w.text(text);
         }
     }
     let alternative = ListView {
         items: node.alternative.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
-        before: "",
-        after: options::spacing_text(node.alternative_separator_space.unwrap_or(0)),
+        before: 0,
+        after: node.alternative_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: "",
-        tail: "",
+        head: 0,
+        tail: 0,
     };
-    let match_block_block_before = options::spacing_text(node.match_block_block_before.unwrap_or(0));
-    let match_block_block_after = options::spacing_text(node.match_block_block_after.unwrap_or(0));
-    write!(f, "{match_block_block_before}\u{FDD0}\n{alternative}\u{FDD1}\n{match_block_block_after}")?;
+    w.site(node.match_block_block_before.unwrap_or(0));
+    w.indent();
+    w.seam("\n");
+    alternative.render(w)?;
+    w.dedent();
+    w.site(node.match_block_block_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_suite_block(node: &SuiteBlockTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_suite_block(node: &SuiteBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
-    let suite_block_before = options::spacing_text(node.suite_block_before.unwrap_or(0));
-    let suite_block_after = options::spacing_text(node.suite_block_after.unwrap_or(0));
-    write!(f, "{suite_block_before}\u{FDD0}\n{block}{suite_block_after}")?;
+    w.site(node.suite_block_before.unwrap_or(0));
+    w.indent();
+    w.seam("\n");
+    block.render(w)?;
+    w.site(node.suite_block_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let operators = &node.operators;
     let primary_expression = &node.primary_expression;
-    let operators_before = options::spacing_text(node.operators_before.unwrap_or(0));
-    let operators_after = options::spacing_text(node.operators_after.unwrap_or(0));
-    let comparison_operator_comparator_before = options::spacing_text(node.comparison_operator_comparator_before.unwrap_or(0));
-    let comparison_operator_comparator_after = options::spacing_text(node.comparison_operator_comparator_after.unwrap_or(0));
-    write!(f, "{comparison_operator_comparator_before}{operators_before}{operators}{operators_after}{primary_expression}{comparison_operator_comparator_after}")?;
+    w.site(node.comparison_operator_comparator_before.unwrap_or(0));
+    w.site(node.operators_before.unwrap_or(0));
+    operators.render(w)?;
+    w.site(node.operators_after.unwrap_or(0));
+    primary_expression.render(w)?;
+    w.site(node.comparison_operator_comparator_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_yield_from_clause(node: &YieldFromClauseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_yield_from_clause(node: &YieldFromClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let from_before = options::spacing_text(node.from_before.unwrap_or(0));
-    let from_after = options::spacing_text(node.from_after.unwrap_or(0));
-    let yield_from_clause_before = options::spacing_text(node.yield_from_clause_before.unwrap_or(0));
-    let yield_from_clause_after = options::spacing_text(node.yield_from_clause_after.unwrap_or(0));
-    write!(f, "{yield_from_clause_before}{from_before}from{from_after}{expression}{yield_from_clause_after}")?;
+    w.site(node.yield_from_clause_before.unwrap_or(0));
+    w.site(node.from_keyword_before.unwrap_or(0));
+    w.text("from")?;
+    w.site(node.from_keyword_after.unwrap_or(0));
+    expression.render(w)?;
+    w.site(node.yield_from_clause_after.unwrap_or(0));
     Ok(())
 }
 
-fn render_string_start(t: &StringStartTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_string_start(t: &StringStartTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render__string_content(t: &_StringContentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(f)?;
-    f.write_str(&t.text)
+fn render__string_content(t: &_StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.adjacent();
+    w.text(&t.text)
 }
 
-fn render_escape_interpolation(t: &EscapeInterpolationTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(f)?;
-    f.write_str(&t.text)
+fn render_escape_interpolation(t: &EscapeInterpolationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.adjacent();
+    w.text(&t.text)
 }
 
-fn render_string_end(t: &StringEndTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    ::sittir_core::spacing::mark_adjacent(f)?;
-    f.write_str(&t.text)
+fn render_string_end(t: &StringEndTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.adjacent();
+    w.text(&t.text)
 }
 
-fn render_newline(t: &NewlineTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, t.text.as_str()].concat())
+fn render_newline(t: &NewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_blankline(t: &BlanklineTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, t.text.as_str()].concat())
+fn render_blankline(t: &BlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_double_newline(t: &DoubleNewlineTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, t.text.as_str()].concat())
+fn render_double_newline(t: &DoubleNewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_tight(t: &TightTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, t.text.as_str()].concat())
+fn render_tight(t: &TightTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_space(t: &SpaceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, t.text.as_str()].concat())
+fn render_space(t: &SpaceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_indent(t: &IndentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_indent(t: &IndentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_dedent(t: &DedentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_except(t: &ExceptTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_import_keyword(t: &ImportKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_import(t: &ImportTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_dot(t: &DotTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_dot(t: &DotTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_from_keyword(t: &FromKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_from(t: &FromTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_future_ukeyword(t: &FutureUKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_future_u(t: &FutureUTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_as_keyword(t: &AsKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_as(t: &AsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_star(t: &StarTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_star(t: &StarTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_gt_gt(t: &GtGtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_gt_gt(t: &GtGtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_assert_keyword(t: &AssertKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_assert(t: &AssertTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_colon_eq(t: &ColonEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_colon_eq(t: &ColonEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_return_keyword(t: &ReturnKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_return(t: &ReturnTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_del_keyword(t: &DelKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_del(t: &DelTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_raise_keyword(t: &RaiseKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_raise(t: &RaiseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_pass_keyword(t: &PassKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_pass(t: &PassTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_break_keyword(t: &BreakKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_break(t: &BreakTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_continue_keyword(t: &ContinueKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_continue(t: &ContinueTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_if_keyword(t: &IfKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_if(t: &IfTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_colon(t: &ColonTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_colon(t: &ColonTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_elif_keyword(t: &ElifKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_elif(t: &ElifTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_else_keyword(t: &ElseKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_else(t: &ElseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_match_keyword(t: &MatchKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_match(t: &MatchTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_case_keyword(t: &CaseKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_case(t: &CaseTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_for_keyword(t: &ForKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_for(t: &ForTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_in_keyword(t: &InKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_in(t: &InTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_while_keyword(t: &WhileKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_while(t: &WhileTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_try_keyword(t: &TryKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_try(t: &TryTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_except_keyword(t: &ExceptKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_finally(t: &FinallyTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_finally_keyword(t: &FinallyKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_with(t: &WithTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_with_keyword(t: &WithKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_def(t: &DefTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_def_keyword(t: &DefKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_dash_gt(t: &DashGtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_dash_gt(t: &DashGtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lparen(t: &LparenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lparen(t: &LparenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_rparen(t: &RparenTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_rparen(t: &RparenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_star_star(t: &StarStarTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_star_star(t: &StarStarTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_global(t: &GlobalTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_global_keyword(t: &GlobalKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_nonlocal(t: &NonlocalTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_nonlocal_keyword(t: &NonlocalKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_exec(t: &ExecTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_exec_keyword(t: &ExecKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_anon_type(t: &AnonTypeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_type_keyword(t: &TypeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_eq(t: &EqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_eq(t: &EqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_class(t: &ClassTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_class_keyword(t: &ClassKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lbrack(t: &LbrackTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lbrack(t: &LbrackTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_rbrack(t: &RbrackTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_rbrack(t: &RbrackTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_at(t: &AtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_at(t: &AtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_comma(t: &CommaTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_comma(t: &CommaTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lbrace(t: &LbraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lbrace(t: &LbraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_rbrace(t: &RbraceTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_rbrace(t: &RbraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_anonymous(t: &AnonymousTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_underscore(t: &UnderscoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_dash(t: &DashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_dash(t: &DashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_plus(t: &PlusTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_plus(t: &PlusTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_not(t: &NotTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_not_keyword(t: &NotKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_and(t: &AndTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_and_keyword(t: &AndKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_or(t: &OrTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_or_keyword(t: &OrKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_slash(t: &SlashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_slash(t: &SlashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_percent(t: &PercentTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_percent(t: &PercentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_slash_slash(t: &SlashSlashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_slash_slash(t: &SlashSlashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_pipe(t: &PipeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_pipe(t: &PipeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_amp(t: &AmpTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_amp(t: &AmpTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_caret(t: &CaretTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_caret(t: &CaretTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lt_lt(t: &LtLtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lt_lt(t: &LtLtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_anon_lambda(t: &AnonLambdaTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lambda_keyword(t: &LambdaKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_anon_yield(t: &AnonYieldTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_yield_keyword(t: &YieldKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_bslash(t: &BslashTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_bslash(t: &BslashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_anon_await(t: &AnonAwaitTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_await_keyword(t: &AwaitKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_async(t: &AsyncTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_async_keyword(t: &AsyncKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_tilde(t: &TildeTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_tilde(t: &TildeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_plus_eq(t: &PlusEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_plus_eq(t: &PlusEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_dash_eq(t: &DashEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_dash_eq(t: &DashEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_star_eq(t: &StarEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_star_eq(t: &StarEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_slash_eq(t: &SlashEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_slash_eq(t: &SlashEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_at_eq(t: &AtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_at_eq(t: &AtEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_slash_slash_eq(t: &SlashSlashEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_slash_slash_eq(t: &SlashSlashEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_percent_eq(t: &PercentEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_percent_eq(t: &PercentEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_star_star_eq(t: &StarStarEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_star_star_eq(t: &StarStarEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_gt_gt_eq(t: &GtGtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_gt_gt_eq(t: &GtGtEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lt_lt_eq(t: &LtLtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lt_lt_eq(t: &LtLtEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_amp_eq(t: &AmpEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_amp_eq(t: &AmpEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_caret_eq(t: &CaretEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_caret_eq(t: &CaretEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_pipe_eq(t: &PipeEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_pipe_eq(t: &PipeEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_print(t: &PrintTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_print_keyword(t: &PrintKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lt(t: &LtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lt(t: &LtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lt_eq(t: &LtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lt_eq(t: &LtEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_eq_eq(t: &EqEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_eq_eq(t: &EqEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_bang_eq(t: &BangEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_bang_eq(t: &BangEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_gt_eq(t: &GtEqTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_gt_eq(t: &GtEqTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_gt(t: &GtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_gt(t: &GtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_lt_gt(t: &LtGtTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_lt_gt(t: &LtGtTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_is(t: &IsTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-    f.write_str(&t.text)
+fn render_is_keyword(t: &IsKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
 }
 
-fn render_simple_statement(t: &SimpleStatementTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        SimpleStatementTransport::FutureImportStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::ImportStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::ImportFromStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::PrintStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::AssertStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::ExpressionStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::ReturnStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::DeleteStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::RaiseStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::PassStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::BreakStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::ContinueStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::GlobalStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::NonlocalStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::ExecStatement(inner) => ::std::fmt::Display::fmt(inner, f),
-        SimpleStatementTransport::TypeAliasStatement(inner) => ::std::fmt::Display::fmt(inner, f),
+        SimpleStatementTransport::FutureImportStatement(inner) => inner.render(w),
+        SimpleStatementTransport::ImportStatement(inner) => inner.render(w),
+        SimpleStatementTransport::ImportFromStatement(inner) => inner.render(w),
+        SimpleStatementTransport::PrintStatement(inner) => inner.render(w),
+        SimpleStatementTransport::AssertStatement(inner) => inner.render(w),
+        SimpleStatementTransport::ExpressionStatement(inner) => inner.render(w),
+        SimpleStatementTransport::ReturnStatement(inner) => inner.render(w),
+        SimpleStatementTransport::DeleteStatement(inner) => inner.render(w),
+        SimpleStatementTransport::RaiseStatement(inner) => inner.render(w),
+        SimpleStatementTransport::PassStatement(inner) => inner.render(w),
+        SimpleStatementTransport::BreakStatement(inner) => inner.render(w),
+        SimpleStatementTransport::ContinueStatement(inner) => inner.render(w),
+        SimpleStatementTransport::GlobalStatement(inner) => inner.render(w),
+        SimpleStatementTransport::NonlocalStatement(inner) => inner.render(w),
+        SimpleStatementTransport::ExecStatement(inner) => inner.render(w),
+        SimpleStatementTransport::TypeAliasStatement(inner) => inner.render(w),
     }
 }
 
-fn render_parameter(t: &ParameterTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_parameter(t: &ParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ParameterTransport::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::TypedParameter(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::DefaultParameter(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::TypedDefaultParameter(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::KeywordSeparator(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::PositionalSeparator(inner) => ::std::fmt::Display::fmt(inner, f),
-        ParameterTransport::DictionarySplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        ParameterTransport::Identifier(inner) => inner.render(w),
+        ParameterTransport::TypedParameter(inner) => inner.render(w),
+        ParameterTransport::DefaultParameter(inner) => inner.render(w),
+        ParameterTransport::TypedDefaultParameter(inner) => inner.render(w),
+        ParameterTransport::ListSplatPattern(inner) => inner.render(w),
+        ParameterTransport::TuplePattern(inner) => inner.render(w),
+        ParameterTransport::KeywordSeparator(inner) => inner.render(w),
+        ParameterTransport::PositionalSeparator(inner) => inner.render(w),
+        ParameterTransport::DictionarySplatPattern(inner) => inner.render(w),
     }
 }
 
-fn render_pattern(t: &PatternTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        PatternTransport::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-        PatternTransport::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-        PatternTransport::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-        PatternTransport::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
-        PatternTransport::TuplePattern(inner) => ::std::fmt::Display::fmt(inner, f),
-        PatternTransport::ListPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PatternTransport::Identifier(inner) => inner.render(w),
+        PatternTransport::Subscript(inner) => inner.render(w),
+        PatternTransport::Attribute(inner) => inner.render(w),
+        PatternTransport::ListSplatPattern(inner) => inner.render(w),
+        PatternTransport::TuplePattern(inner) => inner.render(w),
+        PatternTransport::ListPattern(inner) => inner.render(w),
     }
 }
 
-fn render_expression(t: &ExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_expression(t: &ExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ExpressionTransport::ComparisonOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-        ExpressionTransport::NotOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-        ExpressionTransport::BooleanOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-        ExpressionTransport::Lambda(inner) => ::std::fmt::Display::fmt(inner, f),
-        ExpressionTransport::PrimaryExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-        ExpressionTransport::ConditionalExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-        ExpressionTransport::NamedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-        ExpressionTransport::AsPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        ExpressionTransport::ComparisonOperator(inner) => inner.render(w),
+        ExpressionTransport::NotOperator(inner) => inner.render(w),
+        ExpressionTransport::BooleanOperator(inner) => inner.render(w),
+        ExpressionTransport::Lambda(inner) => inner.render(w),
+        ExpressionTransport::PrimaryExpression(inner) => inner.render(w),
+        ExpressionTransport::ConditionalExpression(inner) => inner.render(w),
+        ExpressionTransport::NamedExpression(inner) => inner.render(w),
+        ExpressionTransport::AsPattern(inner) => inner.render(w),
     }
 }
 
-fn render_primary_expression(t: &PrimaryExpressionTransport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+fn render_primary_expression(t: &PrimaryExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        PrimaryExpressionTransport::Await(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::BinaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Identifier(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::String(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::ConcatenatedString(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Integer(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Float(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::True(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::False(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::None(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::UnaryOperator(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Attribute(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Subscript(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Call(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::List(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::ListComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Dictionary(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::DictionaryComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Set(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::SetComprehension(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Tuple(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::ParenthesizedExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::GeneratorExpression(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::Ellipsis(inner) => ::std::fmt::Display::fmt(inner, f),
-        PrimaryExpressionTransport::ListSplatPattern(inner) => ::std::fmt::Display::fmt(inner, f),
+        PrimaryExpressionTransport::Await(inner) => inner.render(w),
+        PrimaryExpressionTransport::BinaryOperator(inner) => inner.render(w),
+        PrimaryExpressionTransport::Identifier(inner) => inner.render(w),
+        PrimaryExpressionTransport::String(inner) => inner.render(w),
+        PrimaryExpressionTransport::ConcatenatedString(inner) => inner.render(w),
+        PrimaryExpressionTransport::Integer(inner) => inner.render(w),
+        PrimaryExpressionTransport::Float(inner) => inner.render(w),
+        PrimaryExpressionTransport::True(inner) => inner.render(w),
+        PrimaryExpressionTransport::False(inner) => inner.render(w),
+        PrimaryExpressionTransport::None(inner) => inner.render(w),
+        PrimaryExpressionTransport::UnaryOperator(inner) => inner.render(w),
+        PrimaryExpressionTransport::Attribute(inner) => inner.render(w),
+        PrimaryExpressionTransport::Subscript(inner) => inner.render(w),
+        PrimaryExpressionTransport::Call(inner) => inner.render(w),
+        PrimaryExpressionTransport::List(inner) => inner.render(w),
+        PrimaryExpressionTransport::ListComprehension(inner) => inner.render(w),
+        PrimaryExpressionTransport::Dictionary(inner) => inner.render(w),
+        PrimaryExpressionTransport::DictionaryComprehension(inner) => inner.render(w),
+        PrimaryExpressionTransport::Set(inner) => inner.render(w),
+        PrimaryExpressionTransport::SetComprehension(inner) => inner.render(w),
+        PrimaryExpressionTransport::Tuple(inner) => inner.render(w),
+        PrimaryExpressionTransport::ParenthesizedExpression(inner) => inner.render(w),
+        PrimaryExpressionTransport::GeneratorExpression(inner) => inner.render(w),
+        PrimaryExpressionTransport::Ellipsis(inner) => inner.render(w),
+        PrimaryExpressionTransport::ListSplatPattern(inner) => inner.render(w),
     }
 }
 
@@ -47450,339 +47677,335 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// `&AnyTransport` so the root's own `SlotValue` carrier renders through
 /// the SAME single SpacingWriter wrap — a second entry point would be a
 /// second place the root seam policy could drift.
-pub fn render_transport_dispatch(transport: &dyn ::std::fmt::Display, indent: &str) -> Result<String, ::std::fmt::Error> {
+pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
-    // only where a word-class char would collide with a word-class char
-    // across write seams, per this grammar's own word class. Wrap ONCE
-    // here — never per level.
-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_indent(indent);
-    ::std::fmt::Write::write_fmt(&mut w, format_args!("{transport}"))?;
+    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent);
+    transport.render(&mut w)?;
     w.finish()?;
     Ok(s)
 }
 
-impl ::std::fmt::Display for AnyTransport {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+impl ::sittir_core::render::Render for AnyTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AnyTransport::Module(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SimpleStatements(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ImportStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ImportPrefix(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::RelativeImport(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::FutureImportStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ImportFromStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ImportList(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AliasedImport(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WildcardImport(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PrintStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Chevron(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AssertStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExpressionStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::NamedExpression(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ReturnStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DeleteStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::RaiseStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PassStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::BreakStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ContinueStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::IfStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ElifClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ElseClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::MatchStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::MatchBlock(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CaseClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ForStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WhileStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::TryStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExceptClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::FinallyClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WithStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WithClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WithItem(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::FunctionDefinition(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Parameters(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::LambdaParameters(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ListSplat(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DictionarySplat(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::GlobalStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::NonlocalStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExecStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::TypeAliasStatement(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ClassDefinition(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::TypeParameter(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ParenthesizedListSplat(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ArgumentList(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DecoratedDefinition(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Decorator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Suite(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Block(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExpressionList(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DottedName(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CasePattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::UnionPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DictPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::KeyValuePattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::KeywordPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SplatPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ClassPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ComplexPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::_Parameters(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Patterns(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::TuplePattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ListPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DefaultParameter(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::TypedDefaultParameter(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ListSplatPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DictionarySplatPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AsPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::NotOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::BooleanOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::BinaryOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::UnaryOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ComparisonOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Lambda(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::LambdaWithinForInClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Assignment(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AugmentedAssignment(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PatternList(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Yield(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Attribute(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Subscript(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Slice(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Ellipsis(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Call(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::TypedParameter(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Type(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SplatType(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::GenericType(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::UnionType(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ConstrainedType(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::MemberType(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::KeywordArgument(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::List(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Set(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Tuple(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Dictionary(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Pair(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ListComprehension(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DictionaryComprehension(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SetComprehension(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::GeneratorExpression(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ParenthesizedExpression(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CollectionElements(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ForInClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::IfClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ConditionalExpression(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ConcatenatedString(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::String(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::StringContent(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Interpolation(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::EscapeSequence(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::NotEscapeSequence(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::FormatSpecifier(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::TypeConversion(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Integer(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Float(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Identifier(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::True(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::False(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::None(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Await(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Comment(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::LineContinuation(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PositionalSeparator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::KeywordSeparator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::KwAsyncMarker(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SimpleStatementsElements(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Subjects(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CasePatterns(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WithClauseWithItems(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Types(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ArgumentListElements(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExpressionListExpressions(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ListPatternCasePatterns(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DictPatternElements(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PatternListPatterns(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Subscripts(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DictionaryElements(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SliceGroup(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::UnaryOperatorOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AugmentedAssignmentOperator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExceptClauseExceptionAs(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CaseTuplePattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CaseListPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CaseAsPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ComprehensionClauses(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ParenthesizedImportList(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PrintArguments(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PrintChevronArguments(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PrintStatementChevron(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PrintStatementPlain(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WildcardPattern(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SimplePatternNegative(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExceptClauseExceptionList(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExceptClauseException(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AssignmentEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AssignmentType(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AssignmentTyped(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ExpressionStatementTuple(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WithClauseBare(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::WithClauseParen(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::MatchBlockBlock(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SuiteBlock(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ComparisonOperatorComparator(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::YieldFromClause(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::StringStart(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::_StringContent(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::EscapeInterpolation(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::StringEnd(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Newline(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Blankline(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DoubleNewline(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Tight(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Space(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Indent(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Dedent(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Except(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Import(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Dot(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::From(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::FutureU(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::As(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Star(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::GtGt(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Assert(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::ColonEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Return(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Del(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Raise(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Pass(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Break(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Continue(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::If(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Colon(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Elif(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Else(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Match(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Case(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::For(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::In(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::While(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Try(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Finally(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::With(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Def(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DashGt(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Lparen(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Rparen(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::StarStar(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Global(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Nonlocal(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Exec(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AnonType(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Eq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Class(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Lbrack(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Rbrack(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::At(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Comma(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Lbrace(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Rbrace(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Anonymous(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Dash(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Plus(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Not(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::And(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Or(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Slash(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Percent(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SlashSlash(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Pipe(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Amp(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Caret(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::LtLt(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AnonLambda(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AnonYield(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Bslash(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AnonAwait(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Async(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Tilde(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PlusEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::DashEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::StarEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SlashEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AtEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::SlashSlashEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PercentEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::StarStarEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::GtGtEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::LtLtEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::AmpEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::CaretEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::PipeEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Print(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Lt(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::LtEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::EqEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::BangEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::GtEq(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Gt(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::LtGt(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Is(t) => ::std::fmt::Display::fmt(t, f),
-            AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => f.write_str("*"),
-            AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => f.write_str("﷓\n"),
-            AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => f.write_str("async"),
-            AnyTransport::Literal3_73_74_61_72 => f.write_str("*"),
-            AnyTransport::Literal4_63_6f_6d_6d_61 => f.write_str(","),
-            AnyTransport::Literal5_74_72_75_65 => f.write_str("True"),
-            AnyTransport::Literal6_66_61_6c_73_65 => f.write_str("False"),
-            AnyTransport::Literal7_6e_6f_6e_65 => f.write_str("None"),
-            AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => f.write_str("_"),
-            AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => f.write_str("**"),
-            AnyTransport::Literal10_5f => f.write_str("_"),
-            AnyTransport::Literal11_64_61_73_68 => f.write_str("-"),
-            AnyTransport::Literal12_70_6c_75_73 => f.write_str("+"),
-            AnyTransport::Literal13_61_6e_64 => f.write_str("and"),
-            AnyTransport::Literal14_6f_72 => f.write_str("or"),
-            AnyTransport::Literal15_61_74 => f.write_str("@"),
-            AnyTransport::Literal16_73_6c_61_73_68 => f.write_str("/"),
-            AnyTransport::Literal17_70_65_72_63_65_6e_74 => f.write_str("%"),
-            AnyTransport::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => f.write_str("//"),
-            AnyTransport::Literal19_70_69_70_65 => f.write_str("|"),
-            AnyTransport::Literal20_61_6d_70 => f.write_str("&"),
-            AnyTransport::Literal21_63_61_72_65_74 => f.write_str("^"),
-            AnyTransport::Literal22_6c_74_5f_6c_74 => f.write_str("<<"),
-            AnyTransport::Literal23_67_74_5f_67_74 => f.write_str(">>"),
-            AnyTransport::Literal24_74_69_6c_64_65 => f.write_str("~"),
-            AnyTransport::Literal25_70_6c_75_73_5f_65_71 => f.write_str("+="),
-            AnyTransport::Literal26_64_61_73_68_5f_65_71 => f.write_str("-="),
-            AnyTransport::Literal27_73_74_61_72_5f_65_71 => f.write_str("*="),
-            AnyTransport::Literal28_73_6c_61_73_68_5f_65_71 => f.write_str("/="),
-            AnyTransport::Literal29_61_74_5f_65_71 => f.write_str("@="),
-            AnyTransport::Literal30_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => f.write_str("//="),
-            AnyTransport::Literal31_70_65_72_63_65_6e_74_5f_65_71 => f.write_str("%="),
-            AnyTransport::Literal32_73_74_61_72_5f_73_74_61_72_5f_65_71 => f.write_str("**="),
-            AnyTransport::Literal33_67_74_5f_67_74_5f_65_71 => f.write_str(">>="),
-            AnyTransport::Literal34_6c_74_5f_6c_74_5f_65_71 => f.write_str("<<="),
-            AnyTransport::Literal35_61_6d_70_5f_65_71 => f.write_str("&="),
-            AnyTransport::Literal36_63_61_72_65_74_5f_65_71 => f.write_str("^="),
-            AnyTransport::Literal37_70_69_70_65_5f_65_71 => f.write_str("|="),
-            AnyTransport::Literal38_61_6e_6f_6e_5f_74_79_70_65 => f.write_str("type"),
-            AnyTransport::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => f.write_str("\\"),
-            AnyTransport::Literal40_65_71 => f.write_str("="),
-            AnyTransport::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => f.write_str("[^{}\\n]+"),
-            AnyTransport::Literal42_6c_74 => f.write_str("<"),
-            AnyTransport::Literal43_6c_74_5f_65_71 => f.write_str("<="),
-            AnyTransport::Literal44_65_71_5f_65_71 => f.write_str("=="),
-            AnyTransport::Literal45_62_61_6e_67_5f_65_71 => f.write_str("!="),
-            AnyTransport::Literal46_67_74_5f_65_71 => f.write_str(">="),
-            AnyTransport::Literal47_67_74 => f.write_str(">"),
-            AnyTransport::Literal48_6c_74_5f_67_74 => f.write_str("<>"),
-            AnyTransport::Literal49_69_6e => f.write_str("in"),
-            AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => f.write_str("not in"),
-            AnyTransport::Literal51_69_73 => f.write_str("is"),
-            AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => f.write_str("is not"),
+            AnyTransport::Module(t) => t.render(w),
+            AnyTransport::SimpleStatements(t) => t.render(w),
+            AnyTransport::ImportStatement(t) => t.render(w),
+            AnyTransport::ImportPrefix(t) => t.render(w),
+            AnyTransport::RelativeImport(t) => t.render(w),
+            AnyTransport::FutureImportStatement(t) => t.render(w),
+            AnyTransport::ImportFromStatement(t) => t.render(w),
+            AnyTransport::ImportList(t) => t.render(w),
+            AnyTransport::AliasedImport(t) => t.render(w),
+            AnyTransport::WildcardImport(t) => t.render(w),
+            AnyTransport::PrintStatement(t) => t.render(w),
+            AnyTransport::Chevron(t) => t.render(w),
+            AnyTransport::AssertStatement(t) => t.render(w),
+            AnyTransport::ExpressionStatement(t) => t.render(w),
+            AnyTransport::NamedExpression(t) => t.render(w),
+            AnyTransport::ReturnStatement(t) => t.render(w),
+            AnyTransport::DeleteStatement(t) => t.render(w),
+            AnyTransport::RaiseStatement(t) => t.render(w),
+            AnyTransport::PassStatement(t) => t.render(w),
+            AnyTransport::BreakStatement(t) => t.render(w),
+            AnyTransport::ContinueStatement(t) => t.render(w),
+            AnyTransport::IfStatement(t) => t.render(w),
+            AnyTransport::ElifClause(t) => t.render(w),
+            AnyTransport::ElseClause(t) => t.render(w),
+            AnyTransport::MatchStatement(t) => t.render(w),
+            AnyTransport::MatchBlock(t) => t.render(w),
+            AnyTransport::CaseClause(t) => t.render(w),
+            AnyTransport::ForStatement(t) => t.render(w),
+            AnyTransport::WhileStatement(t) => t.render(w),
+            AnyTransport::TryStatement(t) => t.render(w),
+            AnyTransport::ExceptClause(t) => t.render(w),
+            AnyTransport::FinallyClause(t) => t.render(w),
+            AnyTransport::WithStatement(t) => t.render(w),
+            AnyTransport::WithClause(t) => t.render(w),
+            AnyTransport::WithItem(t) => t.render(w),
+            AnyTransport::FunctionDefinition(t) => t.render(w),
+            AnyTransport::Parameters(t) => t.render(w),
+            AnyTransport::LambdaParameters(t) => t.render(w),
+            AnyTransport::ListSplat(t) => t.render(w),
+            AnyTransport::DictionarySplat(t) => t.render(w),
+            AnyTransport::GlobalStatement(t) => t.render(w),
+            AnyTransport::NonlocalStatement(t) => t.render(w),
+            AnyTransport::ExecStatement(t) => t.render(w),
+            AnyTransport::TypeAliasStatement(t) => t.render(w),
+            AnyTransport::ClassDefinition(t) => t.render(w),
+            AnyTransport::TypeParameter(t) => t.render(w),
+            AnyTransport::ParenthesizedListSplat(t) => t.render(w),
+            AnyTransport::ArgumentList(t) => t.render(w),
+            AnyTransport::DecoratedDefinition(t) => t.render(w),
+            AnyTransport::Decorator(t) => t.render(w),
+            AnyTransport::Suite(t) => t.render(w),
+            AnyTransport::Block(t) => t.render(w),
+            AnyTransport::ExpressionList(t) => t.render(w),
+            AnyTransport::DottedName(t) => t.render(w),
+            AnyTransport::CasePattern(t) => t.render(w),
+            AnyTransport::UnionPattern(t) => t.render(w),
+            AnyTransport::DictPattern(t) => t.render(w),
+            AnyTransport::KeyValuePattern(t) => t.render(w),
+            AnyTransport::KeywordPattern(t) => t.render(w),
+            AnyTransport::SplatPattern(t) => t.render(w),
+            AnyTransport::ClassPattern(t) => t.render(w),
+            AnyTransport::ComplexPattern(t) => t.render(w),
+            AnyTransport::_Parameters(t) => t.render(w),
+            AnyTransport::Patterns(t) => t.render(w),
+            AnyTransport::TuplePattern(t) => t.render(w),
+            AnyTransport::ListPattern(t) => t.render(w),
+            AnyTransport::DefaultParameter(t) => t.render(w),
+            AnyTransport::TypedDefaultParameter(t) => t.render(w),
+            AnyTransport::ListSplatPattern(t) => t.render(w),
+            AnyTransport::DictionarySplatPattern(t) => t.render(w),
+            AnyTransport::AsPattern(t) => t.render(w),
+            AnyTransport::NotOperator(t) => t.render(w),
+            AnyTransport::BooleanOperator(t) => t.render(w),
+            AnyTransport::BinaryOperator(t) => t.render(w),
+            AnyTransport::UnaryOperator(t) => t.render(w),
+            AnyTransport::ComparisonOperator(t) => t.render(w),
+            AnyTransport::Lambda(t) => t.render(w),
+            AnyTransport::LambdaWithinForInClause(t) => t.render(w),
+            AnyTransport::Assignment(t) => t.render(w),
+            AnyTransport::AugmentedAssignment(t) => t.render(w),
+            AnyTransport::PatternList(t) => t.render(w),
+            AnyTransport::Yield(t) => t.render(w),
+            AnyTransport::Attribute(t) => t.render(w),
+            AnyTransport::Subscript(t) => t.render(w),
+            AnyTransport::Slice(t) => t.render(w),
+            AnyTransport::Ellipsis(t) => t.render(w),
+            AnyTransport::Call(t) => t.render(w),
+            AnyTransport::TypedParameter(t) => t.render(w),
+            AnyTransport::Type(t) => t.render(w),
+            AnyTransport::SplatType(t) => t.render(w),
+            AnyTransport::GenericType(t) => t.render(w),
+            AnyTransport::UnionType(t) => t.render(w),
+            AnyTransport::ConstrainedType(t) => t.render(w),
+            AnyTransport::MemberType(t) => t.render(w),
+            AnyTransport::KeywordArgument(t) => t.render(w),
+            AnyTransport::List(t) => t.render(w),
+            AnyTransport::Set(t) => t.render(w),
+            AnyTransport::Tuple(t) => t.render(w),
+            AnyTransport::Dictionary(t) => t.render(w),
+            AnyTransport::Pair(t) => t.render(w),
+            AnyTransport::ListComprehension(t) => t.render(w),
+            AnyTransport::DictionaryComprehension(t) => t.render(w),
+            AnyTransport::SetComprehension(t) => t.render(w),
+            AnyTransport::GeneratorExpression(t) => t.render(w),
+            AnyTransport::ParenthesizedExpression(t) => t.render(w),
+            AnyTransport::CollectionElements(t) => t.render(w),
+            AnyTransport::ForInClause(t) => t.render(w),
+            AnyTransport::IfClause(t) => t.render(w),
+            AnyTransport::ConditionalExpression(t) => t.render(w),
+            AnyTransport::ConcatenatedString(t) => t.render(w),
+            AnyTransport::String(t) => t.render(w),
+            AnyTransport::StringContent(t) => t.render(w),
+            AnyTransport::Interpolation(t) => t.render(w),
+            AnyTransport::EscapeSequence(t) => t.render(w),
+            AnyTransport::NotEscapeSequence(t) => t.render(w),
+            AnyTransport::FormatSpecifier(t) => t.render(w),
+            AnyTransport::TypeConversion(t) => t.render(w),
+            AnyTransport::Integer(t) => t.render(w),
+            AnyTransport::Float(t) => t.render(w),
+            AnyTransport::Identifier(t) => t.render(w),
+            AnyTransport::True(t) => t.render(w),
+            AnyTransport::False(t) => t.render(w),
+            AnyTransport::None(t) => t.render(w),
+            AnyTransport::Await(t) => t.render(w),
+            AnyTransport::Comment(t) => t.render(w),
+            AnyTransport::LineContinuation(t) => t.render(w),
+            AnyTransport::PositionalSeparator(t) => t.render(w),
+            AnyTransport::KeywordSeparator(t) => t.render(w),
+            AnyTransport::KwAsyncMarker(t) => t.render(w),
+            AnyTransport::SimpleStatementsElements(t) => t.render(w),
+            AnyTransport::Subjects(t) => t.render(w),
+            AnyTransport::CasePatterns(t) => t.render(w),
+            AnyTransport::WithClauseWithItems(t) => t.render(w),
+            AnyTransport::Types(t) => t.render(w),
+            AnyTransport::ArgumentListElements(t) => t.render(w),
+            AnyTransport::ExpressionListExpressions(t) => t.render(w),
+            AnyTransport::ListPatternCasePatterns(t) => t.render(w),
+            AnyTransport::DictPatternElements(t) => t.render(w),
+            AnyTransport::PatternListPatterns(t) => t.render(w),
+            AnyTransport::Subscripts(t) => t.render(w),
+            AnyTransport::DictionaryElements(t) => t.render(w),
+            AnyTransport::SliceGroup(t) => t.render(w),
+            AnyTransport::UnaryOperatorOperator(t) => t.render(w),
+            AnyTransport::AugmentedAssignmentOperator(t) => t.render(w),
+            AnyTransport::ExceptClauseExceptionAs(t) => t.render(w),
+            AnyTransport::CaseTuplePattern(t) => t.render(w),
+            AnyTransport::CaseListPattern(t) => t.render(w),
+            AnyTransport::CaseAsPattern(t) => t.render(w),
+            AnyTransport::ComprehensionClauses(t) => t.render(w),
+            AnyTransport::ParenthesizedImportList(t) => t.render(w),
+            AnyTransport::PrintArguments(t) => t.render(w),
+            AnyTransport::PrintChevronArguments(t) => t.render(w),
+            AnyTransport::PrintStatementChevron(t) => t.render(w),
+            AnyTransport::PrintStatementPlain(t) => t.render(w),
+            AnyTransport::WildcardPattern(t) => t.render(w),
+            AnyTransport::SimplePatternNegative(t) => t.render(w),
+            AnyTransport::ExceptClauseExceptionList(t) => t.render(w),
+            AnyTransport::ExceptClauseException(t) => t.render(w),
+            AnyTransport::AssignmentEq(t) => t.render(w),
+            AnyTransport::AssignmentType(t) => t.render(w),
+            AnyTransport::AssignmentTyped(t) => t.render(w),
+            AnyTransport::ExpressionStatementTuple(t) => t.render(w),
+            AnyTransport::WithClauseBare(t) => t.render(w),
+            AnyTransport::WithClauseParen(t) => t.render(w),
+            AnyTransport::MatchBlockBlock(t) => t.render(w),
+            AnyTransport::SuiteBlock(t) => t.render(w),
+            AnyTransport::ComparisonOperatorComparator(t) => t.render(w),
+            AnyTransport::YieldFromClause(t) => t.render(w),
+            AnyTransport::StringStart(t) => t.render(w),
+            AnyTransport::_StringContent(t) => t.render(w),
+            AnyTransport::EscapeInterpolation(t) => t.render(w),
+            AnyTransport::StringEnd(t) => t.render(w),
+            AnyTransport::Newline(t) => t.render(w),
+            AnyTransport::Blankline(t) => t.render(w),
+            AnyTransport::DoubleNewline(t) => t.render(w),
+            AnyTransport::Tight(t) => t.render(w),
+            AnyTransport::Space(t) => t.render(w),
+            AnyTransport::Indent(t) => t.render(w),
+            AnyTransport::Dedent(t) => t.render(w),
+            AnyTransport::ImportKeyword(t) => t.render(w),
+            AnyTransport::Dot(t) => t.render(w),
+            AnyTransport::FromKeyword(t) => t.render(w),
+            AnyTransport::FutureUKeyword(t) => t.render(w),
+            AnyTransport::AsKeyword(t) => t.render(w),
+            AnyTransport::Star(t) => t.render(w),
+            AnyTransport::GtGt(t) => t.render(w),
+            AnyTransport::AssertKeyword(t) => t.render(w),
+            AnyTransport::ColonEq(t) => t.render(w),
+            AnyTransport::ReturnKeyword(t) => t.render(w),
+            AnyTransport::DelKeyword(t) => t.render(w),
+            AnyTransport::RaiseKeyword(t) => t.render(w),
+            AnyTransport::PassKeyword(t) => t.render(w),
+            AnyTransport::BreakKeyword(t) => t.render(w),
+            AnyTransport::ContinueKeyword(t) => t.render(w),
+            AnyTransport::IfKeyword(t) => t.render(w),
+            AnyTransport::Colon(t) => t.render(w),
+            AnyTransport::ElifKeyword(t) => t.render(w),
+            AnyTransport::ElseKeyword(t) => t.render(w),
+            AnyTransport::MatchKeyword(t) => t.render(w),
+            AnyTransport::CaseKeyword(t) => t.render(w),
+            AnyTransport::ForKeyword(t) => t.render(w),
+            AnyTransport::InKeyword(t) => t.render(w),
+            AnyTransport::WhileKeyword(t) => t.render(w),
+            AnyTransport::TryKeyword(t) => t.render(w),
+            AnyTransport::ExceptKeyword(t) => t.render(w),
+            AnyTransport::FinallyKeyword(t) => t.render(w),
+            AnyTransport::WithKeyword(t) => t.render(w),
+            AnyTransport::DefKeyword(t) => t.render(w),
+            AnyTransport::DashGt(t) => t.render(w),
+            AnyTransport::Lparen(t) => t.render(w),
+            AnyTransport::Rparen(t) => t.render(w),
+            AnyTransport::StarStar(t) => t.render(w),
+            AnyTransport::GlobalKeyword(t) => t.render(w),
+            AnyTransport::NonlocalKeyword(t) => t.render(w),
+            AnyTransport::ExecKeyword(t) => t.render(w),
+            AnyTransport::TypeKeyword(t) => t.render(w),
+            AnyTransport::Eq(t) => t.render(w),
+            AnyTransport::ClassKeyword(t) => t.render(w),
+            AnyTransport::Lbrack(t) => t.render(w),
+            AnyTransport::Rbrack(t) => t.render(w),
+            AnyTransport::At(t) => t.render(w),
+            AnyTransport::Comma(t) => t.render(w),
+            AnyTransport::Lbrace(t) => t.render(w),
+            AnyTransport::Rbrace(t) => t.render(w),
+            AnyTransport::Underscore(t) => t.render(w),
+            AnyTransport::Dash(t) => t.render(w),
+            AnyTransport::Plus(t) => t.render(w),
+            AnyTransport::NotKeyword(t) => t.render(w),
+            AnyTransport::AndKeyword(t) => t.render(w),
+            AnyTransport::OrKeyword(t) => t.render(w),
+            AnyTransport::Slash(t) => t.render(w),
+            AnyTransport::Percent(t) => t.render(w),
+            AnyTransport::SlashSlash(t) => t.render(w),
+            AnyTransport::Pipe(t) => t.render(w),
+            AnyTransport::Amp(t) => t.render(w),
+            AnyTransport::Caret(t) => t.render(w),
+            AnyTransport::LtLt(t) => t.render(w),
+            AnyTransport::LambdaKeyword(t) => t.render(w),
+            AnyTransport::YieldKeyword(t) => t.render(w),
+            AnyTransport::Bslash(t) => t.render(w),
+            AnyTransport::AwaitKeyword(t) => t.render(w),
+            AnyTransport::AsyncKeyword(t) => t.render(w),
+            AnyTransport::Tilde(t) => t.render(w),
+            AnyTransport::PlusEq(t) => t.render(w),
+            AnyTransport::DashEq(t) => t.render(w),
+            AnyTransport::StarEq(t) => t.render(w),
+            AnyTransport::SlashEq(t) => t.render(w),
+            AnyTransport::AtEq(t) => t.render(w),
+            AnyTransport::SlashSlashEq(t) => t.render(w),
+            AnyTransport::PercentEq(t) => t.render(w),
+            AnyTransport::StarStarEq(t) => t.render(w),
+            AnyTransport::GtGtEq(t) => t.render(w),
+            AnyTransport::LtLtEq(t) => t.render(w),
+            AnyTransport::AmpEq(t) => t.render(w),
+            AnyTransport::CaretEq(t) => t.render(w),
+            AnyTransport::PipeEq(t) => t.render(w),
+            AnyTransport::PrintKeyword(t) => t.render(w),
+            AnyTransport::Lt(t) => t.render(w),
+            AnyTransport::LtEq(t) => t.render(w),
+            AnyTransport::EqEq(t) => t.render(w),
+            AnyTransport::BangEq(t) => t.render(w),
+            AnyTransport::GtEq(t) => t.render(w),
+            AnyTransport::Gt(t) => t.render(w),
+            AnyTransport::LtGt(t) => t.render(w),
+            AnyTransport::IsKeyword(t) => t.render(w),
+            AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => w.text("*"),
+            AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
+            AnyTransport::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
+            AnyTransport::Literal3_73_74_61_72 => w.text("*"),
+            AnyTransport::Literal4_63_6f_6d_6d_61 => w.text(","),
+            AnyTransport::Literal5_74_72_75_65 => w.text("True"),
+            AnyTransport::Literal6_66_61_6c_73_65 => w.text("False"),
+            AnyTransport::Literal7_6e_6f_6e_65 => w.text("None"),
+            AnyTransport::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
+            AnyTransport::Literal9_73_74_61_72_5f_73_74_61_72 => w.text("**"),
+            AnyTransport::Literal10_75_6e_64_65_72_73_63_6f_72_65 => w.text("_"),
+            AnyTransport::Literal11_64_61_73_68 => w.text("-"),
+            AnyTransport::Literal12_70_6c_75_73 => w.text("+"),
+            AnyTransport::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => w.text("and"),
+            AnyTransport::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => w.text("or"),
+            AnyTransport::Literal15_61_74 => w.text("@"),
+            AnyTransport::Literal16_73_6c_61_73_68 => w.text("/"),
+            AnyTransport::Literal17_70_65_72_63_65_6e_74 => w.text("%"),
+            AnyTransport::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => w.text("//"),
+            AnyTransport::Literal19_70_69_70_65 => w.text("|"),
+            AnyTransport::Literal20_61_6d_70 => w.text("&"),
+            AnyTransport::Literal21_63_61_72_65_74 => w.text("^"),
+            AnyTransport::Literal22_6c_74_5f_6c_74 => w.text("<<"),
+            AnyTransport::Literal23_67_74_5f_67_74 => w.text(">>"),
+            AnyTransport::Literal24_74_69_6c_64_65 => w.text("~"),
+            AnyTransport::Literal25_70_6c_75_73_5f_65_71 => w.text("+="),
+            AnyTransport::Literal26_64_61_73_68_5f_65_71 => w.text("-="),
+            AnyTransport::Literal27_73_74_61_72_5f_65_71 => w.text("*="),
+            AnyTransport::Literal28_73_6c_61_73_68_5f_65_71 => w.text("/="),
+            AnyTransport::Literal29_61_74_5f_65_71 => w.text("@="),
+            AnyTransport::Literal30_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => w.text("//="),
+            AnyTransport::Literal31_70_65_72_63_65_6e_74_5f_65_71 => w.text("%="),
+            AnyTransport::Literal32_73_74_61_72_5f_73_74_61_72_5f_65_71 => w.text("**="),
+            AnyTransport::Literal33_67_74_5f_67_74_5f_65_71 => w.text(">>="),
+            AnyTransport::Literal34_6c_74_5f_6c_74_5f_65_71 => w.text("<<="),
+            AnyTransport::Literal35_61_6d_70_5f_65_71 => w.text("&="),
+            AnyTransport::Literal36_63_61_72_65_74_5f_65_71 => w.text("^="),
+            AnyTransport::Literal37_70_69_70_65_5f_65_71 => w.text("|="),
+            AnyTransport::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
+            AnyTransport::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => w.text("\\"),
+            AnyTransport::Literal40_65_71 => w.text("="),
+            AnyTransport::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => w.text("[^{}\\n]+"),
+            AnyTransport::Literal42_6c_74 => w.text("<"),
+            AnyTransport::Literal43_6c_74_5f_65_71 => w.text("<="),
+            AnyTransport::Literal44_65_71_5f_65_71 => w.text("=="),
+            AnyTransport::Literal45_62_61_6e_67_5f_65_71 => w.text("!="),
+            AnyTransport::Literal46_67_74_5f_65_71 => w.text(">="),
+            AnyTransport::Literal47_67_74 => w.text(">"),
+            AnyTransport::Literal48_6c_74_5f_67_74 => w.text("<>"),
+            AnyTransport::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => w.text("in"),
+            AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e => w.text("not in"),
+            AnyTransport::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => w.text("is"),
+            AnyTransport::Literal52_5f_69_73_5f_6e_6f_74 => w.text("is not"),
         }
     }
 }
@@ -47798,7 +48021,7 @@ pub type RenderRoot = ::sittir_core::SlotValue<AnyTransport>;
 pub fn render_transport_parts(
     mut transport: RenderRoot,
     table: &::sittir_core::options::ResolvedOptions,
-) -> Result<(TransportSource, String), ::std::fmt::Error> {
+) -> Result<(TransportSource, String), ::sittir_core::render::RenderError> {
     ::sittir_core::options::FillOptions::fill_options(&mut transport, table);
     let rendered = render_transport_dispatch(&transport, &table.indent)?;
     Ok((TransportSource::Factory, rendered))

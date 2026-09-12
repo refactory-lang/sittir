@@ -1,41 +1,26 @@
-/**
- * The generated render bodies of a grammar — `packages/<grammar>/.sittir/render-bodies.json`,
- * one body IR per emitted kind — are the validators' catalog of renderable
- * kinds and the source the coverage checker reads a kind's body from.
- */
-
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { TemplateRule } from '@sittir/types';
 import type { RenderBody } from '../codegen-surface.ts';
+import { INDENT_TEXT, DEDENT_TEXT } from '../../../codegen/src/dsl/primitives/spacing.ts';
 
 export function renderBodiesPath(grammar: string): string {
-	// packages/tools/src/validate/ → ../../.. → packages/
 	const packagesDir = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 	return resolve(packagesDir, grammar, '.sittir', 'render-bodies.json');
 }
 
-/** Every emitted kind's body; an absent file (a grammar never generated) is an empty catalog. */
 export function loadRenderBodies(grammar: string): Map<string, RenderBody> {
 	const path = renderBodiesPath(grammar);
-	if (!existsSync(path)) return new Map();
+	if (!existsSync(path)) throw new Error(`render-bodies: no catalog at ${path} — regenerate with \`sittir gen\``);
 	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Record<string, RenderBody>;
 	return new Map(Object.entries(parsed));
 }
 
-/** The kinds the renderer can handle: those with an emitted body. */
 export function deriveRuleKinds(grammar: string): Set<string> {
 	return new Set(loadRenderBodies(grammar).keys());
 }
 
-/**
- * A body in the coverage checker's placeholder shape: a slot reference is
- * `$NAME`, a gated arm is a `$TEST_CLAUSE` placeholder whose clause body is
- * the arm, and literal text is itself. The fallback of a gate chain inlines
- * into the surrounding template; an adjacency mark and a token seam
- * contribute nothing.
- */
 export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 	const clauses: Record<string, string> = {};
 	const legacy = (nodes: RenderBody): string => {
@@ -43,8 +28,16 @@ export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 		for (const node of nodes) {
 			switch (node.kind) {
 				case 'text':
-				case 'whitespace':
 					out += node.text;
+					break;
+				case 'tokenSeam':
+					out += node.text;
+					break;
+				case 'indent':
+					out += INDENT_TEXT;
+					break;
+				case 'dedent':
+					out += DEDENT_TEXT;
 					break;
 				case 'space':
 					out += ' ';
@@ -62,6 +55,10 @@ export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 					}
 					if (node.fallback !== undefined) out += legacy(node.fallback);
 					break;
+				default: {
+					const _exhaustive: never = node;
+					throw new Error(`bodyToLegacyRule: unhandled node ${(_exhaustive as { kind: string }).kind}`);
+				}
 			}
 		}
 		return out;

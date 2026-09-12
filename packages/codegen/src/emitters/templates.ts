@@ -42,9 +42,9 @@ import { getTransportProjection } from './transport-projection-cache.ts';
 import { flanksOf, isSeamChoice, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	ADJACENT,
-	DEDENT_MARK,
+	DEDENT as DEDENT_BODY,
 	EMPTY,
-	INDENT_NEWLINE,
+	INDENT as INDENT_BODY,
 	SPACE,
 	branches,
 	concat,
@@ -58,13 +58,11 @@ import {
 	opensAsTag,
 	refersTo,
 	duplicateSlots,
+	literalBody,
 	seam,
 	slot as slotRef,
 	text,
 	weight,
-	whitespace,
-	isWhitespaceOnly,
-	seamMarked,
 	type Body
 } from './render-body.ts';
 
@@ -460,7 +458,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
 			}
-			return text(rule.value);
+			return literalBody(rule.value);
 		}
 
 		case PATTERN: {
@@ -577,11 +575,11 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			return emitChoice(rule, ctx);
 
 		case INDENT:
-			return whitespace(INDENT_NEWLINE);
+			return INDENT_BODY;
 		case NEWLINE:
-			return whitespace('\n');
+			return text('\n');
 		case DEDENT:
-			return whitespace(DEDENT_MARK);
+			return DEDENT_BODY;
 
 		case SUPERTYPE:
 			return EMPTY;
@@ -801,13 +799,13 @@ function emitFieldNameSlot(slotName: string, rule: RenderRule, ctx: EmitCtx): Bo
 function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx): Body {
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
-		return text(rule.literal);
+		return literalBody(rule.literal);
 	}
 	if (rule.nonterminal === false) {
 		const fixed = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
 		if (fixed === undefined)
 			throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
-		return isWhitespaceOnly(fixed) ? whitespace(seamMarked(fixed)) : text(fixed);
+		return literalBody(fixed);
 	}
 
 	const isInlineableHiddenHelper =
@@ -990,8 +988,10 @@ function scanArmBody(body: Body): {
 				case 'text':
 					if (depth === 0 && node.text.trim() !== '') depth0Payload = true;
 					break;
-				case 'whitespace':
 				case 'adjacent':
+				case 'indent':
+				case 'dedent':
+				case 'tokenSeam':
 					if (depth === 0) depth0Payload = true;
 					break;
 				case 'space':

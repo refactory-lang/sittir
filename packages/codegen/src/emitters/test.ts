@@ -14,6 +14,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -363,15 +364,21 @@ function emitSubFactoryTests(
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const slotProp = sub.slot.propertyName;
-		const slotStorageKind = resolveFieldStorageInfo(sub.slot, nodeMap).kind;
-		const slotIsKindEnum = slotStorageKind === 'kindEnum' || slotStorageKind === 'mixedEnum';
+		const slotStorageInfo = resolveFieldStorageInfo(sub.slot, nodeMap);
+		const slotIsKindEnum = slotStorageInfo.kind === 'kindEnum' || slotStorageInfo.kind === 'mixedEnum';
+		const seatedEnumId =
+			slotIsKindEnum && sub.arm.via !== 'value' ? slotStorageInfo.enumKindsById.get(sub.arm.child.kind) : undefined;
 		if (sub.arm.via === 'value') {
-			const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), kindEntries);
+			const val = valueStorageExpr(sub.arm.storage, slotStorageInfo, kindEntries);
 			cases.push(`    const seated = (node as any).${slotProp}();`);
 			cases.push(`    expect(seated?.$text ?? seated).toBe(${val});`);
 		} else if (!slotIsKindEnum) {
 			cases.push(
 				`    expect((node as any).${slotProp}()?.$type).toBe(${testTypeDiscriminant(sub.arm.child.kind, kindEntries, nodeMap)});`
+			);
+		} else if (kindEntries && seatedEnumId !== undefined) {
+			cases.push(
+				`    expect((node as any).${slotProp}()).toBe(${kindDiscriminantExprForId(seatedEnumId, kindEntries)});`
 			);
 		} else {
 			cases.push(`    expect((node as any).${slotProp}()).toBeDefined();`);

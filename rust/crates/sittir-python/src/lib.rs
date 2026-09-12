@@ -54,6 +54,7 @@ impl EngineGrammar for PythonGrammar {
 sittir_core::napi_engine!(
     PythonGrammar,
     RenderRoot,
+    render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
     render::options::defaults,

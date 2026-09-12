@@ -407,6 +407,16 @@ It carries no data; it is a placeholder like `arm.default`, recognised by
  */
 ```
 
+#### `nestedUnder`
+
+The enclosing variants' names, outermost first, when this one is minted
+inside another variant's subtree. The minted rule composes through them
+(`_except_clause_exception_as`); the arm keeps its own short name.
+
+#### `variantMintName`
+
+The name the minted rule takes: the enclosing variants' names then its own.
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
 `_whitespace`, the hidden supertype every grammar declares (in `supertypes:`

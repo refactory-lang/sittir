@@ -551,7 +551,14 @@ function catalogEntriesOf(tables: GeneratedIdTables | undefined): GeneratedKindE
 	return rows.map(([kind, value]) =>
 		typeof value === 'number'
 			? { kind, id: value }
-			: { kind, id: value.id ?? -1, symbolName: value.parser?.symbolName, anon: value.parser?.anon }
+			: {
+					kind,
+					id: value.id ?? -1,
+					symbolName: value.parser?.symbolName,
+					literalText: value.parser?.literalText,
+					literalRule: value.parser?.literalRule,
+					anon: value.parser?.anon
+				}
 	);
 }
 
@@ -600,7 +607,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
-		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id ?? idOfName.get(text),
+		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
 		delimiterArmOfId: (id) => {
 			const member = memberOf(types.Delimiter, id);
 			return member === undefined ? undefined : `Delimiter.${member}`;

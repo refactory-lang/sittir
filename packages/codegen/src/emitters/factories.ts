@@ -407,7 +407,8 @@ function slotStorageFromValueExpr(
 	f: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
 ): string {
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	switch (storageInfo.kind) {
@@ -415,18 +416,14 @@ function slotStorageFromValueExpr(
 			return `coerceBooleanKeywordStorage(${valueExpr})`;
 		case 'bitflag':
 			return `coerceBitflagStorage(${valueExpr}, ${bitflagTextsExpr(storageInfo.texts)})`;
-		case 'kindEnum': {
-			const storageType = isMultiple(f) && !storageInfo.collapsesMultiplicity ? 'number[]' : 'number';
+		case 'kindEnum':
 			return kindEntries
-				? `coerceKindEnumStorage<${storageType}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				? `coerceKindEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
 				: valueExpr;
-		}
-		case 'mixedEnum': {
-			if (!kindEntries) return valueExpr;
-			const elem = fieldElementType(f, nodeMap, kindEntries);
-			const storageType = isMultiple(f) && !storageInfo.collapsesMultiplicity ? `(${elem})[]` : elem;
-			return `coerceMixedEnumStorage<${storageType}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`;
-		}
+		case 'mixedEnum':
+			return kindEntries
+				? `coerceMixedEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				: valueExpr;
 		case 'verbatim':
 			return valueExpr;
 	}
@@ -436,11 +433,12 @@ function slotStorageExpr(
 	f: AssembledNonterminal,
 	configAccess: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
 ): string {
 	const valueExpr = `${configAccess}.${f.configKey}`;
 	const withDefault = isMultiple(f) ? `(${valueExpr} ?? [])` : valueExpr;
-	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries);
+	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries, typeName);
 }
 
 function setterValueSignature(f: AssembledNonterminal, elemType: string): string {
@@ -860,13 +858,13 @@ function emitFieldCarryingFactory(
 		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
-		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries);
+		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries, node.typeName);
 		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		withLines = ['    $with: {', `      ${singleField.propertyName}: (${setterSig}) => ${fn}(value),`, '    },'];
 	} else {
 		const configAccess = 'config';
-		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries);
+		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
 		withLines = ['    $with: {'];
 		for (const f of slots) {
 			const method = f.propertyName;
@@ -1035,11 +1033,11 @@ function emitRefineFormFactory(
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
 			lines.push(
-				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries)};`
+				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries, info.typeName)};`
 			);
 			continue;
 		}
-		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
+		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries, info.typeName)};`);
 	}
 	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);

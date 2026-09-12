@@ -89,6 +89,7 @@ function matchesEmpty(rule) {
   const members = rule.members ?? [];
   if (isChoiceType(t)) return members.some(matchesEmpty);
   if (isSeqType(t)) return members.every(matchesEmpty);
+  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
   return false;
 }
 
@@ -5181,15 +5182,15 @@ var grammar_sittir_default = grammar(
           '"&"/after': preference("space"),
           "operator:/before": preference("space"),
           "operator:/after": preference("space"),
-          "from:/after": preference("space"),
-          "if:/after": preference("space"),
-          "while:/after": preference("space"),
-          "for:/after": preference("space"),
-          "return:/before": preference("space"),
-          "return:/after": preference("space"),
-          "switch:/after": preference("space"),
-          "catch:/after": preference("space"),
-          "var:/after": preference("space"),
+          '"from"/after': preference("space"),
+          '"if"/after': preference("space"),
+          '"while"/after': preference("space"),
+          '"for"/after': preference("space"),
+          '"return"/before': preference("space"),
+          '"return"/after': preference("space"),
+          '"switch"/after': preference("space"),
+          '"catch"/after': preference("space"),
+          '"var"/after': preference("space"),
           "kind:/after": preference("space")
         },
         object_type_content: {

@@ -12,12 +12,12 @@
 //! table for drill-in navigation. Coordinates are stable child-index paths
 //! from the root, re-resolved on each access — no lifetime-erasure needed.
 
-use std::marker::PhantomData;
-use crate::options::ResolvedOptions;
 use crate::format::{apply_format, extract_format};
+use crate::options::ResolvedOptions;
 use crate::read_node::{read_node, ReadDepth};
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::types::{Edit, FormatRecord, NodeData, Source};
+use std::marker::PhantomData;
 
 /// Grammar-specific hooks used by the shared native engine.
 pub trait EngineGrammar: Copy {
@@ -203,13 +203,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
         // The returned `child_node` borrows `self.tree` (not `self.nodes`), so it
         // stays valid across the disjoint `&mut self.nodes` push below — no second
         // re-resolution needed.
-        let parent_node = Self::resolve_handle(&self.nodes, &self.tree, index).ok_or_else(|| {
-            if (index as usize) >= self.nodes.len() {
-                format!("handle {handle} not found in node table")
-            } else {
-                format!("handle {handle}: coordinate path could not be resolved")
-            }
-        })?;
+        let parent_node =
+            Self::resolve_handle(&self.nodes, &self.tree, index).ok_or_else(|| {
+                if (index as usize) >= self.nodes.len() {
+                    format!("handle {handle} not found in node table")
+                } else {
+                    format!("handle {handle}: coordinate path could not be resolved")
+                }
+            })?;
         let child_node = parent_node.child(child_index as u32).ok_or_else(|| {
             format!(
                 "child_index {child_index} out of bounds for handle {handle} (child_count={})",
@@ -440,7 +441,6 @@ mod tests {
         fn render_module_hash(self) -> &'static str {
             "test"
         }
-
     }
 
     fn format_record(prefix: &str, suffix: &str) -> FormatRecord {
@@ -477,7 +477,12 @@ mod tests {
 
     #[test]
     fn render_canonical_node_preserves_engine_format() {
-        let engine = Engine::new(TestGrammar, Some(format_record("<<", ">>")), ResolvedOptions::default()).unwrap();
+        let engine = Engine::new(
+            TestGrammar,
+            Some(format_record("<<", ">>")),
+            ResolvedOptions::default(),
+        )
+        .unwrap();
 
         let rendered = engine
             .render_canonical_node(&node(Source::Factory), "rendered:1".to_string(), None)
@@ -513,5 +518,4 @@ mod tests {
 
         assert_eq!(rendered, "canonical");
     }
-
 }

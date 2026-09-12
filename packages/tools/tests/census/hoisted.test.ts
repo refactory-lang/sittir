@@ -44,12 +44,18 @@ describe('hoisted census ratchet', () => {
 	for (const line of baseline) {
 		const m = /^(\w+): hoisted=(\d+) seated=(\d+) unseated=(\d+)$/.exec(line);
 		if (m === null) throw new Error(`hoisted-census-baseline.txt: unreadable line ${JSON.stringify(line)}`);
-		const [, grammar, , , unseated] = m;
+		const [, grammar, , seated, unseated] = m;
 		it(`${grammar}: no more unseated hoisted kinds than the baseline records`, () => {
 			const raw = readNodeModelFile(grammar!);
 			if (raw === undefined) throw new Error(`no node-model.json5 for ${grammar}`);
 			const census = hoistedCensus(JSON.parse(raw) as CensusModel);
 			expect(census.unseated.length).toBeLessThanOrEqual(Number(unseated));
+		});
+		it(`${grammar}: no fewer seated hoisted kinds than the baseline records`, () => {
+			const raw = readNodeModelFile(grammar!);
+			if (raw === undefined) throw new Error(`no node-model.json5 for ${grammar}`);
+			const census = hoistedCensus(JSON.parse(raw) as CensusModel);
+			expect(census.seated.length).toBeGreaterThanOrEqual(Number(seated));
 		});
 	}
 });

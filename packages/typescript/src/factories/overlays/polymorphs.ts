@@ -1351,12 +1351,12 @@ export const exportSpecifier: typeof B.exportSpecifier & {
 } = {
 	...B.exportSpecifier,
 	type: {
-		strict: exportSpecifier$type(F.buildExportSpecifier, TSKindId.AnonType),
-		coerce: exportSpecifier$type(C.coerceToExportSpecifier, TSKindId.AnonType)
+		strict: exportSpecifier$type(F.buildExportSpecifier, TSKindId.TypeKeyword),
+		coerce: exportSpecifier$type(C.coerceToExportSpecifier, TSKindId.TypeKeyword)
 	},
 	typeof: {
-		strict: exportSpecifier$typeof(F.buildExportSpecifier, TSKindId.Typeof),
-		coerce: exportSpecifier$typeof(C.coerceToExportSpecifier, TSKindId.Typeof)
+		strict: exportSpecifier$typeof(F.buildExportSpecifier, TSKindId.TypeofKeyword),
+		coerce: exportSpecifier$typeof(C.coerceToExportSpecifier, TSKindId.TypeofKeyword)
 	}
 };
 
@@ -1463,13 +1463,13 @@ const _importClauseDefaultImport$type$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'identifier'>
 ) => ReturnType<typeof F.buildImportClauseDefaultImport> = _importClauseDefaultImport$type(
 	F.buildImportClauseDefaultImport,
-	TSKindId.AnonType
+	TSKindId.TypeKeyword
 );
 const _importClauseDefaultImport$type$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'identifier'>
 ) => ReturnType<typeof C.coerceToImportClauseDefaultImport> = _importClauseDefaultImport$type(
 	C.coerceToImportClauseDefaultImport,
-	TSKindId.AnonType
+	TSKindId.TypeKeyword
 );
 const _importClauseDefaultImport$type$importClauseGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1654,8 +1654,8 @@ const _importClauseDefaultImport: {
 		}
 	},
 	type: {
-		strict: _importClauseDefaultImport$type(F.buildImportClauseDefaultImport, TSKindId.AnonType),
-		coerce: _importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.AnonType),
+		strict: _importClauseDefaultImport$type(F.buildImportClauseDefaultImport, TSKindId.TypeKeyword),
+		coerce: _importClauseDefaultImport$type(C.coerceToImportClauseDefaultImport, TSKindId.TypeKeyword),
 		importClauseGroup: {
 			strict: _importClauseDefaultImport$type$importClauseGroup(
 				_importClauseDefaultImport$type$applied,
@@ -1826,10 +1826,13 @@ const importSpecifier$as =
 	};
 const importSpecifier$type$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildImportSpecifier>[0], 'importKind'>
-) => ReturnType<typeof F.buildImportSpecifier> = importSpecifier$type(F.buildImportSpecifier, TSKindId.AnonType);
+) => ReturnType<typeof F.buildImportSpecifier> = importSpecifier$type(F.buildImportSpecifier, TSKindId.TypeKeyword);
 const importSpecifier$type$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'importKind'>
-) => ReturnType<typeof C.coerceToImportSpecifier> = importSpecifier$type(C.coerceToImportSpecifier, TSKindId.AnonType);
+) => ReturnType<typeof C.coerceToImportSpecifier> = importSpecifier$type(
+	C.coerceToImportSpecifier,
+	TSKindId.TypeKeyword
+);
 const importSpecifier$type$as =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -1843,10 +1846,13 @@ const importSpecifier$type$as =
 	};
 const importSpecifier$typeof$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildImportSpecifier>[0], 'importKind'>
-) => ReturnType<typeof F.buildImportSpecifier> = importSpecifier$typeof(F.buildImportSpecifier, TSKindId.Typeof);
+) => ReturnType<typeof F.buildImportSpecifier> = importSpecifier$typeof(F.buildImportSpecifier, TSKindId.TypeofKeyword);
 const importSpecifier$typeof$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifier>[0], 'importKind'>
-) => ReturnType<typeof C.coerceToImportSpecifier> = importSpecifier$typeof(C.coerceToImportSpecifier, TSKindId.Typeof);
+) => ReturnType<typeof C.coerceToImportSpecifier> = importSpecifier$typeof(
+	C.coerceToImportSpecifier,
+	TSKindId.TypeofKeyword
+);
 const importSpecifier$typeof$as =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -1907,16 +1913,16 @@ export const importSpecifier: typeof B.importSpecifier & {
 } = {
 	...B.importSpecifier,
 	type: {
-		strict: importSpecifier$type(F.buildImportSpecifier, TSKindId.AnonType),
-		coerce: importSpecifier$type(C.coerceToImportSpecifier, TSKindId.AnonType),
+		strict: importSpecifier$type(F.buildImportSpecifier, TSKindId.TypeKeyword),
+		coerce: importSpecifier$type(C.coerceToImportSpecifier, TSKindId.TypeKeyword),
 		as: {
 			strict: importSpecifier$type$as(importSpecifier$type$applied, F.buildImportSpecifierAs),
 			coerce: importSpecifier$type$as(importSpecifier$type$appliedCoerce, C.coerceToImportSpecifierAs)
 		}
 	},
 	typeof: {
-		strict: importSpecifier$typeof(F.buildImportSpecifier, TSKindId.Typeof),
-		coerce: importSpecifier$typeof(C.coerceToImportSpecifier, TSKindId.Typeof),
+		strict: importSpecifier$typeof(F.buildImportSpecifier, TSKindId.TypeofKeyword),
+		coerce: importSpecifier$typeof(C.coerceToImportSpecifier, TSKindId.TypeofKeyword),
 		as: {
 			strict: importSpecifier$typeof$as(importSpecifier$typeof$applied, F.buildImportSpecifierAs),
 			coerce: importSpecifier$typeof$as(importSpecifier$typeof$appliedCoerce, C.coerceToImportSpecifierAs)
@@ -1956,12 +1962,12 @@ export const importAttribute: typeof B.importAttribute & {
 } = {
 	...B.importAttribute,
 	with: {
-		strict: importAttribute$with(F.buildImportAttribute, TSKindId.With),
-		coerce: importAttribute$with(C.coerceToImportAttribute, TSKindId.With)
+		strict: importAttribute$with(F.buildImportAttribute, TSKindId.WithKeyword),
+		coerce: importAttribute$with(C.coerceToImportAttribute, TSKindId.WithKeyword)
 	},
 	assert: {
-		strict: importAttribute$assert(F.buildImportAttribute, TSKindId.Assert),
-		coerce: importAttribute$assert(C.coerceToImportAttribute, TSKindId.Assert)
+		strict: importAttribute$assert(F.buildImportAttribute, TSKindId.AssertKeyword),
+		coerce: importAttribute$assert(C.coerceToImportAttribute, TSKindId.AssertKeyword)
 	}
 };
 
@@ -4984,8 +4990,8 @@ export const binaryExpression: typeof B.binaryExpression & {
 		coerce: binaryExpression$qmarkQmark(C.coerceToBinaryExpression, TSKindId.QmarkQmark)
 	},
 	instanceof: {
-		strict: binaryExpression$instanceof(F.buildBinaryExpression, TSKindId.Instanceof),
-		coerce: binaryExpression$instanceof(C.coerceToBinaryExpression, TSKindId.Instanceof)
+		strict: binaryExpression$instanceof(F.buildBinaryExpression, TSKindId.InstanceofKeyword),
+		coerce: binaryExpression$instanceof(C.coerceToBinaryExpression, TSKindId.InstanceofKeyword)
 	},
 	in: { strict: F.buildBinaryExpressionIn, coerce: C.coerceToBinaryExpressionIn }
 };
@@ -5356,12 +5362,12 @@ export const methodDefinition: typeof B.methodDefinition & {
 } = {
 	...B.methodDefinition,
 	get: {
-		strict: methodDefinition$get(F.buildMethodDefinition, TSKindId.Get),
-		coerce: methodDefinition$get(C.coerceToMethodDefinition, TSKindId.Get)
+		strict: methodDefinition$get(F.buildMethodDefinition, TSKindId.GetKeyword),
+		coerce: methodDefinition$get(C.coerceToMethodDefinition, TSKindId.GetKeyword)
 	},
 	set: {
-		strict: methodDefinition$set(F.buildMethodDefinition, TSKindId.Set),
-		coerce: methodDefinition$set(C.coerceToMethodDefinition, TSKindId.Set)
+		strict: methodDefinition$set(F.buildMethodDefinition, TSKindId.SetKeyword),
+		coerce: methodDefinition$set(C.coerceToMethodDefinition, TSKindId.SetKeyword)
 	},
 	star: {
 		strict: methodDefinition$star(F.buildMethodDefinition, TSKindId.Star),
@@ -5558,12 +5564,12 @@ export const methodSignature: typeof B.methodSignature & {
 } = {
 	...B.methodSignature,
 	get: {
-		strict: methodSignature$get(F.buildMethodSignature, TSKindId.Get),
-		coerce: methodSignature$get(C.coerceToMethodSignature, TSKindId.Get)
+		strict: methodSignature$get(F.buildMethodSignature, TSKindId.GetKeyword),
+		coerce: methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword)
 	},
 	set: {
-		strict: methodSignature$set(F.buildMethodSignature, TSKindId.Set),
-		coerce: methodSignature$set(C.coerceToMethodSignature, TSKindId.Set)
+		strict: methodSignature$set(F.buildMethodSignature, TSKindId.SetKeyword),
+		coerce: methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword)
 	},
 	star: {
 		strict: methodSignature$star(F.buildMethodSignature, TSKindId.Star),
@@ -5611,12 +5617,12 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 } = {
 	...B.abstractMethodSignature,
 	get: {
-		strict: abstractMethodSignature$get(F.buildAbstractMethodSignature, TSKindId.Get),
-		coerce: abstractMethodSignature$get(C.coerceToAbstractMethodSignature, TSKindId.Get)
+		strict: abstractMethodSignature$get(F.buildAbstractMethodSignature, TSKindId.GetKeyword),
+		coerce: abstractMethodSignature$get(C.coerceToAbstractMethodSignature, TSKindId.GetKeyword)
 	},
 	set: {
-		strict: abstractMethodSignature$set(F.buildAbstractMethodSignature, TSKindId.Set),
-		coerce: abstractMethodSignature$set(C.coerceToAbstractMethodSignature, TSKindId.Set)
+		strict: abstractMethodSignature$set(F.buildAbstractMethodSignature, TSKindId.SetKeyword),
+		coerce: abstractMethodSignature$set(C.coerceToAbstractMethodSignature, TSKindId.SetKeyword)
 	},
 	star: {
 		strict: abstractMethodSignature$star(F.buildAbstractMethodSignature, TSKindId.Star),
@@ -5661,8 +5667,8 @@ export const asExpression: typeof B.asExpression & {
 } = {
 	...B.asExpression,
 	const: {
-		strict: asExpression$const(F.buildAsExpression, TSKindId.Const),
-		coerce: asExpression$const(C.coerceToAsExpression, TSKindId.Const)
+		strict: asExpression$const(F.buildAsExpression, TSKindId.ConstKeyword),
+		coerce: asExpression$const(C.coerceToAsExpression, TSKindId.ConstKeyword)
 	}
 };
 
@@ -7434,8 +7440,8 @@ export const constraint: typeof B.constraint & {
 } = {
 	...B.constraint,
 	extends: {
-		strict: constraint$extends(F.buildConstraint, TSKindId.Extends),
-		coerce: constraint$extends(C.coerceToConstraint, TSKindId.Extends)
+		strict: constraint$extends(F.buildConstraint, TSKindId.ExtendsKeyword),
+		coerce: constraint$extends(C.coerceToConstraint, TSKindId.ExtendsKeyword)
 	},
 	colon: {
 		strict: constraint$colon(F.buildConstraint, TSKindId.Colon),

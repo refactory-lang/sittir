@@ -82,13 +82,14 @@ The precedent already exists and works: `validate/from.ts` reconstructs text as
 `readData.$text ?? source.slice($span.start, $span.end)` when `$text` is
 absent. That fallback becomes the only path.
 
-**Dirtiness becomes structural rather than stamped.** With provenance held as a
-coordinate, there is no stale text to invalidate: a node is replayable exactly
-when every stored value is still an unexpanded stub, which is already what
-`isUntouchedSubtree` checks after its `stubs > 0` clause was removed. The
-`markEdited` helper and the `$edited(...)` spread in every generated `$with`
-setter are then unnecessary and should be deleted — they exist only to keep a
-provenance `$text` from outliving the edit that invalidated it.
+**An edit detaches the coordinate.** The coordinate is the one fact an edit
+invalidates, so the `$edited(...)` spread in every generated `$with` setter
+drops `$nodeHandle`, `$span` and `$childIndex` from the node it rebuilds, in
+place of the `$text` it drops today. It cannot be inferred later: a node whose
+`$with` emptied its only slot and a node that parsed childless (a file of
+nothing but comments) have the same shape, and only the first is dirty. The
+setter is the one place that knows an edit happened, so the fact is recorded
+there.
 
 **The readers converge.** Both stop emitting `$text` on structural nodes, so
 `SITTIR_DEBUG_TEXT` and the JS/native shape divergence go away together.
@@ -106,9 +107,15 @@ have the same wire shape, and the transport should need only one test.
   children are projected by the same rule, so an untouched child inside an
   edited parent is still a coordinate.
 
-The fold is bottom-up and the check is local: a node is coordinates-only when
-every stored value is. `isUntouchedSubtree`, `hasStructure` and the `$text`
-fallback collapse into that single question.
+The fold is bottom-up and the check is local. A node folds when it still
+carries its coordinate, has no attached trivia (a node's own leading and
+trailing comments sit outside the span), and every stored child folds; a
+text-modeled leaf folds when it still carries its `$span`, and a kind id or
+boolean stored in a slot is inert. A node that does not fold has its
+coordinate stripped before it crosses, so the native side needs one test — is
+`$nodeHandle` present — and never inspects storage keys to decide.
+`isUntouchedSubtree`, `hasStructure` and the `$text` fallback collapse into
+that single question.
 
 **This makes reading non-destructive**, which is the largest practical
 consequence. Today a deep read rebuilds every level from its template, so it
@@ -139,7 +146,21 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// The content is in this message.
     Transport(T),
 }
+
+pub struct NodeCoordinate {
+    /// Tagged: the tree id in the high bits names the tree.
+    pub handle: u64,
+    /// Byte range within that tree's source.
+    pub span: Span,
+}
 ```
+
+A coordinate carries both the handle and the span. The handle's tag is the
+tree's identity, which the span alone cannot express; the span is the slice,
+which the handle alone yields only by re-walking the coordinate table to the
+node. On the wire they are `$nodeHandle` and `$span`, both already stamped by
+the reader on every node it hands out; a `$nodeHandle` without a `$span` is
+an error, never a re-resolution.
 
 `Verbatim(String)` is deleted. Its three meanings separate: a captured span
 becomes `Coord`, text that is genuinely the slot's content becomes a
@@ -280,59 +301,76 @@ whichever arm happened to deserialize. This is the strict dispatch contract
 `VerbatimTransport` established, applied at the carrier and now workable
 because the three shapes are genuinely distinct.
 
-### The sink carries what the boundary erases
+### Coordinates resolve in one walk before the render
 
-Two problems in this spec have one cause and one answer.
+A render already makes one pass over every slot of the transport before a
+byte is written: the fill walk that copies the resolved option into every
+unset spacing and flank field. Resolving coordinates is the same shape of
+work — visit every slot, act on the ones that need it — so it is the same
+walk. The walk takes one context, passed as an argument the whole way down:
 
-`RenderableTransport::render_into(&self, dest)` hands the coordinate arm no way
-to reach the tree it must slice. And `ADJACENT` exists because askama's
-`fmt::Write`/`Formatter` chain **erases sink identity**, so a per-boundary fact
-— "no space may precede this" — cannot travel in-band and rides a thread-local
-mark instead. Same shape of problem: the sink is too weak to carry what the
-render needs to know.
+```rust
+pub struct RenderContext<'a> {
+    pub options: &'a ResolvedOptions,
+    pub sources: &'a dyn SourceTable,
+}
 
-The seam work already names the fix and calls it optional: thread a custom sink
-trait end-to-end, replacing the `fmt::Write` chokepoints, and the mark
-"dissolves into a two-layer `RawWriter`/`SpacingWriter` split: state at the
-bottom, seam check as a decorator that statically-resolved call sites bypass by
-construction. Same semantics, in-band."
+pub trait SourceTable {
+    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>>;
+}
 
-That same sink carries the tree table. So:
+pub trait Prepare {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), PrepareError>;
+}
+```
 
-- **Coordinates resolve in-band.** No ambient tree table, no second
-  thread-local. The sink the render is already writing into knows which trees
-  are live.
-- **A render fn whose seams are all statically decided takes a `RawWriter`**,
-  which inserts nothing. For those fns the template text is final and
-  adjacency needs no signal at all — the question of baking immediacy into the
-  `.jinja` answers itself once nothing is second-guessing the template.
-- **`SpacingWriter` survives only where a seam is genuinely indeterminate** —
-  per-instance presence, adjacent optionals, pattern trailing edges. Immediacy
-  there is a decorator argument rather than a thread-local.
+The engine's live-tree map is the `SourceTable`; each parsed tree holds its
+source as an `Arc<str>`. Visiting a `Coord`, the walk looks the tree up by
+the handle's tag and attaches a clone of that `Arc` to the coordinate, after
+checking the span lies within it on character boundaries. Nothing ambient
+carries the table — no thread-local, no global — and nothing on the render
+path needs a context after the walk: `Display` on a resolved coordinate
+slices the source it holds, and the generated render functions keep the
+`fmt::Write` chain they have. A handle whose tag names no live tree, or a span
+outside its source, fails the walk with the handle in the error, so an
+unresolvable coordinate is refused before the render starts rather than
+rendered empty.
 
-Note what *cannot* be baked as a character, since it is the reason the mark
-exists at all: a required space is bakeable because it is a character to add,
-but immediacy is the demand that no space appear, and an absent space cannot
-express it while a writer is inserting from the last character it saw.
-`type{{ left }}` carries no space and still gets one. Immediacy becomes free
-only by removing the inserter, not by editing the template.
+The adjacency mark is untouched by this. It travels in-band already — the
+`U+FFFE` noncharacter the immediate leaves and the carrier's `ADJACENT`
+position write into the stream, which the spacing writer strips — and a
+coordinate's write honours its position's `ADJACENT` exactly as verbatim text
+does today.
 
-**Where each source of immediacy lands.** `slotVerbatimIsImmediate` is
-conservative because verbatim text "erases kind identity (a text-collapsed
-leaf, an inline terminal and an unexpanded read stub all arrive as text)". One
-of those three is not scalar at all — a stub is a **node** that merely arrives
-as text, and the seam work already routes structural arms through
-`isLeftImmediateKind`, describing them as "the case the scalar-only gate
-cannot cover". So:
+### Gaps between coordinates classify into option values
 
-- **Coordinate** — structural. Uses `isLeftImmediateKind` on the kind it
-  resolves to. Exact, and already realized.
-- **`VerbatimTransport`** — genuinely identity-erased text. Keeps the scalar
-  gate, now over the two sources it was named for.
+Render options give every list site of a kind one value: `Option<u16>` per
+site on the transport, filled from the option table when the wire left it
+unset. A rebuilt node whose items are still coordinates of one tree has a
+better source for that value than the table: the bytes between the items.
 
-With one erasure source gone the gate vetoes less often, so boundaries should
-migrate from indeterminate into static. The seam work's residue report is the
-instrument; record before and after per grammar rather than asserting it.
+In the same walk, before the table fills a site, a list slot whose
+consecutive items are both coordinates of the same tree, in source order,
+yields one gap per adjacent pair — the bytes from the first item's span end
+to the second's span start. For a separated list the gap splits around the
+first occurrence of the separator token into the text before it and the text
+after it; for an unseparated repeat the whole gap is the one site's text. Each
+piece classifies to the arm the site admits whose whitespace text has the
+same seam rank — no line break and empty is `tight`, no line break and
+non-empty is `space`, otherwise the arm with the same number of line breaks,
+falling back to the widest the site admits. A depth arm (`indent`, `dedent`)
+never classifies: indentation belongs to the writer's depth tracking. A gap
+whose token is absent, and any pair that is not two ordered coordinates of
+one tree, contributes nothing. The site takes the majority class over its
+gaps, the first seen winning a tie, and only when the wire left it unset.
+
+So for any list site the precedence is: the value the wire carried, then the
+class of the source gaps, then the engine's option table, then the grammar's
+default. Seated per-item seams are not classified: a seated item is a
+transport the render rebuilds, so its own span is stale and the bytes after
+it are not the gap that will be written. Comments inside a gap count as the
+bytes they are; a comment between two items of a rebuilt list is trivia the
+reader did not attach to either stub, and that loss predates this design.
 
 ### One tolerance is deliberately lost
 
@@ -430,25 +468,30 @@ the chance that someone will.
 
 ### End state
 
-- `NodeData.text` is populated only for text-modeled kinds. The unconditional
-  `source.get(byte_range)` capture in `read_ts_node` is gated on the kind.
+- `NodeData.text` is populated for anonymous tokens and for named kinds the
+  grammar models as text; the unconditional `source.get(byte_range)` capture
+  in `read_ts_node` is gated on a per-grammar predicate the engine adapter
+  exposes, generated from the model's classification.
 - The root keeps whole-file coverage, but as span rather than text: `$span` is
-  `0..source.len()` and the text is sliced natively at render.
-- `SlotValue` keeps two arms, `Coord` and `Transport(T)`. `Node(T)` and
-  `Verbatim(String)` are both gone.
+  `0..source.len()` and the text is sliced natively at render. The tree handle
+  carries the source string for callers that want it.
+- `SlotValue` keeps two arms, `Coord(NodeCoordinate)` and `Transport(T)`.
+  `Node(T)` and `Verbatim(String)` are both gone. A coordinate is the tagged
+  handle and the span.
 - Transport structs drop `$span`, `$nodeHandle`, `$childIndex`, `$source` and
   `$named` — declared today, read never. The reader keeps emitting the
-  coordinate fields, which the wrap layer needs for drill-in.
+  coordinate fields, which the wrap layer needs for drill-in and the
+  projection needs to fold.
 - `VerbatimTransport` returns as a node type, admitted by slot types that
   accept a text kind.
-- A custom sink is threaded through the render stack. Statically-resolved
-  render fns take a `RawWriter`; `SpacingWriter` survives only at
-  indeterminate seams; `mark_adjacent` and its thread-local are gone, and the
-  tree table travels in-band on the sink.
+- The fill walk is the prepare walk: `Prepare::prepare(&mut self, &RenderContext)`
+  resolves coordinates against the engine's live trees, classifies list gaps,
+  then fills unset sites from the option table. The context is an argument
+  end to end; nothing is thread-local or global.
 - `hasStructure`, `_isReadTextLeaf`, and the `slot.rs` judgement collapse into
   the model's own classification of text-modeled kinds — a stamped fact, per
   the canonical-predicates rule, not a shape heuristic re-implemented per site.
-- `markEdited` / `$edited` deleted.
+- `markEdited` / `$edited` detach the coordinate instead of the text.
 - `SITTIR_DEBUG_TEXT` deleted.
 - `#![recursion_limit = "256"]` stays; the wrapper layer that needed it stays.
 
@@ -478,11 +521,12 @@ children`), which is precisely the proxy that forced the unconditional capture.
 6. A coordinate minted by one engine and rendered through another fails loudly.
 7. Deserialization dispatches on shape, with no attempt-then-fallback, and
    rejects an unrecognised shape rather than defaulting to an arm.
-8. The seam residue report is recorded before and after, per grammar. Removing
-   the stub as an erasure source should move boundaries from indeterminate into
-   static; the counts may not regress.
-9. Every render fn the classifier calls statically resolved takes a
-   `RawWriter`, and no thread-local survives in the render path.
+8. A rebuilt list whose items are coordinates renders the majority class of
+   its source gaps: a parsed block with blank lines between its statements
+   keeps them after one statement is appended, and a comma list spelled
+   `a,b,c` stays tight after an item is replaced.
+9. No thread-local or global carries the tree table or the option table; the
+   render context is an argument at every level of the walk.
 10. Full unit suite, and `validate history` compared numerically across all
     three grammars.
 
@@ -499,9 +543,9 @@ carrying the untouched-subtree case.
   seam for fixing it; threading it through the wrap layer is separate work.
 - Whether `$span` should remain on text-modeled kinds once provenance is
   coordinate-based.
-- The seam classifier itself. This spec consumes its output and removes the
-  thread-local it currently needs; it does not change how boundaries are
-  classified.
+- The seam classifier and the adjacency mark. A coordinate's write honours
+  its position's `ADJACENT` as verbatim text does; how boundaries are
+  classified does not change.
 - Tree-level render format. `render_transport_parts` hardcodes
   `TransportSource::Factory`, so detected per-file format never reaches the
   native render path; that predates this spec and needs its own decision.

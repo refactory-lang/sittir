@@ -91,7 +91,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 			parser: {
 				cSymbol: 'anon_sym_COMMA',
 				parserName: 'comma',
-				symbolName: ',',
+				symbolName: ',', literalText: ',',
 				anon: true,
 				aux: false,
 				alias: false,
@@ -103,7 +103,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 			parser: {
 				cSymbol: 'anon_sym_SEMI',
 				parserName: 'semi',
-				symbolName: ';',
+				symbolName: ';', literalText: ';',
 				anon: true,
 				aux: false,
 				alias: false,

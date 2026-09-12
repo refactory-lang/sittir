@@ -28,6 +28,20 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     Verbatim(String),
 }
 
+/// The one derivation of "emit slot text": an `ADJACENT` slot suppresses
+/// the seam space before it, then the text writes verbatim. Shared by
+/// `node_or_write` and `Render for SlotValue`, the two write paths a slot
+/// value can take.
+fn write_verbatim<const ADJACENT: bool>(
+    text: &str,
+    w: &mut dyn crate::render::RenderSink,
+) -> crate::render::RenderResult {
+    if ADJACENT {
+        w.adjacent();
+    }
+    w.text(text)
+}
+
 impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     /// The node this slot holds, or `None` when it holds verbatim text.
     pub fn node(&self) -> Option<&T> {
@@ -37,40 +51,30 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
         }
     }
 
-    /// The node this slot holds, or `None` after writing its verbatim text
-    /// to `dest`. For render paths that call a concrete `render_<kind>`
-    /// function directly instead of going through `Display`.
+    /// The node this slot holds, or `None` after rendering its verbatim
+    /// text to `w`. For render paths that call a concrete `render_<kind>`
+    /// function directly instead of going through `Render`.
     pub fn node_or_write(
         &self,
-        dest: &mut dyn std::fmt::Write,
-    ) -> Result<Option<&T>, std::fmt::Error> {
+        w: &mut dyn crate::render::RenderSink,
+    ) -> Result<Option<&T>, crate::render::RenderError> {
         match self {
             Self::Node(node) => Ok(Some(node)),
             Self::Verbatim(text) => {
-                write_verbatim::<ADJACENT>(text, dest)?;
+                write_verbatim::<ADJACENT>(text, w)?;
                 Ok(None)
             }
         }
     }
 }
 
-/// The one derivation of "emit slot text", shared by `Display` and
-/// `node_or_write` so both honour the position's adjacency the same way.
-fn write_verbatim<const ADJACENT: bool>(
-    text: &str,
-    dest: &mut dyn std::fmt::Write,
-) -> std::fmt::Result {
-    if ADJACENT {
-        crate::spacing::mark_adjacent(dest)?;
-    }
-    dest.write_str(text)
-}
-
-impl<T: std::fmt::Display, const ADJACENT: bool> std::fmt::Display for SlotValue<T, ADJACENT> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
+    for SlotValue<T, ADJACENT>
+{
+    fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
-            Self::Node(node) => std::fmt::Display::fmt(node, f),
-            Self::Verbatim(text) => write_verbatim::<ADJACENT>(text, f),
+            Self::Node(node) => node.render(w),
+            Self::Verbatim(text) => write_verbatim::<ADJACENT>(text, w),
         }
     }
 }
@@ -163,38 +167,58 @@ impl<T, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue for SlotValue
 #[cfg(test)]
 mod tests {
     use super::SlotValue;
+    use crate::render::{render_to_string, Render, RenderResult, RenderSink, WhitespaceTable};
+    use crate::spacing::{SpacingWriter, WordMatcher};
 
     struct Word(&'static str);
 
-    impl std::fmt::Display for Word {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            f.write_str(self.0)
+    impl Render for Word {
+        fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+            w.text(self.0)
         }
+    }
+
+    fn text_of(_: u16) -> &'static str {
+        ""
+    }
+    const TABLE: WhitespaceTable = WhitespaceTable {
+        text_of,
+        indent: 0,
+        dedent: 0,
+    };
+
+    fn rendered(value: &dyn Render) -> String {
+        render_to_string(value, WordMatcher::default_ident(), &TABLE, "    ").unwrap()
     }
 
     #[test]
     fn node_renders_through_its_transport() {
         let slot: SlotValue<Word> = SlotValue::Node(Word("fn"));
-        assert_eq!(slot.to_string(), "fn");
+        assert_eq!(rendered(&slot), "fn");
         assert!(slot.node().is_some());
     }
 
     #[test]
     fn verbatim_renders_its_text() {
         let slot: SlotValue<Word> = SlotValue::Verbatim("pub fn main() { }".to_owned());
-        assert_eq!(slot.to_string(), "pub fn main() { }");
+        assert_eq!(rendered(&slot), "pub fn main() { }");
         assert!(slot.node().is_none());
     }
 
     #[test]
     fn node_or_write_writes_only_the_verbatim_case() {
         let mut buf = String::new();
+        let mut w = SpacingWriter::new(&mut buf, WordMatcher::default_ident());
         let node: SlotValue<Word> = SlotValue::Node(Word("fn"));
-        assert!(node.node_or_write(&mut buf).unwrap().is_some());
+        assert!(node.node_or_write(&mut w).unwrap().is_some());
+        w.finish().unwrap();
         assert_eq!(buf, "");
 
+        let mut buf2 = String::new();
+        let mut w2 = SpacingWriter::new(&mut buf2, WordMatcher::default_ident());
         let verbatim: SlotValue<Word> = SlotValue::Verbatim("raw".to_owned());
-        assert!(verbatim.node_or_write(&mut buf).unwrap().is_none());
-        assert_eq!(buf, "raw");
+        assert!(verbatim.node_or_write(&mut w2).unwrap().is_none());
+        w2.finish().unwrap();
+        assert_eq!(buf2, "raw");
     }
 }

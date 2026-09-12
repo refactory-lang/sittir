@@ -25,13 +25,13 @@ describe('a supertype segment matches the sites of its members', () => {
 });
 
 const ENTRIES: readonly KindEntryLike[] = [
-	{ kind: 'lbrace', symbolName: '{', anon: true },
-	{ kind: 'rbrace', symbolName: '}', anon: true },
-	{ kind: 'lparen', symbolName: '(', anon: true },
-	{ kind: 'comma', symbolName: ',', anon: true },
-	{ kind: 'colon', symbolName: ':', anon: true },
-	{ kind: 'x', symbolName: 'x', anon: true },
-	{ kind: 'y', symbolName: 'y', anon: true },
+	{ kind: 'lbrace', symbolName: '{', literalText: '{', anon: true },
+	{ kind: 'rbrace', symbolName: '}', literalText: '}', anon: true },
+	{ kind: 'lparen', symbolName: '(', literalText: '(', anon: true },
+	{ kind: 'comma', symbolName: ',', literalText: ',', anon: true },
+	{ kind: 'colon', symbolName: ':', literalText: ':', anon: true },
+	{ kind: 'x', symbolName: 'x', literalText: 'x', anon: true },
+	{ kind: 'y', symbolName: 'y', literalText: 'y', anon: true },
 	{ kind: 'block', symbolName: 'block' }
 ];
 
@@ -159,7 +159,7 @@ describe('resolveBindings', () => {
 	});
 
 	it('lets a declaration win over a binding at the identical address', () => {
-		const sites = addressSites([site('keyword_argument', 'eq_before')], [...ENTRIES, { kind: 'eq', symbolName: '=', anon: true }]);
+		const sites = addressSites([site('keyword_argument', 'eq_before')], [...ENTRIES, { kind: 'eq', symbolName: '=', literalText: '=', anon: true }]);
 		const out = resolveBindings(
 			[
 				{ path: 'assignment/before', arm: 'space' },

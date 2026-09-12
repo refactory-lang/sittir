@@ -2,8 +2,8 @@
 //! shape defined in `sittir_core::types`. Spec 012 T011 — enforces
 //! the invariants in data-model.md §1.
 
-use sittir_core::types::{Edit, FieldValue, KindId, NodeData, Source, Span};
 use indexmap::IndexMap;
+use sittir_core::types::{Edit, FieldValue, KindId, NodeData, Source, Span};
 
 // KindId fixtures — values match the Rust grammar's parser.c symbol ids.
 const K_IDENTIFIER: KindId = KindId(1);
@@ -187,7 +187,9 @@ fn slot_order_roundtrips_and_elides_when_absent() {
     );
     assert_eq!(serde_json::to_string(&node).unwrap(), json);
 
-    assert!(!serde_json::to_string(&sample_leaf()).unwrap().contains("$slotOrder"));
+    assert!(!serde_json::to_string(&sample_leaf())
+        .unwrap()
+        .contains("$slotOrder"));
 }
 
 #[test]

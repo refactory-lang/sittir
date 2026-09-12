@@ -26,10 +26,14 @@
 //! boundary and would be serialized dead weight on every hop
 //! (Constitution Principle X exception, documented in data-model.md §1).
 
+use indexmap::IndexMap;
 #[cfg(feature = "napi-bindings")]
 use napi_derive::napi;
-use serde::{de::{SeqAccess, Visitor}, ser::{SerializeMap, SerializeSeq}, Deserialize, Deserializer, Serialize, Serializer};
-use indexmap::IndexMap;
+use serde::{
+    de::{SeqAccess, Visitor},
+    ser::{SerializeMap, SerializeSeq},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
 use std::collections::HashMap;
 use std::fmt;
 
@@ -199,11 +203,7 @@ struct NodeDataSer<'a> {
         skip_serializing_if = "Option::is_none"
     )]
     child_index: &'a Option<u16>,
-    #[serde(
-        rename = "$_trivia",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "$_trivia", default, skip_serializing_if = "Option::is_none")]
     trivia_data: &'a Option<NodeTrivia>,
     #[serde(
         rename = "$slotOrder",
@@ -282,10 +282,7 @@ where
     Ok(Some(fields))
 }
 
-fn serialize_children<S>(
-    children: &Option<Vec<NodeData>>,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
+fn serialize_children<S>(children: &Option<Vec<NodeData>>, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
@@ -321,7 +318,6 @@ where
     }
     Ok(Some(children))
 }
-
 
 impl Serialize for NodeData {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -503,15 +499,21 @@ impl<'de> Deserialize<'de> for FieldValue {
             type Value = FieldValue;
 
             fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-                formatter.write_str("a node object, scalar leaf, boolean flag, or array of node/scalar leaves")
+                formatter.write_str(
+                    "a node object, scalar leaf, boolean flag, or array of node/scalar leaves",
+                )
             }
 
             fn visit_bool<E: serde::de::Error>(self, value: bool) -> Result<Self::Value, E> {
                 Ok(FieldValue::Bool(value))
             }
 
-            fn visit_map<A: serde::de::MapAccess<'de>>(self, map: A) -> Result<Self::Value, A::Error> {
-                let node = NodeData::deserialize(serde::de::value::MapAccessDeserializer::new(map))?;
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                map: A,
+            ) -> Result<Self::Value, A::Error> {
+                let node =
+                    NodeData::deserialize(serde::de::value::MapAccessDeserializer::new(map))?;
                 Ok(FieldValue::Single(Box::new(node)))
             }
 
@@ -524,7 +526,8 @@ impl<'de> Deserialize<'de> for FieldValue {
             }
 
             fn visit_u64<E: serde::de::Error>(self, value: u64) -> Result<Self::Value, E> {
-                let kind = u16::try_from(value).map_err(|_| E::custom(format!("kind id {value} out of range")))?;
+                let kind = u16::try_from(value)
+                    .map_err(|_| E::custom(format!("kind id {value} out of range")))?;
                 Ok(FieldValue::Single(Box::new(scalar_kind_leaf(KindId(kind)))))
             }
 
@@ -592,7 +595,6 @@ fn scalar_child_value(node: &NodeData) -> Option<FieldScalar<'_>> {
     }
     Some(FieldScalar::KindId(node.type_))
 }
-
 
 fn scalar_text_leaf(text: String) -> NodeData {
     NodeData {
@@ -681,9 +683,7 @@ impl<T: napi::bindgen_prelude::FromNapiValue> napi::bindgen_prelude::FromNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: napi::bindgen_prelude::ToNapiValue> napi::bindgen_prelude::ToNapiValue
-    for OneOrMany<T>
-{
+impl<T: napi::bindgen_prelude::ToNapiValue> napi::bindgen_prelude::ToNapiValue for OneOrMany<T> {
     unsafe fn to_napi_value(
         env: napi::sys::napi_env,
         val: Self,

@@ -1,4 +1,4 @@
-import { parseSeamLabel } from '../dsl/primitives/spacing.ts';
+import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -45,6 +45,7 @@ import {
 	classifySlotForEmit,
 	findSupertypeKindByTypeName,
 	isReservedSupertypeTransportNode,
+	rustFieldIdent,
 	rustTypeIdent,
 	slotElementKinds,
 	supertypeTransportKinds,
@@ -72,9 +73,9 @@ import {
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
-import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
+import { collectSitePreferences, publicKindName, type SitePreference } from '../compiler/model/site-preferences.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
-import { publicKindName } from '../compiler/model/site-preferences.ts';
+import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	escapeBraces,
@@ -83,7 +84,6 @@ import {
 	printRustBody,
 	references,
 	rustStringLiteral,
-	seamMarked,
 	isWhitespaceOnly,
 	templateOf,
 	type Body,
@@ -118,6 +118,9 @@ export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
 	readonly options?: OptionsConfig;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly kindEntries?: readonly KindEnumEntry[];
+	readonly sites?: readonly SitePreference[];
+	readonly addresses?: AddressTables;
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -134,9 +137,9 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals, options } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals, options, kindEntries, sites, addresses } = config;
 	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals, options })
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals, options, kindEntries, sites, addresses })
 	};
 }
 
@@ -153,7 +156,10 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#options = {
 			renderRules: config.renderRules,
 			visibleExternals: config.visibleExternals,
-			options: config.options
+			options: config.options,
+			kindEntries: config.kindEntries,
+			sites: config.sites,
+			addresses: config.addresses
 		};
 	}
 
@@ -246,11 +252,6 @@ function collectEffectiveSupertypeTransportShape(
 		subtypes.push({ subKind, subNode });
 	}
 	return { subtypes, suppressedKinds: walk.suppressed, parseNames: walk.parseNames };
-}
-
-export function rustFieldIdent(id: string): string {
-	if (RUST_KEYWORDS.has(id)) return `${id}_`;
-	return id;
 }
 
 interface EmittedField {
@@ -519,14 +520,31 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 }
 
 
+function literalWrite(valueExpr: string, fixed: string | undefined): string {
+	if (fixed !== undefined && isDepthText(fixed)) {
+		return fixed === INDENT_TEXT
+			? `{ w.indent(); w.seam(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`
+			: `{ w.dedent(); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+	}
+	if (fixed !== undefined && isWhitespaceOnly(fixed)) {
+		return `{ w.token_seam(${valueExpr}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
+	}
+	return `w.text(${valueExpr})`;
+}
+
+function literalWriteArm(text: string, immediate: boolean): string {
+	const tail = literalWrite(rustStringLiteral(text), text);
+	return immediate ? `{ w.adjacent(); ${tail} }` : tail;
+}
+
 function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 	switch (cls.tag) {
 		case 'concrete':
-			return `if let Some(v) = ${expr}.node_or_write(f)? { render_${rustSnakeIdent(cls.typeName)}(v, f)?; }`;
+			return `if let Some(v) = ${expr}.node_or_write(w)? { render_${rustSnakeIdent(cls.typeName)}(v, w)?; }`;
 		case 'supertype':
-			return `if let Some(v) = ${expr}.node_or_write(f)? { render_${rustSnakeIdent(cls.supertypeName)}(v, f)?; }`;
+			return `if let Some(v) = ${expr}.node_or_write(w)? { render_${rustSnakeIdent(cls.supertypeName)}(v, w)?; }`;
 		case 'heterogeneous':
-			return `write!(f, "{}", ${expr})?;`;
+			return `${expr}.render(w)?;`;
 		default:
 			return assertNever(cls);
 	}
@@ -579,30 +597,30 @@ function renderTypedDispatch(
 	lines.push(`/// the SAME single SpacingWriter wrap — a second entry point would be a`);
 	lines.push(`/// second place the root seam policy could drift.`);
 	lines.push(
-		`pub fn render_transport_dispatch(transport: &dyn ::std::fmt::Display, indent: &str) -> Result<String, ::std::fmt::Error> {`
+		`pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {`
 	);
 	lines.push(`    let mut s = String::new();`);
-	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
-	lines.push(`    // only where a word-class char would collide with a word-class char`);
-	lines.push(`    // across write seams, per this grammar's own word class. Wrap ONCE`);
-	lines.push(`    // here — never per level.`);
-	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_indent(indent);`);
-	lines.push(`    ::std::fmt::Write::write_fmt(&mut w, format_args!("{transport}"))?;`);
+	lines.push(
+		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent);`
+	);
+	lines.push(`    transport.render(&mut w)?;`);
 	lines.push(`    w.finish()?;`);
 	lines.push(`    Ok(s)`);
 	lines.push(`}`);
 	lines.push('');
 
-	lines.push(`impl ::std::fmt::Display for AnyTransport {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(`impl ::sittir_core::render::Render for AnyTransport {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	lines.push(`        match self {`);
 	for (const node of nodes) {
 		const variant = rustTransportVariantName(node);
-		lines.push(`            AnyTransport::${variant}(t) => ::std::fmt::Display::fmt(t, f),`);
+		lines.push(`            AnyTransport::${variant}(t) => t.render(w),`);
 	}
 	for (const [index, literal] of literals.entries()) {
 		const variant = rustLiteralTransportVariantName(literal, index);
-		lines.push(`            AnyTransport::${variant} => f.write_str(${JSON.stringify(seamMarked(literal.text))}),`);
+		lines.push(`            AnyTransport::${variant} => ${literalWrite(rustStringLiteral(literal.text), literal.text)},`);
 	}
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -656,9 +674,11 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	const slotModel = renderSlotModelOf(node);
 	const allSlots = [...slotModel.named, ...slotModel.unnamed];
 	const lines: string[] = [];
-	lines.push(`fn ${fnName}(node: &${structName}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(
+		`fn ${fnName}(node: &${structName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	if (allSlots.length === 0) {
-		lines.push(`    f.write_str(node.transport_text.as_deref().unwrap_or_default())`);
+		lines.push(`    w.text(node.transport_text.as_deref().unwrap_or_default())`);
 	} else {
 		for (const slot of allSlots) {
 			const slotIdent = rustFieldIdent(slot.storageName);
@@ -699,20 +719,17 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 }
 
 function leafTextWrite(node: AssembledNode, on: string): string {
-	const fixed = fixedTextOfKind(node);
-	return fixed !== undefined && isWhitespaceOnly(fixed)
-		? `f.write_str(&[::sittir_core::spacing::TOKEN_SEAM_STR, ${on}.text.as_str()].concat())`
-		: `f.write_str(&${on}.text)`;
+	return literalWrite(`&${on}.text`, fixedTextOfKind(node));
 }
 
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
-	const body = node instanceof AssembledEnum ? `::std::fmt::Display::fmt(t, f)` : leafTextWrite(node, 't');
-	const mark = node instanceof AssembledLeaf && node.immediate ? [`    ::sittir_core::spacing::mark_adjacent(f)?;`] : [];
+	const body = node instanceof AssembledEnum ? `t.render(w)` : leafTextWrite(node, 't');
+	const adjacent = node instanceof AssembledLeaf && node.immediate ? [`    w.adjacent();`] : [];
 	return [
-		`fn ${fnName}(t: &${typeName}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`,
-		...mark,
+		`fn ${fnName}(t: &${typeName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+		...adjacent,
 		`    ${body}`,
 		`}`,
 		``
@@ -728,7 +745,7 @@ function renderTypedBranchFn(
 	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	return [
-		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`,
+		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan),
 		`}`,
 		''
@@ -803,7 +820,7 @@ function buildTypedTemplateBody(
 			if (checks.length > 0) {
 				lines.push(`    if ${checks.join(' && ')} {`);
 				lines.push(`        if let Some(text) = node.transport_text.as_deref() {`);
-				lines.push(`            return f.write_str(text);`);
+				lines.push(`            return w.text(text);`);
 				lines.push(`        }`);
 				lines.push(`    }`);
 			}
@@ -857,7 +874,7 @@ function buildTypedTemplateBody(
 					? buildSeparatorKindMatchLines(separatedList.separatorRule, fallback, kindIdByKind)
 					: undefined;
 			const spacing = spacingFieldExprs(plan, node, f.name);
-			const spaced = (site: string | undefined): string => (site === undefined ? '""' : `options::spacing_text(${site}.unwrap_or(0))`);
+			const spaced = (site: string | undefined): string => (site === undefined ? '0' : `${site}.unwrap_or(0)`);
 			bound.add(ident);
 			lines.push(`    let ${ident} = ListView {`);
 			lines.push(`        items: ${items},`);
@@ -892,16 +909,23 @@ function buildTypedTemplateBody(
 		bind(ident, f.hasTransportField ? `View::new(&node.${rIdent}, ${template})` : `View::new(None::<&str>, ${template})`);
 	}
 
-	for (const site of node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.side === 'seam')) {
-		const ident = rustFieldIdent(site.fieldIdent);
-		bind(ident, `options::spacing_text(node.${ident}.unwrap_or(0))`);
-	}
+	const seamFieldNames = new Set(
+		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.side === 'seam')).map((site) =>
+			rustFieldIdent(site.fieldIdent)
+		)
+	);
 
 	const refs = references(struct.body);
-	for (const name of [...refs.tests, ...refs.slots, ...refs.seams]) {
+	for (const name of [...refs.tests, ...refs.slots]) {
 		if (bound.has(rustFieldIdent(name))) continue;
 		throw new Error(
 			`render body for '${struct.kind}' names '${name}', which its transport has no slot for (slots: ${struct.fields.map((f) => f.name).join(', ') || 'none'})`
+		);
+	}
+	for (const name of refs.seams) {
+		if (seamFieldNames.has(rustFieldIdent(name))) continue;
+		throw new Error(
+			`render body for '${struct.kind}' names seam '${name}', which its transport has no spacing site for`
 		);
 	}
 	lines.push(...printRustBody(struct.body, { field: rustFieldIdent }));
@@ -946,21 +970,26 @@ export function emitHashFiles(
 
 type RenderPlan = RenderOptionsPlan;
 
+interface PlannedRenderOptions {
+	readonly plan: RenderPlan;
+	readonly addresses: AddressTables;
+	readonly kindEntries: readonly KindEnumEntry[];
+}
+
 const EMPTY_PLAN: RenderPlan = { spacingSites: [], sitePaths: [], delimiterSites: [], depthSites: [], indentId: 0, dedentId: 0, whitespaceText: [] };
+const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
 
 function planRenderOptionsFor(
 	nodeMap: NodeMap,
 	generatedIdTables: GeneratedIdTables | undefined,
 	inputs: RenderOptionsInputs
-): RenderPlan {
-	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLAN;
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
-	return planRenderOptions(
-		sites,
-		kindEntries,
-		whitespaceTextOf(inputs.visibleExternals, nodeMap)
-	);
+): PlannedRenderOptions {
+	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLANNED_OPTIONS;
+	const kindEntries = inputs.kindEntries ?? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const sites = inputs.sites ?? collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
+	const plan = planRenderOptions(sites, kindEntries, whitespaceTextOf(inputs.visibleExternals, nodeMap));
+	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
+	return { plan, addresses, kindEntries };
 }
 
 export function emitRenderModule(
@@ -970,7 +999,7 @@ export function emitRenderModule(
 	generatedIdTables?: GeneratedIdTables,
 	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
-	const plan = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
+	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
 	for (const kind of [...templates.bodies.keys()].sort((a, b) => a.localeCompare(b))) {
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
@@ -989,7 +1018,7 @@ export function emitRenderModule(
 			armSeamSupport(),
 			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 		].join('\n') + '\n';
-	const optionsRs = renderOptionsRs(plan);
+	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
 		{ filename: 'transport.rs', content: transportRs },
 		{ filename: 'options.rs', content: optionsRs }
@@ -1140,11 +1169,12 @@ function armSeamSupport(): string {
 		'    }',
 		'}',
 		'',
-		'impl<T: ::std::fmt::Display> ::std::fmt::Display for Seamed<T> {',
-		"    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {",
-		'        f.write_str(options::spacing_text(self.seam_before.unwrap_or(0)))?;',
-		'        ::std::fmt::Display::fmt(&self.value, f)?;',
-		'        f.write_str(options::spacing_text(self.seam_after.unwrap_or(0)))',
+		'impl<T: ::sittir_core::render::Render> ::sittir_core::render::Render for Seamed<T> {',
+		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
+		'        w.site(self.seam_before.unwrap_or(0));',
+		'        self.value.render(w)?;',
+		'        w.site(self.seam_after.unwrap_or(0));',
+		'        Ok(())',
 		'    }',
 		'}',
 		'',
@@ -1168,6 +1198,7 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 	);
 	lines.push('');
 	lines.push('use ::sittir_core::view::{View, ListView, NO_ITEMS};');
+	lines.push('use ::sittir_core::render::Render;');
 	lines.push('use ::sittir_core::types::{');
 	lines.push('    FieldValue, OneOrMany, Source, Span, NodeTrivia,');
 	lines.push('};');
@@ -1580,9 +1611,11 @@ function emitSupertypeTransportEnum(
 	lines.push(``);
 
 	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
-	lines.push(`impl ::std::fmt::Display for ${enumName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
-	lines.push(`        ${supertypeRenderFn}(self, f)`);
+	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
+	lines.push(`        ${supertypeRenderFn}(self, w)`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -1597,12 +1630,14 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
-	lines.push(`fn ${fnName}(t: &${enumName}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(
+		`fn ${fnName}(t: &${enumName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	lines.push(`    match t {`);
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const innerExpr = boxedInEnum(subKind, ownerKind, subNode, nodeMap) ? `inner.as_ref()` : `inner`;
-		lines.push(`        ${enumName}::${variant}(inner) => ::std::fmt::Display::fmt(${innerExpr}, f),`);
+		lines.push(`        ${enumName}::${variant}(inner) => ${innerExpr}.render(w),`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -2111,27 +2146,23 @@ function emitPerSlotChildEnum(
 	lines.push(`}`);
 	lines.push(``);
 
-	lines.push(`impl ::std::fmt::Display for ${enumName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	lines.push(`        match self {`);
 	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
-		const call = `::std::fmt::Display::fmt(${innerExpr}, f)`;
-		const arm =
-			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap)
-				? `{ ::sittir_core::spacing::mark_adjacent(f)?; ${call} }`
-				: call;
+		const call = `${innerExpr}.render(w)`;
+		const arm = !(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.adjacent(); ${call} }` : call;
 		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
 	}
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			const arm =
-				literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap)
-					? `{ ::sittir_core::spacing::mark_adjacent(f)?; f.write_str(${JSON.stringify(seamMarked(literal.text))}) }`
-					: `f.write_str(${JSON.stringify(seamMarked(literal.text))})`;
-			lines.push(`            ${enumName}::${variant} => ${arm},`);
+			const immediate = literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap);
+			lines.push(`            ${enumName}::${variant} => ${literalWriteArm(literal.text, immediate)},`);
 		}
 	}
 	lines.push(`        }`);
@@ -2272,7 +2303,7 @@ function renderTransportEntry(): string[] {
 		'pub fn render_transport_parts(',
 		'    mut transport: RenderRoot,',
 		'    table: &::sittir_core::options::ResolvedOptions,',
-		') -> Result<(TransportSource, String), ::std::fmt::Error> {',
+		') -> Result<(TransportSource, String), ::sittir_core::render::RenderError> {',
 		'    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);',
 		'    let rendered = render_transport_dispatch(&transport, &table.indent)?;',
 		'    Ok((TransportSource::Factory, rendered))',
@@ -2311,12 +2342,14 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 		)
 	);
 
-	lines.push('impl ::std::fmt::Display for TriviaTransport {');
-	lines.push("    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {");
+	lines.push('impl ::sittir_core::render::Render for TriviaTransport {');
+	lines.push(
+		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
+	);
 	lines.push('        match self {');
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
-		lines.push(`            TriviaTransport::${variant}(t) => ::std::fmt::Display::fmt(t, f),`);
+		lines.push(`            TriviaTransport::${variant}(t) => t.render(w),`);
 	}
 	lines.push('        }');
 	lines.push('    }');
@@ -2711,13 +2744,15 @@ function renderTransportDataStruct(
 	}
 	lines.push('}');
 	lines.push('');
-	lines.push(`impl ::std::fmt::Display for ${structName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	if (isLeafNode) {
-		lines.push(`        render_with_trivia!(self, f, ${leafTextWrite(node, 'self')})`);
+		lines.push(`        render_with_trivia!(self, w, ${leafTextWrite(node, 'self')})`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
-		lines.push(`        render_with_trivia!(self, f, ${renderFn}(self, f))`);
+		lines.push(`        render_with_trivia!(self, w, ${renderFn}(self, w))`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -3489,9 +3524,11 @@ function renderEnumType(
 		lines.push('');
 	}
 
-	lines.push(`impl ::std::fmt::Display for ${enumName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
-	lines.push(`        f.write_str(match self {`);
+	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
+	lines.push(`        w.text(match self {`);
 	for (const v of values) {
 		const variant = literalToVariantName(v);
 		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);

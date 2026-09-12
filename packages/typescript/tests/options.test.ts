@@ -10,22 +10,22 @@ it('the emitted Options type is pinned', () => {
 
 it('types every site by kind id at its address and rejects a wrong member at compile time', () => {
 	const ok: Options = {
-		array: { elements: { separator: { ',': { after: TSKindId.Newline } }, start: TSKindId.Tight, end: TSKindId.Tight } },
+		array: { elements: { separator: { comma: { after: TSKindId.Newline } }, start: TSKindId.Tight, end: TSKindId.Tight } },
 		formal_parameters_elements: {
-			formal_parameter: { separator: { ',': { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
+			formal_parameter: { separator: { comma: { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
 		},
 		object_type_content: {
 			content: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
 		},
-		enum_body_elements: { content: { separator: { ',': { after: TSKindId.Newline } }, delimiter: Delimiter.Trailing } },
+		enum_body_elements: { content: { separator: { comma: { after: TSKindId.Newline } }, delimiter: Delimiter.Trailing } },
 		statements: { terminator: TSKindId.AutomaticSemicolon },
 		quotes: { style: TSKindId.StringSingle },
-		class_body: { '{': { after: TSKindId.Indent }, '}': { before: TSKindId.Dedent } },
+		class_body: { lbrace: { after: TSKindId.Indent }, rbrace: { before: TSKindId.Dedent } },
 		indent: '\t'
 	};
 	const bad: Options = {
 		// @ts-expect-error a semicolon is not a whitespace kind
-		array: { elements: { separator: { ',': { after: TSKindId.Semi } } } },
+		array: { elements: { separator: { comma: { after: TSKindId.Semi } } } },
 		formal_parameters_elements: {
 			// @ts-expect-error the leading flank is fixed here
 			formal_parameter: { delimiter: Delimiter.Leading }
@@ -33,23 +33,23 @@ it('types every site by kind id at its address and rejects a wrong member at com
 		// @ts-expect-error a separator is one of its literal kinds
 		object_type_content: { content: { separator: { kind: TSKindId.Colon } } },
 		// @ts-expect-error a brace has no 'sideways' edge
-		class_body: { '{': { sideways: TSKindId.Space } }
+		class_body: { lbrace: { sideways: TSKindId.Space } }
 	};
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();
 });
 
 it('engine options set the spacing of a built list and per-call options override them', () => {
-	const tight = createEngine({ options: { array: { elements: { separator: { ',': { after: TSKindId.Tight } } } } } });
-	const spaced = createEngine({ options: { array: { elements: { separator: { ',': { after: TSKindId.Space } } } } } });
+	const tight = createEngine({ options: { array: { elements: { separator: { comma: { after: TSKindId.Tight } } } } } });
+	const spaced = createEngine({ options: { array: { elements: { separator: { comma: { after: TSKindId.Space } } } } } });
 	const list = ir.array({ elements: ['a', 'b'] });
 	expect(tight.render(list).toString()).toBe('[a,b]');
 	expect(spaced.render(list).toString()).toBe('[a, b]');
 	expect(
-		tight.render(list, { options: { array: { elements: { separator: { ',': { after: TSKindId.Newline } } } } } }).toString()
+		tight.render(list, { options: { array: { elements: { separator: { comma: { after: TSKindId.Newline } } } } } }).toString()
 	).toBe('[a,\nb]');
 	expect(
-		spaced.render(list, { options: { array: { elements: { separator: { ',': { before: TSKindId.Space } } } } } }).toString()
+		spaced.render(list, { options: { array: { elements: { separator: { comma: { before: TSKindId.Space } } } } } }).toString()
 	).toBe('[a , b]');
 });
 
@@ -59,6 +59,6 @@ it('an unknown key, an address naming no site, and a value a site does not admit
 		/\(array\)\/elements:\/sideways names no site/
 	);
 	expect(() =>
-		createEngine({ options: { array: { elements: { separator: { ',': { after: TSKindId.Semi } } } } } as never })
+		createEngine({ options: { array: { elements: { separator: { comma: { after: TSKindId.Semi } } } } } as never })
 	).toThrow(/does not admit kind id/);
 });

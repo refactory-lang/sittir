@@ -4,7 +4,7 @@ import { ir, TSKindId, Delimiter } from '@sittir/typescript';
 export function rebuildFormatGenerated() {
 	return ir.program.strict({
 		statements: [ir.importStatement.strict({
-			importClause: TSKindId.AnonType,
+			importClause: TSKindId.TypeKeyword,
 			fromClause: ir.importStatement.clauseFrom.strict({
 				importClause: ir.importClause.strict(ir.namedImports.strict({ delimiter: Delimiter.None }, ir.importSpecifier.strict({
 					content: ir.identifier("FormatRecord"),
@@ -19,15 +19,15 @@ export function rebuildFormatGenerated() {
 				name: ir.identifier("applyFormat"),
 				parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
 					pattern: ir.identifier("canonicalRender"),
-					type: ir.typeAnnotation.strict(TSKindId.AnonString),
+					type: ir.typeAnnotation.strict(TSKindId.StringKeyword),
 				}), ir.requiredParameter.strict({
 					pattern: ir.identifier("format"),
 					type: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
 				})),
-				returnType: ir.typeAnnotation.strict(TSKindId.AnonString),
+				returnType: ir.typeAnnotation.strict(TSKindId.StringKeyword),
 				body: ir.statementBlock.strict({
 					statements: [ir.lexicalDeclaration.strict({
-						kind: TSKindId.Let,
+						kind: TSKindId.LetKeyword,
 						declarators: [ir.variableDeclarator.plain.strict({
 							name: ir.identifier("result"),
 							value: ir.identifier("canonicalRender"),
@@ -63,15 +63,15 @@ export function rebuildFormatGenerated() {
 			name: ir.identifier("applyBoundary"),
 			parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
 				pattern: ir.identifier("s"),
-				type: ir.typeAnnotation.strict(TSKindId.AnonString),
+				type: ir.typeAnnotation.strict(TSKindId.StringKeyword),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("format"),
 				type: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
 			})),
-			returnType: ir.typeAnnotation.strict(TSKindId.AnonString),
+			returnType: ir.typeAnnotation.strict(TSKindId.StringKeyword),
 			body: ir.statementBlock.strict({
 				statements: [ir.lexicalDeclaration.strict({
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.objectPattern.strict(ir.identifier("boundary")),
 						value: ir.identifier("format"),
@@ -89,7 +89,7 @@ export function rebuildFormatGenerated() {
 						terminator: TSKindId.Semi,
 					}),
 				}), ir.lexicalDeclaration.strict({
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("leading"),
 						value: ir.binaryExpression.strict({
@@ -104,7 +104,7 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.lexicalDeclaration.strict({
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("trailing"),
 						value: ir.binaryExpression.strict({
@@ -129,15 +129,15 @@ export function rebuildFormatGenerated() {
 			name: ir.identifier("applyTrivia"),
 			parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
 				pattern: ir.identifier("s"),
-				type: ir.typeAnnotation.strict(TSKindId.AnonString),
+				type: ir.typeAnnotation.strict(TSKindId.StringKeyword),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("format"),
 				type: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
 			})),
-			returnType: ir.typeAnnotation.strict(TSKindId.AnonString),
+			returnType: ir.typeAnnotation.strict(TSKindId.StringKeyword),
 			body: ir.statementBlock.strict({
 				statements: [ir.lexicalDeclaration.strict({
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.objectPattern.strict(ir.identifier("trivia")),
 						value: ir.identifier("format"),
@@ -167,7 +167,7 @@ export function rebuildFormatGenerated() {
 						terminator: TSKindId.Semi,
 					}),
 				}), ir.lexicalDeclaration.strict({
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("sorted"),
 						value: ir.callExpression.call.strict({
@@ -202,18 +202,18 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.lexicalDeclaration.strict({
-					kind: TSKindId.Let,
+					kind: TSKindId.LetKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("result"),
 						value: ir.identifier("s"),
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.letConstKind.strict({
-					operator: TSKindId.Of,
+					operator: TSKindId.OfKeyword,
 					right: ir.identifier("sorted"),
 					body: ir.statementBlock.strict({
 						statements: [ir.lexicalDeclaration.strict({
-							kind: TSKindId.Const,
+							kind: TSKindId.ConstKeyword,
 							declarators: [ir.variableDeclarator.plain.strict({
 								name: ir.identifier("offset"),
 								value: ir.callExpression.call.strict({
@@ -276,7 +276,7 @@ export function rebuildFormatGenerated() {
 						})],
 						automaticSemicolon: true,
 					}),
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					left: ir.identifier("item"),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),
@@ -293,15 +293,15 @@ export function rebuildFormatGenerated() {
 					type: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
 				}), ir.requiredParameter.strict({
 					pattern: ir.identifier("editStart"),
-					type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+					type: ir.typeAnnotation.strict(TSKindId.NumberKeyword),
 				}), ir.requiredParameter.strict({
 					pattern: ir.identifier("delta"),
-					type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+					type: ir.typeAnnotation.strict(TSKindId.NumberKeyword),
 				})),
 				returnType: ir.typeAnnotation.strict(ir.identifier("FormatRecord")),
 				body: ir.statementBlock.strict({
 					statements: [ir.lexicalDeclaration.strict({
-						kind: TSKindId.Const,
+						kind: TSKindId.ConstKeyword,
 						declarators: [ir.variableDeclarator.plain.strict({
 							name: ir.identifier("trivia"),
 							value: ir.callExpression.call.strict({
@@ -315,7 +315,7 @@ export function rebuildFormatGenerated() {
 						})],
 						terminator: TSKindId.Semi,
 					}), ir.lexicalDeclaration.strict({
-						kind: TSKindId.Const,
+						kind: TSKindId.ConstKeyword,
 						declarators: [ir.variableDeclarator.plain.strict({
 							name: ir.identifier("kinds"),
 							value: ir.callExpression.call.strict({
@@ -366,10 +366,10 @@ export function rebuildFormatGenerated() {
 				}))),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("editStart"),
-				type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+				type: ir.typeAnnotation.strict(TSKindId.NumberKeyword),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("delta"),
-				type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+				type: ir.typeAnnotation.strict(TSKindId.NumberKeyword),
 			})),
 			returnType: ir.typeAnnotation.strict(ir.unionType.strict({
 				left: ir.arrayType.strict(ir.identifier("FormatTrivia")),
@@ -413,7 +413,7 @@ export function rebuildFormatGenerated() {
 										terminator: TSKindId.Semi,
 									}),
 								}), ir.lexicalDeclaration.strict({
-									kind: TSKindId.Const,
+									kind: TSKindId.ConstKeyword,
 									declarators: [ir.variableDeclarator.plain.strict({
 										name: ir.identifier("newOffset"),
 										value: ir.binaryExpression.strict({
@@ -461,21 +461,21 @@ export function rebuildFormatGenerated() {
 				type: ir.typeAnnotation.strict(ir.unionType.strict({
 					left: ir.genericType.strict({
 						name: ir.identifier("Record"),
-						typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, TSKindId.AnonString, ir.identifier("FormatRecord")),
+						typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, TSKindId.StringKeyword, ir.identifier("FormatRecord")),
 					}),
 					right: ir.literalType.strict(TSKindId.Undefined),
 				})),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("editStart"),
-				type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+				type: ir.typeAnnotation.strict(TSKindId.NumberKeyword),
 			}), ir.requiredParameter.strict({
 				pattern: ir.identifier("delta"),
-				type: ir.typeAnnotation.strict(TSKindId.AnonNumber),
+				type: ir.typeAnnotation.strict(TSKindId.NumberKeyword),
 			})),
 			returnType: ir.typeAnnotation.strict(ir.unionType.strict({
 				left: ir.genericType.strict({
 					name: ir.identifier("Record"),
-					typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, TSKindId.AnonString, ir.identifier("FormatRecord")),
+					typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, TSKindId.StringKeyword, ir.identifier("FormatRecord")),
 				}),
 				right: ir.literalType.strict(TSKindId.Undefined),
 			})),
@@ -492,18 +492,18 @@ export function rebuildFormatGenerated() {
 						terminator: TSKindId.Semi,
 					}),
 				}), ir.lexicalDeclaration.strict({
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("result"),
 						type: ir.typeAnnotation.strict(ir.genericType.strict({
 							name: ir.identifier("Record"),
-							typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, TSKindId.AnonString, ir.identifier("FormatRecord")),
+							typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, TSKindId.StringKeyword, ir.identifier("FormatRecord")),
 						})),
 						value: ir.object.strict(),
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.letConstKind.strict({
-					operator: TSKindId.Of,
+					operator: TSKindId.OfKeyword,
 					right: ir.callExpression.call.strict({
 						function: ir.memberExpression.strict({
 							object: ir.identifier("Object"),
@@ -528,7 +528,7 @@ export function rebuildFormatGenerated() {
 						})],
 						automaticSemicolon: true,
 					}),
-					kind: TSKindId.Const,
+					kind: TSKindId.ConstKeyword,
 					left: ir.arrayPattern.strict(ir.identifier("key"), ir.identifier("sub")),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),

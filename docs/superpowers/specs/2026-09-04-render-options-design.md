@@ -234,13 +234,19 @@ formatting.
 
 ### Read side
 
-The native reader stamps, per occurrence, the whitespace kind on each side
-of a separator token and in each empty gap, by classifying the bytes: no
-bytes is `_tight`, spaces or tabs are `_space`, anything containing a line
-break is `_newline`. Comments in the gap are trivia already and do not
-affect the class. The stamps are the values of the injected choices; the
-flank stamp is the list's existing `_delimiter`. Mixed spellings in one list
-are kept as they are; the stamps are facts, not a consensus.
+The native reader stamps no whitespace. A parsed node carries its
+coordinate — the tagged tree handle and its byte span — and an untouched
+subtree renders by slicing the source the engine still holds, so every gap
+inside it is reproduced byte for byte without a class ever being named. A
+class is derived only where it is needed: when a rebuilt node's list items
+are still coordinates of one tree, the render's prepare walk classifies the
+bytes between consecutive items into the arm the site admits with the same
+seam rank, splits a separated gap around its token, and gives the site the
+majority class over its gaps. That derived class is the occurrence's stamp
+in the precedence below; the flank stamp is the list's existing
+`_delimiter`. The mechanism, its precedence and its limits are specified
+under "Gaps between coordinates classify into option values" in the
+source-provenance design (`2026-08-26-text-content-vs-source-provenance.md`).
 
 `extract_format` keeps producing `indent` by consensus over line starts.
 Its reserved `slots` and `literals` members are removed; this design is

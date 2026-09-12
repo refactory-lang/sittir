@@ -437,8 +437,8 @@ export const genericType: typeof B.genericType & {
 		coerce: genericType$identifier(C.coerceToGenericType, C.coerceToIdentifier)
 	},
 	type: {
-		strict: genericType$type(F.buildGenericType, TSKindId.AnonType),
-		coerce: genericType$type(C.coerceToGenericType, TSKindId.AnonType)
+		strict: genericType$type(F.buildGenericType, TSKindId.TypeKeyword),
+		coerce: genericType$type(C.coerceToGenericType, TSKindId.TypeKeyword)
 	}
 };
 
@@ -3998,12 +3998,12 @@ export const booleanOperator: typeof B.booleanOperator & {
 } = {
 	...B.booleanOperator,
 	and: {
-		strict: booleanOperator$and(F.buildBooleanOperator, TSKindId.And),
-		coerce: booleanOperator$and(C.coerceToBooleanOperator, TSKindId.And)
+		strict: booleanOperator$and(F.buildBooleanOperator, TSKindId.AndKeyword),
+		coerce: booleanOperator$and(C.coerceToBooleanOperator, TSKindId.AndKeyword)
 	},
 	or: {
-		strict: booleanOperator$or(F.buildBooleanOperator, TSKindId.Or),
-		coerce: booleanOperator$or(C.coerceToBooleanOperator, TSKindId.Or)
+		strict: booleanOperator$or(F.buildBooleanOperator, TSKindId.OrKeyword),
+		coerce: booleanOperator$or(C.coerceToBooleanOperator, TSKindId.OrKeyword)
 	}
 };
 
@@ -4383,16 +4383,16 @@ const _comparisonOperatorComparator: {
 		coerce: _comparisonOperatorComparator$ltGt(C.coerceToComparisonOperatorComparator, TSKindId.LtGt)
 	},
 	in: {
-		strict: _comparisonOperatorComparator$in(F.buildComparisonOperatorComparator, TSKindId.In),
-		coerce: _comparisonOperatorComparator$in(C.coerceToComparisonOperatorComparator, TSKindId.In)
+		strict: _comparisonOperatorComparator$in(F.buildComparisonOperatorComparator, TSKindId.InKeyword),
+		coerce: _comparisonOperatorComparator$in(C.coerceToComparisonOperatorComparator, TSKindId.InKeyword)
 	},
 	notIn: {
 		strict: _comparisonOperatorComparator$notIn(F.buildComparisonOperatorComparator, TSKindId._NotIn),
 		coerce: _comparisonOperatorComparator$notIn(C.coerceToComparisonOperatorComparator, TSKindId._NotIn)
 	},
 	is: {
-		strict: _comparisonOperatorComparator$is(F.buildComparisonOperatorComparator, TSKindId.Is),
-		coerce: _comparisonOperatorComparator$is(C.coerceToComparisonOperatorComparator, TSKindId.Is)
+		strict: _comparisonOperatorComparator$is(F.buildComparisonOperatorComparator, TSKindId.IsKeyword),
+		coerce: _comparisonOperatorComparator$is(C.coerceToComparisonOperatorComparator, TSKindId.IsKeyword)
 	},
 	isNot: {
 		strict: _comparisonOperatorComparator$isNot(F.buildComparisonOperatorComparator, TSKindId._IsNot),

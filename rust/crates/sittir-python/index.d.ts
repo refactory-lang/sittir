@@ -65,8 +65,8 @@ export declare class SittirEngine {
    * `treeId` names the parse whose detected format applies. It is
    * optional because factory-built nodes belong to no tree.
    */
-  render(transport: RenderRoot, treeId?: number | undefined | null, options?: string | undefined | null): string
-  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: string | undefined | null): void
+  render(transport: RenderRoot, treeId?: number | undefined | null, options?: Options | undefined | null): string
+  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: Options | undefined | null): void
   applyEdits(source: string, edits: Array<Edit>): string
   /**
    * Drop one tree. Called from the boundary's `FinalizationRegistry`
@@ -94,8 +94,8 @@ export interface AliasedImportTransport {
   '$_trivia'?: TransportTrivia
   _name: SlotValue<DottedNameTransport>
   _alias: SlotValue<IdentifierTransport>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _aliased_import_before?: number
   _aliased_import_after?: number
 }
@@ -141,8 +141,8 @@ export interface AsPatternTransport {
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
   _alias: SlotValue<Box<ExpressionTransport>>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _as_pattern_before?: number
   _as_pattern_after?: number
 }
@@ -156,10 +156,10 @@ export interface AssertStatementTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: Array<SlotValue<ExpressionTransport>>
-  _assert_before?: number
-  _assert_after?: number
   _expression_separator_space_before?: number
   _expression_separator_space_after?: number
+  _assert_keyword_before?: number
+  _assert_keyword_after?: number
   _assert_statement_before?: number
   _assert_statement_after?: number
 }
@@ -266,8 +266,8 @@ export interface AwaitTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<PrimaryExpressionTransport>>
-  _anon_await_before?: number
-  _anon_await_after?: number
+  _await_keyword_before?: number
+  _await_keyword_after?: number
   _await_before?: number
   _await_after?: number
 }
@@ -342,8 +342,8 @@ export interface CaseAsPatternTransport {
   '$_trivia'?: TransportTrivia
   _case_pattern: SlotValue<Box<CasePatternTransport>>
   _identifier: SlotValue<IdentifierTransport>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _case_as_pattern_before?: number
   _case_as_pattern_after?: number
 }
@@ -359,10 +359,10 @@ export interface CaseClauseTransport {
   _guard?: SlotValue<IfClauseTransport>
   _consequence: SlotValue<CaseClauseConsequenceTransportSlot>
   _case_patterns: SlotValue<CasePatternsTransport>
-  _case_before?: number
-  _case_after?: number
   _colon_before?: number
   _colon_after?: number
+  _case_keyword_before?: number
+  _case_keyword_after?: number
   _case_clause_before?: number
   _case_clause_after?: number
 }
@@ -453,10 +453,10 @@ export interface ClassDefinitionTransport {
   _type_parameters?: SlotValue<TypeParameterTransport>
   _superclasses?: SlotValue<ArgumentListTransport>
   _body: SlotValue<ClassDefinitionBodyTransportSlot>
-  _class_before?: number
-  _class_after?: number
   _colon_before?: number
   _colon_after?: number
+  _class_keyword_before?: number
+  _class_keyword_after?: number
   _class_definition_before?: number
   _class_definition_after?: number
 }
@@ -581,10 +581,10 @@ export interface ConditionalExpressionTransport {
   _body: SlotValue<Box<ExpressionTransport>>
   _condition: SlotValue<Box<ExpressionTransport>>
   _alternative: SlotValue<Box<ExpressionTransport>>
-  _else_before?: number
-  _else_after?: number
-  _if_before?: number
-  _if_after?: number
+  _else_keyword_before?: number
+  _else_keyword_after?: number
+  _if_keyword_before?: number
+  _if_keyword_after?: number
   _conditional_expression_before?: number
   _conditional_expression_after?: number
 }
@@ -660,8 +660,8 @@ export interface DeleteStatementTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expressions: SlotValue<DeleteStatementExpressionsTransportSlot>
-  _del_before?: number
-  _del_after?: number
+  _del_keyword_before?: number
+  _del_keyword_after?: number
   _delete_statement_before?: number
   _delete_statement_after?: number
 }
@@ -799,10 +799,10 @@ export interface ElifClauseTransport {
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
   _consequence: SlotValue<ElifClauseConsequenceTransportSlot>
-  _elif_before?: number
-  _elif_after?: number
   _colon_before?: number
   _colon_after?: number
+  _elif_keyword_before?: number
+  _elif_keyword_after?: number
   _elif_clause_before?: number
   _elif_clause_after?: number
 }
@@ -816,10 +816,10 @@ export interface ElseClauseTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<ElseClauseBodyTransportSlot>
-  _else_before?: number
-  _else_after?: number
   _colon_before?: number
   _colon_after?: number
+  _else_keyword_before?: number
+  _else_keyword_after?: number
   _else_clause_before?: number
   _else_clause_after?: number
 }
@@ -827,10 +827,12 @@ export interface ElseClauseTransport {
 export interface EngineOptions {
   format?: string
   /**
-   * The render options object as JSON; resolved once here against the
-   * grammar's site table. Only the resolved ids are kept.
+   * Resolved once here against the grammar's site table at
+   * construction; only the resolved ids are kept. A `render` call
+   * carrying its own options resolves again, per call, over the
+   * engine's table — the engine's own table never changes.
    */
-  options?: string
+  options?: Options
 }
 
 export interface ExceptClauseExceptionAsTransport {
@@ -843,8 +845,8 @@ export interface ExceptClauseExceptionAsTransport {
   '$_trivia'?: TransportTrivia
   _value: SlotValue<ExpressionTransport>
   _alias?: SlotValue<ExpressionTransport>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _except_clause_exception_as_before?: number
   _except_clause_exception_as_after?: number
 }
@@ -884,12 +886,12 @@ export interface ExceptClauseTransport {
   _star_marker?: boolean
   _exception?: SlotValue<ExceptClauseExceptionTransport>
   _suite: SlotValue<ExceptClauseSuiteTransportSlot>
-  _except_before?: number
-  _except_after?: number
   _star_marker_before?: number
   _star_marker_after?: number
   _colon_before?: number
   _colon_after?: number
+  _except_keyword_before?: number
+  _except_keyword_after?: number
   _except_clause_before?: number
   _except_clause_after?: number
 }
@@ -904,12 +906,12 @@ export interface ExecStatementTransport {
   '$_trivia'?: TransportTrivia
   _code: SlotValue<ExecStatementCodeTransportSlot>
   _in_clause?: Array<SlotValue<ExpressionTransport>>
-  _exec_before?: number
-  _exec_after?: number
-  _in_before?: number
-  _in_after?: number
   _in_clause_separator_space_before?: number
   _in_clause_separator_space_after?: number
+  _exec_keyword_before?: number
+  _exec_keyword_after?: number
+  _in_keyword_before?: number
+  _in_keyword_after?: number
   _exec_statement_before?: number
   _exec_statement_after?: number
 }
@@ -976,10 +978,10 @@ export interface FinallyClauseTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _block: SlotValue<FinallyClauseBlockTransportSlot>
-  _finally_before?: number
-  _finally_after?: number
   _colon_before?: number
   _colon_after?: number
+  _finally_keyword_before?: number
+  _finally_keyword_after?: number
   _finally_clause_before?: number
   _finally_clause_after?: number
 }
@@ -996,14 +998,14 @@ export interface ForInClauseTransport {
   _left: SlotValue<ForInClauseLeftTransportSlot>
   _right: Array<SlotValue<ForInClauseRightTransportSlot>>
   _comma?: boolean
-  _for_before?: number
-  _for_after?: number
-  _in_before?: number
-  _in_after?: number
   _right_separator_space_before?: number
   _right_separator_space_after?: number
   _comma_before?: number
   _comma_after?: number
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _in_keyword_before?: number
+  _in_keyword_after?: number
   _for_in_clause_before?: number
   _for_in_clause_after?: number
 }
@@ -1036,12 +1038,12 @@ export interface ForStatementTransport {
   _right: SlotValue<ForStatementRightTransportSlot>
   _body: SlotValue<ForStatementBodyTransportSlot>
   _alternative?: SlotValue<ElseClauseTransport>
-  _for_before?: number
-  _for_after?: number
-  _in_before?: number
-  _in_after?: number
   _colon_before?: number
   _colon_after?: number
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _in_keyword_before?: number
+  _in_keyword_after?: number
   _for_statement_before?: number
   _for_statement_after?: number
 }
@@ -1060,12 +1062,12 @@ export interface FunctionDefinitionTransport {
   _parameters: SlotValue<ParametersTransport>
   _return_type?: SlotValue<TypeTransport>
   _body: SlotValue<FunctionDefinitionBodyTransportSlot>
-  _def_before?: number
-  _def_after?: number
   _dash_gt_before?: number
   _dash_gt_after?: number
   _colon_before?: number
   _colon_after?: number
+  _def_keyword_before?: number
+  _def_keyword_after?: number
   _function_definition_before?: number
   _function_definition_after?: number
 }
@@ -1079,12 +1081,12 @@ export interface FutureImportStatementTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<FutureImportStatementContentTransportSlot>
-  _from_before?: number
-  _from_after?: number
-  _future___before?: number
-  _future___after?: number
-  _import_before?: number
-  _import_after?: number
+  _future___keyword_before?: number
+  _future___keyword_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
+  _import_keyword_before?: number
+  _import_keyword_after?: number
   _future_import_statement_before?: number
   _future_import_statement_after?: number
 }
@@ -1130,10 +1132,10 @@ export interface GlobalStatementTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _names: Array<SlotValue<IdentifierTransport>>
-  _global_before?: number
-  _global_after?: number
   _names_separator_space_before?: number
   _names_separator_space_after?: number
+  _global_keyword_before?: number
+  _global_keyword_after?: number
   _global_statement_before?: number
   _global_statement_after?: number
 }
@@ -1147,8 +1149,8 @@ export interface IfClauseTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
-  _if_before?: number
-  _if_after?: number
+  _if_keyword_before?: number
+  _if_keyword_after?: number
   _if_clause_before?: number
   _if_clause_after?: number
 }
@@ -1165,10 +1167,10 @@ export interface IfStatementTransport {
   _consequence: SlotValue<IfStatementConsequenceTransportSlot>
   _alternative?: Array<SlotValue<IfStatementAlternativeTransportSlot>>
   _alternative_separator_space?: number
-  _if_before?: number
-  _if_after?: number
   _colon_before?: number
   _colon_after?: number
+  _if_keyword_before?: number
+  _if_keyword_after?: number
   _if_statement_before?: number
   _if_statement_after?: number
 }
@@ -1183,10 +1185,10 @@ export interface ImportFromStatementTransport {
   '$_trivia'?: TransportTrivia
   _module_name: SlotValue<ImportFromStatementModuleNameTransportSlot>
   _content: SlotValue<ImportFromStatementContentTransportSlot>
-  _from_before?: number
-  _from_after?: number
-  _import_before?: number
-  _import_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
+  _import_keyword_before?: number
+  _import_keyword_after?: number
   _import_from_statement_before?: number
   _import_from_statement_after?: number
 }
@@ -1214,8 +1216,8 @@ export interface ImportStatementTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _import_list: SlotValue<ImportListTransport>
-  _import_before?: number
-  _import_after?: number
+  _import_keyword_before?: number
+  _import_keyword_after?: number
   _import_statement_before?: number
   _import_statement_after?: number
 }
@@ -1313,8 +1315,8 @@ export interface LambdaTransport {
   _body: SlotValue<Box<ExpressionTransport>>
   _colon_before?: number
   _colon_after?: number
-  _anon_lambda_before?: number
-  _anon_lambda_after?: number
+  _lambda_keyword_before?: number
+  _lambda_keyword_after?: number
   _lambda_before?: number
   _lambda_after?: number
 }
@@ -1331,8 +1333,8 @@ export interface LambdaWithinForInClauseTransport {
   _body: SlotValue<Box<LambdaWithinForInClauseBodyTransportSlot>>
   _colon_before?: number
   _colon_after?: number
-  _anon_lambda_before?: number
-  _anon_lambda_after?: number
+  _lambda_keyword_before?: number
+  _lambda_keyword_after?: number
   _lambda_within_for_in_clause_before?: number
   _lambda_within_for_in_clause_after?: number
 }
@@ -1468,10 +1470,10 @@ export interface MatchStatementTransport {
   '$_trivia'?: TransportTrivia
   _body: SlotValue<MatchBlockTransport>
   _subjects: SlotValue<SubjectsTransport>
-  _match_before?: number
-  _match_after?: number
   _colon_before?: number
   _colon_after?: number
+  _match_keyword_before?: number
+  _match_keyword_after?: number
   _match_statement_before?: number
   _match_statement_after?: number
 }
@@ -1531,8 +1533,8 @@ export interface NonlocalStatementTransport {
   _names: Array<SlotValue<IdentifierTransport>>
   _names_separator_space_before?: number
   _names_separator_space_after?: number
-  _nonlocal_before?: number
-  _nonlocal_after?: number
+  _nonlocal_keyword_before?: number
+  _nonlocal_keyword_after?: number
   _nonlocal_statement_before?: number
   _nonlocal_statement_after?: number
 }
@@ -1546,8 +1548,8 @@ export interface NotOperatorTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _argument: SlotValue<Box<ExpressionTransport>>
-  _not_before?: number
-  _not_after?: number
+  _not_keyword_before?: number
+  _not_keyword_after?: number
   _not_operator_before?: number
   _not_operator_after?: number
 }
@@ -1738,8 +1740,8 @@ export interface PrintStatementChevronTransport {
   '$_trivia'?: TransportTrivia
   _chevron: SlotValue<ChevronTransport>
   _print_chevron_arguments?: SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>
-  _print_before?: number
-  _print_after?: number
+  _print_keyword_before?: number
+  _print_keyword_after?: number
   _print_statement_chevron_before?: number
   _print_statement_chevron_after?: number
 }
@@ -1753,8 +1755,8 @@ export interface PrintStatementPlainTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _print_arguments: SlotValue<PrintArgumentsTransport>
-  _print_before?: number
-  _print_after?: number
+  _print_keyword_before?: number
+  _print_keyword_after?: number
   _print_statement_plain_before?: number
   _print_statement_plain_after?: number
 }
@@ -1780,10 +1782,10 @@ export interface RaiseStatementTransport {
   '$_trivia'?: TransportTrivia
   _cause?: SlotValue<ExpressionTransport>
   _expressions?: SlotValue<RaiseStatementExpressionsTransportSlot>
-  _from_before?: number
-  _from_after?: number
-  _raise_before?: number
-  _raise_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
+  _raise_keyword_before?: number
+  _raise_keyword_after?: number
   _raise_statement_before?: number
   _raise_statement_after?: number
 }
@@ -1811,8 +1813,8 @@ export interface ReturnStatementTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expressions?: SlotValue<ReturnStatementExpressionsTransportSlot>
-  _return_before?: number
-  _return_after?: number
+  _return_keyword_before?: number
+  _return_keyword_after?: number
   _return_statement_before?: number
   _return_statement_after?: number
 }
@@ -2068,10 +2070,10 @@ export interface TryStatementTransport {
   _else_clause?: SlotValue<ElseClauseTransport>
   _finally_clause?: SlotValue<FinallyClauseTransport>
   _except_clauses_separator_space?: number
-  _try_before?: number
-  _try_after?: number
   _colon_before?: number
   _colon_after?: number
+  _try_keyword_before?: number
+  _try_keyword_after?: number
   _try_statement_before?: number
   _try_statement_after?: number
 }
@@ -2122,8 +2124,8 @@ export interface TypeAliasStatementTransport {
   _right: SlotValue<TypeTransport>
   _eq_before?: number
   _eq_after?: number
-  _anon_type_before?: number
-  _anon_type_after?: number
+  _type_keyword_before?: number
+  _type_keyword_after?: number
   _type_alias_statement_before?: number
   _type_alias_statement_after?: number
 }
@@ -2259,10 +2261,10 @@ export interface WhileStatementTransport {
   _condition: SlotValue<ExpressionTransport>
   _body: SlotValue<WhileStatementBodyTransportSlot>
   _alternative?: SlotValue<ElseClauseTransport>
-  _while_before?: number
-  _while_after?: number
   _colon_before?: number
   _colon_after?: number
+  _while_keyword_before?: number
+  _while_keyword_after?: number
   _while_statement_before?: number
   _while_statement_after?: number
 }
@@ -2345,10 +2347,10 @@ export interface WithStatementTransport {
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _with_clause: SlotValue<WithClauseTransport>
   _body: SlotValue<WithStatementBodyTransportSlot>
-  _with_before?: number
-  _with_after?: number
   _colon_before?: number
   _colon_after?: number
+  _with_keyword_before?: number
+  _with_keyword_after?: number
   _with_statement_before?: number
   _with_statement_after?: number
 }
@@ -2362,8 +2364,8 @@ export interface YieldFromClauseTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
-  _from_before?: number
-  _from_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
   _yield_from_clause_before?: number
   _yield_from_clause_after?: number
 }
@@ -2377,8 +2379,8 @@ export interface YieldTransport {
   '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content?: SlotValue<Box<YieldContentTransportSlot>>
-  _anon_yield_before?: number
-  _anon_yield_after?: number
+  _yield_keyword_before?: number
+  _yield_keyword_after?: number
   _yield_before?: number
   _yield_after?: number
 }

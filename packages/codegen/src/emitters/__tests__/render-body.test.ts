@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
 	ADJACENT,
-	ADJACENT_MARK,
-	DEDENT_MARK,
+	DEDENT,
 	EMPTY,
-	SEAM_MARK,
-	INDENT_NEWLINE,
+	INDENT,
 	SPACE,
 	branches,
 	concat,
@@ -24,16 +22,16 @@ import {
 	slot,
 	templateOf,
 	text,
-	weight,
-	whitespace
+	tokenSeam,
+	weight
 } from '../render-body.ts';
 
 describe('concat', () => {
-	it('merges adjacent literal text but never structural whitespace', () => {
+	it('merges adjacent literal text but never a depth node', () => {
 		expect(concat(text('a'), text('b'))).toEqual([{ kind: 'text', text: 'ab' }]);
-		expect(concat(text(':'), whitespace('\n'))).toEqual([
+		expect(concat(text(':'), INDENT)).toEqual([
 			{ kind: 'text', text: ':' },
-			{ kind: 'whitespace', text: '\n' }
+			{ kind: 'indent' }
 		]);
 	});
 
@@ -49,7 +47,8 @@ describe('edgeChar and isExpression', () => {
 		expect(edgeChar(text('fn'), 'ends')).toBe('n');
 		expect(edgeChar(slot('x'), 'starts')).toBe('{');
 		expect(edgeChar(gate('x', slot('x')), 'ends')).toBe('}');
-		expect(edgeChar(whitespace('\n'), 'starts')).toBe('{');
+		expect(edgeChar(INDENT, 'starts')).toBe('{');
+		expect(edgeChar(tokenSeam('\n'), 'starts')).toBe('{');
 		expect(edgeChar(text(' '), 'starts')).toBe(' ');
 		expect(edgeChar(EMPTY, 'ends')).toBe('');
 	});
@@ -82,19 +81,19 @@ describe('weight', () => {
 			gate('type', concat(text(': '), slot('type'))),
 			ADJACENT,
 			branches([{ test: 'a', body: slot('a') }], text('none')),
-			whitespace(INDENT_NEWLINE),
+			INDENT,
 			slot('block'),
-			whitespace(DEDENT_MARK)
+			DEDENT
 		);
-		expect(weight(body)).toBe(149);
+		expect(weight(body)).toBe(132);
 		expect(weight(gate('a', slot('a')))).toBeGreaterThan(weight(slot('a')));
 	});
 });
 
 describe('rustStringLiteral', () => {
-	it('escapes quotes, backslashes, line breaks and the writer marks', () => {
+	it('escapes quotes, backslashes, line breaks and any noncharacter code point', () => {
 		expect(rustStringLiteral('say "hi"\\\n')).toBe('"say \\"hi\\"\\\\\\n"');
-		expect(rustStringLiteral(`a${ADJACENT_MARK}b`)).toBe('"a\\u{FFFE}b"');
+		expect(rustStringLiteral('a\u{FFFE}b')).toBe('"a\\u{FFFE}b"');
 		expect(rustStringLiteral('\u{FDD0}\n')).toBe('"\\u{FDD0}\\n"');
 	});
 });
@@ -117,10 +116,17 @@ describe('liftGates', () => {
 	});
 
 	it('moves literal flanks of an optional or list slot onto the view, through a doubled gate', () => {
-		const body = concat(slot('name'), gate('type', concat(text('->'), ADJACENT, gate('type', slot('type')))));
+		const body = concat(slot('name'), gate('type', concat(text('->'), gate('type', slot('type')))));
 		const lifted = liftGates(body, viewOf);
 		expect(lifted.body).toEqual(concat(slot('name'), slot('type')));
-		expect(lifted.flanks.get('type')).toEqual({ prefix: `->${ADJACENT_MARK}`, suffix: '' });
+		expect(lifted.flanks.get('type')).toEqual({ prefix: '->', suffix: '' });
+	});
+
+	it('does not lift a gate whose only-arm literal edge carries an adjacency call: a flank is a plain string, with no sink call of its own', () => {
+		const body = concat(slot('name'), gate('type', concat(text('->'), ADJACENT, gate('type', slot('type')))));
+		const lifted = liftGates(body, viewOf);
+		expect(lifted.flanks.size).toBe(0);
+		expect(lifted.body[1]!.kind).toBe('if');
 	});
 
 	it('inlines the flanks of a required slot as text', () => {
@@ -144,34 +150,64 @@ describe('liftGates', () => {
 describe('printRustBody', () => {
 	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name) };
 
-	it('writes each run of text and slots as one format call over the sink f', () => {
-		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, whitespace('\n'), text('{}'));
-		expect(printRustBody(body, printer)).toEqual(['    write!(f, "fn {name}(\\u{FFFE}{parameters} \\n{{}}")?;', '    Ok(())']);
+	it('writes each run of text as one w.text call and each slot as its own render call over the sink w', () => {
+		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, tokenSeam('\n'), text('{}'));
+		expect(printRustBody(body, printer)).toEqual([
+			'    w.text("fn ")?;',
+			'    name.render(w)?;',
+			'    w.text("(")?;',
+			'    w.adjacent();',
+			'    parameters.render(w)?;',
+			'    w.text(" ")?;',
+			'    w.token_seam("\\n");',
+			'    w.text("{}")?;',
+			'    Ok(())'
+		]);
 	});
 
-	it('escapes braces in literals and maps slot names through the printer', () => {
-		expect(printRustBody(concat(text('{'), slot('type'), text('}')), printer)).toEqual(['    write!(f, "{{{type_}}}")?;', '    Ok(())']);
+	it('writes a literal brace as-is (no escaping) and maps slot names through the printer', () => {
+		expect(printRustBody(concat(text('{'), slot('type'), text('}')), printer)).toEqual([
+			'    w.text("{")?;',
+			'    type_.render(w)?;',
+			'    w.text("}")?;',
+			'    Ok(())'
+		]);
 	});
 
 	it('writes literal-only runs without formatting and keeps a residual chain as if / else if / else on is_present', () => {
 		const body = concat(text('('), branches([{ test: 'type', body: slot('type') }, { test: 'value', body: slot('value') }], text('_')), text(')'));
 		expect(printRustBody(body, printer)).toEqual([
-			'    f.write_str("(")?;',
+			'    w.text("(")?;',
 			'    if type_.is_present() {',
-			'        write!(f, "{type_}")?;',
+			'        type_.render(w)?;',
 			'    } else if value.is_present() {',
-			'        write!(f, "{value}")?;',
+			'        value.render(w)?;',
 			'    } else {',
-			'        f.write_str("_")?;',
+			'        w.text("_")?;',
 			'    }',
-			'    f.write_str(")")?;',
+			'    w.text(")")?;',
 			'    Ok(())'
 		]);
 	});
 
-	it('prints the indentation marks as escaped structural whitespace', () => {
-		expect(printRustBody(concat(text(':'), whitespace(INDENT_NEWLINE), slot('block'), whitespace(DEDENT_MARK)), printer)).toEqual([
-			'    write!(f, ":\\u{FDD0}\\n{block}\\u{FDD1}")?;',
+	it('prints an indent/dedent pair as depth calls, defaulting the indent seam to a bare newline', () => {
+		expect(printRustBody(concat(text(':'), INDENT, slot('block'), DEDENT), printer)).toEqual([
+			'    w.text(":")?;',
+			'    w.indent();',
+			'    w.seam("\\n");',
+			'    block.render(w)?;',
+			'    w.dedent();',
+			'    Ok(())'
+		]);
+	});
+
+	it('folds a whitespace run that follows a depth node in the same literal into its payload', () => {
+		expect(printRustBody(concat(text(':'), INDENT, text('  \na'), DEDENT), printer)).toEqual([
+			'    w.text(":")?;',
+			'    w.indent();',
+			'    w.seam("  \\n");',
+			'    w.text("a")?;',
+			'    w.dedent();',
 			'    Ok(())'
 		]);
 	});
@@ -186,10 +222,12 @@ describe('templateOf', () => {
 });
 
 describe('seam nodes', () => {
-	it('print as an interpolated field, compare by field, and are listed by references', () => {
-		expect(SEAM_MARK).toBe('\u{FDD2}');
+	it('print as a site call resolved from the field at runtime, compare by field, and are listed by references', () => {
 		expect(printRustBody(concat(text('fn'), seam('lparen_before'), text('('), slot('x')), { field: (n) => n })).toEqual([
-			'    write!(f, "fn{lparen_before}({x}")?;',
+			'    w.text("fn")?;',
+			'    w.site(node.lparen_before.unwrap_or(0));',
+			'    w.text("(")?;',
+			'    x.render(w)?;',
 			'    Ok(())'
 		]);
 		expect(equalBodies(seam('a'), seam('a'))).toBe(true);

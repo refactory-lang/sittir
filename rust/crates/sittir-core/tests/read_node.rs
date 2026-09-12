@@ -164,7 +164,10 @@ fn anonymous_leaf_children_do_not_invent_fields() {
         !params.contains_key("_|"),
         "native read must not invent _<text> fields for anonymous children"
     );
-    assert!(params.get("$other").is_none(), "anonymous-only leaf nodes should still collapse to text");
+    assert!(
+        params.get("$other").is_none(),
+        "anonymous-only leaf nodes should still collapse to text"
+    );
     assert_eq!(params.get("$text").and_then(Value::as_str), Some("||"));
 }
 

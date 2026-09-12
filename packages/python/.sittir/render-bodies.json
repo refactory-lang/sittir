@@ -172,7 +172,7 @@
 					"body": [
 						{
 							"kind": "seam",
-							"field": "as_before"
+							"field": "as_keyword_before"
 						},
 						{
 							"kind": "text",
@@ -180,7 +180,7 @@
 						},
 						{
 							"kind": "seam",
-							"field": "as_after"
+							"field": "as_keyword_after"
 						},
 						{
 							"kind": "if",
@@ -277,16 +277,14 @@
 			"field": "match_block_block_before"
 		},
 		{
-			"kind": "text",
-			"text": "﷐\n"
+			"kind": "indent"
 		},
 		{
 			"kind": "slot",
 			"name": "alternative"
 		},
 		{
-			"kind": "text",
-			"text": "﷑\n"
+			"kind": "dedent"
 		},
 		{
 			"kind": "seam",
@@ -407,8 +405,8 @@
 			"name": "simple_statements_elements"
 		},
 		{
-			"kind": "whitespace",
-			"text": "﷓\n"
+			"kind": "tokenSeam",
+			"text": "\n"
 		},
 		{
 			"kind": "seam",
@@ -475,8 +473,7 @@
 			"field": "suite_block_before"
 		},
 		{
-			"kind": "text",
-			"text": "﷐\n"
+			"kind": "indent"
 		},
 		{
 			"kind": "slot",
@@ -550,7 +547,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "from_before"
+			"field": "from_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -558,7 +555,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "from_after"
+			"field": "from_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -580,7 +577,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "as_before"
+			"field": "as_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -588,7 +585,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "as_after"
+			"field": "as_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -658,7 +655,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "as_before"
+			"field": "as_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -666,7 +663,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "as_after"
+			"field": "as_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -684,7 +681,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "assert_before"
+			"field": "assert_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -692,7 +689,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "assert_after"
+			"field": "assert_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -780,7 +777,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_await_before"
+			"field": "await_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -788,7 +785,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_await_after"
+			"field": "await_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -839,8 +836,7 @@
 			"name": "statements"
 		},
 		{
-			"kind": "text",
-			"text": "﷑\n"
+			"kind": "dedent"
 		},
 		{
 			"kind": "seam",
@@ -898,7 +894,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "as_before"
+			"field": "as_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -906,7 +902,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "as_after"
+			"field": "as_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -924,7 +920,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "case_before"
+			"field": "case_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -932,7 +928,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "case_after"
+			"field": "case_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1108,7 +1104,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "class_before"
+			"field": "class_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1116,7 +1112,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "class_after"
+			"field": "class_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1324,7 +1320,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "if_before"
+			"field": "if_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1332,7 +1328,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "if_after"
+			"field": "if_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1340,7 +1336,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "else_before"
+			"field": "else_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1348,7 +1344,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "else_after"
+			"field": "else_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1429,8 +1425,8 @@
 			"name": "expression"
 		},
 		{
-			"kind": "whitespace",
-			"text": "﷓\n"
+			"kind": "tokenSeam",
+			"text": "\n"
 		},
 		{
 			"kind": "seam",
@@ -1474,7 +1470,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "del_before"
+			"field": "del_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1482,7 +1478,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "del_after"
+			"field": "del_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1696,7 +1692,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "elif_before"
+			"field": "elif_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1704,7 +1700,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "elif_after"
+			"field": "elif_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1738,7 +1734,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "else_before"
+			"field": "else_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1746,7 +1742,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "else_after"
+			"field": "else_keyword_after"
 		},
 		{
 			"kind": "seam",
@@ -1776,7 +1772,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "except_before"
+			"field": "except_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1784,7 +1780,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "except_after"
+			"field": "except_keyword_after"
 		},
 		{
 			"kind": "seam",
@@ -1850,7 +1846,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "exec_before"
+			"field": "exec_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1858,7 +1854,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "exec_after"
+			"field": "exec_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1872,7 +1868,7 @@
 					"body": [
 						{
 							"kind": "seam",
-							"field": "in_before"
+							"field": "in_keyword_before"
 						},
 						{
 							"kind": "text",
@@ -1880,7 +1876,7 @@
 						},
 						{
 							"kind": "seam",
-							"field": "in_after"
+							"field": "in_keyword_after"
 						},
 						{
 							"kind": "slot",
@@ -1926,7 +1922,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "finally_before"
+			"field": "finally_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1934,7 +1930,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "finally_after"
+			"field": "finally_keyword_after"
 		},
 		{
 			"kind": "seam",
@@ -1978,7 +1974,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "for_before"
+			"field": "for_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -1986,7 +1982,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "for_after"
+			"field": "for_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -1994,7 +1990,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "in_before"
+			"field": "in_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2002,7 +1998,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "in_after"
+			"field": "in_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2056,7 +2052,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "for_before"
+			"field": "for_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2064,7 +2060,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "for_after"
+			"field": "for_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2072,7 +2068,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "in_before"
+			"field": "in_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2080,7 +2076,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "in_after"
+			"field": "in_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2168,7 +2164,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "def_before"
+			"field": "def_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2176,7 +2172,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "def_after"
+			"field": "def_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2264,7 +2260,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "from_before"
+			"field": "from_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2272,11 +2268,11 @@
 		},
 		{
 			"kind": "seam",
-			"field": "from_after"
+			"field": "from_keyword_after"
 		},
 		{
 			"kind": "seam",
-			"field": "future___before"
+			"field": "future___keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2284,11 +2280,11 @@
 		},
 		{
 			"kind": "seam",
-			"field": "future___after"
+			"field": "future___keyword_after"
 		},
 		{
 			"kind": "seam",
-			"field": "import_before"
+			"field": "import_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2296,7 +2292,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "import_after"
+			"field": "import_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2374,7 +2370,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "global_before"
+			"field": "global_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2382,7 +2378,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "global_after"
+			"field": "global_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2400,7 +2396,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "if_before"
+			"field": "if_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2408,7 +2404,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "if_after"
+			"field": "if_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2426,7 +2422,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "if_before"
+			"field": "if_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2434,7 +2430,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "if_after"
+			"field": "if_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2472,7 +2468,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "from_before"
+			"field": "from_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2480,7 +2476,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "from_after"
+			"field": "from_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2488,7 +2484,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "import_before"
+			"field": "import_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2496,7 +2492,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "import_after"
+			"field": "import_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2514,7 +2510,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "import_before"
+			"field": "import_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2522,7 +2518,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "import_after"
+			"field": "import_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -2688,7 +2684,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_lambda_before"
+			"field": "lambda_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2696,7 +2692,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_lambda_after"
+			"field": "lambda_keyword_after"
 		},
 		{
 			"kind": "if",
@@ -2746,7 +2742,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_lambda_before"
+			"field": "lambda_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2754,7 +2750,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_lambda_after"
+			"field": "lambda_keyword_after"
 		},
 		{
 			"kind": "if",
@@ -2988,7 +2984,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "match_before"
+			"field": "match_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -2996,7 +2992,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "match_after"
+			"field": "match_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -3096,7 +3092,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "nonlocal_before"
+			"field": "nonlocal_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3104,7 +3100,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "nonlocal_after"
+			"field": "nonlocal_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -3122,7 +3118,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "not_before"
+			"field": "not_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3130,7 +3126,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "not_after"
+			"field": "not_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -3326,7 +3322,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "print_before"
+			"field": "print_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3337,7 +3333,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "print_after"
+			"field": "print_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -3369,7 +3365,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "print_before"
+			"field": "print_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3377,7 +3373,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "print_after"
+			"field": "print_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -3395,7 +3391,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "raise_before"
+			"field": "raise_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3403,7 +3399,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "raise_after"
+			"field": "raise_keyword_after"
 		},
 		{
 			"kind": "if",
@@ -3427,7 +3423,7 @@
 					"body": [
 						{
 							"kind": "seam",
-							"field": "from_before"
+							"field": "from_keyword_before"
 						},
 						{
 							"kind": "text",
@@ -3435,7 +3431,7 @@
 						},
 						{
 							"kind": "seam",
-							"field": "from_after"
+							"field": "from_keyword_after"
 						},
 						{
 							"kind": "if",
@@ -3495,7 +3491,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "return_before"
+			"field": "return_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3503,7 +3499,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "return_after"
+			"field": "return_keyword_after"
 		},
 		{
 			"kind": "if",
@@ -3797,7 +3793,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "try_before"
+			"field": "try_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3805,7 +3801,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "try_after"
+			"field": "try_keyword_after"
 		},
 		{
 			"kind": "seam",
@@ -3969,7 +3965,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_type_before"
+			"field": "type_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -3977,7 +3973,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_type_after"
+			"field": "type_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -4179,7 +4175,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "while_before"
+			"field": "while_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -4187,7 +4183,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "while_after"
+			"field": "while_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -4261,7 +4257,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "with_before"
+			"field": "with_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -4269,7 +4265,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "with_after"
+			"field": "with_keyword_after"
 		},
 		{
 			"kind": "slot",
@@ -4303,7 +4299,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_yield_before"
+			"field": "yield_keyword_before"
 		},
 		{
 			"kind": "text",
@@ -4311,7 +4307,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "anon_yield_after"
+			"field": "yield_keyword_after"
 		},
 		{
 			"kind": "if",

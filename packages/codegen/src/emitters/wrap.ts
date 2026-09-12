@@ -136,7 +136,8 @@ interface ResolveSlotDrillConfig {
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
 	readonly kindEnumAltIdPairs?: readonly (readonly [number, number])[];
 	readonly forceUnknownElement?: boolean;
-	readonly elidedSeparatorIdsExpr?: string;
+	readonly separatorIdsExpr?: string;
+	readonly elided?: boolean;
 }
 
 function resolveSlotDrillExprs(
@@ -146,20 +147,24 @@ function resolveSlotDrillExprs(
 	storeExpr: string;
 	accessorBody: string;
 } {
-	const slotStoreExpr = resolveSlotStoreExpr(
+	const rawStoreExpr = resolveSlotStoreExpr(
 		slot,
 		config.dataExpr,
 		config.candidateStorageKeys,
 		config.forceUnknownElement
 	);
-	if (config.elidedSeparatorIdsExpr !== undefined && slot.arity === 'many') {
+	if (config.separatorIdsExpr !== undefined && slot.arity === 'many' && config.elided) {
 		const allowedArg =
 			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
 		return {
-			storeExpr: `splitElidedWrapSlot(${slotStoreExpr}, ${config.elidedSeparatorIdsExpr}, ${allowedArg})`,
+			storeExpr: `splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg})`,
 			accessorBody: resolveSlotAccessorBody(slot, `${config.elemType} | undefined`)
 		};
 	}
+	const slotStoreExpr =
+		config.separatorIdsExpr !== undefined && slot.arity === 'many'
+			? `dropWireDelimiters(${rawStoreExpr}, ${config.separatorIdsExpr})`
+			: rawStoreExpr;
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
@@ -593,11 +598,6 @@ function emitFieldStorageLines(
 	const collidedReclaimKinds = computeCollidedReclaimKinds(slots, ownerKind, nodeMap, kindEntries);
 	for (const f of slots) {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
-		const allowedKinds =
-			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
-				: undefined;
 		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
 		const reclaimKindIdsExpr =
 			storageInfo.kind === 'kindEnum'
@@ -612,13 +612,13 @@ function emitFieldStorageLines(
 						return ids.length > 0 ? `[${ids.join(', ')}]` : undefined;
 					})()
 				: undefined;
+		const elided = hasOptionalElements(f);
 		const { storeExpr } = resolveSlotDrillExprs(f, {
 			dataExpr,
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
-			allowedKinds,
 			candidateStorageKeys,
 			reclaimKindIdsExpr,
 			kindEnumTextIdPairs:
@@ -629,20 +629,24 @@ function emitFieldStorageLines(
 				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
 					? kindEnumAltIdPairs(f, nodeMap)
 					: undefined,
-			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
+			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			elided
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
 }
 
-function elidedSeparatorIdsExprOf(
+function separatorIdsExprOf(
 	f: AssembledNonterminal,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	elided: boolean
 ): string | undefined {
-	if (!hasOptionalElements(f) || !kindEntries) return undefined;
+	if (!kindEntries) return undefined;
 	const sepTexts = [
 		...new Set(
-			f.values.filter((v) => v.optionalElement === true && v.separator !== undefined).map((v) => v.separator as string)
+			f.values
+				.filter((v) => (elided ? v.optionalElement === true : true) && v.separator !== undefined)
+				.map((v) => v.separator as string)
 		)
 	];
 	if (sepTexts.length === 0) return undefined;
@@ -659,19 +663,15 @@ function emitFieldAccessorLines(
 	for (const f of slots) {
 		const propName = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
-		const allowedKinds =
-			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
-				: undefined;
+		const elided = hasOptionalElements(f);
 		const { accessorBody } = resolveSlotDrillExprs(f, {
 			dataExpr,
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
-			allowedKinds,
-			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
+			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			elided
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
@@ -943,6 +943,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const usesSplitElided = /\bsplitElidedWrapSlot\b/.test(bodySource);
+		const usesDropWireDelimiters = /\bdropWireDelimiters\b/.test(bodySource);
+		const usesWireDelimiter = usesSplitElided || usesDropWireDelimiters;
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource) || usesSplitElided;
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
@@ -1494,19 +1496,52 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
+			...(usesWireDelimiter
+				? [
+						'',
+						'// A wire delimiter is a field-tagged separator token: either its bare',
+						'// numeric kind id (text-collapsed contexts) or an anonymous node stub',
+						'// `{ $type: <id>, $named: false }` (node-stub contexts).',
+						'type _WireDelimiter = number | { readonly $type: number; readonly $named: false };',
+						'function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {',
+						'  if (typeof e === "number") return separatorKindIds.includes(e);',
+						'  if (typeof e === "object" && e !== null) {',
+						'    const stub = e as { $type?: unknown; $named?: unknown };',
+						'    return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
+						'  }',
+						'  return false;',
+						'}'
+					]
+				: []),
+			...(usesDropWireDelimiters
+				? [
+						'',
+						'// A `many` slot with a separator fact whose separator the parser',
+						'// field-tagged into the slot: the render body re-joins the slot',
+						'// with its own separator, so the wire delimiter is dropped rather',
+						'// than stored.',
+						'// Assumes T itself is never an array type — slot elements are node unions.',
+						'function dropWireDelimiters<T>(',
+						'  value: T | readonly (T | _WireDelimiter)[] | undefined,',
+						'  separatorKindIds: readonly number[]',
+						'): T | readonly T[] | undefined {',
+						'  const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);',
+						'  if (value == null) return undefined;',
+						'  if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;',
+						'  return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));',
+						'}'
+					]
+				: []),
 			...(usesSplitElided
 				? [
 						'',
 						'// Elidable separated-list positions (array elision, `[a, , b]`): the',
-						'// raw wire array interleaves element entries with the separator token —',
-						'// either as its bare numeric kind id (text-collapsed contexts) or as an',
-						'// anonymous node stub `{ $type: <id>, $named: false }` (node-stub',
-						'// contexts). Segment on those delimiters — each segment is one position',
-						'// holding 0-or-1 element; an empty position stores `undefined`.',
-						'// Idempotent over already-positional storage (a `$with` re-wrap carries',
-						'// no delimiters): with no delimiter present every entry is its own',
-						'// position, `undefined` holes intact.',
-						'type _WireDelimiter = number | { readonly $type: number; readonly $named: false };',
+						'// raw wire array interleaves element entries with the separator token.',
+						'// Segment on those delimiters — each segment is one position holding',
+						'// 0-or-1 element; an empty position stores `undefined`. Idempotent over',
+						'// already-positional storage (a `$with` re-wrap carries no delimiters):',
+						'// with no delimiter present every entry is its own position, `undefined`',
+						'// holes intact.',
 						'function splitElidedWrapSlot<T>(',
 						'  value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,',
 						'  separatorKindIds: readonly number[],',
@@ -1516,14 +1551,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const isSlotList = (v: T | readonly (T | _WireDelimiter | undefined)[]): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);',
 						'  const items: readonly (T | _WireDelimiter | undefined)[] = value == null ? [] : isSlotList(value) ? value : [value];',
 						'  if (items.length === 0) return [];',
-						'  const isDelimiter = (e: unknown): e is _WireDelimiter => {',
-						'    if (typeof e === "number") return separatorKindIds.includes(e);',
-						'    if (typeof e === "object" && e !== null) {',
-						'      const stub = e as { $type?: unknown; $named?: unknown };',
-						'      return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
-						'    }',
-						'    return false;',
-						'  };',
+						'  const isDelimiter = (e: unknown): e is _WireDelimiter => _isWireDelimiter(e, separatorKindIds);',
 						'  const keepFirst = (seg: readonly (T | undefined)[]): T | undefined => {',
 						'    const present = seg.filter((e): e is T => e !== undefined);',
 						'    const kept = allowedKinds === undefined ? present : _filterWrapChildrenByKind(present, allowedKinds);',

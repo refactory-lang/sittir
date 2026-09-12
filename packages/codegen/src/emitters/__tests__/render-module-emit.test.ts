@@ -357,15 +357,15 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	expect(transport).toContain('pub enum ArrayExpressionContentTransportSlot {');
 	// Key regression guard: each variant must render via its OWN form, not
 	// both collapsing onto forms[0] (semi). Each arm now dispatches through
-	// `Display` (not the per-kind render fn directly) so leading/
+	// `Render` (not the per-kind render fn directly) so leading/
 	// trailing comment trivia attached to the node renders too — the
 	// per-variant distinctness this test guards is still visible in the
 	// ArrayExpressionList vs ArrayExpressionSemi variant/inner-type pairing.
 	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),'
+		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => inner.render(w),'
 	);
 	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => ::std::fmt::Display::fmt(inner, f),'
+		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),'
 	);
 }, 60_000);
 
@@ -403,13 +403,13 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(view).toContain('before: options::spacing_text(node.formal_parameter_separator_space_before.unwrap_or(0)),');
-		expect(view).toContain('after: options::spacing_text(node.formal_parameter_separator_space_after.unwrap_or(0)),');
+		expect(view).toContain('before: node.formal_parameter_separator_space_before.unwrap_or(0),');
+		expect(view).toContain('after: node.formal_parameter_separator_space_after.unwrap_or(0),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
 
-	it('a token seam is a transport field, filled from its site, bound as a local and written through finish', async () => {
+	it('a token seam is a transport field, filled from its site, and resolved through a direct site call', async () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'ArgumentsTransport');
 		expect(body).toContain('napi(js_name = "_lparen_after")');
@@ -418,8 +418,8 @@ describe('render options on transports', () => {
 		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).toContain('self.lparen_after.get_or_insert(table.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);');
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(render).toContain('let lparen_after = options::spacing_text(node.lparen_after.unwrap_or(0));');
-		expect(render).toMatch(/write!\(f, "\{arguments_before\}\{lparen_before\}\(\{lparen_after\}/);
+		expect(render).not.toContain('let lparen_after');
+		expect(render).toMatch(/w\.site\(node\.arguments_before\.unwrap_or\(0\)\);\s*\n\s*w\.site\(node\.lparen_before\.unwrap_or\(0\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site\(node\.lparen_after\.unwrap_or\(0\)\);/);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
 		expect(binary).toContain('pub operator_before: Option<u16>,');
@@ -428,7 +428,7 @@ describe('render options on transports', () => {
 		expect(block).toContain('pub statement_block_before: Option<u16>,');
 		expect(block).toContain('pub statement_block_after: Option<u16>,');
 		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
-		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/write!\(f, "\{statement_block_before\}\{/);
+		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/w\.site\(node\.statement_block_before\.unwrap_or\(0\)\);/);
 	});
 
 	it('the render entry fills the tree from the table before dispatch', async () => {
@@ -439,3 +439,46 @@ describe('render options on transports', () => {
 	});
 });
 
+
+describe('the typed sink replaces the mark-based Display path', () => {
+	it('renders through the typed sink and writes no mark character', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toContain('impl ::std::fmt::Display for');
+		// The depth arms' stamped model identity (dsl/primitives/spacing.ts
+		// INDENT_TEXT/DEDENT_TEXT) legitimately keeps these code points as a
+		// read-path FromNapiValue default \$text, unrelated to rendering. Strip
+		// only on the lines that ARE that default (the \`unwrap_or_else\`/
+		// \`ValueType::Number\` fallback lines), so a mark reaching a render call
+		// on any other line still fails this assertion.
+		const depthDefaultLine = /unwrap_or_else\(\|\||ValueType::Number =>/;
+		const withoutStampedIdentityDefaults = transportRs
+			.split('\n')
+			.map((line) =>
+				depthDefaultLine.test(line)
+					? line.replaceAll(JSON.stringify('\u{FDD0}\n'), '""').replaceAll(JSON.stringify('\u{FDD1}\n'), '""')
+					: line
+			)
+			.join('\n');
+		expect(withoutStampedIdentityDefaults).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(transportRs).not.toContain('mark_adjacent');
+		expect(transportRs).toContain('impl ::sittir_core::render::Render for FunctionItemTransport {');
+		expect(transportRs).toContain(
+			'fn render_function_item(node: &FunctionItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
+		);
+		expect(transportRs).toContain(
+			'pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {'
+		);
+		expect(transportRs).toContain(
+			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(indent)'
+		);
+	});
+
+	it('binds a list view over site ids and writes a seam site as a call', async () => {
+		const transportRs = await getRustTemplatesRs();
+		const block = transportRs.slice(transportRs.indexOf('fn render_block('), transportRs.indexOf('fn render_block(') + 2000);
+		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(0\),/);
+		expect(block).toMatch(/w\.site\(node\.lbrace_after\.unwrap_or\(0\)\);/);
+		expect(block).toContain('w.text("{")?;');
+		expect(block).toContain('statements.render(w)?;');
+	});
+});

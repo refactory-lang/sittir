@@ -12,18 +12,18 @@ import type {
 	Expression,
 	ExpressionEndingWithBlock,
 	ExpressionExceptRange,
+	Literal,
 	LiteralPattern,
 	NonDelimToken,
+	Path,
 	Pattern,
 	Statement,
 	TokenPattern,
 	Tokens,
+	Type,
 	UseClause,
 	Whitespace,
-	_Literal,
-	_NonSpecialToken,
-	_Path,
-	_Type
+	_NonSpecialToken
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -526,7 +526,7 @@ export interface IsGuards {
 	tokens(v: { readonly $type: string | number } | number): v is Tokens;
 	nonSpecialToken(v: { readonly $type: string | number } | number): v is _NonSpecialToken;
 	useClause(v: { readonly $type: string | number } | number): v is UseClause;
-	type(v: { readonly $type: string | number } | number): v is _Type;
+	type(v: { readonly $type: string | number } | number): v is Type;
 	expressionExceptRange(v: { readonly $type: string | number } | number): v is ExpressionExceptRange;
 	expression(v: { readonly $type: string | number } | number): v is Expression;
 	expressionEndingWithBlock(v: { readonly $type: string | number } | number): v is ExpressionEndingWithBlock;
@@ -534,9 +534,9 @@ export interface IsGuards {
 	nonDelimToken(v: { readonly $type: string | number } | number): v is NonDelimToken;
 	condition(v: { readonly $type: string | number } | number): v is Condition;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
-	literal(v: { readonly $type: string | number } | number): v is _Literal;
+	literal(v: { readonly $type: string | number } | number): v is Literal;
 	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern;
-	path(v: { readonly $type: string | number } | number): v is _Path;
+	path(v: { readonly $type: string | number } | number): v is Path;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
 
@@ -804,7 +804,7 @@ export interface AssertGuards {
 	tokens(v: { readonly $type: string | number } | number): asserts v is Tokens;
 	nonSpecialToken(v: { readonly $type: string | number } | number): asserts v is _NonSpecialToken;
 	useClause(v: { readonly $type: string | number } | number): asserts v is UseClause;
-	type(v: { readonly $type: string | number } | number): asserts v is _Type;
+	type(v: { readonly $type: string | number } | number): asserts v is Type;
 	expressionExceptRange(v: { readonly $type: string | number } | number): asserts v is ExpressionExceptRange;
 	expression(v: { readonly $type: string | number } | number): asserts v is Expression;
 	expressionEndingWithBlock(v: { readonly $type: string | number } | number): asserts v is ExpressionEndingWithBlock;
@@ -812,9 +812,9 @@ export interface AssertGuards {
 	nonDelimToken(v: { readonly $type: string | number } | number): asserts v is NonDelimToken;
 	condition(v: { readonly $type: string | number } | number): asserts v is Condition;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
-	literal(v: { readonly $type: string | number } | number): asserts v is _Literal;
+	literal(v: { readonly $type: string | number } | number): asserts v is Literal;
 	literalPattern(v: { readonly $type: string | number } | number): asserts v is LiteralPattern;
-	path(v: { readonly $type: string | number } | number): asserts v is _Path;
+	path(v: { readonly $type: string | number } | number): asserts v is Path;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
 

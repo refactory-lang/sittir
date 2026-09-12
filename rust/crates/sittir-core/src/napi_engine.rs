@@ -24,17 +24,22 @@
 ///
 /// - `$grammar` — the crate's [`EngineGrammar`](crate::engine::EngineGrammar) adapter.
 /// - `$render_root` — the generated transport root type accepted by `render`.
+/// - `$options` — the generated per-grammar options struct (`render::options::Options`), the napi-typed shape `EngineOptions.options` and `render`/`render_to_file` accept.
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
 /// - `$abi` — the render transport ABI version this crate was generated against.
+/// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
+/// - `$resolve` — `fn(&$options, &ResolvedOptions) -> Result<ResolvedOptions, String>`, applying an options object over a base table.
 #[macro_export]
 macro_rules! napi_engine {
-    ($grammar:ty, $render_root:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
+    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
         #[::napi_derive::napi(object)]
         pub struct EngineOptions {
             pub format: Option<String>,
-            /// The render options object as JSON; resolved once here against the
-            /// grammar's site table. Only the resolved ids are kept.
-            pub options: Option<String>,
+            /// Resolved once here against the grammar's site table at
+            /// construction; only the resolved ids are kept. A `render` call
+            /// carrying its own options resolves again, per call, over the
+            /// engine's table — the engine's own table never changes.
+            pub options: Option<$options>,
         }
 
         #[::napi_derive::napi]
@@ -52,7 +57,7 @@ macro_rules! napi_engine {
         impl SittirEngine {
             #[::napi_derive::napi(constructor)]
             pub fn new(options: Option<EngineOptions>) -> ::napi::Result<Self> {
-                let (format_json, options_json) = match options {
+                let (format_json, opts) = match options {
                     Some(opts) => (opts.format, opts.options),
                     None => (None, None),
                 };
@@ -62,13 +67,19 @@ macro_rules! napi_engine {
                     .map_err(|e| {
                         ::napi::Error::from_reason(format!("parse engine format failed: {e}"))
                     })?;
-                let table = match options_json {
-                    Some(json) => $resolve(&json, &$defaults()).map_err(::napi::Error::from_reason)?,
+                let table = match opts {
+                    Some(opts) => {
+                        $resolve(&opts, &$defaults()).map_err(::napi::Error::from_reason)?
+                    }
                     None => $defaults(),
                 };
                 Ok(Self {
-                    engine: $crate::engine::Engine::new(<$grammar as ::std::default::Default>::default(), format, table)
-                        .map_err(::napi::Error::from_reason)?,
+                    engine: $crate::engine::Engine::new(
+                        <$grammar as ::std::default::Default>::default(),
+                        format,
+                        table,
+                    )
+                    .map_err(::napi::Error::from_reason)?,
                     trees: ::std::collections::HashMap::new(),
                     next_tree_id: 0,
                     last_tree_id: None,
@@ -142,9 +153,7 @@ macro_rules! napi_engine {
                             tree_id,
                         })
                         .map_err(|e| {
-                            ::napi::Error::from_reason(format!(
-                                "serialize ParseResult failed: {e}"
-                            ))
+                            ::napi::Error::from_reason(format!("serialize ParseResult failed: {e}"))
                         })?;
                         self.trees.insert(tree_id, parsed);
                         self.last_tree_id = Some(tree_id);
@@ -197,13 +206,17 @@ macro_rules! napi_engine {
                 &self,
                 transport: $render_root,
                 tree_id: Option<f64>,
-                options: Option<String>,
+                options: Option<$options>,
             ) -> ::napi::Result<String> {
+                let resolved;
                 let table = match options {
-                    Some(json) => $resolve(&json, self.engine.options()).map_err(::napi::Error::from_reason)?,
-                    None => self.engine.options().clone(),
+                    Some(opts) => {
+                        resolved = $resolve(&opts, self.engine.options()).map_err(::napi::Error::from_reason)?;
+                        &resolved
+                    }
+                    None => self.engine.options(),
                 };
-                let (source, canonical) = $render_parts(transport, &table).map_err(|e| {
+                let (source, canonical) = $render_parts(transport, table).map_err(|e| {
                     ::napi::Error::from_reason(format!("render_transport failed: {e}"))
                 })?;
                 // A node knows which tree it came from, but the wrap layer
@@ -232,7 +245,7 @@ macro_rules! napi_engine {
                 transport: $render_root,
                 path: String,
                 tree_id: Option<f64>,
-                options: Option<String>,
+                options: Option<$options>,
             ) -> ::napi::Result<()> {
                 let rendered = self.render(transport, tree_id, options)?;
                 ::std::fs::write(&path, rendered).map_err(|e| {
@@ -267,7 +280,9 @@ macro_rules! napi_engine {
                 let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
                     return;
                 };
-                let Ok(tree_id) = u32::try_from(tree_id) else { return };
+                let Ok(tree_id) = u32::try_from(tree_id) else {
+                    return;
+                };
                 self.trees.remove(&tree_id);
                 if self.last_tree_id == Some(tree_id) {
                     self.last_tree_id = None;
@@ -322,7 +337,9 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
     /// could not survive the trip through JavaScript intact.
     const MAX_EXACT: f64 = 9_007_199_254_740_991.0; // 2^53 - 1
     if !value.is_finite() {
-        return Err(napi::Error::from_reason(format!("{label} must be a finite number")));
+        return Err(napi::Error::from_reason(format!(
+            "{label} must be a finite number"
+        )));
     }
     if value < 0.0 {
         return Err(napi::Error::from_reason(format!(

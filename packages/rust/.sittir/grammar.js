@@ -109,6 +109,7 @@ function matchesEmpty(rule) {
   const members = rule.members ?? [];
   if (isChoiceType(t)) return members.some(matchesEmpty);
   if (isSeqType(t)) return members.every(matchesEmpty);
+  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
   return false;
 }
 
@@ -5055,8 +5056,8 @@ var grammar_sittir_default = grammar(
           '"=>"/after': preference("space"),
           "operator:/before": preference("space"),
           "operator:/after": preference("space"),
-          "if:/after": preference("space"),
-          "in:/after": preference("space")
+          '"if"/after': preference("space"),
+          '"in"/after': preference("space")
         },
         source_file: {
           "statements:/separator": preference("tight"),

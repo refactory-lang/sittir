@@ -13,11 +13,11 @@ const str = (value: string): RenderRule => ({ type: 'STRING', value, nonterminal
 const seq = (...members: RenderRule[]): RenderRule => ({ type: 'SEQ', members, nonterminal: true }) as unknown as RenderRule;
 
 const kindEntries = [
-	{ kind: 'comma', anon: true, symbolName: ',', member: 'Comma', id: 5 },
-	{ kind: 'lparen', anon: true, symbolName: '(', member: 'Lparen', id: 7 },
-	{ kind: 'rparen', anon: true, symbolName: ')', member: 'Rparen', id: 8 },
-	{ kind: 'lbrace', anon: true, symbolName: '{', member: 'Lbrace', id: 9 },
-	{ kind: 'fn', anon: true, symbolName: 'fn', member: 'Fn', id: 10 },
+	{ kind: 'comma', anon: true, symbolName: ',', literalText: ',', member: 'Comma', id: 5 },
+	{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 },
+	{ kind: 'rparen', anon: true, symbolName: ')', literalText: ')', member: 'Rparen', id: 8 },
+	{ kind: 'lbrace', anon: true, symbolName: '{', literalText: '{', member: 'Lbrace', id: 9 },
+	{ kind: 'fn', anon: true, symbolName: 'fn', literalText: 'fn', member: 'Fn', id: 10 },
 	{ kind: 'tight', member: 'Tight', id: 90 },
 	{ kind: 'space', member: 'Space', id: 91 },
 	{ kind: 'newline', member: 'Newline', id: 92 },
@@ -331,7 +331,7 @@ describe('seamRenderRules', () => {
 	it('puts a seam inside a nested group whose edge member is a token, so an optional clause carries its opener seam', () => {
 		const clause = { ...seq(str('='), sym('value')), multiplicity: 'optional' } as unknown as RenderRule;
 		const ret = { ...seq(str('->'), sym('type')), staticSeamBefore: 'spaced' } as unknown as RenderRule;
-		const tokens = [{ kind: 'dash_gt', anon: true, symbolName: '->', member: 'DashGt', id: 11 }, { kind: 'eq', anon: true, symbolName: '=', member: 'Eq', id: 12 }];
+		const tokens = [{ kind: 'dash_gt', anon: true, symbolName: '->', literalText: '->', member: 'DashGt', id: 11 }, { kind: 'eq', anon: true, symbolName: '=', literalText: '=', member: 'Eq', id: 12 }];
 		const config = { nodeMap: nodeMapOf({ decl: seq(sym('pattern'), clause, ret, sym('body')) }, {}), kindEntries: [...(kindEntries as never[]), ...tokens] as never };
 		const out = seamRenderRules(spaceRenderRules(config), config);
 		const [pattern, clauseOut, retOut, body] = membersOf(out.rules.decl!);

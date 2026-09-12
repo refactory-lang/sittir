@@ -25,7 +25,6 @@ import type {
 } from '../../types/rule.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
-import { DEDENT_MARK, INDENT_NEWLINE } from '../render-body.ts';
 import { showBody } from './support/show-body.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
@@ -136,11 +135,28 @@ describe('emitRule — seq', () => {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
-				{ type: STRING, value: ' ' },
 				{ type: STRING, value: 'main' }
 			]
 		};
 		expect(shown(rule, makeCtx())).toBe('fn main');
+	});
+
+	it('a whitespace-only STRING member is a token seam, glued to the literal before it with an adjacency call', () => {
+		// literalBody classifies a whitespace-only literal as a tokenSeam
+		// regardless of which render-body site produced it (STRING, SYMBOL's
+		// own literal, or a hidden kind's fixed text) — no real grammar's
+		// STRING/SYMBOL literal is ever whitespace-only in practice (its
+		// spacing comes from the static-spacing pass, not a literal member),
+		// so this exercises the classification itself, not a real shape.
+		const rule: SeqRule = {
+			type: SEQ,
+			members: [
+				{ type: STRING, value: 'fn' },
+				{ type: STRING, value: ' ' },
+				{ type: STRING, value: 'main' }
+			]
+		};
+		expect(shown(rule, makeCtx())).toBe('fn⟨adjacent⟩⟨tokenSeam " "⟩main');
 	});
 
 	it('recurses into nested seqs, inserting a word-boundary space between adjacent word literals', () => {
@@ -499,19 +515,19 @@ describe('emitRule — choice', () => {
 });
 
 describe('emitRule — structural whitespace', () => {
-	it('emits an indent as the writer mark followed by its line break', () => {
+	it('emits an indent as its own depth node', () => {
 		const rule: IndentRule = { type: INDENT };
-		expect(shown(rule, makeCtx())).toBe(`⟨ws ${JSON.stringify(INDENT_NEWLINE)}⟩`);
+		expect(shown(rule, makeCtx())).toBe('⟨indent⟩');
 	});
 
-	it('emits a dedent as the bare writer mark, since the line it closes ended with its own newline', () => {
+	it('emits a dedent as its own depth node', () => {
 		const rule: DedentRule = { type: DEDENT };
-		expect(shown(rule, makeCtx())).toBe(`⟨ws ${JSON.stringify(DEDENT_MARK)}⟩`);
+		expect(shown(rule, makeCtx())).toBe('⟨dedent⟩');
 	});
 
-	it('emits a newline in the same expression form as an indent', () => {
+	it('emits a newline as plain text, not a depth node', () => {
 		const rule: NewlineRule = { type: NEWLINE };
-		expect(shown(rule, makeCtx())).toBe('⟨ws "\\n"⟩');
+		expect(shown(rule, makeCtx())).toBe('\n');
 	});
 });
 

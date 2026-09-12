@@ -113,7 +113,7 @@ describe('engine', () => {
 										$childIndex: 1
 									},
 									_pub: {
-										$type: TSKindId.Pub,
+										$type: TSKindId.PubKeyword,
 										$source: 0,
 										$named: false,
 										$text: 'pub',
@@ -141,7 +141,7 @@ describe('engine', () => {
 									$childIndex: 1
 								},
 								_pub: {
-									$type: TSKindId.Pub,
+									$type: TSKindId.PubKeyword,
 									$source: 0,
 									$named: false,
 									$text: 'pub',

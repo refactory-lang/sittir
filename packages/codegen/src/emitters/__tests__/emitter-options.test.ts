@@ -27,8 +27,8 @@ function terminator(kind: string): SitePreference {
 
 describe('renderOptionsModule', () => {
 	const kindEntries = [
-		{ kind: 'comma', member: 'Comma', symbolName: ',', anon: true },
-		{ kind: 'semi', member: 'Semi', symbolName: ';', anon: true },
+		{ kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true },
+		{ kind: 'semi', member: 'Semi', symbolName: ';', literalText: ';', anon: true },
 		{ kind: 'tight', member: 'tight' },
 		{ kind: 'space', member: 'space' },
 		{ kind: 'newline', member: 'newline' }
@@ -52,7 +52,7 @@ describe('renderOptionsModule', () => {
 		expect(src).toContain(`export type WhitespaceArm = ${spacingType};`);
 		expect(src).toContain("export type AddressRoot = 'formal_parameters' | 'return_statement';");
 		expect(src).toContain("readonly 'formal_parameters/elements/delimiter': Delimiter.Trailing;");
-		expect(src).toContain("readonly 'formal_parameters/elements/separator/,/after': SpacingArm;");
+		expect(src).toContain("readonly 'formal_parameters/elements/separator/comma/after': SpacingArm;");
 		expect(src).toContain("readonly 'return_statement/terminator/statement_terminator': TSKindId.automatic_semicolon | TSKindId.semi;");
 		expect(src).toContain('export type Options = AddressedOptions & { readonly indent?: string };');
 		expect(src).not.toMatch(/SpacingLabel|KindSpacing|SitesOf|Members|EdgeKind|OPTION_CATALOG|export const/);
@@ -72,7 +72,7 @@ describe('renderOptionsModule', () => {
 describe('deriveAddressTables', () => {
 	const addressArm = (arm: PreferenceArm): string => `TSKindId.${arm.kind ?? arm.value}`;
 	const kindEntries = [
-		{ kind: 'lbrace', member: 'Lbrace', symbolName: '{', anon: true },
+		{ kind: 'lbrace', member: 'Lbrace', symbolName: '{', literalText: '{', anon: true },
 		{ kind: 'tight', member: 'Tight' },
 		{ kind: 'space', member: 'Space' }
 	];
@@ -92,10 +92,17 @@ describe('deriveAddressTables', () => {
 		const tables = deriveAddressTables([site('block', 'lbrace', 'lbrace_after'), site('block', 'block', 'block_before')], kindEntries, addressArm, new Map());
 		expect(tables.roots).toEqual(['block']);
 		expect(tables.branches).toEqual([
-			{ path: 'block', keys: ['before', '{'] },
-			{ path: 'block/{', keys: ['after'] }
+			{ path: 'block', children: ['before', 'lbrace'], segments: [{ kind: 'kind-match', name: 'block' }] },
+			{
+				path: 'block/lbrace',
+				children: ['after'],
+				segments: [
+					{ kind: 'kind-match', name: 'block' },
+					{ kind: 'literal', text: '{' }
+				]
+			}
 		]);
-		expect(tables.leaves.map((l) => l.path)).toEqual(['block/before', 'block/{/after']);
+		expect(tables.leaves.map((l) => l.path)).toEqual(['block/before', 'block/lbrace/after']);
 		expect(tables.depth).toBe(3);
 	});
 
@@ -106,10 +113,35 @@ describe('deriveAddressTables', () => {
 			addresses: deriveAddressTables(sites, kindEntries, addressArm, new Map())
 		});
 		expect(src).toContain("export type AddressRoot = 'block';");
-		expect(src).toContain("export interface AddressBranch {\n\treadonly block: '{';\n\treadonly 'block/{': 'after';\n}");
-		expect(src).toContain("export interface AddressLeaf {\n\treadonly 'block/{/after': SpacingArm;\n}");
+		expect(src).toContain("export interface AddressBranch {\n\treadonly block: 'lbrace';\n\treadonly 'block/lbrace': 'after';\n}");
+		expect(src).toContain("export interface AddressLeaf {\n\treadonly 'block/lbrace/after': SpacingArm;\n}");
 		expect(src).toContain('export type AddressedOptions = { readonly [K in AddressRoot]?: AddressNode1<K> };');
 		expect(src).toContain('type AddressNode2<P extends string> = P extends keyof AddressBranch');
 		expect(src).not.toContain('AddressNode3<');
+	});
+
+	it('rejects a literal segment whose text has no kind entry', () => {
+		const orphanLiteral: SitePreference = {
+			...site('block', 'lbrace', 'lbrace_after'),
+			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'literal', text: '\u00a4' }, { kind: 'name', name: 'after' }]
+		};
+		expect(() => deriveAddressTables([orphanLiteral], kindEntries, addressArm, new Map())).toThrow(
+			'options: literal "\u00a4" has no kind name'
+		);
+	});
+
+	it('rejects a literal and a same-spelled name segment at the same position', () => {
+		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }];
+		const literalSite: SitePreference = {
+			...site('block', 'lbrace', 'lbrace_after'),
+			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'literal', text: ',' }, { kind: 'name', name: 'after' }]
+		};
+		const nameSite: SitePreference = {
+			...site('block', 'lbrace', 'lbrace_after'),
+			path: [{ kind: 'kind-match', name: 'block' }, { kind: 'name', name: 'comma' }, { kind: 'name', name: 'after' }]
+		};
+		expect(() => deriveAddressTables([literalSite, nameSite], entries, addressArm, new Map())).toThrow(
+			"options: address 'block/comma' names two segments"
+		);
 	});
 });

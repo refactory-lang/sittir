@@ -23,12 +23,12 @@ export function rebuildSpliceGenerated() {
 					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					})),
 				}),
@@ -38,12 +38,12 @@ export function rebuildSpliceGenerated() {
 					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("source_len"),
-							type: TSKindId.Usize,
+							type: TSKindId.UsizeKeyword,
 						}),
 					})),
 				}).$trivia({ leading: ["/// `end_pos > source.len()` — edit reaches past end of source.\n"] }),
@@ -53,12 +53,12 @@ export function rebuildSpliceGenerated() {
 					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					})),
 				}).$trivia({ leading: ["/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"] }),
@@ -198,7 +198,7 @@ export function rebuildSpliceGenerated() {
 				content: ir.parameter.strict({
 					name: ir.identifier("source"),
 					type: ir.referenceType.strict({
-						type: TSKindId.Str,
+						type: TSKindId.StrKeyword,
 					}),
 				}),
 			}, {
@@ -282,7 +282,7 @@ export function rebuildSpliceGenerated() {
 										value: ir.identifier("e"),
 										field: ir.identifier("end_pos"),
 									}),
-									type: TSKindId.Usize,
+									type: TSKindId.UsizeKeyword,
 								})),
 								operator: TSKindId.Gt,
 								right: ir.identifier("source_len"),
@@ -324,7 +324,7 @@ export function rebuildSpliceGenerated() {
 													value: ir.identifier("e"),
 													field: ir.identifier("start_pos"),
 												}),
-												type: TSKindId.Usize,
+												type: TSKindId.UsizeKeyword,
 											}),
 										})),
 									}),
@@ -343,7 +343,7 @@ export function rebuildSpliceGenerated() {
 													value: ir.identifier("e"),
 													field: ir.identifier("end_pos"),
 												}),
-												type: TSKindId.Usize,
+												type: TSKindId.UsizeKeyword,
 											}),
 										})),
 									}),
@@ -456,7 +456,7 @@ export function rebuildSpliceGenerated() {
 									value: ir.identifier("e"),
 									field: ir.identifier("start_pos"),
 								}),
-								type: TSKindId.Usize,
+								type: TSKindId.UsizeKeyword,
 							}),
 						}), ir.letDeclaration.strict({
 							pattern: ir.identifier("end"),
@@ -465,7 +465,7 @@ export function rebuildSpliceGenerated() {
 									value: ir.identifier("e"),
 									field: ir.identifier("end_pos"),
 								}),
-								type: TSKindId.Usize,
+								type: TSKindId.UsizeKeyword,
 							}),
 						}), ir.expressionStatement.withSemi.strict(ir.callExpression.strict({
 							function: ir.fieldExpression.strict({

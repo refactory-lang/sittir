@@ -98,7 +98,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "coerceToElseClause": "function",
   "coerceToEscapeInterpolation": "function",
   "coerceToEscapeSequence": "function",
-  "coerceToExcept": "function",
   "coerceToExceptClause": "function",
   "coerceToExceptClauseException": "function",
   "coerceToExceptClauseExceptionAs": "function",
