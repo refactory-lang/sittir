@@ -74,7 +74,7 @@ export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLi
 
 function anonTokenText(kindEntries: readonly KindEntryLike[], token: string): string | undefined {
 	const entry = findEntryForKindName(kindEntries, token);
-	return entry?.anon === true ? entry.symbolName : undefined;
+	return entry?.anon === true ? entry.literalText : undefined;
 }
 
 export function matchAddress<T extends SiteAddressInput>(

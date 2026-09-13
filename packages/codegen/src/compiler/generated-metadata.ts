@@ -26,7 +26,9 @@ export interface GeneratedKindEntry {
 	readonly id: number;
 	readonly parseId?: number;
 	readonly symbolName?: string;
+	readonly literalText?: string;
 	readonly anon?: boolean;
+	readonly literalRule?: boolean;
 }
 
 export interface TreeSitterLanguageMetadata {
@@ -41,9 +43,12 @@ export interface TreeSitterLanguageMetadata {
 export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
 	const parserCPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'parser.c');
 	if (existsSync(parserCPath)) {
+		const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
+		const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
 		return deriveGeneratedIdTablesFromParserCSource(
 			readFileSync(parserCPath, 'utf8'),
-			`packages/${grammar}/.sittir/src/parser.c`
+			`packages/${grammar}/.sittir/src/parser.c`,
+			grammarJson
 		);
 	}
 
@@ -68,19 +73,120 @@ export function deriveGeneratedIdTablesFromLanguage(
 
 export async function deriveGeneratedIdTablesFromParserCSource(
 	source: string,
-	sourceArtifact: string
+	sourceArtifact: string,
+	grammarJson?: unknown
 ): Promise<GeneratedIdTables> {
 	const parser = await loadCParser();
 	const symbolIds = collectEnumIds(parser, source, 'enum ts_symbol_identifiers');
 	const fieldIds = collectEnumIds(parser, source, 'enum ts_field_identifiers');
 	const symbolNames = collectNameTable(parser, source, 'static const char * const ts_symbol_names[]');
 	const fieldNames = collectNameTable(parser, source, 'static const char * const ts_field_names[]');
+	const symbolTextFacts = resolveSymbolTextFacts(symbolNames, collectGrammarFacts(grammarJson));
 
 	return {
-		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName),
+		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName(symbolTextFacts), symbolTextFacts),
 		fieldIds: joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName),
 		sourceArtifact
 	};
+}
+
+interface GrammarFacts {
+	readonly aliasTargetNames: ReadonlySet<string>;
+	readonly stringLiterals: ReadonlySet<string>;
+	readonly literalRules: ReadonlyMap<string, string>;
+}
+
+function collectGrammarFacts(grammarJson: unknown): GrammarFacts {
+	const aliasTargetNames = new Set<string>();
+	const stringLiterals = new Set<string>();
+	const literalRules = new Map<string, string>();
+	const rules = (grammarJson as { rules?: Record<string, unknown> } | undefined)?.rules;
+	if (rules) {
+		for (const [name, rule] of Object.entries(rules)) {
+			const literalValue = literalRuleValue(rule);
+			if (literalValue !== undefined) literalRules.set(name, literalValue);
+		}
+		for (const rule of Object.values(rules)) {
+			walkGrammarNode(rule, aliasTargetNames, stringLiterals, literalRules);
+		}
+	}
+	return { aliasTargetNames, stringLiterals, literalRules };
+}
+
+function literalRuleValue(rule: unknown): string | undefined {
+	if (rule === null || typeof rule !== 'object') return undefined;
+	const record = rule as Record<string, unknown>;
+	if (record.type === 'STRING' && typeof record.value === 'string') return record.value;
+	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') return record.value;
+	return undefined;
+}
+
+function walkGrammarNode(
+	node: unknown,
+	aliasTargetNames: Set<string>,
+	stringLiterals: Set<string>,
+	literalRules: Map<string, string>
+): void {
+	if (Array.isArray(node)) {
+		for (const child of node) walkGrammarNode(child, aliasTargetNames, stringLiterals, literalRules);
+		return;
+	}
+	if (node === null || typeof node !== 'object') return;
+	const record = node as Record<string, unknown>;
+	if (record.type === 'STRING' && typeof record.value === 'string') stringLiterals.add(record.value);
+	if (record.type === 'ALIAS' && record.named === true && typeof record.value === 'string') {
+		aliasTargetNames.add(record.value);
+	}
+	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') {
+		const content = record.content as Record<string, unknown> | undefined;
+		if (content?.type === 'SYMBOL' && typeof content.name === 'string') literalRules.set(content.name, record.value as string);
+	}
+	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargetNames, stringLiterals, literalRules);
+}
+
+interface SymbolTextFacts {
+	readonly literalText: string;
+	readonly literalRule?: boolean;
+}
+
+function resolveSymbolTextFacts(
+	names: ReadonlyMap<string, string>,
+	grammar: GrammarFacts
+): ReadonlyMap<string, SymbolTextFacts> {
+	const result = new Map<string, SymbolTextFacts>();
+	for (const [cName, displayName] of names) {
+		if (cName.startsWith('anon_sym_')) {
+			if (grammar.aliasTargetNames.has(displayName)) {
+				const rawSuffix = cName.slice('anon_sym_'.length);
+				if (!grammar.stringLiterals.has(rawSuffix)) {
+					throw new Error(
+						`generated-metadata: aliased token ${cName} (display ${JSON.stringify(displayName)}) has no verbatim literal`
+					);
+				}
+				result.set(cName, { literalText: rawSuffix });
+				continue;
+			}
+			result.set(cName, { literalText: displayName });
+			continue;
+		}
+		if (cName.startsWith('sym_')) {
+			const ruleName = cName.slice('sym_'.length);
+			const literalValue = grammar.literalRules.get(ruleName);
+			if (literalValue === undefined) continue;
+			const isNamedAliasTarget = grammar.aliasTargetNames.has(displayName);
+			if (isNamedAliasTarget) continue;
+			result.set(cName, { literalText: literalValue, literalRule: true });
+		}
+	}
+	return result;
+}
+
+export function symbolNameIsNotable(
+	symbolName: string | undefined,
+	kind: string,
+	literalRule: boolean | undefined
+): boolean {
+	return symbolName !== undefined && (symbolName !== kind || literalRule === true);
 }
 
 export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefined): readonly GeneratedKindEntry[] {
@@ -91,18 +197,21 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 			kind,
 			id: entry.id!,
 			parseId: entry.parseId,
-			symbolName:
-				entry.parser?.symbolName !== undefined && entry.parser.symbolName !== kind
-					? entry.parser.symbolName
-					: undefined,
-			anon: entry.parser?.anon || undefined
+			symbolName: symbolNameIsNotable(entry.parser?.symbolName, kind, entry.parser?.literalRule)
+				? entry.parser?.symbolName
+				: undefined,
+			literalText: entry.parser?.literalText,
+			anon: entry.parser?.anon || undefined,
+			literalRule: entry.parser?.literalRule || undefined
 		}));
 }
 
 export interface KindEntryLike {
 	readonly kind: string;
 	readonly symbolName?: string;
+	readonly literalText?: string;
 	readonly anon?: boolean;
+	readonly literalRule?: boolean;
 }
 
 export function findEntryForKindName<T extends KindEntryLike>(entries: readonly T[], name: string): T | undefined {
@@ -119,11 +228,18 @@ export function findAnonEntryForLiteralText<T extends KindEntryLike>(
 	entries: readonly T[],
 	text: string
 ): T | undefined {
-	return entries.find((entry) => entry.anon === true && entry.symbolName === text);
+	return entries.find((entry) => entry.anon === true && entry.literalText === text);
 }
 
 export function findEntryForLiteralText<T extends KindEntryLike>(entries: readonly T[], text: string): T | undefined {
-	return findAnonEntryForLiteralText(entries, text) ?? findEntryForKindName(entries, text);
+	return (
+		findAnonEntryForLiteralText(entries, text) ??
+		entries.find((entry) => entry.literalRule === true && entry.literalText === text)
+	);
+}
+
+export function findEntryForPatternValue<T extends KindEntryLike>(entries: readonly T[], value: string): T | undefined {
+	return findEntryForLiteralText(entries, value) ?? findEntryForKindName(entries, value);
 }
 
 function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {
@@ -242,12 +358,13 @@ function collectNameTable(parser: CParser, source: string, marker: string): Map<
 function joinIdNames(
 	ids: ReadonlyMap<string, CEnumEntry>,
 	names: ReadonlyMap<string, string>,
-	fallbackName: (cName: string) => string
+	fallbackName: (cName: string) => string,
+	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>
 ): Map<string, GeneratedIdEntry> {
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
 		const key = fallbackName(entry.cName);
-		const parser = createParserMetadata(entry, key, names);
+		const parser = createParserMetadata(entry, key, names, symbolTextFacts);
 		const existing = result.get(key);
 		if (!existing || !existing.parser) {
 			result.set(key, { id: entry.id, parser });
@@ -258,39 +375,24 @@ function joinIdNames(
 			continue;
 		}
 		if (existing.parser.anon !== parser.anon) {
-			if (existing.parser.anon) {
-				const anonKey = disambiguateAnonKey(key, result, existing.id ?? entry.id);
-				result.set(anonKey, {
-					id: existing.id,
-					parser: {
-						...existing.parser,
-						parserName: anonKey,
-						hidden: anonKey.startsWith('_')
-					}
-				});
-				result.set(key, { id: entry.id, parser });
-			} else {
-				const anonKey = disambiguateAnonKey(key, result, entry.id);
-				result.set(anonKey, {
-					id: entry.id,
-					parser: {
-						...parser,
-						parserName: anonKey,
-						hidden: anonKey.startsWith('_')
-					}
-				});
-			}
-			continue;
+			const anonSide = existing.parser.anon ? existing.parser : parser;
+			const namedSide = existing.parser.anon ? parser : existing.parser;
+			throw new Error(
+				`generated-metadata: key '${key}' names both anonymous token ${JSON.stringify(anonSide.symbolName)} (${anonSide.cSymbol}) and kind '${key}' (${namedSide.cSymbol})`
+			);
 		}
 		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
-			if (parser.alias && parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
-				result.set(key, {
-					id: existing.id,
-					parseId: entry.id,
-					parser: { ...existing.parser, symbolName: parser.symbolName }
-				});
+			if (parser.alias) {
+				if (parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
+					result.set(key, {
+						id: existing.id,
+						parseId: entry.id,
+						parser: { ...existing.parser, symbolName: parser.symbolName }
+					});
+				}
+				continue;
 			}
-			continue;
+			throw new Error(`generated-metadata: key '${key}' names both '${existing.parser.cSymbol}' and '${entry.cName}'`);
 		}
 		result.set(key, { id: entry.id, parser });
 	}
@@ -300,12 +402,16 @@ function joinIdNames(
 function createParserMetadata(
 	entry: CEnumEntry,
 	parserName: string,
-	names: ReadonlyMap<string, string>
+	names: ReadonlyMap<string, string>,
+	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>
 ): KindParserMetadata {
+	const facts = symbolTextFacts?.get(entry.cName);
 	return {
 		cSymbol: entry.cName,
 		parserName,
 		symbolName: names.get(entry.cName),
+		literalText: facts?.literalText,
+		literalRule: facts?.literalRule,
 		anon: entry.cName.startsWith('anon_sym_'),
 		aux: entry.cName.startsWith('aux_sym_'),
 		alias: entry.cName.startsWith('alias_sym_'),
@@ -313,25 +419,25 @@ function createParserMetadata(
 	};
 }
 
-function disambiguateAnonKey(baseKey: string, existing: ReadonlyMap<string, GeneratedIdEntry>, id: number): string {
-	const preferred = `anon_${baseKey}`;
-	if (!existing.has(preferred)) return preferred;
-	return `${preferred}_${id}`;
-}
-
 function shouldReplaceSymbol(existingCName: string | undefined, nextCName: string): boolean {
 	if (!existingCName) return true;
 	return existingCName.startsWith('anon_sym_') && !nextCName.startsWith('anon_sym_');
 }
 
-function deriveSymbolRuntimeName(cName: string): string {
-	if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
-	if (cName.startsWith('anon_sym_')) {
-		return cName.slice('anon_sym_'.length).toLowerCase();
-	}
-	if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
-	if (cName.startsWith('alias_sym_')) return `_${cName.slice('alias_sym_'.length)}`;
-	return cName;
+function deriveSymbolRuntimeName(symbolTextFacts: ReadonlyMap<string, SymbolTextFacts>): (cName: string) => string {
+	return (cName) => {
+		if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
+		if (cName.startsWith('anon_sym_')) {
+			const base = cName.slice('anon_sym_'.length).toLowerCase();
+			const text = symbolTextFacts.get(cName)?.literalText;
+			if (text === undefined || cName !== `anon_sym_${text}`) return base;
+			if (/[^_]/.test(text)) return `${base}_keyword`;
+			return text.length <= 1 ? 'underscore' : `underscore${text.length}`;
+		}
+		if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
+		if (cName.startsWith('alias_sym_')) return `_${cName.slice('alias_sym_'.length)}`;
+		return cName;
+	};
 }
 
 function deriveFieldRuntimeName(cName: string): string {

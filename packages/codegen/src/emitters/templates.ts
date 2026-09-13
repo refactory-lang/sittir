@@ -40,39 +40,15 @@ import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import { flanksOf, isSeamChoice, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
-import {
-	ADJACENT,
-	DEDENT_MARK,
-	EMPTY,
-	INDENT_NEWLINE,
-	SPACE,
-	branches,
-	concat,
-	edgeChar,
-	equalBodies,
-	equalNodes,
-	gate,
-	isExpression,
-	isPlainText,
-	mentions,
-	opensAsTag,
-	refersTo,
-	duplicateSlots,
-	seam,
-	slot as slotRef,
-	text,
-	weight,
-	whitespace,
-	isWhitespaceOnly,
-	seamMarked,
-	type Body
-} from './render-body.ts';
+import type { KindEntryLike } from '../compiler/generated-metadata.ts';
+import { ADJACENT, DEDENT as DEDENT_BODY, EMPTY, INDENT as INDENT_BODY, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	renderRules?: RenderRules;
 	grammarSha?: string;
+	kindEntries?: readonly KindEntryLike[];
 }
 
 export interface EmittedTemplates {
@@ -193,7 +169,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			})(),
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
-					literalMergePairs(getTransportProjection(config.nodeMap).literals).map(([a, b]) => a * 128 + b)
+					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(([a, b]) => a * 128 + b)
 				);
 				return (l: string, r: string) =>
 					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
@@ -204,7 +180,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const combos = new Set<string>();
 				const lefts = new Set<string>();
 				const rights = new Set<string>();
-				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals)) {
+				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? [])) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
 					lefts.add(String.fromCharCode(a));
 					rights.add(String.fromCharCode(b));
@@ -460,7 +436,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
 			}
-			return text(rule.value);
+			return literalBody(rule.value);
 		}
 
 		case PATTERN: {
@@ -577,11 +553,11 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			return emitChoice(rule, ctx);
 
 		case INDENT:
-			return whitespace(INDENT_NEWLINE);
+			return INDENT_BODY;
 		case NEWLINE:
-			return whitespace('\n');
+			return text('\n');
 		case DEDENT:
-			return whitespace(DEDENT_MARK);
+			return DEDENT_BODY;
 
 		case SUPERTYPE:
 			return EMPTY;
@@ -801,13 +777,13 @@ function emitFieldNameSlot(slotName: string, rule: RenderRule, ctx: EmitCtx): Bo
 function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx): Body {
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
-		return text(rule.literal);
+		return literalBody(rule.literal);
 	}
 	if (rule.nonterminal === false) {
 		const fixed = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
 		if (fixed === undefined)
 			throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
-		return isWhitespaceOnly(fixed) ? whitespace(seamMarked(fixed)) : text(fixed);
+		return literalBody(fixed);
 	}
 
 	const isInlineableHiddenHelper =
@@ -990,8 +966,10 @@ function scanArmBody(body: Body): {
 				case 'text':
 					if (depth === 0 && node.text.trim() !== '') depth0Payload = true;
 					break;
-				case 'whitespace':
 				case 'adjacent':
+				case 'indent':
+				case 'dedent':
+				case 'tokenSeam':
 					if (depth === 0) depth0Payload = true;
 					break;
 				case 'space':
@@ -1025,7 +1003,150 @@ function restoreEmittedSlotNames(ctx: EmitCtx, snapshot: ReadonlySet<string>): v
 	for (const s of snapshot) ctx.emittedSlotNames.add(s);
 }
 
+/** The kinds a choice arm admits into the slot it carries: the names of its
+ *  symbol members, a supertype standing for its members. `undefined` when the
+ *  arm carries no symbol or more than one, since a literal cannot be gated on
+ *  two slots at once. */
+function armSlotKinds(arm: RenderRule): readonly string[] | undefined {
+	const kinds: string[] = [];
+	let carriers = 0;
+	const walk = (rule: RenderRule): void => {
+		const flanks = flanksOf(rule);
+		if (flanks !== undefined) {
+			walk(flanks.inner);
+			return;
+		}
+		if (isSeamChoice(rule)) return;
+		switch (rule.type) {
+			case SYMBOL:
+				carriers += 1;
+				if (!kinds.includes(rule.name)) kinds.push(rule.name);
+				return;
+			case PATTERN:
+				carriers += 1;
+				return;
+			case CHOICE: {
+				const before = carriers;
+				let most = 0;
+				for (const member of rule.members) {
+					carriers = before;
+					walk(member);
+					most = Math.max(most, carriers - before);
+				}
+				carriers = before + most;
+				return;
+			}
+			case SEQ:
+				for (const member of rule.members) walk(member);
+				return;
+			default:
+				return;
+		}
+	};
+	walk(arm);
+	return carriers === 1 && kinds.length > 0 ? kinds : undefined;
+}
+
+/** A choice's field name pushed down onto the members that carry a slot, so
+ *  each arm emits as the parser tags it: the symbol takes the field, a
+ *  literal beside it stays the arm's own text. */
+function withFieldOnCarriers(rule: RenderRule, fieldName: string): RenderRule {
+	if (isSeamChoice(rule)) return rule;
+	switch (rule.type) {
+		case SYMBOL:
+		case PATTERN:
+			return (rule as { fieldName?: string }).fieldName === undefined
+				? ({ ...rule, fieldName } as RenderRule)
+				: rule;
+		case SEQ:
+		case CHOICE:
+			return { ...rule, members: rule.members.map((m) => withFieldOnCarriers(m, fieldName)) } as RenderRule;
+		default:
+			return rule;
+	}
+}
+
+const isLiteralOnly = (body: Body): boolean =>
+	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
+
+/** The arms of a choice that share one slot and differ only by the literal
+ *  they put beside it, folded into the slot once and each literal gated on
+ *  the kinds its arm admits. `for (init; cond; inc)`: the initializer's
+ *  expression arm ends in `;` and its declaration arms do not, so the `;` is
+ *  written when the initializer is an expression. Nothing else about the
+ *  choice qualifies: an arm without a slot, an arm with two, or arms whose
+ *  text before the slot differs leave the choice to the other resolutions. */
+function emitKindGatedLiterals(
+	rule: Extract<RenderRule, { type: 'CHOICE' }>,
+	fieldName: string | undefined,
+	ctx: EmitCtx
+): Body | undefined {
+	if (rule.members.length < 2) return undefined;
+	if (!rule.members.some((m) => m.type === SEQ && m.members.some((x) => x.type === STRING))) return undefined;
+	const trace = process.env.SITTIR_TRACE_GATED !== undefined && ctx.currentKind === process.env.SITTIR_TRACE_GATED;
+	const bail = (why: string): undefined => {
+		if (trace) process.stderr.write(`[gated] ${ctx.currentKind} field=${fieldName}: ${why}\n`);
+		return undefined;
+	};
+	interface Arm {
+		/** The body up to and through the slot; `undefined` for an arm that is
+		 *  a literal kind alone, which the slot renders as itself. */
+		prefix: Body | undefined;
+		residual: Body;
+		kinds: readonly string[];
+	}
+	const arms: Arm[] = [];
+	let key: string | undefined;
+	const beforeSlots = new Set(ctx.emittedSlotNames);
+	for (const member of rule.members) {
+		const arm = fieldName === undefined ? member : withFieldOnCarriers(member, fieldName);
+		const kinds = armSlotKinds(arm);
+		if (kinds === undefined) return bail(`arm carries no single slot: ${JSON.stringify(arm).slice(0, 160)}`);
+		const body = emitRule(arm, ctx);
+		restoreEmittedSlotNames(ctx, beforeSlots);
+		const at = body.findIndex((n) => n.kind === 'slot');
+		if (at < 0) {
+			if (kinds.length !== 1 || !isLiteralOnly(body)) return bail(`slotless arm not a lone literal kind: ${JSON.stringify(body).slice(0, 160)}`);
+			arms.push({ prefix: undefined, residual: EMPTY, kinds });
+			continue;
+		}
+		if (body.slice(0, at).some((n) => n.kind === 'if')) return bail('gate before the slot');
+		const slotName = (body[at] as { name: string }).name;
+		if (key !== undefined && slotName !== key) return bail(`slot ${slotName} differs from ${key}`);
+		key = slotName;
+		const residual = body.slice(at + 1);
+		if (!isLiteralOnly(residual)) return bail(`residual not literal-only: ${JSON.stringify(residual).slice(0, 160)}`);
+		arms.push({ prefix: body.slice(0, at + 1), residual, kinds });
+	}
+	if (key === undefined) return bail('no arm carries the slot');
+	const prefix = arms.find((a) => a.prefix !== undefined)!.prefix!;
+	if (!arms.every((a) => a.prefix === undefined || equalBodies(a.prefix, prefix))) return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
+	const gated: { kinds: string[]; body: Body }[] = [];
+	for (const arm of arms) {
+		if (arm.residual.length === 0) continue;
+		const same = gated.find((g) => equalBodies(g.body, arm.residual));
+		if (same) {
+			for (const k of arm.kinds) if (!same.kinds.includes(k)) same.kinds.push(k);
+		} else {
+			gated.push({ kinds: [...arm.kinds], body: arm.residual });
+		}
+	}
+	if (gated.length === 0) return bail('no arm has a residual literal');
+	ctx.emittedSlotNames.add(key);
+	return concat(
+		prefix,
+		branches(
+			gated.map((g) => ({ test: key!, kinds: g.kinds, body: g.body })),
+			undefined
+		)
+	);
+}
+
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): Body {
+	{
+		const gated = emitKindGatedLiterals(rule, (rule as { fieldName?: string }).fieldName, ctx);
+		if (gated !== undefined) return gated;
+	}
 	const slot = lookupSlot(rule, ctx);
 	if (slot) {
 		const choiceRuleId = (rule as { id?: string }).id;

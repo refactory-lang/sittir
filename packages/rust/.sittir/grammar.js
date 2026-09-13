@@ -109,6 +109,7 @@ function matchesEmpty(rule) {
   const members = rule.members ?? [];
   if (isChoiceType(t)) return members.some(matchesEmpty);
   if (isSeqType(t)) return members.every(matchesEmpty);
+  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
   return false;
 }
 
@@ -604,14 +605,6 @@ function isArmDefault(v) {
 var arm = {
   default: { __sittirPlaceholder: "default" }
 };
-
-// packages/codegen/src/dsl/primitives/preference.ts
-function isPreference(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
-}
-function preference(arm2) {
-  return { __sittirPlaceholder: "preference", default: arm2 };
-}
 
 // packages/codegen/src/dsl/primitives/group.ts
 function isGroupPlaceholder(v) {
@@ -3564,17 +3557,17 @@ function fieldEnumSiteKey(parentKind, fieldName) {
 function collectConflictingFieldEnumSites(occurrences) {
   const memberKeysBySite = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    const siteKey2 = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
-    let keys = memberKeysBySite.get(siteKey2);
+    const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+    let keys = memberKeysBySite.get(siteKey);
     if (!keys) {
       keys = /* @__PURE__ */ new Set();
-      memberKeysBySite.set(siteKey2, keys);
+      memberKeysBySite.set(siteKey, keys);
     }
     keys.add(occ.memberKey);
   }
   const conflicting = /* @__PURE__ */ new Set();
-  for (const [siteKey2, keys] of memberKeysBySite) {
-    if (keys.size > 1) conflicting.add(siteKey2);
+  for (const [siteKey, keys] of memberKeysBySite) {
+    if (keys.size > 1) conflicting.add(siteKey);
   }
   return conflicting;
 }
@@ -4313,6 +4306,14 @@ function extractNonEmpty(rule) {
     return null;
   }
   return null;
+}
+
+// packages/codegen/src/dsl/primitives/preference.ts
+function isPreference(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
+}
+function preference(arm2) {
+  return { __sittirPlaceholder: "preference", default: arm2 };
 }
 
 // packages/codegen/src/dsl/primitives/spacing.ts
@@ -5055,8 +5056,8 @@ var grammar_sittir_default = grammar(
           '"=>"/after': preference("space"),
           "operator:/before": preference("space"),
           "operator:/after": preference("space"),
-          "if:/after": preference("space"),
-          "in:/after": preference("space")
+          '"if"/after': preference("space"),
+          '"in"/after': preference("space")
         },
         source_file: {
           "statements:/separator": preference("tight"),

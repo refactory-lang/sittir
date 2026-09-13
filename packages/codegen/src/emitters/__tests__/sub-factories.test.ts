@@ -177,6 +177,83 @@ function ambiguousNodeMap(): NodeMap {
 	return buildNodeMap(rules);
 }
 
+function sameHostNodeMap(): NodeMap {
+	const rules: Record<string, Rule<'evaluate'>> = {
+		grandparent_c: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'parent_c' },
+				{ type: SYMBOL, name: 'leaf_c' }
+			]
+		},
+		parent_c: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'twin_a' },
+				{ type: SYMBOL, name: 'twin_b' }
+			]
+		},
+		twin_a: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'twin' },
+				{ type: SYMBOL, name: 'leaf_c' }
+			]
+		},
+		twin_b: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'twin' },
+				{ type: SYMBOL, name: 'other_c' }
+			]
+		},
+		twin: { type: PATTERN, value: '[a-z]+' },
+		leaf_c: { type: PATTERN, value: '[0-9]+' },
+		other_c: { type: PATTERN, value: '[A-Z]+' }
+	};
+	return buildNodeMap(rules);
+}
+
+function depthNodeMap(): NodeMap {
+	const rules: Record<string, Rule<'evaluate'>> = {
+		grandparent_d: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'parent_d' },
+				{ type: SYMBOL, name: 'leaf_d' }
+			]
+		},
+		parent_d: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'member_d' },
+				{ type: SYMBOL, name: 'other_d' }
+			]
+		},
+		member_d: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'object', content: { type: SYMBOL, name: 'leaf_d' } },
+				{
+					type: FIELD,
+					name: 'separator',
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: STRING, value: 'and' },
+							{ type: STRING, value: 'or' }
+						]
+					}
+				},
+				{ type: FIELD, name: 'property', content: { type: SYMBOL, name: 'leaf_d' } }
+			]
+		},
+		other_d: { type: PATTERN, value: '[0-9]+' },
+		leaf_d: { type: PATTERN, value: '[a-z]+' }
+	};
+	return buildNodeMap(rules);
+}
+
 function collideNodeMap(): NodeMap {
 	const rules: Record<string, Rule<'evaluate'>> = {
 		collide_parent: {
@@ -266,27 +343,65 @@ describe('sub-factories — subFactoriesOf', () => {
 		expect(armConfigKeys(set.entries.find((e) => e.name === 'leafB')!, nodeMap)).toEqual(['x', 'y']);
 	});
 
-	it('two flattened claimants for the same name produce an ambiguous diagnostic naming both full paths', () => {
+	it('two flattened claimants for the same name hosted by different direct arms are both kept, named by their host', () => {
 		const nodeMap = ambiguousNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_b')!, nodeMap);
+		expect(set.diagnostics).toEqual([]);
 		expect(set.entries.some((e) => e.name === 'sharedLeaf')).toBe(false);
+		expect(nodeArmOf(set.entries, 'parentXSharedLeaf')).toMatchObject({ path: ['sharedLeaf'] });
+		expect(nodeArmOf(set.entries, 'parentXSharedLeaf').child.kind).toBe('parent_x');
+		expect(nodeArmOf(set.entries, 'parentYSharedLeaf').child.kind).toBe('parent_y');
+	});
+
+	it('two flattened claimants for the same name reached through one child stay ambiguous', () => {
+		const nodeMap = sameHostNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_c')!, nodeMap);
+		expect(set.entries.some((e) => e.name === 'twin')).toBe(false);
 		expect(set.diagnostics).toEqual([
 			{
-				parent: 'grandparent_b',
-				name: 'sharedLeaf',
+				parent: 'grandparent_c',
+				name: 'twin',
 				reason: 'ambiguous',
-				claimants: ['parent_x.sharedLeaf', 'parent_y.sharedLeaf']
+				claimants: ['parent_c.twinATwin', 'parent_c.twinBTwin']
 			}
 		]);
 	});
 
-	it('a config-shaped arm whose configKey collides with a residual slot is dropped with a slot-collision diagnostic', () => {
+	it('a config-shaped arm whose key is also a residual slot is seated as a tuple, with the shared key reported', () => {
 		const nodeMap = collideNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('collide_parent')!, nodeMap);
-		expect(set.entries.map((e) => e.name)).toEqual(['shapeB']);
-		expect(set.diagnostics).toEqual([
-			{ parent: 'collide_parent', name: 'shapeA', reason: 'slot-collision', claimants: ['shape_a'] }
+		expect(set.entries.map((e) => [e.name, e.merges])).toEqual([
+			['shapeA', false],
+			['shapeB', false]
 		]);
+		expect(set.diagnostics).toEqual([
+			{ parent: 'collide_parent', name: 'shapeA', reason: 'shared-key', claimants: ['shape_a'], keys: ['shared'] }
+		]);
+		expect(armConfigKeys(set.entries.find((e) => e.name === 'shapeA')!, nodeMap)).toEqual([]);
+	});
+
+	it('a config-shaped arm with no shared key merges its keys into the parent config', () => {
+		const nodeMap = flattenNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('grandparent')!, nodeMap);
+		expect(set.entries.find((e) => e.name === 'leafB')!.merges).toBe(true);
+	});
+
+	it('the claimant nearest the parent wins a flat name over one reached through a deeper flattening', () => {
+		const nodeMap = depthNodeMap();
+		const parent = subFactoriesOf(nodeMap.nodes.get('parent_d')!, nodeMap);
+		expect(parent.entries.map((e) => [e.name, e.depth])).toEqual([
+			['memberD', 0],
+			['and', 1],
+			['or', 1],
+			['otherD', 0]
+		]);
+
+		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_d')!, nodeMap);
+		expect(set.diagnostics).toEqual([]);
+		const memberD = set.entries.find((e) => e.name === 'memberD')!;
+		expect(memberD.depth).toBe(1);
+		expect(nodeArmOf(set.entries, 'memberD').path).toEqual(['memberD']);
+		expect(set.entries.filter((e) => e.name === 'memberD')).toHaveLength(1);
 	});
 });
 

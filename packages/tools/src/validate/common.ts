@@ -15,21 +15,20 @@
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
-import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/common';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { readNode as readNodeFn, dumpMetrics, metricsEnabled, sliceSpan } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, NativeParseResult, NodeTrivia } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, NodeTrivia } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
+import type { SittirEngine } from '@sittir/common/engine';
 // Codegen internals reached through the shared surface: types via import-type
 // (runtime-erased), runtime values via load() at module top (destructure once,
 // call synchronously — no per-call invoke()).
 import { load } from '../codegen-surface.ts';
 import type {
 	CodegenSurface,
-	PolymorphVariantDescriptor,
 	PolymorphVariantMap,
 	FactoryShape,
 	FactorySlotMeta,
@@ -227,135 +226,54 @@ export function treeHandle(
 	return handle;
 }
 
-/**
- * Native TreeHandle — wraps a `SittirEngine` napi instance so reads
- * (root + drill-in) all flow through napi. Used by validators /
- * probe-kind to exercise the full native pipeline end-to-end without
- * any JS-side parse or walker fallback. The engine owns the tree, and
- * the tree-sitter `Node::id()` returned in `$nodeId` is dereferenced
- * by the same engine that produced it — no cross-engine id leakage.
- */
-export interface NativeEngineLike {
-	parseAndRead(source: string): string;
-	readNode(handle: number, childIndex: number): string;
-}
-export function nativeTreeHandle(engine: NativeEngineLike, source: string): TreeHandle {
-	// Parse eagerly: populates engine tree cache and captures format in one call.
-	// Behavioral note: prior to 017, nativeTreeHandle parsed lazily on first
-	// readNode() call. Parsing is now unconditional at construction time so
-	// the format record is always available before callers access tree.format.
-	const parseResult = JSON.parse(engine.parseAndRead(source)) as NativeParseResult;
-	if (parseResult.nodeData === undefined) {
-		const keys = Object.keys(parseResult as object).join(', ');
-		throw new Error(
-			'nativeTreeHandle: engine.parseAndRead() returned JSON without a "nodeData" key. ' +
-				'The engine binary is out of date — rebuild the matching rust/crates/sittir-<grammar>-napi crate against this version. ' +
-				`Received keys: ${keys}`
-		);
-	}
-	const rootData: AnyNodeData = parseResult.nodeData;
-	const handle: TreeHandle = {
-		// The native engine doesn't expose JS-side raw tree-sitter Node
-		// wrappers; reads always go through `read` below. The required
-		// rootNode slot throws to surface accidental fallbacks.
-		get rootNode(): AnyTreeNode {
-			throw new Error('nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()');
-		},
-		source,
-		read(nodeHandle?: number, childIndex?: number) {
-			if (nodeHandle === undefined) {
-				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
-			}
-			return JSON.parse(engine.readNode(nodeHandle, childIndex ?? 0)) as ReturnType<NonNullable<TreeHandle['read']>>;
-		},
-		...(parseResult.format !== undefined && { format: parseResult.format })
-	};
-	return handle;
-}
+let _cachedNativeEngine: { grammar: string; engine: SittirEngine; binaryMtimeMs: number } | null = null;
 
-/**
- * Build the read-side TreeHandle for the corpus validators. Selects
- * between the wasm/JS handle (default) and a native-engine handle
- * (when `SITTIR_BACKEND=native` is set AND the grammar-owned native
- * module loads). Native handles route every read — root and drill-in
- * alike — through `engine.readNode(id)` so the suite exercises the
- * full native pipeline end-to-end.
- *
- * The wasm `tree` is still required: validators use it for kind
- * navigation (`findFirst`, `collectKinds`) — that traversal needs a
- * raw tree-sitter tree the JS side can walk. The native engine owns
- * its own internal tree for reads; the two coexist within one probe.
- *
- * Cached per process: the napi engine instance is reused across all
- * invocations to amortize the (small) per-engine init. Each call
- * still parses fresh — the engine internally replaces its tree.
- */
-let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike; binaryMtimeMs: number } | null = null;
-const nativePackages: Record<string, string> = {
-	rust: 'sittir-rust',
-	typescript: 'sittir-typescript',
-	python: 'sittir-python'
-};
-type NativeEngineLoadResult = { engine: NativeEngineLike; reason?: undefined } | { engine: null; reason: string };
-
-function loadNativeEngineForGrammar(grammar: string): NativeEngineLoadResult {
+/** The grammar package's boundary module, as a file URL for dynamic import. */
+export function boundaryModulePath(grammar: string): string {
 	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-	// Freshness report doubles as the cache-key source: napi modules can
-	// never be re-dlopened in-process, so the binary's mtime at first load
-	// pins the cache.
+	return pathToFileURL(join(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
+}
+
+/**
+ * The native engine the corpus validators read AND render through: the
+ * grammar package's own default engine (`boundary.ts`'s `defaultEngine()`),
+ * never a second instance. A coordinate names the tree by the tag its
+ * engine minted, so a node read through one engine cannot render through
+ * another — the read handle and the boundary's `render` must share the
+ * instance.
+ *
+ * Cached per (grammar, binary mtime): napi modules cannot be re-dlopened
+ * in-process, so a binary rebuilt mid-process is refused loudly rather than
+ * validated stale. The staleness gate (`assertNativeBinaryFresh`) and the
+ * debug-profile gate run on first load.
+ */
+export async function loadNativeEngine(grammar: string): Promise<SittirEngine> {
+	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 	const binaries = hostBinaryFreshnessFor(repoRoot, grammar);
 	const binaryMtimeMs = binaries.length > 0 ? Math.max(...binaries.map((b) => b.binaryMtimeMs)) : 0;
 
 	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
-		// Cache keyed by (grammar, binary mtime): a binary rebuilt mid-process
-		// CANNOT be reloaded (node caches dlopen'd modules for the process
-		// lifetime), so serving the cached engine would silently validate the
-		// OLD code. Fail loudly instead.
 		if (_cachedNativeEngine.binaryMtimeMs !== binaryMtimeMs) {
 			throw new Error(
 				`Native engine for '${grammar}' was rebuilt after this process loaded it — ` +
 					`napi modules cannot be reloaded in-process. Re-run the command in a fresh process.`
 			);
 		}
-		return { engine: _cachedNativeEngine.engine };
+		return _cachedNativeEngine.engine;
 	}
 
-	// Staleness gate: a binary older than the crate's generated src/templates
-	// would validate stale code (Askama bakes templates at compile time).
-	// Throws loudly; absence of a binary is tolerated (module load below
-	// fails → null → caller reports "engine unavailable").
 	assertNativeBinaryFresh(repoRoot, grammar);
 
-	// Match probe-kind's loader — try the package name, then fall
-	// back to the workspace-local grammar crate directory.
-	const pkg = nativePackages[grammar];
-	if (!pkg) return { engine: null, reason: `no native package mapping registered for grammar '${grammar}'` };
-	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
-	let mod: { SittirEngine: new () => NativeEngineLike };
-	const req = createRequire(import.meta.url);
-	let pkgLoadError: Error | undefined;
-	try {
-		mod = req(pkg) as typeof mod;
-	} catch (e) {
-		pkgLoadError = e as Error;
-		try {
-			mod = req(localCratePath) as typeof mod;
-		} catch (e2) {
-			return {
-				engine: null,
-				reason:
-					`require('${pkg}') failed: ${pkgLoadError.message}; ` +
-					`require('${localCratePath}') failed: ${(e2 as Error).message}`
-			};
-		}
+	const mod = (await import(boundaryModulePath(grammar))) as { defaultEngine?: unknown };
+	if (typeof mod.defaultEngine !== 'function') {
+		throw new Error(`boundary module for grammar '${grammar}' does not export 'defaultEngine'`);
 	}
-	const engine = new mod.SittirEngine();
+	const engine = (mod.defaultEngine as () => SittirEngine)();
 
-	// Debug-profile gate: the binary self-reports its compile profile
-	// (cfg!(debug_assertions) → `buildProfile` getter). Debug binaries have
-	// a known segfault class under validation; refuse them unless explicitly
-	// allowed. Binaries predating the getter report undefined — tolerated.
-	const profile = (engine as { buildProfile?: string }).buildProfile;
+	// Debug binaries have a known segfault class under validation; refuse
+	// them unless explicitly allowed. Binaries predating the getter report
+	// undefined — tolerated.
+	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
 			`Native engine for '${grammar}' is a DEBUG build — debug binaries are refused for ` +
@@ -365,7 +283,7 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLoadResult {
 	}
 
 	_cachedNativeEngine = { grammar, engine, binaryMtimeMs };
-	return { engine };
+	return engine;
 }
 
 /**
@@ -378,27 +296,35 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLoadResult {
  */
 export function cachedNativeEngineProfile(grammar: string): string | undefined {
 	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
-		return (_cachedNativeEngine.engine as { buildProfile?: string }).buildProfile;
+		return _cachedNativeEngine.engine.diagnostics.buildProfile;
 	}
 	return undefined;
 }
 
-export function buildReadHandle(
+/**
+ * Build the read-side TreeHandle for the corpus validators. Selects
+ * between the wasm/JS handle (default) and a native-engine handle
+ * (when `SITTIR_BACKEND=native` is set). A native handle is the grammar
+ * engine's own parse (`diagnostics.parseAndRead`): every read — root and
+ * drill-in alike — goes through the engine that also renders, so the
+ * coordinates it hands out resolve at render time.
+ *
+ * The wasm `tree` is still required: validators use it for kind
+ * navigation (`findFirst`, `collectKinds`) — that traversal needs a
+ * raw tree-sitter tree the JS side can walk. The native engine owns
+ * its own internal tree for reads; the two coexist within one probe.
+ */
+export async function buildReadHandle(
 	grammar: string,
 	tree: TS.Tree,
 	source: string,
 	backend?: 'native' | 'js',
 	kindIdFromName?: (kind: string) => number | undefined
-): TreeHandle {
+): Promise<TreeHandle> {
 	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
 	if (effectiveBackend === 'native') {
-		const result = loadNativeEngineForGrammar(grammar);
-		if (!result.engine) {
-			throw new Error(
-				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}': ${result.reason}`
-			);
-		}
-		return nativeTreeHandle(result.engine, source);
+		const engine = await loadNativeEngine(grammar);
+		return engine.diagnostics.parseAndRead(source).tree;
 	}
 	return treeHandle(tree, source, kindIdFromName);
 }
@@ -1122,6 +1048,10 @@ export interface Seat {
 	readonly kind: string;
 	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
 	readonly mount?: string;
+	/** An arm whose config-shaped child is handed to the wrapper as its own
+	 *  config under the slot key, because a key it would merge is also a slot
+	 *  of the parent. */
+	readonly seated?: true;
 }
 
 /**
@@ -1481,6 +1411,21 @@ export async function loadStorageKindNameFromId(
 	}
 }
 
+/**
+ * The model's own classification of a kind as a leaf — a `pattern`, `token`,
+ * `keyword` or `enum` kind carries text, not storage — keyed by kind id.
+ * Unknown ids (and a grammar with no node model) are not leaves.
+ */
+export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) => boolean> {
+	const kindNameFromId = await loadKindNameFromId(grammar);
+	const { modelTypes } = await loadNodeModel(grammar);
+	return (kindId) => {
+		const name = kindNameFromId?.(kindId);
+		const modelType = name === undefined ? undefined : modelTypes[name];
+		return modelType === 'pattern' || modelType === 'token' || modelType === 'keyword' || modelType === 'enum';
+	};
+}
+
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
 	const typesModulePath = TYPES_MODULE_PATHS[grammar];
 	if (!typesModulePath) return undefined;
@@ -1664,6 +1609,7 @@ interface ReadNodeLike {
 	// hidden/synthetic kinds (e.g. "_suite") that have no parser.c entry.
 	readonly $type?: string | number;
 	readonly $text?: string;
+	readonly $span?: { readonly start: number; readonly end: number };
 	readonly $nodeHandle?: number;
 	readonly $childIndex?: number;
 	readonly $other?: unknown | readonly unknown[];
@@ -1757,7 +1703,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
 	if (isAnonTokenPassthrough(c)) return child;
-	const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
+	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
 	const drilled = drillReadNode(c, opts);
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
@@ -1812,9 +1758,20 @@ function soleWrappedNode(drilled: ReadNodeLike, opts: NodeToConfigOpts): ReadNod
 
 /**
  * Whether a node holds its own contents rather than being a lazy read stub.
- * A stub carries its handle and nothing else; text, slot keys, `$children`
- * or `$other` all mean the node has already been materialized.
+ * A stub carries its coordinate and nothing else; a leaf's text, slot keys,
+ * `$children` or `$other` all mean the node has already been materialized.
  */
+/**
+ * The bytes a read node stands for: its captured text when the reader kept
+ * one (an anonymous token, a text kind), otherwise the span it was read at,
+ * sliced from the tree's source. Empty only when neither is known.
+ */
+function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
+	if (typeof node.$text === 'string') return node.$text;
+	const source = opts.tree?.source;
+	return node.$span !== undefined && source !== undefined ? sliceSpan(source, node.$span) : '';
+}
+
 function carriesOwnContents(c: ReadNodeLike): boolean {
 	if (c.$text !== undefined || c.$other !== undefined) return true;
 	const rec = c as unknown as Record<string, unknown>;
@@ -1953,10 +1910,12 @@ function carryElementTrivia(element: ReadNodeLike, config: Record<string, unknow
  * Project an arm seat child onto its parent's config the way the mount
  * route spells it. A token leaf hands the route nothing: the mount carries
  * the value. A text leaf hands its text. A config-shaped child on a config
- * parent is flattened: its keys join the parent's, and a nested arm inside
- * it extends the route, since a variant minted inside another variant's rule
- * is spelled inside it (`withLeft.withRight`). Any other child hands the
- * route its own factory arguments under the slot.
+ * parent is flattened when the seat merges: its keys join the parent's, and
+ * a nested arm inside it extends the route, since a variant minted inside
+ * another variant's rule is spelled inside it (`withLeft.withRight`). A seat
+ * the model marks `seated` — a key it would merge is also the parent's —
+ * keeps its config whole under the slot; any other child hands the route
+ * its own factory arguments under the slot.
  */
 function projectArmSlot(
 	seat: Seat,
@@ -1981,7 +1940,7 @@ function projectArmSlot(
 	if (typeof value === 'number' || modelType === 'token') return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
-		const args = [typeof value === 'string' ? value : (drillReadNode(value as ReadNodeLike, opts).$text ?? '')];
+		const args = [typeof value === 'string' ? value : readNodeText(drillReadNode(value as ReadNodeLike, opts), opts)];
 		out[key] = args;
 		return setRoute(seat.mount, args);
 	}
@@ -1992,7 +1951,8 @@ function projectArmSlot(
 	const mount = nested === undefined ? seat.mount : `${seat.mount}.${nested.mount}`;
 	const parentShape = opts.factoryShapes?.[parentKind] ?? 'config';
 	if (parentShape === 'config' && childShape === 'config') {
-		Object.assign(out, config);
+		if (seat.seated === true) out[key] = config;
+		else Object.assign(out, config);
 		return setRoute(mount, undefined);
 	}
 	const args = factoryArgs(seat.kind, childShape, config, child, inner);
@@ -2122,7 +2082,7 @@ function buildWithFactory(
 	// the factory accepts the raw source span because external-scanner
 	// delimiters can't be reconstructed from children.
 	if (shape === 'text') {
-		return carryTrivia(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(referenceData.$text ?? ''));
+		return carryTrivia(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)));
 	}
 	const config = nodeToConfig(referenceData, opts);
 	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));

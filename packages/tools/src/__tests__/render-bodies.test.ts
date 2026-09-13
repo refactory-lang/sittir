@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { bodyToLegacyRule } from '../validate/render-bodies.ts';
 import type { RenderBody } from '../codegen-surface.ts';
+import { INDENT_TEXT, DEDENT_TEXT } from '../../../codegen/src/dsl/primitives/spacing.ts';
 
 describe('bodyToLegacyRule', () => {
 	it('spells a slot as its placeholder and keeps text verbatim', () => {
@@ -28,11 +29,12 @@ describe('bodyToLegacyRule', () => {
 		expect(bodyToLegacyRule(body)).toEqual({ template: '$NAME$TYPE_CLAUSE', type_clause: ': $TYPE' });
 	});
 
-	it('inlines a fallback and writes structural whitespace, the indent marks included, as text', () => {
+	it('inlines a fallback and contributes the depth arms\' and a token seam\'s own text', () => {
 		const body: RenderBody = [
-			{ kind: 'whitespace', text: '\u{FDD0}\n' },
+			{ kind: 'indent' },
 			{ kind: 'slot', name: 'block' },
-			{ kind: 'whitespace', text: '\u{FDD1}' },
+			{ kind: 'dedent' },
+			{ kind: 'tokenSeam', text: '\n' },
 			{
 				kind: 'if',
 				arms: [{ test: 'a', body: [{ kind: 'slot', name: 'a' }] }],
@@ -40,6 +42,9 @@ describe('bodyToLegacyRule', () => {
 			},
 			{ kind: 'space' }
 		];
-		expect(bodyToLegacyRule(body)).toEqual({ template: '\u{FDD0}\n$BLOCK\u{FDD1}$A_CLAUSE_ ', a_clause: '$A' });
+		expect(bodyToLegacyRule(body)).toEqual({
+			template: `${INDENT_TEXT}$BLOCK${DEDENT_TEXT}\n$A_CLAUSE_ `,
+			a_clause: '$A'
+		});
 	});
 });

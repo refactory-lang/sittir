@@ -345,9 +345,9 @@ function isAllTextRender(rule: RenderRule): boolean {
 	}
 }
 
-function simplifySeqRule(rule: SeqRule, _ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
+function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
 	if (rule.members.length > 0 && isAllTextRender(rule)) {
-		const text = collectFixedLiteral(rule);
+		const text = collectFixedLiteral(rule, { tokenized: false, deterministic: false, wordMatcher: ctx.grammar.wordMatcher });
 		return text === undefined ? rule : withAttrsFrom(rule, { type: STRING, value: text });
 	}
 	const filtered = rule.members.filter((m) => {

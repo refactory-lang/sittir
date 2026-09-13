@@ -982,6 +982,7 @@ export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enu
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
 	readonly kindEntry?: GeneratedKindEntry;
+	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
 	factoryName?: string;
 	irKey?: string;
@@ -1040,10 +1041,12 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 			irKey?: string;
 			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
+			wordMatcher?: RegExp;
 		}
 	) {
 		this.kind = kind;
 		this.rule = rule;
+		this.wordMatcher = opts?.wordMatcher;
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
@@ -1698,7 +1701,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	constructor(
 		kind: string,
 		rule: RenderRule,
-		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[] }
+		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[]; wordMatcher?: RegExp }
 	) {
 		super(kind, rule, opts);
 	}
@@ -1709,7 +1712,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 
 	get fixedLiteralText(): string | undefined {
 		if (this.rule.type === PATTERN) return undefined;
-		return collectFixedLiteral(this.rule);
+		return collectFixedLiteral(this.rule, { tokenized: false, deterministic: false, wordMatcher: this.wordMatcher });
 	}
 }
 

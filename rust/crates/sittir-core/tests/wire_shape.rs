@@ -11,8 +11,8 @@
 //! boundary contract will fail this test even before the serde
 //! `rename` attribute is set.
 
-use sittir_core::types::{FieldValue, KindId, NodeData, Source, Span};
 use indexmap::IndexMap;
+use sittir_core::types::{FieldValue, KindId, NodeData, Source, Span};
 use std::collections::HashSet;
 
 // Arbitrary KindId values used for test fixtures — shape tests do not

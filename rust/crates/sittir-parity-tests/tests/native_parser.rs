@@ -1,6 +1,6 @@
 use sittir_core::read_node::{read_node, ReadDepth};
 use sittir_core::types::FieldValue;
-use sittir_typescript::render::{CONST, LEXICAL_DECLARATION, SEMI};
+use sittir_typescript::render::{CONST_KEYWORD, LEXICAL_DECLARATION, SEMI};
 use tree_sitter::Parser;
 
 #[test]
@@ -18,7 +18,7 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
 
     assert_eq!(node.kind(), "lexical_declaration");
 
-    let data = read_node(&tree, source, Some(node), Some(0), ReadDepth::Shallow);
+    let data = read_node(&tree, source, Some(node), Some(0), ReadDepth::Shallow, &sittir_typescript::TypeScriptGrammar);
     let fields = data.fields.expect("named fields");
 
     assert_eq!(data.type_, LEXICAL_DECLARATION);
@@ -29,19 +29,19 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
 
     let kind = fields.get("kind").expect("kind field");
     let declarators = fields.get("declarators").expect("declarators field");
-    let semicolon = fields.get("semicolon").expect("semicolon field");
+    let terminator = fields.get("terminator").expect("terminator field");
 
     assert!(matches!(declarators, FieldValue::Single(_)));
-    assert!(matches!(semicolon, FieldValue::Single(_)));
+    assert!(matches!(terminator, FieldValue::Single(_)));
 
     match kind {
-        FieldValue::Single(node) => assert_eq!(node.type_, CONST),
+        FieldValue::Single(node) => assert_eq!(node.type_, CONST_KEYWORD),
         other => panic!("expected single kind field, got {other:?}"),
     }
 
-    match semicolon {
+    match terminator {
         FieldValue::Single(node) => assert_eq!(node.type_, SEMI),
-        other => panic!("expected single semicolon field, got {other:?}"),
+        other => panic!("expected single terminator field, got {other:?}"),
     }
 }
 
@@ -72,7 +72,7 @@ fn typescript_enum_body_elements_stamps_slot_order() {
     }
     let elements = elements.expect("enum_body_elements node");
 
-    let data = read_node(&tree, source, Some(elements), Some(0), ReadDepth::Shallow);
+    let data = read_node(&tree, source, Some(elements), Some(0), ReadDepth::Shallow, &sittir_typescript::TypeScriptGrammar);
     let fields = data.fields.as_ref().expect("named fields");
     assert!(fields.len() >= 2, "expected multi-bucket parent, got {fields:?}");
 
@@ -92,6 +92,7 @@ fn typescript_enum_body_elements_stamps_slot_order() {
         Some(elements.child(0).expect("first member")),
         Some(0),
         ReadDepth::Shallow,
+        &sittir_typescript::TypeScriptGrammar,
     );
     assert!(leaf.slot_order.is_none(), "leaf must not stamp $slotOrder");
 }

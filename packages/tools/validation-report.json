@@ -23,21 +23,6 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "mut",
-    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "mut"
-    },
-    "location": "mut"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
     "ownerKind": "﷐\n",
     "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
@@ -84,63 +69,6 @@
     "source": "grammar",
     "grammar": "rust",
     "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_type",
-    "message": "[assemble] typeName collision: kind '_type' renamed 'Type' → '_Type' (visible sibling(s): 'type')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Type",
-      "newType": "_Type",
-      "visibleKinds": [
-        "type"
-      ]
-    },
-    "location": "_type"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_literal",
-    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Literal",
-      "newType": "_Literal",
-      "visibleKinds": [
-        "literal"
-      ]
-    },
-    "location": "_literal"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_path",
-    "message": "[assemble] typeName collision: kind '_path' renamed 'Path' → '_Path' (visible sibling(s): 'path')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Path",
-      "newType": "_Path",
-      "visibleKinds": [
-        "path"
-      ]
-    },
-    "location": "_path"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
     "code": "kindid-unstamped-symbols",
     "message": "3 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
@@ -163,10 +91,10 @@
     "canProceed": true,
     "details": {
       "texts": [
+        "",
         "\n",
         "\n\n",
         " ",
-        "mut",
         "﷐\n",
         "﷑\n"
       ]
@@ -199,10 +127,10 @@
     "severity": "info",
     "details": {
       "texts": [
+        "",
         "\n",
         "\n\n",
         " ",
-        "mut",
         "﷐\n",
         "﷑\n"
       ]
@@ -581,66 +509,6 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "...",
-    "message": "[assemble] literal \"...\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "..."
-    },
-    "location": "..."
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "True",
-    "message": "[assemble] literal \"True\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "True"
-    },
-    "location": "True"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "False",
-    "message": "[assemble] literal \"False\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "False"
-    },
-    "location": "False"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "None",
-    "message": "[assemble] literal \"None\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "None"
-    },
-    "location": "None"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
     "ownerKind": "﷐\n",
     "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
@@ -690,18 +558,15 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "8 literal(s) resolved no parser kindId",
+    "message": "5 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
+        "",
         "\n",
         "\n\n",
         "\n\n\n",
-        " ",
-        "...",
-        "False",
-        "None",
-        "True"
+        " "
       ]
     },
     "severity": "warning",
@@ -728,19 +593,16 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "8 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
+        "",
         "\n",
         "\n\n",
         "\n\n\n",
-        " ",
-        "...",
-        "False",
-        "None",
-        "True"
+        " "
       ]
     },
     "scope": "grammar"

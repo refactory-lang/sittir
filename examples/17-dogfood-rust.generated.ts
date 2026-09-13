@@ -23,12 +23,12 @@ export function rebuildSpliceGenerated() {
 					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					})),
 				}),
@@ -38,12 +38,12 @@ export function rebuildSpliceGenerated() {
 					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("source_len"),
-							type: TSKindId.Usize,
+							type: TSKindId.UsizeKeyword,
 						}),
 					})),
 				}).$trivia({ leading: ["/// `end_pos > source.len()` — edit reaches past end of source.\n"] }),
@@ -53,12 +53,12 @@ export function rebuildSpliceGenerated() {
 					body: ir.fieldDeclarationList.strict(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("start"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					}, {
 						fieldDeclaration: ir.fieldDeclaration.strict({
 							name: ir.identifier("end"),
-							type: TSKindId.U32,
+							type: TSKindId.U32Keyword,
 						}),
 					})),
 				}).$trivia({ leading: ["/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"] }),
@@ -128,7 +128,7 @@ export function rebuildSpliceGenerated() {
 										macro: ir.identifier("write"),
 										arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
 											stringOpen: ir.stringLiteralOpen("\""),
-											elements: [ir.escapeSequence("invalid edit range: start={start}, end={end}")],
+											elements: [ir.stringContent("invalid edit range: start={start}, end={end}")],
 										})),
 									}),
 								}),
@@ -150,7 +150,7 @@ export function rebuildSpliceGenerated() {
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
 										stringOpen: ir.stringLiteralOpen("\""),
-										elements: [ir.escapeSequence("edit out of bounds: end={end} > source length={source_len}")],
+										elements: [ir.stringContent("edit out of bounds: end={end} > source length={source_len}")],
 									})),
 								})],
 							})],
@@ -172,7 +172,7 @@ export function rebuildSpliceGenerated() {
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
 										stringOpen: ir.stringLiteralOpen("\""),
-										elements: [ir.escapeSequence("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
 									})),
 								}),
 								comma: true,
@@ -198,7 +198,7 @@ export function rebuildSpliceGenerated() {
 				content: ir.parameter.strict({
 					name: ir.identifier("source"),
 					type: ir.referenceType.strict({
-						type: TSKindId.Str,
+						type: TSKindId.StrKeyword,
 					}),
 				}),
 			}, {
@@ -208,7 +208,7 @@ export function rebuildSpliceGenerated() {
 					type: ir.genericType.strict({
 						type: ir.identifier("Vec"),
 						typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-							content: "Edit",
+							content: ir.identifier("Edit"),
 						})),
 					}),
 				}),
@@ -216,9 +216,9 @@ export function rebuildSpliceGenerated() {
 			returnType: ir.genericType.strict({
 				type: ir.identifier("Result"),
 				typeArguments: ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-					content: "String",
+					content: ir.identifier("String"),
 				}, {
-					content: "SpliceError",
+					content: ir.identifier("SpliceError"),
 				})),
 			}),
 			body: ir.block.strict({
@@ -282,7 +282,7 @@ export function rebuildSpliceGenerated() {
 										value: ir.identifier("e"),
 										field: ir.identifier("end_pos"),
 									}),
-									type: TSKindId.Usize,
+									type: TSKindId.UsizeKeyword,
 								})),
 								operator: TSKindId.Gt,
 								right: ir.identifier("source_len"),
@@ -324,7 +324,7 @@ export function rebuildSpliceGenerated() {
 													value: ir.identifier("e"),
 													field: ir.identifier("start_pos"),
 												}),
-												type: TSKindId.Usize,
+												type: TSKindId.UsizeKeyword,
 											}),
 										})),
 									}),
@@ -343,7 +343,7 @@ export function rebuildSpliceGenerated() {
 													value: ir.identifier("e"),
 													field: ir.identifier("end_pos"),
 												}),
-												type: TSKindId.Usize,
+												type: TSKindId.UsizeKeyword,
 											}),
 										})),
 									}),
@@ -442,7 +442,7 @@ export function rebuildSpliceGenerated() {
 							name: ir.identifier("from"),
 						}),
 						arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
-							expression: "source",
+							expression: ir.identifier("source"),
 						})),
 					}),
 				}), ir.expressionStatement.strict(ir.forExpression.strict({
@@ -456,7 +456,7 @@ export function rebuildSpliceGenerated() {
 									value: ir.identifier("e"),
 									field: ir.identifier("start_pos"),
 								}),
-								type: TSKindId.Usize,
+								type: TSKindId.UsizeKeyword,
 							}),
 						}), ir.letDeclaration.strict({
 							pattern: ir.identifier("end"),
@@ -465,7 +465,7 @@ export function rebuildSpliceGenerated() {
 									value: ir.identifier("e"),
 									field: ir.identifier("end_pos"),
 								}),
-								type: TSKindId.Usize,
+								type: TSKindId.UsizeKeyword,
 							}),
 						}), ir.expressionStatement.withSemi.strict(ir.callExpression.strict({
 							function: ir.fieldExpression.strict({
@@ -492,7 +492,7 @@ export function rebuildSpliceGenerated() {
 				trailingExpression: ir.callExpression.strict({
 					function: ir.identifier("Ok"),
 					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
-						expression: "buf",
+						expression: ir.identifier("buf"),
 					})),
 				}),
 			}),

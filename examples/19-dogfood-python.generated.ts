@@ -20,7 +20,7 @@ export function rebuildPython4spaceGenerated() {
 				type: ir.type.strict(ir.identifier("str")),
 				content: ir.identifier("name"),
 			}))),
-			returnType: ir.type.strict(ir.identifier("None")),
+			returnType: ir.type.strict(TSKindId.None),
 			body: [ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
@@ -78,6 +78,6 @@ export function rebuildPython4spaceGenerated() {
 				}),
 				consequence: [ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(ir.identifier("user"))))],
 			}))],
-		}), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(ir.identifier("None"))))],
+		}), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(TSKindId.None)))],
 	}));
 }

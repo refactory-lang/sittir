@@ -26,6 +26,23 @@ export function matchesWordShape(value: string, wordMatcher: RegExp | undefined)
 	return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
 }
 
+export function wordCharClass(wordMatcher: RegExp | undefined): (c: string) => boolean {
+	const base = wordMatcher ?? /\w+/;
+	const src = base.source.replace(/\$$/, '');
+	const flags = base.flags.replace(/[gm]/g, '');
+	let anchored: RegExp;
+	try {
+		anchored = new RegExp(`^(?:${src})`, flags);
+	} catch {
+		anchored = /^\w/;
+	}
+	const joins = (pair: string): boolean => {
+		const m = pair.match(anchored);
+		return !!(m && m[0] !== undefined && m[0].length > 1);
+	};
+	return (c: string) => c.length > 0 && (joins(`a${c}`) || joins(`${c}a`));
+}
+
 function ruleToRegexSource(rule: AnyRule): string | null {
 	const shaped = rule as {
 		value?: string;

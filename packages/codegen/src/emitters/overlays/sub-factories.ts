@@ -41,13 +41,16 @@ export interface SubFactory {
 	readonly slot: AssembledNonterminal;
 	readonly residual: readonly AssembledNonterminal[];
 	readonly arm: ValueArm | NodeArm;
+	readonly depth: number;
+	readonly merges: boolean;
 }
 
 export interface SubFactoryDiagnostic {
 	readonly parent: string;
 	readonly name: string;
-	readonly reason: 'ambiguous' | 'slot-collision';
+	readonly reason: 'ambiguous' | 'shared-key';
 	readonly claimants: readonly string[];
+	readonly keys?: readonly string[];
 }
 
 export interface SubFactorySet {
@@ -122,8 +125,10 @@ function armNaming(
 	return { name: declared ?? fallback, fallback, declaring: value.variantOf === parent.kind };
 }
 
-function isDirect(entry: SubFactory): boolean {
-	return entry.arm.via !== 'node' || entry.arm.path.length === 0;
+const DIRECT = 0;
+
+function flattened(nested: SubFactory): number {
+	return nested.depth + 1;
 }
 
 function claimantOf(entry: SubFactory): string {
@@ -154,25 +159,22 @@ function hoistedCandidatesOf(
 				const storage = textStorageOf(value, nodeMap);
 				if (storage === undefined) continue;
 				const arm: ValueArm = { via: 'value', storage };
-				const entry: SubFactory = { name: naming.name, slot: s, residual, arm };
+				const entry: SubFactory = { name: naming.name, slot: s, residual, arm, depth: DIRECT, merges: false };
 				out.push({ ...naming, entry, claimant: claimantOf(entry) });
 				continue;
 			}
 			if (!isEmitted(child.kind)) continue;
 			if (!isSlotBearingCompound(child) && !isTextLeaf(child)) continue;
 			const arm: NodeArm = { via: 'node', child, path: [] };
-			const entry: SubFactory = { name: naming.name, slot: s, residual, arm };
+			const entry: SubFactory = { name: naming.name, slot: s, residual, arm, depth: DIRECT, merges: false };
 			out.push({ ...naming, entry, claimant: claimantOf(entry) });
 			if (visiting.has(child.kind)) continue;
 			for (const inner of subFactoriesInternal(child, nodeMap, isEmitted, new Set([...visiting, node.kind])).entries) {
 				if (inner.arm.via !== 'node') continue;
 				const nested: NodeArm = { via: 'node', child, path: [inner.name], leaf: inner.arm.leaf ?? inner.arm.child };
 				const leafName = kindArmName(node.kind, nested.leaf!);
-				out.push({
-					name: leafName,
-					entry: { name: leafName, slot: s, residual, arm: nested },
-					claimant: claimantOf({ name: leafName, slot: s, residual, arm: nested })
-				});
+				const flat: SubFactory = { name: leafName, slot: s, residual, arm: nested, depth: flattened(inner), merges: false };
+				out.push({ name: leafName, entry: flat, claimant: claimantOf(flat) });
 			}
 		}
 	}
@@ -228,7 +230,7 @@ function derive(
 				const leaf = s.arm.via === 'node' ? (s.arm.leaf ?? s.arm.child) : undefined;
 				const name = leaf === undefined ? s.name : kindArmName(node.kind, leaf);
 				const arm: NodeArm = { via: 'node', child: forwardChild, path: [s.name], leaf };
-				const entry: SubFactory = { name, slot, residual, arm };
+				const entry: SubFactory = { name, slot, residual, arm, depth: flattened(s), merges: false };
 				candidates.push({ name, entry, claimant: claimantOf(entry) });
 			}
 			return resolveCandidates(node, candidates, nodeMap, isEmitted, nextVisiting);
@@ -243,7 +245,7 @@ function derive(
 			const storage = textStorageOf(value, nodeMap);
 			if (name === undefined || storage === undefined) continue;
 			const arm: ValueArm = { via: 'value', storage };
-			const entry: SubFactory = { name, slot, residual, arm };
+			const entry: SubFactory = { name, slot, residual, arm, depth: DIRECT, merges: false };
 			candidates.push({ name, entry, claimant: claimantOf(entry) });
 			continue;
 		}
@@ -255,7 +257,7 @@ function derive(
 			const naming = storage === undefined ? undefined : armNaming(node, value, nodeMap);
 			if (storage === undefined || naming === undefined) continue;
 			const arm: ValueArm = { via: 'value', storage };
-			const entry: SubFactory = { name: naming.name, slot, residual, arm };
+			const entry: SubFactory = { name: naming.name, slot, residual, arm, depth: DIRECT, merges: false };
 			candidates.push({ ...naming, entry, claimant: claimantOf(entry) });
 			continue;
 		}
@@ -265,7 +267,7 @@ function derive(
 		const naming = armNaming(node, value, nodeMap);
 		if (naming !== undefined) {
 			const arm: NodeArm = { via: 'node', child, path: [] };
-			const entry: SubFactory = { name: naming.name, slot, residual, arm };
+			const entry: SubFactory = { name: naming.name, slot, residual, arm, depth: DIRECT, merges: false };
 			candidates.push({ ...naming, entry, claimant: claimantOf(entry) });
 		}
 
@@ -275,7 +277,7 @@ function derive(
 			const leaf = s.arm.via === 'node' ? (s.arm.leaf ?? s.arm.child) : undefined;
 			const flatName = leaf === undefined ? s.name : kindArmName(node.kind, leaf);
 			const arm: NodeArm = { via: 'node', child, path: [s.name], leaf };
-			const entry: SubFactory = { name: flatName, slot, residual, arm };
+			const entry: SubFactory = { name: flatName, slot, residual, arm, depth: flattened(s), merges: false };
 			candidates.push({ name: flatName, entry, claimant: claimantOf(entry) });
 		}
 	}
@@ -306,16 +308,35 @@ function resolveCandidates(
 		else list.push(c);
 	}
 
-	const resolved: SubFactory[] = [];
+	const entries: SubFactory[] = [];
 	const diagnostics: SubFactoryDiagnostic[] = [];
+	const settle = (winner: Candidate): void => {
+		const shared = sharedKeysOf(winner.entry, nodeMap, { isEmitted }, nextVisiting);
+		if (shared === undefined) {
+			entries.push(winner.entry);
+			return;
+		}
+		entries.push({ ...winner.entry, merges: shared.length === 0 });
+		if (shared.length > 0) {
+			diagnostics.push({
+				parent: node.kind,
+				name: winner.name,
+				reason: 'shared-key',
+				claimants: [winner.claimant],
+				keys: shared
+			});
+		}
+	};
 	for (const [name, list] of byName) {
-		if (list.length === 1) {
-			resolved.push(list[0]!.entry);
+		const nearest = Math.min(...list.map((c) => c.entry.depth));
+		const winners = list.filter((c) => c.entry.depth === nearest);
+		if (winners.length === 1) {
+			settle(winners[0]!);
 			continue;
 		}
-		const direct = list.filter((c) => isDirect(c.entry));
-		if (direct.length === 1) {
-			resolved.push(direct[0]!.entry);
+		const apart = hostedApart(winners, deconflicted);
+		if (apart !== undefined) {
+			for (const c of apart) settle(c);
 			continue;
 		}
 		diagnostics.push({
@@ -326,24 +347,24 @@ function resolveCandidates(
 		});
 	}
 
-	const entries: SubFactory[] = [];
-	for (const entry of resolved) {
-		const residualKeys = new Set(entry.residual.map((f) => f.configKey));
-		const keys = armConfigKeys(entry, nodeMap, { isEmitted }, nextVisiting);
-		const collides = keys.some((k) => residualKeys.has(k));
-		if (collides) {
-			diagnostics.push({
-				parent: node.kind,
-				name: entry.name,
-				reason: 'slot-collision',
-				claimants: [claimantOf(entry)]
-			});
-			continue;
-		}
-		entries.push(entry);
-	}
-
 	return { entries, diagnostics };
+}
+
+function hostedApart(winners: readonly Candidate[], candidates: readonly Candidate[]): Candidate[] | undefined {
+	const children = new Set<string>();
+	const apart: Candidate[] = [];
+	for (const c of winners) {
+		const arm = c.entry.arm;
+		if (arm.via !== 'node' || arm.path.length === 0 || children.has(arm.child.kind)) return undefined;
+		const host = candidates.find(
+			(h) => h.entry.arm.via === 'node' && h.entry.arm.path.length === 0 && h.entry.arm.child === arm.child
+		);
+		if (host === undefined) return undefined;
+		children.add(arm.child.kind);
+		const name = host.name + c.name.charAt(0).toUpperCase() + c.name.slice(1);
+		apart.push({ ...c, name, entry: { ...c.entry, name } });
+	}
+	return apart;
 }
 
 const cache = new WeakMap<NodeMap, WeakMap<IsEmittedPredicate, Map<string, SubFactorySet>>>();
@@ -472,6 +493,7 @@ export interface Seat {
 	readonly kind: string;
 	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
 	readonly mount?: string;
+	readonly seated?: true;
 }
 
 export interface SeatSource {
@@ -499,7 +521,11 @@ export function seatOf(
 				? e.arm.path.length === 0 && e.arm.child === child
 				: text !== undefined && e.arm.storage.text === text)
 	);
-	if (arm !== undefined) return { kind: child.kind, shape: 'arm', mount: arm.name };
+	if (arm !== undefined) {
+		return seatsConfigChild(arm, nodeMap)
+			? { kind: child.kind, shape: 'arm', mount: arm.name, seated: true }
+			: { kind: child.kind, shape: 'arm', mount: arm.name };
+	}
 	if (source.splice !== undefined && source.splice.slot === slot && source.splice.group === child) {
 		return { kind: child.kind, shape: 'splice' };
 	}
@@ -512,6 +538,15 @@ export function seatOf(
 	return undefined;
 }
 
+export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {
+	return (
+		sub.arm.via === 'node' &&
+		sub.arm.path.length === 0 &&
+		!sub.merges &&
+		classifyFactoryShape(sub.arm.child, nodeMap) === 'config'
+	);
+}
+
 export function configKeysOf(node: AssembledNode): readonly string[] {
 	return isSlotBearingCompound(node) ? node.slots.map((f) => f.configKey) : [];
 }
@@ -520,13 +555,39 @@ export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts: SubF
 	return subFactoriesInternal(node, nodeMap, opts.isEmitted ?? DEFAULT_IS_EMITTED, new Set());
 }
 
-export function armIsConfigShaped(sub: SubFactory, nodeMap: NodeMap, opts: SubFactoryOptions = {}): boolean {
+function armIsConfigShaped(sub: SubFactory, nodeMap: NodeMap, opts: SubFactoryOptions): boolean {
 	const arm = sub.arm;
 	if (arm.via === 'value') return false;
 	if (arm.path.length === 0) return classifyFactoryShape(arm.child, nodeMap) === 'config';
 	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);
 	if (nested === undefined || nested.arm.via === 'value') return false;
 	return classifyFactoryShape(nested.arm.child, nodeMap) === 'config';
+}
+
+function mergedKeysOf(
+	sub: SubFactory,
+	nodeMap: NodeMap,
+	opts: SubFactoryOptions,
+	visiting: ReadonlySet<string>
+): readonly string[] {
+	const arm = sub.arm as NodeArm;
+	if (arm.path.length === 0) return configKeysOf(arm.child);
+	if (visiting.has(arm.child.kind)) return [];
+	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);
+	if (nested === undefined) return [];
+	const residualKeys = nested.residual.map((f) => f.configKey);
+	return [...residualKeys, ...armConfigKeys(nested, nodeMap, opts, new Set([...visiting, arm.child.kind]))];
+}
+
+function sharedKeysOf(
+	sub: SubFactory,
+	nodeMap: NodeMap,
+	opts: SubFactoryOptions,
+	visiting: ReadonlySet<string>
+): readonly string[] | undefined {
+	if (!armIsConfigShaped(sub, nodeMap, opts)) return undefined;
+	const residual = new Set(sub.residual.map((f) => f.configKey));
+	return mergedKeysOf(sub, nodeMap, opts, visiting).filter((key) => residual.has(key));
 }
 
 export function armConfigKeys(
@@ -537,18 +598,12 @@ export function armConfigKeys(
 ): readonly string[] {
 	const arm = sub.arm;
 	if (arm.via === 'value') return [];
-	if (arm.path.length === 0) {
-		if (!armIsConfigShaped(sub, nodeMap, opts)) return [];
-		return configKeysOf(arm.child);
-	}
+	if (sub.merges) return mergedKeysOf(sub, nodeMap, opts, visiting);
+	if (arm.path.length === 0) return [];
 	if (visiting.has(arm.child.kind)) return [];
 	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);
 	if (nested === undefined) return [];
 	const residualKeys = nested.residual.map((f) => f.configKey);
-	const nextVisiting = new Set([...visiting, arm.child.kind]);
 	if (nested.arm.via === 'value') return residualKeys;
-	if (armIsConfigShaped(sub, nodeMap, opts)) {
-		return [...residualKeys, ...armConfigKeys(nested, nodeMap, opts, nextVisiting)];
-	}
 	return [...residualKeys, nested.slot.configKey];
 }

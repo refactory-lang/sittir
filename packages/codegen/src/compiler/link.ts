@@ -48,6 +48,7 @@ import {
 	findEntryForKindName,
 	findAnonEntryForLiteralText,
 	findEntryForLiteralText,
+	findEntryForPatternValue,
 	type GeneratedIdTables,
 	type GeneratedKindEntry
 } from './generated-metadata.ts';
@@ -465,7 +466,7 @@ export function canonicalizeRuleLiterals(
 		}
 		case PATTERN: {
 			if (!stampable || kindEntries.length === 0) return rule;
-			const patternEntry = findEntryForLiteralText(kindEntries, rule.value);
+			const patternEntry = findEntryForPatternValue(kindEntries, rule.value);
 			return patternEntry === undefined ? rule : { ...rule, resolvedKindId: patternEntry.id };
 		}
 		default:

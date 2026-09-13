@@ -65,8 +65,8 @@ export declare class SittirEngine {
    * `treeId` names the parse whose detected format applies. It is
    * optional because factory-built nodes belong to no tree.
    */
-  render(transport: RenderRoot, treeId?: number | undefined | null, options?: string | undefined | null): string
-  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: string | undefined | null): void
+  render(transport: RenderRoot, treeId?: number | undefined | null, options?: Options | undefined | null): string
+  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: Options | undefined | null): void
   applyEdits(source: string, edits: Array<Edit>): string
   /**
    * Drop one tree. Called from the boundary's `FinalizationRegistry`
@@ -85,28 +85,16 @@ export declare class SittirEngine {
 }
 
 export interface AliasedImportTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<DottedNameTransport>
   _alias: SlotValue<IdentifierTransport>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _aliased_import_before?: number
   _aliased_import_after?: number
 }
 
 export interface ArgumentListElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<ArgumentListElementsElementTransportSlot>>
   _delimiter?: number
@@ -115,12 +103,6 @@ export interface ArgumentListElementsTransport {
 }
 
 export interface ArgumentListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _arguments?: SlotValue<ArgumentListElementsTransport>
   _lparen_before?: number
@@ -132,45 +114,27 @@ export interface ArgumentListTransport {
 }
 
 export interface AsPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
   _alias: SlotValue<Box<ExpressionTransport>>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _as_pattern_before?: number
   _as_pattern_after?: number
 }
 
 export interface AssertStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: Array<SlotValue<ExpressionTransport>>
-  _assert_before?: number
-  _assert_after?: number
   _expression_separator_space_before?: number
   _expression_separator_space_after?: number
+  _assert_keyword_before?: number
+  _assert_keyword_after?: number
   _assert_statement_before?: number
   _assert_statement_after?: number
 }
 
 export interface AssignmentEqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _right: SlotValue<Box<AssignmentEqRightTransportSlot>>
   _eq_before?: number
@@ -180,12 +144,6 @@ export interface AssignmentEqTransport {
 }
 
 export interface AssignmentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _left: SlotValue<AssignmentLeftTransportSlot>
   _content: SlotValue<Box<AssignmentContentTransportSlot>>
@@ -194,12 +152,6 @@ export interface AssignmentTransport {
 }
 
 export interface AssignmentTypedTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _type: SlotValue<TypeTransport>
   _right: SlotValue<Box<AssignmentTypedRightTransportSlot>>
@@ -212,12 +164,6 @@ export interface AssignmentTypedTransport {
 }
 
 export interface AssignmentTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _type: SlotValue<TypeTransport>
   _colon_before?: number
@@ -227,12 +173,6 @@ export interface AssignmentTypeTransport {
 }
 
 export interface AttributeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _object: SlotValue<Box<PrimaryExpressionTransport>>
   _attribute: SlotValue<IdentifierTransport>
@@ -243,12 +183,6 @@ export interface AttributeTransport {
 }
 
 export interface AugmentedAssignmentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _left: SlotValue<AugmentedAssignmentLeftTransportSlot>
   _operator: SlotValue<AugmentedAssignmentOperatorEnum>
@@ -258,27 +192,15 @@ export interface AugmentedAssignmentTransport {
 }
 
 export interface AwaitTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<PrimaryExpressionTransport>>
-  _anon_await_before?: number
-  _anon_await_after?: number
+  _await_keyword_before?: number
+  _await_keyword_after?: number
   _await_before?: number
   _await_after?: number
 }
 
 export interface BinaryOperatorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<PrimaryExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
@@ -290,12 +212,6 @@ export interface BinaryOperatorTransport {
 }
 
 export interface BlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _statements?: Array<SlotValue<BlockStatementsTransportSlot>>
   _statements_separator_space?: number
@@ -304,12 +220,6 @@ export interface BlockTransport {
 }
 
 export interface BooleanOperatorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<ExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
@@ -319,12 +229,6 @@ export interface BooleanOperatorTransport {
 }
 
 export interface CallTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _function: SlotValue<Box<PrimaryExpressionTransport>>
   _arguments: SlotValue<Box<CallArgumentsTransportSlot>>
@@ -333,47 +237,29 @@ export interface CallTransport {
 }
 
 export interface CaseAsPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _case_pattern: SlotValue<Box<CasePatternTransport>>
   _identifier: SlotValue<IdentifierTransport>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _case_as_pattern_before?: number
   _case_as_pattern_after?: number
 }
 
 export interface CaseClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _guard?: SlotValue<IfClauseTransport>
   _consequence: SlotValue<CaseClauseConsequenceTransportSlot>
   _case_patterns: SlotValue<CasePatternsTransport>
-  _case_before?: number
-  _case_after?: number
   _colon_before?: number
   _colon_after?: number
+  _case_keyword_before?: number
+  _case_keyword_after?: number
   _case_clause_before?: number
   _case_clause_after?: number
 }
 
 export interface CaseListPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _list_pattern_case_patterns?: SlotValue<ListPatternCasePatternsTransport>
   _lbrack_before?: number
@@ -385,12 +271,6 @@ export interface CaseListPatternTransport {
 }
 
 export interface CasePatternsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _case_pattern: Array<SlotValue<CasePatternTransport>>
   _delimiter?: number
@@ -399,23 +279,11 @@ export interface CasePatternsTransport {
 }
 
 export interface CasePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<CasePatternContentTransportSlot>>
 }
 
 export interface CaseTuplePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _list_pattern_case_patterns?: SlotValue<ListPatternCasePatternsTransport>
   _lparen_before?: number
@@ -427,12 +295,6 @@ export interface CaseTuplePatternTransport {
 }
 
 export interface ChevronTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<ExpressionTransport>
   _gt_gt_before?: number
@@ -442,32 +304,20 @@ export interface ChevronTransport {
 }
 
 export interface ClassDefinitionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParameterTransport>
   _superclasses?: SlotValue<ArgumentListTransport>
   _body: SlotValue<ClassDefinitionBodyTransportSlot>
-  _class_before?: number
-  _class_after?: number
   _colon_before?: number
   _colon_after?: number
+  _class_keyword_before?: number
+  _class_keyword_after?: number
   _class_definition_before?: number
   _class_definition_after?: number
 }
 
 export interface ClassPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<DottedNameTransport>
   _arguments?: SlotValue<ListPatternCasePatternsTransport>
@@ -480,12 +330,6 @@ export interface ClassPatternTransport {
 }
 
 export interface CollectionElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<CollectionElementsElementTransportSlot>>
   _delimiter?: number
@@ -494,12 +338,6 @@ export interface CollectionElementsTransport {
 }
 
 export interface ComparisonOperatorComparatorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _operators: SlotValue<Box<AnyTransport>>
   _primary_expression: SlotValue<PrimaryExpressionTransport>
@@ -510,12 +348,6 @@ export interface ComparisonOperatorComparatorTransport {
 }
 
 export interface ComparisonOperatorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<PrimaryExpressionTransport>>
   _comparators: Array<SlotValue<ComparisonOperatorComparatorTransport>>
@@ -525,12 +357,6 @@ export interface ComparisonOperatorTransport {
 }
 
 export interface ComplexPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _real?: boolean
   _imaginary: SlotValue<ComplexPatternImaginaryTransportSlot>
@@ -545,24 +371,12 @@ export interface ComplexPatternTransport {
 }
 
 export interface ComprehensionClausesTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content?: Array<SlotValue<ComprehensionClausesContentTransportSlot>>
   _content_separator_space?: number
 }
 
 export interface ConcatenatedStringTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _string: Array<SlotValue<StringTransport>>
   _string_separator_space?: number
@@ -571,31 +385,19 @@ export interface ConcatenatedStringTransport {
 }
 
 export interface ConditionalExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<ExpressionTransport>>
   _condition: SlotValue<Box<ExpressionTransport>>
   _alternative: SlotValue<Box<ExpressionTransport>>
-  _else_before?: number
-  _else_after?: number
-  _if_before?: number
-  _if_after?: number
+  _else_keyword_before?: number
+  _else_keyword_after?: number
+  _if_keyword_before?: number
+  _if_keyword_after?: number
   _conditional_expression_before?: number
   _conditional_expression_after?: number
 }
 
 export interface ConstrainedTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _base_type: SlotValue<Box<TypeTransport>>
   _constraint: SlotValue<Box<TypeTransport>>
@@ -606,12 +408,6 @@ export interface ConstrainedTypeTransport {
 }
 
 export interface DecoratedDefinitionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _definition: SlotValue<DecoratedDefinitionDefinitionTransportSlot>
   _decorator: Array<SlotValue<DecoratorTransport>>
@@ -621,12 +417,6 @@ export interface DecoratedDefinitionTransport {
 }
 
 export interface DecoratorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<ExpressionTransport>
   _at_before?: number
@@ -636,12 +426,6 @@ export interface DecoratorTransport {
 }
 
 export interface DefaultParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<DefaultParameterNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
@@ -652,27 +436,15 @@ export interface DefaultParameterTransport {
 }
 
 export interface DeleteStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expressions: SlotValue<DeleteStatementExpressionsTransportSlot>
-  _del_before?: number
-  _del_after?: number
+  _del_keyword_before?: number
+  _del_keyword_after?: number
   _delete_statement_before?: number
   _delete_statement_after?: number
 }
 
 export interface DictionaryComprehensionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<PairTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
@@ -685,12 +457,6 @@ export interface DictionaryComprehensionTransport {
 }
 
 export interface DictionaryElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<DictionaryElementsElementTransportSlot>>
   _delimiter?: number
@@ -699,12 +465,6 @@ export interface DictionaryElementsTransport {
 }
 
 export interface DictionarySplatPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<DictionarySplatPatternContentTransportSlot>
   _star_star_before?: number
@@ -714,12 +474,6 @@ export interface DictionarySplatPatternTransport {
 }
 
 export interface DictionarySplatTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<ExpressionTransport>
   _star_star_before?: number
@@ -729,12 +483,6 @@ export interface DictionarySplatTransport {
 }
 
 export interface DictionaryTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _entries?: SlotValue<DictionaryElementsTransport>
   _lbrace_before?: number
@@ -746,12 +494,6 @@ export interface DictionaryTransport {
 }
 
 export interface DictPatternElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<DictPatternElementsElementTransportSlot>>
   _delimiter?: number
@@ -760,12 +502,6 @@ export interface DictPatternElementsTransport {
 }
 
 export interface DictPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _dict_pattern_elements?: SlotValue<DictPatternElementsTransport>
   _lbrace_before?: number
@@ -777,12 +513,6 @@ export interface DictPatternTransport {
 }
 
 export interface DottedNameTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _names: Array<SlotValue<IdentifierTransport>>
   _names_separator_space_before?: number
@@ -790,36 +520,24 @@ export interface DottedNameTransport {
 }
 
 export interface ElifClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
   _consequence: SlotValue<ElifClauseConsequenceTransportSlot>
-  _elif_before?: number
-  _elif_after?: number
   _colon_before?: number
   _colon_after?: number
+  _elif_keyword_before?: number
+  _elif_keyword_after?: number
   _elif_clause_before?: number
   _elif_clause_after?: number
 }
 
 export interface ElseClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<ElseClauseBodyTransportSlot>
-  _else_before?: number
-  _else_after?: number
   _colon_before?: number
   _colon_after?: number
+  _else_keyword_before?: number
+  _else_keyword_after?: number
   _else_clause_before?: number
   _else_clause_after?: number
 }
@@ -827,35 +545,25 @@ export interface ElseClauseTransport {
 export interface EngineOptions {
   format?: string
   /**
-   * The render options object as JSON; resolved once here against the
-   * grammar's site table. Only the resolved ids are kept.
+   * Resolved once here against the grammar's site table at
+   * construction; only the resolved ids are kept. A `render` call
+   * carrying its own options resolves again, per call, over the
+   * engine's table — the engine's own table never changes.
    */
-  options?: string
+  options?: Options
 }
 
 export interface ExceptClauseExceptionAsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _value: SlotValue<ExpressionTransport>
   _alias?: SlotValue<ExpressionTransport>
-  _as_before?: number
-  _as_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
   _except_clause_exception_as_before?: number
   _except_clause_exception_as_after?: number
 }
 
 export interface ExceptClauseExceptionListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _value: Array<SlotValue<ExpressionTransport>>
   _value_separator_space_before?: number
@@ -863,64 +571,40 @@ export interface ExceptClauseExceptionListTransport {
 }
 
 export interface ExceptClauseExceptionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<ExceptClauseExceptionContentTransportSlot>
 }
 
 export interface ExceptClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _star_marker?: boolean
   _exception?: SlotValue<ExceptClauseExceptionTransport>
   _suite: SlotValue<ExceptClauseSuiteTransportSlot>
-  _except_before?: number
-  _except_after?: number
   _star_marker_before?: number
   _star_marker_after?: number
   _colon_before?: number
   _colon_after?: number
+  _except_keyword_before?: number
+  _except_keyword_after?: number
   _except_clause_before?: number
   _except_clause_after?: number
 }
 
 export interface ExecStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _code: SlotValue<ExecStatementCodeTransportSlot>
   _in_clause?: Array<SlotValue<ExpressionTransport>>
-  _exec_before?: number
-  _exec_after?: number
-  _in_before?: number
-  _in_after?: number
   _in_clause_separator_space_before?: number
   _in_clause_separator_space_after?: number
+  _exec_keyword_before?: number
+  _exec_keyword_after?: number
+  _in_keyword_before?: number
+  _in_keyword_after?: number
   _exec_statement_before?: number
   _exec_statement_after?: number
 }
 
 export interface ExpressionListExpressionsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
@@ -929,37 +613,20 @@ export interface ExpressionListExpressionsTransport {
 }
 
 export interface ExpressionListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _tail: SlotValue<ExpressionListTailTransportSlot>
   _expression: SlotValue<Box<ExpressionTransport>>
+  _comma_before?: number
   _expression_list_before?: number
   _expression_list_after?: number
 }
 
 export interface ExpressionStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<ExpressionStatementContentTransportSlot>
 }
 
 export interface ExpressionStatementTupleTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
@@ -968,53 +635,35 @@ export interface ExpressionStatementTupleTransport {
 }
 
 export interface FinallyClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _block: SlotValue<FinallyClauseBlockTransportSlot>
-  _finally_before?: number
-  _finally_after?: number
   _colon_before?: number
   _colon_after?: number
+  _finally_keyword_before?: number
+  _finally_keyword_after?: number
   _finally_clause_before?: number
   _finally_clause_after?: number
 }
 
 export interface ForInClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _left: SlotValue<ForInClauseLeftTransportSlot>
   _right: Array<SlotValue<ForInClauseRightTransportSlot>>
   _comma?: boolean
-  _for_before?: number
-  _for_after?: number
-  _in_before?: number
-  _in_after?: number
   _right_separator_space_before?: number
   _right_separator_space_after?: number
   _comma_before?: number
   _comma_after?: number
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _in_keyword_before?: number
+  _in_keyword_after?: number
   _for_in_clause_before?: number
   _for_in_clause_after?: number
 }
 
 export interface FormatSpecifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content?: Array<SlotValue<FormatSpecifierContentTransportSlot>>
   _colon_before?: number
@@ -1024,35 +673,23 @@ export interface FormatSpecifierTransport {
 }
 
 export interface ForStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _left: SlotValue<ForStatementLeftTransportSlot>
   _right: SlotValue<ForStatementRightTransportSlot>
   _body: SlotValue<ForStatementBodyTransportSlot>
   _alternative?: SlotValue<ElseClauseTransport>
-  _for_before?: number
-  _for_after?: number
-  _in_before?: number
-  _in_after?: number
   _colon_before?: number
   _colon_after?: number
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _in_keyword_before?: number
+  _in_keyword_after?: number
   _for_statement_before?: number
   _for_statement_after?: number
 }
 
 export interface FunctionDefinitionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _name: SlotValue<IdentifierTransport>
@@ -1060,42 +697,30 @@ export interface FunctionDefinitionTransport {
   _parameters: SlotValue<ParametersTransport>
   _return_type?: SlotValue<TypeTransport>
   _body: SlotValue<FunctionDefinitionBodyTransportSlot>
-  _def_before?: number
-  _def_after?: number
   _dash_gt_before?: number
   _dash_gt_after?: number
   _colon_before?: number
   _colon_after?: number
+  _def_keyword_before?: number
+  _def_keyword_after?: number
   _function_definition_before?: number
   _function_definition_after?: number
 }
 
 export interface FutureImportStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<FutureImportStatementContentTransportSlot>
-  _from_before?: number
-  _from_after?: number
-  _future___before?: number
-  _future___after?: number
-  _import_before?: number
-  _import_after?: number
+  _future___keyword_before?: number
+  _future___keyword_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
+  _import_keyword_before?: number
+  _import_keyword_after?: number
   _future_import_statement_before?: number
   _future_import_statement_after?: number
 }
 
 export interface GeneratorExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<ExpressionTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
@@ -1108,96 +733,61 @@ export interface GeneratorExpressionTransport {
 }
 
 export interface GenericTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<GenericTypeNameTransportSlot>
   _type_parameter: SlotValue<TypeParameterTransport>
+  _type_keyword_after?: number
   _generic_type_before?: number
   _generic_type_after?: number
 }
 
 export interface GlobalStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _names: Array<SlotValue<IdentifierTransport>>
-  _global_before?: number
-  _global_after?: number
   _names_separator_space_before?: number
   _names_separator_space_after?: number
+  _global_keyword_before?: number
+  _global_keyword_after?: number
   _global_statement_before?: number
   _global_statement_after?: number
 }
 
 export interface IfClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
-  _if_before?: number
-  _if_after?: number
+  _if_keyword_before?: number
+  _if_keyword_after?: number
   _if_clause_before?: number
   _if_clause_after?: number
 }
 
 export interface IfStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
   _consequence: SlotValue<IfStatementConsequenceTransportSlot>
   _alternative?: Array<SlotValue<IfStatementAlternativeTransportSlot>>
   _alternative_separator_space?: number
-  _if_before?: number
-  _if_after?: number
   _colon_before?: number
   _colon_after?: number
+  _if_keyword_before?: number
+  _if_keyword_after?: number
   _if_statement_before?: number
   _if_statement_after?: number
 }
 
 export interface ImportFromStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _module_name: SlotValue<ImportFromStatementModuleNameTransportSlot>
   _content: SlotValue<ImportFromStatementContentTransportSlot>
-  _from_before?: number
-  _from_after?: number
-  _import_before?: number
-  _import_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
+  _import_keyword_before?: number
+  _import_keyword_after?: number
   _import_from_statement_before?: number
   _import_from_statement_after?: number
 }
 
 export interface ImportListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: Array<SlotValue<ImportListNameTransportSlot>>
   _delimiter?: number
@@ -1206,27 +796,15 @@ export interface ImportListTransport {
 }
 
 export interface ImportStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _import_list: SlotValue<ImportListTransport>
-  _import_before?: number
-  _import_after?: number
+  _import_keyword_before?: number
+  _import_keyword_after?: number
   _import_statement_before?: number
   _import_statement_after?: number
 }
 
 export interface InterpolationTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<InterpolationExpressionTransportSlot>
   _eq_marker?: boolean
@@ -1243,12 +821,6 @@ export interface InterpolationTransport {
 }
 
 export interface KeyValuePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _key: SlotValue<KeyValuePatternKeyTransportSlot>
   _value: SlotValue<CasePatternTransport>
@@ -1259,12 +831,6 @@ export interface KeyValuePatternTransport {
 }
 
 export interface KeywordArgumentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _value: SlotValue<ExpressionTransport>
@@ -1275,12 +841,6 @@ export interface KeywordArgumentTransport {
 }
 
 export interface KeywordPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _value: SlotValue<KeywordPatternValueTransportSlot>
@@ -1291,59 +851,35 @@ export interface KeywordPatternTransport {
 }
 
 export interface LambdaParametersTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _parameters: SlotValue<_ParametersTransport>
 }
 
 export interface LambdaTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _parameters?: SlotValue<LambdaParametersTransport>
   _body: SlotValue<Box<ExpressionTransport>>
   _colon_before?: number
   _colon_after?: number
-  _anon_lambda_before?: number
-  _anon_lambda_after?: number
+  _lambda_keyword_before?: number
+  _lambda_keyword_after?: number
   _lambda_before?: number
   _lambda_after?: number
 }
 
 export interface LambdaWithinForInClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _parameters?: SlotValue<LambdaParametersTransport>
   _body: SlotValue<Box<LambdaWithinForInClauseBodyTransportSlot>>
   _colon_before?: number
   _colon_after?: number
-  _anon_lambda_before?: number
-  _anon_lambda_after?: number
+  _lambda_keyword_before?: number
+  _lambda_keyword_after?: number
   _lambda_within_for_in_clause_before?: number
   _lambda_within_for_in_clause_after?: number
 }
 
 export interface ListComprehensionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<ExpressionTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
@@ -1356,12 +892,6 @@ export interface ListComprehensionTransport {
 }
 
 export interface ListPatternCasePatternsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _case_pattern: Array<SlotValue<CasePatternTransport>>
   _delimiter?: number
@@ -1370,12 +900,6 @@ export interface ListPatternCasePatternsTransport {
 }
 
 export interface ListPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _patterns?: SlotValue<PatternsTransport>
   _lbrack_before?: number
@@ -1387,12 +911,6 @@ export interface ListPatternTransport {
 }
 
 export interface ListSplatPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<ListSplatPatternContentTransportSlot>>
   _star_before?: number
@@ -1402,12 +920,6 @@ export interface ListSplatPatternTransport {
 }
 
 export interface ListSplatTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
   _star_before?: number
@@ -1417,12 +929,6 @@ export interface ListSplatTransport {
 }
 
 export interface ListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _collection_elements?: SlotValue<CollectionElementsTransport>
   _lbrack_before?: number
@@ -1434,12 +940,6 @@ export interface ListTransport {
 }
 
 export interface MatchBlockBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _alternative?: Array<SlotValue<CaseClauseTransport>>
   _alternative_separator_space?: number
@@ -1448,41 +948,23 @@ export interface MatchBlockBlockTransport {
 }
 
 export interface MatchBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<MatchBlockContentTransportSlot>
 }
 
 export interface MatchStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<MatchBlockTransport>
   _subjects: SlotValue<SubjectsTransport>
-  _match_before?: number
-  _match_after?: number
   _colon_before?: number
   _colon_after?: number
+  _match_keyword_before?: number
+  _match_keyword_after?: number
   _match_statement_before?: number
   _match_statement_after?: number
 }
 
 export interface MemberTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _base_type: SlotValue<Box<TypeTransport>>
   _name: SlotValue<IdentifierTransport>
@@ -1493,24 +975,12 @@ export interface MemberTypeTransport {
 }
 
 export interface ModuleTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _statements?: Array<SlotValue<ModuleStatementsTransportSlot>>
   _statements_separator_space?: number
 }
 
 export interface NamedExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _value: SlotValue<Box<ExpressionTransport>>
@@ -1521,44 +991,26 @@ export interface NamedExpressionTransport {
 }
 
 export interface NonlocalStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _names: Array<SlotValue<IdentifierTransport>>
   _names_separator_space_before?: number
   _names_separator_space_after?: number
-  _nonlocal_before?: number
-  _nonlocal_after?: number
+  _nonlocal_keyword_before?: number
+  _nonlocal_keyword_after?: number
   _nonlocal_statement_before?: number
   _nonlocal_statement_after?: number
 }
 
 export interface NotOperatorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _argument: SlotValue<Box<ExpressionTransport>>
-  _not_before?: number
-  _not_after?: number
+  _not_keyword_before?: number
+  _not_keyword_after?: number
   _not_operator_before?: number
   _not_operator_after?: number
 }
 
 export interface PairTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _key: SlotValue<Box<ExpressionTransport>>
   _value: SlotValue<Box<ExpressionTransport>>
@@ -1569,12 +1021,6 @@ export interface PairTransport {
 }
 
 export interface ParametersTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _parameters?: SlotValue<_ParametersTransport>
   _parameter_separator_space_before?: number
@@ -1588,12 +1034,6 @@ export interface ParametersTransport {
 }
 
 export interface ParametersTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _parameter: Array<SlotValue<ParameterTransport>>
   _delimiter?: number
@@ -1608,12 +1048,6 @@ export interface ParametersTransport {
 }
 
 export interface ParenthesizedExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<ParenthesizedExpressionContentTransportSlot>>
   _lparen_before?: number
@@ -1625,12 +1059,6 @@ export interface ParenthesizedExpressionTransport {
 }
 
 export interface ParenthesizedImportListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _import_list: SlotValue<ImportListTransport>
   _lparen_before?: number
@@ -1642,12 +1070,6 @@ export interface ParenthesizedImportListTransport {
 }
 
 export interface ParenthesizedListSplatTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<ParenthesizedListSplatContentTransportSlot>>
   _lparen_before?: number
@@ -1659,12 +1081,6 @@ export interface ParenthesizedListSplatTransport {
 }
 
 export interface PatternListPatternsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _pattern: Array<SlotValue<PatternTransport>>
   _delimiter?: number
@@ -1673,26 +1089,15 @@ export interface PatternListPatternsTransport {
 }
 
 export interface PatternListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _tail: SlotValue<PatternListTailTransportSlot>
   _pattern: SlotValue<PatternTransport>
+  _comma_before?: number
   _pattern_list_before?: number
   _pattern_list_after?: number
 }
 
 export interface PatternsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _pattern: Array<SlotValue<PatternTransport>>
   _delimiter?: number
@@ -1701,12 +1106,6 @@ export interface PatternsTransport {
 }
 
 export interface PrintArgumentsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _argument: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
@@ -1715,12 +1114,6 @@ export interface PrintArgumentsTransport {
 }
 
 export interface PrintChevronArgumentsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _argument: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
@@ -1729,72 +1122,43 @@ export interface PrintChevronArgumentsTransport {
 }
 
 export interface PrintStatementChevronTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _chevron: SlotValue<ChevronTransport>
   _print_chevron_arguments?: SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>
-  _print_before?: number
-  _print_after?: number
+  _comma_before?: number
+  _print_keyword_before?: number
+  _print_keyword_after?: number
   _print_statement_chevron_before?: number
   _print_statement_chevron_after?: number
 }
 
 export interface PrintStatementPlainTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _print_arguments: SlotValue<PrintArgumentsTransport>
-  _print_before?: number
-  _print_after?: number
+  _print_keyword_before?: number
+  _print_keyword_after?: number
   _print_statement_plain_before?: number
   _print_statement_plain_after?: number
 }
 
 export interface PrintStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<PrintStatementContentTransportSlot>
 }
 
 export interface RaiseStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _cause?: SlotValue<ExpressionTransport>
   _expressions?: SlotValue<RaiseStatementExpressionsTransportSlot>
-  _from_before?: number
-  _from_after?: number
-  _raise_before?: number
-  _raise_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
+  _raise_keyword_before?: number
+  _raise_keyword_after?: number
   _raise_statement_before?: number
   _raise_statement_after?: number
 }
 
 export interface RelativeImportTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _prefix: SlotValue<ImportPrefixTransport>
   _name?: SlotValue<DottedNameTransport>
@@ -1803,27 +1167,15 @@ export interface RelativeImportTransport {
 }
 
 export interface ReturnStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expressions?: SlotValue<ReturnStatementExpressionsTransportSlot>
-  _return_before?: number
-  _return_after?: number
+  _return_keyword_before?: number
+  _return_keyword_after?: number
   _return_statement_before?: number
   _return_statement_after?: number
 }
 
 export interface SetComprehensionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<ExpressionTransport>>
   _comprehension_clauses: SlotValue<ComprehensionClausesTransport>
@@ -1836,12 +1188,6 @@ export interface SetComprehensionTransport {
 }
 
 export interface SetTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _collection_elements: SlotValue<CollectionElementsTransport>
   _lbrace_before?: number
@@ -1853,12 +1199,6 @@ export interface SetTransport {
 }
 
 export interface SimplePatternNegativeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _sign?: boolean
   _content: SlotValue<SimplePatternNegativeContentTransportSlot>
@@ -1869,12 +1209,6 @@ export interface SimplePatternNegativeTransport {
 }
 
 export interface SimpleStatementsElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _simple_statement: Array<SlotValue<SimpleStatementTransport>>
   _delimiter?: number
@@ -1883,12 +1217,6 @@ export interface SimpleStatementsElementsTransport {
 }
 
 export interface SimpleStatementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _simple_statements_elements: SlotValue<SimpleStatementsElementsTransport>
   _simple_statements_before?: number
@@ -1896,12 +1224,6 @@ export interface SimpleStatementsTransport {
 }
 
 export interface SliceGroupTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression?: SlotValue<ExpressionTransport>
   _colon_before?: number
@@ -1911,12 +1233,6 @@ export interface SliceGroupTransport {
 }
 
 export interface SliceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _start?: SlotValue<ExpressionTransport>
   _stop?: SlotValue<ExpressionTransport>
@@ -1928,28 +1244,17 @@ export interface SliceTransport {
 }
 
 export interface SplatPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _operator: SlotValue<Box<AnyTransport>>
   _name: SlotValue<SplatPatternNameTransportSlot>
   _operator_before?: number
   _operator_after?: number
+  _underscore_before?: number
   _splat_pattern_before?: number
   _splat_pattern_after?: number
 }
 
 export interface SplatTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _operator: SlotValue<Box<AnyTransport>>
   _name: SlotValue<IdentifierTransport>
@@ -1960,23 +1265,11 @@ export interface SplatTypeTransport {
 }
 
 export interface StringContentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content?: Array<SlotValue<StringContentContentTransportSlot, true>>
 }
 
 export interface StringTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _string_start: SlotValue<StringStartTransport>
   _content?: Array<SlotValue<StringContentTransportSlot>>
@@ -1986,12 +1279,6 @@ export interface StringTransport {
 }
 
 export interface SubjectsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _subject: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
@@ -2000,12 +1287,6 @@ export interface SubjectsTransport {
 }
 
 export interface SubscriptsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _subscript: Array<SlotValue<SubscriptsSubscriptTransportSlot>>
   _delimiter?: number
@@ -2014,12 +1295,6 @@ export interface SubscriptsTransport {
 }
 
 export interface SubscriptTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _value: SlotValue<Box<PrimaryExpressionTransport>>
   _subscripts: SlotValue<SubscriptsTransport>
@@ -2032,12 +1307,6 @@ export interface SubscriptTransport {
 }
 
 export interface SuiteBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _block: SlotValue<BlockTransport>
   _suite_block_before?: number
@@ -2045,44 +1314,26 @@ export interface SuiteBlockTransport {
 }
 
 export interface SuiteTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<SuiteContentTransportSlot>
 }
 
 export interface TryStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _body: SlotValue<TryStatementBodyTransportSlot>
   _except_clauses?: Array<SlotValue<ExceptClauseTransport>>
   _else_clause?: SlotValue<ElseClauseTransport>
   _finally_clause?: SlotValue<FinallyClauseTransport>
   _except_clauses_separator_space?: number
-  _try_before?: number
-  _try_after?: number
   _colon_before?: number
   _colon_after?: number
+  _try_keyword_before?: number
+  _try_keyword_after?: number
   _try_statement_before?: number
   _try_statement_after?: number
 }
 
 export interface TuplePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _patterns?: SlotValue<PatternsTransport>
   _lparen_before?: number
@@ -2094,12 +1345,6 @@ export interface TuplePatternTransport {
 }
 
 export interface TupleTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _collection_elements?: SlotValue<CollectionElementsTransport>
   _lparen_before?: number
@@ -2111,30 +1356,18 @@ export interface TupleTransport {
 }
 
 export interface TypeAliasStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _left: SlotValue<TypeTransport>
   _right: SlotValue<TypeTransport>
   _eq_before?: number
   _eq_after?: number
-  _anon_type_before?: number
-  _anon_type_after?: number
+  _type_keyword_before?: number
+  _type_keyword_after?: number
   _type_alias_statement_before?: number
   _type_alias_statement_after?: number
 }
 
 export interface TypedDefaultParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeTransport>
@@ -2148,12 +1381,6 @@ export interface TypedDefaultParameterTransport {
 }
 
 export interface TypedParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _type: SlotValue<TypeTransport>
   _content: SlotValue<TypedParameterContentTransportSlot>
@@ -2164,12 +1391,6 @@ export interface TypedParameterTransport {
 }
 
 export interface TypeParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _types: SlotValue<TypesTransport>
   _lbrack_before?: number
@@ -2181,12 +1402,6 @@ export interface TypeParameterTransport {
 }
 
 export interface TypesTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _type: Array<SlotValue<TypeTransport>>
   _delimiter?: number
@@ -2195,23 +1410,11 @@ export interface TypesTransport {
 }
 
 export interface TypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<TypeContentTransportSlot>>
 }
 
 export interface UnaryOperatorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _operator: SlotValue<UnaryOperatorOperatorEnum>
   _argument: SlotValue<Box<PrimaryExpressionTransport>>
@@ -2220,12 +1423,6 @@ export interface UnaryOperatorTransport {
 }
 
 export interface UnionPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _patterns: Array<SlotValue<UnionPatternPatternsTransportSlot>>
   _patterns_separator_space_before?: number
@@ -2233,12 +1430,6 @@ export interface UnionPatternTransport {
 }
 
 export interface UnionTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<TypeTransport>>
   _right: SlotValue<Box<TypeTransport>>
@@ -2249,31 +1440,19 @@ export interface UnionTypeTransport {
 }
 
 export interface WhileStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
   _body: SlotValue<WhileStatementBodyTransportSlot>
   _alternative?: SlotValue<ElseClauseTransport>
-  _while_before?: number
-  _while_after?: number
   _colon_before?: number
   _colon_after?: number
+  _while_keyword_before?: number
+  _while_keyword_after?: number
   _while_statement_before?: number
   _while_statement_after?: number
 }
 
 export interface WithClauseBareTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _with_item: Array<SlotValue<WithItemTransport>>
   _delimiter?: number
@@ -2282,12 +1461,6 @@ export interface WithClauseBareTransport {
 }
 
 export interface WithClauseParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _with_clause_with_items: SlotValue<WithClauseWithItemsTransport>
   _lparen_before?: number
@@ -2299,23 +1472,11 @@ export interface WithClauseParenTransport {
 }
 
 export interface WithClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content: SlotValue<WithClauseContentTransportSlot>
 }
 
 export interface WithClauseWithItemsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _with_item: Array<SlotValue<WithItemTransport>>
   _delimiter?: number
@@ -2324,61 +1485,37 @@ export interface WithClauseWithItemsTransport {
 }
 
 export interface WithItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _value: SlotValue<ExpressionTransport>
 }
 
 export interface WithStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _with_clause: SlotValue<WithClauseTransport>
   _body: SlotValue<WithStatementBodyTransportSlot>
-  _with_before?: number
-  _with_after?: number
   _colon_before?: number
   _colon_after?: number
+  _with_keyword_before?: number
+  _with_keyword_after?: number
   _with_statement_before?: number
   _with_statement_after?: number
 }
 
 export interface YieldFromClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
-  _from_before?: number
-  _from_after?: number
+  _from_keyword_before?: number
+  _from_keyword_after?: number
   _yield_from_clause_before?: number
   _yield_from_clause_after?: number
 }
 
 export interface YieldTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
   '$_trivia'?: TransportTrivia
   _content?: SlotValue<Box<YieldContentTransportSlot>>
-  _anon_yield_before?: number
-  _anon_yield_after?: number
+  _yield_keyword_before?: number
+  _yield_keyword_after?: number
   _yield_before?: number
   _yield_after?: number
 }

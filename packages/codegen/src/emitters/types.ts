@@ -485,7 +485,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	);
 	lines.push('export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		const displayName = entry.symbolName && !entry.anon ? entry.symbolName : entry.kind;
+		const displayName = entry.symbolName ?? entry.kind;
 		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
 			lines.push(`  [${entry.parseId}, ${JSON.stringify(displayName)}],`);
@@ -523,10 +523,11 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	}
 	const seenCases = new Set(entries.map((e) => e.kind));
 	for (const entry of entries) {
-		if (!entry.symbolName) continue;
-		if (seenCases.has(entry.symbolName)) continue;
-		seenCases.add(entry.symbolName);
-		lines.push(`    case ${JSON.stringify(entry.symbolName)}: return TSKindId.${entry.member};`);
+		const parserTypeString = entry.symbolName;
+		if (!parserTypeString) continue;
+		if (seenCases.has(parserTypeString)) continue;
+		seenCases.add(parserTypeString);
+		lines.push(`    case ${JSON.stringify(parserTypeString)}: return TSKindId.${entry.member};`);
 	}
 	lines.push('    default: throw new TypeError(`unknown kind name ${kindName}`);');
 	lines.push('  }');

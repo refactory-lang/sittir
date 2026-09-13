@@ -18,8 +18,8 @@ const SEP: RenderRule = {
 const kindEntries = [
 	{ kind: 'member_list', member: 'MemberList', id: 1 },
 	{ kind: 'member', member: 'Member', id: 2 },
-	{ kind: 'comma', member: 'Comma', id: 3, symbolName: ',', anon: true },
-	{ kind: 'semi', member: 'Semi', id: 4, symbolName: ';', anon: true }
+	{ kind: 'comma', member: 'Comma', id: 3, symbolName: ',', literalText: ',', anon: true },
+	{ kind: 'semi', member: 'Semi', id: 4, symbolName: ';', literalText: ';', anon: true }
 ];
 
 function listNodeMap(separatorRule: RenderRule | undefined) {

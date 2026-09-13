@@ -82,8 +82,7 @@ export function spliceErrorEnumStrict() {
 	return ir.statement.enum.strict({
 		visibilityModifier: ir.visibilityModifier.pub(),
 		name: id('SpliceError'),
-		// Issue L2 (docs/factory-surface-issues.md): the `{ delimiter }` option is
-		// honored in FIRST argument position only.
+		// The options object must be the first argument to a list factory.
 		body: ir.enumVariantList.strict(
 			{ delimiter: Delimiter.Trailing },
 			variantStrict('InvalidRange', [

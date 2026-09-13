@@ -1,9 +1,6 @@
 export interface VariantPlaceholder {
 	readonly __sittirPlaceholder: 'variant';
 	readonly name: string;
-	/** The enclosing variants' names, outermost first, when this one is minted
-	 * inside another variant's subtree. The minted rule composes through them
-	 * (`_except_clause_exception_as`); the arm keeps its own short name. */
 	readonly nestedUnder?: readonly string[];
 }
 
@@ -15,7 +12,6 @@ export function variant(name: string): VariantPlaceholder {
 	return { __sittirPlaceholder: 'variant' as const, name };
 }
 
-/** The name the minted rule takes: the enclosing variants' names then its own. */
 export function variantMintName(v: VariantPlaceholder): string {
 	return [...(v.nestedUnder ?? []), v.name].join('_');
 }

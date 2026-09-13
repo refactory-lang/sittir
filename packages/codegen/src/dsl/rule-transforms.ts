@@ -1,22 +1,17 @@
 import {
 	ALIAS,
 	CHOICE,
-	DEDENT,
 	FIELD,
-	INDENT,
-	NEWLINE,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
 	REPEAT1,
 	SEQ,
 	STRING,
-	SUPERTYPE,
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
-import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { withId } from './rule-attrs.ts';
 

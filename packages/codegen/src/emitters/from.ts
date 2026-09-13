@@ -319,9 +319,10 @@ function emitBranchFrom(
 		const key = JSON.stringify(f.configKey);
 		const signature = `export function ${fieldResolverName(typeName, f)}(value: T.${typeName}.LooseConfig[${key}]): T.${typeName}[${JSON.stringify(f.storageKey)}] {`;
 		if (needsNonEmptyHoist(f, nodeMap)) {
+			const storageKeyExpr = JSON.stringify(f.storageKey);
 			lines.push(
 				signature,
-				`  const resolved = ${body};`,
+				`  const resolved: readonly T.${typeName}[${storageKeyExpr}][number][] = ${body};`,
 				`  _assertNonEmpty(resolved, '${node.kind}.${f.propertyName}');`,
 				'  return resolved;',
 				'}',

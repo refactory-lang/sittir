@@ -54,7 +54,7 @@ export function warnIfNativeBinaryStale(grammar: string): void {
 	if (nodeMtime === undefined) {
 		console.warn(
 			`⚠ [${grammar}] no native binding (.node) in rust/crates/sittir-${grammar}/ — ` +
-				`\`--backend native\` will fail or fall back to TS. Build it: \`pnpm validate:native\` ` +
+				`\`--backend native\` will throw (there is no JS backend to fall back to). Build it: \`pnpm validate:native\` ` +
 				`or \`pnpm -C rust/crates/sittir-${grammar} run build\`.`
 		);
 		return;
@@ -67,8 +67,8 @@ export function warnIfNativeBinaryStale(grammar: string): void {
 		console.warn(
 			`⚠ [${grammar}] STALE NATIVE BINARY — the render module was regenerated after the last napi build ` +
 				`(newest src/render/*.rs ${new Date(renderMtime).toISOString()} > newest .node ${new Date(nodeMtime).toISOString()}). ` +
-				`The render module is compiled into the .node, so \`--backend native\` may fall back ` +
-				`to the JS backend status — these counts will NOT reflect your changes. ` +
+				`The render module is compiled into the .node, so \`--backend native\` reports counts ` +
+				`from the previously built module — these counts will NOT reflect your changes. ` +
 				`Rebuild: \`pnpm validate:native\` (regens + rebuilds + counts) or \`pnpm -C rust/crates/sittir-${grammar} run build\`. ` +
 				`[mtime heuristic — a no-op regen that only bumped timestamps can false-positive.]`
 		);

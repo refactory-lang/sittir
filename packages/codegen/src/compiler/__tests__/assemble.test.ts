@@ -24,8 +24,7 @@ import {
 	isMultiple,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword,
-	AbstractAssembledCompound
+	AssembledKeyword
 } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
@@ -990,6 +989,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				cSymbol: `anon_sym_${id}`,
 				parserName: symbolName,
 				symbolName,
+				literalText: symbolName,
 				anon: true,
 				aux: false,
 				alias: false,

@@ -9,6 +9,7 @@ import {
 } from '../validate/common.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
 import type { NodeTrivia as ReadTrivia } from '@sittir/types';
+import { sliceSpan } from '@sittir/common';
 
 export interface PrintContext {
 	readonly grammar: string;
@@ -24,6 +25,8 @@ export interface PrintContext {
 	readonly keywordKinds?: ReadonlySet<string>;
 	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
+	/** The source the read came from: the bytes a span addresses. */
+	readonly source?: string;
 }
 
 export interface NodeTrivia {
@@ -46,6 +49,7 @@ export class Printed {
 export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
+	readonly $span?: { readonly start: number; readonly end: number };
 	readonly $nodeHandle?: number;
 	readonly $_trivia?: ReadTrivia;
 }
@@ -101,7 +105,7 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
-		return reindent(value.source, depth) + triviaSuffix(triviaOf(value), ctx);
+		return reindent(value.source, depth) + triviaSuffix(triviaOf(value, ctx.source), ctx);
 	}
 	if (typeof value === 'string') return JSON.stringify(value);
 	if (typeof value === 'boolean') return String(value);
@@ -151,11 +155,19 @@ function printListOptions(options: Record<string, unknown>, ctx: PrintContext): 
 	return `{ ${parts.join(', ')} }`;
 }
 
-export function triviaOf(node: ReadNodeLike | undefined): NodeTrivia | undefined {
+/**
+ * A node's attached comments as text. A trivia entry carries its text when the
+ * reader captured one; otherwise its span addresses the bytes in `source`.
+ */
+export function triviaOf(node: ReadNodeLike | undefined, source?: string): NodeTrivia | undefined {
 	const trivia = node?.$_trivia;
 	if (!trivia) return undefined;
+	const textOf = (entry: ReadNodeLike): string | undefined => {
+		if (typeof entry.$text === 'string') return entry.$text;
+		return entry.$span !== undefined && source !== undefined ? sliceSpan(source, entry.$span) : undefined;
+	};
 	const texts = (list: readonly unknown[] | undefined): string[] =>
-		(list ?? []).map((t) => (t as ReadNodeLike).$text).filter((t): t is string => typeof t === 'string');
+		(list ?? []).map((t) => textOf(t as ReadNodeLike)).filter((t): t is string => typeof t === 'string');
 	const leading = texts(trivia.leading);
 	const trailing = texts(trivia.trailing);
 	return leading.length === 0 && trailing.length === 0 ? undefined : { leading, trailing };
@@ -195,6 +207,18 @@ function printVerbatimText(
 	return text;
 }
 
+/**
+ * The text a slot value stands for when it is text: a bare string, or a read
+ * leaf — a node with `$text`, no storage and no attached trivia — which the
+ * reader hands over as itself, coordinate included. A leaf carrying trivia
+ * keeps its node form so the trivia prints with it.
+ */
+function textLeafValue(v: unknown): string | undefined {
+	if (typeof v === 'string') return v;
+	if (!isPlainObject(v) || typeof v.$text !== 'string' || v.$other != null || v.$_trivia != null) return undefined;
+	return Object.keys(v).some((key) => key.startsWith('_')) ? undefined : v.$text;
+}
+
 function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unknown {
 	if (!isPlainObject(config)) return config;
 	const out: Record<string, unknown> = {};
@@ -206,8 +230,10 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 		const leaf = textLeafOfSlot(kind, property, ctx);
 		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
 		const storage = ctx.slotStorage?.[kind]?.[property];
-		const wrap = (v: unknown): unknown =>
-			typeof v === 'string' ? printVerbatimText(v, leaf, ctx, kinds, storage) : v;
+		const wrap = (v: unknown): unknown => {
+			const text = textLeafValue(v);
+			return text === undefined ? v : printVerbatimText(text, leaf, ctx, kinds, storage);
+		};
 		out[property] = Array.isArray(value) ? value.map(wrap) : wrap(value);
 	}
 	return out;
@@ -242,13 +268,14 @@ function wrapSeatedConfig(kind: string, config: unknown, ctx: PrintContext): unk
 }
 
 function wrapDirectArg(kind: string, value: unknown, ctx: PrintContext): unknown {
-	if (typeof value !== 'string') return value;
+	const text = textLeafValue(value);
+	if (text === undefined) return value;
 	const properties = Object.keys(ctx.slotKinds?.[kind] ?? {});
 	const property = properties.length === 1 ? properties[0] : undefined;
 	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, ctx);
 	const kinds = property === undefined ? [] : (ctx.slotKinds?.[kind]?.[property] ?? []);
 	const storage = property === undefined ? undefined : ctx.slotStorage?.[kind]?.[property];
-	return printVerbatimText(value, leaf, ctx, kinds, storage);
+	return printVerbatimText(text, leaf, ctx, kinds, storage);
 }
 
 function camelCase(kind: string): string {
@@ -259,15 +286,15 @@ export function printingFactoryMap(
 	realShapes: Record<string, FactoryShape>,
 	kindIdOfName: (kind: string) => number | undefined,
 	ctx: PrintContext
-): Record<string, (...args: unknown[]) => Printed> {
-	const map: Record<string, (...args: unknown[]) => Printed> = {};
+): Record<string, (...args: unknown[]) => Printed | string> {
+	const map: Record<string, (...args: unknown[]) => Printed | string> = {};
 	const kinds = Object.keys(realShapes);
 	for (const kind of kinds) {
 		const shape: FactoryShape = realShapes[kind]!;
 		const path = ctx.irPathOfKind(kind);
 		const id = kindIdOfName(kind) ?? kind;
 		const publicName = kind.replace(/^_+/, '');
-		const entry = (...args: unknown[]): Printed => {
+		const entry = (...args: unknown[]): Printed | string => {
 			switch (shape) {
 				case 'text': {
 					const text = String(args[0] ?? '');
@@ -275,6 +302,10 @@ export function printingFactoryMap(
 						const member = ctx.memberIdOfText?.(text);
 						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
 					}
+					// A hidden text kind has no factory on `ir` (the model's key for it
+					// names nothing emitted): it hands its text to the parent, whose
+					// slot prints it through the public text kind it declares.
+					if (kind.startsWith('_')) return text;
 					return new Printed(id, `${path}(${JSON.stringify(text)})`, kind);
 				}
 				case 'direct':
@@ -324,7 +355,7 @@ export function printingFactoryMap(
  * one `ir-render-parse` builds rather than a second derivation of it.
  */
 export function printingIrSurface(
-	map: Record<string, (...args: unknown[]) => Printed>,
+	map: Record<string, (...args: unknown[]) => Printed | string>,
 	kindIdOfName: (kind: string) => number | undefined,
 	modelTypes: Record<string, string>,
 	ctx: PrintContext
@@ -351,7 +382,7 @@ function mountPrinter(
 	parentKind: string,
 	id: number | string,
 	ctx: PrintContext
-): (...args: unknown[]) => Printed {
+): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
 		const printed = args.map((a) =>
 			printValue(
@@ -376,7 +407,7 @@ export function printFactorySource(
 	if (!(printed instanceof Printed)) {
 		throw new Error(`emit-factory-source: no factory for root kind '${rootKind}'`);
 	}
-	return printed.source + triviaSuffix(triviaOf(printed), ctx);
+	return printed.source + triviaSuffix(triviaOf(printed, ctx.source), ctx);
 }
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -389,11 +420,10 @@ import {
 	loadLanguageForGrammar,
 	loadNodeModel,
 	loadReadTreeNode,
-	materializeWrappedNodeData,
-	walkWrappedTree
+	materializeWrappedNodeData
 } from '../validate/common.ts';
-import { invoke } from '../codegen-surface.ts';
-import type { GeneratedIdTables, GeneratedKindEntry } from '../../../codegen/src/compiler/generated-metadata.ts';
+import { invoke, load } from '../codegen-surface.ts';
+import type { GeneratedIdTables, GeneratedKindEntry } from '../codegen-surface.ts';
 
 interface TypesModule {
 	readonly KIND_NAMES: ReadonlyMap<number, string>;
@@ -551,7 +581,14 @@ function catalogEntriesOf(tables: GeneratedIdTables | undefined): GeneratedKindE
 	return rows.map(([kind, value]) =>
 		typeof value === 'number'
 			? { kind, id: value }
-			: { kind, id: value.id ?? -1, symbolName: value.parser?.symbolName, anon: value.parser?.anon }
+			: {
+					kind,
+					id: value.id ?? -1,
+					symbolName: value.parser?.symbolName,
+					literalText: value.parser?.literalText,
+					literalRule: value.parser?.literalRule,
+					anon: value.parser?.anon
+				}
 	);
 }
 
@@ -564,7 +601,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 	const readTreeNode = await loadReadTreeNode(grammar);
 	if (!readTreeNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
 	const kindIdFromName = await loadKindIdFromName(grammar);
-	const handle = buildReadHandle(grammar, tree, source, 'native', kindIdFromName);
+	const handle = await buildReadHandle(grammar, tree, source, 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
 	const typesPath = TYPES_MODULE_PATHS[grammar];
 	if (!typesPath) throw new Error(`emit-factory-source: no types module for ${grammar}`);
@@ -580,7 +617,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 	const memberOf = (table: Record<number, string | number>, id: number): string | undefined =>
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
-	const { findEntryForLiteralText } = await import('../../../codegen/src/compiler/generated-metadata.ts');
+	const { findEntryForLiteralText } = await load('generatedMetadata');
 	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
@@ -600,7 +637,8 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
-		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id ?? idOfName.get(text),
+		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
+		source,
 		delimiterArmOfId: (id) => {
 			const member = memberOf(types.Delimiter, id);
 			return member === undefined ? undefined : `Delimiter.${member}`;

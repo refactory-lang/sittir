@@ -190,7 +190,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, simplifiedRule, { kindEntries }));
+					nodes.set(kind, new AssembledPattern(kind, simplifiedRule, { kindEntries, wordMatcher: wordMatcherRegex }));
 					break;
 				}
 				case 'token': {

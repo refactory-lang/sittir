@@ -173,6 +173,11 @@ export function rustTypeIdent(name: string): string {
 	return RUST_KEYWORDS.has(ident) ? `${ident}_` : ident;
 }
 
+export function rustFieldIdent(id: string): string {
+	if (RUST_KEYWORDS.has(id)) return `${id}_`;
+	return id;
+}
+
 export const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
 export function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {

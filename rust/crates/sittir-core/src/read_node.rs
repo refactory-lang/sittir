@@ -20,12 +20,17 @@
 //! - `$other`   — child entries with NO field name. Materialized leaf
 //!   children are scalarized on the wire only for anonymous/token leaves;
 //!   named leaves and branch children remain objects.
-//! - `$text`       — full source text for leaves only.
+//! - `$text`       — source text for anonymous tokens and for the kinds the
+//!   grammar models as text (`ReadModel::is_text_kind`); every other node is
+//!   addressed by its span.
 //! - `$span`       — `{start, end}` from `node.byte_range()`.
 //! - `$nodeHandle` — current node handle on the returned node; parent
-//!   handle on child stubs.
-//! - `$childIndex` — position within parent's children array on child
-//!   stubs. `None` on the returned node itself.
+//!   handle on every child of a shallow read (stubs and leaves alike), so
+//!   an untouched child is a coordinate into its tree; on a deep read only
+//!   the leaves carry one, the tree's tag, since nothing is re-read.
+//! - `$childIndex` — position within parent's children array on a shallow
+//!   read's children and a deep read's expanded children. `None` on the
+//!   returned node itself and on a deep read's leaves.
 
 use crate::types::{FieldValue, KindId, NodeData, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
@@ -48,6 +53,25 @@ pub enum ReadDepth {
     Deep,
 }
 
+/// What the reader needs to know about the grammar it is reading. The
+/// reader is otherwise grammar-agnostic; every fact here is generated from
+/// the model and stamped, never re-derived from a node's shape.
+pub trait ReadModel {
+    /// Whether a named node of this kind is captured as text: its template
+    /// renders from that text, so the text is the node's content and not a
+    /// spelling the template could rebuild.
+    fn is_text_kind(&self, kind: KindId) -> bool;
+
+    /// Whether `child` is the token that separates the `field` slot's items
+    /// on a `parent` node. Such a token is punctuation the template
+    /// re-emits, not a slot member, so the reader drops it rather than
+    /// seating it beside the items.
+    fn is_slot_separator(&self, parent: KindId, field: &str, child: KindId) -> bool {
+        let _ = (parent, field, child);
+        false
+    }
+}
+
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
 /// `NodeData`. See module docs for the shape contract.
 ///
@@ -60,6 +84,7 @@ pub enum ReadDepth {
 /// * `node_handle` — handle assigned by `ParsedTree` for the returned node.
 /// * `depth` — whether children with substructure come back as stubs
 ///   (`Shallow`) or fully expanded (`Deep`).
+/// * `model` — the grammar's read facts: which kinds are captured as text.
 ///
 /// The caller supplies the `Node` directly (obtained via
 /// `ParsedTree.nodes[handle]` + `parent.child(child_index)`), so no
@@ -70,32 +95,38 @@ pub fn read_node(
     target: Option<tree_sitter::Node>,
     node_handle: Option<u64>,
     depth: ReadDepth,
+    model: &dyn ReadModel,
 ) -> NodeData {
     match target {
-        Some(node) => read_ts_node(node, source, node_handle, depth),
+        Some(node) => read_ts_node(node, source, node_handle, node_handle, depth, model),
         None => {
-            let mut root = read_ts_node(tree.root_node(), source, node_handle, depth);
+            let mut root = read_ts_node(
+                tree.root_node(),
+                source,
+                node_handle,
+                node_handle,
+                depth,
+                model,
+            );
             widen_to_whole_source(&mut root, source);
             root
         }
     }
 }
 
-/// Stretch the root's span and captured text to cover the entire source.
+/// Stretch the root's span to cover the entire source.
 ///
-/// tree-sitter's root node starts at the first token, so a leading blank line
-/// or indentation falls outside its byte range — and for a source with no
-/// tokens at all the range collapses to the end of the file. The root stands
-/// for the whole file, and its captured text is what the untouched-subtree
-/// render replays verbatim, so anything outside that range would be dropped on
-/// the way back out. Trailing extras are already inside the root's range;
-/// only the leading side (and the token-less case) needs widening.
+/// tree-sitter's root node starts at the first token, so a leading blank
+/// line or indentation falls outside its byte range — and for a source with
+/// no tokens at all the range collapses to the end of the file. The root
+/// stands for the whole file, and its span is what the coordinate render
+/// slices, so anything outside that range would be dropped on the way back
+/// out.
 fn widen_to_whole_source(root: &mut NodeData, source: &str) {
     root.span = Some(Span {
         start: 0,
         end: source.len() as u32,
     });
-    root.text = Some(source.to_string());
 }
 
 /// The `$type` every read stamps: tree-sitter's pre-alias GRAMMAR symbol —
@@ -105,17 +136,26 @@ fn widen_to_whole_source(root: &mut NodeData, source: &str) {
 /// The alias/display symbol is presentation: a role the node plays at its
 /// position, which the position (the consuming slot) already encodes —
 /// acceptance sets and slot keying carry the source ids so no consumer
-/// needs the display symbol as identity.
+/// needs the display symbol as identity — a transport accepts every
+/// identity the parser can show as one of its members, the display kind
+/// of an anonymous token included.
 fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
     KindId(node.grammar_id())
 }
 
 /// Read core — converts a tree-sitter `Node` into `NodeData`.
+///
+/// `tree_handle` is any handle this tree minted — the tag a trivia entry's
+/// coordinate carries, since a comment is never addressed on its own and so
+/// never gets a handle of its own. `node_handle` is this node's own handle
+/// when it has one.
 fn read_ts_node(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u64>,
+    tree_handle: Option<u64>,
     depth: ReadDepth,
+    model: &dyn ReadModel,
 ) -> NodeData {
     // Phase B-inverse: numeric ids directly instead of the string kind()
     // so NodeData.type_: KindId flows end-to-end without a heap-allocated
@@ -130,7 +170,8 @@ fn read_ts_node(
         end: byte_range.end as u32,
     };
 
-    let (fields, children, slot_order) = read_children(node, source, node_handle, depth);
+    let (fields, children, slot_order) =
+        read_children(node, source, node_handle, tree_handle, depth, model);
 
     // Leaf heuristic: no named fields AND no (named) children. The
     // tree-sitter convention is that purely-anonymous terminals are
@@ -140,12 +181,11 @@ fn read_ts_node(
         && children
             .as_ref()
             .is_none_or(|cs| cs.iter().all(|c| !c.named));
-    // Always capture the verbatim source span so text-template nodes
-    // (e.g. `raw_string_literal`) can render `{{ text }}` correctly even
-    // when they have named-field children that would otherwise suppress
-    // the leaf heuristic.  For structural nodes the extra `$text` is
-    // unused but harmless.
-    let text = source.get(byte_range.clone()).map(|s| s.to_string());
+    let text = if carries_text(&node, model) {
+        source.get(byte_range.clone()).map(|s| s.to_string())
+    } else {
+        None
+    };
 
     // On leaves, drop the (possibly empty) `$other` entirely — the
     // shape gate in `tests/read_node.rs` enforces that leaves don't carry `$other`
@@ -163,7 +203,7 @@ fn read_ts_node(
         span: Some(span),
         node_handle,
         child_index: None,
-        trivia_data: compute_trivia(node, source),
+        trivia_data: compute_trivia(node, source, tree_handle, model),
         slot_order,
     }
 }
@@ -198,7 +238,15 @@ fn read_ts_node(
 /// `read_ts_node`, not shallow stubs) since they are not independently
 /// addressable through the normal `_<slot>`/`$other` handle+child-index
 /// navigation -- nothing would ever drill in to hydrate a stub left here.
-fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivia> {
+/// Each entry still carries a coordinate — the tree's tag in `$nodeHandle`
+/// and its own `$span` — so an untouched comment renders as the bytes it
+/// spans, whatever its kind's transport would otherwise need.
+fn compute_trivia(
+    node: tree_sitter::Node<'_>,
+    source: &str,
+    tree_handle: Option<u64>,
+    model: &dyn ReadModel,
+) -> Option<NodeTrivia> {
     // An extra never carries its own trivia -- it IS trivia.
     if node.is_extra() {
         return None;
@@ -208,7 +256,14 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
     let mut cursor = node.prev_sibling();
     while let Some(sib) = cursor {
         if sib.is_extra() {
-            leading.push(read_ts_node(sib, source, None, ReadDepth::Deep));
+            leading.push(read_ts_node(
+                sib,
+                source,
+                tree_handle,
+                tree_handle,
+                ReadDepth::Deep,
+                model,
+            ));
             cursor = sib.prev_sibling();
         } else if sib.is_named() {
             break;
@@ -223,7 +278,14 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
     let mut cursor = node.next_sibling();
     while let Some(sib) = cursor {
         if sib.is_extra() {
-            trailing.push(read_ts_node(sib, source, None, ReadDepth::Deep));
+            trailing.push(read_ts_node(
+                sib,
+                source,
+                tree_handle,
+                tree_handle,
+                ReadDepth::Deep,
+                model,
+            ));
             cursor = sib.next_sibling();
         } else if sib.is_named() {
             is_last_named = false;
@@ -240,8 +302,16 @@ fn compute_trivia(node: tree_sitter::Node<'_>, source: &str) -> Option<NodeTrivi
         None
     } else {
         Some(NodeTrivia {
-            leading: if leading.is_empty() { None } else { Some(leading) },
-            trailing: if trailing.is_empty() { None } else { Some(trailing) },
+            leading: if leading.is_empty() {
+                None
+            } else {
+                Some(leading)
+            },
+            trailing: if trailing.is_empty() {
+                None
+            } else {
+                Some(trailing)
+            },
         })
     }
 }
@@ -268,7 +338,9 @@ fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u64>,
+    tree_handle: Option<u64>,
     depth: ReadDepth,
+    model: &dyn ReadModel,
 ) -> (
     Option<IndexMap<String, FieldValue>>,
     Option<Vec<NodeData>>,
@@ -277,6 +349,7 @@ fn read_children(
     let mut fields_acc: IndexMap<String, Vec<NodeData>> = IndexMap::new();
     let mut children_acc: Vec<NodeData> = Vec::new();
     let mut slot_order_acc: Vec<String> = Vec::new();
+    let parent_kind = stamped_kind(&node);
 
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
@@ -288,14 +361,33 @@ fn read_children(
             continue;
         }
         let field_name = node.field_name_for_child(i).map(|s| s.to_string());
+        // A separator is always an anonymous literal token; a named child
+        // that shares its kind id is still a member.
+        if let Some(name) = field_name.as_deref() {
+            if !child.is_named() && model.is_slot_separator(parent_kind, name, stamped_kind(&child))
+            {
+                continue;
+            }
+        }
         let data = if child.child_count() == 0 {
-            read_materialized_leaf(child, source)
+            // A leaf keeps a coordinate at either depth. Under a shallow read
+            // it is a child like any stub — the parent's handle and its index,
+            // which the wrap layer may re-read. Under a deep read nothing is
+            // re-read, so it carries the tree's tag and no index, as a trivia
+            // entry does: enough to fold and slice, never a stub's shape.
+            let (handle, child_index) = match depth {
+                ReadDepth::Shallow => (node_handle, Some(i as u16)),
+                ReadDepth::Deep => (tree_handle, None),
+            };
+            read_materialized_leaf(child, source, model, handle, child_index)
         } else {
             match depth {
-                ReadDepth::Shallow => read_child_stub(child, source, node_handle, i as u16),
+                ReadDepth::Shallow => {
+                    read_child_stub(child, source, node_handle, i as u16, model)
+                }
                 ReadDepth::Deep => NodeData {
                     child_index: Some(i as u16),
-                    ..read_ts_node(child, source, None, ReadDepth::Deep)
+                    ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep, model)
                 },
             }
         };
@@ -350,11 +442,34 @@ fn read_children(
     (fields, children, slot_order)
 }
 
+/// Whether a node's bytes are its content. Text is content for anonymous
+/// tokens and for the kinds whose template renders from it; every other
+/// node is addressed by its span. A node has two identities the model may
+/// know: the production that parsed it (`stamped_kind`) and the kind it is
+/// shown as (`kind_id`, the alias target) — `print` used as an identifier
+/// parses as its own symbol and is shown as `identifier`, and it is the
+/// identifier's transport that takes the text.
+fn carries_text(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
+    !node.is_named()
+        || model.is_text_kind(stamped_kind(node))
+        || model.is_text_kind(KindId(node.kind_id()))
+}
+
+/// The text a child carries: its bytes when `carries_text`, nothing otherwise.
+fn child_text(child: tree_sitter::Node<'_>, source: &str, model: &dyn ReadModel) -> Option<String> {
+    if carries_text(&child, model) {
+        source.get(child.byte_range()).map(|s| s.to_string())
+    } else {
+        None
+    }
+}
+
 fn read_child_stub(
     child: tree_sitter::Node<'_>,
     source: &str,
     parent_handle: Option<u64>,
     child_index: u16,
+    model: &dyn ReadModel,
 ) -> NodeData {
     let byte_range = child.byte_range();
     NodeData {
@@ -363,7 +478,7 @@ fn read_child_stub(
         named: child.is_named(),
         fields: None,
         children: None,
-        text: source.get(byte_range.clone()).map(|s| s.to_string()),
+        text: child_text(child, source, model),
         span: Some(Span {
             start: byte_range.start as u32,
             end: byte_range.end as u32,
@@ -375,7 +490,13 @@ fn read_child_stub(
     }
 }
 
-fn read_materialized_leaf(child: tree_sitter::Node<'_>, source: &str) -> NodeData {
+fn read_materialized_leaf(
+    child: tree_sitter::Node<'_>,
+    source: &str,
+    model: &dyn ReadModel,
+    handle: Option<u64>,
+    child_index: Option<u16>,
+) -> NodeData {
     let byte_range = child.byte_range();
     NodeData {
         type_: stamped_kind(&child),
@@ -383,13 +504,13 @@ fn read_materialized_leaf(child: tree_sitter::Node<'_>, source: &str) -> NodeDat
         named: child.is_named(),
         fields: None,
         children: None,
-        text: source.get(byte_range.clone()).map(|s| s.to_string()),
+        text: child_text(child, source, model),
         span: Some(Span {
             start: byte_range.start as u32,
             end: byte_range.end as u32,
         }),
-        node_handle: None,
-        child_index: None,
+        node_handle: handle,
+        child_index,
         trivia_data: None,
         slot_order: None,
     }

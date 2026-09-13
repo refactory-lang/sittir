@@ -13,7 +13,7 @@ import { FromEmitter } from './from.ts';
 import { WrapEmitter } from './wrap.ts';
 import { emitTypes } from './types.ts';
 import { emitConsts } from './consts.ts';
-import { emitOptions, renderOptionsModule } from './options.ts';
+import { addressTablesFor, emitOptions, renderOptionsModule } from './options.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
@@ -107,7 +107,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const resolvedRules = rulesConfig
 		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
 		: undefined;
-	const spacedRules = resolvedRules?.spaced;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
@@ -142,7 +141,11 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries && renderRules
 			? collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock })
 			: undefined;
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
+	const addressTables =
+		kindEntries && renderRules && sitePreferences
+			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
+			: undefined;
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
@@ -152,7 +155,10 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					generatedIdTables,
 					renderRules,
 					options: optionsBlock,
-					visibleExternals
+					visibleExternals,
+					kindEntries,
+					sites: sitePreferences,
+					addresses: addressTables
 				})
 			: undefined;
 
@@ -169,7 +175,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences }) : renderOptionsModule();
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule();
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });

@@ -143,9 +143,7 @@ describe('post-evaluate invariant', () => {
 				// visibleExternals: — externals auto-aliased visible with a
 				// fixed render body (drainVisibleExternalsMetadata).
 				'visibleExternals',
-				// Spacing phantom declarations from `patches:` — drained from
-				// __wireContext__ by drainSpacingPreferencesMetadata.
-						// The `options:` block, carried unread — resolved against the
+				// The `options:` block, carried unread — resolved against the
 				// site universe in seamRenderRules, which is the first place
 				// the sites an address names exist.
 				'options',

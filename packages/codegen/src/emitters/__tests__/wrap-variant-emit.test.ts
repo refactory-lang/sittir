@@ -101,11 +101,10 @@ function makeTransparentHiddenSupertypeNodeMap() {
 }
 
 describe('wrap emitter — polymorph variant stamping', () => {
-	it('limits named-slot filtering to separator-carrying verbatim slots', () => {
-		expect(wrapEmitterSource).toContain(
-			'const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);'
-		);
-		expect(wrapEmitterSource).toContain("storageInfo.kind === 'verbatim' && hasSeparatorMetadata");
+	it('drops a many slot\u2019s field-tagged separator by id regardless of storage kind', () => {
+		expect(wrapEmitterSource).toContain('separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),');
+		expect(wrapEmitterSource).not.toContain("storageInfo.kind === 'verbatim' && hasSeparatorMetadata");
+		expect(wrapEmitterSource).toContain('function dropWireDelimiters<T>(');
 	});
 
 	it('routes unnamed children through the shared slot resolver entrypoint', () => {

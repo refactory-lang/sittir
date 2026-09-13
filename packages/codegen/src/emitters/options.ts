@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { admitsDepth, type RenderRules } from '../compiler/model/render-rules.ts';
-import { findEntryForKindName, type KindEntryLike } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, type KindEntryLike } from '../compiler/generated-metadata.ts';
 import { supertypeMembersByPublicName, type SupertypeMembers } from '../compiler/model/supertype-members.ts';
 import {
 	collectSitePreferences,
@@ -10,8 +10,8 @@ import {
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-arms.ts';
-import { addressSegments, addressSites, matchAddress } from '../compiler/model/site-addresses.ts';
-import { parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { addressSegments, addressSites, matchAddress, type AddressedSite } from '../compiler/model/site-addresses.ts';
+import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
 
 export { publicKindName } from '../compiler/model/site-preferences.ts';
@@ -33,12 +33,15 @@ function unionOf(parts: Iterable<string>): string {
 
 export interface AddressBranchEntry {
 	readonly path: string;
-	readonly keys: readonly string[];
+	readonly segments: readonly PreferenceSegment[];
+	readonly children: readonly string[];
 }
 
 export interface AddressLeafEntry {
 	readonly path: string;
 	readonly type: string;
+	readonly canonical: readonly (readonly PreferenceSegment[])[];
+	readonly segments: readonly PreferenceSegment[];
 }
 
 export interface AddressTables {
@@ -50,10 +53,13 @@ export interface AddressTables {
 
 export const EMPTY_ADDRESSES: AddressTables = { roots: [], branches: [], leaves: [], depth: 0 };
 
-function nestedKey(segment: PreferenceSegment): string {
+export function nestedKey(segment: PreferenceSegment, kindEntries: readonly KindEntryLike[]): string {
 	switch (segment.kind) {
-		case 'literal':
-			return segment.text;
+		case 'literal': {
+			const entry = findEntryForLiteralText(kindEntries, segment.text);
+			if (entry === undefined) throw new Error(`options: literal ${JSON.stringify(segment.text)} has no kind name`);
+			return entry.kind;
+		}
 		case 'index':
 			return String(segment.value);
 		case 'wildcard':
@@ -71,15 +77,24 @@ export function deriveAddressTables(
 	declared?: OptionsDeclarations
 ): AddressTables {
 	const branches = new Map<string, Set<string>>();
-	const leaves = new Map<string, string>();
+	const branchSegments = new Map<string, readonly PreferenceSegment[]>();
+	const leaves = new Map<string, { type: string; canonical: (readonly PreferenceSegment[])[]; segments: readonly PreferenceSegment[] }>();
 	const roots = new Set<string>();
 	let depth = 0;
+	const assertSameSegments = (path: string, segments: readonly PreferenceSegment[]): void => {
+		const prior = branchSegments.get(path) ?? leaves.get(path)?.segments;
+		if (prior !== undefined && formatPreferencePath(prior) !== formatPreferencePath(segments)) {
+			throw new Error(`options: address '${path}' names two segments`);
+		}
+	};
 	for (const site of addressSites(sites, kindEntries)) {
-		const keys = site.path.map(nestedKey);
+		const keys = site.path.map((segment) => nestedKey(segment, kindEntries));
 		depth = Math.max(depth, keys.length);
 		roots.add(keys[0]!);
 		for (let i = 0; i < keys.length - 1; i++) {
 			const path = keys.slice(0, i + 1).join('/');
+			assertSameSegments(path, site.path.slice(0, i + 1));
+			branchSegments.set(path, site.path.slice(0, i + 1));
 			const children = branches.get(path) ?? new Set<string>();
 			children.add(keys[i + 1]!);
 			branches.set(path, children);
@@ -87,30 +102,39 @@ export function deriveAddressTables(
 		const type = site.arms.map(armType).join(' | ');
 		const path = keys.join('/');
 		const prior = leaves.get(path);
-		if (prior !== undefined && prior !== type) throw new Error(`options: address '${path}' resolves to two types`);
-		leaves.set(path, type);
+		if (prior !== undefined && prior.type !== type) throw new Error(`options: address '${path}' resolves to two types`);
+		assertSameSegments(path, site.path);
+		leaves.set(path, { type, canonical: [site.path], segments: site.path });
 	}
 	if (declared !== undefined) {
 		const addressed = addressSites(sites, kindEntries);
-		const reached = new Map<string, SitePreference[]>();
+		const reached = new Map<string, AddressedSite<SitePreference>[]>();
 		for (const binding of declared.bindings) {
 			const hits = matchAddress(addressSegments(binding.address), addressed, membersOf);
-			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...(hits as unknown as SitePreference[])]);
+			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...hits]);
 		}
 		for (const declaration of declared.declarations) {
 			if (matchAddress(addressSegments(declaration.path), addressed, membersOf).length > 0) continue;
 			const bound = reached.get(declaration.path) ?? [];
 			if (bound.length === 0) continue;
-			const keys = parsePreferencePath(declaration.path).map(nestedKey);
+			const declaredSegments = parsePreferencePath(declaration.path);
+			const keys = declaredSegments.map((segment) => nestedKey(segment, kindEntries));
 			depth = Math.max(depth, keys.length);
 			roots.add(keys[0]!);
 			for (let i = 0; i < keys.length - 1; i++) {
 				const at = keys.slice(0, i + 1).join('/');
+				assertSameSegments(at, declaredSegments.slice(0, i + 1));
+				branchSegments.set(at, declaredSegments.slice(0, i + 1));
 				const children = branches.get(at) ?? new Set<string>();
 				children.add(keys[i + 1]!);
 				branches.set(at, children);
 			}
-			leaves.set(keys.join('/'), unionOf(bound.map((site) => site.arms.map(armType).join(' | '))));
+			assertSameSegments(keys.join('/'), declaredSegments);
+			leaves.set(keys.join('/'), {
+				type: unionOf(bound.map((site) => site.arms.map(armType).join(' | '))),
+				canonical: bound.map((site) => site.path),
+				segments: declaredSegments
+			});
 		}
 	}
 
@@ -120,8 +144,8 @@ export function deriveAddressTables(
 	const byPath = <T extends { readonly path: string }>(a: T, b: T): number => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 	return {
 		roots: [...roots].sort(),
-		branches: [...branches].map(([path, keys]) => ({ path, keys: [...keys].sort() })).sort(byPath),
-		leaves: [...leaves].map(([path, type]) => ({ path, type })).sort(byPath),
+		branches: [...branches].map(([path, children]) => ({ path, segments: branchSegments.get(path)!, children: [...children].sort() })).sort(byPath),
+		leaves: [...leaves].map(([path, { type, canonical, segments }]) => ({ path, type, canonical, segments })).sort(byPath),
 		depth
 	};
 }
@@ -162,7 +186,7 @@ function addressLines(addresses: AddressTables, alias: (type: string) => string)
 	L.push(`export type AddressRoot = ${union(addresses.roots)};`, '');
 	L.push('/// Every address that has something beneath it, and what that is.');
 	L.push('export interface AddressBranch {');
-	for (const branch of addresses.branches) L.push(`\treadonly ${propertyName(branch.path)}: ${union(branch.keys)};`);
+	for (const branch of addresses.branches) L.push(`\treadonly ${propertyName(branch.path)}: ${union(branch.children)};`);
 	L.push('}', '');
 	L.push('/// Every address that names a site, and what that site admits.');
 	L.push('export interface AddressLeaf {');
@@ -189,12 +213,24 @@ function addressLines(addresses: AddressTables, alias: (type: string) => string)
 	return L;
 }
 
+export function addressTablesFor(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
+	sites: readonly SitePreference[],
+	optionsBlock?: OptionsConfig
+): AddressTables {
+	const declared =
+		optionsBlock === undefined ? undefined : readOptionsBlock(optionsBlock, new Set([...nodeMap.nodes.keys()].map(publicKindName)));
+	return deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries), supertypeMembersByPublicName(nodeMap), declared);
+}
+
 export interface EmitOptionsConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly renderRules: RenderRules;
 	readonly options?: OptionsConfig;
 	readonly sites?: readonly SitePreference[];
+	readonly addresses?: AddressTables;
 }
 
 export function emitOptions(config: EmitOptionsConfig): string {
@@ -206,15 +242,10 @@ export function emitOptions(config: EmitOptionsConfig): string {
 			renderRules: config.renderRules,
 			options: config.options
 		});
-	const supertypeMembers = supertypeMembersByPublicName(config.nodeMap);
 	const armType = kindIdArmType(config.kindEntries);
 	const typeOf = (arms: readonly string[]): string => arms.map((arm) => armType({ value: arm, kind: arm })).join(' | ');
 	const spacingType = typeOf(spacingArmsOf(config.nodeMap));
 	const whitespaceType = sites.some((s) => admitsDepth({ arms: s.arms.map((arm) => arm.value) })) ? typeOf(whitespaceArmsOf(config.nodeMap)) : undefined;
-	const declared =
-		config.options === undefined
-			? undefined
-			: readOptionsBlock(config.options, new Set([...config.nodeMap.nodes.keys()].map(publicKindName)));
-	const addresses = deriveAddressTables(sites, config.kindEntries, armType, supertypeMembers, declared);
+	const addresses = config.addresses ?? addressTablesFor(config.nodeMap, config.kindEntries, sites, config.options);
 	return renderOptionsModule({ spacingType, whitespaceType, addresses });
 }

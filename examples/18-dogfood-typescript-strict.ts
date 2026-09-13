@@ -24,12 +24,12 @@ import { ir, TSKindId } from '@sittir/typescript';
 //     fragment (`ir.string.single.strict({ elements: [fragment] })`), where
 //     the coercer takes the quoted text whole.
 //   - A determined slot takes the stamped enum member on the strict surface
-//     (`TSKindId.AnonType`), where the coercer takes its text (`'type'`).
-//   - An ALIAS form yields its own kind rather than the parent's:
-//     `ir.importStatement.clauseFrom.strict(…)` builds the arm, and the caller seats
-//     it in `import_statement`'s `fromClause`. Rendered alone it carries
-//     neither the `import` keyword nor the terminator, because those belong to
-//     the parent's template.
+//     (`TSKindId.TypeKeyword`), where the coercer takes its text (`'type'`).
+//   - A hoisted arm is reached through its parent's sub-factory, which builds
+//     the PARENT: `ir.importStatement.clauseFrom.strict(…)` takes the import
+//     statement's own config. The arm's `importClause` key is also the
+//     statement's, so the arm's config sits whole under the `fromClause`
+//     slot instead of being merged into the statement's keys.
 // Open issues on this surface: docs/factory-surface-issues.md
 
 const id = (text: string) => ir.identifier.identifier(text);
@@ -37,9 +37,9 @@ const ann = (type: string) => ir.typeAnnotation.strict(id(type));
 
 /** `import type { FormatRecord, FormatTrivia } from '@sittir/types';` */
 export function importTypesStrict() {
-	return ir.importStatement.strict({
-		importClause: TSKindId.AnonType,
-		fromClause: ir.importStatement.clauseFrom.strict({
+	return ir.importStatement.clauseFrom.strict({
+		importClause: TSKindId.TypeKeyword,
+		fromClause: {
 			importClause: ir.importClause.namedImports(
 				ir.namedImports.strict(
 					ir.importSpecifier({ content: 'FormatRecord' }),
@@ -47,7 +47,7 @@ export function importTypesStrict() {
 				)
 			),
 			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
-		}),
+		},
 		terminator: ';',
 	});
 }

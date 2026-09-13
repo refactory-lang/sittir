@@ -14,9 +14,9 @@ import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { enumArmsOf, resolveFieldStorageInfo, kindEnumTextIdPairs } from '../shared.ts';
 
 const kindEntries = [
-	{ id: 1, kind: 'u8', symbolName: 'anon_sym_u8', anon: false },
-	{ id: 2, kind: 'bool', symbolName: 'anon_sym_bool', anon: false },
-	{ id: 3, kind: 'self', symbolName: 'anon_sym_self', anon: false }
+	{ id: 1, kind: 'u8', symbolName: 'primitive_type', literalText: 'u8', anon: true },
+	{ id: 2, kind: 'bool', symbolName: 'primitive_type', literalText: 'bool', anon: true },
+	{ id: 3, kind: 'self', symbolName: 'self', literalText: 'self', anon: false, literalRule: true }
 ];
 
 // token_tree: seq(field('tokens', repeat($._token))); _token is a supertype over

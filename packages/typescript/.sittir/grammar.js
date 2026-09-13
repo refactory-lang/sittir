@@ -89,6 +89,7 @@ function matchesEmpty(rule) {
   const members = rule.members ?? [];
   if (isChoiceType(t)) return members.some(matchesEmpty);
   if (isSeqType(t)) return members.every(matchesEmpty);
+  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
   return false;
 }
 
@@ -3570,17 +3571,17 @@ function fieldEnumSiteKey(parentKind, fieldName) {
 function collectConflictingFieldEnumSites(occurrences) {
   const memberKeysBySite = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    const siteKey2 = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
-    let keys = memberKeysBySite.get(siteKey2);
+    const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+    let keys = memberKeysBySite.get(siteKey);
     if (!keys) {
       keys = /* @__PURE__ */ new Set();
-      memberKeysBySite.set(siteKey2, keys);
+      memberKeysBySite.set(siteKey, keys);
     }
     keys.add(occ.memberKey);
   }
   const conflicting = /* @__PURE__ */ new Set();
-  for (const [siteKey2, keys] of memberKeysBySite) {
-    if (keys.size > 1) conflicting.add(siteKey2);
+  for (const [siteKey, keys] of memberKeysBySite) {
+    if (keys.size > 1) conflicting.add(siteKey);
   }
   return conflicting;
 }
@@ -5181,15 +5182,15 @@ var grammar_sittir_default = grammar(
           '"&"/after': preference("space"),
           "operator:/before": preference("space"),
           "operator:/after": preference("space"),
-          "from:/after": preference("space"),
-          "if:/after": preference("space"),
-          "while:/after": preference("space"),
-          "for:/after": preference("space"),
-          "return:/before": preference("space"),
-          "return:/after": preference("space"),
-          "switch:/after": preference("space"),
-          "catch:/after": preference("space"),
-          "var:/after": preference("space"),
+          '"from"/after': preference("space"),
+          '"if"/after': preference("space"),
+          '"while"/after': preference("space"),
+          '"for"/after': preference("space"),
+          '"return"/before': preference("space"),
+          '"return"/after': preference("space"),
+          '"switch"/after': preference("space"),
+          '"catch"/after': preference("space"),
+          '"var"/after': preference("space"),
           "kind:/after": preference("space")
         },
         object_type_content: {
@@ -5216,7 +5217,9 @@ var grammar_sittir_default = grammar(
         object: { '"{"/after': preference("space"), '"}"/before': preference("space") },
         object_pattern: { '"{"/after': preference("space"), '"}"/before': preference("space") },
         ternary_expression: { '":"/before': preference("space") },
-        for_statement: { '"("/before': preference("space") },
+        for_statement: { '"("/before': preference("space"), '";"/after': preference("space") },
+        lexical_declaration: { after: preference("space") },
+        variable_declaration: { after: preference("space") },
         required_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
         optional_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
         _bindings: {

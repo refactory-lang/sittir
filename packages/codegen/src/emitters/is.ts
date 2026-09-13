@@ -331,7 +331,7 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push("    if (typeof v === 'number') return false;");
 	lines.push('    const o = v as Record<string, unknown>;');
 	lines.push(`    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));`);
-	lines.push(`    return hasFields || typeof o['$text'] === 'string';`);
+	lines.push(`    return hasFields || typeof o['$text'] === 'string' || typeof o['$nodeHandle'] === 'number';`);
 	lines.push('}');
 	lines.push('');
 
