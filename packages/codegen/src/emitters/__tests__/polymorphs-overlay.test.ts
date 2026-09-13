@@ -7,7 +7,6 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
-import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar covering the sub-factory shapes exercised here:
@@ -115,30 +114,37 @@ function polymorphNodeMap(): NodeMap {
 
 function ambiguousNodeMap(): NodeMap {
 	return buildNodeMap({
-		grandparent_b: {
+		grandparent_c: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'parent_x' },
-				{ type: SYMBOL, name: 'parent_y' }
+				{ type: SYMBOL, name: 'parent_c' },
+				{ type: SYMBOL, name: 'leaf_c' }
 			]
 		},
-		parent_x: {
+		parent_c: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'shared_leaf' },
-				{ type: SYMBOL, name: 'other_x' }
+				{ type: SYMBOL, name: 'twin_a' },
+				{ type: SYMBOL, name: 'twin_b' }
 			]
 		},
-		parent_y: {
+		twin_a: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'shared_leaf' },
-				{ type: SYMBOL, name: 'other_y' }
+				{ type: SYMBOL, name: 'twin' },
+				{ type: SYMBOL, name: 'leaf_c' }
 			]
 		},
-		shared_leaf: { type: PATTERN, value: '[a-z]+' },
-		other_x: { type: PATTERN, value: '[0-9]+' },
-		other_y: { type: PATTERN, value: '[0-9]+' }
+		twin_b: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'twin' },
+				{ type: SYMBOL, name: 'other_c' }
+			]
+		},
+		twin: { type: PATTERN, value: '[a-z]+' },
+		leaf_c: { type: PATTERN, value: '[0-9]+' },
+		other_c: { type: PATTERN, value: '[A-Z]+' }
 	});
 }
 
@@ -186,7 +192,7 @@ describe('emitPolymorphsOverlay', () => {
 		emitPolymorphsOverlay({ nodeMap });
 
 		expect(warn).toHaveBeenCalledWith(
-			'[codegen] grandparent_b: sub-factory sharedLeaf skipped (ambiguous): parent_x.sharedLeaf, parent_y.sharedLeaf'
+			'[codegen] grandparent_c: sub-factory twin skipped (ambiguous): parent_c.twinATwin, parent_c.twinBTwin'
 		);
 	});
 });

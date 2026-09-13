@@ -2989,7 +2989,7 @@ export function buildYieldExpression(value?: T.Expression): T.YieldExpression.Bu
 export function buildCallExpression(config: T.CallExpression.Config): T.CallExpression.Built {
 	const _function = coerceMixedEnumStorage<NonNullable<T.CallExpression['_function']>>(config.function, [
 		['self', TSKindId.Self] as const,
-		['( )', TSKindId.UnitExpression] as const
+		['()', TSKindId.UnitExpression] as const
 	]);
 	const _arguments = config.arguments;
 	return withMethods(

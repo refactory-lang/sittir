@@ -11,6 +11,7 @@ const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
 const str = (value: string): RenderRule => ({ type: 'STRING', value, nonterminal: false }) as unknown as RenderRule;
 const seq = (...members: RenderRule[]): RenderRule => ({ type: 'SEQ', members, nonterminal: true }) as unknown as RenderRule;
+const choice = (...members: RenderRule[]): RenderRule => ({ type: 'CHOICE', members, nonterminal: true }) as unknown as RenderRule;
 
 const kindEntries = [
 	{ kind: 'comma', anon: true, symbolName: ',', literalText: ',', member: 'Comma', id: 5 },
@@ -18,6 +19,7 @@ const kindEntries = [
 	{ kind: 'rparen', anon: true, symbolName: ')', literalText: ')', member: 'Rparen', id: 8 },
 	{ kind: 'lbrace', anon: true, symbolName: '{', literalText: '{', member: 'Lbrace', id: 9 },
 	{ kind: 'fn', anon: true, symbolName: 'fn', literalText: 'fn', member: 'Fn', id: 10 },
+	{ kind: 'semi', anon: true, symbolName: ';', literalText: ';', member: 'Semi', id: 11 },
 	{ kind: 'tight', member: 'Tight', id: 90 },
 	{ kind: 'space', member: 'Space', id: 91 },
 	{ kind: 'newline', member: 'Newline', id: 92 },
@@ -326,6 +328,21 @@ describe('seamRenderRules', () => {
 			'linked.operator @operator_before',
 			'linked.operator @operator_after'
 		]);
+	});
+
+	it('seats a token seam inside the choice arm that ends with the token, and leaves a choice that is one site alone', () => {
+		// `for (init; cond)`: only the expression arm of the initializer ends in `;`,
+		// so `semi_after` lives in that arm; the other arms meet `cond` bare.
+		const initializer = choice(sym('decl', { fieldName: 'initializer' }), seq(sym('expr', { fieldName: 'initializer' }), str(';')), sym('empty', { fieldName: 'initializer' }));
+		const { out, config } = seamed({ loop: seq(str('('), initializer, sym('cond'), str(')')) });
+		const arms = membersOf(membersOf(out.rules.loop!)[2]!);
+		const armShape = (arm: RenderRule): string[] | string => ((arm as { members?: unknown }).members === undefined ? (arm as { name: string }).name : memberNames(arm));
+		expect(arms.map(armShape)).toEqual(['decl', ['expr', 'S(semi_before)', ';', 'S(semi_after)'], 'empty']);
+		expect(spacingSitesOf(out, config.nodeMap).map((s) => s.address)).toContain('semi_after');
+		// A choice of literals is one seam site named by the slot, not per arm.
+		const opener = choice(str('{'), str('('));
+		const one = seamed({ block: seq(sym('head'), { ...opener, fieldName: 'opening' } as RenderRule, sym('body')) });
+		expect(spacingSitesOf(one.out, one.config.nodeMap).map((s) => s.address)).toEqual(['opening_before', 'opening_after']);
 	});
 
 	it('puts a seam inside a nested group whose edge member is a token, so an optional clause carries its opener seam', () => {

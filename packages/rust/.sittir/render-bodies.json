@@ -3812,6 +3812,9 @@
 			"text": "<"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "seam",
 			"field": "lt_after"
 		},
@@ -4278,6 +4281,9 @@
 			"text": "::"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "seam",
 			"field": "colon_colon_after"
 		},
@@ -4306,6 +4312,9 @@
 		{
 			"kind": "text",
 			"text": "::"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -4354,6 +4363,9 @@
 		{
 			"kind": "text",
 			"text": "::"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -5109,6 +5121,9 @@
 			"text": "!"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "seam",
 			"field": "bang_after"
 		},
@@ -5137,6 +5152,9 @@
 		{
 			"kind": "text",
 			"text": "=>"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -6050,6 +6068,9 @@
 		{
 			"kind": "text",
 			"text": "::"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

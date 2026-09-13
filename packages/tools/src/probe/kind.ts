@@ -83,7 +83,7 @@ import {
 	loadWebTreeSitter,
 	treeHandle,
 	adaptNode,
-	nativeTreeHandle,
+	loadNativeEngine,
 	materializeWrappedNodeData,
 	loadReadTreeNode,
 	walkNativeForKind,
@@ -107,7 +107,8 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
-import { stripStructuralNodeText } from '@sittir/common';
+import { stripStructuralProvenance, toTransportData } from '@sittir/common';
+import type { SittirEngine } from '@sittir/common/engine';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -568,11 +569,11 @@ export async function probe(
 	// inside that engine. Wasm parser above is kept only so the
 	// (informational) `cst` dump is comparable across paths.
 	let nodeData: unknown;
-	let nativeEngine: NativeProbeEngine | undefined;
+	let nativeEngine: SittirEngine | undefined;
 	if (opts.engine === 'native' && !opts.noWrap) {
 		nativeEngine = await loadNativeEngine(grammar);
 		const readTreeNodeFn = await loadReadTreeNode(grammar);
-		const handle = nativeTreeHandle(nativeEngine, source);
+		const handle = nativeEngine.diagnostics.parseAndRead(source).tree;
 		if (isRoot) {
 			nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.();
 		} else {
@@ -654,9 +655,7 @@ export async function probe(
 	let wrapDiag: ProbeWrapDiag | undefined;
 	if (!opts.noRender) {
 		if (opts.engine === 'native') {
-			rendered = nativeEngine
-				? nativeEngine.render(await nativeRenderPayload(grammar, nodeData))
-				: await renderNodeDataNative(grammar, nodeData);
+			rendered = await renderNodeDataNative(grammar, nodeData);
 		} else {
 			rendered = await renderNodeData(grammar, nodeData);
 		}
@@ -905,7 +904,7 @@ export function materializeProbeWrappedNodeData(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
-	return stripStructuralNodeText(materializeWrappedNodeData(root, onAccessorThrow));
+	return stripStructuralProvenance(materializeWrappedNodeData(root, onAccessorThrow));
 }
 
 export function resolveNativeTraceNodeData(
@@ -931,10 +930,10 @@ async function readProbeNodeData(
 	if (engine === 'native') {
 		const nativeEngine = await loadNativeEngine(grammar);
 		const readTreeNodeFn = await loadReadTreeNode(grammar);
-		const handle = nativeTreeHandle(nativeEngine, source);
+		const handle = nativeEngine.diagnostics.parseAndRead(source).tree;
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
-			const legacyDeepNodeData = stripStructuralNodeText(await deepReadProbeNode(handle, undefined, undefined));
+			const legacyDeepNodeData = stripStructuralProvenance(await deepReadProbeNode(handle, undefined, undefined));
 			const deepReadTreeNodeRaw = readTreeNodeFn ? readTreeNodeFn(handle) : undefined;
 			const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
 			return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
@@ -947,7 +946,7 @@ async function readProbeNodeData(
 				) ?? null;
 			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
 				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
-				const legacyDeepNodeData = stripStructuralNodeText(
+				const legacyDeepNodeData = stripStructuralProvenance(
 					await deepReadProbeNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
 				);
 				const deepReadTreeNodeRaw = readTreeNodeFn
@@ -964,7 +963,7 @@ async function readProbeNodeData(
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
 		const targetHandle = getTargetHandle(target);
 		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
-		const legacyDeepNodeData = stripStructuralNodeText(
+		const legacyDeepNodeData = stripStructuralProvenance(
 			targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target
 		);
 		const deepReadTreeNodeRaw =
@@ -1067,7 +1066,7 @@ async function buildTraceLane(
 		}
 	}
 	try {
-		const nativeTransport = await nativeRenderPayload(grammar, cleanedNodeData);
+		const nativeTransport = nativeRenderPayload(cleanedNodeData);
 		const rendered = await renderNodeDataNative(grammar, cleanedNodeData);
 		return {
 			engine,
@@ -1082,7 +1081,7 @@ async function buildTraceLane(
 	} catch (error) {
 		let nativeTransport: unknown;
 		try {
-			nativeTransport = await nativeRenderPayload(grammar, cleanedNodeData);
+			nativeTransport = nativeRenderPayload(cleanedNodeData);
 		} catch {
 			nativeTransport = undefined;
 		}
@@ -1147,59 +1146,10 @@ async function renderNodeData(grammar: string, nodeData: unknown): Promise<strin
 	return renderNodeDataNative(grammar, materializeProbeWrappedNodeData(nodeData));
 }
 
-/** @internal — load the grammar-owned native engine for `grammar`. Mirrors
- *  the `createRequire` pattern in `backend.ts`. Throws on failure so
- *  `--engine native` / `both` modes can't silently fall back to the
- *  TS render and mask a parity issue. */
-interface NativeProbeEngine {
-	parseAndRead(source: string): string;
-	readNode(nodeId: number): string;
-	render(node: Record<string, unknown>): string;
-}
-const nativePackages: Record<string, string> = {
-	rust: 'sittir-rust',
-	typescript: 'sittir-typescript',
-	python: 'sittir-python'
-};
-async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
-	const { createRequire } = await import('node:module');
-	const req = createRequire(import.meta.url);
-	// Try the package name first; fall back to the workspace-local
-	// grammar crate at `rust/crates/sittir-{grammar}/`. The crate's
-	// package.json `main` points at the local platform-specific `.node`
-	// artifact.
-	const pkg = nativePackages[grammar];
-	if (!pkg) throw new Error(`probe-kind: no native package for ${grammar}`);
-	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(/\/$/, '');
-	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
-	let mod: { SittirEngine: new () => NativeProbeEngine };
-	try {
-		mod = req(pkg) as typeof mod;
-	} catch {
-		try {
-			mod = req(localCratePath) as typeof mod;
-		} catch (err) {
-			const message = err instanceof Error ? err.message : String(err);
-			throw new Error(
-				`probe-kind: --engine native could not load '${pkg}' or '${localCratePath}' — build the native binary with \`cd ${localCratePath} && pnpm exec napi build --release\`. Underlying error: ${message}`
-			);
-		}
-	}
-	return new mod.SittirEngine();
-}
-
-async function nativeRenderPayload(grammar: string, nodeData: unknown): Promise<Record<string, unknown>> {
-	const thisFile = import.meta.url;
-	const utilsPath = new URL(`../../../${grammar}/src/utils.ts`, thisFile).href;
-	const utils = (await import(utilsPath)) as {
-		toNativeRenderTransport?: (node: unknown) => unknown;
-	};
-	const project = utils.toNativeRenderTransport ?? ((node: unknown) => node);
-	const payload = project(stripBigInts(nodeData));
-	if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) {
-		throw new Error('native render payload must be a transport object');
-	}
-	return payload as Record<string, unknown>;
+/** @internal — the transport data the engine renders for `nodeData`: the
+ *  same projection `SittirEngine.render` applies, exposed for the trace. */
+function nativeRenderPayload(nodeData: unknown): Record<string, unknown> {
+	return toTransportData(stripBigInts(nodeData) as AnyNodeData) as unknown as Record<string, unknown>;
 }
 
 /** @internal — render via the native napi engine.
@@ -1209,7 +1159,7 @@ async function nativeRenderPayload(grammar: string, nodeData: unknown): Promise<
  *  on this path. */
 async function renderNodeDataNative(grammar: string, nodeData: unknown): Promise<string> {
 	const engine = await loadNativeEngine(grammar);
-	return engine.render(await nativeRenderPayload(grammar, nodeData));
+	return engine.render(stripBigInts(nodeData) as AnyNodeData).toString();
 }
 
 /** @internal — load `readTreeNode` from an explicit `src/wrap.ts`

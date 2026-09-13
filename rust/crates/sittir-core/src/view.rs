@@ -10,6 +10,55 @@
 
 use crate::render::{Render, RenderResult, RenderSink};
 use crate::slot::SlotValue;
+use crate::types::KindId;
+
+/// What a transport answers when a body asks whether its value is one of a
+/// set of kinds: a generated struct answers for its own kind, a generated
+/// enum for the variant it holds.
+pub trait KindOf {
+    fn kind_in(&self, kinds: &[KindId]) -> bool;
+}
+
+impl<T: KindOf + ?Sized> KindOf for Box<T> {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        (**self).kind_in(kinds)
+    }
+}
+
+/// A slot position asked whether the value it holds is one of a set of
+/// kinds. A literal a render rule puts beside a slot in only some arms of a
+/// choice is written under this test: the arm's kinds are the gate. A
+/// coordinate asks the sink's tree table; an absent position is no kind.
+pub trait KindTest {
+    fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool;
+}
+
+impl<T: KindOf, const ADJACENT: bool> KindTest for SlotValue<T, ADJACENT> {
+    fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
+        match self {
+            SlotValue::Coord(coord) => w.kind_of(coord).is_some_and(|kind| kinds.contains(&kind)),
+            SlotValue::Transport(t) => t.kind_in(kinds),
+        }
+    }
+}
+
+impl<S: KindTest + ?Sized> KindTest for &S {
+    fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
+        (**self).kind_in(w, kinds)
+    }
+}
+
+impl<S: KindTest + ?Sized> KindTest for Box<S> {
+    fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
+        (**self).kind_in(w, kinds)
+    }
+}
+
+impl<S: KindTest> KindTest for Option<S> {
+    fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
+        self.as_ref().is_some_and(|slot| slot.kind_in(w, kinds))
+    }
+}
 
 /// A slot position as a view sees it: it writes itself between `prefix` and
 /// `suffix`, or writes nothing at all when it holds no value.
@@ -156,6 +205,12 @@ impl<'t, S: Slot> View<'t, S> {
 
     pub fn is_present(&self) -> bool {
         self.slot.is_present()
+    }
+}
+
+impl<S: Slot + KindTest> KindTest for View<'_, S> {
+    fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
+        self.slot.kind_in(w, kinds)
     }
 }
 

@@ -1,6 +1,6 @@
 # `$text` — Slot Content vs Source Provenance
 
-**Status:** Designed (not realized)
+**Status:** Realized
 
 ## Problem
 
@@ -59,6 +59,23 @@ On the deep read, 99.9 % of all `$text` is structural, and it is ~23 % of the
 payload — bytes spent shipping the source to a consumer that cannot use them
 for anything but handing them back.
 
+Measured after, same file and grammar (the small source is the 44-byte
+`fn main() {\n    let x = 1;\n    let y = 2;\n}\n`):
+
+| read | read wire bytes | structural `$text` | other `$text` | wire ÷ source | crosses at render |
+|---|---|---|---|---|---|
+| shallow, 44 B source | 217 | 0 | 0 | 4.9× | 94 |
+| deep, 44 B source | 2 281 | 0 | 22 | 51.8× | 94 |
+| shallow, 8 KB source | 4 768 | 0 | 26 | 0.56× | 98 |
+| deep, 8 KB source | 160 329 | 0 | 1 713 | 18.8× | 98 |
+
+Structural `$text` is gone from both reads. The deep **read** wire is 15.6 %
+larger than before, not 23 % smaller: every leaf now carries its coordinate
+(`$nodeHandle` and `$span`) and comments travel as trivia entries with spans,
+which outweighs the text they replaced. What crosses at **render** for an
+untouched tree is one coordinate — 98 bytes for the whole file at either
+depth, where the deep read used to send 138 750.
+
 ## Design
 
 **`$text` means slot content, and only that.** It appears when the kind's
@@ -107,15 +124,18 @@ have the same wire shape, and the transport should need only one test.
   children are projected by the same rule, so an untouched child inside an
   edited parent is still a coordinate.
 
-The fold is bottom-up and the check is local. A node folds when it still
-carries its coordinate, has no attached trivia (a node's own leading and
-trailing comments sit outside the span), and every stored child folds; a
-text-modeled leaf folds when it still carries its `$span`, and a kind id or
-boolean stored in a slot is inert. A node that does not fold has its
-coordinate stripped before it crosses, so the native side needs one test — is
-`$nodeHandle` present — and never inspects storage keys to decide.
-`isUntouchedSubtree`, `hasStructure` and the `$text` fallback collapse into
-that single question.
+The fold is bottom-up and the check is local. The node that emits a
+coordinate needs its handle and its span, and must carry no attached trivia of
+its own (a node's leading and trailing comments sit outside its span). Below
+it every stored node needs only its span: a deep read stamps the tree's tag on
+its leaves and no handle on the levels between, and a descendant's trivia lies
+inside the ancestor's span, so it never blocks the fold. A text-modeled leaf
+folds when it still carries its `$span`, and a kind id, boolean or bare string
+stored in a slot is inert. A node that does not fold has its coordinate
+stripped before it crosses, while the nodes under it that do fold keep theirs,
+so the native side needs one test — is `$nodeHandle` present — and never
+inspects storage keys to decide. `isUntouchedSubtree`, `hasStructure` and the
+`$text` fallback collapse into that single question.
 
 **This makes reading non-destructive**, which is the largest practical
 consequence. Today a deep read rebuilds every level from its template, so it
@@ -130,8 +150,8 @@ deep   : "pub fn main(){ // keep me\nlet x=1;println!(\"{}\",x); }"
 Indentation, the blank line, and every seam space are lost to a read. Under
 this rule each unedited level folds back to a coordinate, the root is
 coordinates-only, and a deep read renders byte-identically to a shallow one.
-The read-depth suite currently records the divergence as "the point of the
-flag, not a defect"; that caveat goes away.
+The read-depth suite pins that a deep parse renders the source byte for byte,
+like a shallow one.
 
 ### The carrier: a coordinate or the transport
 
@@ -430,26 +450,26 @@ deep   : "pub fn main(){ // keep me\nlet x=1;println!(\"{}\",x); }"
 Indentation, the blank line, and every seam space are lost to a read. Under
 this rule each unedited level folds back to a coordinate, the root is
 coordinates-only, and a deep read renders byte-identically to a shallow one.
-The read-depth suite currently records the divergence as "the point of the
-flag, not a defect"; that caveat goes away.
+The read-depth suite pins that a deep parse renders the source byte for byte,
+like a shallow one.
 
-### Coordinates must name their engine
+### Coordinates name their engine
 
-Tree ids are allocated per engine and start at 0, so two engines each have a
-tree 0 and a handle does **not** identify a tree globally:
+Tree ids come from one process-wide counter and are never reused, so a
+handle's tag identifies a tree across every engine in the process:
 
 ```
-engine A root $nodeHandle = 0
-engine B root $nodeHandle = 0
+engine A root $nodeHandle → tree 0
+engine B root $nodeHandle → tree 1
 ```
 
-While provenance travels as text this is harmless. As a coordinate it is the
-same silent-corruption class as an untagged handle, one level up: a node read
-by one engine and rendered through another would resolve against an unrelated
-tree and emit the wrong source. Before coordinates ship, either the handle must
-carry engine identity as well, or `render` must refuse a coordinate it did not
-mint. Refusing is the smaller change and fails loudly, which is the right
-default for a fact that cannot be checked any other way.
+A node read by one engine and rendered through another names a tree that
+engine does not hold, and `render` refuses it with the handle in the error
+rather than resolving against whatever tree sits at that index over there —
+the same silent-corruption class as an untagged handle, one level up.
+Exhausting the ids is refused the same way: recycling one would let a stale
+handle match the tree that took its id. Refusing fails loudly, which is the
+right default for a fact that cannot be checked any other way.
 
 ### Coordinates are not portable
 
@@ -481,7 +501,9 @@ the chance that someone will.
 - Transport structs drop `$span`, `$nodeHandle`, `$childIndex`, `$source` and
   `$named` — declared today, read never. The reader keeps emitting the
   coordinate fields, which the wrap layer needs for drill-in and the
-  projection needs to fold.
+  projection needs to fold: a shallow read's leaf carries its parent's handle
+  and its child index, a deep read's leaf carries the tree's tag and no
+  index, and the levels between carry a span only.
 - `VerbatimTransport` returns as a node type, admitted by slot types that
   accept a text kind.
 - The fill walk is the prepare walk: `Prepare::prepare(&mut self, &RenderContext)`
@@ -556,3 +578,24 @@ Depends on tagged handles and native tree retention, which are already in
 place: handles name their tree, and the engine keeps every tree JavaScript can
 still reach, disposing it through a `FinalizationRegistry`. Without that, a
 coordinate would be unresolvable the moment a second parse happened.
+
+Measured at realization, rust grammar unless noted:
+
+- Gate 5: the "after" table above. The deep read wire grew (leaf
+  coordinates and trivia spans replaced structural text); the render wire
+  of an untouched tree is one coordinate at either depth.
+- Gate 6: `packages/rust/tests/coordinate-engine-identity.test.ts` — a node
+  read by one engine is refused by another with the handle and tree id in
+  the error.
+- Byte axis: a shallow and a deep read of `sittir-core/src/render.rs`,
+  `packages/common/src/transport-data.ts` (typescript) and
+  `tests/format-roundtrip/fixtures/python-4space.py` (python) each render
+  their source byte for byte
+  (`packages/tools/tests/emit/dogfood-render-bytes.test.ts`).
+- Where a render's time goes now: on a read → render loop over the 8 KB
+  file, the native call is 5.8 % of the wall and the transport decode
+  (`SlotValue::from_napi_value`) 2 % of that call, down from 98.7 % of the
+  call before coordinates; building the result JavaScript string is nearly
+  all of the native call. The JavaScript-side projection that walks the
+  read tree to fold it is the rest of the wall: a shallow root renders at
+  ~70 000/s, the same file read deep at ~6 300/s.

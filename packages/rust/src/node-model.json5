@@ -19999,9 +19999,9 @@
       "irKey": "unitExpression",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"( )\" as const",
+      "stampExpression": "\"()\" as const",
       "word": false,
-      "text": "( )",
+      "text": "()",
       "factoryShape": "text"
     },
     {
@@ -20012,9 +20012,9 @@
       "irKey": "unitType",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"( )\" as const",
+      "stampExpression": "\"()\" as const",
       "word": false,
-      "text": "( )",
+      "text": "()",
       "factoryShape": "text"
     },
     {

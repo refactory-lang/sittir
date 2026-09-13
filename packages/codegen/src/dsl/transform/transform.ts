@@ -19,7 +19,6 @@ import { isVariantPlaceholder, variantMintName } from '../primitives/variant.ts'
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
-import { isPreference } from '../primitives/preference.ts';
 import type { PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
@@ -46,30 +45,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import type { RuleAnnotations } from '../../types/rule.ts';
 import { nativeRuleFn } from '../enrich.ts';
-
-function armNamesOf(arm: unknown): string[] {
-	const node = arm as {
-		type?: string;
-		value?: unknown;
-		name?: string;
-		content?: unknown;
-		annotations?: RuleAnnotations;
-	};
-	const names: string[] = [];
-	if (node.annotations?.variant !== undefined) names.push(node.annotations.variant);
-	if (node.type === 'STRING' && typeof node.value === 'string') names.push(node.value);
-	if (node.type === 'ALIAS') {
-		const value = node.value as { name?: string } | string | undefined;
-		const target = typeof value === 'string' ? value : value?.name;
-		if (target !== undefined) names.push(target, target.replace(/^_+/, ''));
-		names.push(...armNamesOf(node.content));
-	}
-	if (node.type === 'SYMBOL' && typeof node.name === 'string') names.push(node.name, node.name.replace(/^_+/, ''));
-	if (isPrecWrapper(node as { type: string })) names.push(...armNamesOf(node.content));
-	return names;
-}
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
 	return withAnnotations(rule, { variant: variantName, variantOf: parentKind });

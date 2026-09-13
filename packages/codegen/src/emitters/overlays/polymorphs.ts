@@ -13,7 +13,7 @@ import { valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
 import {
 	armConfigKeys,
-	armIsConfigShaped,
+	seatsConfigChild,
 	configKeysOf,
 	elementsSeatOf,
 	spliceSeatOf,
@@ -159,7 +159,11 @@ export function collectPolymorphWires(
 		}
 		visiting.delete(node.kind);
 		for (const d of set.diagnostics) {
-			warn(`[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`);
+			warn(
+				d.reason === 'shared-key'
+					? `[codegen] ${node.kind}: sub-factory ${d.name} seated, not merged (${d.reason}: ${(d.keys ?? []).join(', ')}): ${d.claimants.join(', ')}`
+					: `[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`
+			);
 		}
 		const subs = set.entries.filter((sub) => {
 			if (sub.arm.via === 'value') return true;
@@ -441,11 +445,14 @@ const ERASED_HELPERS = [
 	'const _o = (config: unknown) => config as Record<string, unknown>;',
 	'const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> =>',
 	'\t({ ..._o(config), ...extra });',
-	'// A spliced group is present as a whole or absent as a whole: the second',
-	'// overload forbids every one of its keys.',
-	'type NoneOf<T> = { [K in keyof T]?: never };',
 	'const _built = (v: unknown): boolean => typeof v === \'object\' && v !== null && \'$type\' in v;',
 	''
+];
+
+const SPLICE_HELPER = [
+	'// A spliced group is present as a whole or absent as a whole: the second',
+	'// overload forbids every one of its keys.',
+	'type NoneOf<T> = { [K in keyof T]?: never };'
 ];
 
 interface WireShape {
@@ -458,7 +465,8 @@ function shape(
 	k: string,
 	positional: boolean,
 	mergeKeys: readonly string[] | undefined,
-	m: string
+	m: string,
+	seatsConfig = false
 ): WireShape {
 	if (sub.arm.via === 'value') {
 		if (sub.residual.length === 0) {
@@ -520,6 +528,18 @@ function shape(
 				`	};`
 			],
 			paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0])`
+		};
+	}
+	if (seatsConfig) {
+		return {
+			method: [
+				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
+				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & { ${k}: ArgsOf<CF>[0] }): ReturnType<PF> => {`,
+				`		const { ${k}: seated, ...rest } = config;`,
+				`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(seated) });`,
+				`	};`
+			],
+			paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}>[0] })`
 		};
 	}
 	return {
@@ -725,12 +745,10 @@ function emitSub(
 	const c = childRefs(sub, wires.keyByKind, wires.coerceEmitted, (kind) => seatBearing(wires, kind, parent.kind), wires);
 	if (c === undefined) return undefined;
 	const mergeKeys =
-		sub.arm.path.length === 0 &&
-		sub.residual.length > 0 &&
-		armIsConfigShaped(sub, nodeMap, { isEmitted: wires.isEmitted })
+		sub.arm.path.length === 0 && sub.residual.length > 0 && sub.merges
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
-	const s = shape(sub, k, positional, mergeKeys, m);
+	const s = shape(sub, k, positional, mergeKeys, m, seatsConfigChild(sub, nodeMap));
 	const typeFor = (pRef: string, cRef: string): string => `${s.paramFor(pRef, cRef)} => ReturnType<typeof ${pRef}>`;
 	return {
 		method: s.method,
@@ -762,6 +780,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		const seated = composeSeats(seats, wireSet, wires, methods);
 		const armEntries = new Map<string, ArmEntry>();
 		const flat: { line: string; type: string }[] = [];
+		const built: { sub: SubFactory; entry: ArmEntry }[] = [];
 		for (const sub of wireSet.subs) {
 			const emission = emitSub(wireSet.node, wireSet.parentKey, sub, wires, nodeMap, seated?.refs);
 			if (emission === undefined) continue;
@@ -775,17 +794,18 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				emission.coerceType === undefined
 					? `strict: ${emission.strictType}`
 					: `strict: ${emission.strictType}; coerce: ${emission.coerceType}`;
-			const under = nestingArmOf(sub, wireSet.subs);
 			const entry: ArmEntry = { sub, line: body, type: bodyType, children: new Map() };
-			if (under === undefined) {
-				armEntries.set(sub.name, entry);
+			built.push({ sub, entry });
+			if (nestingArmOf(sub, wireSet.subs) === undefined) armEntries.set(sub.name, entry);
+		}
+		for (const { sub, entry } of built) {
+			const under = nestingArmOf(sub, wireSet.subs);
+			if (under === undefined) continue;
+			const host = armEntries.get(under.host);
+			if (host === undefined) {
+				flat.push({ line: `	${sub.name}: { ${entry.line} },`, type: `	${sub.name}: { ${entry.type} };` });
 			} else {
-				const host = armEntries.get(under.host);
-				if (host === undefined) {
-					flat.push({ line: `	${sub.name}: { ${body} },`, type: `	${sub.name}: { ${bodyType} };` });
-				} else {
-					host.children.set(under.key, entry);
-				}
+				host.children.set(under.key, entry);
 			}
 		}
 		composeAcrossSlots(wireSet, wires, nodeMap, seated?.refs, armEntries, methods);
@@ -840,5 +860,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import type { ArgsOf, OmitEach } from '../../utils.js';",
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : [])
 	];
+	const anchor = blocks.indexOf(ERASED_HELPERS[ERASED_HELPERS.length - 3]!);
+	if (anchor >= 0 && blocks.some((b) => b.includes('NoneOf<'))) blocks.splice(anchor + 1, 0, ...SPLICE_HELPER);
 	return [...overlayFrame(overlayImportPath(1), blocks, extraImports), ...blocks].join('\n');
 }

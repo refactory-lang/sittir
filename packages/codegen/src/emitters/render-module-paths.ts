@@ -11,3 +11,7 @@ export function renderModuleSrcDir(grammar: RenderModuleGrammar): string {
 export function renderModuleFixturesPath(grammar: RenderModuleGrammar): string {
 	return `${renderModuleRoot(grammar)}/test-fixtures.json`;
 }
+
+export function renderModuleLeftOutPath(grammar: RenderModuleGrammar): string {
+	return `${renderModuleRoot(grammar)}/test-fixtures.left-out.json`;
+}

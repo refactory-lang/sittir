@@ -310,7 +310,7 @@ describe('wrapped tree materialization', () => {
 			const parser = new Parser();
 			parser.setLanguage(lang);
 			const tree = parser.parse(source)!;
-			const handle = buildReadHandle('typescript', tree, source, 'native');
+			const handle = await buildReadHandle('typescript', tree, source, 'native');
 			const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
 			const { readTreeNode } = (await import(wrapModulePath)) as {
 				readTreeNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
@@ -344,8 +344,10 @@ describe('wrapped tree materialization', () => {
 			// affects RENDER output, not this structural layer.
 			expect(() => declarationArm.content()).not.toThrow();
 
+			// A read leaf materializes as itself — its text and the coordinate
+			// it was read at — not as bare text.
 			const declaration = asRecord(materializeWrappedNodeData(declarationArm.content()));
-			expect(declaration._name).toBe('readFile');
+			expect(asRecord(declaration._name).$text).toBe('readFile');
 		}
 	);
 

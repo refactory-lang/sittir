@@ -268,7 +268,9 @@ describe('examples/17 generated rebuild (splice.rs)', () => {
 	it('renders — every token-tree child now builds', async () => {
 		expect((await rebuildSpliceGenerated()).$render()).toContain('pub enum SpliceError');
 	});
-	it.fails('re-parses to the same tree as the real file — open rows S2, S3, S9', async () => {
-		expect(dogfoodContract(createEngine(), await rebuildSpliceGenerated(), target).reparsesEqual).toBe(true);
+	it('re-parses to the same tree as the real file and matches it modulo whitespace', async () => {
+		const result = dogfoodContract(createEngine(), await rebuildSpliceGenerated(), target);
+		expect(result.reparsesEqual).toBe(true);
+		expect(result.sameModuloWhitespace).toBe(true);
 	});
 });

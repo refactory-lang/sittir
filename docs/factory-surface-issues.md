@@ -263,6 +263,31 @@ Affects typescript (`call_expression`, `variable_declarator`, `import_statement`
 
 ---
 
+### L6 — A list envelope's array collapses to its first string
+
+A loose config that hands a list-envelope slot an array of texts stores the
+FIRST text as the envelope itself, dropping the rest; the envelope's transport
+admits no text, so the native render refuses it.
+
+```ts
+ir.genericType({ type: 'Vec', typeArguments: ['Edit'] })                 // envelope slot holds "Edit"
+ir.genericType({ type: 'Result', typeArguments: ['String', 'SpliceError'] }) // holds "String"; SpliceError is gone
+ir.callExpression({ function: 'Ok', arguments: ['buf'] })                // envelope slot holds "buf"
+ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, { content: 'Edit' })) // → "<Edit>"
+ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'buf'))                       // → "(buf)"
+```
+
+The slot carrier used to echo the stored text, so the first form rendered
+`<Edit>` and the second rendered `<String>` without complaint; the carrier now
+takes text only where a kind renders from text, so the loss surfaces as a
+render error. The loose coercer should build the envelope with one element
+per array entry.
+
+Affects rust (`generic_type.type_arguments`, `call_expression.arguments`;
+`examples/17-dogfood-rust.ts` marks five sites).
+
+---
+
 ## Both surfaces
 
 ### X1 — An unrecognised config key is dropped in silence
