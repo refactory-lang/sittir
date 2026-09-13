@@ -254,6 +254,7 @@ export interface AttributedParameterTransport {
   '$_trivia'?: TransportTrivia
   _attribute_item?: SlotValue<AttributeItemTransport>
   _content: SlotValue<AttributedParameterContentTransportSlot>
+  _underscore_before?: number
   _attributed_parameter_before?: number
   _attributed_parameter_after?: number
 }
@@ -1507,6 +1508,8 @@ export interface RangePatternPrefixTransport {
   '$_trivia'?: TransportTrivia
   _right: SlotValue<Box<RangePatternPrefixRightTransportSlot>>
   _content: SlotValue<Box<AnyTransport>>
+  _dot_dot_after?: number
+  _dot_dot_eq_after?: number
   _range_pattern_prefix_before?: number
   _range_pattern_prefix_after?: number
 }
@@ -1528,6 +1531,9 @@ export interface RangePatternWithLeftWithRightTransport {
   '$_trivia'?: TransportTrivia
   _right: SlotValue<Box<RangePatternWithLeftWithRightRightTransportSlot>>
   _content: SlotValue<Box<AnyTransport>>
+  _dot_dot_after?: number
+  _dot_dot_dot_after?: number
+  _dot_dot_eq_after?: number
   _range_pattern_with_left_with_right_before?: number
   _range_pattern_with_left_with_right_after?: number
 }

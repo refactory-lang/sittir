@@ -30,7 +30,8 @@ export function showBody(body: Body): string {
 				break;
 			case 'if':
 				node.arms.forEach((arm, i) => {
-					out += `⟨${i === 0 ? 'if' : 'elif'} ${arm.test}⟩${showBody(arm.body)}`;
+					const test = arm.kinds === undefined ? arm.test : `${arm.test}:${arm.kinds.join('|')}`;
+					out += `⟨${i === 0 ? 'if' : 'elif'} ${test}⟩${showBody(arm.body)}`;
 				});
 				if (node.fallback !== undefined) out += `⟨else⟩${showBody(node.fallback)}`;
 				out += '⟨end⟩';

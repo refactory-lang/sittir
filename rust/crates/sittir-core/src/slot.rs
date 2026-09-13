@@ -306,6 +306,34 @@ mod tests {
         }
     }
 
+    const WORD_KIND: crate::types::KindId = crate::types::KindId(7);
+
+    impl crate::view::KindOf for Word {
+        fn kind_in(&self, kinds: &[crate::types::KindId]) -> bool {
+            kinds.contains(&WORD_KIND)
+        }
+    }
+
+    #[test]
+    fn a_slot_answers_a_kind_test_for_its_value_and_never_for_a_tree_it_cannot_ask() {
+        use crate::view::KindTest;
+        let sources = Sources(HashMap::from([(3, Arc::from("let main() {}"))]));
+        let mut out = String::new();
+        let w = SpacingWriter::new(&mut out, WordMatcher::default_ident())
+            .with_table(&TABLE)
+            .with_indent("    ")
+            .with_sources(&sources);
+        let held: SlotValue<Word> = SlotValue::Transport(Word("main"));
+        assert!(held.kind_in(&w, &[WORD_KIND]));
+        assert!(!held.kind_in(&w, &[crate::types::KindId(8)]));
+        let absent: Option<SlotValue<Word>> = None;
+        assert!(!absent.kind_in(&w, &[WORD_KIND]));
+        // A table of bare sources holds no tree to ask, so a coordinate is no kind.
+        let coord: SlotValue<Word> =
+            SlotValue::Coord(NodeCoordinate::new(encode_handle(3, 0), Span { start: 4, end: 8 }));
+        assert!(!coord.kind_in(&w, &[WORD_KIND]));
+    }
+
     fn text_of(_: u16) -> &'static str {
         ""
     }

@@ -8,6 +8,7 @@ use std::fmt;
 use std::sync::Arc;
 
 use crate::spacing::{SpacingWriter, WordMatcher};
+use crate::types::KindId;
 
 #[derive(Debug)]
 pub enum RenderError {
@@ -51,6 +52,13 @@ pub struct WhitespaceTable {
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
     fn source_of(&self, tree_id: u32) -> Option<&Arc<str>>;
+
+    /// The kind of the node a coordinate names, when the table still holds
+    /// its tree. A table of bare sources cannot answer and says so.
+    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        let _ = coord;
+        None
+    }
 }
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
@@ -99,6 +107,12 @@ pub trait RenderSink {
             tree_id: coord.tree_id(),
         }
         .into())
+    }
+    /// The kind of the node a coordinate names, from the tree table this
+    /// writer holds; a sink with no table answers nothing.
+    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        let _ = coord;
+        None
     }
     fn indent(&mut self);
     /// Shallows the depth and merges `seam` after it. A dedent that arrives

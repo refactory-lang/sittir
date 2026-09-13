@@ -1,5 +1,3 @@
-import { DELIMITER_LABEL, SEPARATOR_LABEL } from '../dsl/primitives/spacing.ts';
-import { publicKindName } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {

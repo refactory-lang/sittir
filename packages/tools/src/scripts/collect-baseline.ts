@@ -28,7 +28,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -39,7 +39,7 @@ import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 import { boundaryModulePath } from '../validate/common.ts';
 import { load } from '../codegen-surface.ts';
 
-const { renderModuleFixturesPath } = await load('renderModulePaths');
+const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md
@@ -76,6 +76,9 @@ export interface ParityFixtures {
 	failingByKind: { readonly [kind: string]: readonly string[] };
 	/** Format-only failures by kind → fixture id list. Deferred to 017. */
 	formatDeferredByKind: { readonly [kind: string]: readonly string[] };
+	/** Render fixtures the regen left out as not reproducible without the
+	 *  tree, by kind. A kind's count may only shrink. */
+	leftOutByKind?: { readonly [kind: string]: number };
 }
 
 export interface GrammarEntry {
@@ -267,8 +270,18 @@ export async function collectParityFixtures(
 		// a fixture is reclassified, it's MOVED from `failingByKind` to
 		// `formatDeferredByKind`. At baseline (commit 6e06f93f / no
 		// triage performed), this is always empty.
-		formatDeferredByKind: {}
+		formatDeferredByKind: {},
+		leftOutByKind: loadLeftOutByKind(grammar)
 	};
+}
+
+function loadLeftOutByKind(grammar: Grammar): { readonly [kind: string]: number } {
+	const path = resolve(repoRoot, renderModuleLeftOutPath(grammar));
+	if (!existsSync(path)) return {};
+	const parsed = JSON.parse(readFileSync(path, 'utf-8')) as Record<string, number>;
+	const sorted: Record<string, number> = {};
+	for (const kind of Object.keys(parsed).sort()) sorted[kind] = parsed[kind]!;
+	return sorted;
 }
 
 // ---------------------------------------------------------------------------

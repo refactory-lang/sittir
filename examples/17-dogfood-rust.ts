@@ -256,7 +256,7 @@ export function applyEditsFn() {
 						type: 'Vec',
 						// The list is built for the same reason as the type arguments above.
 						typeArguments: ir.typeArguments.strict(
-							ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, { content: 'Edit' })
+							ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, { content: ir.identifier('Edit') })
 						),
 					},
 				})
@@ -268,8 +268,8 @@ export function applyEditsFn() {
 				typeArguments: ir.typeArguments.strict(
 					ir.typeArgumentsElements.strict(
 						{ delimiter: Delimiter.None },
-						{ content: 'String' },
-						{ content: 'SpliceError' }
+						{ content: ir.identifier('String') },
+						{ content: ir.identifier('SpliceError') }
 					)
 				),
 			},
@@ -306,14 +306,14 @@ export function applyEditsFn() {
 						value: ir.callExpression({
 							function: { kind: 'scoped_identifier', path: 'String', name: 'from' },
 							// The list is built for the same reason as the type arguments above.
-							arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'source')),
+							arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, { expression: ir.identifier('source') })),
 						}),
 					}),
 				],
 				// The list is built for the same reason as the type arguments above.
 				trailingExpression: ir.callExpression({
 					function: 'Ok',
-					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'buf')),
+					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, { expression: ir.identifier('buf') })),
 				}),
 			}),
 		})

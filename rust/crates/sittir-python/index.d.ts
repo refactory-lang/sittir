@@ -616,6 +616,7 @@ export interface ExpressionListTransport {
   '$_trivia'?: TransportTrivia
   _tail: SlotValue<ExpressionListTailTransportSlot>
   _expression: SlotValue<Box<ExpressionTransport>>
+  _comma_before?: number
   _expression_list_before?: number
   _expression_list_after?: number
 }
@@ -735,6 +736,7 @@ export interface GenericTypeTransport {
   '$_trivia'?: TransportTrivia
   _name: SlotValue<GenericTypeNameTransportSlot>
   _type_parameter: SlotValue<TypeParameterTransport>
+  _type_keyword_after?: number
   _generic_type_before?: number
   _generic_type_after?: number
 }
@@ -1090,6 +1092,7 @@ export interface PatternListTransport {
   '$_trivia'?: TransportTrivia
   _tail: SlotValue<PatternListTailTransportSlot>
   _pattern: SlotValue<PatternTransport>
+  _comma_before?: number
   _pattern_list_before?: number
   _pattern_list_after?: number
 }
@@ -1122,6 +1125,7 @@ export interface PrintStatementChevronTransport {
   '$_trivia'?: TransportTrivia
   _chevron: SlotValue<ChevronTransport>
   _print_chevron_arguments?: SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>
+  _comma_before?: number
   _print_keyword_before?: number
   _print_keyword_after?: number
   _print_statement_chevron_before?: number
@@ -1245,6 +1249,7 @@ export interface SplatPatternTransport {
   _name: SlotValue<SplatPatternNameTransportSlot>
   _operator_before?: number
   _operator_after?: number
+  _underscore_before?: number
   _splat_pattern_before?: number
   _splat_pattern_after?: number
 }

@@ -50,6 +50,7 @@ const MODULES = {
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
 	generate: '../../codegen/src/compiler/generate.ts',
 	generatedMetadata: '../../codegen/src/compiler/generated-metadata.ts',
+	spacing: '../../codegen/src/dsl/primitives/spacing.ts',
 	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
 	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
 	types: '../../codegen/src/emitters/types.ts',
@@ -77,6 +78,7 @@ export interface CodegenSurface {
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
 	generate: typeof import('../../codegen/src/compiler/generate.ts');
 	generatedMetadata: typeof import('../../codegen/src/compiler/generated-metadata.ts');
+	spacing: typeof import('../../codegen/src/dsl/primitives/spacing.ts');
 	kindDiscriminant: typeof import('../../codegen/src/emitters/kind-discriminant.ts');
 	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
 	types: typeof import('../../codegen/src/emitters/types.ts');
@@ -137,6 +139,8 @@ export async function load<M extends keyof CodegenSurface>(module: M): Promise<C
 export type NodeMap = import('../../codegen/src/compiler/types.ts').NodeMap;
 export type AssembledNode = import('../../codegen/src/compiler/model/node-map.ts').AssembledNode;
 export type RenderBody = import('../../codegen/src/emitters/render-body.ts').Body;
+export type GeneratedIdTables = import('../../codegen/src/compiler/generated-metadata.ts').GeneratedIdTables;
+export type GeneratedKindEntry = import('../../codegen/src/compiler/generated-metadata.ts').GeneratedKindEntry;
 export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate']>>;
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type SimplifiedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;

@@ -24,8 +24,7 @@ import {
 	isMultiple,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword,
-	AbstractAssembledCompound
+	AssembledKeyword
 } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 

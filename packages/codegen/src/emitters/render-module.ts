@@ -40,14 +40,10 @@ import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
 	RUST_KEYWORDS,
 	acceptedTransportKinds,
-	buildSupertypeTransportSet,
-	classifySlot,
 	classifySlotForEmit,
 	findSupertypeKindByTypeName,
-	isReservedSupertypeTransportNode,
 	rustFieldIdent,
 	rustTypeIdent,
-	slotElementKinds,
 	supertypeTransportKinds,
 	type SlotClass
 } from './transport-common.ts';
@@ -615,6 +611,15 @@ function renderTypedDispatch(
 	lines.push(`}`);
 	lines.push('');
 
+	lines.push(
+		...kindOfImplLines(
+			'AnyTransport',
+			nodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
+			undefined,
+			undefined,
+			'false'
+		)
+	);
 	lines.push(`impl ::sittir_core::render::Render for AnyTransport {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -900,8 +905,37 @@ function buildTypedTemplateBody(
 			`render body for '${struct.kind}' names seam '${name}', which its transport has no spacing site for`
 		);
 	}
-	lines.push(...printRustBody(struct.body, { field: rustFieldIdent }));
+	lines.push(
+		...printRustBody(struct.body, {
+			field: rustFieldIdent,
+			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
+		})
+	);
 	return lines;
+}
+
+function rustKindIdSlice(
+	names: readonly string[],
+	nodeMap: NodeMap | undefined,
+	kindIdByKind: ReadonlyMap<string, number> | undefined,
+	ownerKind: string
+): string {
+	if (nodeMap === undefined || kindIdByKind === undefined) {
+		throw new Error(`render body for '${ownerKind}' gates a literal on kinds [${names.join(', ')}] but has no kind id table`);
+	}
+	const ids = new Set<number>();
+	for (const name of names) {
+		const direct = kindIdByKind.get(name);
+		if (direct !== undefined) ids.add(direct);
+		for (const concrete of concreteKindsOf(name, nodeMap)) {
+			const id = kindIdByKind.get(concrete);
+			if (id !== undefined) ids.add(id);
+		}
+	}
+	if (ids.size === 0) {
+		throw new Error(`render body for '${ownerKind}' gates a literal on kinds [${names.join(', ')}], none of which has a kind id`);
+	}
+	return `&[${[...ids].sort((a, b) => a - b).map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}]`;
 }
 
 function libRsContents(lang: Grammar): string {
@@ -1172,6 +1206,12 @@ function armSeamSupport(): string {
 		'    }',
 		'}',
 		'',
+		'impl<T: ::sittir_core::view::KindOf> ::sittir_core::view::KindOf for Seamed<T> {',
+		'    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {',
+		'        self.value.kind_in(kinds)',
+		'    }',
+		'}',
+		'',
 		`impl<T: ArmSeams> ${PREPARE_MOD}::Prepare for Seamed<T> {`,
 		`    ${PREPARE_SIG}`,
 		'        if let Some((before, after)) = self.value.arm_seam_sites() {',
@@ -1210,7 +1250,7 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
 	);
 	lines.push('');
-	lines.push('use ::sittir_core::view::{View, ListView, NO_ITEMS};');
+	lines.push('use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};');
 	lines.push('use ::sittir_core::render::Render;');
 	lines.push('use ::sittir_core::types::{');
 	lines.push('    FieldValue, OneOrMany, Source, Span, NodeTrivia,');
@@ -1606,6 +1646,19 @@ function emitSupertypeTransportEnum(
 	lines.push(``);
 
 	lines.push(...renderBoxedEnumNapiImpls(enumName));
+
+	lines.push(
+		...kindOfImplLines(
+			enumName,
+			validSubtypes.map(({ subNode }) => ({ variant: rustTypeIdent(subNode.typeName), payload: true })),
+			admitsVerbatim
+				? validSubtypes
+						.filter(({ subNode }) => subNode.modelType === 'pattern')
+						.map(({ subKind }) => kindIdByKind?.get(subKind))
+						.filter((id): id is number => id !== undefined)
+				: undefined
+		)
+	);
 
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
@@ -2048,6 +2101,26 @@ function emitPerSlotChildEnum(
 			...literalVariants.map((variant) => ({ variant, payload: false })),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
+	);
+	lines.push(
+		...kindOfImplLines(
+			enumName,
+			[
+				...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
+				...entry.literals.flatMap((literal) => {
+					const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+					if (variant === undefined) return [];
+					const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
+					return [{ variant, payload: false, ids: id === undefined ? [] : [id] }];
+				})
+			],
+			admitsVerbatim
+				? validKinds
+						.filter(({ node }) => node.modelType === 'pattern')
+						.map(({ kind }) => kindIdByKind?.get(kind))
+						.filter((id): id is number => id !== undefined)
+				: undefined
+		)
 	);
 
 	if (kindIdByKind !== undefined) {
@@ -2750,6 +2823,41 @@ function prepareStructImpl(
 	];
 }
 
+/** The `KindOf` answer a generated transport type gives a kind-gated body:
+ *  a struct is its own kind, an enum answers for the variant it holds, and a
+ *  verbatim value stands for whichever pattern kinds the position admits. */
+function kindOfImplLines(
+	typeName: string,
+	arms: readonly { variant: string; payload: boolean; ids?: readonly number[] }[],
+	verbatimIds: readonly number[] | undefined,
+	ownIds?: readonly number[],
+	rest: 'exhaustive' | 'false' = 'exhaustive'
+): string[] {
+	const idList = (ids: readonly number[]): string =>
+		`[${[...new Set(ids)].sort((a, b) => a - b).map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}]`;
+	const containsAny = (ids: readonly number[]): string =>
+		ids.length === 0 ? 'false' : `${idList(ids)}.iter().any(|k| kinds.contains(k))`;
+	const lines = [
+		`impl ::sittir_core::view::KindOf for ${typeName} {`,
+		`    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {`
+	];
+	if (ownIds !== undefined) {
+		lines.push(`        ${containsAny(ownIds)}`);
+	} else {
+		lines.push(`        match self {`);
+		for (const arm of arms) {
+			if (arm.payload && arm.ids === undefined) lines.push(`            Self::${arm.variant}(inner) => inner.kind_in(kinds),`);
+			else if (arm.payload) lines.push(`            Self::${arm.variant}(_) => ${containsAny(arm.ids!)},`);
+			else lines.push(`            Self::${arm.variant} => ${containsAny(arm.ids ?? [])},`);
+		}
+		if (verbatimIds !== undefined) lines.push(`            Self::Verbatim(_) => ${containsAny(verbatimIds)},`);
+		if (rest === 'false') lines.push(`            _ => false,`);
+		lines.push(`        }`);
+	}
+	lines.push(`    }`, `}`, ``);
+	return lines;
+}
+
 function renderTransportStruct(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -2761,7 +2869,7 @@ function renderTransportStruct(
 		return renderEnumType(node, hasNapi, kindEntries, plan);
 	}
 	const slotModel = renderSlotModelOf(node);
-	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, plan);
+	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, plan, kindEntries);
 }
 
 function renderTransportDataStruct(
@@ -2769,7 +2877,8 @@ function renderTransportDataStruct(
 	node: AssembledNode,
 	slotModel: RenderSlotModel,
 	nodeMap: NodeMap,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'token';
 	const lines: string[] = [];
@@ -2839,6 +2948,8 @@ function renderTransportDataStruct(
 	}
 	lines.push('}');
 	lines.push('');
+	const ownId = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind)?.id;
+	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -3542,6 +3653,16 @@ function renderEnumType(
 		lines.push('');
 	}
 
+	lines.push(
+		...kindOfImplLines(
+			enumName,
+			values.map((v) => {
+				const id = node.resolvedByText.get(v)?.id;
+				return { variant: literalToVariantName(v), payload: false, ids: id === undefined ? [] : [id] };
+			}),
+			undefined
+		)
+	);
 	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`

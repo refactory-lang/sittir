@@ -149,17 +149,15 @@ short-circuit is corrected in this task.
 
 ## Open, carried forward
 
-- **typescript C-style `for` loses its semicolons.** `for_statement.condition`
-  is a singular field wrapping `seq(_expressions, ';')`: the reader seats the
-  `;` beside the expression (the separator table covers repeated slots only),
-  and the render body prints no `;` after `condition` or `increment`, so a
-  provenance-detached rebuild of `for (let i = 0; i < 3; i++) {}` renders
-  `for (let i = 0;i < 3 i++) {}`. Coordinate folding hides it from the
-  read-render-parse counts and the parity gate keeps no such fixture.
-  Witness: `packages/typescript/tests/for-statement-terminator.test.ts`
-  (`it.fails`). The fix is a grammar patch that names the two `;` as slots of
-  the statement (the terminator shape `expression_statement` has), which is
-  roles work, not a reader change.
+- **typescript C-style `for` and its semicolons** — closed on the branch that
+  follows this one: a literal that only some arms of a choice put beside a
+  shared slot is written under a gate on the kinds the slot holds
+  (`emitKindGatedLiterals`, `IfArm.kinds`, `KindTest` in the core), the
+  reader drops a literal the parser field-tags beside a singular slot
+  (`fieldTaggedLiteralTexts`), and the token's seam sits inside the arm that
+  carries it (`withArmEdgeSeams`). The corpus now holds
+  `for (let i = 0; i < 3; i++) { }`, which read-render-parse did catch once
+  it was there; the blind spot was corpus coverage.
 
 - `applyEdits` in `packages/common/src/edit.ts` slices an `Edit`'s byte
   positions as string indices (the native path applies bytes). Pre-existing;

@@ -54,7 +54,7 @@ function writeFile(path: string, content: string): void {
  * than emitting an insufficient fixture set.
  */
 export async function emitParityFixtures(grammar: string): Promise<void> {
-	const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
+	const { extractParityFixtures, serializeFixtures, fixturesOutputPath, leftOutOutputPath, serializeLeftOut } =
 		await import('./validate/parity-fixtures.ts');
 	const extracted = await extractParityFixtures(grammar);
 	const fxPath = fixturesOutputPath(grammar);
@@ -85,8 +85,13 @@ export async function emitParityFixtures(grammar: string): Promise<void> {
 	}
 
 	writeFile(fxPath, serializeFixtures(extracted.fixtures));
+	writeFile(leftOutOutputPath(grammar), serializeLeftOut(extracted.leftOutByKind));
+	const leftOutEntries = Object.entries(extracted.leftOutByKind);
+	const leftOutTotal = leftOutEntries.reduce((sum, [, n]) => sum + n, 0);
 	const dropped =
-		extracted.unreproducible > 0 ? `; ${extracted.unreproducible} render left out: not reproducible without the tree` : '';
+		leftOutTotal > 0
+			? `; ${leftOutTotal} render left out, not reproducible without the tree: ${leftOutEntries.map(([kind, n]) => (n > 1 ? `${kind}×${n}` : kind)).join(', ')}`
+			: '';
 	console.log(
 		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds${dropped})`
 	);
