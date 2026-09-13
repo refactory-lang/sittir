@@ -1041,7 +1041,7 @@ Expected: `0` node_modules paths staged.
 
 ## Self-review
 
-**Spec coverage.** Catalog rules 1–6: Task 5 (families, key spelling, whitespace classes, trailing-only-where-optional, indent, dense indices) and Task 1–3 (named slots, declared defaults). Rule 3 (whitespace kinds as externals): Task 4. Verification items owned by this plan: scanner inertness (Task 4), catalog snapshots and type-level tests (Task 6), existing gates identical (every task). Not in this plan, by design: reader stamps and the round-trip metric (plan 2), render path and `&Options` (plan 3), engine API, `engine.ir`, `reformat`, `tree.options()` and the precedence inversion (plan 4), layout (plan 5).
+**Spec coverage.** Catalog rules 1–6: Task 5 (families, key spelling, whitespace classes, trailing-only-where-optional, indent, dense indices) and Task 1–3 (named slots, declared defaults). Rule 3 (whitespace kinds as externals): Task 4. Verification items owned by this plan: scanner inertness (Task 4), catalog snapshots and type-level tests (Task 6), existing gates identical (every task). Not in this plan, by design: reader stamps and the round-trip metric (plan 2), render path and `&Options` (plan 3), engine API, `engine.ir`, `reformat`, `tree.inferOptions()` and the precedence inversion (plan 4), layout (plan 5).
 
 **Placeholder scan.** Every code step has its code; the two "if X, then" branches (Task 2 step 3, Task 3 step 3) name the exact function and file to look at and what to assert. The fixture helpers in Task 5 name their signatures.
 

@@ -175,6 +175,6 @@ short-circuit is corrected in this task.
 
 ## Next
 
-Render-options plan 4: `reformat`, `engine.ir`, `tree.options()` from the
+Render-options plan 4: `reformat`, `engine.ir`, `tree.inferOptions()` from the
 classified gaps. Then the PR #266 / #267 items (strict surface; arm and slot
 renames).
