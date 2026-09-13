@@ -20,3 +20,8 @@ the parser's own display name, `literalText` the token's literal text, and
 `literalText` makes `findEntryForLiteralText` miss every anon-token lookup,
 so this must mirror `KindEntryLike` exactly, not just `symbolName`/`anon`.
 ```
+
+
+### `packages/tools/src/emit/factory-source.ts::mountPrinter`
+
+The printer for a form reached through a parent's mount route (`ir.<parent>.<mount>.strict(...)`): each argument is printed as a seated config when it is an object and as a direct value otherwise. Arguments are printed only up to the last one that is defined, so a form whose optional slot the source left empty prints as `strict()` rather than `strict(undefined)` — the spelling the form's own surface admits.

@@ -3,6 +3,7 @@ import {
 	Printed,
 	printValue,
 	printingFactoryMap,
+	printingIrSurface,
 	printFactorySource,
 	type PrintContext
 } from '../../src/emit/factory-source.ts';
@@ -54,6 +55,32 @@ describe('printValue', () => {
 			'ir.arguments.strict({ delimiter: Delimiter.Trailing }, ir.identifier("x"))'
 		);
 		expect(map.arguments!(map.identifier!('x')).source).toBe('ir.arguments.strict(ir.identifier("x"))');
+	});
+	it('prints a mounted form with its given arguments and no trailing undefined', () => {
+		const map = printingFactoryMap(
+			{ visibility_modifier: 'config', visibility_modifier_pub: 'direct', identifier: 'text' },
+			(k) => ({ visibility_modifier: 6, visibility_modifier_pub: 7, identifier: 3 })[k],
+			ctx
+		);
+		const surface = printingIrSurface(
+			map,
+			(k) => ({ visibility_modifier: 6, visibility_modifier_pub: 7, identifier: 3 })[k],
+			{},
+			{
+				...ctx,
+				irPathOfKind: (kind) => (kind === 'visibility_modifier' ? 'ir.visibilityModifier' : ctx.irPathOfKind(kind)),
+				seats: {
+					visibility_modifier: {
+						modifier: { visibility_modifier_pub: { kind: 'visibility_modifier_pub', shape: 'arm', mount: 'pub' } }
+					}
+				}
+			}
+		);
+		const pub = (surface.entries.visibility_modifier as unknown as Record<string, { strict: (...a: unknown[]) => Printed }>)
+			.pub!;
+		expect(pub.strict(undefined).source).toBe('ir.visibilityModifier.pub.strict()');
+		expect(pub.strict().source).toBe('ir.visibilityModifier.pub.strict()');
+		expect(pub.strict(map.identifier!('x')).source).toBe('ir.visibilityModifier.pub.strict(ir.identifier("x"))');
 	});
 	it('appends a node trivia call from the trivia the value carries', () => {
 		const printed = new Printed(2, 'ir.functionItem.strict({})', 'function_item');
