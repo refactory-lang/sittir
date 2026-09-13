@@ -73,21 +73,20 @@ Two causes, both in `nodeToConfig`. The read stores an unnamed slot under the ch
 
 Resolved with S4's slot keys: `ir.attributedParameter.strict({ content: ir.selfParameter.strict({ reference: true }) })` now prints, as do the argument, type-argument and import wrappers.
 
-### S6 — Verbatim text in an expression or pattern position has no leaf to wrap
+### S6 — Verbatim text in an expression or pattern position has no leaf to wrap — RESOLVED
 
-Generated: typescript `"boundary"` where `ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern` is expected, `"0"` and `"offset"` in `arguments`, python `Argument of type 'string' is not assignable to parameter of type 'Identifier'`.
-The read stores text for aliased leaves (`shorthand_property_identifier_pattern`, `number`) and the slot lists no pattern kind the emitter can pick, so the text is printed bare.
+Was: typescript `"boundary"` where a pattern is expected, `"0"` and `"offset"` in `arguments`, python a bare string where an `Identifier` is expected.
+The factory-source emitter wraps every text leaf through the public text kind the slot declares (`wrapTextLeaves`, `printVerbatimText`), so the rebuilds spell `ir.identifier("boundary")`, `ir.number("0")`, `ir.identifier("offset")`; no bare text remains in a node position in any of the three generated rebuilds.
 
-### S7 — A layout keyword arrives as a kind id where a presence flag is expected
+### S7 — A layout keyword arrives as a kind id where a presence flag is expected — RESOLVED
 
-Generated: typescript `TSKindId.AutomaticSemicolon` for a statement terminator slot.
-Error: `TS2322: Type 'TSKindId.AutomaticSemicolon' is not assignable to type 'BooleanKeyword<"\n"> | undefined'`.
+Was: typescript `TSKindId.AutomaticSemicolon` rejected for a statement terminator slot typed `BooleanKeyword<"\n">`.
+The terminator is a declared choice slot whose values are kind ids (`terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>`), so both spellings build and render (`packages/typescript/tests/strict-surface-seats.test.ts`); the rebuild has no such site left.
 
-### S9 — A config-shaped parent does not build its hoisted group from a config
+### S9 — A config-shaped parent does not build its hoisted group from a config — RESOLVED
 
-Generated (the intended spelling): typescript `ir.forInStatement.strict({ content: { kind: TSKindId.Const, left: ir.identifier("item") }, … })`, python `ir.comparisonOperator.strict({ left, comparators: [{ operators: TSKindId.EqEq, primaryExpression: … }] })`.
-Error: `TS2322: Type 'TSKindId' is not assignable to type '() => number'` (the slot's type is the group's Built shape, accessor methods included); at render: `Missing field \`_operators\` on ComparisonOperatorTransport._comparators`, `$type property missing in ExportStatementContentTransportSlot`.
-A group has a visible alias and its builder exists in the generated factories (`buildForHeaderLetConstKind`, `buildComparisonOperatorComparator`), but it is not on `ir`, and only a forwarded parent builds it from a config (`buildMatchBlock` accepts `MatchBlockArms.Config`). A config-shaped parent passes the slot value through untouched (`const _content = config.content;`) and its Config demands the group's Built. The parent's Config should accept the group's Config in that slot and the factory should call the group's builder, as the forwarded case already does. Rust's render still throws `seated is not iterable` on a list slot handed one node.
+Was: the group's config under the slot key (`content: { kind, left }`) rejected, `comparators: [{ operators, primaryExpression }]` rejected, and rust's render throwing on a list seat handed one node.
+Resolved by group seating on the parent: a hoisted group is reached through the parent's mount route, which merges the group's keys into the call (`ir.forInStatement.letConstKind.strict({ kind, left, operator, right, body })`); an element group in a list slot takes each element as the group's config (`ir.comparisonOperator.strict({ left, comparators: [{ operators, primaryExpression }] })`); a spliced group keeps its own arity (`ir.matchBlock.strict({ matchArm, lastArm })`, `ir.matchBlock.strict()` for the empty block) and a list seat handed one node is refused at compile time, so the render throw is behind a type error. The config-under-slot-key spelling this row asked for is refused on purpose: the plain route takes the built group, the mount route takes its keys. Witnesses: `strict-surface-seats.test.ts` in each grammar package.
 
 ### S8 — Form names the read data reaches are not on `ir` — RESOLVED
 
