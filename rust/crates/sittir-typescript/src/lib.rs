@@ -30,9 +30,8 @@ use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
 
-#[cfg(feature = "napi-bindings")]
 #[derive(Clone, Copy, Default)]
-struct TypeScriptGrammar;
+pub struct TypeScriptGrammar;
 
 #[cfg(feature = "napi-bindings")]
 impl EngineGrammar for TypeScriptGrammar {
@@ -48,7 +47,6 @@ impl EngineGrammar for TypeScriptGrammar {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
 impl sittir_core::read_node::ReadModel for TypeScriptGrammar {
     fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
         render::kind_ids::is_text_kind(kind)

@@ -517,6 +517,8 @@ export function findReparsedNodeAtOffset(
 export interface RenderFixture {
 	kind: 'render';
 	grammar: string;
+	/** The kind the fixture renders, by name. */
+	pattern: string;
 	/** NodeData input — the deep-read result from readTreeNode, made
 	 *  self-contained by `selfContainedRenderInput` so the boundary render
 	 *  path can take it in any process. Serialized to JSON verbatim. */
@@ -960,6 +962,7 @@ export async function validateReadRenderParse(
 								options.onFixture({
 									kind: 'render',
 									grammar,
+									pattern: renderedKind,
 									input: selfContainedRenderInput(data, entry.source, isLeafKind),
 									expectedOutput: rendered
 								});

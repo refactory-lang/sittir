@@ -14341,6 +14341,17 @@ passes straight to the parent, anything else is the group's config and is
 built first. The `$type` probe (`_built`) is what the raw forwarded wrapper
 used to do; it lives here now, once, because the seating is the overlay's.
 
+### `packages/codegen/src/emitters/render-module-paths.ts::renderModuleLeftOutPath`
+
+The sidecar beside a grammar's `test-fixtures.json`: the render fixtures the
+parity extraction left out because their input, detached from the tree the
+validator rendered it from, no longer renders the validated bytes, counted
+by kind. The baseline collector reads it into `parityFixtures.leftOutByKind`
+and the regression checker lets a kind's count only shrink, so a template
+that stops reproducing its source fails the build instead of dropping out of
+the fixture set unseen. Excluded from the manifest for the same reason the
+fixture file is: both land in the validator's own commit.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::SPLICE_HELPER`
 
 The `NoneOf<T>` alias a spliced group's second overload uses to forbid every

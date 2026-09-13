@@ -30,9 +30,8 @@ use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
 
-#[cfg(feature = "napi-bindings")]
 #[derive(Clone, Copy, Default)]
-struct RustGrammar;
+pub struct RustGrammar;
 
 #[cfg(feature = "napi-bindings")]
 impl EngineGrammar for RustGrammar {
@@ -48,7 +47,6 @@ impl EngineGrammar for RustGrammar {
     }
 }
 
-#[cfg(feature = "napi-bindings")]
 impl sittir_core::read_node::ReadModel for RustGrammar {
     fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
         render::kind_ids::is_text_kind(kind)
