@@ -650,7 +650,8 @@ export interface AddressBranch {
 	readonly 'exec_statement/in_clause/tuple': 'after';
 	readonly 'exec_statement/in_clause/unary_operator': 'after';
 	readonly 'exec_statement/in_keyword': 'after' | 'before';
-	readonly expression_list: 'after' | 'before';
+	readonly expression_list: 'after' | 'before' | 'comma';
+	readonly 'expression_list/comma': 'before';
 	readonly expression_list_expressions: 'expression';
 	readonly 'expression_list_expressions/expression':
 		| 'as_pattern'
@@ -846,7 +847,8 @@ export interface AddressBranch {
 	readonly generator_expression: 'after' | 'before' | 'lparen' | 'rparen';
 	readonly 'generator_expression/lparen': 'after' | 'before';
 	readonly 'generator_expression/rparen': 'after' | 'before';
-	readonly generic_type: 'after' | 'before';
+	readonly generic_type: 'after' | 'before' | 'type_keyword';
+	readonly 'generic_type/type_keyword': 'after';
 	readonly global_statement: 'after' | 'before' | 'global_keyword' | 'names';
 	readonly 'global_statement/global_keyword': 'after' | 'before';
 	readonly 'global_statement/names': 'separator';
@@ -1000,7 +1002,8 @@ export interface AddressBranch {
 	readonly parenthesized_list_splat: 'after' | 'before' | 'lparen' | 'rparen';
 	readonly 'parenthesized_list_splat/lparen': 'after' | 'before';
 	readonly 'parenthesized_list_splat/rparen': 'after' | 'before';
-	readonly pattern_list: 'after' | 'before';
+	readonly pattern_list: 'after' | 'before' | 'comma';
+	readonly 'pattern_list/comma': 'before';
 	readonly pattern_list_patterns: 'pattern';
 	readonly 'pattern_list_patterns/pattern':
 		| 'attribute'
@@ -1145,7 +1148,8 @@ export interface AddressBranch {
 	readonly 'print_chevron_arguments/argument/subscript': 'after';
 	readonly 'print_chevron_arguments/argument/tuple': 'after';
 	readonly 'print_chevron_arguments/argument/unary_operator': 'after';
-	readonly print_statement_chevron: 'after' | 'before' | 'print_keyword';
+	readonly print_statement_chevron: 'after' | 'before' | 'comma' | 'print_keyword';
+	readonly 'print_statement_chevron/comma': 'before';
 	readonly 'print_statement_chevron/print_keyword': 'after' | 'before';
 	readonly print_statement_plain: 'after' | 'before' | 'print_keyword';
 	readonly 'print_statement_plain/print_keyword': 'after' | 'before';
@@ -1256,8 +1260,9 @@ export interface AddressBranch {
 	readonly 'slice/colon': 'after' | 'before';
 	readonly slice_group: 'after' | 'before' | 'colon';
 	readonly 'slice_group/colon': 'after' | 'before';
-	readonly splat_pattern: 'after' | 'before' | 'operator';
+	readonly splat_pattern: 'after' | 'before' | 'operator' | 'underscore';
 	readonly 'splat_pattern/operator': 'after' | 'before';
+	readonly 'splat_pattern/underscore': 'before';
 	readonly splat_type: 'after' | 'before' | 'operator';
 	readonly 'splat_type/operator': 'after' | 'before';
 	readonly string: 'after' | 'before';
@@ -1927,6 +1932,7 @@ export interface AddressLeaf {
 	readonly 'exec_statement/in_keyword/before': SpacingArm;
 	readonly 'expression_list/after': SpacingArm;
 	readonly 'expression_list/before': SpacingArm;
+	readonly 'expression_list/comma/before': SpacingArm;
 	readonly 'expression_list_expressions/expression/as_pattern/after': SpacingArm;
 	readonly 'expression_list_expressions/expression/attribute/after': SpacingArm;
 	readonly 'expression_list_expressions/expression/await/after': SpacingArm;
@@ -2064,6 +2070,7 @@ export interface AddressLeaf {
 	readonly 'generator_expression/rparen/before': SpacingArm;
 	readonly 'generic_type/after': SpacingArm;
 	readonly 'generic_type/before': SpacingArm;
+	readonly 'generic_type/type_keyword/after': SpacingArm;
 	readonly 'global_statement/after': SpacingArm;
 	readonly 'global_statement/before': SpacingArm;
 	readonly 'global_statement/global_keyword/after': SpacingArm;
@@ -2248,6 +2255,7 @@ export interface AddressLeaf {
 	readonly 'parenthesized_list_splat/rparen/before': SpacingArm;
 	readonly 'pattern_list/after': SpacingArm;
 	readonly 'pattern_list/before': SpacingArm;
+	readonly 'pattern_list/comma/before': SpacingArm;
 	readonly 'pattern_list_patterns/pattern/attribute/after': SpacingArm;
 	readonly 'pattern_list_patterns/pattern/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'pattern_list_patterns/pattern/list_pattern/after': SpacingArm;
@@ -2322,6 +2330,7 @@ export interface AddressLeaf {
 	readonly 'print_chevron_arguments/argument/unary_operator/after': SpacingArm;
 	readonly 'print_statement_chevron/after': SpacingArm;
 	readonly 'print_statement_chevron/before': SpacingArm;
+	readonly 'print_statement_chevron/comma/before': SpacingArm;
 	readonly 'print_statement_chevron/print_keyword/after': SpacingArm;
 	readonly 'print_statement_chevron/print_keyword/before': SpacingArm;
 	readonly 'print_statement_plain/after': SpacingArm;
@@ -2414,6 +2423,7 @@ export interface AddressLeaf {
 	readonly 'splat_pattern/before': SpacingArm;
 	readonly 'splat_pattern/operator/after': SpacingArm;
 	readonly 'splat_pattern/operator/before': SpacingArm;
+	readonly 'splat_pattern/underscore/before': SpacingArm;
 	readonly 'splat_type/after': SpacingArm;
 	readonly 'splat_type/before': SpacingArm;
 	readonly 'splat_type/operator/after': SpacingArm;

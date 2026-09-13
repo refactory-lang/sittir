@@ -3682,8 +3682,60 @@
 			"name": "initializer"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "initializer",
+					"kinds": [
+						"expression",
+						"sequence_expression"
+					],
+					"body": [
+						{
+							"kind": "seam",
+							"field": "semi_before"
+						},
+						{
+							"kind": "text",
+							"text": ";"
+						},
+						{
+							"kind": "seam",
+							"field": "semi_after"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "slot",
 			"name": "condition"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "condition",
+					"kinds": [
+						"expression",
+						"sequence_expression"
+					],
+					"body": [
+						{
+							"kind": "seam",
+							"field": "semi_before"
+						},
+						{
+							"kind": "text",
+							"text": ";"
+						},
+						{
+							"kind": "seam",
+							"field": "semi_after"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "if",

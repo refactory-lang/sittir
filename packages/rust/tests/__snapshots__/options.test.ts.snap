@@ -101,6 +101,7 @@ export type AddressRoot =
 	| 'impl_item_positive_clause'
 	| 'index_expression'
 	| 'inner_attribute_item'
+	| 'integer_literal'
 	| 'label'
 	| 'last_match_arm'
 	| 'let_chain'
@@ -278,7 +279,8 @@ export interface AddressBranch {
 	readonly attributed_ordered_field: 'after' | 'attribute_item' | 'before';
 	readonly 'attributed_ordered_field/attribute_item': 'attribute_item' | 'end' | 'separator' | 'start';
 	readonly 'attributed_ordered_field/attribute_item/attribute_item': 'after';
-	readonly attributed_parameter: 'after' | 'before';
+	readonly attributed_parameter: 'after' | 'before' | 'underscore';
+	readonly 'attributed_parameter/underscore': 'before';
 	readonly attributed_type_parameter: 'after' | 'attribute_item' | 'before';
 	readonly 'attributed_type_parameter/attribute_item': 'attribute_item' | 'end' | 'separator' | 'start';
 	readonly 'attributed_type_parameter/attribute_item/attribute_item': 'after';
@@ -685,6 +687,35 @@ export interface AddressBranch {
 	readonly 'inner_attribute_item/lbrack': 'after' | 'before';
 	readonly 'inner_attribute_item/pound': 'after' | 'before';
 	readonly 'inner_attribute_item/rbrack': 'after' | 'before';
+	readonly integer_literal:
+		| 'f32_keyword'
+		| 'f64_keyword'
+		| 'i128_keyword'
+		| 'i16_keyword'
+		| 'i32_keyword'
+		| 'i64_keyword'
+		| 'i8_keyword'
+		| 'isize_keyword'
+		| 'u128_keyword'
+		| 'u16_keyword'
+		| 'u32_keyword'
+		| 'u64_keyword'
+		| 'u8_keyword'
+		| 'usize_keyword';
+	readonly 'integer_literal/f32_keyword': 'before';
+	readonly 'integer_literal/f64_keyword': 'before';
+	readonly 'integer_literal/i128_keyword': 'before';
+	readonly 'integer_literal/i16_keyword': 'before';
+	readonly 'integer_literal/i32_keyword': 'before';
+	readonly 'integer_literal/i64_keyword': 'before';
+	readonly 'integer_literal/i8_keyword': 'before';
+	readonly 'integer_literal/isize_keyword': 'before';
+	readonly 'integer_literal/u128_keyword': 'before';
+	readonly 'integer_literal/u16_keyword': 'before';
+	readonly 'integer_literal/u32_keyword': 'before';
+	readonly 'integer_literal/u64_keyword': 'before';
+	readonly 'integer_literal/u8_keyword': 'before';
+	readonly 'integer_literal/usize_keyword': 'before';
 	readonly label: 'after' | 'before' | 'squote';
 	readonly 'label/squote': 'after' | 'before';
 	readonly last_match_arm: 'after' | 'attributes' | 'before' | 'comma' | 'eq_gt';
@@ -935,9 +966,14 @@ export interface AddressBranch {
 	readonly 'range_expression_postfix/operator': 'after' | 'before';
 	readonly range_expression_prefix: 'after' | 'before' | 'operator';
 	readonly 'range_expression_prefix/operator': 'after' | 'before';
-	readonly range_pattern_prefix: 'after' | 'before';
+	readonly range_pattern_prefix: 'after' | 'before' | 'dot_dot' | 'dot_dot_eq';
+	readonly 'range_pattern_prefix/dot_dot': 'after';
+	readonly 'range_pattern_prefix/dot_dot_eq': 'after';
 	readonly range_pattern_with_left: 'after' | 'before';
-	readonly range_pattern_with_left_with_right: 'after' | 'before';
+	readonly range_pattern_with_left_with_right: 'after' | 'before' | 'dot_dot' | 'dot_dot_dot' | 'dot_dot_eq';
+	readonly 'range_pattern_with_left_with_right/dot_dot': 'after';
+	readonly 'range_pattern_with_left_with_right/dot_dot_dot': 'after';
+	readonly 'range_pattern_with_left_with_right/dot_dot_eq': 'after';
 	readonly raw_string_literal: 'after' | 'before';
 	readonly ref_pattern: 'after' | 'before' | 'ref_keyword';
 	readonly 'ref_pattern/ref_keyword': 'after' | 'before';
@@ -1784,6 +1820,7 @@ export interface AddressLeaf {
 	readonly 'attributed_ordered_field/before': WhitespaceArm;
 	readonly 'attributed_parameter/after': WhitespaceArm;
 	readonly 'attributed_parameter/before': WhitespaceArm;
+	readonly 'attributed_parameter/underscore/before': WhitespaceArm;
 	readonly 'attributed_type_parameter/after': WhitespaceArm;
 	readonly 'attributed_type_parameter/attribute_item/attribute_item/after': WhitespaceArm;
 	readonly 'attributed_type_parameter/attribute_item/end': WhitespaceArm;
@@ -2235,6 +2272,20 @@ export interface AddressLeaf {
 	readonly 'inner_attribute_item/pound/before': WhitespaceArm;
 	readonly 'inner_attribute_item/rbrack/after': WhitespaceArm;
 	readonly 'inner_attribute_item/rbrack/before': WhitespaceArm;
+	readonly 'integer_literal/f32_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/f64_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/i128_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/i16_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/i32_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/i64_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/i8_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/isize_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/u128_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/u16_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/u32_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/u64_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/u8_keyword/before': WhitespaceArm;
+	readonly 'integer_literal/usize_keyword/before': WhitespaceArm;
 	readonly 'label/after': WhitespaceArm;
 	readonly 'label/before': WhitespaceArm;
 	readonly 'label/squote/after': WhitespaceArm;
@@ -2520,10 +2571,15 @@ export interface AddressLeaf {
 	readonly 'range_expression_prefix/operator/before': WhitespaceArm;
 	readonly 'range_pattern_prefix/after': WhitespaceArm;
 	readonly 'range_pattern_prefix/before': WhitespaceArm;
+	readonly 'range_pattern_prefix/dot_dot/after': WhitespaceArm;
+	readonly 'range_pattern_prefix/dot_dot_eq/after': WhitespaceArm;
 	readonly 'range_pattern_with_left/after': WhitespaceArm;
 	readonly 'range_pattern_with_left/before': WhitespaceArm;
 	readonly 'range_pattern_with_left_with_right/after': WhitespaceArm;
 	readonly 'range_pattern_with_left_with_right/before': WhitespaceArm;
+	readonly 'range_pattern_with_left_with_right/dot_dot/after': WhitespaceArm;
+	readonly 'range_pattern_with_left_with_right/dot_dot_dot/after': WhitespaceArm;
+	readonly 'range_pattern_with_left_with_right/dot_dot_eq/after': WhitespaceArm;
 	readonly 'raw_string_literal/after': WhitespaceArm;
 	readonly 'raw_string_literal/before': WhitespaceArm;
 	readonly 'ref_pattern/after': WhitespaceArm;

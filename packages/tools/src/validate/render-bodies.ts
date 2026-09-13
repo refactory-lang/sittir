@@ -51,8 +51,9 @@ export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 					break;
 				case 'if':
 					for (const arm of node.arms) {
-						clauses[`${arm.test}_clause`] = legacy(arm.body);
-						out += `$${arm.test.toUpperCase()}_CLAUSE`;
+						const clause = arm.kinds === undefined ? arm.test : `${arm.test}_${arm.kinds.join('_')}`;
+						clauses[`${clause}_clause`] = legacy(arm.body);
+						out += `$${clause.toUpperCase()}_CLAUSE`;
 					}
 					if (node.fallback !== undefined) out += legacy(node.fallback);
 					break;

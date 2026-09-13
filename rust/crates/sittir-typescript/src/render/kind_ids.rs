@@ -924,13 +924,17 @@ pub fn is_text_kind(kind: KindId) -> bool {
     matches!(kind.0, 1 | 2 | 89 | 90 | 91 | 92 | 96 | 97 | 98 | 99 | 161 | 162 | 163 | 164 | 166 | 302 | 343 | 377 | 378 | 445 | 451)
 }
 
-/// (parent kind id, tree-sitter field name, separator kind ids) for every
-/// repeated slot whose separator the parser field-tags into the slot.
-/// The reader drops such a child instead of seating it, so a native read
-/// and a wrapped read hand back the same slot contents.
+/// (parent kind id, tree-sitter field name, punctuation kind ids) for every
+/// slot the parser field-tags a literal into: the separator of a repeated
+/// slot, or a literal a rule puts beside a singular slot under the same
+/// field. The template prints such a token itself, so the reader drops the
+/// child instead of seating it, and a native read and a wrapped read hand
+/// back the same slot contents.
 static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (190, "declarators", &[14]),
     (191, "declarators", &[14]),
+    (197, "condition", &[20]),
+    (219, "expression", &[3]),
     (254, "expression", &[14]),
     (288, "type", &[14]),
     (297, "type", &[14]),

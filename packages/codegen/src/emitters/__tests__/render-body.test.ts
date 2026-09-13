@@ -148,7 +148,7 @@ describe('liftGates', () => {
 });
 
 describe('printRustBody', () => {
-	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name) };
+	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name), kinds: (names: readonly string[]) => `&[${names.join(', ')}]` };
 
 	it('writes each run of text as one w.text call and each slot as its own render call over the sink w', () => {
 		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, tokenSeam('\n'), text('{}'));
@@ -190,6 +190,17 @@ describe('printRustBody', () => {
 		]);
 	});
 
+	it('prints a kind-gated arm as a kind_in test over the sink with the arm kinds', () => {
+		const body = concat(slot('condition'), branches([{ test: 'condition', kinds: ['expression'], body: text(';') }], undefined));
+		expect(printRustBody(body, printer)).toEqual([
+			'    condition.render(w)?;',
+			'    if condition.kind_in(&*w, &[expression]) {',
+			'        w.text(";")?;',
+			'    }',
+			'    Ok(())'
+		]);
+	});
+
 	it('prints an indent/dedent pair as depth calls, defaulting the indent seam to a bare newline', () => {
 		expect(printRustBody(concat(text(':'), INDENT, slot('block'), DEDENT), printer)).toEqual([
 			'    w.text(":")?;',
@@ -223,7 +234,7 @@ describe('templateOf', () => {
 
 describe('seam nodes', () => {
 	it('print as a site call resolved from the field at runtime, compare by field, and are listed by references', () => {
-		expect(printRustBody(concat(text('fn'), seam('lparen_before'), text('('), slot('x')), { field: (n) => n })).toEqual([
+		expect(printRustBody(concat(text('fn'), seam('lparen_before'), text('('), slot('x')), { field: (n) => n, kinds: (names) => `&[${names.join(', ')}]` })).toEqual([
 			'    w.text("fn")?;',
 			'    w.site(node.lparen_before.unwrap_or(0));',
 			'    w.text("(")?;',

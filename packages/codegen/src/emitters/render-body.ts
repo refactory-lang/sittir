@@ -42,6 +42,10 @@ export interface TokenSeamNode {
 
 export interface IfArm {
 	readonly test: string;
+	/** When present, the arm also asks that the slot's value be one of these
+	 *  kinds (a supertype names its members): a literal that only some arms
+	 *  of a choice put beside the slot is printed under such a gate. */
+	readonly kinds?: readonly string[];
 	readonly body: Body;
 }
 
@@ -178,7 +182,16 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 		case 'if': {
 			const other = b as IfNode;
 			if (a.arms.length !== other.arms.length) return false;
-			if (!a.arms.every((arm, i) => arm.test === other.arms[i]!.test && equalBodies(arm.body, other.arms[i]!.body))) {
+			const sameKinds = (x: IfArm, y: IfArm): boolean =>
+				x.kinds === undefined || y.kinds === undefined
+					? x.kinds === y.kinds
+					: x.kinds.length === y.kinds.length && x.kinds.every((k, i) => k === y.kinds![i]);
+			if (
+				!a.arms.every(
+					(arm, i) =>
+						arm.test === other.arms[i]!.test && sameKinds(arm, other.arms[i]!) && equalBodies(arm.body, other.arms[i]!.body)
+				)
+			) {
 				return false;
 			}
 			if (a.fallback === undefined || other.fallback === undefined) return a.fallback === other.fallback;
@@ -380,9 +393,9 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 				out.push([node]);
 				continue;
 			}
-			const arms = node.arms.map((arm) => ({ test: arm.test, body: lift(arm.body) }));
+			const arms = node.arms.map((arm) => ({ ...arm, body: lift(arm.body) }));
 			const fallback = node.fallback === undefined ? undefined : lift(node.fallback);
-			const only = arms.length === 1 && fallback === undefined ? arms[0]! : undefined;
+			const only = arms.length === 1 && fallback === undefined && arms[0]!.kinds === undefined ? arms[0]! : undefined;
 			const at = only?.body.findIndex((n) => n.kind === 'slot' && n.name === only.test) ?? -1;
 			const prefix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(0, at));
 			const suffix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(at + 1));
@@ -413,6 +426,8 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 
 export interface RustBodyPrinter {
 	readonly field: (name: string) => string;
+	/** The Rust slice literal naming these kinds' ids, for a kind-gated arm. */
+	readonly kinds: (names: readonly string[]) => string;
 }
 
 export function escapeBraces(value: string): string {
@@ -499,7 +514,11 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 			case 'if':
 				flush();
 				node.arms.forEach((arm, i) => {
-					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${printer.field(arm.test)}.is_present() {`);
+					const test =
+						arm.kinds === undefined
+							? `${printer.field(arm.test)}.is_present()`
+							: `${printer.field(arm.test)}.kind_in(&*w, ${printer.kinds(arm.kinds)})`;
+					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${test} {`);
 					lines.push(...printStatements(arm.body, printer, depth + 1));
 				});
 				if (node.fallback !== undefined) {

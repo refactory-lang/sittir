@@ -110,6 +110,59 @@ describe('emitRule — pattern', () => {
 	});
 });
 
+describe('emitRule — kind-gated literal', () => {
+	// `for (init; cond; inc)`: the initializer is a choice of a declaration arm,
+	// an expression arm followed by `;`, and an empty-statement arm. The slot
+	// is emitted once and the `;` under a gate naming the expression arm's kinds.
+	function forInitializer(): ChoiceRule {
+		return {
+			type: CHOICE,
+			id: 'for_initializer',
+			members: [
+				{ type: SYMBOL, name: 'lexical_declaration', fieldName: 'initializer' } as SymbolRule,
+				{
+					type: SEQ,
+					members: [{ type: SYMBOL, name: '_expressions', fieldName: 'initializer' } as SymbolRule, { type: STRING, value: ';' }]
+				} as SeqRule,
+				{ type: SYMBOL, name: 'empty_statement', fieldName: 'initializer' } as SymbolRule
+			]
+		} as ChoiceRule;
+	}
+	const slot = makeSlot({ name: 'initializer', storageName: 'initializer', propertyName: 'initializer', fieldName: 'initializer' });
+
+	it('folds arms that share a slot and gates the arm literal on the arm kinds', () => {
+		const ctx = makeCtx({ ownerSlots: { initializer: slot } });
+		expect(shown(forInitializer(), ctx)).toBe('⟨initializer⟩⟨if initializer:_expressions⟩;⟨end⟩');
+	});
+
+	it('gates the literal inside a fielded choice by pushing the field onto the arms', () => {
+		const rule: ChoiceRule = {
+			type: CHOICE,
+			fieldName: 'condition',
+			members: [
+				{ type: SEQ, members: [{ type: SYMBOL, name: '_expressions' } as SymbolRule, { type: STRING, value: ';' }] } as SeqRule,
+				{ type: SYMBOL, name: 'empty_statement' } as SymbolRule
+			]
+		} as ChoiceRule;
+		const conditionSlot = makeSlot({ name: 'condition', storageName: 'condition', propertyName: 'condition', fieldName: 'condition' });
+		const ctx = makeCtx({ ownerSlots: { condition: conditionSlot } });
+		expect(shown(rule, ctx)).toBe('⟨condition⟩⟨if condition:_expressions⟩;⟨end⟩');
+	});
+
+	it('leaves a choice alone when an arm carries no slot', () => {
+		const rule: ChoiceRule = {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'declaration_list', fieldName: 'body' } as SymbolRule,
+				{ type: SEQ, members: [{ type: STRING, value: ';' }] } as SeqRule
+			]
+		} as ChoiceRule;
+		const bodySlot = makeSlot({ name: 'body', storageName: 'body', propertyName: 'body', fieldName: 'body' });
+		const ctx = makeCtx({ ownerSlots: { body: bodySlot } });
+		expect(shown(rule, ctx)).not.toContain(':');
+	});
+});
+
 describe('emitRule — enum', () => {
 	it('emits the first member as a literal', () => {
 		// PR-P: EnumRule is now ChoiceRule with all-STRING members.
