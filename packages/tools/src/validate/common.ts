@@ -29,7 +29,6 @@ import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
 import type {
 	CodegenSurface,
-	PolymorphVariantDescriptor,
 	PolymorphVariantMap,
 	FactoryShape,
 	FactorySlotMeta,
@@ -1049,6 +1048,10 @@ export interface Seat {
 	readonly kind: string;
 	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
 	readonly mount?: string;
+	/** An arm whose config-shaped child is handed to the wrapper as its own
+	 *  config under the slot key, because a key it would merge is also a slot
+	 *  of the parent. */
+	readonly seated?: true;
 }
 
 /**
@@ -1700,7 +1703,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
 	if (isAnonTokenPassthrough(c)) return child;
-	const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
+	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
 	const drilled = drillReadNode(c, opts);
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
@@ -1907,10 +1910,12 @@ function carryElementTrivia(element: ReadNodeLike, config: Record<string, unknow
  * Project an arm seat child onto its parent's config the way the mount
  * route spells it. A token leaf hands the route nothing: the mount carries
  * the value. A text leaf hands its text. A config-shaped child on a config
- * parent is flattened: its keys join the parent's, and a nested arm inside
- * it extends the route, since a variant minted inside another variant's rule
- * is spelled inside it (`withLeft.withRight`). Any other child hands the
- * route its own factory arguments under the slot.
+ * parent is flattened when the seat merges: its keys join the parent's, and
+ * a nested arm inside it extends the route, since a variant minted inside
+ * another variant's rule is spelled inside it (`withLeft.withRight`). A seat
+ * the model marks `seated` — a key it would merge is also the parent's —
+ * keeps its config whole under the slot; any other child hands the route
+ * its own factory arguments under the slot.
  */
 function projectArmSlot(
 	seat: Seat,
@@ -1946,7 +1951,8 @@ function projectArmSlot(
 	const mount = nested === undefined ? seat.mount : `${seat.mount}.${nested.mount}`;
 	const parentShape = opts.factoryShapes?.[parentKind] ?? 'config';
 	if (parentShape === 'config' && childShape === 'config') {
-		Object.assign(out, config);
+		if (seat.seated === true) out[key] = config;
+		else Object.assign(out, config);
 		return setRoute(mount, undefined);
 	}
 	const args = factoryArgs(seat.kind, childShape, config, child, inner);

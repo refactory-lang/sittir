@@ -25,7 +25,6 @@ import {
 	deriveChildrenCardinality,
 	storageKindOfRef,
 	storageTargetOf,
-	isKindIdStored,
 	AbstractAssembledCompound,
 	AssembledEnvelope,
 	AssembledPolymorph,
@@ -39,7 +38,7 @@ import {
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
-import { findEntryForKindName, type KindEntryLike, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
+import { type KindEntryLike, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
 import { publicKindName } from '../compiler/model/render-rules.ts';
 
 export function isSlotBearingCompound(

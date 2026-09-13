@@ -59,6 +59,15 @@ describe('export_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefault);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('default.from builds the parent', () => {
+		const node = ir.exportStatement.default.from({
+			content: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any,
+			automaticSemicolon: '\n'
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefault);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('default.fromStarFrom builds the parent', () => {
 		const node = ir.exportStatement.default.fromStarFrom({
 			automaticSemicolon: '\n',
@@ -160,6 +169,19 @@ describe('export_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefault);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('default.declarationDefaultKwValue builds the parent', () => {
+		const node = ir.exportStatement.default.declarationDefaultKwValue({
+			content: [
+				{
+					value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+					automaticSemicolon: '\n'
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefault);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('typeExport builds the parent', () => {
 		const node = ir.exportStatement.typeExport({
 			exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any,
@@ -167,6 +189,54 @@ describe('export_statement sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatement);
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementTypeExport);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typeExport.automaticSemicolon builds the parent', () => {
+		const node = ir.exportStatement.typeExport.automaticSemicolon({
+			exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementTypeExport);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('equalsExport.automaticSemicolon builds the parent', () => {
+		const node = ir.exportStatement.equalsExport.automaticSemicolon({
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementEqualsExport);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('namespaceExport.automaticSemicolon builds the parent', () => {
+		const node = ir.exportStatement.namespaceExport.automaticSemicolon({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementNamespaceExport);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typeExport.semi builds the parent', () => {
+		const node = ir.exportStatement.typeExport.semi({
+			exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementTypeExport);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('equalsExport.semi builds the parent', () => {
+		const node = ir.exportStatement.equalsExport.semi({
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementEqualsExport);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('namespaceExport.semi builds the parent', () => {
+		const node = ir.exportStatement.namespaceExport.semi({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ExportStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementNamespaceExport);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('equalsExport builds the parent', () => {
@@ -325,30 +395,34 @@ describe('import_statement', () => {
 });
 
 describe('import_statement sub-factories', () => {
-	it('clauseFrom builds the _import_statement_clause_from form', () => {
+	it('clauseFrom builds the parent', () => {
 		const node = ir.importStatement.clauseFrom({
-			importClause: {
-				$type: TSKindId.ImportClause,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: {
-					$type: TSKindId.NamespaceImport,
+			terminator: '\n',
+			fromClause: {
+				importClause: {
+					$type: TSKindId.ImportClause,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					_content: {
+						$type: TSKindId.NamespaceImport,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any
+				} as any,
+				source: {
+					$type: TSKindId.String,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
 				} as any
-			} as any,
-			source: {
-				$type: TSKindId.String,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
-			} as any
+			}
 		});
-		expect(node.$type).toBe(TSKindId.ImportStatementClauseFrom);
+		expect(node.$type).toBe(TSKindId.ImportStatement);
+		expect((node as any).fromClause()?.$type).toBe(TSKindId.ImportStatementClauseFrom);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('importRequireClause builds the import_require_clause form', () => {
@@ -1023,6 +1097,28 @@ describe('for_in_statement sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('varKind.identifier builds the parent', () => {
+		const node = ir.forInStatement.varKind.identifier({
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			content: [{ left: ['test'] }]
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('letConstKind.identifier builds the parent', () => {
+		const node = ir.forInStatement.letConstKind.identifier({
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			content: [{ kind: 'let', left: ['test'] }]
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('lhs.decoratorMemberExpression builds the parent', () => {
 		const node = ir.forInStatement.lhs.decoratorMemberExpression({
 			operator: 'in',
@@ -1064,6 +1160,50 @@ describe('for_in_statement sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ForInStatement);
 		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('varKind.objectPattern builds the parent', () => {
+		const node = ir.forInStatement.varKind.objectPattern({
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			content: [{ left: [] }]
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('letConstKind.objectPattern builds the parent', () => {
+		const node = ir.forInStatement.letConstKind.objectPattern({
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			content: [{ kind: 'let', left: [] }]
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('varKind.arrayPattern builds the parent', () => {
+		const node = ir.forInStatement.varKind.arrayPattern({
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			content: [{ left: [] }]
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('letConstKind.arrayPattern builds the parent', () => {
+		const node = ir.forInStatement.letConstKind.arrayPattern({
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			content: [{ kind: 'let', left: [] }]
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('letConstKind builds the parent', () => {
@@ -1687,6 +1827,18 @@ describe('nested_identifier sub-factories', () => {
 		expect((node as any).object()?.$type).toBe(TSKindId.Identifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('nestedIdentifier builds the parent', () => {
+		const node = ir.nestedIdentifier.nestedIdentifier({
+			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			object: {
+				object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			}
+		});
+		expect(node.$type).toBe(TSKindId.NestedIdentifier);
+		expect((node as any).object()?.$type).toBe(TSKindId.NestedIdentifier);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('class', () => {
@@ -1831,6 +1983,53 @@ describe('function_expression sub-factories', () => {
 		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('assertsAnnotation.identifier builds the parent', () => {
+		const node = ir.functionExpression.assertsAnnotation.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.FunctionExpression);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.identifier builds the parent', () => {
+		const node = ir.functionExpression.typePredicateAnnotation.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionExpression);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.this builds the parent', () => {
+		const node = ir.functionExpression.assertsAnnotation.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionExpression);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.this builds the parent', () => {
+		const node = ir.functionExpression.typePredicateAnnotation.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{
+					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionExpression);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('typePredicateAnnotation builds the parent', () => {
 		const node = ir.functionExpression.typePredicateAnnotation({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
@@ -1919,6 +2118,57 @@ describe('function_declaration sub-factories', () => {
 		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('assertsAnnotation.identifier builds the parent', () => {
+		const node = ir.functionDeclaration.assertsAnnotation.identifier({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.FunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.identifier builds the parent', () => {
+		const node = ir.functionDeclaration.typePredicateAnnotation.identifier({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.this builds the parent', () => {
+		const node = ir.functionDeclaration.assertsAnnotation.this({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.this builds the parent', () => {
+		const node = ir.functionDeclaration.typePredicateAnnotation.this({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{
+					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('typePredicateAnnotation builds the parent', () => {
 		const node = ir.functionDeclaration.typePredicateAnnotation({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
@@ -2001,6 +2251,53 @@ describe('generator_function sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.GeneratorFunction);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.identifier builds the parent', () => {
+		const node = ir.generatorFunction.assertsAnnotation.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunction);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.identifier builds the parent', () => {
+		const node = ir.generatorFunction.typePredicateAnnotation.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunction);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.this builds the parent', () => {
+		const node = ir.generatorFunction.assertsAnnotation.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunction);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.this builds the parent', () => {
+		const node = ir.generatorFunction.typePredicateAnnotation.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{
+					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunction);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('typePredicateAnnotation builds the parent', () => {
@@ -2089,6 +2386,57 @@ describe('generator_function_declaration sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.GeneratorFunctionDeclaration);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.identifier builds the parent', () => {
+		const node = ir.generatorFunctionDeclaration.assertsAnnotation.identifier({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.identifier builds the parent', () => {
+		const node = ir.generatorFunctionDeclaration.typePredicateAnnotation.identifier({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.this builds the parent', () => {
+		const node = ir.generatorFunctionDeclaration.assertsAnnotation.this({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.this builds the parent', () => {
+		const node = ir.generatorFunctionDeclaration.typePredicateAnnotation.this({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{
+					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GeneratorFunctionDeclaration);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('typePredicateAnnotation builds the parent', () => {
@@ -2215,6 +2563,15 @@ describe('call_expression sub-factories', () => {
 		const node = ir.callExpression.templateCall({
 			function: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			arguments: { $type: TSKindId.TemplateString, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).content()?.$type).toBe(TSKindId.CallExpressionTemplateCall);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('templateCall.newExpression builds the parent', () => {
+		const node = ir.callExpression.templateCall.newExpression({
+			arguments: { $type: TSKindId.TemplateString, $text: 'test', $source: 2, $named: true } as any,
+			function: { constructor_: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).content()?.$type).toBe(TSKindId.CallExpressionTemplateCall);
@@ -2767,12 +3124,25 @@ describe('binary_expression sub-factories', () => {
 		expect(seated?.$text ?? seated).toBe(TSKindId.InstanceofKeyword);
 		expect(() => node.$render!()).not.toThrow();
 	});
-	it('in builds the _binary_expression_in form', () => {
+	it('in builds the parent', () => {
 		const node = ir.binaryExpression.in({
-			left: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			binaryExpressionIn: {
+				left: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
+				right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			}
 		});
-		expect(node.$type).toBe(TSKindId.BinaryExpressionIn);
+		expect(node.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).binaryExpressionIn()?.$type).toBe(TSKindId.BinaryExpressionIn);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('in.privatePropertyIdentifier builds the parent', () => {
+		const node = ir.binaryExpression.in.privatePropertyIdentifier({
+			binaryExpressionIn: [
+				{ right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, left: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.BinaryExpression);
+		expect((node as any).binaryExpressionIn()?.$type).toBe(TSKindId.BinaryExpressionIn);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3146,6 +3516,18 @@ describe('decorator_member_expression sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.DecoratorMemberExpression);
 		expect((node as any).object()?.$type).toBe(TSKindId.Identifier);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decoratorMemberExpression builds the parent', () => {
+		const node = ir.decoratorMemberExpression.decoratorMemberExpression({
+			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			object: {
+				object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			}
+		});
+		expect(node.$type).toBe(TSKindId.DecoratorMemberExpression);
+		expect((node as any).object()?.$type).toBe(TSKindId.DecoratorMemberExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4622,6 +5004,27 @@ describe('tuple_parameter sub-factories', () => {
 		expect((node as any).name()?.$type).toBe(TSKindId.RestPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('restPattern.memberExpression builds the parent', () => {
+		const node = ir.tupleParameter.restPattern.memberExpression({
+			type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			name: [
+				{
+					object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
+					separator: '.',
+					property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.TupleParameter);
+		expect((node as any).name()?.$type).toBe(TSKindId.RestPattern);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('restPattern.optionalChain builds the parent', () => {
 		const node = ir.tupleParameter.restPattern.optionalChain({
 			type: {
@@ -5095,6 +5498,36 @@ describe('type_query sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('callExpression.import builds the parent', () => {
+		const node = ir.typeQuery.callExpression.import({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [{ $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.TypeQuery);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('instantiationExpression.import builds the parent', () => {
+		const node = ir.typeQuery.instantiationExpression.import({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				} as any
+			} as any,
+			function: [{ $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.TypeQuery);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('identifier builds the parent', () => {
 		const node = ir.typeQuery.identifier('test');
 		expect(node.$type).toBe(TSKindId.TypeQuery);
@@ -5340,6 +5773,49 @@ describe('call_signature sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.CallSignature);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.identifier builds the parent', () => {
+		const node = ir.callSignature.assertsAnnotation.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.CallSignature);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.identifier builds the parent', () => {
+		const node = ir.callSignature.typePredicateAnnotation.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallSignature);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('assertsAnnotation.this builds the parent', () => {
+		const node = ir.callSignature.assertsAnnotation.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.CallSignature);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.AssertsAnnotation);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicateAnnotation.this builds the parent', () => {
+		const node = ir.callSignature.typePredicateAnnotation.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{
+					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallSignature);
+		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('typePredicateAnnotation builds the parent', () => {
@@ -5745,6 +6221,49 @@ describe('function_type sub-factories', () => {
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.FunctionType);
+		expect((node as any).returnType()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('asserts.identifier builds the parent', () => {
+		const node = ir.functionType.asserts.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.FunctionType);
+		expect((node as any).returnType()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicate.identifier builds the parent', () => {
+		const node = ir.functionType.typePredicate.identifier({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: ['test'] }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionType);
+		expect((node as any).returnType()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('asserts.this builds the parent', () => {
+		const node = ir.functionType.asserts.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.FunctionType);
+		expect((node as any).returnType()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('typePredicate.this builds the parent', () => {
+		const node = ir.functionType.typePredicate.this({
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			returnType: [
+				{
+					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				}
+			]
 		});
 		expect(node.$type).toBe(TSKindId.FunctionType);
 		expect((node as any).returnType()).toBeDefined();

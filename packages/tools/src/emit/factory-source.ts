@@ -420,11 +420,10 @@ import {
 	loadLanguageForGrammar,
 	loadNodeModel,
 	loadReadTreeNode,
-	materializeWrappedNodeData,
-	walkWrappedTree
+	materializeWrappedNodeData
 } from '../validate/common.ts';
-import { invoke } from '../codegen-surface.ts';
-import type { GeneratedIdTables, GeneratedKindEntry } from '../../../codegen/src/compiler/generated-metadata.ts';
+import { invoke, load } from '../codegen-surface.ts';
+import type { GeneratedIdTables, GeneratedKindEntry } from '../codegen-surface.ts';
 
 interface TypesModule {
 	readonly KIND_NAMES: ReadonlyMap<number, string>;
@@ -618,7 +617,7 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 	const memberOf = (table: Record<number, string | number>, id: number): string | undefined =>
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
-	const { findEntryForLiteralText } = await import('../../../codegen/src/compiler/generated-metadata.ts');
+	const { findEntryForLiteralText } = await load('generatedMetadata');
 	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));

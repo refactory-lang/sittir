@@ -2,18 +2,13 @@ import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn } from '../transform/transform.ts';
-import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
+import { isPreference } from '../primitives/preference.ts';
 import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
 	parseFlankAddress,
 	parseSeamLabel,
-	DELIMITER_LABEL,
-	DELIMITER_ARMS,
-	SEPARATOR_LABEL,
-	isDelimiterArm,
-	parseSpacingLabel,
-	siteKey
+	parseSpacingLabel
 } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
@@ -359,8 +354,6 @@ export function polymorphVisibleName(parentKind: string, suffix: string): string
 export function polymorphHiddenName(parentKind: string, suffix: string): string {
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-
-const SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 
 function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
 	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, unknown>;

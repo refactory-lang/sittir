@@ -338,6 +338,10 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.seam_is_token = true;
     }
 
+    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+        self.sources.and_then(|sources| sources.kind_of(coord))
+    }
+
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
         let sources = self
             .sources

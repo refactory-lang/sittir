@@ -44,16 +44,7 @@ export default grammar(
 				_space: string(' ')
 			}),
 
-			// String-interior scanner tokens: the external scanner claims their
-			// characters directly, so no whitespace can ever precede them — a
-			// string's plain-text run abutting an escape is one lexical region,
-			// not a token seam, and the rendered text must never receive a seam
-			// space. `token.immediate` cannot be written on an externals entry,
-			// so each token's sittir-side `renderAs` body carries the wrapper:
-			// the TOKEN flatten at link pushes `immediate` onto the rule the
-			// render pipeline sees. The pattern bodies are nominal text shapes
-			// (these leaves render verbatim from wire text, never from the
-			// pattern).
+			// See docs/python-grammar-sittir-glossary.md::renderAs
 			renderAs: (_$) => ({
 				string_start: /[a-zA-Z]*["']+/,
 				_string_content: token.immediate(/[^"'\\{}\n]+/),
@@ -161,13 +152,7 @@ export default grammar(
 					4: field('alternative')
 				},
 
-				// Arm 11 of `_simple_pattern` is the negative-literal shape
-				// (`seq(optional('-'), choice(integer, float))`, minted as
-				// `simple_pattern_negative`): the optional `-` is an anonymous
-				// token enrich's optional-keyword promotion skips (not
-				// word-shaped), so unfielded it lands in `$other` and never
-				// renders. Fielding it mints `_kw_sign` — the same mechanism
-				// `complex_pattern`'s leading `-` uses via its position-0 field.
+				// See docs/python-grammar-sittir-glossary.md::_simple_pattern
 				_simple_pattern: [{ '11/0': field('sign') }, { '11': variant('negative') }],
 
 				constrained_type: {
@@ -207,15 +192,7 @@ export default grammar(
 					0: field('name')
 				},
 
-				// import_from_statement: 1 field(s)
-				// Path-scoped to choice arm 0 (the bare `$.wildcard_import` symbol).
-				// The previous flat `3: field('wildcard_import')` wrapped the WHOLE
-				// position-3 choice, so in the parenthesized arm
-				// (`seq('(', $._import_list, ')')`) the field landed on the anonymous
-				// '(' / ',' / ')' tokens (the named imports inside `_import_list`
-				// already carry their own field('name')) — the wildcard_import slot
-				// then filtered those out and threw "repeated slot 'wildcard_import'
-				// requires at least one value" for `from a import (b, c)`.
+				// See docs/python-grammar-sittir-glossary.md::import_from_statement
 				import_from_statement: [
 					{ '3/0': field('wildcard_import') }, // wildcard_import [struct=0]
 					{ '3/2': alias('parenthesized_import_list') }
@@ -248,10 +225,7 @@ export default grammar(
 				},
 
 				splat_type: {
-					// Same star position as splat_pattern above — the choice of
-					// '*'/'**' is the operator, not a second 'identifier' (the
-					// duplicate name merged both positions into one slot and
-					// dropped the star from renders).
+					// See docs/python-grammar-sittir-glossary.md::splat_type
 					0: field('operator'),
 					1: field('name')
 				},
@@ -290,30 +264,12 @@ export default grammar(
 
 				_match_block: { 0: variant('block'), 1: variant('empty') },
 
-				// A suite is one of three forms: simple statements on the same
-				// line, an indented block, or nothing at all. Arms 0 and 2 are
-				// aliases (to `simple_statements` / `newline`) and only need arm
-				// names. Arm 1 (`seq($._indent, $.block)`) is an anonymous seq
-				// member with no identity of its own; promoting it to a kind
-				// (same mechanism as `_match_block`'s `block` arm above) gives
-				// it a real template, so its INDENT member renders instead of
-				// being dropped by emitChoice's union-slot routing.
+				// See docs/python-grammar-sittir-glossary.md::_suite
 				_suite: { 0: variant('inline'), 1: variant('block'), 2: variant('empty') }
 			},
 			rules: {
 				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_newline, $._indent, $._dedent),
-				// Base grammar aliases this arm (`alias($.list_splat_pattern,
-				// $.list_splat)`), making primary_expression and list_splat_pattern
-				// parse-kind-non-injective; stripping the alias below (needed so
-				// both fork this OR/AND choice arm produce a real, distinct kind)
-				// exposes the declared `[primary_expression, list_splat_pattern]`
-				// GLR conflict as two visibly different kinds instead of one
-				// display name, with the winning fork now decided by structural
-				// tie-break noise instead of upstream's alias. `prec.dynamic(-1)`
-				// restores upstream's outcome deterministically: the expression
-				// fork (list_splat) wins every genuine ambiguity — true pattern
-				// contexts (`a, *rest = xs`) are unaffected since the expression
-				// fork dies at `=` there, leaving no tie to break.
+				// See docs/python-grammar-sittir-glossary.md::primary_expression
 				primary_expression: ($: any, original: ChoiceRule) => {
 					let base = original.members;
 
@@ -322,17 +278,7 @@ export default grammar(
 				_except_clause_exception_as: ($) => seq(field('value', $.expression), optional($._except_clause_exception_as_optional1)),
 				_except_clause_exception_as_optional1: ($) => seq('as', field('alias', $.expression)),
 
-				// `string_content`'s plain-text runs (`_string_content`) and
-				// invalid-escape runs (`_not_escape_sequence`) are hidden
-				// tokens — absent from the CST, so a read can only see the
-				// escape children and any string mixing text with escapes
-				// loses its text through the slot-based render (the verbatim
-				// $text fallback fires only when ALL slots are empty).
-				// Alias both visible so fragments surface as leaf nodes the
-				// read captures; the reader's `$slotOrder` stamp then merges
-				// the per-kind buckets back into document order. Mirrors
-				// tree-sitter-typescript, whose string fragments are visible
-				// named tokens (`unescaped_double_string_fragment`).
+				// See docs/python-grammar-sittir-glossary.md::string_content
 				string_content: ($) =>
 					prec.right(
 						repeat1(
@@ -345,23 +291,7 @@ export default grammar(
 						)
 					),
 
-				// `format_specifier`'s text run behaves immediate — its regex
-				// absorbs any whitespace as content, so inter-token extras can
-				// never materialize before it — but upstream writes plain
-				// `token(...)`. Declaring `token.immediate` matters beyond the
-				// parse: the text|text seam is load-bearing for RENDERING and
-				// not subsumed by static char-class analysis. At parse time two
-				// adjacent text runs can't occur (greedy lexing), but
-				// config-built nodes ($with setters, untyped construction
-				// through the Verbatim scalar arm) CAN pass '10' and 'd' as
-				// separate items;
-				// a seam check would inject '10 d' — corrupting the format
-				// spec, where raw '10d' is the only correct output (verbatim
-				// content: a space is semantics). Both sides are
-				// class-indeterminate, so only the declared-immediacy fact can
-				// clear that seam. (The text↔format_expression seams, by
-				// contrast, are statically safe via the interpolation's fixed
-				// non-word '{'/'}' flanks.)
+				// See docs/python-grammar-sittir-glossary.md::format_specifier
 				format_specifier: ($) =>
 					seq(':', repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))),
 
@@ -373,11 +303,7 @@ export default grammar(
 				set: ($) => seq('{', alias($._collection_elements, $.collection_elements), '}'),
 				tuple: ($) => seq('(', optional(alias($._collection_elements, $.collection_elements)), ')'),
 
-				// Reference the shared case-pattern list kind (the enrich mint
-				// serving _list_pattern/_tuple_pattern/class_pattern) instead of
-				// respelling the list inline — the visible list node carries the
-				// per-instance trailing-separator fact; an inline spelling would
-				// keep per-field flank capture alive on these two kinds alone.
+				// See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
 				case_tuple_pattern: ($) =>
 					seq('(', optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ')'),
 				case_list_pattern: ($) =>
@@ -404,19 +330,7 @@ export default grammar(
 				print_statement_plain: ($) => seq('print', alias($._print_arguments, $.print_arguments)),
 				print_statement: ($) =>
 					choice(prec(1, $.print_statement_chevron), prec(-3, prec.dynamic(-1, $.print_statement_plain))),
-				// Base `_simple_pattern`'s last arm is the bare literal `'_'`
-				// (the match-statement wildcard pattern). Every other arm is a
-				// named rule (`$.dotted_name`, `$.string`, ...), so when
-				// `_simple_pattern` (hidden) inlines into `case_pattern`, those
-				// arms surface as a real named child that routes into
-				// `case_pattern`'s singular `content` slot — but a bare string
-				// literal produces an ANONYMOUS/unnamed token instead, which
-				// the wrap layer's `content` accessor never finds ("singular
-				// slot 'content' on 'case_pattern' requires one value; got
-				// undefined"). Same root-cause class, same fix, as rust's
-				// `_pattern`/`_wildcard_pattern` (packages/rust/grammar.sittir.ts):
-				// alias the literal into its own real, named node so it can
-				// fill the slot like every sibling arm.
+				// See docs/python-grammar-sittir-glossary.md::_simple_pattern
 				_simple_pattern: ($) =>
 					prec(
 						1,

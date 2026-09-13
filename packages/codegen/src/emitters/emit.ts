@@ -107,7 +107,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const resolvedRules = rulesConfig
 		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
 		: undefined;
-	const spacedRules = resolvedRules?.spaced;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,

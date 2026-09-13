@@ -34,7 +34,7 @@ import {
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
-import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
+import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 
 export interface EmitTestsConfig {
@@ -322,12 +322,15 @@ function subFactoryCallArgs(
 	if (sub.residual.length === 0) return childArgs;
 
 	const residualParts = requiredFieldParts(sub.residual, nodeMap, kindEntries);
-	const mergeShaped = path.length === 0 && armIsConfigShaped(sub, nodeMap, { isEmitted });
+	const mergeShaped = path.length === 0 && sub.merges;
 	if (mergeShaped) {
 		const inner = objectLiteralInner(childArgs);
 		if (inner === undefined) return undefined;
 		const parts = inner.length > 0 ? [...residualParts, inner] : residualParts;
 		return objectFrom(parts);
+	}
+	if (seatsConfigChild(sub, nodeMap)) {
+		return objectFrom([...residualParts, `${sub.slot.configKey}: ${childArgs === '' ? '{}' : childArgs}`]);
 	}
 	const tuple = childArgs === '' ? '[]' : `[${childArgs}]`;
 	return objectFrom([...residualParts, `${sub.slot.configKey}: ${tuple}`]);

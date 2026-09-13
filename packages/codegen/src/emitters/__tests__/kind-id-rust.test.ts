@@ -62,6 +62,12 @@ describe('is_slot_separator', () => {
 		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));
 		expect(table).toContain(`(${idOf('for_in_clause')}, "right", &[${idOf('comma')}]),`);
 	});
+	it("names a literal a rule field-tags beside a singular slot, so the reader drops it as the template's own", async () => {
+		const { source, idOf } = await emittedKindIds('typescript');
+		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));
+		// for_statement: `field(condition, choice(seq(_expressions, ';'), empty_statement))`
+		expect(table).toContain(`(${idOf('for_statement')}, "condition", &[${idOf('semi')}]),`);
+	});
 	it('leaves an elidable list alone: its separators place the holes', async () => {
 		const { source, idOf } = await emittedKindIds('typescript');
 		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));

@@ -41,31 +41,7 @@ import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from 
 import { getTransportProjection } from './transport-projection-cache.ts';
 import { flanksOf, isSeamChoice, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import {
-	ADJACENT,
-	DEDENT as DEDENT_BODY,
-	EMPTY,
-	INDENT as INDENT_BODY,
-	SPACE,
-	branches,
-	concat,
-	edgeChar,
-	equalBodies,
-	equalNodes,
-	gate,
-	isExpression,
-	isPlainText,
-	mentions,
-	opensAsTag,
-	refersTo,
-	duplicateSlots,
-	literalBody,
-	seam,
-	slot as slotRef,
-	text,
-	weight,
-	type Body
-} from './render-body.ts';
+import { ADJACENT, DEDENT as DEDENT_BODY, EMPTY, INDENT as INDENT_BODY, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -1027,7 +1003,150 @@ function restoreEmittedSlotNames(ctx: EmitCtx, snapshot: ReadonlySet<string>): v
 	for (const s of snapshot) ctx.emittedSlotNames.add(s);
 }
 
+/** The kinds a choice arm admits into the slot it carries: the names of its
+ *  symbol members, a supertype standing for its members. `undefined` when the
+ *  arm carries no symbol or more than one, since a literal cannot be gated on
+ *  two slots at once. */
+function armSlotKinds(arm: RenderRule): readonly string[] | undefined {
+	const kinds: string[] = [];
+	let carriers = 0;
+	const walk = (rule: RenderRule): void => {
+		const flanks = flanksOf(rule);
+		if (flanks !== undefined) {
+			walk(flanks.inner);
+			return;
+		}
+		if (isSeamChoice(rule)) return;
+		switch (rule.type) {
+			case SYMBOL:
+				carriers += 1;
+				if (!kinds.includes(rule.name)) kinds.push(rule.name);
+				return;
+			case PATTERN:
+				carriers += 1;
+				return;
+			case CHOICE: {
+				const before = carriers;
+				let most = 0;
+				for (const member of rule.members) {
+					carriers = before;
+					walk(member);
+					most = Math.max(most, carriers - before);
+				}
+				carriers = before + most;
+				return;
+			}
+			case SEQ:
+				for (const member of rule.members) walk(member);
+				return;
+			default:
+				return;
+		}
+	};
+	walk(arm);
+	return carriers === 1 && kinds.length > 0 ? kinds : undefined;
+}
+
+/** A choice's field name pushed down onto the members that carry a slot, so
+ *  each arm emits as the parser tags it: the symbol takes the field, a
+ *  literal beside it stays the arm's own text. */
+function withFieldOnCarriers(rule: RenderRule, fieldName: string): RenderRule {
+	if (isSeamChoice(rule)) return rule;
+	switch (rule.type) {
+		case SYMBOL:
+		case PATTERN:
+			return (rule as { fieldName?: string }).fieldName === undefined
+				? ({ ...rule, fieldName } as RenderRule)
+				: rule;
+		case SEQ:
+		case CHOICE:
+			return { ...rule, members: rule.members.map((m) => withFieldOnCarriers(m, fieldName)) } as RenderRule;
+		default:
+			return rule;
+	}
+}
+
+const isLiteralOnly = (body: Body): boolean =>
+	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
+
+/** The arms of a choice that share one slot and differ only by the literal
+ *  they put beside it, folded into the slot once and each literal gated on
+ *  the kinds its arm admits. `for (init; cond; inc)`: the initializer's
+ *  expression arm ends in `;` and its declaration arms do not, so the `;` is
+ *  written when the initializer is an expression. Nothing else about the
+ *  choice qualifies: an arm without a slot, an arm with two, or arms whose
+ *  text before the slot differs leave the choice to the other resolutions. */
+function emitKindGatedLiterals(
+	rule: Extract<RenderRule, { type: 'CHOICE' }>,
+	fieldName: string | undefined,
+	ctx: EmitCtx
+): Body | undefined {
+	if (rule.members.length < 2) return undefined;
+	if (!rule.members.some((m) => m.type === SEQ && m.members.some((x) => x.type === STRING))) return undefined;
+	const trace = process.env.SITTIR_TRACE_GATED !== undefined && ctx.currentKind === process.env.SITTIR_TRACE_GATED;
+	const bail = (why: string): undefined => {
+		if (trace) process.stderr.write(`[gated] ${ctx.currentKind} field=${fieldName}: ${why}\n`);
+		return undefined;
+	};
+	interface Arm {
+		/** The body up to and through the slot; `undefined` for an arm that is
+		 *  a literal kind alone, which the slot renders as itself. */
+		prefix: Body | undefined;
+		residual: Body;
+		kinds: readonly string[];
+	}
+	const arms: Arm[] = [];
+	let key: string | undefined;
+	const beforeSlots = new Set(ctx.emittedSlotNames);
+	for (const member of rule.members) {
+		const arm = fieldName === undefined ? member : withFieldOnCarriers(member, fieldName);
+		const kinds = armSlotKinds(arm);
+		if (kinds === undefined) return bail(`arm carries no single slot: ${JSON.stringify(arm).slice(0, 160)}`);
+		const body = emitRule(arm, ctx);
+		restoreEmittedSlotNames(ctx, beforeSlots);
+		const at = body.findIndex((n) => n.kind === 'slot');
+		if (at < 0) {
+			if (kinds.length !== 1 || !isLiteralOnly(body)) return bail(`slotless arm not a lone literal kind: ${JSON.stringify(body).slice(0, 160)}`);
+			arms.push({ prefix: undefined, residual: EMPTY, kinds });
+			continue;
+		}
+		if (body.slice(0, at).some((n) => n.kind === 'if')) return bail('gate before the slot');
+		const slotName = (body[at] as { name: string }).name;
+		if (key !== undefined && slotName !== key) return bail(`slot ${slotName} differs from ${key}`);
+		key = slotName;
+		const residual = body.slice(at + 1);
+		if (!isLiteralOnly(residual)) return bail(`residual not literal-only: ${JSON.stringify(residual).slice(0, 160)}`);
+		arms.push({ prefix: body.slice(0, at + 1), residual, kinds });
+	}
+	if (key === undefined) return bail('no arm carries the slot');
+	const prefix = arms.find((a) => a.prefix !== undefined)!.prefix!;
+	if (!arms.every((a) => a.prefix === undefined || equalBodies(a.prefix, prefix))) return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
+	const gated: { kinds: string[]; body: Body }[] = [];
+	for (const arm of arms) {
+		if (arm.residual.length === 0) continue;
+		const same = gated.find((g) => equalBodies(g.body, arm.residual));
+		if (same) {
+			for (const k of arm.kinds) if (!same.kinds.includes(k)) same.kinds.push(k);
+		} else {
+			gated.push({ kinds: [...arm.kinds], body: arm.residual });
+		}
+	}
+	if (gated.length === 0) return bail('no arm has a residual literal');
+	ctx.emittedSlotNames.add(key);
+	return concat(
+		prefix,
+		branches(
+			gated.map((g) => ({ test: key!, kinds: g.kinds, body: g.body })),
+			undefined
+		)
+	);
+}
+
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): Body {
+	{
+		const gated = emitKindGatedLiterals(rule, (rule as { fieldName?: string }).fieldName, ctx);
+		if (gated !== undefined) return gated;
+	}
 	const slot = lookupSlot(rule, ctx);
 	if (slot) {
 		const choiceRuleId = (rule as { id?: string }).id;

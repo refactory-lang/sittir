@@ -7,8 +7,7 @@ import {
 	AssembledList,
 	AssembledKeyword,
 	AssembledNonterminal,
-	valueParseKindsOf,
-	valueParseLabelsOf
+	valueParseKindsOf
 } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 

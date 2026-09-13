@@ -312,15 +312,19 @@ const _assignmentEq$expressionList =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentEq$expressionListComma =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentEq$patternListComma =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentEq$expressionListExpressions =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _assignmentEq$assignment =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _assignmentEq$patternList =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const _assignmentEq$yield =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -328,47 +332,329 @@ const _assignmentEq$augmentedAssignment =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentEq$patternList =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentEq$patternListPatterns =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentEq$yield =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentEq$yieldFromClause =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _assignmentEq: {
 	expressionList: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionList>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToExpressionList>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		comma: {
+			strict: (...args: ArgsOf<typeof expressionList.comma.strict>) => ReturnType<typeof F.buildAssignmentEq>;
+			coerce: (...args: ArgsOf<typeof expressionList.comma.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		};
+		expressions: {
+			strict: (...args: ArgsOf<typeof expressionList.expressions.strict>) => ReturnType<typeof F.buildAssignmentEq>;
+			coerce: (...args: ArgsOf<typeof expressionList.expressions.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		};
 	};
 	assignment: {
 		strict: (...args: ArgsOf<typeof F.buildAssignment>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToAssignment>) => ReturnType<typeof C.coerceToAssignmentEq>;
 	};
-	patternList: {
-		strict: (...args: ArgsOf<typeof F.buildPatternList>) => ReturnType<typeof F.buildAssignmentEq>;
-		coerce: (...args: ArgsOf<typeof C.coerceToPatternList>) => ReturnType<typeof C.coerceToAssignmentEq>;
-	};
-	yield: {
-		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildAssignmentEq>;
-		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof C.coerceToAssignmentEq>;
-	};
 	augmentedAssignment: {
 		strict: (...args: ArgsOf<typeof F.buildAugmentedAssignment>) => ReturnType<typeof F.buildAssignmentEq>;
 		coerce: (...args: ArgsOf<typeof C.coerceToAugmentedAssignment>) => ReturnType<typeof C.coerceToAssignmentEq>;
 	};
+	patternList: {
+		strict: (...args: ArgsOf<typeof F.buildPatternList>) => ReturnType<typeof F.buildAssignmentEq>;
+		coerce: (...args: ArgsOf<typeof C.coerceToPatternList>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		comma: {
+			strict: (...args: ArgsOf<typeof patternList.comma.strict>) => ReturnType<typeof F.buildAssignmentEq>;
+			coerce: (...args: ArgsOf<typeof patternList.comma.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		};
+		patterns: {
+			strict: (...args: ArgsOf<typeof patternList.patterns.strict>) => ReturnType<typeof F.buildAssignmentEq>;
+			coerce: (...args: ArgsOf<typeof patternList.patterns.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		};
+	};
+	yield: {
+		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildAssignmentEq>;
+		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		fromClause: {
+			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildAssignmentEq>;
+			coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToAssignmentEq>;
+		};
+	};
 } = {
 	expressionList: {
 		strict: _assignmentEq$expressionList(F.buildAssignmentEq, F.buildExpressionList),
-		coerce: _assignmentEq$expressionList(C.coerceToAssignmentEq, C.coerceToExpressionList)
+		coerce: _assignmentEq$expressionList(C.coerceToAssignmentEq, C.coerceToExpressionList),
+		comma: {
+			strict: _assignmentEq$expressionListComma(F.buildAssignmentEq, expressionList.comma.strict),
+			coerce: _assignmentEq$expressionListComma(C.coerceToAssignmentEq, expressionList.comma.coerce)
+		},
+		expressions: {
+			strict: _assignmentEq$expressionListExpressions(F.buildAssignmentEq, expressionList.expressions.strict),
+			coerce: _assignmentEq$expressionListExpressions(C.coerceToAssignmentEq, expressionList.expressions.coerce)
+		}
 	},
 	assignment: {
 		strict: _assignmentEq$assignment(F.buildAssignmentEq, F.buildAssignment),
 		coerce: _assignmentEq$assignment(C.coerceToAssignmentEq, C.coerceToAssignment)
 	},
-	patternList: {
-		strict: _assignmentEq$patternList(F.buildAssignmentEq, F.buildPatternList),
-		coerce: _assignmentEq$patternList(C.coerceToAssignmentEq, C.coerceToPatternList)
-	},
-	yield: {
-		strict: _assignmentEq$yield(F.buildAssignmentEq, F.buildYield),
-		coerce: _assignmentEq$yield(C.coerceToAssignmentEq, C.coerceToYield)
-	},
 	augmentedAssignment: {
 		strict: _assignmentEq$augmentedAssignment(F.buildAssignmentEq, F.buildAugmentedAssignment),
 		coerce: _assignmentEq$augmentedAssignment(C.coerceToAssignmentEq, C.coerceToAugmentedAssignment)
+	},
+	patternList: {
+		strict: _assignmentEq$patternList(F.buildAssignmentEq, F.buildPatternList),
+		coerce: _assignmentEq$patternList(C.coerceToAssignmentEq, C.coerceToPatternList),
+		comma: {
+			strict: _assignmentEq$patternListComma(F.buildAssignmentEq, patternList.comma.strict),
+			coerce: _assignmentEq$patternListComma(C.coerceToAssignmentEq, patternList.comma.coerce)
+		},
+		patterns: {
+			strict: _assignmentEq$patternListPatterns(F.buildAssignmentEq, patternList.patterns.strict),
+			coerce: _assignmentEq$patternListPatterns(C.coerceToAssignmentEq, patternList.patterns.coerce)
+		}
+	},
+	yield: {
+		strict: _assignmentEq$yield(F.buildAssignmentEq, F.buildYield),
+		coerce: _assignmentEq$yield(C.coerceToAssignmentEq, C.coerceToYield),
+		fromClause: {
+			strict: _assignmentEq$yieldFromClause(F.buildAssignmentEq, yield_.fromClause.strict),
+			coerce: _assignmentEq$yieldFromClause(C.coerceToAssignmentEq, yield_.fromClause.coerce)
+		}
+	}
+};
+
+const _assignmentTyped$expressionList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'expression' || key === 'tail') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
+	};
+const _assignmentTyped$expressionListComma =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _assignmentTyped$patternListComma =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _assignmentTyped$expressionListExpressions =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _assignmentTyped$assignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'left' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
+	};
+const _assignmentTyped$augmentedAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
+	};
+const _assignmentTyped$patternList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'pattern' || key === 'tail') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
+	};
+const _assignmentTyped$patternListPatterns =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _assignmentTyped$yield =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _assignmentTyped$yieldFromClause =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+	};
+const _assignmentTyped: {
+	expressionList: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildExpressionList>[0]
+		) => ReturnType<typeof F.buildAssignmentTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> &
+				ArgsOf<typeof C.coerceToExpressionList>[0]
+		) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		comma: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof expressionList.comma.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignmentTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof expressionList.comma.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		};
+		expressions: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof expressionList.expressions.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignmentTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof expressionList.expressions.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		};
+	};
+	assignment: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildAssignment>[0]
+		) => ReturnType<typeof F.buildAssignmentTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & ArgsOf<typeof C.coerceToAssignment>[0]
+		) => ReturnType<typeof C.coerceToAssignmentTyped>;
+	};
+	augmentedAssignment: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildAugmentedAssignment>[0]
+		) => ReturnType<typeof F.buildAssignmentTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> &
+				ArgsOf<typeof C.coerceToAugmentedAssignment>[0]
+		) => ReturnType<typeof C.coerceToAssignmentTyped>;
+	};
+	patternList: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildPatternList>[0]
+		) => ReturnType<typeof F.buildAssignmentTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & ArgsOf<typeof C.coerceToPatternList>[0]
+		) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		comma: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof patternList.comma.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignmentTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof patternList.comma.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		};
+		patterns: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof patternList.patterns.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignmentTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof patternList.patterns.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		};
+	};
+	yield: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & { right: ArgsOf<typeof F.buildYield> }
+		) => ReturnType<typeof F.buildAssignmentTyped>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & { right: ArgsOf<typeof C.coerceToYield> }
+		) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		fromClause: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof yield_.fromClause.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignmentTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
+					right: ArgsOf<typeof yield_.fromClause.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignmentTyped>;
+		};
+	};
+} = {
+	expressionList: {
+		strict: _assignmentTyped$expressionList(F.buildAssignmentTyped, F.buildExpressionList),
+		coerce: _assignmentTyped$expressionList(C.coerceToAssignmentTyped, C.coerceToExpressionList),
+		comma: {
+			strict: _assignmentTyped$expressionListComma(F.buildAssignmentTyped, expressionList.comma.strict),
+			coerce: _assignmentTyped$expressionListComma(C.coerceToAssignmentTyped, expressionList.comma.coerce)
+		},
+		expressions: {
+			strict: _assignmentTyped$expressionListExpressions(F.buildAssignmentTyped, expressionList.expressions.strict),
+			coerce: _assignmentTyped$expressionListExpressions(C.coerceToAssignmentTyped, expressionList.expressions.coerce)
+		}
+	},
+	assignment: {
+		strict: _assignmentTyped$assignment(F.buildAssignmentTyped, F.buildAssignment),
+		coerce: _assignmentTyped$assignment(C.coerceToAssignmentTyped, C.coerceToAssignment)
+	},
+	augmentedAssignment: {
+		strict: _assignmentTyped$augmentedAssignment(F.buildAssignmentTyped, F.buildAugmentedAssignment),
+		coerce: _assignmentTyped$augmentedAssignment(C.coerceToAssignmentTyped, C.coerceToAugmentedAssignment)
+	},
+	patternList: {
+		strict: _assignmentTyped$patternList(F.buildAssignmentTyped, F.buildPatternList),
+		coerce: _assignmentTyped$patternList(C.coerceToAssignmentTyped, C.coerceToPatternList),
+		comma: {
+			strict: _assignmentTyped$patternListComma(F.buildAssignmentTyped, patternList.comma.strict),
+			coerce: _assignmentTyped$patternListComma(C.coerceToAssignmentTyped, patternList.comma.coerce)
+		},
+		patterns: {
+			strict: _assignmentTyped$patternListPatterns(F.buildAssignmentTyped, patternList.patterns.strict),
+			coerce: _assignmentTyped$patternListPatterns(C.coerceToAssignmentTyped, patternList.patterns.coerce)
+		}
+	},
+	yield: {
+		strict: _assignmentTyped$yield(F.buildAssignmentTyped, F.buildYield),
+		coerce: _assignmentTyped$yield(C.coerceToAssignmentTyped, C.coerceToYield),
+		fromClause: {
+			strict: _assignmentTyped$yieldFromClause(F.buildAssignmentTyped, yield_.fromClause.strict),
+			coerce: _assignmentTyped$yieldFromClause(C.coerceToAssignmentTyped, yield_.fromClause.coerce)
+		}
 	}
 };
 
@@ -555,6 +841,14 @@ export const type: typeof B.type & {
 	}
 };
 
+const _assignmentType$splatType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const _assignmentType$genericType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _assignmentType$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -572,6 +866,14 @@ const _assignmentType$memberType =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _assignmentType: {
+	splatType: {
+		strict: (...args: ArgsOf<typeof type.splatType.strict>) => ReturnType<typeof F.buildAssignmentType>;
+		coerce: (...args: ArgsOf<typeof type.splatType.coerce>) => ReturnType<typeof C.coerceToAssignmentType>;
+	};
+	genericType: {
+		strict: (...args: ArgsOf<typeof type.genericType.strict>) => ReturnType<typeof F.buildAssignmentType>;
+		coerce: (...args: ArgsOf<typeof type.genericType.coerce>) => ReturnType<typeof C.coerceToAssignmentType>;
+	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof type.genericType.identifier.strict>) => ReturnType<typeof F.buildAssignmentType>;
 		coerce: (...args: ArgsOf<typeof type.genericType.identifier.coerce>) => ReturnType<typeof C.coerceToAssignmentType>;
@@ -589,6 +891,14 @@ const _assignmentType: {
 		coerce: (...args: ArgsOf<typeof type.memberType.coerce>) => ReturnType<typeof C.coerceToAssignmentType>;
 	};
 } = {
+	splatType: {
+		strict: _assignmentType$splatType(F.buildAssignmentType, type.splatType.strict),
+		coerce: _assignmentType$splatType(C.coerceToAssignmentType, type.splatType.coerce)
+	},
+	genericType: {
+		strict: _assignmentType$genericType(F.buildAssignmentType, type.genericType.strict),
+		coerce: _assignmentType$genericType(C.coerceToAssignmentType, type.genericType.coerce)
+	},
 	identifier: {
 		strict: _assignmentType$identifier(F.buildAssignmentType, type.genericType.identifier.strict),
 		coerce: _assignmentType$identifier(C.coerceToAssignmentType, type.genericType.identifier.coerce)
@@ -607,173 +917,121 @@ const _assignmentType: {
 	}
 };
 
-const _assignmentTyped$expressionList =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'expression' || key === 'tail') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
-	};
-const _assignmentTyped$assignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'content') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
-	};
-const _assignmentTyped$augmentedAssignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
-	};
-const _assignmentTyped$patternList =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'pattern' || key === 'tail') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(inner) });
-	};
-const _assignmentTyped$patternListPatterns =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
-	};
-const _assignmentTyped$yield =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
-	};
-const _assignmentTyped$yieldFromClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
-	};
-const _assignmentTyped: {
-	expressionList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildExpressionList>[0]
-		) => ReturnType<typeof F.buildAssignmentTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> &
-				ArgsOf<typeof C.coerceToExpressionList>[0]
-		) => ReturnType<typeof C.coerceToAssignmentTyped>;
-	};
-	assignment: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildAssignment>[0]
-		) => ReturnType<typeof F.buildAssignmentTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & ArgsOf<typeof C.coerceToAssignment>[0]
-		) => ReturnType<typeof C.coerceToAssignmentTyped>;
-	};
-	augmentedAssignment: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildAugmentedAssignment>[0]
-		) => ReturnType<typeof F.buildAssignmentTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> &
-				ArgsOf<typeof C.coerceToAugmentedAssignment>[0]
-		) => ReturnType<typeof C.coerceToAssignmentTyped>;
-	};
-	patternList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & ArgsOf<typeof F.buildPatternList>[0]
-		) => ReturnType<typeof F.buildAssignmentTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & ArgsOf<typeof C.coerceToPatternList>[0]
-		) => ReturnType<typeof C.coerceToAssignmentTyped>;
-		patterns: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
-					right: ArgsOf<typeof patternList.patterns.strict>;
-				}
-			) => ReturnType<typeof F.buildAssignmentTyped>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
-					right: ArgsOf<typeof patternList.patterns.coerce>;
-				}
-			) => ReturnType<typeof C.coerceToAssignmentTyped>;
-		};
-	};
-	yield: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & { right: ArgsOf<typeof F.buildYield> }
-		) => ReturnType<typeof F.buildAssignmentTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & { right: ArgsOf<typeof C.coerceToYield> }
-		) => ReturnType<typeof C.coerceToAssignmentTyped>;
-		fromClause: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildAssignmentTyped>[0], 'right'> & {
-					right: ArgsOf<typeof yield_.fromClause.strict>;
-				}
-			) => ReturnType<typeof F.buildAssignmentTyped>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentTyped>[0], 'right'> & {
-					right: ArgsOf<typeof yield_.fromClause.coerce>;
-				}
-			) => ReturnType<typeof C.coerceToAssignmentTyped>;
-		};
-	};
-} = {
-	expressionList: {
-		strict: _assignmentTyped$expressionList(F.buildAssignmentTyped, F.buildExpressionList),
-		coerce: _assignmentTyped$expressionList(C.coerceToAssignmentTyped, C.coerceToExpressionList)
-	},
-	assignment: {
-		strict: _assignmentTyped$assignment(F.buildAssignmentTyped, F.buildAssignment),
-		coerce: _assignmentTyped$assignment(C.coerceToAssignmentTyped, C.coerceToAssignment)
-	},
-	augmentedAssignment: {
-		strict: _assignmentTyped$augmentedAssignment(F.buildAssignmentTyped, F.buildAugmentedAssignment),
-		coerce: _assignmentTyped$augmentedAssignment(C.coerceToAssignmentTyped, C.coerceToAugmentedAssignment)
-	},
-	patternList: {
-		strict: _assignmentTyped$patternList(F.buildAssignmentTyped, F.buildPatternList),
-		coerce: _assignmentTyped$patternList(C.coerceToAssignmentTyped, C.coerceToPatternList),
-		patterns: {
-			strict: _assignmentTyped$patternListPatterns(F.buildAssignmentTyped, patternList.patterns.strict),
-			coerce: _assignmentTyped$patternListPatterns(C.coerceToAssignmentTyped, patternList.patterns.coerce)
-		}
-	},
-	yield: {
-		strict: _assignmentTyped$yield(F.buildAssignmentTyped, F.buildYield),
-		coerce: _assignmentTyped$yield(C.coerceToAssignmentTyped, C.coerceToYield),
-		fromClause: {
-			strict: _assignmentTyped$yieldFromClause(F.buildAssignmentTyped, yield_.fromClause.strict),
-			coerce: _assignmentTyped$yieldFromClause(C.coerceToAssignmentTyped, yield_.fromClause.coerce)
-		}
-	}
-};
-
 const assignment$eq =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
+const assignment$eqExpressionList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedExpressionList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$eqPatternList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedPatternList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$eqExpressionListExpressions =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedExpressionListExpressions =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$eqAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$eqAugmentedAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedAugmentedAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$eqPatternListPatterns =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedPatternListPatterns =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$eqYield =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedYield =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$eqYieldFromClause =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$typedYieldFromClause =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
 const assignment$type =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$splatType =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const assignment$genericType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -824,6 +1082,102 @@ export const assignment: typeof B.assignment & {
 				content: ArgsOf<typeof C.coerceToAssignmentEq>;
 			}
 		) => ReturnType<typeof C.coerceToAssignment>;
+		expressionList: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.expressionList.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.expressionList.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		patternList: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.patternList.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.patternList.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		expressionListExpressions: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.expressionList.expressions.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.expressionList.expressions.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		assignment: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.assignment.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.assignment.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		augmentedAssignment: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.augmentedAssignment.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.augmentedAssignment.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		patternListPatterns: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.patternList.patterns.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.patternList.patterns.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		yield: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.yield.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.yield.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		yieldFromClause: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.yield.fromClause.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentEq.yield.fromClause.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
 	};
 	type: {
 		strict: (
@@ -836,6 +1190,30 @@ export const assignment: typeof B.assignment & {
 				content: ArgsOf<typeof C.coerceToAssignmentType>;
 			}
 		) => ReturnType<typeof C.coerceToAssignment>;
+		splatType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.splatType.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.splatType.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		genericType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.genericType.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentType.genericType.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
 		identifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
@@ -892,16 +1270,158 @@ export const assignment: typeof B.assignment & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & ArgsOf<typeof C.coerceToAssignmentTyped>[0]
 		) => ReturnType<typeof C.coerceToAssignment>;
+		expressionList: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.expressionList.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.expressionList.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		patternList: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.patternList.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.patternList.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		expressionListExpressions: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.expressionList.expressions.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.expressionList.expressions.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		assignment: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.assignment.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.assignment.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		augmentedAssignment: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.augmentedAssignment.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.augmentedAssignment.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		patternListPatterns: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.patternList.patterns.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.patternList.patterns.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		yield: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.yield.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.yield.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
+		yieldFromClause: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.yield.fromClause.strict>;
+				}
+			) => ReturnType<typeof F.buildAssignment>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignment>[0], 'content'> & {
+					content: ArgsOf<typeof _assignmentTyped.yield.fromClause.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAssignment>;
+		};
 	};
 } = {
 	...B.assignment,
 	eq: {
 		strict: assignment$eq(F.buildAssignment, F.buildAssignmentEq),
-		coerce: assignment$eq(C.coerceToAssignment, C.coerceToAssignmentEq)
+		coerce: assignment$eq(C.coerceToAssignment, C.coerceToAssignmentEq),
+		expressionList: {
+			strict: assignment$eqExpressionList(F.buildAssignment, _assignmentEq.expressionList.strict),
+			coerce: assignment$eqExpressionList(C.coerceToAssignment, _assignmentEq.expressionList.coerce)
+		},
+		patternList: {
+			strict: assignment$eqPatternList(F.buildAssignment, _assignmentEq.patternList.strict),
+			coerce: assignment$eqPatternList(C.coerceToAssignment, _assignmentEq.patternList.coerce)
+		},
+		expressionListExpressions: {
+			strict: assignment$eqExpressionListExpressions(
+				F.buildAssignment,
+				_assignmentEq.expressionList.expressions.strict
+			),
+			coerce: assignment$eqExpressionListExpressions(
+				C.coerceToAssignment,
+				_assignmentEq.expressionList.expressions.coerce
+			)
+		},
+		assignment: {
+			strict: assignment$eqAssignment(F.buildAssignment, _assignmentEq.assignment.strict),
+			coerce: assignment$eqAssignment(C.coerceToAssignment, _assignmentEq.assignment.coerce)
+		},
+		augmentedAssignment: {
+			strict: assignment$eqAugmentedAssignment(F.buildAssignment, _assignmentEq.augmentedAssignment.strict),
+			coerce: assignment$eqAugmentedAssignment(C.coerceToAssignment, _assignmentEq.augmentedAssignment.coerce)
+		},
+		patternListPatterns: {
+			strict: assignment$eqPatternListPatterns(F.buildAssignment, _assignmentEq.patternList.patterns.strict),
+			coerce: assignment$eqPatternListPatterns(C.coerceToAssignment, _assignmentEq.patternList.patterns.coerce)
+		},
+		yield: {
+			strict: assignment$eqYield(F.buildAssignment, _assignmentEq.yield.strict),
+			coerce: assignment$eqYield(C.coerceToAssignment, _assignmentEq.yield.coerce)
+		},
+		yieldFromClause: {
+			strict: assignment$eqYieldFromClause(F.buildAssignment, _assignmentEq.yield.fromClause.strict),
+			coerce: assignment$eqYieldFromClause(C.coerceToAssignment, _assignmentEq.yield.fromClause.coerce)
+		}
 	},
 	type: {
 		strict: assignment$type(F.buildAssignment, F.buildAssignmentType),
 		coerce: assignment$type(C.coerceToAssignment, C.coerceToAssignmentType),
+		splatType: {
+			strict: assignment$splatType(F.buildAssignment, _assignmentType.splatType.strict),
+			coerce: assignment$splatType(C.coerceToAssignment, _assignmentType.splatType.coerce)
+		},
+		genericType: {
+			strict: assignment$genericType(F.buildAssignment, _assignmentType.genericType.strict),
+			coerce: assignment$genericType(C.coerceToAssignment, _assignmentType.genericType.coerce)
+		},
 		identifier: {
 			strict: assignment$identifier(F.buildAssignment, _assignmentType.identifier.strict),
 			coerce: assignment$identifier(C.coerceToAssignment, _assignmentType.identifier.coerce)
@@ -921,7 +1441,45 @@ export const assignment: typeof B.assignment & {
 	},
 	typed: {
 		strict: assignment$typed(F.buildAssignment, F.buildAssignmentTyped),
-		coerce: assignment$typed(C.coerceToAssignment, C.coerceToAssignmentTyped)
+		coerce: assignment$typed(C.coerceToAssignment, C.coerceToAssignmentTyped),
+		expressionList: {
+			strict: assignment$typedExpressionList(F.buildAssignment, _assignmentTyped.expressionList.strict),
+			coerce: assignment$typedExpressionList(C.coerceToAssignment, _assignmentTyped.expressionList.coerce)
+		},
+		patternList: {
+			strict: assignment$typedPatternList(F.buildAssignment, _assignmentTyped.patternList.strict),
+			coerce: assignment$typedPatternList(C.coerceToAssignment, _assignmentTyped.patternList.coerce)
+		},
+		expressionListExpressions: {
+			strict: assignment$typedExpressionListExpressions(
+				F.buildAssignment,
+				_assignmentTyped.expressionList.expressions.strict
+			),
+			coerce: assignment$typedExpressionListExpressions(
+				C.coerceToAssignment,
+				_assignmentTyped.expressionList.expressions.coerce
+			)
+		},
+		assignment: {
+			strict: assignment$typedAssignment(F.buildAssignment, _assignmentTyped.assignment.strict),
+			coerce: assignment$typedAssignment(C.coerceToAssignment, _assignmentTyped.assignment.coerce)
+		},
+		augmentedAssignment: {
+			strict: assignment$typedAugmentedAssignment(F.buildAssignment, _assignmentTyped.augmentedAssignment.strict),
+			coerce: assignment$typedAugmentedAssignment(C.coerceToAssignment, _assignmentTyped.augmentedAssignment.coerce)
+		},
+		patternListPatterns: {
+			strict: assignment$typedPatternListPatterns(F.buildAssignment, _assignmentTyped.patternList.patterns.strict),
+			coerce: assignment$typedPatternListPatterns(C.coerceToAssignment, _assignmentTyped.patternList.patterns.coerce)
+		},
+		yield: {
+			strict: assignment$typedYield(F.buildAssignment, _assignmentTyped.yield.strict),
+			coerce: assignment$typedYield(C.coerceToAssignment, _assignmentTyped.yield.coerce)
+		},
+		yieldFromClause: {
+			strict: assignment$typedYieldFromClause(F.buildAssignment, _assignmentTyped.yield.fromClause.strict),
+			coerce: assignment$typedYieldFromClause(C.coerceToAssignment, _assignmentTyped.yield.fromClause.coerce)
+		}
 	}
 };
 
@@ -937,7 +1495,35 @@ const expressionStatement$assignmentEq =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$expressionList =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$expressionListExpressions =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$augmentedAssignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$yield =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$yieldFromClause =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const expressionStatement$assignmentType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$splatType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$genericType =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -961,22 +1547,6 @@ const expressionStatement$assignmentTyped =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$augmentedAssignment =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$yield =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$yieldFromClause =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$expressionListExpressions =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const expressionStatement: typeof B.expressionStatement & {
 	tuple: {
 		strict: (...args: ArgsOf<typeof F.buildExpressionStatementTuple>) => ReturnType<typeof F.buildExpressionStatement>;
@@ -994,6 +1564,22 @@ export const expressionStatement: typeof B.expressionStatement & {
 		type: {
 			strict: (...args: ArgsOf<typeof assignment.type.strict>) => ReturnType<typeof F.buildExpressionStatement>;
 			coerce: (...args: ArgsOf<typeof assignment.type.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		splatType: {
+			strict: (
+				...args: ArgsOf<typeof assignment.type.splatType.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof assignment.type.splatType.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		genericType: {
+			strict: (
+				...args: ArgsOf<typeof assignment.type.genericType.strict>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof assignment.type.genericType.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
 		};
 		identifier: {
 			strict: (
@@ -1039,9 +1625,11 @@ export const expressionStatement: typeof B.expressionStatement & {
 	yield: {
 		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof C.coerceToExpressionStatement>;
-		fromClause: {
-			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		expressionList: {
+			strict: (...args: ArgsOf<typeof yield_.expressionList.strict>) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (
+				...args: ArgsOf<typeof yield_.expressionList.coerce>
+			) => ReturnType<typeof C.coerceToExpressionStatement>;
 		};
 		expressionListExpressions: {
 			strict: (
@@ -1050,6 +1638,10 @@ export const expressionStatement: typeof B.expressionStatement & {
 			coerce: (
 				...args: ArgsOf<typeof yield_.expressionList.expressions.coerce>
 			) => ReturnType<typeof C.coerceToExpressionStatement>;
+		};
+		fromClause: {
+			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof C.coerceToExpressionStatement>;
 		};
 	};
 } = {
@@ -1068,6 +1660,14 @@ export const expressionStatement: typeof B.expressionStatement & {
 		type: {
 			strict: expressionStatement$assignmentType(F.buildExpressionStatement, assignment.type.strict),
 			coerce: expressionStatement$assignmentType(C.coerceToExpressionStatement, assignment.type.coerce)
+		},
+		splatType: {
+			strict: expressionStatement$splatType(F.buildExpressionStatement, assignment.type.splatType.strict),
+			coerce: expressionStatement$splatType(C.coerceToExpressionStatement, assignment.type.splatType.coerce)
+		},
+		genericType: {
+			strict: expressionStatement$genericType(F.buildExpressionStatement, assignment.type.genericType.strict),
+			coerce: expressionStatement$genericType(C.coerceToExpressionStatement, assignment.type.genericType.coerce)
 		},
 		identifier: {
 			strict: expressionStatement$identifier(F.buildExpressionStatement, assignment.type.identifier.strict),
@@ -1097,9 +1697,9 @@ export const expressionStatement: typeof B.expressionStatement & {
 	yield: {
 		strict: expressionStatement$yield(F.buildExpressionStatement, F.buildYield),
 		coerce: expressionStatement$yield(C.coerceToExpressionStatement, C.coerceToYield),
-		fromClause: {
-			strict: expressionStatement$yieldFromClause(F.buildExpressionStatement, yield_.fromClause.strict),
-			coerce: expressionStatement$yieldFromClause(C.coerceToExpressionStatement, yield_.fromClause.coerce)
+		expressionList: {
+			strict: expressionStatement$expressionList(F.buildExpressionStatement, yield_.expressionList.strict),
+			coerce: expressionStatement$expressionList(C.coerceToExpressionStatement, yield_.expressionList.coerce)
 		},
 		expressionListExpressions: {
 			strict: expressionStatement$expressionListExpressions(
@@ -1110,6 +1710,10 @@ export const expressionStatement: typeof B.expressionStatement & {
 				C.coerceToExpressionStatement,
 				yield_.expressionList.expressions.coerce
 			)
+		},
+		fromClause: {
+			strict: expressionStatement$yieldFromClause(F.buildExpressionStatement, yield_.fromClause.strict),
+			coerce: expressionStatement$yieldFromClause(C.coerceToExpressionStatement, yield_.fromClause.coerce)
 		}
 	}
 };
@@ -2485,6 +3089,42 @@ const decoratedDefinition$classDefinition =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(inner) });
 	};
+const decoratedDefinition$classDefinitionSimpleStatements =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
+		const { definition: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+	};
+const decoratedDefinition$functionDefinitionSimpleStatements =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
+		const { definition: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+	};
+const decoratedDefinition$classDefinitionSuiteBlock =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
+		const { definition: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+	};
+const decoratedDefinition$functionDefinitionSuiteBlock =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
+		const { definition: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+	};
+const decoratedDefinition$classDefinitionEmpty =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
+		const { definition: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+	};
+const decoratedDefinition$functionDefinitionEmpty =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
+		const { definition: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+	};
 const decoratedDefinition$functionDefinition =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -2514,6 +3154,42 @@ export const decoratedDefinition: typeof B.decoratedDefinition & {
 			config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> &
 				ArgsOf<typeof C.coerceToClassDefinition>[0]
 		) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		inline: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof classDefinition.inline.strict>;
+				}
+			) => ReturnType<typeof F.buildDecoratedDefinition>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof classDefinition.inline.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		};
+		block: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof classDefinition.block.strict>;
+				}
+			) => ReturnType<typeof F.buildDecoratedDefinition>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof classDefinition.block.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		};
+		empty: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof classDefinition.empty.strict>;
+				}
+			) => ReturnType<typeof F.buildDecoratedDefinition>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof classDefinition.empty.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		};
 	};
 	functionDefinition: {
 		strict: (
@@ -2524,16 +3200,176 @@ export const decoratedDefinition: typeof B.decoratedDefinition & {
 			config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> &
 				ArgsOf<typeof C.coerceToFunctionDefinition>[0]
 		) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		inline: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof functionDefinition.inline.strict>;
+				}
+			) => ReturnType<typeof F.buildDecoratedDefinition>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof functionDefinition.inline.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		};
+		block: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof functionDefinition.block.strict>;
+				}
+			) => ReturnType<typeof F.buildDecoratedDefinition>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof functionDefinition.block.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		};
+		empty: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof functionDefinition.empty.strict>;
+				}
+			) => ReturnType<typeof F.buildDecoratedDefinition>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToDecoratedDefinition>[0], 'definition'> & {
+					definition: ArgsOf<typeof functionDefinition.empty.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToDecoratedDefinition>;
+		};
 	};
 } = {
 	...B.decoratedDefinition,
 	classDefinition: {
 		strict: decoratedDefinition$classDefinition(F.buildDecoratedDefinition, F.buildClassDefinition),
-		coerce: decoratedDefinition$classDefinition(C.coerceToDecoratedDefinition, C.coerceToClassDefinition)
+		coerce: decoratedDefinition$classDefinition(C.coerceToDecoratedDefinition, C.coerceToClassDefinition),
+		inline: {
+			strict: decoratedDefinition$classDefinitionSimpleStatements(
+				F.buildDecoratedDefinition,
+				classDefinition.inline.strict
+			),
+			coerce: decoratedDefinition$classDefinitionSimpleStatements(
+				C.coerceToDecoratedDefinition,
+				classDefinition.inline.coerce
+			)
+		},
+		block: {
+			strict: decoratedDefinition$classDefinitionSuiteBlock(F.buildDecoratedDefinition, classDefinition.block.strict),
+			coerce: decoratedDefinition$classDefinitionSuiteBlock(C.coerceToDecoratedDefinition, classDefinition.block.coerce)
+		},
+		empty: {
+			strict: decoratedDefinition$classDefinitionEmpty(F.buildDecoratedDefinition, classDefinition.empty.strict),
+			coerce: decoratedDefinition$classDefinitionEmpty(C.coerceToDecoratedDefinition, classDefinition.empty.coerce)
+		}
 	},
 	functionDefinition: {
 		strict: decoratedDefinition$functionDefinition(F.buildDecoratedDefinition, F.buildFunctionDefinition),
-		coerce: decoratedDefinition$functionDefinition(C.coerceToDecoratedDefinition, C.coerceToFunctionDefinition)
+		coerce: decoratedDefinition$functionDefinition(C.coerceToDecoratedDefinition, C.coerceToFunctionDefinition),
+		inline: {
+			strict: decoratedDefinition$functionDefinitionSimpleStatements(
+				F.buildDecoratedDefinition,
+				functionDefinition.inline.strict
+			),
+			coerce: decoratedDefinition$functionDefinitionSimpleStatements(
+				C.coerceToDecoratedDefinition,
+				functionDefinition.inline.coerce
+			)
+		},
+		block: {
+			strict: decoratedDefinition$functionDefinitionSuiteBlock(
+				F.buildDecoratedDefinition,
+				functionDefinition.block.strict
+			),
+			coerce: decoratedDefinition$functionDefinitionSuiteBlock(
+				C.coerceToDecoratedDefinition,
+				functionDefinition.block.coerce
+			)
+		},
+		empty: {
+			strict: decoratedDefinition$functionDefinitionEmpty(F.buildDecoratedDefinition, functionDefinition.empty.strict),
+			coerce: decoratedDefinition$functionDefinitionEmpty(
+				C.coerceToDecoratedDefinition,
+				functionDefinition.empty.coerce
+			)
+		}
+	}
+};
+
+const classPattern$arguments = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	return (
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'arguments'> & { arguments: ArgsOf<CF> })
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const seat = _o(config)['arguments'];
+		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
+		return _p<ReturnType<PF>>(parent)({ ..._o(config), arguments: _c(child)(...seat) });
+	};
+};
+const classPattern$seated: (
+	config:
+		| ArgsOf<typeof F.buildClassPattern>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof F.buildClassPattern>[0]>, 'arguments'> & {
+				arguments: ArgsOf<typeof F.buildListPatternCasePatterns>;
+		  })
+) => ReturnType<typeof F.buildClassPattern> = classPattern$arguments(
+	F.buildClassPattern,
+	F.buildListPatternCasePatterns
+);
+const classPattern$seatedCoerce: (
+	config:
+		| ArgsOf<typeof C.coerceToClassPattern>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToClassPattern>[0]>, 'arguments'> & {
+				arguments: ArgsOf<typeof C.coerceToListPatternCasePatterns>;
+		  })
+) => ReturnType<typeof C.coerceToClassPattern> = classPattern$arguments(
+	C.coerceToClassPattern,
+	C.coerceToListPatternCasePatterns
+);
+export const classPattern: typeof B.classPattern & {
+	strict: typeof classPattern$seated;
+	coerce: typeof classPattern$seatedCoerce;
+} = {
+	...B.classPattern,
+	strict: classPattern$seated,
+	coerce: classPattern$seatedCoerce
+};
+
+const splatPattern$star =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
+const splatPattern$starStar =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
+export const splatPattern: typeof B.splatPattern & {
+	star: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof F.buildSplatPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof C.coerceToSplatPattern>;
+	};
+	starStar: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof F.buildSplatPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSplatPattern>[0], 'operator'>
+		) => ReturnType<typeof C.coerceToSplatPattern>;
+	};
+} = {
+	...B.splatPattern,
+	star: {
+		strict: splatPattern$star(F.buildSplatPattern, TSKindId.Star),
+		coerce: splatPattern$star(C.coerceToSplatPattern, TSKindId.Star)
+	},
+	starStar: {
+		strict: splatPattern$starStar(F.buildSplatPattern, TSKindId.StarStar),
+		coerce: splatPattern$starStar(C.coerceToSplatPattern, TSKindId.StarStar)
 	}
 };
 
@@ -2654,6 +3490,30 @@ export const complexPattern: typeof B.complexPattern & {
 	}
 };
 
+const keywordPattern$classPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
+	};
+const keywordPattern$splatPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
+	};
+const keywordPattern$star =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+	};
+const keywordPattern$starStar =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+	};
 const keywordPattern$unionPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
@@ -2770,6 +3630,54 @@ const keywordPattern$wildcardPattern =
 	(config: OmitEach<ArgsOf<PF>[0], 'value'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, value: value });
 export const keywordPattern: typeof B.keywordPattern & {
+	classPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof classPattern.strict>[0];
+			}
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof classPattern.coerce>[0];
+			}
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	splatPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildSplatPattern>[0];
+			}
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof C.coerceToSplatPattern>[0];
+			}
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+		star: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof splatPattern.star.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof splatPattern.star.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		starStar: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof splatPattern.starStar.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof splatPattern.starStar.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+	};
 	unionPattern: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof unionPattern.strict> }
@@ -2944,6 +3852,22 @@ export const keywordPattern: typeof B.keywordPattern & {
 	};
 } = {
 	...B.keywordPattern,
+	classPattern: {
+		strict: keywordPattern$classPattern(F.buildKeywordPattern, classPattern.strict),
+		coerce: keywordPattern$classPattern(C.coerceToKeywordPattern, classPattern.coerce)
+	},
+	splatPattern: {
+		strict: keywordPattern$splatPattern(F.buildKeywordPattern, F.buildSplatPattern),
+		coerce: keywordPattern$splatPattern(C.coerceToKeywordPattern, C.coerceToSplatPattern),
+		star: {
+			strict: keywordPattern$star(F.buildKeywordPattern, splatPattern.star.strict),
+			coerce: keywordPattern$star(C.coerceToKeywordPattern, splatPattern.star.coerce)
+		},
+		starStar: {
+			strict: keywordPattern$starStar(F.buildKeywordPattern, splatPattern.starStar.strict),
+			coerce: keywordPattern$starStar(C.coerceToKeywordPattern, splatPattern.starStar.coerce)
+		}
+	},
 	unionPattern: {
 		strict: keywordPattern$unionPattern(F.buildKeywordPattern, unionPattern.strict),
 		coerce: keywordPattern$unionPattern(C.coerceToKeywordPattern, unionPattern.coerce)
@@ -3014,90 +3938,19 @@ export const keywordPattern: typeof B.keywordPattern & {
 	}
 };
 
-const classPattern$arguments = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
-	parent: PF,
-	child: CF
-) => {
-	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'arguments'> & { arguments: ArgsOf<CF> })
-	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
-		const seat = _o(config)['arguments'];
-		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
-		return _p<ReturnType<PF>>(parent)({ ..._o(config), arguments: _c(child)(...seat) });
-	};
-};
-const classPattern$seated: (
-	config:
-		| ArgsOf<typeof F.buildClassPattern>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildClassPattern>[0]>, 'arguments'> & {
-				arguments: ArgsOf<typeof F.buildListPatternCasePatterns>;
-		  })
-) => ReturnType<typeof F.buildClassPattern> = classPattern$arguments(
-	F.buildClassPattern,
-	F.buildListPatternCasePatterns
-);
-const classPattern$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToClassPattern>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToClassPattern>[0]>, 'arguments'> & {
-				arguments: ArgsOf<typeof C.coerceToListPatternCasePatterns>;
-		  })
-) => ReturnType<typeof C.coerceToClassPattern> = classPattern$arguments(
-	C.coerceToClassPattern,
-	C.coerceToListPatternCasePatterns
-);
-export const classPattern: typeof B.classPattern & {
-	strict: typeof classPattern$seated;
-	coerce: typeof classPattern$seatedCoerce;
-} = {
-	...B.classPattern,
-	strict: classPattern$seated,
-	coerce: classPattern$seatedCoerce
-};
-
-const splatPattern$star =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
-const splatPattern$starStar =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, operator: value });
-export const splatPattern: typeof B.splatPattern & {
-	star: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSplatPattern>[0], 'operator'>
-		) => ReturnType<typeof F.buildSplatPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSplatPattern>[0], 'operator'>
-		) => ReturnType<typeof C.coerceToSplatPattern>;
-	};
-	starStar: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSplatPattern>[0], 'operator'>
-		) => ReturnType<typeof F.buildSplatPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSplatPattern>[0], 'operator'>
-		) => ReturnType<typeof C.coerceToSplatPattern>;
-	};
-} = {
-	...B.splatPattern,
-	star: {
-		strict: splatPattern$star(F.buildSplatPattern, TSKindId.Star),
-		coerce: splatPattern$star(C.coerceToSplatPattern, TSKindId.Star)
-	},
-	starStar: {
-		strict: splatPattern$starStar(F.buildSplatPattern, TSKindId.StarStar),
-		coerce: splatPattern$starStar(C.coerceToSplatPattern, TSKindId.StarStar)
-	}
-};
-
 const casePattern$caseAsPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const casePattern$keywordPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$classPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$splatPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -3141,6 +3994,14 @@ const casePattern$simplePatternNegative =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$integer =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$float =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const casePattern$complexPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -3153,14 +4014,6 @@ const casePattern$wildcardPattern =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(value);
-const casePattern$classPattern =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$splatPattern =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const casePattern$star =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -3192,6 +4045,22 @@ export const casePattern: typeof B.casePattern & {
 		negative: {
 			strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
 			coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
+	};
+	classPattern: {
+		strict: (...args: ArgsOf<typeof classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof classPattern.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+	};
+	splatPattern: {
+		strict: (...args: ArgsOf<typeof F.buildSplatPattern>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSplatPattern>) => ReturnType<typeof C.coerceToCasePattern>;
+		star: {
+			strict: (...args: ArgsOf<typeof splatPattern.star.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof splatPattern.star.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
+		starStar: {
+			strict: (...args: ArgsOf<typeof splatPattern.starStar.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof splatPattern.starStar.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
 		};
 	};
 	unionPattern: {
@@ -3250,25 +4119,19 @@ export const casePattern: typeof B.casePattern & {
 		strict: () => ReturnType<typeof F.buildCasePattern>;
 		coerce: () => ReturnType<typeof C.coerceToCasePattern>;
 	};
-	classPattern: {
-		strict: (...args: ArgsOf<typeof classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof classPattern.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
-	};
-	splatPattern: {
-		strict: (...args: ArgsOf<typeof F.buildSplatPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSplatPattern>) => ReturnType<typeof C.coerceToCasePattern>;
-		star: {
-			strict: (...args: ArgsOf<typeof splatPattern.star.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof splatPattern.star.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
-		};
-		starStar: {
-			strict: (...args: ArgsOf<typeof splatPattern.starStar.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof splatPattern.starStar.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
-		};
-	};
 	negative: {
 		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof C.coerceToCasePattern>;
+		integer: {
+			strict: (...args: ArgsOf<typeof _simplePatternNegative.integer.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof _simplePatternNegative.integer.coerce>
+			) => ReturnType<typeof C.coerceToCasePattern>;
+		};
+		float: {
+			strict: (...args: ArgsOf<typeof _simplePatternNegative.float.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof _simplePatternNegative.float.coerce>) => ReturnType<typeof C.coerceToCasePattern>;
+		};
 	};
 } = {
 	...B.casePattern,
@@ -3282,6 +4145,22 @@ export const casePattern: typeof B.casePattern & {
 		negative: {
 			strict: casePattern$simplePatternNegative(F.buildCasePattern, keywordPattern.negative.strict),
 			coerce: casePattern$simplePatternNegative(C.coerceToCasePattern, keywordPattern.negative.coerce)
+		}
+	},
+	classPattern: {
+		strict: casePattern$classPattern(F.buildCasePattern, classPattern.strict),
+		coerce: casePattern$classPattern(C.coerceToCasePattern, classPattern.coerce)
+	},
+	splatPattern: {
+		strict: casePattern$splatPattern(F.buildCasePattern, F.buildSplatPattern),
+		coerce: casePattern$splatPattern(C.coerceToCasePattern, C.coerceToSplatPattern),
+		star: {
+			strict: casePattern$star(F.buildCasePattern, splatPattern.star.strict),
+			coerce: casePattern$star(C.coerceToCasePattern, splatPattern.star.coerce)
+		},
+		starStar: {
+			strict: casePattern$starStar(F.buildCasePattern, splatPattern.starStar.strict),
+			coerce: casePattern$starStar(C.coerceToCasePattern, splatPattern.starStar.coerce)
 		}
 	},
 	unionPattern: {
@@ -3340,25 +4219,17 @@ export const casePattern: typeof B.casePattern & {
 		strict: casePattern$wildcardPattern(F.buildCasePattern, TSKindId.WildcardPattern),
 		coerce: casePattern$wildcardPattern(C.coerceToCasePattern, TSKindId.WildcardPattern)
 	},
-	classPattern: {
-		strict: casePattern$classPattern(F.buildCasePattern, classPattern.strict),
-		coerce: casePattern$classPattern(C.coerceToCasePattern, classPattern.coerce)
-	},
-	splatPattern: {
-		strict: casePattern$splatPattern(F.buildCasePattern, F.buildSplatPattern),
-		coerce: casePattern$splatPattern(C.coerceToCasePattern, C.coerceToSplatPattern),
-		star: {
-			strict: casePattern$star(F.buildCasePattern, splatPattern.star.strict),
-			coerce: casePattern$star(C.coerceToCasePattern, splatPattern.star.coerce)
-		},
-		starStar: {
-			strict: casePattern$starStar(F.buildCasePattern, splatPattern.starStar.strict),
-			coerce: casePattern$starStar(C.coerceToCasePattern, splatPattern.starStar.coerce)
-		}
-	},
 	negative: {
 		strict: casePattern$negative(F.buildCasePattern, F.buildSimplePatternNegative),
-		coerce: casePattern$negative(C.coerceToCasePattern, C.coerceToSimplePatternNegative)
+		coerce: casePattern$negative(C.coerceToCasePattern, C.coerceToSimplePatternNegative),
+		integer: {
+			strict: casePattern$integer(F.buildCasePattern, _simplePatternNegative.integer.strict),
+			coerce: casePattern$integer(C.coerceToCasePattern, _simplePatternNegative.integer.coerce)
+		},
+		float: {
+			strict: casePattern$float(F.buildCasePattern, _simplePatternNegative.float.strict),
+			coerce: casePattern$float(C.coerceToCasePattern, _simplePatternNegative.float.coerce)
+		}
 	}
 };
 
@@ -4478,6 +5349,39 @@ export const comparisonOperator: typeof B.comparisonOperator & {
 	coerce: comparisonOperator$seatedCoerce
 };
 
+const lambdaWithinForInClause$lambdaWithinForInClause =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { body: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
+	};
+export const lambdaWithinForInClause: typeof B.lambdaWithinForInClause & {
+	lambdaWithinForInClause: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildLambdaWithinForInClause>[0], 'body'> & {
+				body: ArgsOf<typeof F.buildLambdaWithinForInClause>[0];
+			}
+		) => ReturnType<typeof F.buildLambdaWithinForInClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToLambdaWithinForInClause>[0], 'body'> & {
+				body: ArgsOf<typeof C.coerceToLambdaWithinForInClause>[0];
+			}
+		) => ReturnType<typeof C.coerceToLambdaWithinForInClause>;
+	};
+} = {
+	...B.lambdaWithinForInClause,
+	lambdaWithinForInClause: {
+		strict: lambdaWithinForInClause$lambdaWithinForInClause(
+			F.buildLambdaWithinForInClause,
+			F.buildLambdaWithinForInClause
+		),
+		coerce: lambdaWithinForInClause$lambdaWithinForInClause(
+			C.coerceToLambdaWithinForInClause,
+			C.coerceToLambdaWithinForInClause
+		)
+	}
+};
+
 const slice$splice =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -4585,6 +5489,30 @@ const typedParameter$listSplatPattern =
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
 	};
+const typedParameter$listSplatPatternSubscript =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typedParameter$dictionarySplatPatternSubscript =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typedParameter$listSplatPatternAttribute =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
+const typedParameter$dictionarySplatPatternAttribute =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+	};
 const typedParameter$dictionarySplatPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
@@ -4615,6 +5543,30 @@ export const typedParameter: typeof B.typedParameter & {
 				content: ArgsOf<typeof C.coerceToListSplatPattern>;
 			}
 		) => ReturnType<typeof C.coerceToTypedParameter>;
+		subscript: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof listSplatPattern.subscript.strict>;
+				}
+			) => ReturnType<typeof F.buildTypedParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof listSplatPattern.subscript.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypedParameter>;
+		};
+		attribute: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof listSplatPattern.attribute.strict>;
+				}
+			) => ReturnType<typeof F.buildTypedParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof listSplatPattern.attribute.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypedParameter>;
+		};
 	};
 	dictionarySplatPattern: {
 		strict: (
@@ -4627,6 +5579,30 @@ export const typedParameter: typeof B.typedParameter & {
 				content: ArgsOf<typeof C.coerceToDictionarySplatPattern>;
 			}
 		) => ReturnType<typeof C.coerceToTypedParameter>;
+		subscript: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof dictionarySplatPattern.subscript.strict>;
+				}
+			) => ReturnType<typeof F.buildTypedParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof dictionarySplatPattern.subscript.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypedParameter>;
+		};
+		attribute: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof dictionarySplatPattern.attribute.strict>;
+				}
+			) => ReturnType<typeof F.buildTypedParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypedParameter>[0], 'content'> & {
+					content: ArgsOf<typeof dictionarySplatPattern.attribute.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypedParameter>;
+		};
 	};
 } = {
 	...B.typedParameter,
@@ -4636,11 +5612,39 @@ export const typedParameter: typeof B.typedParameter & {
 	},
 	listSplatPattern: {
 		strict: typedParameter$listSplatPattern(F.buildTypedParameter, F.buildListSplatPattern),
-		coerce: typedParameter$listSplatPattern(C.coerceToTypedParameter, C.coerceToListSplatPattern)
+		coerce: typedParameter$listSplatPattern(C.coerceToTypedParameter, C.coerceToListSplatPattern),
+		subscript: {
+			strict: typedParameter$listSplatPatternSubscript(F.buildTypedParameter, listSplatPattern.subscript.strict),
+			coerce: typedParameter$listSplatPatternSubscript(C.coerceToTypedParameter, listSplatPattern.subscript.coerce)
+		},
+		attribute: {
+			strict: typedParameter$listSplatPatternAttribute(F.buildTypedParameter, listSplatPattern.attribute.strict),
+			coerce: typedParameter$listSplatPatternAttribute(C.coerceToTypedParameter, listSplatPattern.attribute.coerce)
+		}
 	},
 	dictionarySplatPattern: {
 		strict: typedParameter$dictionarySplatPattern(F.buildTypedParameter, F.buildDictionarySplatPattern),
-		coerce: typedParameter$dictionarySplatPattern(C.coerceToTypedParameter, C.coerceToDictionarySplatPattern)
+		coerce: typedParameter$dictionarySplatPattern(C.coerceToTypedParameter, C.coerceToDictionarySplatPattern),
+		subscript: {
+			strict: typedParameter$dictionarySplatPatternSubscript(
+				F.buildTypedParameter,
+				dictionarySplatPattern.subscript.strict
+			),
+			coerce: typedParameter$dictionarySplatPatternSubscript(
+				C.coerceToTypedParameter,
+				dictionarySplatPattern.subscript.coerce
+			)
+		},
+		attribute: {
+			strict: typedParameter$dictionarySplatPatternAttribute(
+				F.buildTypedParameter,
+				dictionarySplatPattern.attribute.strict
+			),
+			coerce: typedParameter$dictionarySplatPatternAttribute(
+				C.coerceToTypedParameter,
+				dictionarySplatPattern.attribute.coerce
+			)
+		}
 	}
 };
 
@@ -4649,6 +5653,10 @@ const parenthesizedExpression$yield =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const parenthesizedExpression$yieldFromClause =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const parenthesizedExpression$expressionList =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -4668,6 +5676,14 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildParenthesizedExpression>;
 			coerce: (
 				...args: ArgsOf<typeof yield_.fromClause.coerce>
+			) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		};
+		expressionList: {
+			strict: (
+				...args: ArgsOf<typeof yield_.expressionList.strict>
+			) => ReturnType<typeof F.buildParenthesizedExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yield_.expressionList.coerce>
 			) => ReturnType<typeof C.coerceToParenthesizedExpression>;
 		};
 		expressionListExpressions: {
@@ -4691,6 +5707,10 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 		fromClause: {
 			strict: parenthesizedExpression$yieldFromClause(F.buildParenthesizedExpression, yield_.fromClause.strict),
 			coerce: parenthesizedExpression$yieldFromClause(C.coerceToParenthesizedExpression, yield_.fromClause.coerce)
+		},
+		expressionList: {
+			strict: parenthesizedExpression$expressionList(F.buildParenthesizedExpression, yield_.expressionList.strict),
+			coerce: parenthesizedExpression$expressionList(C.coerceToParenthesizedExpression, yield_.expressionList.coerce)
 		},
 		expressionListExpressions: {
 			strict: parenthesizedExpression$expressionListExpressions(
@@ -4792,6 +5812,24 @@ const interpolation$expressionList =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) });
 	};
+const interpolation$expressionListComma =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+	};
+const interpolation$patternListComma =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+	};
+const interpolation$expressionListExpressions =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+	};
 const interpolation$patternList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -4830,6 +5868,30 @@ export const interpolation: typeof B.interpolation & {
 			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> &
 				ArgsOf<typeof C.coerceToExpressionList>[0]
 		) => ReturnType<typeof C.coerceToInterpolation>;
+		comma: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof expressionList.comma.strict>;
+				}
+			) => ReturnType<typeof F.buildInterpolation>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof expressionList.comma.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToInterpolation>;
+		};
+		expressions: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof expressionList.expressions.strict>;
+				}
+			) => ReturnType<typeof F.buildInterpolation>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof expressionList.expressions.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToInterpolation>;
+		};
 	};
 	patternList: {
 		strict: (
@@ -4839,6 +5901,18 @@ export const interpolation: typeof B.interpolation & {
 			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> &
 				ArgsOf<typeof C.coerceToPatternList>[0]
 		) => ReturnType<typeof C.coerceToInterpolation>;
+		comma: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof patternList.comma.strict>;
+				}
+			) => ReturnType<typeof F.buildInterpolation>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
+					expression: ArgsOf<typeof patternList.comma.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToInterpolation>;
+		};
 		patterns: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
@@ -4880,11 +5954,23 @@ export const interpolation: typeof B.interpolation & {
 	...B.interpolation,
 	expressionList: {
 		strict: interpolation$expressionList(F.buildInterpolation, F.buildExpressionList),
-		coerce: interpolation$expressionList(C.coerceToInterpolation, C.coerceToExpressionList)
+		coerce: interpolation$expressionList(C.coerceToInterpolation, C.coerceToExpressionList),
+		comma: {
+			strict: interpolation$expressionListComma(F.buildInterpolation, expressionList.comma.strict),
+			coerce: interpolation$expressionListComma(C.coerceToInterpolation, expressionList.comma.coerce)
+		},
+		expressions: {
+			strict: interpolation$expressionListExpressions(F.buildInterpolation, expressionList.expressions.strict),
+			coerce: interpolation$expressionListExpressions(C.coerceToInterpolation, expressionList.expressions.coerce)
+		}
 	},
 	patternList: {
 		strict: interpolation$patternList(F.buildInterpolation, F.buildPatternList),
 		coerce: interpolation$patternList(C.coerceToInterpolation, C.coerceToPatternList),
+		comma: {
+			strict: interpolation$patternListComma(F.buildInterpolation, patternList.comma.strict),
+			coerce: interpolation$patternListComma(C.coerceToInterpolation, patternList.comma.coerce)
+		},
 		patterns: {
 			strict: interpolation$patternListPatterns(F.buildInterpolation, patternList.patterns.strict),
 			coerce: interpolation$patternListPatterns(C.coerceToInterpolation, patternList.patterns.coerce)
