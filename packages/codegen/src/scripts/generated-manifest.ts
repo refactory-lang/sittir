@@ -18,10 +18,8 @@ const MANIFEST_FILENAME = 'generated.manifest.json';
 export function generatedRootsFor(grammar: Grammar): string[] {
 	return [
 		`packages/${grammar}/src`,
-		`packages/${grammar}/templates`,
 		`packages/${grammar}/.sittir`,
 		`rust/crates/sittir-${grammar}/src`,
-		`rust/crates/sittir-${grammar}/templates`,
 		`rust/crates/sittir-${grammar}/test-fixtures.json`,
 		`rust/crates/sittir-${grammar}/index.d.ts`,
 		`rust/crates/sittir-${grammar}/index.js`
@@ -89,7 +87,7 @@ function trackedPaths(): ReadonlySet<string> {
 
 function isManifestExcluded(relPath: string): boolean {
 	if (!trackedPaths().has(relPath)) return true;
-	return relPath.endsWith('/test-fixtures.json');
+	return relPath.endsWith('/test-fixtures.json') || relPath.endsWith('/test-fixtures.left-out.json');
 }
 
 function collectFiles(grammar: Grammar): string[] {

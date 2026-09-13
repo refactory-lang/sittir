@@ -5,6 +5,8 @@ import type { VariantChild } from './variant-structural.ts';
 
 import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
+export type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 
 export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
 
@@ -57,6 +59,8 @@ export interface KindParserMetadata {
 	readonly cSymbol: string;
 	readonly parserName: string;
 	readonly symbolName?: string;
+	readonly literalText?: string;
+	readonly literalRule?: boolean;
 	readonly anon: boolean;
 	readonly aux: boolean;
 	readonly alias: boolean;
@@ -94,6 +98,7 @@ export interface RawGrammar {
 	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
+	readonly options?: OptionsConfig;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly orphanedSyntheticGroups?: readonly string[];
@@ -159,7 +164,6 @@ export interface LinkedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
-	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
@@ -190,7 +194,6 @@ export interface NormalizedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
-	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
@@ -216,7 +219,6 @@ export interface SimplifiedGrammar {
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
-	readonly hoistedKinds?: ReadonlySet<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;

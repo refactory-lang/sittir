@@ -1,12 +1,26 @@
+import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { transform as transformFn } from '../transform/transform.ts';
+import { isPreference } from '../primitives/preference.ts';
+import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
+import type { IsPreferencePath } from '../primitives/preference-path.ts';
+import {
+	parseFlankAddress,
+	parseSeamLabel,
+	parseSpacingLabel
+} from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
-import { isVariantPlaceholder } from '../primitives/variant.ts';
+import {
+	isVariantPlaceholder,
+	nestVariant,
+	variantMintName,
+	type VariantPlaceholder
+} from '../primitives/variant.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
-import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
+import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
@@ -25,6 +39,7 @@ export interface WireContext {
 	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
+	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
 }
@@ -98,6 +113,7 @@ export function withWireContext<T>(
 		refineForms: new Map(),
 		groups: undefined,
 		renderAs: undefined,
+		options: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
 	};
@@ -123,16 +139,74 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
 ]
-	? Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
+	? Partial<Record<BaseKind<Base>, PatchEntry>>
 	: Base extends { readonly rules: infer R }
-		? {
-				readonly [K in keyof R]?: R[K] extends GrammarRule
-					? TransformPatchMap<FastKeys<R[K]>> | TransformPatchMap<FastKeys<R[K]>>[]
-					: PatchMap | PatchMap[];
-			}
-		: Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>;
+		? { readonly [K in keyof R]?: TransformPatchMap | readonly TransformPatchMap[] }
+		: Partial<Record<BaseKind<Base>, PatchEntry>>;
+
+export type PatchEntry = PatchMap | readonly PatchMap[];
 
 export type PatchMap = Record<string, unknown>;
+
+type RulesOf<B> = B extends { readonly rules: infer R } ? R : never;
+
+type PatchKeyCheck<Rule, M> = {
+	readonly [Path in keyof M]: Path extends string | number
+		? string extends Path
+			? M[Path]
+			: IsPath<Rule, `${Path}`> extends true
+				? M[Path]
+				: { readonly 'patches: no such path in this rule': `${Path}` }
+		: M[Path];
+};
+
+type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
+	? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I]> }
+	: PatchKeyCheck<Rule, E>;
+
+type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
+
+export type PatchesCheck<B, P> = IsShaped<B> extends false
+	? unknown
+	: { readonly [K in keyof P]: K extends keyof RulesOf<B> ? PatchEntryCheck<RulesOf<B>[K], P[K]> : P[K] };
+
+type DeclaredLabels<O> = {
+	[K in Exclude<keyof O, typeof BINDINGS_KEY> & string]: `${K}/${keyof O[K] & string}`;
+}[Exclude<keyof O, typeof BINDINGS_KEY> & string];
+
+type PreferencePathCheck<M> = {
+	readonly [Path in keyof M]: Path extends string
+		? string extends Path
+			? M[Path]
+			: IsPreferencePath<Path> extends true
+				? M[Path]
+				: { readonly 'options: not a path': Path }
+		: M[Path];
+};
+
+type BindingsCheck<B, O, M> = {
+	readonly [Address in keyof M]: Address extends string
+		? string extends Address
+			? M[Address]
+			: IsPreferencePath<Address> extends false
+				? { readonly 'options: _bindings address is not a path': Address }
+				: M[Address] extends DeclaredLabels<O>
+					? M[Address] extends `${infer Root}/${string}`
+						? IsShaped<B> extends true
+							? Root extends keyof RulesOf<B>
+								? { readonly "options: a label's kind is virtual, this names a real kind": Root }
+								: M[Address]
+							: M[Address]
+						: M[Address]
+					: { readonly 'options: _bindings names no declared label': M[Address] }
+		: M[Address];
+};
+
+export type OptionsCheck<B, O> = {
+	readonly [K in keyof O]: K extends typeof BINDINGS_KEY
+		? BindingsCheck<B, O, O[K]>
+		: PreferencePathCheck<O[K]>;
+};
 
 export type ShapedSymbols<B extends GrammarJson> = {
 	readonly [R in keyof B['rules'] & string]: SymbolRule<R>;
@@ -157,7 +231,9 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	readonly groups?: Partial<
 		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
 	>;
+	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly patches?: PatchesConfig<B>;
+	readonly options?: OptionsConfig;
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
@@ -186,9 +262,13 @@ type RuleFn = SittirRuleFn;
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
-export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: B): WiredOpts {
+export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
+	config: WireConfig<B> & { readonly patches?: P & PatchesCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
+	base?: B
+): WiredOpts {
 	const cfg = config as unknown as WireConfig<any>;
 	const baseArg = base as unknown as BaseArg | undefined;
+	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
@@ -202,6 +282,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
+		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
@@ -211,7 +292,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
 	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
-	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.visibleExternals)) {
+	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
@@ -219,7 +300,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		}
 	}
 	wrapAllRuleFns(outRules, context);
-	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
 
 	if (baseArg) {
@@ -245,7 +326,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 				}
 			}
 		}
-		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
 
 	const conflicts = wrapConflictsCallback(cfg.conflicts as ConflictsFn | undefined, context);
@@ -274,8 +355,74 @@ export function polymorphHiddenName(parentKind: string, suffix: string): string 
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
-function patchSetsOf(entry: PatchMap | PatchMap[]): readonly PatchMap[] {
-	return Array.isArray(entry) ? entry : [entry];
+function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
+	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, unknown>;
+	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
+}
+
+/// A top-level gap, seam or flank spelling, retired from patches.
+function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
+	if (rules.has(key) || rules.has(`_${key}`)) return false;
+	return parseSpacingLabel(key) !== undefined || parseSeamLabel(key) !== undefined || parseFlankAddress(key) !== undefined;
+}
+
+
+
+
+function assertNoSpacingAddressPatches(patches: PatchesConfig, rules: ReadonlySet<string>): void {
+	for (const key of Object.keys(patches)) {
+		if (!patches[key]) continue;
+		if (isRetiredAddressKey(key, rules)) {
+			throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
+		}
+	}
+}
+
+function patchSetsOf(entry: PatchEntry): readonly PatchMap[] {
+	const items = Array.isArray(entry) ? entry : [entry];
+	return nestVariantsByPath(items.filter((item): item is PatchMap => !isPreference(item)));
+}
+
+/**
+ * A variant patched at a position INSIDE another variant's position is minted
+ * inside that variant's rule, so its name composes through it:
+ * `{ '2/0': variant('exception'), '2/0/0': variant('as') }` mints
+ * `_except_clause_exception` and `_except_clause_exception_as`, not a flat
+ * `_except_clause_as` that reads as a sibling of the group it lives in. The
+ * arm keeps its own short name, so the spelling stays `exception.as`.
+ */
+function nestVariantsByPath(sets: readonly PatchMap[]): readonly PatchMap[] {
+	const variantAt = new Map<string, VariantPlaceholder>();
+	for (const set of sets) {
+		for (const [key, value] of Object.entries(set)) {
+			if (isVariantPlaceholder(value)) variantAt.set(key, value);
+		}
+	}
+	if (variantAt.size < 2) return sets;
+	const ancestorsOf = (key: string): readonly string[] => {
+		const segments = key.split('/');
+		const names: string[] = [];
+		for (let i = 1; i < segments.length; i++) {
+			const prefix = segments.slice(0, i).join('/');
+			const outer = variantAt.get(prefix);
+			if (outer !== undefined) names.push(outer.name);
+		}
+		return names;
+	};
+	return sets.map((set) => {
+		let changed = false;
+		const out: PatchMap = {};
+		for (const [key, value] of Object.entries(set)) {
+			if (!isVariantPlaceholder(value)) {
+				out[key] = value;
+				continue;
+			}
+			const nested = nestVariant(value, ancestorsOf(key));
+			changed ||= nested !== value;
+			out[key] = nested;
+		}
+		return changed ? out : set;
+	});
 }
 
 function composeOrSynthesizePatchedParents(
@@ -302,13 +449,15 @@ function buildPatchedParentFn(
 			: isHidden && context.deposits.has(kind)
 				? context.deposits.get(kind)
 				: original;
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+		return patchSets.length === 0
+			? base
+			: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
 
 function placeholderHiddenName(value: unknown, parentKind: string): string | undefined {
 	if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
 	if (isAliasPlaceholder(value)) return `_${value.name}`;
 	return undefined;
 }
@@ -606,16 +755,21 @@ function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCan
 
 function withStringGlobalShim<T>(fn: () => T): T {
 	const g = globalThis as Record<string, unknown>;
-	const hadString = 'string' in g;
-	const previous = g.string;
-	if (!hadString) {
-		g.string = (value: string) => ({ type: 'STRING', value });
+	const shims: Record<string, unknown> = {
+		string: (value: string) => ({ type: 'STRING', value }),
+		indent: () => ({ type: 'INDENT' }),
+		dedent: () => ({ type: 'DEDENT' })
+	};
+	const added: string[] = [];
+	for (const [name, shim] of Object.entries(shims)) {
+		if (name in g) continue;
+		g[name] = shim;
+		added.push(name);
 	}
 	try {
 		return fn();
 	} finally {
-		if (!hadString) delete g.string;
-		else g.string = previous;
+		for (const name of added) delete g[name];
 	}
 }
 
@@ -657,6 +811,12 @@ function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMa
 	return rule;
 }
 
+function stampHoistedFn(fn: RuleFn): RuleFn {
+	return function hoistedRuleFn($, previous) {
+		return withHoistedAnnotation(fn($, previous));
+	};
+}
+
 function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyMap<string, string>): RuleFn {
 	return function visibleExternalsRewritingRuleFn($, previous) {
 		const result = fn($, previous);
@@ -682,11 +842,12 @@ function applyWireVisibleExternalsRewrite(
 	}
 }
 
-function applyWirePatternReplacement(
+export function applyWirePatternReplacement(
 	rules: Record<string, RuleFn>,
 	authoredRuleNames: ReadonlySet<string>,
 	groups?: GroupsConfig,
-	context?: WireContext
+	context?: WireContext,
+	injects?: GroupsConfig
 ): void {
 	const candidates: WirePatternCandidate[] = [];
 	const $ = makeSimpleDollarProxy();
@@ -707,33 +868,40 @@ function applyWirePatternReplacement(
 		candidates.push({ name, body });
 	}
 
-	if (groups) {
-		for (const [key, value] of Object.entries(groups)) {
-			if (typeof value !== 'function') continue;
-			if (key.startsWith('_')) {
-				throw new Error(
-					`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
-				);
-			}
-			const hiddenName = `_${key}`;
-			let body: RuntimeRule;
-			try {
-				const result = (value as RuleFn).call(undefined, $, undefined);
-				if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
-					throw new Error(`groups['${key}']: body fn did not return a rule object`);
-				}
-				body = result as RuntimeRule;
-			} catch (e) {
-				throw new Error(`groups['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
-			}
-			if (!isComplexBodyRt(body)) {
-				throw new Error(
-					`groups['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
-				);
-			}
-			candidates.push({ name: hiddenName, body, aliasAs: key });
-			rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value as RuleFn, context) : (value as RuleFn);
+	const declared: [section: 'groups' | 'injects', key: string, value: RuleFn][] = [];
+	for (const [key, value] of Object.entries(groups ?? {})) {
+		if (typeof value !== 'function') continue;
+		if (key.startsWith('_')) {
+			throw new Error(
+				`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+			);
 		}
+		declared.push(['groups', key, value as RuleFn]);
+	}
+	for (const [key, value] of Object.entries(injects ?? {})) {
+		if (typeof value === 'function') declared.push(['injects', key, value as RuleFn]);
+	}
+	for (const [section, key, value] of declared) {
+		const hidden = key.startsWith('_');
+		const hiddenName = hidden ? key : `_${key}`;
+		let body: RuntimeRule;
+		try {
+			const result = value.call(undefined, $, undefined);
+			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
+				throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+			}
+			body = result as RuntimeRule;
+		} catch (e) {
+			throw new Error(`${section}['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
+		}
+		if (!isComplexBodyRt(body)) {
+			throw new Error(
+				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
+			);
+		}
+		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+		const registered = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}
 
 	if (candidates.length === 0) return;

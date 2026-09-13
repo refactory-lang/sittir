@@ -23,10 +23,10 @@ import { fileURLToPath } from 'node:url';
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
 // ---------------------------------------------------------------------------
-// Schema types — mirror packages/legacy-core/src/metrics.ts
+// Schema types — mirror packages/common/src/metrics.ts
 // ---------------------------------------------------------------------------
 
-/** Subset of MetricsFile we read. Keep in sync with packages/legacy-core/src/metrics.ts. */
+/** Subset of MetricsFile we read. Keep in sync with packages/common/src/metrics.ts. */
 interface MetricsFile {
 	readonly schemaVersion: number;
 	readonly backend: 'ts' | 'native';

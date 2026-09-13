@@ -25,14 +25,13 @@ pub fn language() -> tree_sitter::Language {
 use sittir_core::engine::EngineGrammar;
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_transport_parts, RenderRoot, TEMPLATE_BUNDLE_HASH};
+use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
 
-#[cfg(feature = "napi-bindings")]
 #[derive(Clone, Copy, Default)]
-struct RustGrammar;
+pub struct RustGrammar;
 
 #[cfg(feature = "napi-bindings")]
 impl EngineGrammar for RustGrammar {
@@ -43,8 +42,23 @@ impl EngineGrammar for RustGrammar {
             .map_err(|e| format!("failed to set parser language: {e}"))
     }
 
-    fn template_bundle_hash(self) -> &'static str {
-        TEMPLATE_BUNDLE_HASH
+    fn render_module_hash(self) -> &'static str {
+        RENDER_MODULE_HASH
+    }
+}
+
+impl sittir_core::read_node::ReadModel for RustGrammar {
+    fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
+        render::kind_ids::is_text_kind(kind)
+    }
+
+    fn is_slot_separator(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: &str,
+        child: sittir_core::types::KindId,
+    ) -> bool {
+        render::kind_ids::is_slot_separator(parent, field, child)
     }
 }
 
@@ -54,6 +68,9 @@ impl EngineGrammar for RustGrammar {
 sittir_core::napi_engine!(
     RustGrammar,
     RenderRoot,
+    render::options::Options,
     render_transport_parts,
-    NATIVE_RENDER_TRANSPORT_ABI
+    NATIVE_RENDER_TRANSPORT_ABI,
+    render::options::defaults,
+    render::options::resolve
 );

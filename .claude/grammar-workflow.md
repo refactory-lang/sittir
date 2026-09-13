@@ -20,24 +20,12 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packag
   3. missing type/model facts
   4. `transform(original, { ... })` as a last resort
 
-## Template rules
+## Render bodies
 
-Shared templates must stay in the Nunjucks ∩ Askama intersection.
-
-Canonical conditional:
-
-```jinja
-{% if field | isPresent %}...{% endif %}
-```
-
-Avoid:
-
-- `{% if foo is defined %}`
-- truthy `{% if foo %}`
-- `{% if foo != "" %}`
-- `{% else if %}` (use `{% elif %}`)
-
-Keep separators inside the guarded conditional.
+Render bodies are generated from the render rules — there is no template to
+author. A slot renders where its rule sits; an optional slot is gated on its
+presence; separators and their spacing come from the list view. Fix the rule
+(an override, an `enrich` promotion, a `variant()`), never the emitted body.
 
 ## Override patterns
 

@@ -186,161 +186,90 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
 ```
 
+### `packages/codegen/src/grammar-shapes/path-type.ts::module`
+
+Type-level twin of `applyPath` (`dsl/transform/transform-path.ts`): decides,
+for one written path and one rule shape, whether the walker would accept it.
+It validates the keys an author wrote rather than enumerating every key a rule
+admits — enumeration multiplies the alternative spellings of each node (`_`,
+`-k`, `name:`) along a path, which is exponential in depth and stalled the
+compiler on `grammar-shape.rust.ts`; validation costs one segment step per
+written key and needs no depth cap.
+
+The shape it walks is the post-enrich one (`EnrichRule`), because the runtime
+walks the enriched rule. Where runtime enrich mints structure the type model
+does not — exclusive field-choice distribution adds arms to a choice — the
+model is a lower bound and the walk turns permissive rather than rejecting.
+
 ### `packages/codegen/src/grammar-shapes/path-type.ts::PeelPrec`
 
-```text
-/** Peel all leading PREC wrappers (transparent) to the structural rule. */
-```
+PREC wrappers consume no segment, as in `applyPath`.
 
-### `packages/codegen/src/grammar-shapes/path-type.ts::TopLevelKeys`
+### `packages/codegen/src/grammar-shapes/path-type.ts::Opaque`
 
-```text
-/** Valid first-segment index strings for rule `N` (top-level). */
-```
+A child the model cannot see below. Every further segment is accepted under
+it. Produced for an index beyond a choice's modelled arity, since enrich may
+have distributed more arms onto that choice at runtime.
 
-### `packages/codegen/src/grammar-shapes/path-type.ts::NonNumericFirstSegment`
+### `packages/codegen/src/grammar-shapes/path-type.ts::Leaf`
 
-```text
-/** Non-numeric first-segment forms from `parsePath` that the type model
- *  cannot bounds-check, accepted permissively. (`name:` also admits junk like
- *  `'5:'` — TS can't cheaply require a letter-initial; permissive is fine.) */
-```
+A string member reached by a literal segment: nothing descends further.
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::Kinds`
+
+The symbol names a `(kind)` segment can match from a node: symbols anywhere
+below it, through PREC, containers and the single-content wrappers, but not
+below a FIELD (the walker refuses a symbol inside a named field) and not
+through an ALIAS (the walker does not enter one).
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::FromEnd`
+
+Resolves a negative index against a member tuple: `-1` is the last member.
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::StepMembers`
+
+One segment against a container's members: `_` is every member (the rest of
+the path then has to hold for at least one of them, which the distributive
+walk gives for free), an index or negative index is one member, a literal is
+a string member. `Beyond` is what an out-of-range index yields — `Opaque` for
+a choice, `never` for a sequence, whose arity enrich never changes.
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::Step`
+
+One segment against one node, returning the child it lands on or `never`.
+Mirrors the dispatch in `applyPath`: a FIELD takes `0`, `-1`, `_`, its own
+`name:` and a literal of its content; ALIAS and the repeat/token wrappers take
+`0`, `-1`, `_` and a literal; a `(kind)` match is terminal and lands on the
+symbol itself.
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::Segments`
+
+Splits a path on `/`, keeping a quoted literal whole — rust's token-tree
+punctuation includes `/` and `/=` as arms, so `"/="/after` is two segments.
+Shared with `IsPreferencePath` (`dsl/primitives/preference-path.ts`), the way
+`splitSegments` is shared by both runtime parsers.
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::Walk`
+
+Steps every segment; `true` when all resolve. A union child (from `_`)
+distributes, so a member on which the rest fails drops out as `never` and the
+path holds if any member accepts it — the walker's skip-on-failure rule.
+
+### `packages/codegen/src/grammar-shapes/path-type.ts::IsPath`
+
+`true` when `applyPath` would accept path `P` on rule `N`, `false` when it
+would throw. What `PatchesCheck` consults per written key.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchValue`
 
-```text
-/** Patch values accepted in a transform patch-map: tree-sitter `RuleOrLiteral`
- *  (native rule objects + literals) plus sittir's DSL placeholder/result types.
- *  Sourced from the actual primitive return interfaces (DRY) via type-only
- *  imports — no runtime cycle (primitives don't import grammar-shapes).
- *
- *  `field('x')` returns `FieldPlaceholder`; `field('x', content)` returns
- *  `FieldLike`; `variant('y')` returns `VariantPlaceholder`. RESIDUAL:
- *  `alias()` is typed `=> unknown` (source-side, overloaded — fixing it needs
- *  overload signatures in dsl/primitives/alias.ts, outside this file set), so
- *  alias-valued transform entries are NOT cleared by enriching this union.
- *  `AliasPlaceholder` is included for the day `alias()` returns it; today it
- *  has no effect on the `unknown`-typed alias() expression. Reported as a
- *  residual — NOT papered with a `unknown`/`any` union (that would collapse
- *  the whole value type and accept anything). */
-```
+A single patch value: a rule or literal, or a `field` / `alias` / `variant` /
+`arm.default` placeholder.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchMap`
 
-```text
-/** A single patch-map for one rule: path-key → patch value. */
-```
-
-### `packages/codegen/src/grammar-shapes/path-type.ts::FastKeys`
-
-```text
-/** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
- *  top-level member count). */
-```
-
-### Parameterized rule shapes (`packages/codegen/src/grammar-shapes/grammar-json.ts`)
-
-`SeqRule` / `ChoiceRule` / … mirror tree-sitter's own discriminants, refined
-over content: containers are bound over `readonly GrammarRule[]`, and leaves
-mirror tree-sitter's `SymbolRule` shape structurally. `Rule` is the ambient
-tree-sitter union.
-
-`PrecRuleUnion` and `SingleContentWrapper` are the discriminant guards used by
-the purely type-level `Enrich<>` and path types.
-
-### `packages/codegen/src/grammar-shapes/grammar-json.ts::MutableDeep`
-
-The readonly→mutable bridge, used ONLY to PROVE the subtyping ladder
-`GrammarJson ⊑ GrammarSchema<string>` (modulo readonly). It recursively strips
-`readonly` so containers become `members: GrammarRule[]` (mutable), which IS
-assignable to tree-sitter's `Rule`. It is not used at any runtime or navigation
-site — it exists purely as an assertion aid.
-
-### `PeelPrec` / `TopLevelKeys` (`packages/codegen/src/grammar-shapes/path-type.ts`)
-
-`PeelPrec` resolves a single positional index against a rule's children after
-transparently peeling PREC wrappers.
-
-`TopLevelKeys` is the first-segment autocomplete layer — the cheap, perf-safe
-one. It is the union of valid top-level index segments for a rule (after the
-PREC peel), and editors offer these as completions for the first path segment.
-
-### `packages/codegen/src/grammar-shapes/path-type.ts::PathKey`
-
-The type a transform patch-object KEY should have for rule `N`.
-
-Shallow-precise, deep-permissive. The FIRST segment autocompletes to the rule's
-real top-level INDICES (`TopLevelKeys`, bounds-checked), but `parsePath`
-(`dsl/transform/transform-path.ts`) also admits non-numeric first segments the
-type model cannot bounds-check: wildcard `_`, kind-match `(name)`,
-field-traversal `name:`, and reverse index `-N`. Those are accepted permissively
-so authored paths like `'(_expression)'`, `'_'`, and `'-1'` don't false-reject.
-Deeper segments degrade to free-form via the `/${string}` tail — the soundness
-rule is never to REJECT a deep path that can't be proven invalid.
-
-CRUCIAL: the precise numeric `TopLevelKeys` arm must be preserved. The
-permissive arms must NOT widen the whole union to `string`, or out-of-bounds
-numeric keys — `'7'` on a 2-arm choice — would be silently accepted. That
-out-of-bounds rejection is guarded by a negative-controlled
-`@ts-expect-error` in `intellisense-demo.test-d.ts`.
-
-### `TransformPatchMap` / `FastKeys` (`packages/codegen/src/grammar-shapes/path-type.ts`)
-
-`TransformPatchMap<R>` keys each patch entry by `PathKey<R>`
-(segment-1-precise) and values by the patch-value union. `TransformsFor<S>`
-maps EVERY rule kind in a schema to its `original`-shape's patch-map. That
-mapped type spans the whole rule set and is the standing type-checker PERF
-risk, so it is parameterized over `KeyOf<R>` — the key strategy can be swapped
-without touching the value/mapping machinery:
-
-- PRECISE keys — `PathKey<EnrichRule<R>>`, which instantiates `EnrichRule` per
-  rule. This is the cost driver.
-- FAST keys — `PathKey<R>` on the RAW rule. Top-level member count is
-  enrich-INVARIANT (enrich wraps in place and never adds or removes a top-level
-  member), so segment-1 autocomplete is identical without instantiating
-  `EnrichRule`. This is the perf fallback if PRECISE degrades check time.
-
-The type-only imports of the DSL primitive return interfaces keep the value
-axis DRY and introduce no runtime cycle — the primitives don't import
-`grammar-shapes`.
-
-### `packages/codegen/src/grammar-shapes/path-type.ts::module`
-
-```text
-/**
- * path-type.ts — type-level FIRST-SEGMENT addressing for transform PATH
- * keys over a (post-Enrich) rule shape.
- *
- * Only the first path segment is resolved precisely (`TopLevelKeys`), after
- * transparently peeling PREC wrappers (PREC does not consume a segment):
- *
- *   - SEQ / CHOICE  : the segment must be a valid `members` index.
- *   - single-content wrappers (FIELD/ALIAS/REPEAT/REPEAT1/TOKEN/
- *     IMMEDIATE_TOKEN) : the only valid segment is `'0'`.
- *   - leaves (SYMBOL/STRING/PATTERN/BLANK) : no valid segment (`never`).
- *
- * Everything past the first segment (`PathKey`'s `/${string}` tail) is
- * free-form and unchecked — deep paths are accepted permissively rather
- * than walked and bounds-checked (soundness: never REJECT a deep path we
- * can't prove invalid). The full recursive path-to-rule resolver this
- * module used to expose (`RuleAtPath`) was deleted as dead code (Track 1
- * sweep, commit `662fde555`); this module now only powers segment-1
- * autocomplete/validation, not full path resolution.
- *
- * Paths are `/`-joined segments, e.g. `'4/0'`, `'1/0'`. We model numeric
- * segments only (the dominant authoring form). Wildcard `_`, kind-match
- * `(name)`, and field-traversal `name:` are accepted by the runtime but are
- * left as `string`-typed escape hatches here (see PathKey below) — typing
- * them precisely is future work and degrading to `string` is sound.
- *
- * PERF (the stated risk): First-segment autocomplete (`TopLevelKeys`) is a
- * cheap hand-rolled union over the top-level members tuple, NOT a full path
- * walk over all paths (no `type-fest` `Paths` over the 182-rule registry,
- * which would blow up). SYMBOL stays a lazy name-tagged leaf: we do NOT
- * follow symbols cross-rule (authored paths address within one rule's
- * inline nesting).
- */
-```
+A patch map for one rule, path key to patch value. Keys are open here; their
+validity is decided per written key by `PatchesCheck`, from the base the
+grammar hands `wire()`.
 
 ### `packages/codegen/src/grammar-shapes/enrich-type.ts::module`
 

@@ -47,6 +47,8 @@ declare global {
 	function sym<N extends string>(name: N): SymbolRule<N>;
 
 	function string<const S extends string>(value: S): StringRule<S>;
+	function indent(): StringRule<string>;
+	function dedent(): StringRule<string>;
 
 	function blank(): BlankRule;
 }

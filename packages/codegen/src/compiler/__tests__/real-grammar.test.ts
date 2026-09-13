@@ -4,6 +4,7 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { resolveGrammarJsPath } from '../resolve-grammar.ts';
+import { loadGeneratedIdTables } from '../generated-metadata.ts';
 
 // Raw base grammars (no override() / variant() applied) still contain
 // non-canonical shapes that would trip the derive-audit default. Switch
@@ -42,6 +43,26 @@ describe('Evaluate — real tree-sitter grammars', () => {
 	it('captures Python externals', async () => {
 		const raw = await evaluate(pythonGrammar);
 		expect(raw.externals.length).toBeGreaterThan(0);
+	});
+
+	it.each([
+		['python', (): string => pythonGrammar, [']', ')', '}']],
+		['typescript', (): string => tsGrammar, ['||']]
+	])('%s keeps literal-text externals but mints no rule for them', async (_name, grammar, literals) => {
+		const raw = await evaluate(grammar());
+		expect(literals.every((t) => raw.externals.includes(t))).toBe(true);
+		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });
+		expect(literals.filter((t) => linked.rules[t] !== undefined)).toEqual([]);
+	});
+
+	it.each([
+		['python', (): string => pythonGrammar],
+		['rust', (): string => rustGrammar],
+		['typescript', (): string => tsGrammar]
+	])('%s mints no rule keyed by literal token text', async (_name, grammar) => {
+		const raw = await evaluate(grammar());
+		const linked = link(raw, { generatedIdTables: await loadGeneratedIdTables(_name) });
+		expect(Object.keys(linked.rules).filter((k) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(k))).toEqual([]);
 	});
 
 	it('has rules for key Python constructs', async () => {

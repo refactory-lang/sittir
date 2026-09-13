@@ -46,17 +46,17 @@ function writeFile(path: string, content: string): void {
  *
  * MUST run after the napi rebuild (which `runCodegen` performs before returning):
  * the validator's wrapped-tree candidate walk requires the NATIVE engine, and
- * Askama bakes the just-emitted templates into the .node at compile time, so
- * extracting before the rebuild would capture fixtures against stale templates.
+ * the generated render bodies compile into the .node at build time, so
+ * extracting before the rebuild would capture fixtures against a stale binary.
  *
  * The FR-011 required-kinds gate lives in `extractParityFixtures` — it throws
  * when the corpus doesn't cover the exception kinds, so regen fails loudly rather
  * than emitting an insufficient fixture set.
  */
-export async function emitParityFixtures(grammar: string, templatesPath: string): Promise<void> {
-	const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
+export async function emitParityFixtures(grammar: string): Promise<void> {
+	const { extractParityFixtures, serializeFixtures, fixturesOutputPath, leftOutOutputPath, serializeLeftOut } =
 		await import('./validate/parity-fixtures.ts');
-	const extracted = await extractParityFixtures(grammar, templatesPath);
+	const extracted = await extractParityFixtures(grammar);
 	const fxPath = fixturesOutputPath(grammar);
 
 	// Refuse to clobber a non-trivial committed fixture set with an empty
@@ -85,8 +85,15 @@ export async function emitParityFixtures(grammar: string, templatesPath: string)
 	}
 
 	writeFile(fxPath, serializeFixtures(extracted.fixtures));
+	writeFile(leftOutOutputPath(grammar), serializeLeftOut(extracted.leftOutByKind));
+	const leftOutEntries = Object.entries(extracted.leftOutByKind);
+	const leftOutTotal = leftOutEntries.reduce((sum, [, n]) => sum + n, 0);
+	const dropped =
+		leftOutTotal > 0
+			? `; ${leftOutTotal} render left out, not reproducible without the tree: ${leftOutEntries.map(([kind, n]) => (n > 1 ? `${kind}×${n}` : kind)).join(', ')}`
+			: '';
 	console.log(
-		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
+		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds${dropped})`
 	);
 	// Surface FR-011 coverage gap warnings as non-fatal stderr messages.
 	for (const w of extracted.warnings) {
@@ -101,7 +108,7 @@ export async function emitParityFixtures(grammar: string, templatesPath: string)
  * Returns the total render-parse / from() failure count so the orchestrator can
  * set `process.exitCode`.
  */
-export async function runRoundtripProbes(grammar: string, templatesDir: string): Promise<number> {
+export async function runRoundtripProbes(grammar: string): Promise<number> {
 	console.log('\nRunning validator probes...');
 
 	const { validateReadProjection, formatReadProjectionReport } = await import('./validate/read-projection.ts');
@@ -116,15 +123,13 @@ export async function runRoundtripProbes(grammar: string, templatesDir: string):
 	const readProjectionResult = await validateReadProjection(grammar);
 	console.log(formatReadProjectionReport(readProjectionResult));
 
-	// Validators take the per-rule `.jinja` templates directory path (feature
-	// 011). createRenderer auto-detects directory vs legacy YAML file.
-	const readRenderParseResult = await validateReadRenderParse(grammar, templatesDir, {
+	const readRenderParseResult = await validateReadRenderParse(grammar, {
 		backend: 'native'
 	});
 	console.log(formatReadRenderParseReport(readRenderParseResult));
 
 	// Factory render-parse (corpus → readNode → factory() → render → re-parse)
-	const factoryRenderParseResult = await validateFactoryRenderParse(grammar, templatesDir, 'native');
+	const factoryRenderParseResult = await validateFactoryRenderParse(grammar, 'native');
 	console.log(formatFactoryRenderParseReport(factoryRenderParseResult));
 
 	// from() correctness (structural comparison: from() vs factory())

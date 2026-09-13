@@ -50,7 +50,7 @@ function makeImplNodeMap(declareDefault: boolean) {
 		['_impl_negative', true]
 	] as const) {
 		const render = flatten(clauseRule(negative));
-		nodes.set(kind, new AssembledBranch(kind, render, render, { hoisted: true }));
+		nodes.set(kind, new AssembledBranch(kind, { ...render, annotations: { hoisted: true } }, { ...render, annotations: { hoisted: true } }));
 	}
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z_:]+' }));
 	return makeNodeMapWith(nodes);

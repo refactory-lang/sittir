@@ -697,7 +697,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1329,7 +1329,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1769,7 +1769,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2146,7 +2146,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2166,7 +2166,7 @@
     "type": "debugger_statement",
     "named": true,
     "fields": {
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2249,7 +2249,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2552,32 +2552,6 @@
     }
   },
   {
-    "type": "export_statement_default_clause_from",
-    "named": true,
-    "fields": {
-      "source": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "export_clause",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "export_statement_default_declaration",
     "named": true,
     "fields": {
@@ -2607,14 +2581,14 @@
       "required": false,
       "types": [
         {
-          "type": "export_statement_default_default_kw",
+          "type": "export_statement_default_declaration_default_kw",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "export_statement_default_default_kw",
+    "type": "export_statement_default_declaration_default_kw",
     "named": true,
     "fields": {
       "declaration": {
@@ -2633,87 +2607,14 @@
       "required": false,
       "types": [
         {
-          "type": "export_statement_default_value",
+          "type": "export_statement_default_declaration_default_kw_value",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "export_statement_default_from",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "automatic_semicolon",
-          "named": true
-        },
-        {
-          "type": "export_clause",
-          "named": true
-        },
-        {
-          "type": "export_statement_default_clause_from",
-          "named": true
-        },
-        {
-          "type": "export_statement_default_ns_from",
-          "named": true
-        },
-        {
-          "type": "export_statement_default_star_from",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "export_statement_default_ns_from",
-    "named": true,
-    "fields": {
-      "source": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "namespace_export",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "export_statement_default_star_from",
-    "named": true,
-    "fields": {
-      "source": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "export_statement_default_value",
+    "type": "export_statement_default_declaration_default_kw_value",
     "named": true,
     "fields": {
       "value": {
@@ -2739,6 +2640,105 @@
     }
   },
   {
+    "type": "export_statement_default_from",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "automatic_semicolon",
+          "named": true
+        },
+        {
+          "type": "export_clause",
+          "named": true
+        },
+        {
+          "type": "export_statement_default_from_clause_from",
+          "named": true
+        },
+        {
+          "type": "export_statement_default_from_ns_from",
+          "named": true
+        },
+        {
+          "type": "export_statement_default_from_star_from",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "export_statement_default_from_clause_from",
+    "named": true,
+    "fields": {
+      "source": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "export_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "export_statement_default_from_ns_from",
+    "named": true,
+    "fields": {
+      "source": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "namespace_export",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "export_statement_default_from_star_from",
+    "named": true,
+    "fields": {
+      "source": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "export_statement_equals_export",
     "named": true,
     "fields": {
@@ -2752,7 +2752,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2782,7 +2782,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2812,7 +2812,17 @@
           }
         ]
       },
-      "semicolon": {
+      "source": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2822,16 +2832,6 @@
           },
           {
             "type": "automatic_semicolon",
-            "named": true
-          }
-        ]
-      },
-      "source": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "string",
             "named": true
           }
         ]
@@ -2856,7 +2856,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3476,7 +3476,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -3809,7 +3809,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4082,7 +4082,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4495,10 +4495,6 @@
         "required": true,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "variable_declarator",
             "named": true
           }
@@ -4518,7 +4514,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6214,7 +6210,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6357,7 +6353,7 @@
     "type": "string_single",
     "named": true,
     "fields": {
-      "elements_2": {
+      "elements": {
         "multiple": true,
         "required": false,
         "types": [
@@ -6654,7 +6650,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -6767,7 +6763,7 @@
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [
@@ -7205,16 +7201,12 @@
         "required": true,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
             "type": "variable_declarator",
             "named": true
           }
         ]
       },
-      "semicolon": {
+      "terminator": {
         "multiple": false,
         "required": true,
         "types": [

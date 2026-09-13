@@ -18,6 +18,9 @@ export * from './factories/coerce.js';
 // Constants (node kinds, keywords, operators)
 export * from './consts.js';
 
+// Render options catalog (per-slot defaults and formatting choices)
+export * from './options.js';
+
 // Type guards (is × shape composition, assert + throw)
 export { is, isTree, isNode, assert } from './is.js';
 export type { IsGuards, AssertGuards } from './is.js';
@@ -33,6 +36,6 @@ export { render, toEdit, applyEdits } from './boundary.js';
 export { createEngine } from './engine.js';
 export type { EngineOptions } from './engine.js';
 
-// Backend selection (spec 012) — native vs. typescript fallback shim.
+// Backend selection — native vs. typescript fallback shim.
 export { getActiveBackend } from './backend.js';
 export type { BackendName, BackendStatus } from './backend.js';

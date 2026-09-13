@@ -1,11 +1,10 @@
-// @generated from packages/rust/templates/*.jinja — do not hand-edit.
+// @generated from packages/rust/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 //
-// This file carries the SHA-256 digest of the template bundle at codegen
+// The SHA-256 digest of this render module's generated sources at codegen
 // time. The grammar-owned `sittir-rust` native module exports it as
-// `SittirEngine.templateBundleHash`; the JS backend shim
-// (packages/rust/src/backend.ts) compares it against the TS-side
-// hash to detect drift between the baked Rust binary and the TS
-// templates, falling through to the TS engine on mismatch (FR-020).
+// `SittirEngine.renderModuleHash`; the backend shim
+// (packages/rust/src/backend.ts) compares it against the TS-side copy to
+// detect a native binary built from older generated code.
 
-pub const TEMPLATE_BUNDLE_HASH: &str = "cef56a9ef0e3df6e8600c9130547078461fd21c6855f91a4d5eccc24317754b1";
+pub const RENDER_MODULE_HASH: &str = "8074d53878a862be90a738292caeac80d6c6b852cff3fdeb369dcfd2ac50ac22";

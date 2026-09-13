@@ -18,11 +18,23 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "grammar": "rust",
-    "ownerKind": "mut",
-    "message": "[assemble] literal \"mut\" has no anonymous parser symbol — not minted",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "mut"
+      "literalText": "﷐\n"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷑\n"
     }
   },
   {
@@ -38,54 +50,6 @@
       "newType": "_NonSpecialToken",
       "visibleKinds": [
         "non_special_token"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "_type",
-    "message": "[assemble] typeName collision: kind '_type' renamed 'Type' → '_Type' (visible sibling(s): 'type')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Type",
-      "newType": "_Type",
-      "visibleKinds": [
-        "type"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "_literal",
-    "message": "[assemble] typeName collision: kind '_literal' renamed 'Literal' → '_Literal' (visible sibling(s): 'literal')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Literal",
-      "newType": "_Literal",
-      "visibleKinds": [
-        "literal"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "_path",
-    "message": "[assemble] typeName collision: kind '_path' renamed 'Path' → '_Path' (visible sibling(s): 'path')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Path",
-      "newType": "_Path",
-      "visibleKinds": [
-        "path"
       ]
     }
   },
@@ -106,11 +70,16 @@
   },
   {
     "code": "kindid-unstamped-literals",
-    "message": "1 literal(s) resolved no parser kindId",
+    "message": "6 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
-        "mut"
+        "",
+        "\n",
+        "\n\n",
+        " ",
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "severity": "warning",
@@ -132,12 +101,17 @@
   },
   {
     "code": "kindid-vaporized-literals",
-    "message": "1 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "6 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "texts": [
-        "mut"
+        "",
+        "\n",
+        "\n\n",
+        " ",
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "scope": "grammar",
@@ -156,5 +130,15 @@
     },
     "scope": "grammar",
     "grammar": "rust"
+  },
+  {
+    "scope": "grammar",
+    "code": "body-pattern-zero-match",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "_visibility_modifier_in_path",
+    "message": "groups: body-pattern '_visibility_modifier_in_path' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.",
+    "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.",
+    "canProceed": true
   }
 ]

@@ -143,6 +143,10 @@ describe('post-evaluate invariant', () => {
 				// visibleExternals: — externals auto-aliased visible with a
 				// fixed render body (drainVisibleExternalsMetadata).
 				'visibleExternals',
+				// The `options:` block, carried unread — resolved against the
+				// site universe in seamRenderRules, which is the first place
+				// the sites an address names exist.
+				'options',
 				// Per-kind diagnostic exceptions from grammar.sittir.ts `expectDiagnostics:` —
 				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
 				'expectDiagnostics',

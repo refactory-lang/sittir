@@ -1,3 +1,4 @@
+import { withHoistedAnnotation } from './annotations.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
@@ -12,7 +13,8 @@ import {
 	isChoiceType,
 	isRepeatType,
 	isPrecWrapper,
-	typeEq
+	typeEq,
+	matchesEmpty
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
 
@@ -63,13 +65,8 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 		}
 	: B;
 
-export interface EnrichConfig {
-	readonly skip?: readonly string[];
-}
-
-export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): EnrichedGrammar<B> {
+export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const base = baseInput as unknown as GrammarResult;
-	const enrichSkip = new Set(config?.skip ?? []);
 	if (!base || typeof base !== 'object') {
 		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
 	}
@@ -94,13 +91,13 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
 		enrichedRules[name] =
-			rule && !enrichSkip.has(name)
+			rule
 				? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher)
 				: rule!;
 	}
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
-		if (!rule || enrichSkip.has(name)) continue;
+		if (!rule) continue;
 		if (!isSeqType((rule as { type?: string }).type)) continue;
 		const info = separatedListBodyInfo(rule);
 		if (!info?.flankCarrying || info.form !== 'head') continue;
@@ -110,18 +107,17 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	}
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
-		if (!rule || enrichSkip.has(name)) continue;
+		if (!rule) continue;
 		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
 	separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
-	separatedListEnrichSkip = enrichSkip;
 	hiddenListPromotionNames = new Map();
 	hoistKwRules = kwRules;
 	hoistWordMatcher = wordMatcher;
 	try {
 		for (const name of Object.keys(enrichedRules)) {
 			const rule = enrichedRules[name];
-			if (!rule || enrichSkip.has(name)) continue;
+			if (!rule) continue;
 			enrichedRules[name] = applyHoistAndUnalias(
 				name,
 				rule,
@@ -138,7 +134,6 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 		}
 	} finally {
 		separatedListNameCounts = null;
-		separatedListEnrichSkip = null;
 		hiddenListPromotionNames = null;
 		hoistKwRules = null;
 		hoistWordMatcher = undefined;
@@ -154,7 +149,7 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 			clauseGroupRules,
 			supertypeNames
 		);
-		clauseGroupRules[groupName] = groupUnaliasResult.rule;
+		clauseGroupRules[groupName] = withHoistedAnnotation(groupUnaliasResult.rule);
 		for (const diagnostic of groupUnaliasResult.diagnostics) {
 			recordUnaliasDiagnostic(unaliasSink, diagnostic);
 		}
@@ -162,7 +157,6 @@ export function enrich<B = GrammarResult>(baseInput: B, config?: EnrichConfig): 
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
 	for (const name of Object.keys(mergedRules)) {
-		if (enrichSkip.has(name)) continue;
 		const rule = mergedRules[name];
 		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
 	}
@@ -512,6 +506,12 @@ function sameElementShape(a: Rule, b: Rule): boolean {
 	return ruleKey(a as unknown as RuntimeRule) === ruleKey(b as unknown as RuntimeRule);
 }
 
+function hasFieldedArm(rule: Rule): boolean {
+	const cursor = peelTransparentElementWrappers(rule);
+	const members = (cursor as unknown as { members?: Rule[] }).members;
+	return isChoiceType((cursor as { type: string }).type) && Array.isArray(members) && members.some((m) => isFieldType((m as { type: string }).type));
+}
+
 function peelTransparentElementWrappers(rule: Rule): Rule {
 	if (isPrecWrapper(rule as { type: string })) {
 		return peelTransparentElementWrappers((rule as unknown as { content: Rule }).content);
@@ -559,6 +559,8 @@ function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => st
 		if (!detected || detected.trailing) continue;
 		const innerElement = detected.content as unknown as Rule;
 		if (!sameElementShape(leading, innerElement)) continue;
+		if (hasFieldedArm(leading)) continue;
+		if (matchesEmpty(leading as unknown as RuntimeRule)) continue;
 		const fieldName = reserve(deriveElementFieldName(leading));
 
 		const innerMembers = (inner as unknown as { members: Rule[] }).members;
@@ -588,19 +590,23 @@ function applyNodeChoiceFieldWrap(
 	mergedRules: Record<string, Rule>,
 	supertypeNames: ReadonlySet<string>
 ): Rule {
-	const usedNames = new Set<string>();
-	collectAllFieldNamesDeep(rule, usedNames);
 	let changed = false;
 
-	const reserve = (base: string): string => {
-		if (!usedNames.has(base)) {
-			usedNames.add(base);
+	const namesDeepIn = (r: Rule): Set<string> => {
+		const names = new Set<string>();
+		collectAllFieldNamesDeep(r, names);
+		return names;
+	};
+
+	const reserve = (base: string, scope: Set<string>): string => {
+		if (!scope.has(base)) {
+			scope.add(base);
 			return base;
 		}
 		let n = 2;
-		while (usedNames.has(`${base}_${n}`)) n++;
+		while (scope.has(`${base}_${n}`)) n++;
 		const name = `${base}_${n}`;
-		usedNames.add(name);
+		scope.add(name);
 		return name;
 	};
 
@@ -623,7 +629,7 @@ function applyNodeChoiceFieldWrap(
 	};
 	countEligibleRefs(rule);
 
-	const visit = (r: Rule, suppressed: boolean = false): Rule => {
+	const visit = (r: Rule, suppressed: boolean, scope: Set<string>): Rule => {
 		if (isFieldType((r as { type: string }).type)) return r;
 
 		if (!suppressed && isRepeatType((r as { type: string }).type)) {
@@ -646,10 +652,10 @@ function applyNodeChoiceFieldWrap(
 				if (isEligibleFieldReferent(refName, mergedRules, supertypeNames) && refCounts.get(refName) === 1) {
 					changed = true;
 					const fieldName = pluralizeFieldName(refName.replace(/^_/, ''));
-					return makeField(reserve(fieldName), rebuildRepeat(inner));
+					return makeField(reserve(fieldName, scope), rebuildRepeat(inner));
 				}
 			}
-			let visitedInner = visit(inner, true);
+			let visitedInner = visit(inner, true, scope);
 			if (
 				isChoiceType((visitedInner as { type: string }).type) &&
 				!isAllArmsNodeShaped(visitedInner) &&
@@ -660,14 +666,14 @@ function applyNodeChoiceFieldWrap(
 			}
 			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
 				changed = true;
-				return makeField(reserve('elements'), rebuildRepeat(visitedInner));
+				return makeField(reserve('elements', scope), rebuildRepeat(visitedInner));
 			}
 			if (visitedInner === inner) return r;
 			return rebuildRepeat(visitedInner);
 		}
 
 		if (isSeqType((r as { type: string }).type)) {
-			const sepListRewrite = fieldSeparatedListElements(r, reserve);
+			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope));
 			if (sepListRewrite) {
 				changed = true;
 				r = sepListRewrite;
@@ -676,23 +682,38 @@ function applyNodeChoiceFieldWrap(
 
 		const bag = r as unknown as { members?: readonly Rule[]; content?: Rule };
 		if (Array.isArray(bag.members)) {
-			const memberSuppressed = isChoiceType((r as { type: string }).type);
+			const isChoice = isChoiceType((r as { type: string }).type);
 			let memberChanged = false;
+			if (!isChoice) {
+				const newMembers = bag.members.map((m) => {
+					const nm = visit(m, false, scope);
+					if (nm !== m) memberChanged = true;
+					return nm;
+				});
+				return memberChanged ? ({ ...(r as object), members: newMembers } as Rule) : r;
+			}
+			const insideChoice = namesDeepIn(r);
+			const outside = new Set([...scope].filter((n) => !insideChoice.has(n)));
+			const minted = new Set<string>();
 			const newMembers = bag.members.map((m) => {
-				const nm = visit(m, memberSuppressed);
+				const armScope = new Set([...outside, ...namesDeepIn(m)]);
+				const before = new Set(armScope);
+				const nm = visit(m, true, armScope);
 				if (nm !== m) memberChanged = true;
+				for (const n of armScope) if (!before.has(n)) minted.add(n);
 				return nm;
 			});
+			for (const n of minted) scope.add(n);
 			return memberChanged ? ({ ...(r as object), members: newMembers } as Rule) : r;
 		}
 		if (bag.content && typeof bag.content === 'object') {
-			const nc = visit(bag.content, suppressed);
+			const nc = visit(bag.content, suppressed, scope);
 			return nc !== bag.content ? withContent(r as object, nc) : r;
 		}
 		return r;
 	};
 
-	const result = visit(rule);
+	const result = visit(rule, false, namesDeepIn(rule));
 	return changed ? result : rule;
 }
 
@@ -1475,8 +1496,6 @@ function collectSeparatedListNameProposals(rules: Record<string, Rule>): Map<str
 
 let separatedListNameCounts: Map<string, number> | null = null;
 
-let separatedListEnrichSkip: ReadonlySet<string> | null = null;
-
 let hiddenListPromotionNames: Map<string, string> | null = null;
 
 let hoistKwRules: Record<string, Rule> | null = null;
@@ -1487,7 +1506,6 @@ function promoteHiddenListRef(member: Rule, rulesBag: Record<string, Rule>): Rul
 	if (!isSymbolType((member as { type?: string }).type)) return member;
 	const name = (member as { name?: unknown }).name;
 	if (typeof name !== 'string' || !name.startsWith('_')) return member;
-	if (separatedListEnrichSkip?.has(name)) return member;
 	let visibleName = hiddenListPromotionNames.get(name);
 	if (visibleName === undefined) {
 		const body = rulesBag[name];
@@ -2181,10 +2199,7 @@ function visibleGroupSynthName(
 		const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
 		for (const candidate of candidates) {
 			if (!nameFree(candidate)) continue;
-			const skipped =
-				separatedListEnrichSkip !== null &&
-				(separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
-			return register(candidate, skipped ? registeredBody : registeredFlat);
+			return register(candidate, registeredFlat);
 		}
 	}
 	if (enclosingFieldName !== undefined) {
@@ -2308,6 +2323,7 @@ function mintStructuredChoiceArm(
 		if (isSupertypeLike(body)) return null;
 		const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, 'arm');
 		if (!promoted) return null;
+		rulesBag[name] = withHoistedAnnotation(body);
 		visibleGroupHiddenNames.add(name);
 		if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
 		return makeVisibleGroupAlias(arm, promoted.visibleName);

@@ -8,7 +8,9 @@ const extractParityFixtures = vi.fn();
 vi.mock('../validate/parity-fixtures.ts', () => ({
 	extractParityFixtures: (...args: unknown[]) => extractParityFixtures(...args),
 	serializeFixtures: (fixtures: unknown[]) => JSON.stringify(fixtures, null, 2) + '\n',
-	fixturesOutputPath: () => fxPath
+	fixturesOutputPath: () => fxPath,
+	leftOutOutputPath: () => leftOutPath,
+	serializeLeftOut: (leftOut: Record<string, number>) => JSON.stringify(leftOut, null, 2) + '\n'
 }));
 
 import { emitParityFixtures } from '../post-generate.ts';
@@ -19,11 +21,13 @@ function makeTmp(): string {
 
 let tmp: string;
 let fxPath: string;
+let leftOutPath: string;
 
 describe('emitParityFixtures', () => {
 	beforeEach(() => {
 		tmp = makeTmp();
 		fxPath = join(tmp, 'test-fixtures.json');
+		leftOutPath = join(tmp, 'test-fixtures.left-out.json');
 		extractParityFixtures.mockReset();
 	});
 
@@ -39,11 +43,12 @@ describe('emitParityFixtures', () => {
 			fixtures: [],
 			renderCount: 0,
 			roundTripCount: 0,
+			leftOutByKind: {},
 			coveredKinds: new Set(),
 			warnings: []
 		});
 
-		await expect(emitParityFixtures('rust', tmp)).rejects.toThrow(/refusing to overwrite/);
+		await expect(emitParityFixtures('rust')).rejects.toThrow(/refusing to overwrite/);
 
 		// The committed file must be untouched — not clobbered with `[]`.
 		expect(JSON.parse(readFileSync(fxPath, 'utf8'))).toEqual(existing);
@@ -57,11 +62,12 @@ describe('emitParityFixtures', () => {
 			fixtures: fresh,
 			renderCount: 1,
 			roundTripCount: 1,
+			leftOutByKind: {},
 			coveredKinds: new Set(),
 			warnings: []
 		});
 
-		await emitParityFixtures('rust', tmp);
+		await emitParityFixtures('rust');
 
 		expect(JSON.parse(readFileSync(fxPath, 'utf8'))).toEqual(fresh);
 	});
@@ -72,11 +78,12 @@ describe('emitParityFixtures', () => {
 			fixtures: [],
 			renderCount: 0,
 			roundTripCount: 0,
+			leftOutByKind: {},
 			coveredKinds: new Set(),
 			warnings: []
 		});
 
-		await expect(emitParityFixtures('rust', tmp)).resolves.toBeUndefined();
+		await expect(emitParityFixtures('rust')).resolves.toBeUndefined();
 		expect(JSON.parse(readFileSync(fxPath, 'utf8'))).toEqual([]);
 	});
 });
