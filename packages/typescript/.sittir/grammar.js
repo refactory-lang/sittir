@@ -5217,7 +5217,9 @@ var grammar_sittir_default = grammar(
         object: { '"{"/after': preference("space"), '"}"/before': preference("space") },
         object_pattern: { '"{"/after': preference("space"), '"}"/before': preference("space") },
         ternary_expression: { '":"/before': preference("space") },
-        for_statement: { '"("/before': preference("space") },
+        for_statement: { '"("/before': preference("space"), '";"/after': preference("space") },
+        lexical_declaration: { after: preference("space") },
+        variable_declaration: { after: preference("space") },
         required_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
         optional_parameter: { "decorator:/(_)/after": preference("space"), "decorator:/end": preference("space") },
         _bindings: {

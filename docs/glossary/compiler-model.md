@@ -3539,6 +3539,19 @@ Whether a kind gets edge seams: it is a compound node, and it is either
 visible or a hidden kind with no visible twin of the same public name,
 since the two would claim the same `<kind>_before` key.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::withArmEdgeSeams`
+
+A choice whose arms end (or start) in a token gets that token's seam inside
+each such arm, since the token meets the member beside the choice only when
+its arm renders: `for (init; cond; inc)` seats `semi/after` in the
+initializer's expression arm and nowhere else, so `for (let i = 0; i < 3; …)`
+spaces after its `;` while `for (;;)` stays tight. A bare token arm is
+wrapped in a sequence to hold the seam; a sequence arm takes it at its edge.
+A choice that is itself one seam site (a token set or an enum slot, which
+`seamNameOf` names as a whole) is left to the boundary's own token seams.
+Runs from `withTokenSeams` on both neighbours of every boundary, before
+those seams are placed.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::withTokenSeams`
 
 One seq's members with the seam choices inserted; any other rule, a flank

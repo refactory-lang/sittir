@@ -7,7 +7,7 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
-use ::sittir_core::view::{View, ListView, NO_ITEMS};
+use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
 use ::sittir_core::types::{
     FieldValue, OneOrMany, Source, Span, NodeTrivia,
@@ -33,6 +33,12 @@ pub struct Seamed<T> {
 impl<T> Seamed<T> {
     pub fn new(value: T) -> Self {
         Self { value, seam_before: None, seam_after: None }
+    }
+}
+
+impl<T: ::sittir_core::view::KindOf> ::sittir_core::view::KindOf for Seamed<T> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        self.value.kind_in(kinds)
     }
 }
 
@@ -2162,6 +2168,29 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementTransport> {
     }
 }
 
+impl ::sittir_core::view::KindOf for SimpleStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::FutureImportStatement(inner) => inner.kind_in(kinds),
+            Self::ImportStatement(inner) => inner.kind_in(kinds),
+            Self::ImportFromStatement(inner) => inner.kind_in(kinds),
+            Self::PrintStatement(inner) => inner.kind_in(kinds),
+            Self::AssertStatement(inner) => inner.kind_in(kinds),
+            Self::ExpressionStatement(inner) => inner.kind_in(kinds),
+            Self::ReturnStatement(inner) => inner.kind_in(kinds),
+            Self::DeleteStatement(inner) => inner.kind_in(kinds),
+            Self::RaiseStatement(inner) => inner.kind_in(kinds),
+            Self::PassStatement(inner) => inner.kind_in(kinds),
+            Self::BreakStatement(inner) => inner.kind_in(kinds),
+            Self::ContinueStatement(inner) => inner.kind_in(kinds),
+            Self::GlobalStatement(inner) => inner.kind_in(kinds),
+            Self::NonlocalStatement(inner) => inner.kind_in(kinds),
+            Self::ExecStatement(inner) => inner.kind_in(kinds),
+            Self::TypeAliasStatement(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 impl ::sittir_core::render::Render for SimpleStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_simple_statement(self, w)
@@ -2410,6 +2439,23 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterTransport> {
     }
 }
 
+impl ::sittir_core::view::KindOf for ParameterTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::TypedParameter(inner) => inner.kind_in(kinds),
+            Self::DefaultParameter(inner) => inner.kind_in(kinds),
+            Self::TypedDefaultParameter(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::KeywordSeparator(inner) => inner.kind_in(kinds),
+            Self::PositionalSeparator(inner) => inner.kind_in(kinds),
+            Self::DictionarySplatPattern(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 impl ::sittir_core::render::Render for ParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_parameter(self, w)
@@ -2613,6 +2659,20 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         PatternTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for PatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::ListPattern(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
     }
 }
 
@@ -2997,6 +3057,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ExpressionTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for ExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::PrimaryExpression(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => false,
+        }
     }
 }
 
@@ -3472,6 +3548,39 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrimaryExpressionTransport> {
     }
 }
 
+impl ::sittir_core::view::KindOf for PrimaryExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTransport {
     match t {
         PrimaryExpressionTransport::Await(inner) => AnyTransport::Await(inner),
@@ -3537,6 +3646,23 @@ impl ::sittir_core::prepare::Prepare for ModuleStatementsTransportSlot {
             ModuleStatementsTransportSlot::ClassDefinition(t) => t.prepare(ctx),
             ModuleStatementsTransportSlot::DecoratedDefinition(t) => t.prepare(ctx),
             ModuleStatementsTransportSlot::MatchStatement(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ModuleStatementsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::IfStatement(inner) => inner.kind_in(kinds),
+            Self::ForStatement(inner) => inner.kind_in(kinds),
+            Self::WhileStatement(inner) => inner.kind_in(kinds),
+            Self::TryStatement(inner) => inner.kind_in(kinds),
+            Self::WithStatement(inner) => inner.kind_in(kinds),
+            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
+            Self::ClassDefinition(inner) => inner.kind_in(kinds),
+            Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
+            Self::MatchStatement(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -3708,6 +3834,15 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementContentTransportSl
     }
 }
 
+impl ::sittir_core::view::KindOf for FutureImportStatementContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ImportList(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedImportList(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for FutureImportStatementContentTransportSlot {
     unsafe fn from_napi_value(
@@ -3807,6 +3942,15 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementModuleNameTransportS
         match self {
             ImportFromStatementModuleNameTransportSlot::RelativeImport(t) => t.prepare(ctx),
             ImportFromStatementModuleNameTransportSlot::DottedName(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ImportFromStatementModuleNameTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::RelativeImport(inner) => inner.kind_in(kinds),
+            Self::DottedName(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -3912,6 +4056,16 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementContentTransportSlot
             ImportFromStatementContentTransportSlot::ImportList(t) => t.prepare(ctx),
             ImportFromStatementContentTransportSlot::ParenthesizedImportList(t) => t.prepare(ctx),
             ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ImportFromStatementContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ImportList(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedImportList(inner) => inner.kind_in(kinds),
+            Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -4023,6 +4177,15 @@ impl ::sittir_core::prepare::Prepare for ImportListNameTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ImportListNameTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::DottedName(inner) => inner.kind_in(kinds),
+            Self::AliasedImport(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ImportListNameTransportSlot {
     unsafe fn from_napi_value(
@@ -4122,6 +4285,15 @@ impl ::sittir_core::prepare::Prepare for PrintStatementContentTransportSlot {
         match self {
             PrintStatementContentTransportSlot::PrintStatementChevron(t) => t.prepare(ctx),
             PrintStatementContentTransportSlot::PrintStatementPlain(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for PrintStatementContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::PrintStatementChevron(inner) => inner.kind_in(kinds),
+            Self::PrintStatementPlain(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -4295,6 +4467,50 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::Yield(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionStatementTuple(inner) => inner.kind_in(kinds),
+            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -4777,6 +4993,47 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
     }
 }
 
+impl ::sittir_core::view::KindOf for ReturnStatementExpressionsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransportSlot {
     unsafe fn from_napi_value(
@@ -5227,6 +5484,47 @@ impl ::sittir_core::prepare::Prepare for DeleteStatementExpressionsTransportSlot
             DeleteStatementExpressionsTransportSlot::AsPattern(t) => t.prepare(ctx),
             DeleteStatementExpressionsTransportSlot::ExpressionList(t) => t.prepare(ctx),
             DeleteStatementExpressionsTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for DeleteStatementExpressionsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -5685,6 +5983,47 @@ impl ::sittir_core::prepare::Prepare for RaiseStatementExpressionsTransportSlot 
     }
 }
 
+impl ::sittir_core::view::KindOf for RaiseStatementExpressionsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTransportSlot {
     unsafe fn from_napi_value(
@@ -6077,6 +6416,16 @@ impl ::sittir_core::prepare::Prepare for IfStatementConsequenceTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for IfStatementConsequenceTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportSlot {
     unsafe fn from_napi_value(
@@ -6190,6 +6539,15 @@ impl ::sittir_core::prepare::Prepare for IfStatementAlternativeTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for IfStatementAlternativeTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ElifClause(inner) => inner.kind_in(kinds),
+            Self::ElseClause(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for IfStatementAlternativeTransportSlot {
     unsafe fn from_napi_value(
@@ -6291,6 +6649,16 @@ impl ::sittir_core::prepare::Prepare for ElifClauseConsequenceTransportSlot {
             ElifClauseConsequenceTransportSlot::SimpleStatements(t) => t.prepare(ctx),
             ElifClauseConsequenceTransportSlot::SuiteBlock(t) => t.prepare(ctx),
             ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ElifClauseConsequenceTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -6410,6 +6778,16 @@ impl ::sittir_core::prepare::Prepare for ElseClauseBodyTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ElseClauseBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -6523,6 +6901,15 @@ impl ::sittir_core::prepare::Prepare for MatchBlockContentTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for MatchBlockContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
     unsafe fn from_napi_value(
@@ -6620,6 +7007,16 @@ impl ::sittir_core::prepare::Prepare for CaseClauseConsequenceTransportSlot {
             CaseClauseConsequenceTransportSlot::SimpleStatements(t) => t.prepare(ctx),
             CaseClauseConsequenceTransportSlot::SuiteBlock(t) => t.prepare(ctx),
             CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for CaseClauseConsequenceTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -6735,6 +7132,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementAsyncMarkerTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ForStatementAsyncMarkerTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -6834,6 +7239,21 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::ListPattern(t) => t.prepare(ctx),
             ForStatementLeftTransportSlot::PatternList(t) => t.prepare(ctx),
             ForStatementLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ForStatementLeftTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::ListPattern(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -7080,6 +7500,47 @@ impl ::sittir_core::prepare::Prepare for ForStatementRightTransportSlot {
             ForStatementRightTransportSlot::AsPattern(t) => t.prepare(ctx),
             ForStatementRightTransportSlot::ExpressionList(t) => t.prepare(ctx),
             ForStatementRightTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ForStatementRightTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -7476,6 +7937,16 @@ impl ::sittir_core::prepare::Prepare for ForStatementBodyTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ForStatementBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -7587,6 +8058,16 @@ impl ::sittir_core::prepare::Prepare for WhileStatementBodyTransportSlot {
             WhileStatementBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
             WhileStatementBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
             WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for WhileStatementBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -7706,6 +8187,16 @@ impl ::sittir_core::prepare::Prepare for TryStatementBodyTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for TryStatementBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -7817,6 +8308,14 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseStarMarkerTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ExceptClauseStarMarkerTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal3_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseStarMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -7906,6 +8405,16 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseSuiteTransportSlot {
             ExceptClauseSuiteTransportSlot::SimpleStatements(t) => t.prepare(ctx),
             ExceptClauseSuiteTransportSlot::SuiteBlock(t) => t.prepare(ctx),
             ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ExceptClauseSuiteTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8025,6 +8534,16 @@ impl ::sittir_core::prepare::Prepare for FinallyClauseBlockTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for FinallyClauseBlockTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot {
     unsafe fn from_napi_value(
@@ -8136,6 +8655,14 @@ impl ::sittir_core::prepare::Prepare for WithStatementAsyncMarkerTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for WithStatementAsyncMarkerTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -8225,6 +8752,16 @@ impl ::sittir_core::prepare::Prepare for WithStatementBodyTransportSlot {
             WithStatementBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
             WithStatementBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
             WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for WithStatementBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8342,6 +8879,15 @@ impl ::sittir_core::prepare::Prepare for WithClauseContentTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for WithClauseContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::WithClauseBare(inner) => inner.kind_in(kinds),
+            Self::WithClauseParen(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for WithClauseContentTransportSlot {
     unsafe fn from_napi_value(
@@ -8443,6 +8989,14 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionAsyncMarkerTransportS
     }
 }
 
+impl ::sittir_core::view::KindOf for FunctionDefinitionAsyncMarkerTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -8532,6 +9086,16 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionBodyTransportSlot {
             FunctionDefinitionBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
             FunctionDefinitionBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
             FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for FunctionDefinitionBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8647,6 +9211,16 @@ impl ::sittir_core::prepare::Prepare for ExecStatementCodeTransportSlot {
             ExecStatementCodeTransportSlot::String(t) => t.prepare(ctx),
             ExecStatementCodeTransportSlot::Identifier(t) => t.prepare(ctx),
             ExecStatementCodeTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ExecStatementCodeTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8795,6 +9369,16 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionBodyTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ClassDefinitionBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot {
     unsafe fn from_napi_value(
@@ -8908,6 +9492,15 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatContentTransportS
     }
 }
 
+impl ::sittir_core::view::KindOf for ParenthesizedListSplatContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
+            Self::ListSplat(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedListSplatContentTransportSlot {
     unsafe fn from_napi_value(
@@ -9017,6 +9610,15 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionDefinitionTransportS
     }
 }
 
+impl ::sittir_core::view::KindOf for DecoratedDefinitionDefinitionTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClassDefinition(inner) => inner.kind_in(kinds),
+            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DecoratedDefinitionDefinitionTransportSlot {
     unsafe fn from_napi_value(
@@ -9118,6 +9720,16 @@ impl ::sittir_core::prepare::Prepare for SuiteContentTransportSlot {
             SuiteContentTransportSlot::SimpleStatements(t) => t.prepare(ctx),
             SuiteContentTransportSlot::SuiteBlock(t) => t.prepare(ctx),
             SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SuiteContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -9247,6 +9859,23 @@ impl ::sittir_core::prepare::Prepare for BlockStatementsTransportSlot {
             BlockStatementsTransportSlot::ClassDefinition(t) => t.prepare(ctx),
             BlockStatementsTransportSlot::DecoratedDefinition(t) => t.prepare(ctx),
             BlockStatementsTransportSlot::MatchStatement(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for BlockStatementsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::IfStatement(inner) => inner.kind_in(kinds),
+            Self::ForStatement(inner) => inner.kind_in(kinds),
+            Self::WhileStatement(inner) => inner.kind_in(kinds),
+            Self::TryStatement(inner) => inner.kind_in(kinds),
+            Self::WithStatement(inner) => inner.kind_in(kinds),
+            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
+            Self::ClassDefinition(inner) => inner.kind_in(kinds),
+            Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
+            Self::MatchStatement(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -9418,6 +10047,15 @@ impl ::sittir_core::prepare::Prepare for ExpressionListTailTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ExpressionListTailTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ExpressionListExpressions(inner) => inner.kind_in(kinds),
+            Self::Literal4_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot {
     unsafe fn from_napi_value(
@@ -9543,6 +10181,30 @@ impl ::sittir_core::prepare::Prepare for CasePatternContentTransportSlot {
             CasePatternContentTransportSlot::Literal6_66_61_6c_73_65 => Ok(()),
             CasePatternContentTransportSlot::Literal7_6e_6f_6e_65 => Ok(()),
             CasePatternContentTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for CasePatternContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::CaseAsPattern(inner) => inner.kind_in(kinds),
+            Self::KeywordPattern(inner) => inner.kind_in(kinds),
+            Self::ClassPattern(inner) => inner.kind_in(kinds),
+            Self::SplatPattern(inner) => inner.kind_in(kinds),
+            Self::UnionPattern(inner) => inner.kind_in(kinds),
+            Self::CaseListPattern(inner) => inner.kind_in(kinds),
+            Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
+            Self::DictPattern(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
+            Self::ComplexPattern(inner) => inner.kind_in(kinds),
+            Self::DottedName(inner) => inner.kind_in(kinds),
+            Self::Literal5_74_72_75_65 => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::Literal6_66_61_6c_73_65 => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Literal7_6e_6f_6e_65 => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -9780,6 +10442,28 @@ impl ::sittir_core::prepare::Prepare for UnionPatternPatternsTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for UnionPatternPatternsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClassPattern(inner) => inner.kind_in(kinds),
+            Self::SplatPattern(inner) => inner.kind_in(kinds),
+            Self::UnionPattern(inner) => inner.kind_in(kinds),
+            Self::CaseListPattern(inner) => inner.kind_in(kinds),
+            Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
+            Self::DictPattern(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
+            Self::ComplexPattern(inner) => inner.kind_in(kinds),
+            Self::DottedName(inner) => inner.kind_in(kinds),
+            Self::Literal5_74_72_75_65 => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::Literal6_66_61_6c_73_65 => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Literal7_6e_6f_6e_65 => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for UnionPatternPatternsTransportSlot {
     unsafe fn from_napi_value(
@@ -9993,6 +10677,28 @@ impl ::sittir_core::prepare::Prepare for KeyValuePatternKeyTransportSlot {
             KeyValuePatternKeyTransportSlot::Literal6_66_61_6c_73_65 => Ok(()),
             KeyValuePatternKeyTransportSlot::Literal7_6e_6f_6e_65 => Ok(()),
             KeyValuePatternKeyTransportSlot::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for KeyValuePatternKeyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClassPattern(inner) => inner.kind_in(kinds),
+            Self::SplatPattern(inner) => inner.kind_in(kinds),
+            Self::UnionPattern(inner) => inner.kind_in(kinds),
+            Self::CaseListPattern(inner) => inner.kind_in(kinds),
+            Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
+            Self::DictPattern(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
+            Self::ComplexPattern(inner) => inner.kind_in(kinds),
+            Self::DottedName(inner) => inner.kind_in(kinds),
+            Self::Literal5_74_72_75_65 => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::Literal6_66_61_6c_73_65 => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Literal7_6e_6f_6e_65 => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10214,6 +10920,28 @@ impl ::sittir_core::prepare::Prepare for KeywordPatternValueTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for KeywordPatternValueTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClassPattern(inner) => inner.kind_in(kinds),
+            Self::SplatPattern(inner) => inner.kind_in(kinds),
+            Self::UnionPattern(inner) => inner.kind_in(kinds),
+            Self::CaseListPattern(inner) => inner.kind_in(kinds),
+            Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
+            Self::DictPattern(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
+            Self::ComplexPattern(inner) => inner.kind_in(kinds),
+            Self::DottedName(inner) => inner.kind_in(kinds),
+            Self::Literal5_74_72_75_65 => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::Literal6_66_61_6c_73_65 => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Literal7_6e_6f_6e_65 => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Literal8_5f_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for KeywordPatternValueTransportSlot {
     unsafe fn from_napi_value(
@@ -10405,6 +11133,15 @@ impl ::sittir_core::prepare::Prepare for SplatPatternOperatorTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for SplatPatternOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal3_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal9_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -10498,6 +11235,16 @@ impl ::sittir_core::prepare::Prepare for SplatPatternNameTransportSlot {
             SplatPatternNameTransportSlot::Identifier(t) => t.prepare(ctx),
             SplatPatternNameTransportSlot::Literal10_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
             SplatPatternNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SplatPatternNameTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Literal10_75_6e_64_65_72_73_63_6f_72_65 => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10638,6 +11385,14 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternRealTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ComplexPatternRealTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal11_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternRealTransportSlot {
     unsafe fn from_napi_value(
@@ -10727,6 +11482,16 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternImaginaryTransportSlot {
             ComplexPatternImaginaryTransportSlot::Integer(t) => t.prepare(ctx),
             ComplexPatternImaginaryTransportSlot::Float(t) => t.prepare(ctx),
             ComplexPatternImaginaryTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ComplexPatternImaginaryTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10837,6 +11602,15 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternOperatorTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ComplexPatternOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal12_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal11_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -10930,6 +11704,16 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternContentTransportSlot {
             ComplexPatternContentTransportSlot::Integer(t) => t.prepare(ctx),
             ComplexPatternContentTransportSlot::Float(t) => t.prepare(ctx),
             ComplexPatternContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ComplexPatternContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11038,6 +11822,16 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNameTransportSlot {
             DefaultParameterNameTransportSlot::Identifier(t) => t.prepare(ctx),
             DefaultParameterNameTransportSlot::TuplePattern(t) => t.prepare(ctx),
             DefaultParameterNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for DefaultParameterNameTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11184,6 +11978,17 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternContentTransportSlot {
             ListSplatPatternContentTransportSlot::Subscript(t) => t.prepare(ctx),
             ListSplatPatternContentTransportSlot::Attribute(t) => t.prepare(ctx),
             ListSplatPatternContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ListSplatPatternContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11342,6 +12147,17 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatPatternContentTransportS
     }
 }
 
+impl ::sittir_core::view::KindOf for DictionarySplatPatternContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternContentTransportSlot {
     unsafe fn from_napi_value(
@@ -11492,6 +12308,15 @@ impl ::sittir_core::prepare::Prepare for BooleanOperatorOperatorTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for BooleanOperatorOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal13_61_6e_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_6f_72_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -11605,6 +12430,26 @@ impl ::sittir_core::prepare::Prepare for BinaryOperatorOperatorTransportSlot {
             BinaryOperatorOperatorTransportSlot::Literal21_63_61_72_65_74 => Ok(()),
             BinaryOperatorOperatorTransportSlot::Literal22_6c_74_5f_6c_74 => Ok(()),
             BinaryOperatorOperatorTransportSlot::Literal23_67_74_5f_67_74 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for BinaryOperatorOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal12_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal11_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Literal3_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal15_61_74 => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
+            Self::Literal16_73_6c_61_73_68 => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
+            Self::Literal17_70_65_72_63_65_6e_74 => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::Literal18_73_6c_61_73_68_5f_73_6c_61_73_68 => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
+            Self::Literal9_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+            Self::Literal19_70_69_70_65 => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
+            Self::Literal20_61_6d_70 => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
+            Self::Literal21_63_61_72_65_74 => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::Literal22_6c_74_5f_6c_74 => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::Literal23_67_74_5f_67_74 => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11746,6 +12591,16 @@ impl ::sittir_core::prepare::Prepare for UnaryOperatorOperatorTransportSlot {
             UnaryOperatorOperatorTransportSlot::Literal12_70_6c_75_73 => Ok(()),
             UnaryOperatorOperatorTransportSlot::Literal11_64_61_73_68 => Ok(()),
             UnaryOperatorOperatorTransportSlot::Literal24_74_69_6c_64_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for UnaryOperatorOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal12_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal11_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Literal24_74_69_6c_64_65 => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11909,6 +12764,47 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for LambdaWithinForInClauseBodyTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -12315,6 +13211,21 @@ impl ::sittir_core::prepare::Prepare for AssignmentLeftTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for AssignmentLeftTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::ListPattern(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AssignmentLeftTransportSlot {
     unsafe fn from_napi_value(
@@ -12499,6 +13410,16 @@ impl ::sittir_core::prepare::Prepare for AssignmentContentTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for AssignmentContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AssignmentContentTransportSlot {
     unsafe fn from_napi_value(
@@ -12618,6 +13539,21 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentLeftTransportSlot {
             AugmentedAssignmentLeftTransportSlot::ListPattern(t) => t.prepare(ctx),
             AugmentedAssignmentLeftTransportSlot::PatternList(t) => t.prepare(ctx),
             AugmentedAssignmentLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for AugmentedAssignmentLeftTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::ListPattern(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -12822,6 +13758,26 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentOperatorTransportSlo
             AugmentedAssignmentOperatorTransportSlot::Literal35_61_6d_70_5f_65_71 => Ok(()),
             AugmentedAssignmentOperatorTransportSlot::Literal36_63_61_72_65_74_5f_65_71 => Ok(()),
             AugmentedAssignmentOperatorTransportSlot::Literal37_70_69_70_65_5f_65_71 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for AugmentedAssignmentOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal25_70_6c_75_73_5f_65_71 => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::Literal26_64_61_73_68_5f_65_71 => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::Literal27_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::Literal28_73_6c_61_73_68_5f_65_71 => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::Literal29_61_74_5f_65_71 => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::Literal30_73_6c_61_73_68_5f_73_6c_61_73_68_5f_65_71 => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Literal31_70_65_72_63_65_6e_74_5f_65_71 => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Literal32_73_74_61_72_5f_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::Literal33_67_74_5f_67_74_5f_65_71 => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::Literal34_6c_74_5f_6c_74_5f_65_71 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal35_61_6d_70_5f_65_71 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal36_63_61_72_65_74_5f_65_71 => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::Literal37_70_69_70_65_5f_65_71 => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -13033,6 +13989,51 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for AugmentedAssignmentRightTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -13459,6 +14460,15 @@ impl ::sittir_core::prepare::Prepare for PatternListTailTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for PatternListTailTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::PatternListPatterns(inner) => inner.kind_in(kinds),
+            Self::Literal4_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
     unsafe fn from_napi_value(
@@ -13620,6 +14630,48 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::AsPattern(t) => t.prepare(ctx),
             YieldContentTransportSlot::ExpressionList(t) => t.prepare(ctx),
             YieldContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for YieldContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::YieldFromClause(inner) => inner.kind_in(kinds),
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -14022,6 +15074,15 @@ impl ::sittir_core::prepare::Prepare for CallArgumentsTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for CallArgumentsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::ArgumentList(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for CallArgumentsTransportSlot {
     unsafe fn from_napi_value(
@@ -14125,6 +15186,17 @@ impl ::sittir_core::prepare::Prepare for TypedParameterContentTransportSlot {
             TypedParameterContentTransportSlot::ListSplatPattern(t) => t.prepare(ctx),
             TypedParameterContentTransportSlot::DictionarySplatPattern(t) => t.prepare(ctx),
             TypedParameterContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for TypedParameterContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::DictionarySplatPattern(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -14347,6 +15419,51 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::ConstrainedType(t) => t.prepare(ctx),
             TypeContentTransportSlot::MemberType(t) => t.prepare(ctx),
             TypeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for TypeContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::SplatType(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::UnionType(inner) => inner.kind_in(kinds),
+            Self::ConstrainedType(inner) => inner.kind_in(kinds),
+            Self::MemberType(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -14773,6 +15890,15 @@ impl ::sittir_core::prepare::Prepare for SplatTypeOperatorTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for SplatTypeOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal3_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Literal9_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeOperatorTransportSlot {
     unsafe fn from_napi_value(
@@ -14866,6 +15992,16 @@ impl ::sittir_core::prepare::Prepare for GenericTypeNameTransportSlot {
             GenericTypeNameTransportSlot::Identifier(t) => t.prepare(ctx),
             GenericTypeNameTransportSlot::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
             GenericTypeNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for GenericTypeNameTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Literal38_74_79_70_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -15064,6 +16200,48 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionContentTransport
             ParenthesizedExpressionContentTransportSlot::Yield(t) => t.prepare(ctx),
             ParenthesizedExpressionContentTransportSlot::ListSplat(t) => t.prepare(ctx),
             ParenthesizedExpressionContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ParenthesizedExpressionContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::ListSplat(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -15534,6 +16712,49 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsElementTransportSlot 
     }
 }
 
+impl ::sittir_core::view::KindOf for CollectionElementsElementTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::ListSplat(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTransportSlot {
     unsafe fn from_napi_value(
@@ -15938,6 +17159,14 @@ impl ::sittir_core::prepare::Prepare for ForInClauseAsyncMarkerTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ForInClauseAsyncMarkerTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -16037,6 +17266,21 @@ impl ::sittir_core::prepare::Prepare for ForInClauseLeftTransportSlot {
             ForInClauseLeftTransportSlot::ListPattern(t) => t.prepare(ctx),
             ForInClauseLeftTransportSlot::PatternList(t) => t.prepare(ctx),
             ForInClauseLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ForInClauseLeftTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::ListPattern(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16283,6 +17527,47 @@ impl ::sittir_core::prepare::Prepare for ForInClauseRightTransportSlot {
             ForInClauseRightTransportSlot::AsPattern(t) => t.prepare(ctx),
             ForInClauseRightTransportSlot::LambdaWithinForInClause(t) => t.prepare(ctx),
             ForInClauseRightTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ForInClauseRightTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16675,6 +17960,14 @@ impl ::sittir_core::prepare::Prepare for ForInClauseCommaTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for ForInClauseCommaTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal4_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseCommaTransportSlot {
     unsafe fn from_napi_value(
@@ -16762,6 +18055,15 @@ impl ::sittir_core::prepare::Prepare for StringContentTransportSlot {
         match self {
             StringContentTransportSlot::Interpolation(t) => t.prepare(ctx),
             StringContentTransportSlot::StringContent(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for StringContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Interpolation(inner) => inner.kind_in(kinds),
+            Self::StringContent(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -16871,6 +18173,18 @@ impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
             StringContentContentTransportSlot::_StringContent(t) => t.prepare(ctx),
             StringContentContentTransportSlot::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => Ok(()),
             StringContentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for StringContentContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::EscapeInterpolation(inner) => inner.kind_in(kinds),
+            Self::EscapeSequence(inner) => inner.kind_in(kinds),
+            Self::_StringContent(inner) => inner.kind_in(kinds),
+            Self::Literal39_5f_6e_6f_74_5f_65_73_63_61_70_65_5f_73_65_71_75_65_6e_63_65 => [::sittir_core::types::KindId(235)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(65), ::sittir_core::types::KindId(105), ::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -17057,6 +18371,49 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::PatternList(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::Yield(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for InterpolationExpressionTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -17465,6 +18822,14 @@ impl ::sittir_core::prepare::Prepare for InterpolationEqMarkerTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for InterpolationEqMarkerTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal40_65_71 => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for InterpolationEqMarkerTransportSlot {
     unsafe fn from_napi_value(
@@ -17552,6 +18917,15 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierContentTransportSlot {
         match self {
             FormatSpecifierContentTransportSlot::Interpolation(t) => t.prepare(ctx),
             FormatSpecifierContentTransportSlot::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for FormatSpecifierContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Interpolation(inner) => inner.kind_in(kinds),
+            Self::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => false,
         }
     }
 }
@@ -17725,6 +19099,50 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsElementTransportSlo
             ArgumentListElementsElementTransportSlot::ParenthesizedListSplat(t) => t.prepare(ctx),
             ArgumentListElementsElementTransportSlot::KeywordArgument(t) => t.prepare(ctx),
             ArgumentListElementsElementTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ArgumentListElementsElementTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ListSplat(inner) => inner.kind_in(kinds),
+            Self::DictionarySplat(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
+            Self::KeywordArgument(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18143,6 +19561,15 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsElementTransportSlot
     }
 }
 
+impl ::sittir_core::view::KindOf for DictPatternElementsElementTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::KeyValuePattern(inner) => inner.kind_in(kinds),
+            Self::SplatPattern(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DictPatternElementsElementTransportSlot {
     unsafe fn from_napi_value(
@@ -18306,6 +19733,47 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SubscriptsSubscriptTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::Slice(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18700,6 +20168,15 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsElementTransportSlot 
     }
 }
 
+impl ::sittir_core::view::KindOf for DictionaryElementsElementTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Pair(inner) => inner.kind_in(kinds),
+            Self::DictionarySplat(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for DictionaryElementsElementTransportSlot {
     unsafe fn from_napi_value(
@@ -18799,6 +20276,15 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesContentTransportSlo
         match self {
             ComprehensionClausesContentTransportSlot::ForInClause(t) => t.prepare(ctx),
             ComprehensionClausesContentTransportSlot::IfClause(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ComprehensionClausesContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ForInClause(inner) => inner.kind_in(kinds),
+            Self::IfClause(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -18906,6 +20392,15 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronPrintChevronArgume
     }
 }
 
+impl ::sittir_core::view::KindOf for PrintStatementChevronPrintChevronArgumentsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::PrintChevronArguments(inner) => inner.kind_in(kinds),
+            Self::Literal4_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementChevronPrintChevronArgumentsTransportSlot {
     unsafe fn from_napi_value(
@@ -19003,6 +20498,14 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeSignTransportSlot 
     }
 }
 
+impl ::sittir_core::view::KindOf for SimplePatternNegativeSignTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal11_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeSignTransportSlot {
     unsafe fn from_napi_value(
@@ -19092,6 +20595,16 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeContentTransportSl
             SimplePatternNegativeContentTransportSlot::Integer(t) => t.prepare(ctx),
             SimplePatternNegativeContentTransportSlot::Float(t) => t.prepare(ctx),
             SimplePatternNegativeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SimplePatternNegativeContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -19198,6 +20711,15 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionContentTransportSl
         match self {
             ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(t) => t.prepare(ctx),
             ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ExceptClauseExceptionContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ExceptClauseExceptionAs(inner) => inner.kind_in(kinds),
+            Self::ExceptClauseExceptionList(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -19373,6 +20895,51 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqRightTransportSlot {
             AssignmentEqRightTransportSlot::PatternList(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::Yield(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for AssignmentEqRightTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -19871,6 +21438,51 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedRightTransportSlot {
     }
 }
 
+impl ::sittir_core::view::KindOf for AssignmentTypedRightTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlot {
     unsafe fn from_napi_value(
@@ -20311,6 +21923,24 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorOperatorsTr
     }
 }
 
+impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorOperatorsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal42_6c_74 => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::Literal43_6c_74_5f_65_71 => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::Literal44_65_71_5f_65_71 => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Literal45_62_61_6e_67_5f_65_71 => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::Literal46_67_74_5f_65_71 => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::Literal47_67_74 => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
+            Self::Literal48_6c_74_5f_67_74 => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::Literal49_69_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
+            Self::Literal50_5f_6e_6f_74_5f_69_6e => [::sittir_core::types::KindId(194)].iter().any(|k| kinds.contains(k)),
+            Self::Literal51_69_73_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::Literal52_5f_69_73_5f_6e_6f_74 => [::sittir_core::types::KindId(195)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorOperatorsTransportSlot {
     unsafe fn from_napi_value(
@@ -20439,6 +22069,12 @@ pub struct ModuleTransport {
     pub statements_separator_space: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ModuleTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ModuleTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_module(self, w))
@@ -20535,6 +22171,12 @@ pub struct SimpleStatementsTransport {
     pub simple_statements_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SimpleStatementsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SimpleStatementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_simple_statements(self, w))
@@ -20587,6 +22229,12 @@ pub struct ImportStatementTransport {
     pub import_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ImportStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ImportStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_import_statement(self, w))
@@ -20628,6 +22276,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementTransport> {
 pub struct ImportPrefixTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ImportPrefixTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ImportPrefixTransport {
@@ -20725,6 +22379,12 @@ pub struct RelativeImportTransport {
     pub relative_import_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for RelativeImportTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for RelativeImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_relative_import(self, w))
@@ -20784,6 +22444,12 @@ pub struct FutureImportStatementTransport {
     pub future_import_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future_import_statement_after"))]
     pub future_import_statement_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for FutureImportStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for FutureImportStatementTransport {
@@ -20850,6 +22516,12 @@ pub struct ImportFromStatementTransport {
     pub import_from_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ImportFromStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ImportFromStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_import_from_statement(self, w))
@@ -20903,6 +22575,12 @@ pub struct ImportListTransport {
     pub name_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name_separator_space_after"))]
     pub name_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ImportListTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ImportListTransport {
@@ -20983,6 +22661,12 @@ pub struct AliasedImportTransport {
     pub aliased_import_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for AliasedImportTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AliasedImportTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_aliased_import(self, w))
@@ -21025,6 +22709,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AliasedImportTransport> {
 pub struct WildcardImportTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for WildcardImportTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for WildcardImportTransport {
@@ -21118,6 +22808,12 @@ pub struct PrintStatementTransport {
     pub content: ::sittir_core::SlotValue<PrintStatementContentTransportSlot>,
 }
 
+impl ::sittir_core::view::KindOf for PrintStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for PrintStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_print_statement(self, w))
@@ -21166,6 +22862,12 @@ pub struct ChevronTransport {
     pub chevron_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_chevron_after"))]
     pub chevron_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ChevronTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ChevronTransport {
@@ -21224,6 +22926,12 @@ pub struct AssertStatementTransport {
     pub assert_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_statement_after"))]
     pub assert_statement_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for AssertStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AssertStatementTransport {
@@ -21375,6 +23083,12 @@ pub struct ExpressionStatementTransport {
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentTransportSlot>,
 }
 
+impl ::sittir_core::view::KindOf for ExpressionStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ExpressionStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_expression_statement(self, w))
@@ -21425,6 +23139,12 @@ pub struct NamedExpressionTransport {
     pub named_expression_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_named_expression_after"))]
     pub named_expression_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for NamedExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for NamedExpressionTransport {
@@ -21482,6 +23202,12 @@ pub struct ReturnStatementTransport {
     pub return_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ReturnStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ReturnStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_return_statement(self, w))
@@ -21534,6 +23260,12 @@ pub struct DeleteStatementTransport {
     pub delete_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_delete_statement_after"))]
     pub delete_statement_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for DeleteStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DeleteStatementTransport {
@@ -21596,6 +23328,12 @@ pub struct RaiseStatementTransport {
     pub raise_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for RaiseStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for RaiseStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_raise_statement(self, w))
@@ -21640,6 +23378,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RaiseStatementTransport> {
 pub struct PassStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PassStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(132)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PassStatementTransport {
@@ -21730,6 +23474,12 @@ pub struct BreakStatementTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for BreakStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(133)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for BreakStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -21816,6 +23566,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakStatementTransport> {
 pub struct ContinueStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ContinueStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(134)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ContinueStatementTransport {
@@ -21927,6 +23683,12 @@ pub struct IfStatementTransport {
     pub if_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for IfStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(135)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for IfStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_if_statement(self, w))
@@ -22017,6 +23779,12 @@ pub struct ElifClauseTransport {
     pub elif_clause_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ElifClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ElifClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_elif_clause(self, w))
@@ -22076,6 +23844,12 @@ pub struct ElseClauseTransport {
     pub else_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause_after"))]
     pub else_clause_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ElseClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ElseClauseTransport {
@@ -22140,6 +23914,12 @@ pub struct MatchStatementTransport {
     pub match_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for MatchStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for MatchStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_match_statement(self, w))
@@ -22187,6 +23967,12 @@ pub struct MatchBlockTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<MatchBlockContentTransportSlot>,
+}
+
+impl ::sittir_core::view::KindOf for MatchBlockTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for MatchBlockTransport {
@@ -22245,6 +24031,12 @@ pub struct CaseClauseTransport {
     pub case_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_clause_after"))]
     pub case_clause_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for CaseClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for CaseClauseTransport {
@@ -22321,6 +24113,12 @@ pub struct ForStatementTransport {
     pub for_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ForStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(141)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ForStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_for_statement(self, w))
@@ -22391,6 +24189,12 @@ pub struct WhileStatementTransport {
     pub while_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for WhileStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(142)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WhileStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_while_statement(self, w))
@@ -22459,6 +24263,12 @@ pub struct TryStatementTransport {
     pub try_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_statement_after"))]
     pub try_statement_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for TryStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TryStatementTransport {
@@ -22549,6 +24359,12 @@ pub struct ExceptClauseTransport {
     pub except_clause_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ExceptClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ExceptClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_except_clause(self, w))
@@ -22611,6 +24427,12 @@ pub struct FinallyClauseTransport {
     pub finally_clause_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause_after"))]
     pub finally_clause_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for FinallyClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for FinallyClauseTransport {
@@ -22677,6 +24499,12 @@ pub struct WithStatementTransport {
     pub with_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for WithStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(146)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WithStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_with_statement(self, w))
@@ -22727,6 +24555,12 @@ pub struct WithClauseTransport {
     pub content: ::sittir_core::SlotValue<WithClauseContentTransportSlot>,
 }
 
+impl ::sittir_core::view::KindOf for WithClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WithClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_with_clause(self, w))
@@ -22767,6 +24601,12 @@ pub struct WithItemTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
+}
+
+impl ::sittir_core::view::KindOf for WithItemTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(148)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for WithItemTransport {
@@ -22835,6 +24675,12 @@ pub struct FunctionDefinitionTransport {
     pub function_definition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_definition_after"))]
     pub function_definition_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for FunctionDefinitionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(149)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for FunctionDefinitionTransport {
@@ -22908,6 +24754,12 @@ pub struct ParametersTransport {
     pub parameters_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ParametersTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(150)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_parameters(self, w))
@@ -22958,6 +24810,12 @@ pub struct LambdaParametersTransport {
     pub parameters: ::sittir_core::SlotValue<_ParametersTransport>,
 }
 
+impl ::sittir_core::view::KindOf for LambdaParametersTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(151)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LambdaParametersTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_lambda_parameters(self, w))
@@ -23006,6 +24864,12 @@ pub struct ListSplatTransport {
     pub list_splat_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_splat_after"))]
     pub list_splat_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ListSplatTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(152)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ListSplatTransport {
@@ -23060,6 +24924,12 @@ pub struct DictionarySplatTransport {
     pub dictionary_splat_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dictionary_splat_after"))]
     pub dictionary_splat_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for DictionarySplatTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(153)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DictionarySplatTransport {
@@ -23118,6 +24988,12 @@ pub struct GlobalStatementTransport {
     pub global_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_statement_after"))]
     pub global_statement_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for GlobalStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(154)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for GlobalStatementTransport {
@@ -23184,6 +25060,12 @@ pub struct NonlocalStatementTransport {
     pub nonlocal_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_statement_after"))]
     pub nonlocal_statement_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for NonlocalStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for NonlocalStatementTransport {
@@ -23256,6 +25138,12 @@ pub struct ExecStatementTransport {
     pub exec_statement_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_statement_after"))]
     pub exec_statement_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ExecStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ExecStatementTransport {
@@ -23423,6 +25311,12 @@ pub struct TypeAliasStatementTransport {
     pub type_alias_statement_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for TypeAliasStatementTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for TypeAliasStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_type_alias_statement(self, w))
@@ -23490,6 +25384,12 @@ pub struct ClassDefinitionTransport {
     pub class_definition_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ClassDefinitionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ClassDefinitionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_class_definition(self, w))
@@ -23553,6 +25453,12 @@ pub struct TypeParameterTransport {
     pub type_parameter_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for TypeParameterTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for TypeParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_type_parameter(self, w))
@@ -23611,6 +25517,12 @@ pub struct ParenthesizedListSplatTransport {
     pub parenthesized_list_splat_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_list_splat_after"))]
     pub parenthesized_list_splat_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ParenthesizedListSplatTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(160)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
@@ -23673,6 +25585,12 @@ pub struct ArgumentListTransport {
     pub argument_list_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ArgumentListTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(161)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ArgumentListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_argument_list(self, w))
@@ -23727,6 +25645,12 @@ pub struct DecoratedDefinitionTransport {
     pub decorated_definition_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorated_definition_after"))]
     pub decorated_definition_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for DecoratedDefinitionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
@@ -23800,6 +25724,12 @@ pub struct DecoratorTransport {
     pub decorator_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for DecoratorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(163)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DecoratorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_decorator(self, w))
@@ -23844,6 +25774,12 @@ pub struct SuiteTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<SuiteContentTransportSlot>,
+}
+
+impl ::sittir_core::view::KindOf for SuiteTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        false
+    }
 }
 
 impl ::sittir_core::render::Render for SuiteTransport {
@@ -23892,6 +25828,12 @@ pub struct BlockTransport {
     pub block_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_after"))]
     pub block_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for BlockTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(164)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for BlockTransport {
@@ -23988,10 +25930,18 @@ pub struct ExpressionListTransport {
     pub tail: ::sittir_core::SlotValue<ExpressionListTailTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
+    pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_list_before"))]
     pub expression_list_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_list_after"))]
     pub expression_list_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ExpressionListTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(165)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ExpressionListTransport {
@@ -24002,6 +25952,7 @@ impl ::sittir_core::render::Render for ExpressionListTransport {
 
 impl ::sittir_core::prepare::Prepare for ExpressionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.comma_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_COMMA_BEFORE]);
         self.expression_list_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_EXPRESSION_LIST_BEFORE]);
         self.expression_list_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_EXPRESSION_LIST_AFTER]);
         self.tail.prepare(ctx)?;
@@ -24041,6 +25992,12 @@ pub struct DottedNameTransport {
     pub names_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_after"))]
     pub names_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for DottedNameTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DottedNameTransport {
@@ -24093,6 +26050,12 @@ pub struct CasePatternTransport {
     pub content: ::sittir_core::SlotValue<Box<CasePatternContentTransportSlot>>,
 }
 
+impl ::sittir_core::view::KindOf for CasePatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for CasePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_case_pattern(self, w))
@@ -24137,6 +26100,12 @@ pub struct UnionPatternTransport {
     pub patterns_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns_separator_space_after"))]
     pub patterns_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for UnionPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(169)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for UnionPatternTransport {
@@ -24242,6 +26211,12 @@ pub struct DictPatternTransport {
     pub dict_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for DictPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DictPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_dict_pattern(self, w))
@@ -24298,6 +26273,12 @@ pub struct KeyValuePatternTransport {
     pub key_value_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key_value_pattern_after"))]
     pub key_value_pattern_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for KeyValuePatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(171)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for KeyValuePatternTransport {
@@ -24357,6 +26338,12 @@ pub struct KeywordPatternTransport {
     pub keyword_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for KeywordPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(172)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for KeywordPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_keyword_pattern(self, w))
@@ -24408,10 +26395,18 @@ pub struct SplatPatternTransport {
     pub operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
     pub operator_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_underscore_before"))]
+    pub underscore_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_splat_pattern_before"))]
     pub splat_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_splat_pattern_after"))]
     pub splat_pattern_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for SplatPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for SplatPatternTransport {
@@ -24424,6 +26419,7 @@ impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.operator_before.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_OPERATOR_BEFORE]);
         self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_OPERATOR_AFTER]);
+        self.underscore_before.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_UNDERSCORE_BEFORE]);
         self.splat_pattern_before.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_SPLAT_PATTERN_BEFORE]);
         self.splat_pattern_after.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_SPLAT_PATTERN_AFTER]);
         self.operator.prepare(ctx)?;
@@ -24473,6 +26469,12 @@ pub struct ClassPatternTransport {
     pub class_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_pattern_after"))]
     pub class_pattern_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ClassPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ClassPatternTransport {
@@ -24542,6 +26544,12 @@ pub struct ComplexPatternTransport {
     pub complex_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ComplexPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(175)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ComplexPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_complex_pattern(self, w))
@@ -24609,6 +26617,12 @@ pub struct _ParametersTransport {
     pub parameters_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_after"))]
     pub parameters_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for _ParametersTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(176)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for _ParametersTransport {
@@ -24706,6 +26720,12 @@ pub struct PatternsTransport {
     pub pattern_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for PatternsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(177)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for PatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_patterns(self, w))
@@ -24798,6 +26818,12 @@ pub struct TuplePatternTransport {
     pub tuple_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for TuplePatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(180)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for TuplePatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_tuple_pattern(self, w))
@@ -24858,6 +26884,12 @@ pub struct ListPatternTransport {
     pub list_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ListPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(181)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_list_pattern(self, w))
@@ -24914,6 +26946,12 @@ pub struct DefaultParameterTransport {
     pub default_parameter_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_parameter_after"))]
     pub default_parameter_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for DefaultParameterTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(182)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DefaultParameterTransport {
@@ -24979,6 +27017,12 @@ pub struct TypedDefaultParameterTransport {
     pub typed_default_parameter_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for TypedDefaultParameterTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(183)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_typed_default_parameter(self, w))
@@ -25037,6 +27081,12 @@ pub struct ListSplatPatternTransport {
     pub list_splat_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ListSplatPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(184)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ListSplatPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_list_splat_pattern(self, w))
@@ -25089,6 +27139,12 @@ pub struct DictionarySplatPatternTransport {
     pub dictionary_splat_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dictionary_splat_pattern_after"))]
     pub dictionary_splat_pattern_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for DictionarySplatPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(185)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
@@ -25147,6 +27203,12 @@ pub struct AsPatternTransport {
     pub as_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for AsPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(186)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_as_pattern(self, w))
@@ -25202,6 +27264,12 @@ pub struct NotOperatorTransport {
     pub not_operator_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for NotOperatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(190)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for NotOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_not_operator(self, w))
@@ -25254,6 +27322,12 @@ pub struct BooleanOperatorTransport {
     pub boolean_operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_boolean_operator_after"))]
     pub boolean_operator_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for BooleanOperatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(191)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for BooleanOperatorTransport {
@@ -25314,6 +27388,12 @@ pub struct BinaryOperatorTransport {
     pub binary_operator_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for BinaryOperatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(192)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for BinaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_binary_operator(self, w))
@@ -25368,6 +27448,12 @@ pub struct UnaryOperatorTransport {
     pub unary_operator_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for UnaryOperatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(193)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for UnaryOperatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_unary_operator(self, w))
@@ -25419,6 +27505,12 @@ pub struct ComparisonOperatorTransport {
     pub comparison_operator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparison_operator_after"))]
     pub comparison_operator_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ComparisonOperatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(196)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorTransport {
@@ -25498,6 +27590,12 @@ pub struct LambdaTransport {
     pub lambda_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for LambdaTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(197)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LambdaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_lambda(self, w))
@@ -25561,6 +27659,12 @@ pub struct LambdaWithinForInClauseTransport {
     pub lambda_within_for_in_clause_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for LambdaWithinForInClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(198)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_lambda_within_for_in_clause(self, w))
@@ -25616,6 +27720,12 @@ pub struct AssignmentTransport {
     pub assignment_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for AssignmentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(199)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AssignmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_assignment(self, w))
@@ -25669,6 +27779,12 @@ pub struct AugmentedAssignmentTransport {
     pub augmented_assignment_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for AugmentedAssignmentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(200)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_augmented_assignment(self, w))
@@ -25715,10 +27831,18 @@ pub struct PatternListTransport {
     pub tail: ::sittir_core::SlotValue<PatternListTailTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
+    pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_list_before"))]
     pub pattern_list_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_list_after"))]
     pub pattern_list_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for PatternListTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(201)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PatternListTransport {
@@ -25729,6 +27853,7 @@ impl ::sittir_core::render::Render for PatternListTransport {
 
 impl ::sittir_core::prepare::Prepare for PatternListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.comma_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_COMMA_BEFORE]);
         self.pattern_list_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_PATTERN_LIST_BEFORE]);
         self.pattern_list_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_PATTERN_LIST_AFTER]);
         self.tail.prepare(ctx)?;
@@ -25772,6 +27897,12 @@ pub struct YieldTransport {
     pub yield_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_after"))]
     pub yield_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for YieldTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(203)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for YieldTransport {
@@ -25828,6 +27959,12 @@ pub struct AttributeTransport {
     pub attribute_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_after"))]
     pub attribute_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for AttributeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(204)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AttributeTransport {
@@ -25891,6 +28028,12 @@ pub struct SubscriptTransport {
     pub subscript_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SubscriptTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(205)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SubscriptTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_subscript(self, w))
@@ -25952,6 +28095,12 @@ pub struct SliceTransport {
     pub slice_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SliceTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(206)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SliceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_slice(self, w))
@@ -25995,6 +28144,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceTransport> {
 pub struct EllipsisTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for EllipsisTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for EllipsisTransport {
@@ -26094,6 +28249,12 @@ pub struct CallTransport {
     pub call_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for CallTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(207)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for CallTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_call(self, w))
@@ -26149,6 +28310,12 @@ pub struct TypedParameterTransport {
     pub typed_parameter_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for TypedParameterTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for TypedParameterTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_typed_parameter(self, w))
@@ -26194,6 +28361,12 @@ pub struct TypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<TypeContentTransportSlot>>,
+}
+
+impl ::sittir_core::view::KindOf for TypeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(209)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TypeTransport {
@@ -26248,6 +28421,12 @@ pub struct SplatTypeTransport {
     pub splat_type_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SplatTypeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(210)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SplatTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_splat_type(self, w))
@@ -26295,10 +28474,18 @@ pub struct GenericTypeTransport {
     pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameter"))]
     pub type_parameter: ::sittir_core::SlotValue<TypeParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_keyword_after"))]
+    pub type_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generic_type_before"))]
     pub generic_type_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_generic_type_after"))]
     pub generic_type_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for GenericTypeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(211)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for GenericTypeTransport {
@@ -26309,6 +28496,7 @@ impl ::sittir_core::render::Render for GenericTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.type_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_GENERIC_TYPE_TYPE_KEYWORD_AFTER]);
         self.generic_type_before.get_or_insert(ctx.options.spacing[options::SITE_GENERIC_TYPE_GENERIC_TYPE_BEFORE]);
         self.generic_type_after.get_or_insert(ctx.options.spacing[options::SITE_GENERIC_TYPE_GENERIC_TYPE_AFTER]);
         self.name.prepare(ctx)?;
@@ -26354,6 +28542,12 @@ pub struct UnionTypeTransport {
     pub union_type_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_union_type_after"))]
     pub union_type_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for UnionTypeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(212)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for UnionTypeTransport {
@@ -26413,6 +28607,12 @@ pub struct ConstrainedTypeTransport {
     pub constrained_type_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ConstrainedTypeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(213)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ConstrainedTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_constrained_type(self, w))
@@ -26468,6 +28668,12 @@ pub struct MemberTypeTransport {
     pub member_type_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_member_type_after"))]
     pub member_type_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for MemberTypeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(214)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for MemberTypeTransport {
@@ -26527,6 +28733,12 @@ pub struct KeywordArgumentTransport {
     pub keyword_argument_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for KeywordArgumentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(215)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for KeywordArgumentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_keyword_argument(self, w))
@@ -26584,6 +28796,12 @@ pub struct ListTransport {
     pub list_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_after"))]
     pub list_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ListTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(216)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ListTransport {
@@ -26646,6 +28864,12 @@ pub struct SetTransport {
     pub set_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SetTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(217)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_set(self, w))
@@ -26704,6 +28928,12 @@ pub struct TupleTransport {
     pub tuple_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tuple_after"))]
     pub tuple_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for TupleTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(218)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TupleTransport {
@@ -26766,6 +28996,12 @@ pub struct DictionaryTransport {
     pub dictionary_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for DictionaryTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(219)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DictionaryTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_dictionary(self, w))
@@ -26822,6 +29058,12 @@ pub struct PairTransport {
     pub pair_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pair_after"))]
     pub pair_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for PairTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(220)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PairTransport {
@@ -26883,6 +29125,12 @@ pub struct ListComprehensionTransport {
     pub list_comprehension_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_comprehension_after"))]
     pub list_comprehension_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ListComprehensionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(221)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ListComprehensionTransport {
@@ -26948,6 +29196,12 @@ pub struct DictionaryComprehensionTransport {
     pub dictionary_comprehension_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for DictionaryComprehensionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(222)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_dictionary_comprehension(self, w))
@@ -27009,6 +29263,12 @@ pub struct SetComprehensionTransport {
     pub set_comprehension_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_set_comprehension_after"))]
     pub set_comprehension_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for SetComprehensionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(223)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for SetComprehensionTransport {
@@ -27074,6 +29334,12 @@ pub struct GeneratorExpressionTransport {
     pub generator_expression_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for GeneratorExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for GeneratorExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_generator_expression(self, w))
@@ -27135,6 +29401,12 @@ pub struct ParenthesizedExpressionTransport {
     pub parenthesized_expression_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ParenthesizedExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(225)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_parenthesized_expression(self, w))
@@ -27187,6 +29459,12 @@ pub struct CollectionElementsTransport {
     pub element_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_element_separator_space_after"))]
     pub element_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for CollectionElementsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(226)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for CollectionElementsTransport {
@@ -27364,6 +29642,12 @@ pub struct ForInClauseTransport {
     pub for_in_clause_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ForInClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(227)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ForInClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_for_in_clause(self, w))
@@ -27525,6 +29809,12 @@ pub struct IfClauseTransport {
     pub if_clause_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for IfClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(228)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for IfClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_if_clause(self, w))
@@ -27587,6 +29877,12 @@ pub struct ConditionalExpressionTransport {
     pub conditional_expression_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ConditionalExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(229)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ConditionalExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_conditional_expression(self, w))
@@ -27641,6 +29937,12 @@ pub struct ConcatenatedStringTransport {
     pub concatenated_string_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_concatenated_string_after"))]
     pub concatenated_string_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ConcatenatedStringTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(230)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ConcatenatedStringTransport {
@@ -27713,6 +30015,12 @@ pub struct StringTransport {
     pub string_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for StringTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(231)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for StringTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_string(self, w))
@@ -27757,6 +30065,12 @@ pub struct StringContentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>>,
+}
+
+impl ::sittir_core::view::KindOf for StringContentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(232)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for StringContentTransport {
@@ -27823,6 +30137,12 @@ pub struct InterpolationTransport {
     pub interpolation_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for InterpolationTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(233)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for InterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_interpolation(self, w))
@@ -27871,6 +30191,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InterpolationTransport> {
 pub struct EscapeSequenceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for EscapeSequenceTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for EscapeSequenceTransport {
@@ -27957,6 +30283,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EscapeSequenceTransport> {
 pub struct NotEscapeSequenceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for NotEscapeSequenceTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(235)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
@@ -28058,6 +30390,12 @@ pub struct FormatSpecifierTransport {
     pub format_specifier_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for FormatSpecifierTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(236)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for FormatSpecifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_format_specifier(self, w))
@@ -28099,6 +30437,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierTransport> {
 pub struct TypeConversionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for TypeConversionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TypeConversionTransport {
@@ -28187,6 +30531,12 @@ pub struct IntegerTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for IntegerTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for IntegerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -28271,6 +30621,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerTransport> {
 pub struct FloatTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for FloatTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for FloatTransport {
@@ -28359,6 +30715,12 @@ pub struct IdentifierTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for IdentifierTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for IdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -28443,6 +30805,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentifierTransport> {
 pub struct TrueTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for TrueTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TrueTransport {
@@ -28533,6 +30901,12 @@ pub struct FalseTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for FalseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for FalseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -28619,6 +30993,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FalseTransport> {
 pub struct NoneTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for NoneTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for NoneTransport {
@@ -28720,6 +31100,12 @@ pub struct AwaitTransport {
     pub await_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for AwaitTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(237)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AwaitTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_await(self, w))
@@ -28761,6 +31147,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AwaitTransport> {
 pub struct CommentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for CommentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for CommentTransport {
@@ -28849,6 +31241,12 @@ pub struct LineContinuationTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for LineContinuationTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LineContinuationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -28933,6 +31331,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LineContinuationTransport> {
 pub struct PositionalSeparatorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PositionalSeparatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(238)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PositionalSeparatorTransport {
@@ -29023,6 +31427,12 @@ pub struct KeywordSeparatorTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for KeywordSeparatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(239)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for KeywordSeparatorTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -29109,6 +31519,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordSeparatorTransport> {
 pub struct KwAsyncMarkerTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for KwAsyncMarkerTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for KwAsyncMarkerTransport {
@@ -29231,6 +31647,12 @@ pub struct SimpleStatementsElementsTransport {
     pub simple_statement_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statement_separator_space_after"))]
     pub simple_statement_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for SimpleStatementsElementsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(241)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
@@ -29445,6 +31867,12 @@ pub struct SubjectsTransport {
     pub subject_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SubjectsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(242)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SubjectsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_subjects(self, w))
@@ -29597,6 +32025,12 @@ pub struct CasePatternsTransport {
     pub case_pattern_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for CasePatternsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(243)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for CasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_case_patterns(self, w))
@@ -29704,6 +32138,12 @@ pub struct WithClauseWithItemsTransport {
     pub with_item_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for WithClauseWithItemsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WithClauseWithItemsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_with_clause_with_items(self, w))
@@ -29759,6 +32199,12 @@ pub struct TypesTransport {
     pub type_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_separator_space_after"))]
     pub type_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for TypesTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(245)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TypesTransport {
@@ -29925,6 +32371,12 @@ pub struct ArgumentListElementsTransport {
     pub element_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ArgumentListElementsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(246)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ArgumentListElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_argument_list_elements(self, w))
@@ -30083,6 +32535,12 @@ pub struct ExpressionListExpressionsTransport {
     pub expression_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ExpressionListExpressionsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(247)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ExpressionListExpressionsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_expression_list_expressions(self, w))
@@ -30235,6 +32693,12 @@ pub struct ListPatternCasePatternsTransport {
     pub case_pattern_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ListPatternCasePatternsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(248)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_list_pattern_case_patterns(self, w))
@@ -30342,6 +32806,12 @@ pub struct DictPatternElementsTransport {
     pub element_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for DictPatternElementsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(249)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DictPatternElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_dict_pattern_elements(self, w))
@@ -30417,6 +32887,12 @@ pub struct PatternListPatternsTransport {
     pub pattern_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_separator_space_after"))]
     pub pattern_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for PatternListPatternsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(250)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PatternListPatternsTransport {
@@ -30503,6 +32979,12 @@ pub struct SubscriptsTransport {
     pub subscript_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscript_separator_space_after"))]
     pub subscript_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for SubscriptsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(251)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for SubscriptsTransport {
@@ -30654,6 +33136,12 @@ pub struct DictionaryElementsTransport {
     pub element_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for DictionaryElementsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(252)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DictionaryElementsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_dictionary_elements(self, w))
@@ -30731,6 +33219,12 @@ pub struct SliceGroupTransport {
     pub slice_group_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_slice_group_after"))]
     pub slice_group_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for SliceGroupTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(253)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for SliceGroupTransport {
@@ -30843,6 +33337,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorArm {
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         Err(::napi::Error::from_reason("UnaryOperatorOperatorArm is receive-only"))
+    }
+}
+
+impl ::sittir_core::view::KindOf for UnaryOperatorOperatorArm {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Plus => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Minus => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Tilde => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+        }
     }
 }
 
@@ -31004,6 +33508,26 @@ impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorArm {
     }
 }
 
+impl ::sittir_core::view::KindOf for AugmentedAssignmentOperatorArm {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::PlusEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::MinusEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::V40_3d => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::V2f_2f_3d => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::V2a_2a_3d => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
 impl ::sittir_core::render::Render for AugmentedAssignmentOperatorArm {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         w.text(match self {
@@ -31065,6 +33589,12 @@ pub struct ExceptClauseExceptionAsTransport {
     pub except_clause_exception_as_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ExceptClauseExceptionAsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(255)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_except_clause_exception_as(self, w))
@@ -31122,6 +33652,12 @@ pub struct CaseTuplePatternTransport {
     pub case_tuple_pattern_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_tuple_pattern_after"))]
     pub case_tuple_pattern_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for CaseTuplePatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(256)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for CaseTuplePatternTransport {
@@ -31184,6 +33720,12 @@ pub struct CaseListPatternTransport {
     pub case_list_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for CaseListPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(257)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for CaseListPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_case_list_pattern(self, w))
@@ -31242,6 +33784,12 @@ pub struct CaseAsPatternTransport {
     pub case_as_pattern_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for CaseAsPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(258)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for CaseAsPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_case_as_pattern(self, w))
@@ -31289,6 +33837,12 @@ pub struct ComprehensionClausesTransport {
     pub content: Option<Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content_separator_space"))]
     pub content_separator_space: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ComprehensionClausesTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(259)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ComprehensionClausesTransport {
@@ -31371,6 +33925,12 @@ pub struct ParenthesizedImportListTransport {
     pub parenthesized_import_list_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for ParenthesizedImportListTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(260)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_parenthesized_import_list(self, w))
@@ -31423,6 +33983,12 @@ pub struct PrintArgumentsTransport {
     pub argument_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument_separator_space_after"))]
     pub argument_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for PrintArgumentsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(261)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PrintArgumentsTransport {
@@ -31577,6 +34143,12 @@ pub struct PrintChevronArgumentsTransport {
     pub argument_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for PrintChevronArgumentsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(262)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_print_chevron_arguments(self, w))
@@ -31723,6 +34295,8 @@ pub struct PrintStatementChevronTransport {
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
     pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
+    pub comma_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_before"))]
     pub print_keyword_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_after"))]
@@ -31733,6 +34307,12 @@ pub struct PrintStatementChevronTransport {
     pub print_statement_chevron_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for PrintStatementChevronTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(263)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for PrintStatementChevronTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_print_statement_chevron(self, w))
@@ -31741,6 +34321,7 @@ impl ::sittir_core::render::Render for PrintStatementChevronTransport {
 
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.comma_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE]);
         self.print_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_BEFORE]);
         self.print_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER]);
         self.print_statement_chevron_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_STATEMENT_CHEVRON_BEFORE]);
@@ -31788,6 +34369,12 @@ pub struct PrintStatementPlainTransport {
     pub print_statement_plain_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for PrintStatementPlainTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(264)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for PrintStatementPlainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_print_statement_plain(self, w))
@@ -31829,6 +34416,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementPlainTransport> 
 pub struct WildcardPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for WildcardPatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for WildcardPatternTransport {
@@ -31932,6 +34525,12 @@ pub struct SimplePatternNegativeTransport {
     pub simple_pattern_negative_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SimplePatternNegativeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(266)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_simple_pattern_negative(self, w))
@@ -31981,6 +34580,12 @@ pub struct ExceptClauseExceptionListTransport {
     pub value_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value_separator_space_after"))]
     pub value_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ExceptClauseExceptionListTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(267)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
@@ -32128,6 +34733,12 @@ pub struct ExceptClauseExceptionTransport {
     pub content: ::sittir_core::SlotValue<ExceptClauseExceptionContentTransportSlot>,
 }
 
+impl ::sittir_core::view::KindOf for ExceptClauseExceptionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(268)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ExceptClauseExceptionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_except_clause_exception(self, w))
@@ -32176,6 +34787,12 @@ pub struct AssignmentEqTransport {
     pub assignment_eq_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_eq_after"))]
     pub assignment_eq_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for AssignmentEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(269)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AssignmentEqTransport {
@@ -32230,6 +34847,12 @@ pub struct AssignmentTypeTransport {
     pub assignment_type_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_type_after"))]
     pub assignment_type_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for AssignmentTypeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(270)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AssignmentTypeTransport {
@@ -32292,6 +34915,12 @@ pub struct AssignmentTypedTransport {
     pub assignment_typed_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for AssignmentTypedTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(271)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AssignmentTypedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_assignment_typed(self, w))
@@ -32345,6 +34974,12 @@ pub struct ExpressionStatementTupleTransport {
     pub expression_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
     pub expression_separator_space_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ExpressionStatementTupleTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
@@ -32499,6 +35134,12 @@ pub struct WithClauseBareTransport {
     pub with_item_separator_space_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for WithClauseBareTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WithClauseBareTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_with_clause_bare(self, w))
@@ -32562,6 +35203,12 @@ pub struct WithClauseParenTransport {
     pub with_clause_paren_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for WithClauseParenTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WithClauseParenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_with_clause_paren(self, w))
@@ -32614,6 +35261,12 @@ pub struct MatchBlockBlockTransport {
     pub match_block_block_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_block_block_after"))]
     pub match_block_block_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for MatchBlockBlockTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for MatchBlockBlockTransport {
@@ -32681,6 +35334,12 @@ pub struct SuiteBlockTransport {
     pub suite_block_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for SuiteBlockTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SuiteBlockTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_suite_block(self, w))
@@ -32733,6 +35392,12 @@ pub struct ComparisonOperatorComparatorTransport {
     pub comparison_operator_comparator_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparison_operator_comparator_after"))]
     pub comparison_operator_comparator_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
@@ -32790,6 +35455,12 @@ pub struct YieldFromClauseTransport {
     pub yield_from_clause_after: Option<u16>,
 }
 
+impl ::sittir_core::view::KindOf for YieldFromClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for YieldFromClauseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, render_yield_from_clause(self, w))
@@ -32831,6 +35502,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldFromClauseTransport> {
 pub struct StringStartTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for StringStartTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for StringStartTransport {
@@ -32919,6 +35596,12 @@ pub struct _StringContentTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for _StringContentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for _StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -33003,6 +35686,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<_StringContentTransport> {
 pub struct EscapeInterpolationTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for EscapeInterpolationTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for EscapeInterpolationTransport {
@@ -33091,6 +35780,12 @@ pub struct StringEndTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for StringEndTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for StringEndTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -33175,6 +35870,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StringEndTransport> {
 pub struct NewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for NewlineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for NewlineTransport {
@@ -33265,6 +35966,12 @@ pub struct BlanklineTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for BlanklineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for BlanklineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
@@ -33351,6 +36058,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
 pub struct DoubleNewlineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DoubleNewlineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DoubleNewlineTransport {
@@ -33441,6 +36154,12 @@ pub struct TightTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for TightTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for TightTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
@@ -33525,6 +36244,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TightTransport> {
 pub struct SpaceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for SpaceTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for SpaceTransport {
@@ -33615,6 +36340,12 @@ pub struct IndentTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for IndentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for IndentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -33701,6 +36432,12 @@ pub struct DedentTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for DedentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DedentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -33785,6 +36522,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
 pub struct ImportKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ImportKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ImportKeywordTransport {
@@ -33875,6 +36618,12 @@ pub struct DotTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for DotTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DotTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -33961,6 +36710,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DotTransport> {
 pub struct FromKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for FromKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for FromKeywordTransport {
@@ -34051,6 +36806,12 @@ pub struct FutureUKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for FutureUKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for FutureUKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -34137,6 +36898,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FutureUKeywordTransport> {
 pub struct AsKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for AsKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AsKeywordTransport {
@@ -34227,6 +36994,12 @@ pub struct StarTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for StarTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for StarTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -34313,6 +37086,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StarTransport> {
 pub struct GtGtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for GtGtTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for GtGtTransport {
@@ -34403,6 +37182,12 @@ pub struct AssertKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for AssertKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AssertKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -34489,6 +37274,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertKeywordTransport> {
 pub struct ColonEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ColonEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ColonEqTransport {
@@ -34579,6 +37370,12 @@ pub struct ReturnKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for ReturnKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ReturnKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -34665,6 +37462,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnKeywordTransport> {
 pub struct DelKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DelKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DelKeywordTransport {
@@ -34755,6 +37558,12 @@ pub struct RaiseKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for RaiseKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for RaiseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -34841,6 +37650,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RaiseKeywordTransport> {
 pub struct PassKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PassKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PassKeywordTransport {
@@ -34931,6 +37746,12 @@ pub struct BreakKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for BreakKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for BreakKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -35017,6 +37838,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BreakKeywordTransport> {
 pub struct ContinueKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ContinueKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ContinueKeywordTransport {
@@ -35107,6 +37934,12 @@ pub struct IfKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for IfKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for IfKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -35193,6 +38026,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IfKeywordTransport> {
 pub struct ColonTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ColonTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ColonTransport {
@@ -35283,6 +38122,12 @@ pub struct ElifKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for ElifKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ElifKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -35369,6 +38214,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifKeywordTransport> {
 pub struct ElseKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ElseKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ElseKeywordTransport {
@@ -35459,6 +38310,12 @@ pub struct MatchKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for MatchKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for MatchKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -35545,6 +38402,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchKeywordTransport> {
 pub struct CaseKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for CaseKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for CaseKeywordTransport {
@@ -35635,6 +38498,12 @@ pub struct ForKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for ForKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ForKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -35721,6 +38590,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForKeywordTransport> {
 pub struct InKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for InKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for InKeywordTransport {
@@ -35811,6 +38686,12 @@ pub struct WhileKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for WhileKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WhileKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -35897,6 +38778,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileKeywordTransport> {
 pub struct TryKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for TryKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TryKeywordTransport {
@@ -35987,6 +38874,12 @@ pub struct ExceptKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for ExceptKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ExceptKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -36073,6 +38966,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptKeywordTransport> {
 pub struct FinallyKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for FinallyKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for FinallyKeywordTransport {
@@ -36163,6 +39062,12 @@ pub struct WithKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for WithKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for WithKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -36249,6 +39154,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithKeywordTransport> {
 pub struct DefKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DefKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DefKeywordTransport {
@@ -36339,6 +39250,12 @@ pub struct DashGtTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for DashGtTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DashGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -36425,6 +39342,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DashGtTransport> {
 pub struct LparenTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for LparenTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for LparenTransport {
@@ -36515,6 +39438,12 @@ pub struct RparenTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for RparenTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for RparenTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -36601,6 +39530,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
 pub struct StarStarTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for StarStarTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for StarStarTransport {
@@ -36691,6 +39626,12 @@ pub struct GlobalKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for GlobalKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for GlobalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -36777,6 +39718,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GlobalKeywordTransport> {
 pub struct NonlocalKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for NonlocalKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for NonlocalKeywordTransport {
@@ -36867,6 +39814,12 @@ pub struct ExecKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for ExecKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for ExecKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -36953,6 +39906,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecKeywordTransport> {
 pub struct TypeKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for TypeKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for TypeKeywordTransport {
@@ -37043,6 +40002,12 @@ pub struct EqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for EqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for EqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -37129,6 +40094,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<EqTransport> {
 pub struct ClassKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for ClassKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for ClassKeywordTransport {
@@ -37219,6 +40190,12 @@ pub struct LbrackTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for LbrackTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LbrackTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -37305,6 +40282,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackTransport> {
 pub struct RbrackTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for RbrackTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for RbrackTransport {
@@ -37395,6 +40378,12 @@ pub struct AtTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for AtTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -37481,6 +40470,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AtTransport> {
 pub struct CommaTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for CommaTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for CommaTransport {
@@ -37571,6 +40566,12 @@ pub struct LbraceTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for LbraceTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LbraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -37657,6 +40658,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LbraceTransport> {
 pub struct RbraceTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for RbraceTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for RbraceTransport {
@@ -37747,6 +40754,12 @@ pub struct UnderscoreTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for UnderscoreTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for UnderscoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -37833,6 +40846,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnderscoreTransport> {
 pub struct DashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for DashTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for DashTransport {
@@ -37923,6 +40942,12 @@ pub struct PlusTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for PlusTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for PlusTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -38009,6 +41034,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PlusTransport> {
 pub struct NotKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for NotKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for NotKeywordTransport {
@@ -38099,6 +41130,12 @@ pub struct AndKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for AndKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AndKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -38185,6 +41222,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AndKeywordTransport> {
 pub struct OrKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for OrKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for OrKeywordTransport {
@@ -38275,6 +41318,12 @@ pub struct SlashTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for SlashTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -38361,6 +41410,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashTransport> {
 pub struct PercentTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PercentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PercentTransport {
@@ -38451,6 +41506,12 @@ pub struct SlashSlashTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for SlashSlashTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SlashSlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -38537,6 +41598,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashSlashTransport> {
 pub struct PipeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PipeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PipeTransport {
@@ -38627,6 +41694,12 @@ pub struct AmpTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for AmpTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AmpTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -38713,6 +41786,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AmpTransport> {
 pub struct CaretTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for CaretTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for CaretTransport {
@@ -38803,6 +41882,12 @@ pub struct LtLtTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for LtLtTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LtLtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -38889,6 +41974,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtLtTransport> {
 pub struct LambdaKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for LambdaKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for LambdaKeywordTransport {
@@ -38979,6 +42070,12 @@ pub struct YieldKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for YieldKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for YieldKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -39065,6 +42162,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldKeywordTransport> {
 pub struct BslashTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for BslashTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for BslashTransport {
@@ -39155,6 +42258,12 @@ pub struct AwaitKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for AwaitKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for AwaitKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -39241,6 +42350,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AwaitKeywordTransport> {
 pub struct AsyncKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AsyncKeywordTransport {
@@ -39331,6 +42446,12 @@ pub struct TildeTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for TildeTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for TildeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -39417,6 +42538,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TildeTransport> {
 pub struct PlusEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PlusEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PlusEqTransport {
@@ -39507,6 +42634,12 @@ pub struct DashEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for DashEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for DashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -39593,6 +42726,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DashEqTransport> {
 pub struct StarEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for StarEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for StarEqTransport {
@@ -39683,6 +42822,12 @@ pub struct SlashEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for SlashEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SlashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -39769,6 +42914,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashEqTransport> {
 pub struct AtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for AtEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AtEqTransport {
@@ -39859,6 +43010,12 @@ pub struct SlashSlashEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for SlashSlashEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for SlashSlashEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -39945,6 +43102,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashSlashEqTransport> {
 pub struct PercentEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PercentEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PercentEqTransport {
@@ -40035,6 +43198,12 @@ pub struct StarStarEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for StarStarEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for StarStarEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -40121,6 +43290,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StarStarEqTransport> {
 pub struct GtGtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for GtGtEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for GtGtEqTransport {
@@ -40211,6 +43386,12 @@ pub struct LtLtEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for LtLtEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LtLtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -40297,6 +43478,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtLtEqTransport> {
 pub struct AmpEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for AmpEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for AmpEqTransport {
@@ -40387,6 +43574,12 @@ pub struct CaretEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for CaretEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for CaretEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -40473,6 +43666,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CaretEqTransport> {
 pub struct PipeEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for PipeEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for PipeEqTransport {
@@ -40563,6 +43762,12 @@ pub struct PrintKeywordTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for PrintKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for PrintKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -40649,6 +43854,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintKeywordTransport> {
 pub struct LtTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for LtTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for LtTransport {
@@ -40739,6 +43950,12 @@ pub struct LtEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for LtEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LtEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -40825,6 +44042,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtEqTransport> {
 pub struct EqEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for EqEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for EqEqTransport {
@@ -40915,6 +44138,12 @@ pub struct BangEqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for BangEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for BangEqTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -41001,6 +44230,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BangEqTransport> {
 pub struct GtEqTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for GtEqTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for GtEqTransport {
@@ -41091,6 +44326,12 @@ pub struct GtTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for GtTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for GtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -41179,6 +44420,12 @@ pub struct LtGtTransport {
     pub text: String,
 }
 
+impl ::sittir_core::view::KindOf for LtGtTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k))
+    }
+}
+
 impl ::sittir_core::render::Render for LtGtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
@@ -41265,6 +44512,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LtGtTransport> {
 pub struct IsKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for IsKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
+    }
 }
 
 impl ::sittir_core::render::Render for IsKeywordTransport {
@@ -44064,6 +47317,279 @@ pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, 
     transport.render(&mut w)?;
     w.finish()?;
     Ok(s)
+}
+
+impl ::sittir_core::view::KindOf for AnyTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Module(inner) => inner.kind_in(kinds),
+            Self::SimpleStatements(inner) => inner.kind_in(kinds),
+            Self::ImportStatement(inner) => inner.kind_in(kinds),
+            Self::ImportPrefix(inner) => inner.kind_in(kinds),
+            Self::RelativeImport(inner) => inner.kind_in(kinds),
+            Self::FutureImportStatement(inner) => inner.kind_in(kinds),
+            Self::ImportFromStatement(inner) => inner.kind_in(kinds),
+            Self::ImportList(inner) => inner.kind_in(kinds),
+            Self::AliasedImport(inner) => inner.kind_in(kinds),
+            Self::WildcardImport(inner) => inner.kind_in(kinds),
+            Self::PrintStatement(inner) => inner.kind_in(kinds),
+            Self::Chevron(inner) => inner.kind_in(kinds),
+            Self::AssertStatement(inner) => inner.kind_in(kinds),
+            Self::ExpressionStatement(inner) => inner.kind_in(kinds),
+            Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnStatement(inner) => inner.kind_in(kinds),
+            Self::DeleteStatement(inner) => inner.kind_in(kinds),
+            Self::RaiseStatement(inner) => inner.kind_in(kinds),
+            Self::PassStatement(inner) => inner.kind_in(kinds),
+            Self::BreakStatement(inner) => inner.kind_in(kinds),
+            Self::ContinueStatement(inner) => inner.kind_in(kinds),
+            Self::IfStatement(inner) => inner.kind_in(kinds),
+            Self::ElifClause(inner) => inner.kind_in(kinds),
+            Self::ElseClause(inner) => inner.kind_in(kinds),
+            Self::MatchStatement(inner) => inner.kind_in(kinds),
+            Self::MatchBlock(inner) => inner.kind_in(kinds),
+            Self::CaseClause(inner) => inner.kind_in(kinds),
+            Self::ForStatement(inner) => inner.kind_in(kinds),
+            Self::WhileStatement(inner) => inner.kind_in(kinds),
+            Self::TryStatement(inner) => inner.kind_in(kinds),
+            Self::ExceptClause(inner) => inner.kind_in(kinds),
+            Self::FinallyClause(inner) => inner.kind_in(kinds),
+            Self::WithStatement(inner) => inner.kind_in(kinds),
+            Self::WithClause(inner) => inner.kind_in(kinds),
+            Self::WithItem(inner) => inner.kind_in(kinds),
+            Self::FunctionDefinition(inner) => inner.kind_in(kinds),
+            Self::Parameters(inner) => inner.kind_in(kinds),
+            Self::LambdaParameters(inner) => inner.kind_in(kinds),
+            Self::ListSplat(inner) => inner.kind_in(kinds),
+            Self::DictionarySplat(inner) => inner.kind_in(kinds),
+            Self::GlobalStatement(inner) => inner.kind_in(kinds),
+            Self::NonlocalStatement(inner) => inner.kind_in(kinds),
+            Self::ExecStatement(inner) => inner.kind_in(kinds),
+            Self::TypeAliasStatement(inner) => inner.kind_in(kinds),
+            Self::ClassDefinition(inner) => inner.kind_in(kinds),
+            Self::TypeParameter(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
+            Self::ArgumentList(inner) => inner.kind_in(kinds),
+            Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
+            Self::Decorator(inner) => inner.kind_in(kinds),
+            Self::Suite(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::ExpressionList(inner) => inner.kind_in(kinds),
+            Self::DottedName(inner) => inner.kind_in(kinds),
+            Self::CasePattern(inner) => inner.kind_in(kinds),
+            Self::UnionPattern(inner) => inner.kind_in(kinds),
+            Self::DictPattern(inner) => inner.kind_in(kinds),
+            Self::KeyValuePattern(inner) => inner.kind_in(kinds),
+            Self::KeywordPattern(inner) => inner.kind_in(kinds),
+            Self::SplatPattern(inner) => inner.kind_in(kinds),
+            Self::ClassPattern(inner) => inner.kind_in(kinds),
+            Self::ComplexPattern(inner) => inner.kind_in(kinds),
+            Self::_Parameters(inner) => inner.kind_in(kinds),
+            Self::Patterns(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::ListPattern(inner) => inner.kind_in(kinds),
+            Self::DefaultParameter(inner) => inner.kind_in(kinds),
+            Self::TypedDefaultParameter(inner) => inner.kind_in(kinds),
+            Self::ListSplatPattern(inner) => inner.kind_in(kinds),
+            Self::DictionarySplatPattern(inner) => inner.kind_in(kinds),
+            Self::AsPattern(inner) => inner.kind_in(kinds),
+            Self::NotOperator(inner) => inner.kind_in(kinds),
+            Self::BooleanOperator(inner) => inner.kind_in(kinds),
+            Self::BinaryOperator(inner) => inner.kind_in(kinds),
+            Self::UnaryOperator(inner) => inner.kind_in(kinds),
+            Self::ComparisonOperator(inner) => inner.kind_in(kinds),
+            Self::Lambda(inner) => inner.kind_in(kinds),
+            Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
+            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
+            Self::PatternList(inner) => inner.kind_in(kinds),
+            Self::Yield(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::Subscript(inner) => inner.kind_in(kinds),
+            Self::Slice(inner) => inner.kind_in(kinds),
+            Self::Ellipsis(inner) => inner.kind_in(kinds),
+            Self::Call(inner) => inner.kind_in(kinds),
+            Self::TypedParameter(inner) => inner.kind_in(kinds),
+            Self::Type(inner) => inner.kind_in(kinds),
+            Self::SplatType(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::UnionType(inner) => inner.kind_in(kinds),
+            Self::ConstrainedType(inner) => inner.kind_in(kinds),
+            Self::MemberType(inner) => inner.kind_in(kinds),
+            Self::KeywordArgument(inner) => inner.kind_in(kinds),
+            Self::List(inner) => inner.kind_in(kinds),
+            Self::Set(inner) => inner.kind_in(kinds),
+            Self::Tuple(inner) => inner.kind_in(kinds),
+            Self::Dictionary(inner) => inner.kind_in(kinds),
+            Self::Pair(inner) => inner.kind_in(kinds),
+            Self::ListComprehension(inner) => inner.kind_in(kinds),
+            Self::DictionaryComprehension(inner) => inner.kind_in(kinds),
+            Self::SetComprehension(inner) => inner.kind_in(kinds),
+            Self::GeneratorExpression(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::CollectionElements(inner) => inner.kind_in(kinds),
+            Self::ForInClause(inner) => inner.kind_in(kinds),
+            Self::IfClause(inner) => inner.kind_in(kinds),
+            Self::ConditionalExpression(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::StringContent(inner) => inner.kind_in(kinds),
+            Self::Interpolation(inner) => inner.kind_in(kinds),
+            Self::EscapeSequence(inner) => inner.kind_in(kinds),
+            Self::NotEscapeSequence(inner) => inner.kind_in(kinds),
+            Self::FormatSpecifier(inner) => inner.kind_in(kinds),
+            Self::TypeConversion(inner) => inner.kind_in(kinds),
+            Self::Integer(inner) => inner.kind_in(kinds),
+            Self::Float(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::True(inner) => inner.kind_in(kinds),
+            Self::False(inner) => inner.kind_in(kinds),
+            Self::None(inner) => inner.kind_in(kinds),
+            Self::Await(inner) => inner.kind_in(kinds),
+            Self::Comment(inner) => inner.kind_in(kinds),
+            Self::LineContinuation(inner) => inner.kind_in(kinds),
+            Self::PositionalSeparator(inner) => inner.kind_in(kinds),
+            Self::KeywordSeparator(inner) => inner.kind_in(kinds),
+            Self::KwAsyncMarker(inner) => inner.kind_in(kinds),
+            Self::SimpleStatementsElements(inner) => inner.kind_in(kinds),
+            Self::Subjects(inner) => inner.kind_in(kinds),
+            Self::CasePatterns(inner) => inner.kind_in(kinds),
+            Self::WithClauseWithItems(inner) => inner.kind_in(kinds),
+            Self::Types(inner) => inner.kind_in(kinds),
+            Self::ArgumentListElements(inner) => inner.kind_in(kinds),
+            Self::ExpressionListExpressions(inner) => inner.kind_in(kinds),
+            Self::ListPatternCasePatterns(inner) => inner.kind_in(kinds),
+            Self::DictPatternElements(inner) => inner.kind_in(kinds),
+            Self::PatternListPatterns(inner) => inner.kind_in(kinds),
+            Self::Subscripts(inner) => inner.kind_in(kinds),
+            Self::DictionaryElements(inner) => inner.kind_in(kinds),
+            Self::SliceGroup(inner) => inner.kind_in(kinds),
+            Self::UnaryOperatorOperator(inner) => inner.kind_in(kinds),
+            Self::AugmentedAssignmentOperator(inner) => inner.kind_in(kinds),
+            Self::ExceptClauseExceptionAs(inner) => inner.kind_in(kinds),
+            Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
+            Self::CaseListPattern(inner) => inner.kind_in(kinds),
+            Self::CaseAsPattern(inner) => inner.kind_in(kinds),
+            Self::ComprehensionClauses(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedImportList(inner) => inner.kind_in(kinds),
+            Self::PrintArguments(inner) => inner.kind_in(kinds),
+            Self::PrintChevronArguments(inner) => inner.kind_in(kinds),
+            Self::PrintStatementChevron(inner) => inner.kind_in(kinds),
+            Self::PrintStatementPlain(inner) => inner.kind_in(kinds),
+            Self::WildcardPattern(inner) => inner.kind_in(kinds),
+            Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
+            Self::ExceptClauseExceptionList(inner) => inner.kind_in(kinds),
+            Self::ExceptClauseException(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
+            Self::ExpressionStatementTuple(inner) => inner.kind_in(kinds),
+            Self::WithClauseBare(inner) => inner.kind_in(kinds),
+            Self::WithClauseParen(inner) => inner.kind_in(kinds),
+            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::ComparisonOperatorComparator(inner) => inner.kind_in(kinds),
+            Self::YieldFromClause(inner) => inner.kind_in(kinds),
+            Self::StringStart(inner) => inner.kind_in(kinds),
+            Self::_StringContent(inner) => inner.kind_in(kinds),
+            Self::EscapeInterpolation(inner) => inner.kind_in(kinds),
+            Self::StringEnd(inner) => inner.kind_in(kinds),
+            Self::Newline(inner) => inner.kind_in(kinds),
+            Self::Blankline(inner) => inner.kind_in(kinds),
+            Self::DoubleNewline(inner) => inner.kind_in(kinds),
+            Self::Tight(inner) => inner.kind_in(kinds),
+            Self::Space(inner) => inner.kind_in(kinds),
+            Self::Indent(inner) => inner.kind_in(kinds),
+            Self::Dedent(inner) => inner.kind_in(kinds),
+            Self::ImportKeyword(inner) => inner.kind_in(kinds),
+            Self::Dot(inner) => inner.kind_in(kinds),
+            Self::FromKeyword(inner) => inner.kind_in(kinds),
+            Self::FutureUKeyword(inner) => inner.kind_in(kinds),
+            Self::AsKeyword(inner) => inner.kind_in(kinds),
+            Self::Star(inner) => inner.kind_in(kinds),
+            Self::GtGt(inner) => inner.kind_in(kinds),
+            Self::AssertKeyword(inner) => inner.kind_in(kinds),
+            Self::ColonEq(inner) => inner.kind_in(kinds),
+            Self::ReturnKeyword(inner) => inner.kind_in(kinds),
+            Self::DelKeyword(inner) => inner.kind_in(kinds),
+            Self::RaiseKeyword(inner) => inner.kind_in(kinds),
+            Self::PassKeyword(inner) => inner.kind_in(kinds),
+            Self::BreakKeyword(inner) => inner.kind_in(kinds),
+            Self::ContinueKeyword(inner) => inner.kind_in(kinds),
+            Self::IfKeyword(inner) => inner.kind_in(kinds),
+            Self::Colon(inner) => inner.kind_in(kinds),
+            Self::ElifKeyword(inner) => inner.kind_in(kinds),
+            Self::ElseKeyword(inner) => inner.kind_in(kinds),
+            Self::MatchKeyword(inner) => inner.kind_in(kinds),
+            Self::CaseKeyword(inner) => inner.kind_in(kinds),
+            Self::ForKeyword(inner) => inner.kind_in(kinds),
+            Self::InKeyword(inner) => inner.kind_in(kinds),
+            Self::WhileKeyword(inner) => inner.kind_in(kinds),
+            Self::TryKeyword(inner) => inner.kind_in(kinds),
+            Self::ExceptKeyword(inner) => inner.kind_in(kinds),
+            Self::FinallyKeyword(inner) => inner.kind_in(kinds),
+            Self::WithKeyword(inner) => inner.kind_in(kinds),
+            Self::DefKeyword(inner) => inner.kind_in(kinds),
+            Self::DashGt(inner) => inner.kind_in(kinds),
+            Self::Lparen(inner) => inner.kind_in(kinds),
+            Self::Rparen(inner) => inner.kind_in(kinds),
+            Self::StarStar(inner) => inner.kind_in(kinds),
+            Self::GlobalKeyword(inner) => inner.kind_in(kinds),
+            Self::NonlocalKeyword(inner) => inner.kind_in(kinds),
+            Self::ExecKeyword(inner) => inner.kind_in(kinds),
+            Self::TypeKeyword(inner) => inner.kind_in(kinds),
+            Self::Eq(inner) => inner.kind_in(kinds),
+            Self::ClassKeyword(inner) => inner.kind_in(kinds),
+            Self::Lbrack(inner) => inner.kind_in(kinds),
+            Self::Rbrack(inner) => inner.kind_in(kinds),
+            Self::At(inner) => inner.kind_in(kinds),
+            Self::Comma(inner) => inner.kind_in(kinds),
+            Self::Lbrace(inner) => inner.kind_in(kinds),
+            Self::Rbrace(inner) => inner.kind_in(kinds),
+            Self::Underscore(inner) => inner.kind_in(kinds),
+            Self::Dash(inner) => inner.kind_in(kinds),
+            Self::Plus(inner) => inner.kind_in(kinds),
+            Self::NotKeyword(inner) => inner.kind_in(kinds),
+            Self::AndKeyword(inner) => inner.kind_in(kinds),
+            Self::OrKeyword(inner) => inner.kind_in(kinds),
+            Self::Slash(inner) => inner.kind_in(kinds),
+            Self::Percent(inner) => inner.kind_in(kinds),
+            Self::SlashSlash(inner) => inner.kind_in(kinds),
+            Self::Pipe(inner) => inner.kind_in(kinds),
+            Self::Amp(inner) => inner.kind_in(kinds),
+            Self::Caret(inner) => inner.kind_in(kinds),
+            Self::LtLt(inner) => inner.kind_in(kinds),
+            Self::LambdaKeyword(inner) => inner.kind_in(kinds),
+            Self::YieldKeyword(inner) => inner.kind_in(kinds),
+            Self::Bslash(inner) => inner.kind_in(kinds),
+            Self::AwaitKeyword(inner) => inner.kind_in(kinds),
+            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
+            Self::Tilde(inner) => inner.kind_in(kinds),
+            Self::PlusEq(inner) => inner.kind_in(kinds),
+            Self::DashEq(inner) => inner.kind_in(kinds),
+            Self::StarEq(inner) => inner.kind_in(kinds),
+            Self::SlashEq(inner) => inner.kind_in(kinds),
+            Self::AtEq(inner) => inner.kind_in(kinds),
+            Self::SlashSlashEq(inner) => inner.kind_in(kinds),
+            Self::PercentEq(inner) => inner.kind_in(kinds),
+            Self::StarStarEq(inner) => inner.kind_in(kinds),
+            Self::GtGtEq(inner) => inner.kind_in(kinds),
+            Self::LtLtEq(inner) => inner.kind_in(kinds),
+            Self::AmpEq(inner) => inner.kind_in(kinds),
+            Self::CaretEq(inner) => inner.kind_in(kinds),
+            Self::PipeEq(inner) => inner.kind_in(kinds),
+            Self::PrintKeyword(inner) => inner.kind_in(kinds),
+            Self::Lt(inner) => inner.kind_in(kinds),
+            Self::LtEq(inner) => inner.kind_in(kinds),
+            Self::EqEq(inner) => inner.kind_in(kinds),
+            Self::BangEq(inner) => inner.kind_in(kinds),
+            Self::GtEq(inner) => inner.kind_in(kinds),
+            Self::Gt(inner) => inner.kind_in(kinds),
+            Self::LtGt(inner) => inner.kind_in(kinds),
+            Self::IsKeyword(inner) => inner.kind_in(kinds),
+            _ => false,
+        }
+    }
 }
 
 impl ::sittir_core::render::Render for AnyTransport {

@@ -10551,6 +10551,41 @@ lifted out of every arm and emitted once after the gates.
 // another arm) would wrongly see it as already-emitted and produce ''.
 ```
 
+### `packages/codegen/src/emitters/templates.ts::armSlotKinds`
+
+The kinds a choice arm admits into the slot it carries: the names of its
+symbol members, a supertype standing for its members. `undefined` when the
+arm carries no symbol or more than one, since a literal cannot be gated on
+two slots at once.
+
+### `packages/codegen/src/emitters/templates.ts::withFieldOnCarriers`
+
+A choice's field name pushed down onto the members that carry a slot, so
+each arm emits as the parser tags it: the symbol takes the field, a literal
+beside it stays the arm's own text. Tree-sitter tags that literal with the
+field too; the reader drops it as punctuation (`fieldTaggedLiteralTexts`),
+which is why the template must print it.
+
+### `packages/codegen/src/emitters/templates.ts::emitKindGatedLiterals`
+
+The arms of a choice that share one slot and differ only by the literal they
+put beside it, folded into the slot once with each literal gated on the kinds
+its arm admits (`IfArm.kinds`). `for (init; cond; inc)`: the initializer's
+expression arm ends in `;` and its declaration arms do not, so the `;` is
+written when the initializer is an expression; the condition's `empty_statement`
+arm carries its own `;`, so the gate names the expression kinds only. Arms
+with the same residual merge their kinds. Nothing else about the choice
+qualifies: an arm without a slot (the literal-fallback shape), an arm with
+two, a residual that is not literal-only, or arms whose text before the slot
+differs all leave the choice to the other resolutions. An arm that is a
+literal kind alone (`empty_statement`, whose whole rendering is `;`) has no
+slot in its body; it counts as the slot with nothing beside it, since the
+slot renders that value as itself. Tried first in `emitChoice`, before the
+slot lookup, on both the fielded choice (`field(x, choice(...))`) and the
+plain one, so the weight-based arm merge never gets to keep one arm's
+literal for every value. `SITTIR_TRACE_GATED=<kind>` prints why a choice of
+that kind was left alone.
+
 ### `packages/codegen/src/emitters/templates.ts::emitChoice`
 
 #### body
@@ -14351,6 +14386,31 @@ and the regression checker lets a kind's count only shrink, so a template
 that stops reproducing its source fails the build instead of dropping out of
 the fixture set unseen. Excluded from the manifest for the same reason the
 fixture file is: both land in the validator's own commit.
+
+### `packages/codegen/src/emitters/render-module.ts::kindOfImplLines`
+
+The `KindOf` answer a generated transport type gives a kind-gated body: a
+struct is its own kind, an enum answers for the variant it holds (a payload
+variant delegates, a literal variant names its id), and a verbatim value
+stands for whichever pattern kinds the position admits. Every transport
+struct, supertype enum, per-slot enum, literal enum and `AnyTransport` gets
+one, so a `SlotValue` of any generated type satisfies `KindTest`.
+
+### `packages/codegen/src/emitters/render-module.ts::rustKindIdSlice`
+
+The Rust slice literal a kind-gated arm tests against: the arm's kind names
+expanded through `concreteKindsOf` (a supertype to its members) and mapped to
+ids. A name with no id table or no id at all is an error, since a gate that
+can never fire would silently drop the literal.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::fieldTaggedLiteralTexts`
+
+The literals a kind's render rule places under a field beside the slot's own
+member, keyed by field name: `field(condition, choice(seq(_expressions, ';'),
+empty_statement))` tags the `;` with `condition`, so the reader would seat it
+as a second value. These join the repeated-slot separators in the
+punctuation table the reader consults (`is_slot_separator`), because the
+template prints them itself.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::SPLICE_HELPER`
 

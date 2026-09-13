@@ -1958,6 +1958,194 @@
                   ]
                 },
                 {
+                  "$type": 197,
+                  "$source": 0,
+                  "$named": true,
+                  "_initializer": {
+                    "$type": 191,
+                    "$source": 0,
+                    "$named": true,
+                    "_kind": 126,
+                    "_declarators": [
+                      {
+                        "$type": 192,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 411,
+                          "$source": 0,
+                          "$named": true,
+                          "_name": {
+                            "$type": 1,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "i",
+                            "$span": {
+                              "start": 697,
+                              "end": 698
+                            }
+                          },
+                          "_value": {
+                            "$type": 98,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "0",
+                            "$span": {
+                              "start": 701,
+                              "end": 702
+                            }
+                          },
+                          "$other": [
+                            {
+                              "$type": 36,
+                              "$source": 0,
+                              "$named": false,
+                              "$text": "=",
+                              "$span": {
+                                "start": 699,
+                                "end": 700
+                              }
+                            }
+                          ],
+                          "$slotOrder": [
+                            "name",
+                            "value"
+                          ]
+                        }
+                      }
+                    ],
+                    "_terminator": 20,
+                    "$slotOrder": [
+                      "kind",
+                      "declarators",
+                      "terminator"
+                    ]
+                  },
+                  "_condition": {
+                    "$type": 251,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": {
+                      "$type": 1,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "i",
+                      "$span": {
+                        "start": 704,
+                        "end": 705
+                      }
+                    },
+                    "_operator": 75,
+                    "_right": {
+                      "$type": 98,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "3",
+                      "$span": {
+                        "start": 708,
+                        "end": 709
+                      }
+                    },
+                    "$slotOrder": [
+                      "left",
+                      "operator",
+                      "right"
+                    ]
+                  },
+                  "_increment": {
+                    "$type": 253,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": {
+                      "$type": 399,
+                      "$source": 0,
+                      "$named": true,
+                      "_argument": {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "i",
+                        "$span": {
+                          "start": 711,
+                          "end": 712
+                        }
+                      },
+                      "_operator": 156,
+                      "$slotOrder": [
+                        "argument",
+                        "operator"
+                      ]
+                    }
+                  },
+                  "_body": {
+                    "$type": 193,
+                    "$source": 0,
+                    "$named": true,
+                    "_automatic_semicolon": true,
+                    "$other": [
+                      {
+                        "$type": 5,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": "{",
+                        "$span": {
+                          "start": 716,
+                          "end": 717
+                        }
+                      },
+                      {
+                        "$type": 6,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": "}",
+                        "$span": {
+                          "start": 718,
+                          "end": 719
+                        }
+                      }
+                    ],
+                    "_statements": []
+                  },
+                  "$other": [
+                    {
+                      "$type": 18,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "for",
+                      "$span": {
+                        "start": 688,
+                        "end": 691
+                      }
+                    },
+                    {
+                      "$type": 19,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "(",
+                      "$span": {
+                        "start": 692,
+                        "end": 693
+                      }
+                    },
+                    {
+                      "$type": 21,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": ")",
+                      "$span": {
+                        "start": 714,
+                        "end": 715
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "initializer",
+                    "condition",
+                    "increment",
+                    "body"
+                  ]
+                },
+                {
                   "$type": 195,
                   "$source": 0,
                   "$named": true,
@@ -1972,8 +2160,8 @@
                         "$named": false,
                         "$text": "(",
                         "$span": {
-                          "start": 691,
-                          "end": 692
+                          "start": 725,
+                          "end": 726
                         }
                       },
                       {
@@ -1982,8 +2170,8 @@
                         "$named": false,
                         "$text": ")",
                         "$span": {
-                          "start": 696,
-                          "end": 697
+                          "start": 730,
+                          "end": 731
                         }
                       }
                     ],
@@ -2016,8 +2204,8 @@
                           "$named": false,
                           "$text": "{",
                           "$span": {
-                            "start": 707,
-                            "end": 708
+                            "start": 741,
+                            "end": 742
                           }
                         },
                         {
@@ -2026,8 +2214,8 @@
                           "$named": false,
                           "$text": "}",
                           "$span": {
-                            "start": 709,
-                            "end": 710
+                            "start": 743,
+                            "end": 744
                           }
                         }
                       ],
@@ -2040,8 +2228,8 @@
                         "$named": false,
                         "$text": "else",
                         "$span": {
-                          "start": 702,
-                          "end": 706
+                          "start": 736,
+                          "end": 740
                         }
                       }
                     ]
@@ -2053,8 +2241,8 @@
                       "$named": false,
                       "$text": "if",
                       "$span": {
-                        "start": 688,
-                        "end": 690
+                        "start": 722,
+                        "end": 724
                       }
                     }
                   ],
@@ -2074,8 +2262,8 @@
                     "$named": true,
                     "$text": "1",
                     "$span": {
-                      "start": 713,
-                      "end": 714
+                      "start": 747,
+                      "end": 748
                     }
                   },
                   "_terminator": 20,
@@ -2096,8 +2284,8 @@
                       "$named": false,
                       "$text": "return",
                       "$span": {
-                        "start": 718,
-                        "end": 724
+                        "start": 752,
+                        "end": 758
                       }
                     }
                   ]
@@ -2117,8 +2305,8 @@
                         "$named": false,
                         "$text": "(",
                         "$span": {
-                          "start": 735,
-                          "end": 736
+                          "start": 769,
+                          "end": 770
                         }
                       },
                       {
@@ -2127,8 +2315,8 @@
                         "$named": false,
                         "$text": ")",
                         "$span": {
-                          "start": 737,
-                          "end": 738
+                          "start": 771,
+                          "end": 772
                         }
                       }
                     ],
@@ -2142,8 +2330,8 @@
                         "$named": true,
                         "$text": "x",
                         "$span": {
-                          "start": 736,
-                          "end": 737
+                          "start": 770,
+                          "end": 771
                         }
                       }
                     }
@@ -2163,8 +2351,8 @@
                           "$named": true,
                           "$text": "1",
                           "$span": {
-                            "start": 752,
-                            "end": 753
+                            "start": 786,
+                            "end": 787
                           }
                         },
                         "_body": [
@@ -2180,8 +2368,8 @@
                                 "$named": false,
                                 "$text": "break",
                                 "$span": {
-                                  "start": 765,
-                                  "end": 770
+                                  "start": 799,
+                                  "end": 804
                                 }
                               }
                             ]
@@ -2194,8 +2382,8 @@
                             "$named": false,
                             "$text": "case",
                             "$span": {
-                              "start": 747,
-                              "end": 751
+                              "start": 781,
+                              "end": 785
                             }
                           },
                           {
@@ -2204,8 +2392,8 @@
                             "$named": false,
                             "$text": ":",
                             "$span": {
-                              "start": 753,
-                              "end": 754
+                              "start": 787,
+                              "end": 788
                             }
                           }
                         ],
@@ -2231,8 +2419,8 @@
                                 "$named": false,
                                 "$text": "break",
                                 "$span": {
-                                  "start": 797,
-                                  "end": 802
+                                  "start": 831,
+                                  "end": 836
                                 }
                               }
                             ]
@@ -2245,8 +2433,8 @@
                             "$named": false,
                             "$text": "default",
                             "$span": {
-                              "start": 778,
-                              "end": 785
+                              "start": 812,
+                              "end": 819
                             }
                           },
                           {
@@ -2255,8 +2443,8 @@
                             "$named": false,
                             "$text": ":",
                             "$span": {
-                              "start": 785,
-                              "end": 786
+                              "start": 819,
+                              "end": 820
                             }
                           }
                         ]
@@ -2269,8 +2457,8 @@
                         "$named": false,
                         "$text": "{",
                         "$span": {
-                          "start": 739,
-                          "end": 740
+                          "start": 773,
+                          "end": 774
                         }
                       },
                       {
@@ -2279,8 +2467,8 @@
                         "$named": false,
                         "$text": "}",
                         "$span": {
-                          "start": 806,
-                          "end": 807
+                          "start": 840,
+                          "end": 841
                         }
                       }
                     ]
@@ -2292,8 +2480,8 @@
                       "$named": false,
                       "$text": "switch",
                       "$span": {
-                        "start": 728,
-                        "end": 734
+                        "start": 762,
+                        "end": 768
                       }
                     }
                   ],
@@ -2321,8 +2509,8 @@
                           "$named": true,
                           "$text": "hello",
                           "$span": {
-                            "start": 817,
-                            "end": 822
+                            "start": 851,
+                            "end": 856
                           }
                         }
                       ],
@@ -2333,8 +2521,8 @@
                           "$named": false,
                           "$text": "\"",
                           "$span": {
-                            "start": 816,
-                            "end": 817
+                            "start": 850,
+                            "end": 851
                           }
                         },
                         {
@@ -2343,8 +2531,8 @@
                           "$named": false,
                           "$text": "\"",
                           "$span": {
-                            "start": 822,
-                            "end": 823
+                            "start": 856,
+                            "end": 857
                           }
                         }
                       ]
@@ -2358,8 +2546,8 @@
                       "$named": false,
                       "$text": "throw",
                       "$span": {
-                        "start": 810,
-                        "end": 815
+                        "start": 844,
+                        "end": 849
                       }
                     }
                   ],
@@ -2384,8 +2572,8 @@
                         "$named": false,
                         "$text": "{",
                         "$span": {
-                          "start": 831,
-                          "end": 832
+                          "start": 865,
+                          "end": 866
                         }
                       },
                       {
@@ -2394,8 +2582,8 @@
                         "$named": false,
                         "$text": "}",
                         "$span": {
-                          "start": 833,
-                          "end": 834
+                          "start": 867,
+                          "end": 868
                         }
                       }
                     ],
@@ -2415,8 +2603,8 @@
                         "$named": true,
                         "$text": "e",
                         "$span": {
-                          "start": 844,
-                          "end": 845
+                          "start": 878,
+                          "end": 879
                         }
                       },
                       "$other": [
@@ -2426,8 +2614,8 @@
                           "$named": false,
                           "$text": "(",
                           "$span": {
-                            "start": 843,
-                            "end": 844
+                            "start": 877,
+                            "end": 878
                           }
                         },
                         {
@@ -2436,8 +2624,8 @@
                           "$named": false,
                           "$text": ")",
                           "$span": {
-                            "start": 845,
-                            "end": 846
+                            "start": 879,
+                            "end": 880
                           }
                         }
                       ]
@@ -2454,8 +2642,8 @@
                           "$named": false,
                           "$text": "{",
                           "$span": {
-                            "start": 847,
-                            "end": 848
+                            "start": 881,
+                            "end": 882
                           }
                         },
                         {
@@ -2464,8 +2652,8 @@
                           "$named": false,
                           "$text": "}",
                           "$span": {
-                            "start": 849,
-                            "end": 850
+                            "start": 883,
+                            "end": 884
                           }
                         }
                       ],
@@ -2478,8 +2666,8 @@
                         "$named": false,
                         "$text": "catch",
                         "$span": {
-                          "start": 837,
-                          "end": 842
+                          "start": 871,
+                          "end": 876
                         }
                       }
                     ],
@@ -2504,8 +2692,8 @@
                           "$named": false,
                           "$text": "{",
                           "$span": {
-                            "start": 861,
-                            "end": 862
+                            "start": 895,
+                            "end": 896
                           }
                         },
                         {
@@ -2514,8 +2702,8 @@
                           "$named": false,
                           "$text": "}",
                           "$span": {
-                            "start": 863,
-                            "end": 864
+                            "start": 897,
+                            "end": 898
                           }
                         }
                       ],
@@ -2528,8 +2716,8 @@
                         "$named": false,
                         "$text": "finally",
                         "$span": {
-                          "start": 853,
-                          "end": 860
+                          "start": 887,
+                          "end": 894
                         }
                       }
                     ]
@@ -2541,8 +2729,8 @@
                       "$named": false,
                       "$text": "try",
                       "$span": {
-                        "start": 827,
-                        "end": 830
+                        "start": 861,
+                        "end": 864
                       }
                     }
                   ],
@@ -2571,12 +2759,13 @@
                   "$named": false,
                   "$text": "}",
                   "$span": {
-                    "start": 865,
-                    "end": 866
+                    "start": 899,
+                    "end": 900
                   }
                 }
               ],
               "$slotOrder": [
+                "statements",
                 "statements",
                 "statements",
                 "statements",
@@ -2612,17 +2801,17 @@
         }
       ]
     },
-    "expectedOutput": "declare class Error {\n    constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n\n;declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
+    "expectedOutput": "declare class Error {\n    constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n\n;declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
   },
   {
     "kind": "roundtrip",
     "grammar": "typescript",
-    "sourceIn": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
+    "sourceIn": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "declare class Error {\n    constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n\n;declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
-    "wrappedText": "declare class Error {\n    constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n\n;declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedSourceOut": "declare class Error {\n    constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n\n;declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (string (string_double elements: (unescaped_double_string_fragment))))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) automatic_semicolon: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) automatic_semicolon: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_declaration declaration: (variable_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier)))))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (number)))) condition: (binary_expression left: (identifier) right: (number)) increment: (update_expression (update_expression_postfix argument: (identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))))",
+    "wrappedText": "declare class Error {\n    constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n    interface LogOptions{\n        verbose?: boolean;\n    }\n    interface AlertOptions{\n        modal: boolean;\n        title?: string;\n        color?: string;\n    }\n}\n\ndeclare class Greeter {\n    constructor(greeting: string);\n    greeting: string;\n    showGreeting(): void;\n}\n\ndeclare module Foo.Bar {\n    export var foo;\n}\n\n;declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -4697,6 +4886,194 @@
               ]
             },
             {
+              "$type": 197,
+              "$source": 0,
+              "$named": true,
+              "_initializer": {
+                "$type": 191,
+                "$source": 0,
+                "$named": true,
+                "_kind": 126,
+                "_declarators": [
+                  {
+                    "$type": 192,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": {
+                      "$type": 411,
+                      "$source": 0,
+                      "$named": true,
+                      "_name": {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "i",
+                        "$span": {
+                          "start": 697,
+                          "end": 698
+                        }
+                      },
+                      "_value": {
+                        "$type": 98,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "0",
+                        "$span": {
+                          "start": 701,
+                          "end": 702
+                        }
+                      },
+                      "$other": [
+                        {
+                          "$type": 36,
+                          "$source": 0,
+                          "$named": false,
+                          "$text": "=",
+                          "$span": {
+                            "start": 699,
+                            "end": 700
+                          }
+                        }
+                      ],
+                      "$slotOrder": [
+                        "name",
+                        "value"
+                      ]
+                    }
+                  }
+                ],
+                "_terminator": 20,
+                "$slotOrder": [
+                  "kind",
+                  "declarators",
+                  "terminator"
+                ]
+              },
+              "_condition": {
+                "$type": 251,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "i",
+                  "$span": {
+                    "start": 704,
+                    "end": 705
+                  }
+                },
+                "_operator": 75,
+                "_right": {
+                  "$type": 98,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "3",
+                  "$span": {
+                    "start": 708,
+                    "end": 709
+                  }
+                },
+                "$slotOrder": [
+                  "left",
+                  "operator",
+                  "right"
+                ]
+              },
+              "_increment": {
+                "$type": 253,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 399,
+                  "$source": 0,
+                  "$named": true,
+                  "_argument": {
+                    "$type": 1,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "i",
+                    "$span": {
+                      "start": 711,
+                      "end": 712
+                    }
+                  },
+                  "_operator": 156,
+                  "$slotOrder": [
+                    "argument",
+                    "operator"
+                  ]
+                }
+              },
+              "_body": {
+                "$type": 193,
+                "$source": 0,
+                "$named": true,
+                "_automatic_semicolon": true,
+                "$other": [
+                  {
+                    "$type": 5,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "{",
+                    "$span": {
+                      "start": 716,
+                      "end": 717
+                    }
+                  },
+                  {
+                    "$type": 6,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "}",
+                    "$span": {
+                      "start": 718,
+                      "end": 719
+                    }
+                  }
+                ],
+                "_statements": []
+              },
+              "$other": [
+                {
+                  "$type": 18,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "for",
+                  "$span": {
+                    "start": 688,
+                    "end": 691
+                  }
+                },
+                {
+                  "$type": 19,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "(",
+                  "$span": {
+                    "start": 692,
+                    "end": 693
+                  }
+                },
+                {
+                  "$type": 21,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": ")",
+                  "$span": {
+                    "start": 714,
+                    "end": 715
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "initializer",
+                "condition",
+                "increment",
+                "body"
+              ]
+            },
+            {
               "$type": 195,
               "$source": 0,
               "$named": true,
@@ -4711,8 +5088,8 @@
                     "$named": false,
                     "$text": "(",
                     "$span": {
-                      "start": 691,
-                      "end": 692
+                      "start": 725,
+                      "end": 726
                     }
                   },
                   {
@@ -4721,8 +5098,8 @@
                     "$named": false,
                     "$text": ")",
                     "$span": {
-                      "start": 696,
-                      "end": 697
+                      "start": 730,
+                      "end": 731
                     }
                   }
                 ],
@@ -4755,8 +5132,8 @@
                       "$named": false,
                       "$text": "{",
                       "$span": {
-                        "start": 707,
-                        "end": 708
+                        "start": 741,
+                        "end": 742
                       }
                     },
                     {
@@ -4765,8 +5142,8 @@
                       "$named": false,
                       "$text": "}",
                       "$span": {
-                        "start": 709,
-                        "end": 710
+                        "start": 743,
+                        "end": 744
                       }
                     }
                   ],
@@ -4779,8 +5156,8 @@
                     "$named": false,
                     "$text": "else",
                     "$span": {
-                      "start": 702,
-                      "end": 706
+                      "start": 736,
+                      "end": 740
                     }
                   }
                 ]
@@ -4792,8 +5169,8 @@
                   "$named": false,
                   "$text": "if",
                   "$span": {
-                    "start": 688,
-                    "end": 690
+                    "start": 722,
+                    "end": 724
                   }
                 }
               ],
@@ -4813,8 +5190,8 @@
                 "$named": true,
                 "$text": "1",
                 "$span": {
-                  "start": 713,
-                  "end": 714
+                  "start": 747,
+                  "end": 748
                 }
               },
               "_terminator": 20,
@@ -4835,8 +5212,8 @@
                   "$named": false,
                   "$text": "return",
                   "$span": {
-                    "start": 718,
-                    "end": 724
+                    "start": 752,
+                    "end": 758
                   }
                 }
               ]
@@ -4856,8 +5233,8 @@
                     "$named": false,
                     "$text": "(",
                     "$span": {
-                      "start": 735,
-                      "end": 736
+                      "start": 769,
+                      "end": 770
                     }
                   },
                   {
@@ -4866,8 +5243,8 @@
                     "$named": false,
                     "$text": ")",
                     "$span": {
-                      "start": 737,
-                      "end": 738
+                      "start": 771,
+                      "end": 772
                     }
                   }
                 ],
@@ -4881,8 +5258,8 @@
                     "$named": true,
                     "$text": "x",
                     "$span": {
-                      "start": 736,
-                      "end": 737
+                      "start": 770,
+                      "end": 771
                     }
                   }
                 }
@@ -4902,8 +5279,8 @@
                       "$named": true,
                       "$text": "1",
                       "$span": {
-                        "start": 752,
-                        "end": 753
+                        "start": 786,
+                        "end": 787
                       }
                     },
                     "_body": [
@@ -4919,8 +5296,8 @@
                             "$named": false,
                             "$text": "break",
                             "$span": {
-                              "start": 765,
-                              "end": 770
+                              "start": 799,
+                              "end": 804
                             }
                           }
                         ]
@@ -4933,8 +5310,8 @@
                         "$named": false,
                         "$text": "case",
                         "$span": {
-                          "start": 747,
-                          "end": 751
+                          "start": 781,
+                          "end": 785
                         }
                       },
                       {
@@ -4943,8 +5320,8 @@
                         "$named": false,
                         "$text": ":",
                         "$span": {
-                          "start": 753,
-                          "end": 754
+                          "start": 787,
+                          "end": 788
                         }
                       }
                     ],
@@ -4970,8 +5347,8 @@
                             "$named": false,
                             "$text": "break",
                             "$span": {
-                              "start": 797,
-                              "end": 802
+                              "start": 831,
+                              "end": 836
                             }
                           }
                         ]
@@ -4984,8 +5361,8 @@
                         "$named": false,
                         "$text": "default",
                         "$span": {
-                          "start": 778,
-                          "end": 785
+                          "start": 812,
+                          "end": 819
                         }
                       },
                       {
@@ -4994,8 +5371,8 @@
                         "$named": false,
                         "$text": ":",
                         "$span": {
-                          "start": 785,
-                          "end": 786
+                          "start": 819,
+                          "end": 820
                         }
                       }
                     ]
@@ -5008,8 +5385,8 @@
                     "$named": false,
                     "$text": "{",
                     "$span": {
-                      "start": 739,
-                      "end": 740
+                      "start": 773,
+                      "end": 774
                     }
                   },
                   {
@@ -5018,8 +5395,8 @@
                     "$named": false,
                     "$text": "}",
                     "$span": {
-                      "start": 806,
-                      "end": 807
+                      "start": 840,
+                      "end": 841
                     }
                   }
                 ]
@@ -5031,8 +5408,8 @@
                   "$named": false,
                   "$text": "switch",
                   "$span": {
-                    "start": 728,
-                    "end": 734
+                    "start": 762,
+                    "end": 768
                   }
                 }
               ],
@@ -5060,8 +5437,8 @@
                       "$named": true,
                       "$text": "hello",
                       "$span": {
-                        "start": 817,
-                        "end": 822
+                        "start": 851,
+                        "end": 856
                       }
                     }
                   ],
@@ -5072,8 +5449,8 @@
                       "$named": false,
                       "$text": "\"",
                       "$span": {
-                        "start": 816,
-                        "end": 817
+                        "start": 850,
+                        "end": 851
                       }
                     },
                     {
@@ -5082,8 +5459,8 @@
                       "$named": false,
                       "$text": "\"",
                       "$span": {
-                        "start": 822,
-                        "end": 823
+                        "start": 856,
+                        "end": 857
                       }
                     }
                   ]
@@ -5097,8 +5474,8 @@
                   "$named": false,
                   "$text": "throw",
                   "$span": {
-                    "start": 810,
-                    "end": 815
+                    "start": 844,
+                    "end": 849
                   }
                 }
               ],
@@ -5123,8 +5500,8 @@
                     "$named": false,
                     "$text": "{",
                     "$span": {
-                      "start": 831,
-                      "end": 832
+                      "start": 865,
+                      "end": 866
                     }
                   },
                   {
@@ -5133,8 +5510,8 @@
                     "$named": false,
                     "$text": "}",
                     "$span": {
-                      "start": 833,
-                      "end": 834
+                      "start": 867,
+                      "end": 868
                     }
                   }
                 ],
@@ -5154,8 +5531,8 @@
                     "$named": true,
                     "$text": "e",
                     "$span": {
-                      "start": 844,
-                      "end": 845
+                      "start": 878,
+                      "end": 879
                     }
                   },
                   "$other": [
@@ -5165,8 +5542,8 @@
                       "$named": false,
                       "$text": "(",
                       "$span": {
-                        "start": 843,
-                        "end": 844
+                        "start": 877,
+                        "end": 878
                       }
                     },
                     {
@@ -5175,8 +5552,8 @@
                       "$named": false,
                       "$text": ")",
                       "$span": {
-                        "start": 845,
-                        "end": 846
+                        "start": 879,
+                        "end": 880
                       }
                     }
                   ]
@@ -5193,8 +5570,8 @@
                       "$named": false,
                       "$text": "{",
                       "$span": {
-                        "start": 847,
-                        "end": 848
+                        "start": 881,
+                        "end": 882
                       }
                     },
                     {
@@ -5203,8 +5580,8 @@
                       "$named": false,
                       "$text": "}",
                       "$span": {
-                        "start": 849,
-                        "end": 850
+                        "start": 883,
+                        "end": 884
                       }
                     }
                   ],
@@ -5217,8 +5594,8 @@
                     "$named": false,
                     "$text": "catch",
                     "$span": {
-                      "start": 837,
-                      "end": 842
+                      "start": 871,
+                      "end": 876
                     }
                   }
                 ],
@@ -5243,8 +5620,8 @@
                       "$named": false,
                       "$text": "{",
                       "$span": {
-                        "start": 861,
-                        "end": 862
+                        "start": 895,
+                        "end": 896
                       }
                     },
                     {
@@ -5253,8 +5630,8 @@
                       "$named": false,
                       "$text": "}",
                       "$span": {
-                        "start": 863,
-                        "end": 864
+                        "start": 897,
+                        "end": 898
                       }
                     }
                   ],
@@ -5267,8 +5644,8 @@
                     "$named": false,
                     "$text": "finally",
                     "$span": {
-                      "start": 853,
-                      "end": 860
+                      "start": 887,
+                      "end": 894
                     }
                   }
                 ]
@@ -5280,8 +5657,8 @@
                   "$named": false,
                   "$text": "try",
                   "$span": {
-                    "start": 827,
-                    "end": 830
+                    "start": 861,
+                    "end": 864
                   }
                 }
               ],
@@ -5310,12 +5687,13 @@
               "$named": false,
               "$text": "}",
               "$span": {
-                "start": 865,
-                "end": 866
+                "start": 899,
+                "end": 900
               }
             }
           ],
           "$slotOrder": [
+            "statements",
             "statements",
             "statements",
             "statements",
@@ -5349,17 +5727,17 @@
         ]
       }
     },
-    "expectedOutput": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
+    "expectedOutput": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
   },
   {
     "kind": "roundtrip",
     "grammar": "typescript",
-    "sourceIn": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
+    "sourceIn": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "ambient_declaration",
     "edits": [],
-    "expectedSourceOut": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
-    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))))",
-    "wrappedText": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedSourceOut": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (number)))) condition: (binary_expression left: (identifier) right: (number)) increment: (update_expression (update_expression_postfix argument: (identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))))",
+    "wrappedText": "declare module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -7238,6 +7616,69 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "variable_declarator",
+    "input": {
+      "$type": 192,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 411,
+        "$source": 0,
+        "$named": true,
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "i",
+          "$span": {
+            "start": 697,
+            "end": 698
+          }
+        },
+        "_value": {
+          "$type": 98,
+          "$source": 0,
+          "$named": true,
+          "$text": "0",
+          "$span": {
+            "start": 701,
+            "end": 702
+          }
+        },
+        "$other": [
+          {
+            "$type": 36,
+            "$source": 0,
+            "$named": false,
+            "$text": "=",
+            "$span": {
+              "start": 699,
+              "end": 700
+            }
+          }
+        ],
+        "$slotOrder": [
+          "name",
+          "value"
+        ]
+      }
+    },
+    "expectedOutput": "i = 0"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "i = 0",
+    "pattern": "variable_declarator",
+    "edits": [],
+    "expectedSourceOut": "i = 0",
+    "expectedReparseTree": "(variable_declarator (variable_declarator_plain name: (identifier) value: (number)))",
+    "wrappedText": "let i = 0;",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "lexical_declaration",
     "input": {
       "$type": 191,
@@ -7431,6 +7872,83 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "lexical_declaration",
+    "input": {
+      "$type": 191,
+      "$source": 0,
+      "$named": true,
+      "_kind": 126,
+      "_declarators": [
+        {
+          "$type": 192,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 411,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "i",
+              "$span": {
+                "start": 697,
+                "end": 698
+              }
+            },
+            "_value": {
+              "$type": 98,
+              "$source": 0,
+              "$named": true,
+              "$text": "0",
+              "$span": {
+                "start": 701,
+                "end": 702
+              }
+            },
+            "$other": [
+              {
+                "$type": 36,
+                "$source": 0,
+                "$named": false,
+                "$text": "=",
+                "$span": {
+                  "start": 699,
+                  "end": 700
+                }
+              }
+            ],
+            "$slotOrder": [
+              "name",
+              "value"
+            ]
+          }
+        }
+      ],
+      "_terminator": 20,
+      "$slotOrder": [
+        "kind",
+        "declarators",
+        "terminator"
+      ]
+    },
+    "expectedOutput": "let i = 0;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "let i = 0;",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "let i = 0;",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (number))))",
+    "wrappedText": "let i = 0;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "string",
     "input": {
       "$type": 255,
@@ -7508,8 +8026,8 @@
             "$named": true,
             "$text": "hello",
             "$span": {
-              "start": 817,
-              "end": 822
+              "start": 851,
+              "end": 856
             }
           }
         ],
@@ -7520,8 +8038,8 @@
             "$named": false,
             "$text": "\"",
             "$span": {
-              "start": 816,
-              "end": 817
+              "start": 850,
+              "end": 851
             }
           },
           {
@@ -7530,8 +8048,8 @@
             "$named": false,
             "$text": "\"",
             "$span": {
-              "start": 822,
-              "end": 823
+              "start": 856,
+              "end": 857
             }
           }
         ]
@@ -10032,6 +10550,194 @@
           ]
         },
         {
+          "$type": 197,
+          "$source": 0,
+          "$named": true,
+          "_initializer": {
+            "$type": 191,
+            "$source": 0,
+            "$named": true,
+            "_kind": 126,
+            "_declarators": [
+              {
+                "$type": 192,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 411,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": {
+                    "$type": 1,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "i",
+                    "$span": {
+                      "start": 697,
+                      "end": 698
+                    }
+                  },
+                  "_value": {
+                    "$type": 98,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "0",
+                    "$span": {
+                      "start": 701,
+                      "end": 702
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 36,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "=",
+                      "$span": {
+                        "start": 699,
+                        "end": 700
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "name",
+                    "value"
+                  ]
+                }
+              }
+            ],
+            "_terminator": 20,
+            "$slotOrder": [
+              "kind",
+              "declarators",
+              "terminator"
+            ]
+          },
+          "_condition": {
+            "$type": 251,
+            "$source": 0,
+            "$named": true,
+            "_left": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "i",
+              "$span": {
+                "start": 704,
+                "end": 705
+              }
+            },
+            "_operator": 75,
+            "_right": {
+              "$type": 98,
+              "$source": 0,
+              "$named": true,
+              "$text": "3",
+              "$span": {
+                "start": 708,
+                "end": 709
+              }
+            },
+            "$slotOrder": [
+              "left",
+              "operator",
+              "right"
+            ]
+          },
+          "_increment": {
+            "$type": 253,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 399,
+              "$source": 0,
+              "$named": true,
+              "_argument": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "i",
+                "$span": {
+                  "start": 711,
+                  "end": 712
+                }
+              },
+              "_operator": 156,
+              "$slotOrder": [
+                "argument",
+                "operator"
+              ]
+            }
+          },
+          "_body": {
+            "$type": 193,
+            "$source": 0,
+            "$named": true,
+            "_automatic_semicolon": true,
+            "$other": [
+              {
+                "$type": 5,
+                "$source": 0,
+                "$named": false,
+                "$text": "{",
+                "$span": {
+                  "start": 716,
+                  "end": 717
+                }
+              },
+              {
+                "$type": 6,
+                "$source": 0,
+                "$named": false,
+                "$text": "}",
+                "$span": {
+                  "start": 718,
+                  "end": 719
+                }
+              }
+            ],
+            "_statements": []
+          },
+          "$other": [
+            {
+              "$type": 18,
+              "$source": 0,
+              "$named": false,
+              "$text": "for",
+              "$span": {
+                "start": 688,
+                "end": 691
+              }
+            },
+            {
+              "$type": 19,
+              "$source": 0,
+              "$named": false,
+              "$text": "(",
+              "$span": {
+                "start": 692,
+                "end": 693
+              }
+            },
+            {
+              "$type": 21,
+              "$source": 0,
+              "$named": false,
+              "$text": ")",
+              "$span": {
+                "start": 714,
+                "end": 715
+              }
+            }
+          ],
+          "$slotOrder": [
+            "initializer",
+            "condition",
+            "increment",
+            "body"
+          ]
+        },
+        {
           "$type": 195,
           "$source": 0,
           "$named": true,
@@ -10046,8 +10752,8 @@
                 "$named": false,
                 "$text": "(",
                 "$span": {
-                  "start": 691,
-                  "end": 692
+                  "start": 725,
+                  "end": 726
                 }
               },
               {
@@ -10056,8 +10762,8 @@
                 "$named": false,
                 "$text": ")",
                 "$span": {
-                  "start": 696,
-                  "end": 697
+                  "start": 730,
+                  "end": 731
                 }
               }
             ],
@@ -10090,8 +10796,8 @@
                   "$named": false,
                   "$text": "{",
                   "$span": {
-                    "start": 707,
-                    "end": 708
+                    "start": 741,
+                    "end": 742
                   }
                 },
                 {
@@ -10100,8 +10806,8 @@
                   "$named": false,
                   "$text": "}",
                   "$span": {
-                    "start": 709,
-                    "end": 710
+                    "start": 743,
+                    "end": 744
                   }
                 }
               ],
@@ -10114,8 +10820,8 @@
                 "$named": false,
                 "$text": "else",
                 "$span": {
-                  "start": 702,
-                  "end": 706
+                  "start": 736,
+                  "end": 740
                 }
               }
             ]
@@ -10127,8 +10833,8 @@
               "$named": false,
               "$text": "if",
               "$span": {
-                "start": 688,
-                "end": 690
+                "start": 722,
+                "end": 724
               }
             }
           ],
@@ -10148,8 +10854,8 @@
             "$named": true,
             "$text": "1",
             "$span": {
-              "start": 713,
-              "end": 714
+              "start": 747,
+              "end": 748
             }
           },
           "_terminator": 20,
@@ -10170,8 +10876,8 @@
               "$named": false,
               "$text": "return",
               "$span": {
-                "start": 718,
-                "end": 724
+                "start": 752,
+                "end": 758
               }
             }
           ]
@@ -10191,8 +10897,8 @@
                 "$named": false,
                 "$text": "(",
                 "$span": {
-                  "start": 735,
-                  "end": 736
+                  "start": 769,
+                  "end": 770
                 }
               },
               {
@@ -10201,8 +10907,8 @@
                 "$named": false,
                 "$text": ")",
                 "$span": {
-                  "start": 737,
-                  "end": 738
+                  "start": 771,
+                  "end": 772
                 }
               }
             ],
@@ -10216,8 +10922,8 @@
                 "$named": true,
                 "$text": "x",
                 "$span": {
-                  "start": 736,
-                  "end": 737
+                  "start": 770,
+                  "end": 771
                 }
               }
             }
@@ -10237,8 +10943,8 @@
                   "$named": true,
                   "$text": "1",
                   "$span": {
-                    "start": 752,
-                    "end": 753
+                    "start": 786,
+                    "end": 787
                   }
                 },
                 "_body": [
@@ -10254,8 +10960,8 @@
                         "$named": false,
                         "$text": "break",
                         "$span": {
-                          "start": 765,
-                          "end": 770
+                          "start": 799,
+                          "end": 804
                         }
                       }
                     ]
@@ -10268,8 +10974,8 @@
                     "$named": false,
                     "$text": "case",
                     "$span": {
-                      "start": 747,
-                      "end": 751
+                      "start": 781,
+                      "end": 785
                     }
                   },
                   {
@@ -10278,8 +10984,8 @@
                     "$named": false,
                     "$text": ":",
                     "$span": {
-                      "start": 753,
-                      "end": 754
+                      "start": 787,
+                      "end": 788
                     }
                   }
                 ],
@@ -10305,8 +11011,8 @@
                         "$named": false,
                         "$text": "break",
                         "$span": {
-                          "start": 797,
-                          "end": 802
+                          "start": 831,
+                          "end": 836
                         }
                       }
                     ]
@@ -10319,8 +11025,8 @@
                     "$named": false,
                     "$text": "default",
                     "$span": {
-                      "start": 778,
-                      "end": 785
+                      "start": 812,
+                      "end": 819
                     }
                   },
                   {
@@ -10329,8 +11035,8 @@
                     "$named": false,
                     "$text": ":",
                     "$span": {
-                      "start": 785,
-                      "end": 786
+                      "start": 819,
+                      "end": 820
                     }
                   }
                 ]
@@ -10343,8 +11049,8 @@
                 "$named": false,
                 "$text": "{",
                 "$span": {
-                  "start": 739,
-                  "end": 740
+                  "start": 773,
+                  "end": 774
                 }
               },
               {
@@ -10353,8 +11059,8 @@
                 "$named": false,
                 "$text": "}",
                 "$span": {
-                  "start": 806,
-                  "end": 807
+                  "start": 840,
+                  "end": 841
                 }
               }
             ]
@@ -10366,8 +11072,8 @@
               "$named": false,
               "$text": "switch",
               "$span": {
-                "start": 728,
-                "end": 734
+                "start": 762,
+                "end": 768
               }
             }
           ],
@@ -10395,8 +11101,8 @@
                   "$named": true,
                   "$text": "hello",
                   "$span": {
-                    "start": 817,
-                    "end": 822
+                    "start": 851,
+                    "end": 856
                   }
                 }
               ],
@@ -10407,8 +11113,8 @@
                   "$named": false,
                   "$text": "\"",
                   "$span": {
-                    "start": 816,
-                    "end": 817
+                    "start": 850,
+                    "end": 851
                   }
                 },
                 {
@@ -10417,8 +11123,8 @@
                   "$named": false,
                   "$text": "\"",
                   "$span": {
-                    "start": 822,
-                    "end": 823
+                    "start": 856,
+                    "end": 857
                   }
                 }
               ]
@@ -10432,8 +11138,8 @@
               "$named": false,
               "$text": "throw",
               "$span": {
-                "start": 810,
-                "end": 815
+                "start": 844,
+                "end": 849
               }
             }
           ],
@@ -10458,8 +11164,8 @@
                 "$named": false,
                 "$text": "{",
                 "$span": {
-                  "start": 831,
-                  "end": 832
+                  "start": 865,
+                  "end": 866
                 }
               },
               {
@@ -10468,8 +11174,8 @@
                 "$named": false,
                 "$text": "}",
                 "$span": {
-                  "start": 833,
-                  "end": 834
+                  "start": 867,
+                  "end": 868
                 }
               }
             ],
@@ -10489,8 +11195,8 @@
                 "$named": true,
                 "$text": "e",
                 "$span": {
-                  "start": 844,
-                  "end": 845
+                  "start": 878,
+                  "end": 879
                 }
               },
               "$other": [
@@ -10500,8 +11206,8 @@
                   "$named": false,
                   "$text": "(",
                   "$span": {
-                    "start": 843,
-                    "end": 844
+                    "start": 877,
+                    "end": 878
                   }
                 },
                 {
@@ -10510,8 +11216,8 @@
                   "$named": false,
                   "$text": ")",
                   "$span": {
-                    "start": 845,
-                    "end": 846
+                    "start": 879,
+                    "end": 880
                   }
                 }
               ]
@@ -10528,8 +11234,8 @@
                   "$named": false,
                   "$text": "{",
                   "$span": {
-                    "start": 847,
-                    "end": 848
+                    "start": 881,
+                    "end": 882
                   }
                 },
                 {
@@ -10538,8 +11244,8 @@
                   "$named": false,
                   "$text": "}",
                   "$span": {
-                    "start": 849,
-                    "end": 850
+                    "start": 883,
+                    "end": 884
                   }
                 }
               ],
@@ -10552,8 +11258,8 @@
                 "$named": false,
                 "$text": "catch",
                 "$span": {
-                  "start": 837,
-                  "end": 842
+                  "start": 871,
+                  "end": 876
                 }
               }
             ],
@@ -10578,8 +11284,8 @@
                   "$named": false,
                   "$text": "{",
                   "$span": {
-                    "start": 861,
-                    "end": 862
+                    "start": 895,
+                    "end": 896
                   }
                 },
                 {
@@ -10588,8 +11294,8 @@
                   "$named": false,
                   "$text": "}",
                   "$span": {
-                    "start": 863,
-                    "end": 864
+                    "start": 897,
+                    "end": 898
                   }
                 }
               ],
@@ -10602,8 +11308,8 @@
                 "$named": false,
                 "$text": "finally",
                 "$span": {
-                  "start": 853,
-                  "end": 860
+                  "start": 887,
+                  "end": 894
                 }
               }
             ]
@@ -10615,8 +11321,8 @@
               "$named": false,
               "$text": "try",
               "$span": {
-                "start": 827,
-                "end": 830
+                "start": 861,
+                "end": 864
               }
             }
           ],
@@ -10645,8 +11351,8 @@
           "$named": false,
           "$text": "}",
           "$span": {
-            "start": 865,
-            "end": 866
+            "start": 899,
+            "end": 900
           }
         }
       ],
@@ -10663,20 +11369,21 @@
         "statements",
         "statements",
         "statements",
+        "statements",
         "automatic_semicolon"
       ]
     },
-    "expectedOutput": "{\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
+    "expectedOutput": "{\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
   },
   {
     "kind": "roundtrip",
     "grammar": "typescript",
-    "sourceIn": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
+    "sourceIn": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "statement_block",
     "edits": [],
-    "expectedSourceOut": "{\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
-    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))",
-    "wrappedText": "{\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedSourceOut": "{\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (number)))) condition: (binary_expression left: (identifier) right: (number)) increment: (update_expression (update_expression_postfix argument: (identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon))",
+    "wrappedText": "{\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -10802,6 +11509,52 @@
       "$type": 193,
       "$source": 0,
       "$named": true,
+      "_automatic_semicolon": true,
+      "$other": [
+        {
+          "$type": 5,
+          "$source": 0,
+          "$named": false,
+          "$text": "{",
+          "$span": {
+            "start": 716,
+            "end": 717
+          }
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$named": false,
+          "$text": "}",
+          "$span": {
+            "start": 718,
+            "end": 719
+          }
+        }
+      ],
+      "_statements": []
+    },
+    "expectedOutput": "{}\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{ }",
+    "pattern": "statement_block",
+    "edits": [],
+    "expectedSourceOut": "{}\n",
+    "expectedReparseTree": "(statement_block automatic_semicolon: (automatic_semicolon))",
+    "wrappedText": "{}\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "statement_block",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
       "_statements": []
     },
     "expectedOutput": "{}"
@@ -10833,8 +11586,8 @@
           "$named": false,
           "$text": "{",
           "$span": {
-            "start": 707,
-            "end": 708
+            "start": 741,
+            "end": 742
           }
         },
         {
@@ -10843,8 +11596,8 @@
           "$named": false,
           "$text": "}",
           "$span": {
-            "start": 709,
-            "end": 710
+            "start": 743,
+            "end": 744
           }
         }
       ],
@@ -10879,8 +11632,8 @@
           "$named": false,
           "$text": "{",
           "$span": {
-            "start": 831,
-            "end": 832
+            "start": 865,
+            "end": 866
           }
         },
         {
@@ -10889,8 +11642,8 @@
           "$named": false,
           "$text": "}",
           "$span": {
-            "start": 833,
-            "end": 834
+            "start": 867,
+            "end": 868
           }
         }
       ],
@@ -10925,8 +11678,8 @@
           "$named": false,
           "$text": "{",
           "$span": {
-            "start": 847,
-            "end": 848
+            "start": 881,
+            "end": 882
           }
         },
         {
@@ -10935,8 +11688,8 @@
           "$named": false,
           "$text": "}",
           "$span": {
-            "start": 849,
-            "end": 850
+            "start": 883,
+            "end": 884
           }
         }
       ],
@@ -10971,8 +11724,8 @@
           "$named": false,
           "$text": "{",
           "$span": {
-            "start": 861,
-            "end": 862
+            "start": 895,
+            "end": 896
           }
         },
         {
@@ -10981,8 +11734,8 @@
           "$named": false,
           "$text": "}",
           "$span": {
-            "start": 863,
-            "end": 864
+            "start": 897,
+            "end": 898
           }
         }
       ],
@@ -12433,6 +13186,194 @@
             ]
           },
           {
+            "$type": 197,
+            "$source": 0,
+            "$named": true,
+            "_initializer": {
+              "$type": 191,
+              "$source": 0,
+              "$named": true,
+              "_kind": 126,
+              "_declarators": [
+                {
+                  "$type": 192,
+                  "$source": 0,
+                  "$named": true,
+                  "_content": {
+                    "$type": 411,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": {
+                      "$type": 1,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "i",
+                      "$span": {
+                        "start": 697,
+                        "end": 698
+                      }
+                    },
+                    "_value": {
+                      "$type": 98,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "0",
+                      "$span": {
+                        "start": 701,
+                        "end": 702
+                      }
+                    },
+                    "$other": [
+                      {
+                        "$type": 36,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": "=",
+                        "$span": {
+                          "start": 699,
+                          "end": 700
+                        }
+                      }
+                    ],
+                    "$slotOrder": [
+                      "name",
+                      "value"
+                    ]
+                  }
+                }
+              ],
+              "_terminator": 20,
+              "$slotOrder": [
+                "kind",
+                "declarators",
+                "terminator"
+              ]
+            },
+            "_condition": {
+              "$type": 251,
+              "$source": 0,
+              "$named": true,
+              "_left": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "i",
+                "$span": {
+                  "start": 704,
+                  "end": 705
+                }
+              },
+              "_operator": 75,
+              "_right": {
+                "$type": 98,
+                "$source": 0,
+                "$named": true,
+                "$text": "3",
+                "$span": {
+                  "start": 708,
+                  "end": 709
+                }
+              },
+              "$slotOrder": [
+                "left",
+                "operator",
+                "right"
+              ]
+            },
+            "_increment": {
+              "$type": 253,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 399,
+                "$source": 0,
+                "$named": true,
+                "_argument": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "i",
+                  "$span": {
+                    "start": 711,
+                    "end": 712
+                  }
+                },
+                "_operator": 156,
+                "$slotOrder": [
+                  "argument",
+                  "operator"
+                ]
+              }
+            },
+            "_body": {
+              "$type": 193,
+              "$source": 0,
+              "$named": true,
+              "_automatic_semicolon": true,
+              "$other": [
+                {
+                  "$type": 5,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "{",
+                  "$span": {
+                    "start": 716,
+                    "end": 717
+                  }
+                },
+                {
+                  "$type": 6,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "}",
+                  "$span": {
+                    "start": 718,
+                    "end": 719
+                  }
+                }
+              ],
+              "_statements": []
+            },
+            "$other": [
+              {
+                "$type": 18,
+                "$source": 0,
+                "$named": false,
+                "$text": "for",
+                "$span": {
+                  "start": 688,
+                  "end": 691
+                }
+              },
+              {
+                "$type": 19,
+                "$source": 0,
+                "$named": false,
+                "$text": "(",
+                "$span": {
+                  "start": 692,
+                  "end": 693
+                }
+              },
+              {
+                "$type": 21,
+                "$source": 0,
+                "$named": false,
+                "$text": ")",
+                "$span": {
+                  "start": 714,
+                  "end": 715
+                }
+              }
+            ],
+            "$slotOrder": [
+              "initializer",
+              "condition",
+              "increment",
+              "body"
+            ]
+          },
+          {
             "$type": 195,
             "$source": 0,
             "$named": true,
@@ -12447,8 +13388,8 @@
                   "$named": false,
                   "$text": "(",
                   "$span": {
-                    "start": 691,
-                    "end": 692
+                    "start": 725,
+                    "end": 726
                   }
                 },
                 {
@@ -12457,8 +13398,8 @@
                   "$named": false,
                   "$text": ")",
                   "$span": {
-                    "start": 696,
-                    "end": 697
+                    "start": 730,
+                    "end": 731
                   }
                 }
               ],
@@ -12491,8 +13432,8 @@
                     "$named": false,
                     "$text": "{",
                     "$span": {
-                      "start": 707,
-                      "end": 708
+                      "start": 741,
+                      "end": 742
                     }
                   },
                   {
@@ -12501,8 +13442,8 @@
                     "$named": false,
                     "$text": "}",
                     "$span": {
-                      "start": 709,
-                      "end": 710
+                      "start": 743,
+                      "end": 744
                     }
                   }
                 ],
@@ -12515,8 +13456,8 @@
                   "$named": false,
                   "$text": "else",
                   "$span": {
-                    "start": 702,
-                    "end": 706
+                    "start": 736,
+                    "end": 740
                   }
                 }
               ]
@@ -12528,8 +13469,8 @@
                 "$named": false,
                 "$text": "if",
                 "$span": {
-                  "start": 688,
-                  "end": 690
+                  "start": 722,
+                  "end": 724
                 }
               }
             ],
@@ -12549,8 +13490,8 @@
               "$named": true,
               "$text": "1",
               "$span": {
-                "start": 713,
-                "end": 714
+                "start": 747,
+                "end": 748
               }
             },
             "_terminator": 20,
@@ -12571,8 +13512,8 @@
                 "$named": false,
                 "$text": "return",
                 "$span": {
-                  "start": 718,
-                  "end": 724
+                  "start": 752,
+                  "end": 758
                 }
               }
             ]
@@ -12592,8 +13533,8 @@
                   "$named": false,
                   "$text": "(",
                   "$span": {
-                    "start": 735,
-                    "end": 736
+                    "start": 769,
+                    "end": 770
                   }
                 },
                 {
@@ -12602,8 +13543,8 @@
                   "$named": false,
                   "$text": ")",
                   "$span": {
-                    "start": 737,
-                    "end": 738
+                    "start": 771,
+                    "end": 772
                   }
                 }
               ],
@@ -12617,8 +13558,8 @@
                   "$named": true,
                   "$text": "x",
                   "$span": {
-                    "start": 736,
-                    "end": 737
+                    "start": 770,
+                    "end": 771
                   }
                 }
               }
@@ -12638,8 +13579,8 @@
                     "$named": true,
                     "$text": "1",
                     "$span": {
-                      "start": 752,
-                      "end": 753
+                      "start": 786,
+                      "end": 787
                     }
                   },
                   "_body": [
@@ -12655,8 +13596,8 @@
                           "$named": false,
                           "$text": "break",
                           "$span": {
-                            "start": 765,
-                            "end": 770
+                            "start": 799,
+                            "end": 804
                           }
                         }
                       ]
@@ -12669,8 +13610,8 @@
                       "$named": false,
                       "$text": "case",
                       "$span": {
-                        "start": 747,
-                        "end": 751
+                        "start": 781,
+                        "end": 785
                       }
                     },
                     {
@@ -12679,8 +13620,8 @@
                       "$named": false,
                       "$text": ":",
                       "$span": {
-                        "start": 753,
-                        "end": 754
+                        "start": 787,
+                        "end": 788
                       }
                     }
                   ],
@@ -12706,8 +13647,8 @@
                           "$named": false,
                           "$text": "break",
                           "$span": {
-                            "start": 797,
-                            "end": 802
+                            "start": 831,
+                            "end": 836
                           }
                         }
                       ]
@@ -12720,8 +13661,8 @@
                       "$named": false,
                       "$text": "default",
                       "$span": {
-                        "start": 778,
-                        "end": 785
+                        "start": 812,
+                        "end": 819
                       }
                     },
                     {
@@ -12730,8 +13671,8 @@
                       "$named": false,
                       "$text": ":",
                       "$span": {
-                        "start": 785,
-                        "end": 786
+                        "start": 819,
+                        "end": 820
                       }
                     }
                   ]
@@ -12744,8 +13685,8 @@
                   "$named": false,
                   "$text": "{",
                   "$span": {
-                    "start": 739,
-                    "end": 740
+                    "start": 773,
+                    "end": 774
                   }
                 },
                 {
@@ -12754,8 +13695,8 @@
                   "$named": false,
                   "$text": "}",
                   "$span": {
-                    "start": 806,
-                    "end": 807
+                    "start": 840,
+                    "end": 841
                   }
                 }
               ]
@@ -12767,8 +13708,8 @@
                 "$named": false,
                 "$text": "switch",
                 "$span": {
-                  "start": 728,
-                  "end": 734
+                  "start": 762,
+                  "end": 768
                 }
               }
             ],
@@ -12796,8 +13737,8 @@
                     "$named": true,
                     "$text": "hello",
                     "$span": {
-                      "start": 817,
-                      "end": 822
+                      "start": 851,
+                      "end": 856
                     }
                   }
                 ],
@@ -12808,8 +13749,8 @@
                     "$named": false,
                     "$text": "\"",
                     "$span": {
-                      "start": 816,
-                      "end": 817
+                      "start": 850,
+                      "end": 851
                     }
                   },
                   {
@@ -12818,8 +13759,8 @@
                     "$named": false,
                     "$text": "\"",
                     "$span": {
-                      "start": 822,
-                      "end": 823
+                      "start": 856,
+                      "end": 857
                     }
                   }
                 ]
@@ -12833,8 +13774,8 @@
                 "$named": false,
                 "$text": "throw",
                 "$span": {
-                  "start": 810,
-                  "end": 815
+                  "start": 844,
+                  "end": 849
                 }
               }
             ],
@@ -12859,8 +13800,8 @@
                   "$named": false,
                   "$text": "{",
                   "$span": {
-                    "start": 831,
-                    "end": 832
+                    "start": 865,
+                    "end": 866
                   }
                 },
                 {
@@ -12869,8 +13810,8 @@
                   "$named": false,
                   "$text": "}",
                   "$span": {
-                    "start": 833,
-                    "end": 834
+                    "start": 867,
+                    "end": 868
                   }
                 }
               ],
@@ -12890,8 +13831,8 @@
                   "$named": true,
                   "$text": "e",
                   "$span": {
-                    "start": 844,
-                    "end": 845
+                    "start": 878,
+                    "end": 879
                   }
                 },
                 "$other": [
@@ -12901,8 +13842,8 @@
                     "$named": false,
                     "$text": "(",
                     "$span": {
-                      "start": 843,
-                      "end": 844
+                      "start": 877,
+                      "end": 878
                     }
                   },
                   {
@@ -12911,8 +13852,8 @@
                     "$named": false,
                     "$text": ")",
                     "$span": {
-                      "start": 845,
-                      "end": 846
+                      "start": 879,
+                      "end": 880
                     }
                   }
                 ]
@@ -12929,8 +13870,8 @@
                     "$named": false,
                     "$text": "{",
                     "$span": {
-                      "start": 847,
-                      "end": 848
+                      "start": 881,
+                      "end": 882
                     }
                   },
                   {
@@ -12939,8 +13880,8 @@
                     "$named": false,
                     "$text": "}",
                     "$span": {
-                      "start": 849,
-                      "end": 850
+                      "start": 883,
+                      "end": 884
                     }
                   }
                 ],
@@ -12953,8 +13894,8 @@
                   "$named": false,
                   "$text": "catch",
                   "$span": {
-                    "start": 837,
-                    "end": 842
+                    "start": 871,
+                    "end": 876
                   }
                 }
               ],
@@ -12979,8 +13920,8 @@
                     "$named": false,
                     "$text": "{",
                     "$span": {
-                      "start": 861,
-                      "end": 862
+                      "start": 895,
+                      "end": 896
                     }
                   },
                   {
@@ -12989,8 +13930,8 @@
                     "$named": false,
                     "$text": "}",
                     "$span": {
-                      "start": 863,
-                      "end": 864
+                      "start": 897,
+                      "end": 898
                     }
                   }
                 ],
@@ -13003,8 +13944,8 @@
                   "$named": false,
                   "$text": "finally",
                   "$span": {
-                    "start": 853,
-                    "end": 860
+                    "start": 887,
+                    "end": 894
                   }
                 }
               ]
@@ -13016,8 +13957,8 @@
                 "$named": false,
                 "$text": "try",
                 "$span": {
-                  "start": 827,
-                  "end": 830
+                  "start": 861,
+                  "end": 864
                 }
               }
             ],
@@ -13046,12 +13987,13 @@
             "$named": false,
             "$text": "}",
             "$span": {
-              "start": 865,
-              "end": 866
+              "start": 899,
+              "end": 900
             }
           }
         ],
         "$slotOrder": [
+          "statements",
           "statements",
           "statements",
           "statements",
@@ -13084,17 +14026,17 @@
         "body"
       ]
     },
-    "expectedOutput": "module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
+    "expectedOutput": "module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n"
   },
   {
     "kind": "roundtrip",
     "grammar": "typescript",
-    "sourceIn": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
+    "sourceIn": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))",
-    "wrappedText": "module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedSourceOut": "module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression (parenthesized_expression_typed (true)))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier))) right: (null) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (number)))) condition: (binary_expression left: (identifier) right: (number)) increment: (update_expression (update_expression_postfix argument: (identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression (parenthesized_expression_typed (true))) consequence: (statement_block) alternative: (else_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) statements: (expression_statement expression: (number)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression (parenthesized_expression_typed (identifier))) body: (switch_body cases: (switch_case value: (number) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string (string_double elements: (unescaped_double_string_fragment)))) statements: (try_statement body: (statement_block automatic_semicolon: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block automatic_semicolon: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block automatic_semicolon: (automatic_semicolon)))) automatic_semicolon: (automatic_semicolon)))",
+    "wrappedText": "module Foo {\n    break;\n    continue;\n    debugger;\n    do {}while (true);\n    for (x in null) {}\n    for (;;) {}\n    for (let i = 0; i < 3; i++) {}\n    if (true) {}else {}\n    1;\n    return ;\n    switch (x) {\n        case 1:\n            break;\n        default:\n            break;\n    }\n    throw\"hello\";\n    try {}\n    catch (e) {}\n    finally {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -13237,8 +14179,8 @@
           "$named": false,
           "$text": "break",
           "$span": {
-            "start": 765,
-            "end": 770
+            "start": 799,
+            "end": 804
           }
         }
       ]
@@ -13272,8 +14214,8 @@
           "$named": false,
           "$text": "break",
           "$span": {
-            "start": 797,
-            "end": 802
+            "start": 831,
+            "end": 836
           }
         }
       ]
@@ -13515,8 +14457,8 @@
           "$named": false,
           "$text": "(",
           "$span": {
-            "start": 691,
-            "end": 692
+            "start": 725,
+            "end": 726
           }
         },
         {
@@ -13525,8 +14467,8 @@
           "$named": false,
           "$text": ")",
           "$span": {
-            "start": 696,
-            "end": 697
+            "start": 730,
+            "end": 731
           }
         }
       ],
@@ -13565,8 +14507,8 @@
           "$named": false,
           "$text": "(",
           "$span": {
-            "start": 735,
-            "end": 736
+            "start": 769,
+            "end": 770
           }
         },
         {
@@ -13575,8 +14517,8 @@
           "$named": false,
           "$text": ")",
           "$span": {
-            "start": 737,
-            "end": 738
+            "start": 771,
+            "end": 772
           }
         }
       ],
@@ -13590,8 +14532,8 @@
           "$named": true,
           "$text": "x",
           "$span": {
-            "start": 736,
-            "end": 737
+            "start": 770,
+            "end": 771
           }
         }
       }
@@ -13808,6 +14750,301 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "for_statement",
+    "input": {
+      "$type": 197,
+      "$source": 0,
+      "$named": true,
+      "_initializer": {
+        "$type": 191,
+        "$source": 0,
+        "$named": true,
+        "_kind": 126,
+        "_declarators": [
+          {
+            "$type": 192,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 411,
+              "$source": 0,
+              "$named": true,
+              "_name": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "i",
+                "$span": {
+                  "start": 697,
+                  "end": 698
+                }
+              },
+              "_value": {
+                "$type": 98,
+                "$source": 0,
+                "$named": true,
+                "$text": "0",
+                "$span": {
+                  "start": 701,
+                  "end": 702
+                }
+              },
+              "$other": [
+                {
+                  "$type": 36,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "=",
+                  "$span": {
+                    "start": 699,
+                    "end": 700
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "name",
+                "value"
+              ]
+            }
+          }
+        ],
+        "_terminator": 20,
+        "$slotOrder": [
+          "kind",
+          "declarators",
+          "terminator"
+        ]
+      },
+      "_condition": {
+        "$type": 251,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "i",
+          "$span": {
+            "start": 704,
+            "end": 705
+          }
+        },
+        "_operator": 75,
+        "_right": {
+          "$type": 98,
+          "$source": 0,
+          "$named": true,
+          "$text": "3",
+          "$span": {
+            "start": 708,
+            "end": 709
+          }
+        },
+        "$slotOrder": [
+          "left",
+          "operator",
+          "right"
+        ]
+      },
+      "_increment": {
+        "$type": 253,
+        "$source": 0,
+        "$named": true,
+        "_content": {
+          "$type": 399,
+          "$source": 0,
+          "$named": true,
+          "_argument": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "i",
+            "$span": {
+              "start": 711,
+              "end": 712
+            }
+          },
+          "_operator": 156,
+          "$slotOrder": [
+            "argument",
+            "operator"
+          ]
+        }
+      },
+      "_body": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_automatic_semicolon": true,
+        "$other": [
+          {
+            "$type": 5,
+            "$source": 0,
+            "$named": false,
+            "$text": "{",
+            "$span": {
+              "start": 716,
+              "end": 717
+            }
+          },
+          {
+            "$type": 6,
+            "$source": 0,
+            "$named": false,
+            "$text": "}",
+            "$span": {
+              "start": 718,
+              "end": 719
+            }
+          }
+        ],
+        "_statements": []
+      },
+      "$other": [
+        {
+          "$type": 18,
+          "$source": 0,
+          "$named": false,
+          "$text": "for",
+          "$span": {
+            "start": 688,
+            "end": 691
+          }
+        },
+        {
+          "$type": 19,
+          "$source": 0,
+          "$named": false,
+          "$text": "(",
+          "$span": {
+            "start": 692,
+            "end": 693
+          }
+        },
+        {
+          "$type": 21,
+          "$source": 0,
+          "$named": false,
+          "$text": ")",
+          "$span": {
+            "start": 714,
+            "end": 715
+          }
+        }
+      ],
+      "$slotOrder": [
+        "initializer",
+        "condition",
+        "increment",
+        "body"
+      ]
+    },
+    "expectedOutput": "for (let i = 0; i < 3; i++) {}\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "for (let i = 0; i < 3; i++) { }",
+    "pattern": "for_statement",
+    "edits": [],
+    "expectedSourceOut": "for (let i = 0; i < 3; i++) {}\n",
+    "expectedReparseTree": "(for_statement initializer: (lexical_declaration declarators: (variable_declarator (variable_declarator_plain name: (identifier) value: (number)))) condition: (binary_expression left: (identifier) right: (number)) increment: (update_expression (update_expression_postfix argument: (identifier))) body: (statement_block automatic_semicolon: (automatic_semicolon)))",
+    "wrappedText": "for (let i = 0; i < 3; i++) {}\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "binary_expression",
+    "input": {
+      "$type": 251,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "i",
+        "$span": {
+          "start": 704,
+          "end": 705
+        }
+      },
+      "_operator": 75,
+      "_right": {
+        "$type": 98,
+        "$source": 0,
+        "$named": true,
+        "$text": "3",
+        "$span": {
+          "start": 708,
+          "end": 709
+        }
+      },
+      "$slotOrder": [
+        "left",
+        "operator",
+        "right"
+      ]
+    },
+    "expectedOutput": "i < 3"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "i < 3",
+    "pattern": "binary_expression",
+    "edits": [],
+    "expectedSourceOut": "i < 3",
+    "expectedReparseTree": "(binary_expression left: (identifier) right: (number))",
+    "wrappedText": "let _ = i < 3;",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "update_expression",
+    "input": {
+      "$type": 253,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 399,
+        "$source": 0,
+        "$named": true,
+        "_argument": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "i",
+          "$span": {
+            "start": 711,
+            "end": 712
+          }
+        },
+        "_operator": 156,
+        "$slotOrder": [
+          "argument",
+          "operator"
+        ]
+      }
+    },
+    "expectedOutput": "i++"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "i++",
+    "pattern": "update_expression",
+    "edits": [],
+    "expectedSourceOut": "i++",
+    "expectedReparseTree": "(update_expression (update_expression_postfix argument: (identifier)))",
+    "wrappedText": "let _ = i++;",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "if_statement",
     "input": {
       "$type": 195,
@@ -13824,8 +15061,8 @@
             "$named": false,
             "$text": "(",
             "$span": {
-              "start": 691,
-              "end": 692
+              "start": 725,
+              "end": 726
             }
           },
           {
@@ -13834,8 +15071,8 @@
             "$named": false,
             "$text": ")",
             "$span": {
-              "start": 696,
-              "end": 697
+              "start": 730,
+              "end": 731
             }
           }
         ],
@@ -13868,8 +15105,8 @@
               "$named": false,
               "$text": "{",
               "$span": {
-                "start": 707,
-                "end": 708
+                "start": 741,
+                "end": 742
               }
             },
             {
@@ -13878,8 +15115,8 @@
               "$named": false,
               "$text": "}",
               "$span": {
-                "start": 709,
-                "end": 710
+                "start": 743,
+                "end": 744
               }
             }
           ],
@@ -13892,8 +15129,8 @@
             "$named": false,
             "$text": "else",
             "$span": {
-              "start": 702,
-              "end": 706
+              "start": 736,
+              "end": 740
             }
           }
         ]
@@ -13905,8 +15142,8 @@
           "$named": false,
           "$text": "if",
           "$span": {
-            "start": 688,
-            "end": 690
+            "start": 722,
+            "end": 724
           }
         }
       ],
@@ -13943,8 +15180,8 @@
         "$named": true,
         "$text": "1",
         "$span": {
-          "start": 713,
-          "end": 714
+          "start": 747,
+          "end": 748
         }
       },
       "_terminator": 20,
@@ -13982,8 +15219,8 @@
           "$named": false,
           "$text": "return",
           "$span": {
-            "start": 718,
-            "end": 724
+            "start": 752,
+            "end": 758
           }
         }
       ]
@@ -14020,8 +15257,8 @@
             "$named": false,
             "$text": "(",
             "$span": {
-              "start": 735,
-              "end": 736
+              "start": 769,
+              "end": 770
             }
           },
           {
@@ -14030,8 +15267,8 @@
             "$named": false,
             "$text": ")",
             "$span": {
-              "start": 737,
-              "end": 738
+              "start": 771,
+              "end": 772
             }
           }
         ],
@@ -14045,8 +15282,8 @@
             "$named": true,
             "$text": "x",
             "$span": {
-              "start": 736,
-              "end": 737
+              "start": 770,
+              "end": 771
             }
           }
         }
@@ -14066,8 +15303,8 @@
               "$named": true,
               "$text": "1",
               "$span": {
-                "start": 752,
-                "end": 753
+                "start": 786,
+                "end": 787
               }
             },
             "_body": [
@@ -14083,8 +15320,8 @@
                     "$named": false,
                     "$text": "break",
                     "$span": {
-                      "start": 765,
-                      "end": 770
+                      "start": 799,
+                      "end": 804
                     }
                   }
                 ]
@@ -14097,8 +15334,8 @@
                 "$named": false,
                 "$text": "case",
                 "$span": {
-                  "start": 747,
-                  "end": 751
+                  "start": 781,
+                  "end": 785
                 }
               },
               {
@@ -14107,8 +15344,8 @@
                 "$named": false,
                 "$text": ":",
                 "$span": {
-                  "start": 753,
-                  "end": 754
+                  "start": 787,
+                  "end": 788
                 }
               }
             ],
@@ -14134,8 +15371,8 @@
                     "$named": false,
                     "$text": "break",
                     "$span": {
-                      "start": 797,
-                      "end": 802
+                      "start": 831,
+                      "end": 836
                     }
                   }
                 ]
@@ -14148,8 +15385,8 @@
                 "$named": false,
                 "$text": "default",
                 "$span": {
-                  "start": 778,
-                  "end": 785
+                  "start": 812,
+                  "end": 819
                 }
               },
               {
@@ -14158,8 +15395,8 @@
                 "$named": false,
                 "$text": ":",
                 "$span": {
-                  "start": 785,
-                  "end": 786
+                  "start": 819,
+                  "end": 820
                 }
               }
             ]
@@ -14172,8 +15409,8 @@
             "$named": false,
             "$text": "{",
             "$span": {
-              "start": 739,
-              "end": 740
+              "start": 773,
+              "end": 774
             }
           },
           {
@@ -14182,8 +15419,8 @@
             "$named": false,
             "$text": "}",
             "$span": {
-              "start": 806,
-              "end": 807
+              "start": 840,
+              "end": 841
             }
           }
         ]
@@ -14195,8 +15432,8 @@
           "$named": false,
           "$text": "switch",
           "$span": {
-            "start": 728,
-            "end": 734
+            "start": 762,
+            "end": 768
           }
         }
       ],
@@ -14241,8 +15478,8 @@
               "$named": true,
               "$text": "hello",
               "$span": {
-                "start": 817,
-                "end": 822
+                "start": 851,
+                "end": 856
               }
             }
           ],
@@ -14253,8 +15490,8 @@
               "$named": false,
               "$text": "\"",
               "$span": {
-                "start": 816,
-                "end": 817
+                "start": 850,
+                "end": 851
               }
             },
             {
@@ -14263,8 +15500,8 @@
               "$named": false,
               "$text": "\"",
               "$span": {
-                "start": 822,
-                "end": 823
+                "start": 856,
+                "end": 857
               }
             }
           ]
@@ -14278,8 +15515,8 @@
           "$named": false,
           "$text": "throw",
           "$span": {
-            "start": 810,
-            "end": 815
+            "start": 844,
+            "end": 849
           }
         }
       ],
@@ -14321,8 +15558,8 @@
             "$named": false,
             "$text": "{",
             "$span": {
-              "start": 831,
-              "end": 832
+              "start": 865,
+              "end": 866
             }
           },
           {
@@ -14331,8 +15568,8 @@
             "$named": false,
             "$text": "}",
             "$span": {
-              "start": 833,
-              "end": 834
+              "start": 867,
+              "end": 868
             }
           }
         ],
@@ -14352,8 +15589,8 @@
             "$named": true,
             "$text": "e",
             "$span": {
-              "start": 844,
-              "end": 845
+              "start": 878,
+              "end": 879
             }
           },
           "$other": [
@@ -14363,8 +15600,8 @@
               "$named": false,
               "$text": "(",
               "$span": {
-                "start": 843,
-                "end": 844
+                "start": 877,
+                "end": 878
               }
             },
             {
@@ -14373,8 +15610,8 @@
               "$named": false,
               "$text": ")",
               "$span": {
-                "start": 845,
-                "end": 846
+                "start": 879,
+                "end": 880
               }
             }
           ]
@@ -14391,8 +15628,8 @@
               "$named": false,
               "$text": "{",
               "$span": {
-                "start": 847,
-                "end": 848
+                "start": 881,
+                "end": 882
               }
             },
             {
@@ -14401,8 +15638,8 @@
               "$named": false,
               "$text": "}",
               "$span": {
-                "start": 849,
-                "end": 850
+                "start": 883,
+                "end": 884
               }
             }
           ],
@@ -14415,8 +15652,8 @@
             "$named": false,
             "$text": "catch",
             "$span": {
-              "start": 837,
-              "end": 842
+              "start": 871,
+              "end": 876
             }
           }
         ],
@@ -14441,8 +15678,8 @@
               "$named": false,
               "$text": "{",
               "$span": {
-                "start": 861,
-                "end": 862
+                "start": 895,
+                "end": 896
               }
             },
             {
@@ -14451,8 +15688,8 @@
               "$named": false,
               "$text": "}",
               "$span": {
-                "start": 863,
-                "end": 864
+                "start": 897,
+                "end": 898
               }
             }
           ],
@@ -14465,8 +15702,8 @@
             "$named": false,
             "$text": "finally",
             "$span": {
-              "start": 853,
-              "end": 860
+              "start": 887,
+              "end": 894
             }
           }
         ]
@@ -14478,8 +15715,8 @@
           "$named": false,
           "$text": "try",
           "$span": {
-            "start": 827,
-            "end": 830
+            "start": 861,
+            "end": 864
           }
         }
       ],

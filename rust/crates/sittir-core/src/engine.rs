@@ -17,7 +17,8 @@ use crate::options::ResolvedOptions;
 use crate::read_node::{read_node, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::splice::apply_edits as splice_apply_edits;
-use crate::types::{Edit, FormatRecord, NodeData, Source};
+use crate::slot::NodeCoordinate;
+use crate::types::{Edit, FormatRecord, KindId, NodeData, Source};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -579,5 +580,11 @@ mod tests {
 impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
     fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
         self.get(&tree_id).map(|tree| &tree.source)
+    }
+
+    fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
+        let tree = self.get(&coord.tree_id())?;
+        let index = tree.local_index(coord.handle).ok()?;
+        ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
     }
 }
