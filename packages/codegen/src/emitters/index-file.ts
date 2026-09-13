@@ -45,7 +45,7 @@ export function emitIndex(_config: EmitIndexConfig): string {
 		"export { createEngine } from './engine.js';",
 		"export type { EngineOptions } from './engine.js';",
 		'',
-		'// Backend selection (spec 012) — native vs. typescript fallback shim.',
+		'// Backend selection — native vs. typescript fallback shim.',
 		"export { getActiveBackend } from './backend.js';",
 		"export type { BackendName, BackendStatus } from './backend.js';",
 		''

@@ -10,6 +10,7 @@ import type { SeqRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel } from '../node-model.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
+import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from './sub-factories.test.ts';
 
 describe('node-model emitter', () => {
 	it('serializes per-value parseKind without slot-level aliasSources', () => {
@@ -65,5 +66,31 @@ describe('node-model emitter', () => {
 		expect(serialized).not.toContain('storageKindId');
 		expect(serialized).not.toContain('parseKindId');
 		expect(serialized).not.toContain('resolvedKindId');
+	});
+});
+
+describe('seats', () => {
+	it('serializes the seat of every hoisted slot value', () => {
+		const model = buildNodeModel(twoChoiceSlotsNodeMap());
+		const header = model.nodes.find((n) => n.kind === 'header')!;
+		const content = (header as { slots: { name: string; values: { seat?: unknown }[] }[] }).slots.find((s) => s.name === 'content')!;
+		expect(content.values.map((v) => v.seat)).toEqual([
+			{ kind: '_header_lhs', shape: 'arm', mount: 'lhs' },
+			{ kind: '_header_kind', shape: 'arm', mount: 'kind' }
+		]);
+		const clause = buildNodeModel(clauseNodeMap()).nodes.find((n) => n.kind === 'clause')! as {
+			slots: { values: { seat?: unknown }[] }[];
+		};
+		expect(clause.slots.flatMap((s) => s.values).find((v) => v.seat)?.seat).toEqual({
+			kind: '_clause_group',
+			shape: 'splice'
+		});
+		const comparison = buildNodeModel(comparisonNodeMap()).nodes.find((n) => n.kind === 'comparison')! as {
+			slots: { name: string; values: { seat?: unknown }[] }[];
+		};
+		expect(comparison.slots.find((s) => s.name === 'comparators')!.values[0]!.seat).toEqual({
+			kind: '_comparison_comparator',
+			shape: 'elements'
+		});
 	});
 });

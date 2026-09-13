@@ -39,6 +39,22 @@ var import_grammar = __toESM(require("tree-sitter-rust/grammar.js"), 1);
 var base = import_grammar.default;
 var base_default = base;
 
+// packages/codegen/src/dsl/annotations.ts
+function withAnnotations(rule, extra) {
+  const node = rule;
+  if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
+    const content = node.content;
+    return {
+      ...node,
+      content: { ...content, annotations: { ...content.annotations, ...extra } }
+    };
+  }
+  return { ...node, annotations: { ...node.annotations, ...extra } };
+}
+function withHoistedAnnotation(rule) {
+  return withAnnotations(rule, { hoisted: true });
+}
+
 // packages/codegen/src/types/runtime-shapes.ts
 function extractSymbolName(v) {
   if (!v || typeof v !== "object") return void 0;
@@ -87,6 +103,15 @@ var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
 var isBlankType = (t) => typeEq(t, "BLANK");
+function matchesEmpty(rule) {
+  const t = rule.type;
+  if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+  const members = rule.members ?? [];
+  if (isChoiceType(t)) return members.some(matchesEmpty);
+  if (isSeqType(t)) return members.every(matchesEmpty);
+  if (isPrecWrapper(rule)) return matchesEmpty(rule.content);
+  return false;
+}
 
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
@@ -107,17 +132,39 @@ var ApplyPathSkip = class extends Error {
     this.name = "ApplyPathSkip";
   }
 };
+function splitSegments(pathStr) {
+  const parts = [];
+  let current = "";
+  let inLiteral = false;
+  for (const c of pathStr) {
+    if (c === '"') {
+      inLiteral = !inLiteral;
+      current += c;
+    } else if (c === "/" && !inLiteral) {
+      parts.push(current);
+      current = "";
+    } else {
+      current += c;
+    }
+  }
+  if (inLiteral) throw new Error(`parsePath: unterminated literal in path '${pathStr}'`);
+  parts.push(current);
+  return parts;
+}
 function parsePath(pathStr) {
+  if (pathStr === ".") return [];
   if (typeof pathStr !== "string" || pathStr.length === 0) {
     throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
   }
   if (pathStr.startsWith("/") || pathStr.endsWith("/")) {
     throw new Error(`parsePath: leading/trailing slash not allowed in path '${pathStr}'`);
   }
-  const parts = pathStr.split("/");
+  const parts = splitSegments(pathStr);
   const segments = [];
   for (const part of parts) {
-    if (part === "_") {
+    if (part.length >= 2 && part.startsWith('"') && part.endsWith('"')) {
+      segments.push({ kind: "literal", text: part.slice(1, -1) });
+    } else if (part === "_") {
       segments.push({ kind: "wildcard" });
     } else if (/^-?\d+$/.test(part)) {
       segments.push({ kind: "index", value: Number(part) });
@@ -126,10 +173,10 @@ function parsePath(pathStr) {
     } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
       segments.push({ kind: "fieldName", name: part.slice(0, -1) });
     } else if (part === "*") {
-      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`);
+      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard`);
     } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
       throw new Error(
-        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`
+        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead`
       );
     } else {
       throw new Error(
@@ -162,6 +209,7 @@ function applyPath(rule, segments, patch, precStack) {
     case "fieldName":
       return descendThroughNamedField(rule, head.name, rest, patch, precStack);
     case "index":
+    case "literal":
     case "wildcard": {
       if (isContainerType(t)) {
         return applyToMembers(rule, head, rest, patch, precStack);
@@ -247,6 +295,15 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
         `applyPath: index ${head.value} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
       );
     }
+    case "literal": {
+      if (literalTextOfMember(contentOf(rule)) !== head.text) {
+        throw new ApplyPathSkip(
+          `applyPath: '${rule.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+        );
+      }
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+      return reconstructWrapper(rule, newContent);
+    }
     case "kind-match":
     case "fieldName": {
       throw new Error(
@@ -275,6 +332,15 @@ function descendThroughAlias(rule, head, rest, patch, precStack) {
       throw new ApplyPathSkip(
         `applyPath: index ${head.value} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
       );
+    }
+    case "literal": {
+      if (literalTextOfMember(contentOf(rule)) !== head.text) {
+        throw new ApplyPathSkip(
+          `applyPath: '${rule.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+        );
+      }
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+      return reconstructWrapper(rule, newContent);
     }
     case "kind-match":
     case "fieldName": {
@@ -391,6 +457,7 @@ function reconstructWrapper(rule, newContent) {
     return carryOverProperties(rule, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
   }
   if (isFieldType(t)) {
+    if (isFieldType(newContent.type)) return newContent;
     const name = rule.name;
     return carryOverProperties(rule, nativeRequired("field")(name, newContent));
   }
@@ -440,6 +507,12 @@ function applyToMembers(rule, head, rest, patch, precStack) {
   switch (head.kind) {
     case "index":
       return applyToIndexedMember(rule, members, head.value, rest, patch, precStack);
+    case "literal": {
+      const at = members.findIndex((m) => literalTextOfMember(m) === head.text);
+      if (at < 0) throw new ApplyPathSkip(`applyPath: no literal ${JSON.stringify(head.text)} in ${rule.type}`);
+      members[at] = applyPath(members[at], rest, patch, precStack);
+      return reconstructContainer(rule, members);
+    }
     case "wildcard":
       return applyWildcardToMembers(rule, members, rest, patch, precStack);
     case "kind-match":
@@ -453,6 +526,10 @@ function applyToMembers(rule, head, rest, patch, precStack) {
       );
     }
   }
+}
+function literalTextOfMember(rule) {
+  const r = rule;
+  return r.type === "STRING" && typeof r.value === "string" ? r.value : void 0;
 }
 function applyToIndexedMember(rule, members, indexValue, rest, patch, precStack) {
   const idx = indexValue < 0 ? members.length + indexValue : indexValue;
@@ -514,6 +591,12 @@ function isVariantPlaceholder(v) {
 function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
+function variantMintName(v) {
+  return [...v.nestedUnder ?? [], v.name].join("_");
+}
+function nestVariant(v, nestedUnder) {
+  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
+}
 
 // packages/codegen/src/dsl/primitives/arm.ts
 function isArmDefault(v) {
@@ -523,12 +606,9 @@ var arm = {
   default: { __sittirPlaceholder: "default" }
 };
 
-// packages/codegen/src/dsl/primitives/preference.ts
-function isPreference(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
-}
-function preference(label, defaultArm) {
-  return { __sittirPlaceholder: "preference", label, default: defaultArm };
+// packages/codegen/src/dsl/primitives/group.ts
+function isGroupPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
 }
 
 // packages/codegen/src/types/rule-types.ts
@@ -1364,15 +1444,15 @@ function diagnoseParseKindCollisions(input) {
     const byWireIdentity = /* @__PURE__ */ new Map();
     for (const value of bucket) {
       const wireKey = value.storageKindId !== void 0 ? `#${value.storageKindId}` : `?${parseKey}`;
-      const group = byWireIdentity.get(wireKey) ?? [];
-      group.push(value);
-      byWireIdentity.set(wireKey, group);
+      const group2 = byWireIdentity.get(wireKey) ?? [];
+      group2.push(value);
+      byWireIdentity.set(wireKey, group2);
     }
-    for (const group of byWireIdentity.values()) {
-      const groupStorageIdentities = distinct(group.map((value) => kindKey(value.storageKindId, value.storageKind)));
+    for (const group2 of byWireIdentity.values()) {
+      const groupStorageIdentities = distinct(group2.map((value) => kindKey(value.storageKindId, value.storageKind)));
       if (groupStorageIdentities.length <= 1) continue;
-      if (distinct(group.map((value) => value.structuralSignature)).length === 1) continue;
-      const storageKinds = distinct(group.map((value) => value.storageKind));
+      if (distinct(group2.map((value) => value.structuralSignature)).length === 1) continue;
+      const storageKinds = distinct(group2.map((value) => value.storageKind));
       diagnostics.push({
         code: "parsekind-noninjective",
         severity: "error",
@@ -1421,9 +1501,8 @@ function distinct(values) {
 function withContent(node, content) {
   return { ...node, content };
 }
-function enrich(baseInput, config) {
+function enrich(baseInput) {
   const base2 = baseInput;
-  const enrichSkip = new Set(config?.skip ?? []);
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
@@ -1443,11 +1522,11 @@ function enrich(baseInput, config) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule && !enrichSkip.has(name) ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
+    enrichedRules[name] = rule ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
   }
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
-    if (!rule || enrichSkip.has(name)) continue;
+    if (!rule) continue;
     if (!isSeqType(rule.type)) continue;
     const info = separatedListBodyInfo(rule);
     if (!info?.flankCarrying || info.form !== "head") continue;
@@ -1457,18 +1536,17 @@ function enrich(baseInput, config) {
   }
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
-    if (!rule || enrichSkip.has(name)) continue;
+    if (!rule) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
   }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
-  separatedListEnrichSkip = enrichSkip;
   hiddenListPromotionNames = /* @__PURE__ */ new Map();
   hoistKwRules = kwRules;
   hoistWordMatcher = wordMatcher;
   try {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
-      if (!rule || enrichSkip.has(name)) continue;
+      if (!rule) continue;
       enrichedRules[name] = applyHoistAndUnalias(
         name,
         rule,
@@ -1485,7 +1563,6 @@ function enrich(baseInput, config) {
     }
   } finally {
     separatedListNameCounts = null;
-    separatedListEnrichSkip = null;
     hiddenListPromotionNames = null;
     hoistKwRules = null;
     hoistWordMatcher = void 0;
@@ -1501,7 +1578,7 @@ function enrich(baseInput, config) {
       clauseGroupRules,
       supertypeNames
     );
-    clauseGroupRules[groupName] = groupUnaliasResult.rule;
+    clauseGroupRules[groupName] = withHoistedAnnotation(groupUnaliasResult.rule);
     for (const diagnostic of groupUnaliasResult.diagnostics) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
     }
@@ -1509,7 +1586,6 @@ function enrich(baseInput, config) {
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
   for (const name of Object.keys(mergedRules)) {
-    if (enrichSkip.has(name)) continue;
     const rule = mergedRules[name];
     if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
   }
@@ -1807,6 +1883,11 @@ function isEligibleFieldReferent(name, mergedRules, supertypeNames) {
 function sameElementShape(a, b) {
   return ruleKey(a) === ruleKey(b);
 }
+function hasFieldedArm(rule) {
+  const cursor = peelTransparentElementWrappers(rule);
+  const members = cursor.members;
+  return isChoiceType(cursor.type) && Array.isArray(members) && members.some((m) => isFieldType(m.type));
+}
 function peelTransparentElementWrappers(rule) {
   if (isPrecWrapper(rule)) {
     return peelTransparentElementWrappers(rule.content);
@@ -1852,6 +1933,8 @@ function fieldSeparatedListElements(seqRule, reserve) {
     if (!detected || detected.trailing) continue;
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
+    if (hasFieldedArm(leading)) continue;
+    if (matchesEmpty(leading)) continue;
     const fieldName = reserve(deriveElementFieldName(leading));
     const innerMembers = inner.members;
     const newInnerMembers = innerMembers.slice();
@@ -2637,7 +2720,6 @@ function collectSeparatedListNameProposals(rules) {
   return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
 }
 var separatedListNameCounts = null;
-var separatedListEnrichSkip = null;
 var hiddenListPromotionNames = null;
 var hoistKwRules = null;
 var hoistWordMatcher;
@@ -2646,7 +2728,6 @@ function promoteHiddenListRef(member, rulesBag) {
   if (!isSymbolType(member.type)) return member;
   const name = member.name;
   if (typeof name !== "string" || !name.startsWith("_")) return member;
-  if (separatedListEnrichSkip?.has(name)) return member;
   let visibleName = hiddenListPromotionNames.get(name);
   if (visibleName === void 0) {
     const body = rulesBag[name];
@@ -3234,8 +3315,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     const registeredFlat = ambientPrec ? withContent(ambientPrec, flatBody) : flatBody;
     for (const candidate of candidates) {
       if (!nameFree(candidate)) continue;
-      const skipped = separatedListEnrichSkip !== null && (separatedListEnrichSkip.has(candidate) || separatedListEnrichSkip.has(`_${candidate}`));
-      return register(candidate, skipped ? registeredBody : registeredFlat);
+      return register(candidate, registeredFlat);
     }
   }
   if (enclosingFieldName !== void 0) {
@@ -3332,6 +3412,7 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     if (isSupertypeLike(body)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
     if (!promoted) return null;
+    rulesBag[name] = withHoistedAnnotation(body);
     visibleGroupHiddenNames.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
@@ -3429,12 +3510,12 @@ function walkFieldEnums(rule, rules, parentKind, out) {
 function buildCanonicalEnumNames(occurrences, rules) {
   const byKey = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    let group = byKey.get(occ.memberKey);
-    if (!group) {
-      group = [];
-      byKey.set(occ.memberKey, group);
+    let group2 = byKey.get(occ.memberKey);
+    if (!group2) {
+      group2 = [];
+      byKey.set(occ.memberKey, group2);
     }
-    group.push(occ);
+    group2.push(occ);
   }
   const existingNameCandidatesByMemberKey = /* @__PURE__ */ new Map();
   for (const [name, rule] of Object.entries(rules)) {
@@ -3453,17 +3534,17 @@ function buildCanonicalEnumNames(occurrences, rules) {
     existingRuleNameByMemberKey.set(key, candidates.sort()[0]);
   }
   const result = /* @__PURE__ */ new Map();
-  const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
-    const first = group[0];
-    const candidate = deriveCandidateName(group, existingRuleNameByMemberKey, first);
-    return { memberKey, group, first, index, ...candidate };
+  const groups = Array.from(byKey.entries()).map(([memberKey, group2], index) => {
+    const first = group2[0];
+    const candidate = deriveCandidateName(group2, existingRuleNameByMemberKey, first);
+    return { memberKey, group: group2, first, index, ...candidate };
   });
   groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
   const claimedNames = /* @__PURE__ */ new Set();
-  for (const group of groups) {
-    const chosenName = claimUniqueEnumName(group.name, rules, group.memberKey, claimedNames);
+  for (const group2 of groups) {
+    const chosenName = claimUniqueEnumName(group2.name, rules, group2.memberKey, claimedNames);
     claimedNames.add(chosenName);
-    result.set(group.memberKey, chosenName);
+    result.set(group2.memberKey, chosenName);
   }
   return result;
 }
@@ -3476,17 +3557,17 @@ function fieldEnumSiteKey(parentKind, fieldName) {
 function collectConflictingFieldEnumSites(occurrences) {
   const memberKeysBySite = /* @__PURE__ */ new Map();
   for (const occ of occurrences) {
-    const siteKey2 = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
-    let keys = memberKeysBySite.get(siteKey2);
+    const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+    let keys = memberKeysBySite.get(siteKey);
     if (!keys) {
       keys = /* @__PURE__ */ new Set();
-      memberKeysBySite.set(siteKey2, keys);
+      memberKeysBySite.set(siteKey, keys);
     }
     keys.add(occ.memberKey);
   }
   const conflicting = /* @__PURE__ */ new Set();
-  for (const [siteKey2, keys] of memberKeysBySite) {
-    if (keys.size > 1) conflicting.add(siteKey2);
+  for (const [siteKey, keys] of memberKeysBySite) {
+    if (keys.size > 1) conflicting.add(siteKey);
   }
   return conflicting;
 }
@@ -3519,7 +3600,7 @@ function enumMemberKeySlug(memberKey) {
     return encoded.length > 0 ? encoded : "empty";
   }).join("__");
 }
-function deriveCandidateName(group, existingRuleNameByMemberKey, first) {
+function deriveCandidateName(group2, existingRuleNameByMemberKey, first) {
   const existingName = existingRuleNameByMemberKey.get(first.memberKey);
   if (existingName !== void 0) {
     if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
@@ -3530,9 +3611,9 @@ function deriveCandidateName(group, existingRuleNameByMemberKey, first) {
     }
     return { name: existingName, priority: 0 };
   }
-  const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+  const allSameFieldName = group2.every((o) => o.fieldName === first.fieldName);
   if (allSameFieldName) {
-    const distinctParents = new Set(group.map((o) => o.parentKind)).size;
+    const distinctParents = new Set(group2.map((o) => o.parentKind)).size;
     if (distinctParents >= 2) {
       return { name: `_${first.fieldName}`, priority: 2 };
     }
@@ -3634,56 +3715,6 @@ function resolveToEnumMembersOneLevelDeep(target) {
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
-function armNamesOf(arm2) {
-  const node = arm2;
-  const names = [];
-  if (node.annotations?.variant !== void 0) names.push(node.annotations.variant);
-  if (node.type === "STRING" && typeof node.value === "string") names.push(node.value);
-  if (node.type === "ALIAS") {
-    const value = node.value;
-    const target = typeof value === "string" ? value : value?.name;
-    if (target !== void 0) names.push(target, target.replace(/^_+/, ""));
-    names.push(...armNamesOf(node.content));
-  }
-  if (node.type === "SYMBOL" && typeof node.name === "string") names.push(node.name, node.name.replace(/^_+/, ""));
-  if (isPrecWrapper(node)) names.push(...armNamesOf(node.content));
-  return names;
-}
-function applyPreference(rule, patch, kind) {
-  const node = rule;
-  if (node.type === "CHOICE" && Array.isArray(node.members)) {
-    let matched = false;
-    const members = node.members.map((arm2) => {
-      const isDefault = armNamesOf(arm2).includes(patch.default);
-      matched ||= isDefault;
-      return withAnnotations(arm2, { preference: patch.label, ...isDefault ? { default: true } : {} });
-    });
-    if (!matched) {
-      throw new Error(
-        `preference('${patch.label}', '${patch.default}') on '${kind}': no arm is spelled '${patch.default}' (arms: ${node.members.map((m) => armNamesOf(m)[0] ?? "?").join(", ")})`
-      );
-    }
-    return { ...node, members };
-  }
-  if (node.content !== void 0 && node.content !== null && typeof node.content === "object") {
-    return {
-      ...node,
-      content: applyPreference(node.content, patch, kind)
-    };
-  }
-  throw new Error(`preference('${patch.label}', '${patch.default}') on '${kind}': the rule is not a choice`);
-}
-function withAnnotations(rule, extra) {
-  const node = rule;
-  if (node?.type === "ALIAS" && node.content !== null && typeof node.content === "object") {
-    const content = node.content;
-    return {
-      ...node,
-      content: { ...content, annotations: { ...content.annotations, ...extra } }
-    };
-  }
-  return { ...node, annotations: { ...node.annotations, ...extra } };
-}
 function withVariantAnnotation(rule, variantName, parentKind) {
   return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
 }
@@ -3697,7 +3728,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -3817,20 +3848,20 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altMember = choiceMembers[resolvedAlt];
-    const visibleName = polymorphVisibleName(parentKind, p.v.name);
-    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+    const visibleName = polymorphVisibleName(parentKind, variantMintName(p.v));
+    const hiddenName = polymorphHiddenName(parentKind, variantMintName(p.v));
     const lift = enrichLiftArmOf(altMember);
     if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
     const altContent = lift === null ? altMember : lift.body;
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
+    const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
     refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
   }
-  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
+  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))));
   const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -3874,7 +3905,7 @@ function enrichLiftArmOf(member) {
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
 function renameEnrichLift(aliasMember, lift, hiddenName, visibleName) {
-  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, lift.body);
+  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, withHoistedAnnotation(lift.body));
   wireRegisterSymbolRename(lift.liftName, hiddenName);
   return {
     ...aliasMember,
@@ -3968,21 +3999,21 @@ function resolvePatch(patch, originalMember, precStack) {
   if (isArmDefault(patch)) {
     return withAnnotations(originalMember, { default: true });
   }
-  if (isPreference(patch)) {
-    return applyPreference(originalMember, patch, wireGetCurrentRuleKind() ?? "(unknown)");
+  if (isGroupPlaceholder(patch)) {
+    return withAnnotations(originalMember, { hoisted: true });
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
-    const visibleName = polymorphVisibleName(parentKind, patch.name);
+    const visibleName = polymorphVisibleName(parentKind, variantMintName(patch));
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
     if (originalMember.type === "ALIAS") {
       const lift = enrichLiftArmOf(originalMember);
       if (lift !== null) {
         return annotated(
-          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, patch.name), visibleName)
+          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, variantMintName(patch)), visibleName)
         );
       }
       return annotated({ ...originalMember, value: visibleName });
@@ -3993,7 +4024,7 @@ function resolvePatch(patch, originalMember, precStack) {
         metadata: makeRuleMetadata({ fieldSource: "override" })
       });
     }
-    const hiddenName = polymorphHiddenName(parentKind, patch.name);
+    const hiddenName = polymorphHiddenName(parentKind, variantMintName(patch));
     return annotated(
       registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
     );
@@ -4223,7 +4254,7 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     );
   }
   const body = factored ? factored.nonEmpty : originalMember;
-  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body))) {
+  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(withHoistedAnnotation(body)))) {
     throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
   }
   const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);
@@ -4237,19 +4268,6 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     return optional2(aliasNode);
   }
   return aliasNode;
-}
-function matchesEmpty(rule) {
-  const t = rule.type;
-  if (isBlankType(t)) return true;
-  if (isOptionalType(t)) return true;
-  if (isPlainRepeatType(t)) return true;
-  if (isChoiceType(t)) {
-    return membersOf2(rule).some((m) => matchesEmpty(m));
-  }
-  if (isSeqType(t)) {
-    return membersOf2(rule).every((m) => matchesEmpty(m));
-  }
-  return false;
 }
 function factorOutEmptiness(rule) {
   if (!matchesEmpty(rule)) return null;
@@ -4290,9 +4308,15 @@ function extractNonEmpty(rule) {
   return null;
 }
 
+// packages/codegen/src/dsl/primitives/preference.ts
+function isPreference(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
+}
+function preference(arm2) {
+  return { __sittirPlaceholder: "preference", default: arm2 };
+}
+
 // packages/codegen/src/dsl/primitives/spacing.ts
-var SPACING_ARMS = ["tight", "space", "newline"];
-var WHITESPACE_ARMS = ["tight", "space", "newline", "indent", "dedent"];
 var EMPTY_SEPARATOR_TOKEN = "empty";
 var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
 function parseSpacingLabel(name) {
@@ -4303,21 +4327,16 @@ function parseSpacingLabel(name) {
   if (token3 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token3 } : void 0;
   return side === void 0 ? void 0 : { token: token3, side };
 }
-function siteKey(slot, label) {
-  const spacing = parseSpacingLabel(label);
-  if (spacing === void 0) return `${slot}_${label}`;
-  return spacing.side === void 0 ? `${slot}_separator_space` : `${slot}_separator_space_${spacing.side}`;
+var SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+function parseSeamLabel(name) {
+  if (parseSpacingLabel(name) !== void 0) return void 0;
+  const m = SEAM_LABEL.exec(name);
+  return m ? { token: m[1], side: m[2] } : void 0;
 }
 var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
 function parseFlankAddress(key) {
   const m = FLANK_ADDRESS.exec(key);
   return m ? { kind: m[1], side: m[2] } : void 0;
-}
-function isSpacingArm(value) {
-  return SPACING_ARMS.includes(value);
-}
-function isWhitespaceArm(value) {
-  return WHITESPACE_ARMS.includes(value);
 }
 
 // packages/codegen/src/dsl/wire/wire.ts
@@ -4357,6 +4376,7 @@ function wireGetCurrentRuleKind() {
 function wire(config, base2) {
   const cfg = config;
   const baseArg = base2;
+  assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
@@ -4370,11 +4390,11 @@ function wire(config, base2) {
     visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
-    defaults: renderDefaultsOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg)),
+    options: cfg.options,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const patches = structuralPatchesOf(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
+  const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
   injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
@@ -4435,110 +4455,75 @@ function polymorphVisibleName(parentKind, suffix) {
 function polymorphHiddenName(parentKind, suffix) {
   return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
-var SLOT_KEY = /^[a-z_][a-z0-9_]*$/;
 function knownRuleNames(cfg, base2) {
   const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
-  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(baseRules)]);
+  return /* @__PURE__ */ new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
-function isSitePreferenceEntry(key, value) {
-  return SLOT_KEY.test(key) && isPreference(value);
+function isRetiredAddressKey(key, rules) {
+  if (rules.has(key) || rules.has(`_${key}`)) return false;
+  return parseSpacingLabel(key) !== void 0 || parseSeamLabel(key) !== void 0 || parseFlankAddress(key) !== void 0;
 }
-function isFlankDefaultKey(key, rules) {
-  return parseFlankAddress(key) !== void 0 && !rules.has(key) && !rules.has(`_${key}`);
-}
-function checkSpacingArm(at, arm2) {
-  if (!isSpacingArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${SPACING_ARMS.join(", ")}`);
-  return arm2;
-}
-function checkWhitespaceArm(at, arm2) {
-  if (!isWhitespaceArm(arm2)) throw new Error(`patches: ${at} defaults to '${arm2}', not one of ${WHITESPACE_ARMS.join(", ")}`);
-  return arm2;
-}
-function onePreference(kind, entry, what) {
-  const preferences = kindPreferencesOf(entry);
-  if (patchSetsOf(entry).length > 0 || preferences.length !== 1) {
-    throw new Error(`patches: '${kind}' is ${what} and takes exactly one preference(label, default)`);
-  }
-  return preferences[0];
-}
-function renderDefaultsOf(patches, rules) {
-  const labels = {};
-  const sites = {};
-  const site = (kind, address, value) => {
-    const own = sites[kind] ?? {};
-    if (address in own) throw new Error(`patches: ${kind} declares '${address}' twice`);
-    own[address] = value;
-    sites[kind] = own;
-  };
-  for (const [key, entry] of Object.entries(patches)) {
-    if (!entry) continue;
-    if (parseSpacingLabel(key) !== void 0) {
-      const { label, default: arm2 } = onePreference(key, entry, "a separator spacing preference");
-      if (label !== key) throw new Error(`patches: '${key}' is named by its gap; preference('${label}', \u2026) does not rename it`);
-      labels[key] = checkSpacingArm(`'${key}'`, arm2);
-      continue;
-    }
-    const flank = isFlankDefaultKey(key, rules) ? parseFlankAddress(key) : void 0;
-    if (flank !== void 0) {
-      const { label, default: arm2 } = onePreference(key, entry, "an array flank");
-      site(flank.kind, flank.side, { label, arm: checkWhitespaceArm(`'${key}'`, arm2) });
-      continue;
-    }
-    for (const patchMap of patchSetsOf(entry)) {
-      for (const [slot, value] of Object.entries(patchMap)) {
-        if (!isSitePreferenceEntry(slot, value)) continue;
-        const { label, default: arm2 } = value;
-        const address = siteKey(slot, label);
-        site(key, address, { label, arm: checkSpacingArm(`${key}.${address}`, arm2) });
-      }
+function assertNoSpacingAddressPatches(patches, rules) {
+  for (const key of Object.keys(patches)) {
+    if (!patches[key]) continue;
+    if (isRetiredAddressKey(key, rules)) {
+      throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
     }
   }
-  return Object.keys(labels).length === 0 && Object.keys(sites).length === 0 ? void 0 : { labels, sites };
-}
-function structuralPatchesOf(patches, rules) {
-  const out = {};
-  for (const [kind, entry] of Object.entries(patches)) {
-    if (!entry || parseSpacingLabel(kind) !== void 0 || isFlankDefaultKey(kind, rules)) continue;
-    const items = Array.isArray(entry) ? entry : [entry];
-    const kept = [];
-    for (const item of items) {
-      if (isPreference(item)) {
-        kept.push(item);
-        continue;
-      }
-      const structural = Object.fromEntries(Object.entries(item).filter(([k, v]) => !isSitePreferenceEntry(k, v)));
-      if (Object.keys(structural).length > 0) kept.push(structural);
-    }
-    if (kept.length > 0) out[kind] = kept.length === 1 ? kept[0] : kept;
-  }
-  return out;
 }
 function patchSetsOf(entry) {
   const items = Array.isArray(entry) ? entry : [entry];
-  return items.filter((item) => !isPreference(item));
+  return nestVariantsByPath(items.filter((item) => !isPreference(item)));
 }
-function kindPreferencesOf(entry) {
-  const items = Array.isArray(entry) ? entry : [entry];
-  return items.filter(isPreference);
+function nestVariantsByPath(sets) {
+  const variantAt = /* @__PURE__ */ new Map();
+  for (const set of sets) {
+    for (const [key, value] of Object.entries(set)) {
+      if (isVariantPlaceholder(value)) variantAt.set(key, value);
+    }
+  }
+  if (variantAt.size < 2) return sets;
+  const ancestorsOf = (key) => {
+    const segments = key.split("/");
+    const names = [];
+    for (let i = 1; i < segments.length; i++) {
+      const prefix = segments.slice(0, i).join("/");
+      const outer = variantAt.get(prefix);
+      if (outer !== void 0) names.push(outer.name);
+    }
+    return names;
+  };
+  return sets.map((set) => {
+    let changed = false;
+    const out = {};
+    for (const [key, value] of Object.entries(set)) {
+      if (!isVariantPlaceholder(value)) {
+        out[key] = value;
+        continue;
+      }
+      const nested = nestVariant(value, ancestorsOf(key));
+      changed ||= nested !== value;
+      out[key] = nested;
+    }
+    return changed ? out : set;
+  });
 }
 function composeOrSynthesizePatchedParents(rules, patches, context) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
-    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), kindPreferencesOf(entry), rules[kind], context);
+    rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
   }
 }
-function buildPatchedParentFn(kind, patchSets, preferences, userFn, context) {
+function buildPatchedParentFn(kind, patchSets, userFn, context) {
   const isHidden = kind.startsWith("_");
   return function wiredPatchedParent($, original) {
     const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
-    let result = patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
-    for (const pref of preferences) result = applyPreference(result, pref, kind);
-    return result;
+    return patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
   };
 }
 function placeholderHiddenName(value, parentKind) {
   if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, value.name);
+  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
   if (isAliasPlaceholder(value)) return `_${value.name}`;
   return void 0;
 }
@@ -4608,7 +4593,7 @@ function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
     const renamed = context.symbolRenames.size === 0 ? base2 : base2.map(
-      (group) => group.map((entry) => {
+      (group2) => group2.map((entry) => {
         const symbol = entry;
         const next = symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" ? context.symbolRenames.get(symbol.name) : void 0;
         return next === void 0 ? entry : symbolizeRef($, next);
@@ -4616,7 +4601,7 @@ function buildWiredConflictsFn(userConflicts, context) {
     );
     if (context.conflictGroups.length === 0) return renamed;
     const symbolized = context.conflictGroups.map(
-      (group) => group.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
+      (group2) => group2.map((name) => symbolizeRef($, context.symbolRenames.get(name) ?? name))
     );
     return [...renamed, ...symbolized];
   };
@@ -4816,6 +4801,11 @@ function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
   }
   return rule;
 }
+function stampHoistedFn(fn) {
+  return function hoistedRuleFn($, previous) {
+    return withHoistedAnnotation(fn($, previous));
+  };
+}
 function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
   return function visibleExternalsRewritingRuleFn($, previous) {
     const result = fn($, previous);
@@ -4886,7 +4876,8 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
       );
     }
     candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-    rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    const registered = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    rules[hiddenName] = section === "groups" ? stampHoistedFn(registered) : registered;
   }
   if (candidates.length === 0) return;
   const candidateNames = new Set(candidates.map((c) => c.name));
@@ -4994,27 +4985,7 @@ var token = globalThis.token;
 var grammar = globalThis.grammar;
 
 // packages/rust/grammar.sittir.ts
-var enrichedBase = enrich(base_default, {
-  // `tuple_type`'s separated list is extracted into its own
-  // `_tuple_type_elements` rule (`rules:` below) with every element
-  // position explicitly fielded, and `trait_bounds` fields its list's
-  // element position via its `bounds` field override —
-  // applyNodeChoiceFieldWrap's separated-list target fielding the same
-  // position first left those overrides with nothing to find: a hard
-  // `tree-sitter generate` failure for `tuple_type` (kind-match search
-  // came up empty) and an accessor-throw for `trait_bounds` (merged slot
-  // ended up empty).
-  // `function_modifiers` already fields EVERY position with a wildcard
-  // override (`_: field('modifier')` below) — same nested-field collision
-  // as `tuple_type`/`trait_bounds`, this time surfacing as a render-time
-  // unknown-kind-id error rather than a hard generate failure or an
-  // accessor-throw. `_where_predicates` regressed factory-render-parse
-  // (-2) and `_closure_parameters_optional1`/`_use_clauses` each
-  // regressed coverage (-1) when enabled — found via bisection against
-  // `validate:native`, root cause not further isolated (each is a small,
-  // contained loss, not a hard failure); left skipped until diagnosed.
-  skip: ["tuple_type", "trait_bounds", "function_modifiers"]
-});
+var enrichedBase = enrich(base_default);
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
@@ -5033,11 +5004,13 @@ var grammar_sittir_default = grammar(
         [$._attributed_type_parameter, $._type],
         [$._attributed_argument]
       ],
-      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._indent, $._dedent],
+      externals: ($, previous) => [...previous ?? [], $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+      supertypes: ($, previous) => [...previous ?? [], $._whitespace],
       visibleExternals: (_$) => ({
         _tight: string(""),
         _space: string(" "),
         _newline: string("\n"),
+        _blankline: string("\n\n"),
         _indent: indent(),
         _dedent: dedent()
       }),
@@ -5058,25 +5031,95 @@ var grammar_sittir_default = grammar(
         type_argument: ($) => seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
         match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
+      options: {
+        body: { before: preference("indent"), after: preference("dedent") },
+        gap: { separator: preference("newline") },
+        field_declaration_list_elements: {
+          'element:/separator/","/after': preference("newline"),
+          "element:/delimiter": preference("Delimiter.Trailing")
+        },
+        enum_variant_list_elements: {
+          'element:/separator/","/after': preference("newline"),
+          "element:/delimiter": preference("Delimiter.Trailing")
+        },
+        _: {
+          '_/separator/","/before': preference("tight"),
+          '_/separator/";"/before': preference("tight"),
+          '_/separator/"+"/before': preference("space"),
+          '_/separator/"+"/after': preference("space"),
+          '":"/after': preference("space"),
+          '"->"/before': preference("space"),
+          '"->"/after': preference("space"),
+          '"="/before': preference("space"),
+          '"="/after': preference("space"),
+          '"=>"/before': preference("space"),
+          '"=>"/after': preference("space"),
+          "operator:/before": preference("space"),
+          "operator:/after": preference("space"),
+          '"if"/after': preference("space"),
+          '"in"/after': preference("space")
+        },
+        source_file: {
+          "statements:/separator": preference("tight"),
+          "statements:/(_)/after": preference("blankline"),
+          "statements:/(attribute_item)/after": preference("newline")
+        },
+        delim_token_tree_brace: { "delim_tokens:/separator": preference("tight") },
+        delim_token_tree_bracket: { "delim_tokens:/separator": preference("tight") },
+        delim_token_tree_paren: { "delim_tokens:/separator": preference("tight") },
+        token_tree_brace: { "tokens:/separator": preference("tight") },
+        token_tree_bracket: { "tokens:/separator": preference("tight") },
+        token_tree_paren: { "tokens:/separator": preference("tight") },
+        token_tree_pattern_brace: { "token_patterns:/separator": preference("tight") },
+        token_tree_pattern_bracket: { "token_patterns:/separator": preference("tight") },
+        token_tree_pattern_paren: { "token_patterns:/separator": preference("tight") },
+        block: { before: preference("space"), "statements:/end": preference("newline") },
+        match_block: { before: preference("space") },
+        declaration_list: { before: preference("space") },
+        field_declaration_list: { before: preference("space") },
+        enum_variant_list: { before: preference("space") },
+        field_initializer_list: {
+          before: preference("space"),
+          '"{"/after': preference("space"),
+          '"}"/before': preference("space")
+        },
+        last_match_arm: { before: preference("newline") },
+        range_expression_binary: { "operator:/before": preference("tight"), "operator:/after": preference("tight") },
+        range_expression_prefix: { "operator:/after": preference("tight") },
+        unary_expression: { "operator:/after": preference("tight") },
+        token_tree_punctuation: { '","/after': preference("space") },
+        _bindings: {
+          'block/"{"/after': "body/before",
+          'block/"}"/before': "body/after",
+          'match_block/"{"/after': "body/before",
+          'match_block/"}"/before': "body/after",
+          'declaration_list/"{"/after': "body/before",
+          'declaration_list/"}"/before': "body/after",
+          'field_declaration_list/"{"/after': "body/before",
+          'field_declaration_list/"}"/before': "body/after",
+          'enum_variant_list/"{"/after': "body/before",
+          'enum_variant_list/"}"/before': "body/after",
+          "array_expression_list/attributes:/separator": "gap/separator",
+          "array_expression_semi/attributes:/separator": "gap/separator",
+          "attributed_argument/attribute_item:/separator": "gap/separator",
+          "attributed_enum_variant/attribute_item:/separator": "gap/separator",
+          "attributed_field_declaration/attribute_item:/separator": "gap/separator",
+          "attributed_ordered_field/attribute_item:/separator": "gap/separator",
+          "attributed_type_parameter/attribute_item:/separator": "gap/separator",
+          "block/statements:/separator": "gap/separator",
+          "declaration_list/declarations:/separator": "gap/separator",
+          "field_initializer/attribute_item:/separator": "gap/separator",
+          "function_modifiers/modifier:/separator": "gap/separator",
+          "last_match_arm/attributes:/separator": "gap/separator",
+          "match_arm/attributes:/separator": "gap/separator",
+          "match_block_arms/match_arm:/separator": "gap/separator",
+          "shorthand_field_initializer/attributes:/separator": "gap/separator",
+          "token_repetition/tokens:/separator": "gap/separator",
+          "token_repetition_pattern/token_patterns:/separator": "gap/separator",
+          "tuple_expression/attributes:/separator": "gap/separator"
+        }
+      },
       patches: {
-        comma_separator_space_before: preference("comma_separator_space_before", "tight"),
-        semi_separator_space_before: preference("semi_separator_space_before", "tight"),
-        empty_separator_space: preference("empty_separator_space", "newline"),
-        block_start: preference("block_body_start", "indent"),
-        block_end: preference("block_body_end", "dedent"),
-        declaration_list_start: preference("block_body_start", "indent"),
-        declaration_list_end: preference("block_body_end", "dedent"),
-        _token_tree_paren: { tokens: preference("empty_separator_space", "tight") },
-        _token_tree_bracket: { tokens: preference("empty_separator_space", "tight") },
-        _token_tree_brace: { tokens: preference("empty_separator_space", "tight") },
-        _delim_token_tree_paren: { delim_tokens: preference("empty_separator_space", "tight") },
-        _delim_token_tree_bracket: { delim_tokens: preference("empty_separator_space", "tight") },
-        _delim_token_tree_brace: { delim_tokens: preference("empty_separator_space", "tight") },
-        _token_tree_pattern_paren: { token_patterns: preference("empty_separator_space", "tight") },
-        _token_tree_pattern_bracket: { token_patterns: preference("empty_separator_space", "tight") },
-        _token_tree_pattern_brace: { token_patterns: preference("empty_separator_space", "tight") },
-        token_repetition: { tokens: preference("empty_separator_space", "tight") },
-        token_repetition_pattern: { token_patterns: preference("empty_separator_space", "tight") },
         parameter: {
           "1": field2("name")
         },
@@ -5246,7 +5289,9 @@ var grammar_sittir_default = grammar(
         base_field_initializer: { 1: field2("value") },
         unsafe_block: { 1: field2("body") },
         try_block: { 1: field2("body") },
-        declaration_list: { 1: field2("declarations") },
+        declaration_list: {
+          1: field2("declarations")
+        },
         expression_statement: {
           0: variant("with_semi"),
           1: variant("block_ending")
@@ -5284,8 +5329,8 @@ var grammar_sittir_default = grammar(
         macro_definition: { "2/0": variant("paren"), "2/1": variant("bracket"), "2/2": variant("brace") },
         range_pattern: [
           {
-            "0/1/0": variant("left_with_right"),
-            "0/1/1": variant("left_bare"),
+            "0/1/0": variant("with_right"),
+            "0/1/1": variant("bare"),
             "1": variant("prefix")
           },
           { "0": variant("with_left") }
@@ -5308,6 +5353,7 @@ var grammar_sittir_default = grammar(
         impl_item: { "3/0/0/0": arm.default }
       },
       rules: {
+        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
         // tuple_type's separated list realized as its own kind — the
         // delimiter is a fact of the list, so the list is a top-level
         // rule carrying it (hidden rule + visible alias, matching the

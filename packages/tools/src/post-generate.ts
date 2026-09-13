@@ -46,15 +46,15 @@ function writeFile(path: string, content: string): void {
  *
  * MUST run after the napi rebuild (which `runCodegen` performs before returning):
  * the validator's wrapped-tree candidate walk requires the NATIVE engine, and
- * Askama bakes the just-emitted templates into the .node at compile time, so
- * extracting before the rebuild would capture fixtures against stale templates.
+ * the generated render bodies compile into the .node at build time, so
+ * extracting before the rebuild would capture fixtures against a stale binary.
  *
  * The FR-011 required-kinds gate lives in `extractParityFixtures` — it throws
  * when the corpus doesn't cover the exception kinds, so regen fails loudly rather
  * than emitting an insufficient fixture set.
  */
 export async function emitParityFixtures(grammar: string): Promise<void> {
-	const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
+	const { extractParityFixtures, serializeFixtures, fixturesOutputPath, leftOutOutputPath, serializeLeftOut } =
 		await import('./validate/parity-fixtures.ts');
 	const extracted = await extractParityFixtures(grammar);
 	const fxPath = fixturesOutputPath(grammar);
@@ -85,8 +85,15 @@ export async function emitParityFixtures(grammar: string): Promise<void> {
 	}
 
 	writeFile(fxPath, serializeFixtures(extracted.fixtures));
+	writeFile(leftOutOutputPath(grammar), serializeLeftOut(extracted.leftOutByKind));
+	const leftOutEntries = Object.entries(extracted.leftOutByKind);
+	const leftOutTotal = leftOutEntries.reduce((sum, [, n]) => sum + n, 0);
+	const dropped =
+		leftOutTotal > 0
+			? `; ${leftOutTotal} render left out, not reproducible without the tree: ${leftOutEntries.map(([kind, n]) => (n > 1 ? `${kind}×${n}` : kind)).join(', ')}`
+			: '';
 	console.log(
-		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
+		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds${dropped})`
 	);
 	// Surface FR-011 coverage gap warnings as non-fatal stderr messages.
 	for (const w of extracted.warnings) {

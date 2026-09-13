@@ -39,36 +39,16 @@ import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts'
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { flanksOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
-import {
-	ADJACENT,
-	DEDENT_MARK,
-	EMPTY,
-	INDENT_NEWLINE,
-	SPACE,
-	branches,
-	concat,
-	edgeChar,
-	equalBodies,
-	equalNodes,
-	gate,
-	isExpression,
-	isPlainText,
-	mentions,
-	opensAsTag,
-	refersTo,
-	slot as slotRef,
-	text,
-	weight,
-	whitespace,
-	type Body
-} from './render-body.ts';
+import { flanksOf, isSeamChoice, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
+import type { KindEntryLike } from '../compiler/generated-metadata.ts';
+import { ADJACENT, DEDENT as DEDENT_BODY, EMPTY, INDENT as INDENT_BODY, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	renderRules?: RenderRules;
 	grammarSha?: string;
+	kindEntries?: readonly KindEntryLike[];
 }
 
 export interface EmittedTemplates {
@@ -189,7 +169,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			})(),
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
-					literalMergePairs(getTransportProjection(config.nodeMap).literals).map(([a, b]) => a * 128 + b)
+					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(([a, b]) => a * 128 + b)
 				);
 				return (l: string, r: string) =>
 					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
@@ -200,7 +180,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const combos = new Set<string>();
 				const lefts = new Set<string>();
 				const rights = new Set<string>();
-				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals)) {
+				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? [])) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
 					lefts.add(String.fromCharCode(a));
 					rights.add(String.fromCharCode(b));
@@ -220,10 +200,6 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	emitBranch(node: AssembledNode): void {
-		this.#emitNode(node);
-	}
-
-	emitGroup(node: AssembledNode): void {
 		this.#emitNode(node);
 	}
 
@@ -256,6 +232,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		}
 		if (process.env['SITTIR_SLOT_PRESERVATION'] !== '0') {
 			assertSlotPreservation(node, body);
+			assertNoDuplicateSlots(node, body);
 		}
 		this.#bodies.set(node.kind, body);
 	}
@@ -286,6 +263,7 @@ function renderRuleEdge(
 		case SEQ: {
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			for (const m of members) {
+				if (isSeamChoice(m)) continue;
 				const e = renderRuleEdge(m, side, ctx, new Set(visiting));
 				if (e !== 'empty') return e;
 			}
@@ -326,6 +304,7 @@ function describeVariesReason(rule: RenderRule, side: 'starts' | 'ends', ctx: Em
 		case SEQ: {
 			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
 			for (const m of members) {
+				if (isSeamChoice(m)) continue;
 				const e = renderRuleEdge(m, side, ctx, new Set(visiting));
 				if (e !== 'empty') return describeVariesReason(m, side, ctx, new Set(visiting));
 			}
@@ -440,9 +419,9 @@ function classifySeqBoundary(
 	return spaced ? STATIC_SPACED : STATIC_GLUED;
 }
 
-function joinStaticSeam(body: Body, segment: Body, spaced: boolean): Body {
-	if (spaced) return concat(body, SPACE, segment);
-	return isExpression(segment) ? concat(body, ADJACENT, segment) : concat(body, segment);
+function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {
+	if (spaced) return concat(body, seams.length > 0 ? seams : SPACE, segment);
+	return concat(body, isExpression(segment) ? ADJACENT : EMPTY, seams, segment);
 }
 
 export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
@@ -457,7 +436,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
 			}
-			return text(rule.value);
+			return literalBody(rule.value);
 		}
 
 		case PATTERN: {
@@ -482,7 +461,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			const partRules: RenderRule[] = [];
 			const partIndices: number[] = [];
 			rule.members.forEach((m, i) => {
-				const part = emitRule(m, ctx);
+				const part = isSeamChoice(m) ? seam(seamPartOf(m).fieldName) : emitRule(m, ctx);
 				if (part.length === 0) return;
 				parts.push(part);
 				partRules.push(m);
@@ -496,20 +475,43 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				const memberIdx = partIndices[rightPartIdx]!;
 				rule.members[memberIdx] = { ...rule.members[memberIdx]!, staticSeamBefore: resolution };
 			};
+			const isSeam = (b: Body): boolean => b.every((n) => n.kind === 'seam');
+			const leadingSeams = (b: Body): number => b.findIndex((n) => n.kind !== 'seam');
+			const trailingSeams = (b: Body): number => b.length - [...b].reverse().findIndex((n) => n.kind !== 'seam');
 			const joinParts = (segments: Body[], firstIdx: number): Body => {
-				let body = segments[0]!;
-				for (let i = 1; i < segments.length; i++) {
+				let body: Body | undefined;
+				let seams: Body = EMPTY;
+				let lastRealPartIdx = -1;
+				for (let i = 0; i < segments.length; i++) {
+					const whole = segments[i]!;
+					if (isSeam(whole)) {
+						seams = concat(seams, whole);
+						continue;
+					}
 					const rightPartIdx = firstIdx + i;
+					if (body === undefined) {
+						body = concat(seams, whole);
+						seams = EMPTY;
+						lastRealPartIdx = rightPartIdx;
+						continue;
+					}
+					const lead = leadingSeams(whole);
+					const segment = whole.slice(lead);
+					const cut = trailingSeams(body);
+					seams = concat(body.slice(cut), seams, whole.slice(0, lead));
+					body = body.slice(0, cut);
 					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					const l = edgeChar(body, 'ends');
-					const r = edgeChar(segments[i]!, 'starts');
+					const r = edgeChar(segment, 'starts');
 					if (stamped !== undefined) {
 						const spaced = stamped === 'spaced';
 						recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
-						body = joinStaticSeam(body, segments[i]!, spaced);
+						body = joinStaticSeam(body, segment, spaced, seams);
+						seams = EMPTY;
+						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
-					const leftRule = partRules[rightPartIdx - 1]!;
+					const leftRule = partRules[lastRealPartIdx]!;
 					const rightRule = partRules[rightPartIdx]!;
 					const classification = classifySeqBoundary(l, r, leftRule, rightRule, ctx);
 					if (classification.resolution === 'runtime-varying') {
@@ -521,15 +523,19 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 								tallySeamVariesReason(`right:${describeVariesReason(rightRule, 'starts', ctx, new Set())}`);
 							if (classification.mergePairAmbiguous) tallySeamVariesReason('merge-pair-ambiguous');
 						}
-						body = concat(body, segments[i]!);
+						body = concat(body, seams, segment);
+						seams = EMPTY;
+						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
 					recordSeam(l, r, classification.resolution);
 					const isGlued = classification.resolution !== 'static-spaced';
 					stampSeam(rightPartIdx, isGlued ? 'glued' : 'spaced');
-					body = joinStaticSeam(body, segments[i]!, !isGlued);
+					body = joinStaticSeam(body, segment, !isGlued, seams);
+					seams = EMPTY;
+					lastRealPartIdx = rightPartIdx;
 				}
-				return body;
+				return concat(body ?? EMPTY, seams);
 			};
 			const seqBody = joinParts(parts, 0);
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional' && seqBody.length !== 0) {
@@ -547,11 +553,11 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			return emitChoice(rule, ctx);
 
 		case INDENT:
-			return whitespace(INDENT_NEWLINE);
+			return INDENT_BODY;
 		case NEWLINE:
-			return whitespace('\n');
+			return text('\n');
 		case DEDENT:
-			return whitespace(DEDENT_MARK);
+			return DEDENT_BODY;
 
 		case SUPERTYPE:
 			return EMPTY;
@@ -771,13 +777,13 @@ function emitFieldNameSlot(slotName: string, rule: RenderRule, ctx: EmitCtx): Bo
 function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx): Body {
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
-		return text(rule.literal);
+		return literalBody(rule.literal);
 	}
 	if (rule.nonterminal === false) {
 		const fixed = fixedTextOfKind(ctx.nodeMap.nodes.get(rule.name)) ?? collectFixedLiteral(ctx.rules[rule.name]!);
 		if (fixed === undefined)
 			throw new Error(`emitSymbol: '${rule.name}' is nonterminal: false but renders no fixed text`);
-		return fixed.trim() === '' ? whitespace(fixed) : text(fixed);
+		return literalBody(fixed);
 	}
 
 	const isInlineableHiddenHelper =
@@ -899,6 +905,7 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<RenderRule, { type: 'SEQ' 
 }
 
 function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefined {
+	if (isSeamChoice(content)) return undefined;
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
 		const key = contentFieldName.toLowerCase();
@@ -959,11 +966,14 @@ function scanArmBody(body: Body): {
 				case 'text':
 					if (depth === 0 && node.text.trim() !== '') depth0Payload = true;
 					break;
-				case 'whitespace':
 				case 'adjacent':
+				case 'indent':
+				case 'dedent':
+				case 'tokenSeam':
 					if (depth === 0) depth0Payload = true;
 					break;
 				case 'space':
+				case 'seam':
 					break;
 				case 'slot':
 					if (depth === 0) {
@@ -993,7 +1003,150 @@ function restoreEmittedSlotNames(ctx: EmitCtx, snapshot: ReadonlySet<string>): v
 	for (const s of snapshot) ctx.emittedSlotNames.add(s);
 }
 
+/** The kinds a choice arm admits into the slot it carries: the names of its
+ *  symbol members, a supertype standing for its members. `undefined` when the
+ *  arm carries no symbol or more than one, since a literal cannot be gated on
+ *  two slots at once. */
+function armSlotKinds(arm: RenderRule): readonly string[] | undefined {
+	const kinds: string[] = [];
+	let carriers = 0;
+	const walk = (rule: RenderRule): void => {
+		const flanks = flanksOf(rule);
+		if (flanks !== undefined) {
+			walk(flanks.inner);
+			return;
+		}
+		if (isSeamChoice(rule)) return;
+		switch (rule.type) {
+			case SYMBOL:
+				carriers += 1;
+				if (!kinds.includes(rule.name)) kinds.push(rule.name);
+				return;
+			case PATTERN:
+				carriers += 1;
+				return;
+			case CHOICE: {
+				const before = carriers;
+				let most = 0;
+				for (const member of rule.members) {
+					carriers = before;
+					walk(member);
+					most = Math.max(most, carriers - before);
+				}
+				carriers = before + most;
+				return;
+			}
+			case SEQ:
+				for (const member of rule.members) walk(member);
+				return;
+			default:
+				return;
+		}
+	};
+	walk(arm);
+	return carriers === 1 && kinds.length > 0 ? kinds : undefined;
+}
+
+/** A choice's field name pushed down onto the members that carry a slot, so
+ *  each arm emits as the parser tags it: the symbol takes the field, a
+ *  literal beside it stays the arm's own text. */
+function withFieldOnCarriers(rule: RenderRule, fieldName: string): RenderRule {
+	if (isSeamChoice(rule)) return rule;
+	switch (rule.type) {
+		case SYMBOL:
+		case PATTERN:
+			return (rule as { fieldName?: string }).fieldName === undefined
+				? ({ ...rule, fieldName } as RenderRule)
+				: rule;
+		case SEQ:
+		case CHOICE:
+			return { ...rule, members: rule.members.map((m) => withFieldOnCarriers(m, fieldName)) } as RenderRule;
+		default:
+			return rule;
+	}
+}
+
+const isLiteralOnly = (body: Body): boolean =>
+	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
+
+/** The arms of a choice that share one slot and differ only by the literal
+ *  they put beside it, folded into the slot once and each literal gated on
+ *  the kinds its arm admits. `for (init; cond; inc)`: the initializer's
+ *  expression arm ends in `;` and its declaration arms do not, so the `;` is
+ *  written when the initializer is an expression. Nothing else about the
+ *  choice qualifies: an arm without a slot, an arm with two, or arms whose
+ *  text before the slot differs leave the choice to the other resolutions. */
+function emitKindGatedLiterals(
+	rule: Extract<RenderRule, { type: 'CHOICE' }>,
+	fieldName: string | undefined,
+	ctx: EmitCtx
+): Body | undefined {
+	if (rule.members.length < 2) return undefined;
+	if (!rule.members.some((m) => m.type === SEQ && m.members.some((x) => x.type === STRING))) return undefined;
+	const trace = process.env.SITTIR_TRACE_GATED !== undefined && ctx.currentKind === process.env.SITTIR_TRACE_GATED;
+	const bail = (why: string): undefined => {
+		if (trace) process.stderr.write(`[gated] ${ctx.currentKind} field=${fieldName}: ${why}\n`);
+		return undefined;
+	};
+	interface Arm {
+		/** The body up to and through the slot; `undefined` for an arm that is
+		 *  a literal kind alone, which the slot renders as itself. */
+		prefix: Body | undefined;
+		residual: Body;
+		kinds: readonly string[];
+	}
+	const arms: Arm[] = [];
+	let key: string | undefined;
+	const beforeSlots = new Set(ctx.emittedSlotNames);
+	for (const member of rule.members) {
+		const arm = fieldName === undefined ? member : withFieldOnCarriers(member, fieldName);
+		const kinds = armSlotKinds(arm);
+		if (kinds === undefined) return bail(`arm carries no single slot: ${JSON.stringify(arm).slice(0, 160)}`);
+		const body = emitRule(arm, ctx);
+		restoreEmittedSlotNames(ctx, beforeSlots);
+		const at = body.findIndex((n) => n.kind === 'slot');
+		if (at < 0) {
+			if (kinds.length !== 1 || !isLiteralOnly(body)) return bail(`slotless arm not a lone literal kind: ${JSON.stringify(body).slice(0, 160)}`);
+			arms.push({ prefix: undefined, residual: EMPTY, kinds });
+			continue;
+		}
+		if (body.slice(0, at).some((n) => n.kind === 'if')) return bail('gate before the slot');
+		const slotName = (body[at] as { name: string }).name;
+		if (key !== undefined && slotName !== key) return bail(`slot ${slotName} differs from ${key}`);
+		key = slotName;
+		const residual = body.slice(at + 1);
+		if (!isLiteralOnly(residual)) return bail(`residual not literal-only: ${JSON.stringify(residual).slice(0, 160)}`);
+		arms.push({ prefix: body.slice(0, at + 1), residual, kinds });
+	}
+	if (key === undefined) return bail('no arm carries the slot');
+	const prefix = arms.find((a) => a.prefix !== undefined)!.prefix!;
+	if (!arms.every((a) => a.prefix === undefined || equalBodies(a.prefix, prefix))) return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
+	const gated: { kinds: string[]; body: Body }[] = [];
+	for (const arm of arms) {
+		if (arm.residual.length === 0) continue;
+		const same = gated.find((g) => equalBodies(g.body, arm.residual));
+		if (same) {
+			for (const k of arm.kinds) if (!same.kinds.includes(k)) same.kinds.push(k);
+		} else {
+			gated.push({ kinds: [...arm.kinds], body: arm.residual });
+		}
+	}
+	if (gated.length === 0) return bail('no arm has a residual literal');
+	ctx.emittedSlotNames.add(key);
+	return concat(
+		prefix,
+		branches(
+			gated.map((g) => ({ test: key!, kinds: g.kinds, body: g.body })),
+			undefined
+		)
+	);
+}
+
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): Body {
+	{
+		const gated = emitKindGatedLiterals(rule, (rule as { fieldName?: string }).fieldName, ctx);
+		if (gated !== undefined) return gated;
+	}
 	const slot = lookupSlot(rule, ctx);
 	if (slot) {
 		const choiceRuleId = (rule as { id?: string }).id;
@@ -1209,6 +1362,16 @@ function selfGatedSlotUnits(body: Body): SlotUnit[] | null {
 	return units.length > 0 ? units : null;
 }
 
+export function assertNoDuplicateSlots(node: AssembledNode, body: Body): void {
+	const duplicated = duplicateSlots(body);
+	if (duplicated.length > 0) {
+		throw new Error(
+			`TemplateEmitter duplicate-slot violation on kind '${node.kind}' (${node.modelType}): ` +
+				`slot(s) [${duplicated.join(', ')}] appear more than once on one path of the body: ${JSON.stringify(body)}`
+		);
+	}
+}
+
 function assertSlotPreservation(node: AssembledNode, body: Body): void {
 	const slots = node.slots;
 	if (slots.length === 0) return;
@@ -1258,12 +1421,10 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				break;
 			case 'branch':
 			case 'envelope':
-				if (node.hoisted) te.emitGroup(node);
-				else te.emitBranch(node);
+				te.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (node.hoisted) te.emitGroup(node);
-				else te.emitBranch(node);
+				te.emitBranch(node);
 				break;
 			case 'supertype':
 				break;

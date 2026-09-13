@@ -24,7 +24,7 @@
  */
 
 import type { AnyNodeData } from '@sittir/types';
-import type { PolymorphVariantMap, FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
+import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
@@ -42,8 +42,22 @@ import {
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
+	type IrSurface,
+	loadIrSurface,
 	buildFactoryNodeFromReference
 } from './common.ts';
+
+/**
+ * Which factory surface a run builds through: `raw` calls each kind's raw
+ * builder, where a hoisted child is an ordinary child; `ir` calls the
+ * author-facing `ir` binding and its mount routes, projecting a hoisted child
+ * by its seat, and counts only kinds bound on `ir`.
+ */
+export type FactorySurface = 'raw' | 'ir';
+
+export interface ValidateFactoryRenderParseOptions {
+	readonly surface?: FactorySurface;
+}
 
 /**
  * Find a node anywhere in the tree by its exact byte span, preferring the
@@ -303,9 +317,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
-	polymorphVariants: PolymorphVariantMap;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
-	kindLiteralText: ReadonlyMap<number, string> | undefined;
 	importFailure: { message: string } | null;
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
@@ -314,9 +326,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
-	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
-	let kindLiteralText: ReadonlyMap<number, string> | undefined = undefined;
 	if (!factoryModulePath) {
 		return {
 			factoryMap,
@@ -324,9 +334,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
-			kindLiteralText,
 			importFailure: null
 		};
 	}
@@ -340,7 +348,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		polymorphVariants = mapData.polymorphVariants;
 		const typesModulePath = FACTORY_MODULE_PATHS[grammar]?.replace('factories/raw.ts', 'types.ts');
 		if (typesModulePath) {
 			try {
@@ -359,7 +366,6 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				if (kindNamesMap) {
 					kindNameFromId = (id: number) => kindNamesMap.get(id);
 				}
-				kindLiteralText = typesModule.KIND_LITERAL_TEXT as ReadonlyMap<number, string> | undefined;
 			} catch (e) {
 				// Without kindNameFromId every walked candidate is rejected (its
 				// numeric $type can't be resolved to a kind name), so the validator
@@ -374,9 +380,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 					fieldAliasMap,
 					factoryFields,
 					factorySlots,
-					polymorphVariants,
 					kindNameFromId,
-					kindLiteralText,
 					importFailure: { message }
 				};
 			}
@@ -387,9 +391,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
-			kindLiteralText,
 			importFailure: null
 		};
 	} catch (e) {
@@ -401,9 +403,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			polymorphVariants,
 			kindNameFromId,
-			kindLiteralText,
 			importFailure: { message }
 		};
 	}
@@ -469,6 +469,7 @@ function recordFactoryModuleLoadFailure(
  * @param fieldAliasMap - Camel→snake alias map used by `nodeToConfig`.
  * @param factoryFields - Declared field list per kind used by `nodeToConfig`.
  * @param factorySlots - Declared slot metadata per kind used by `nodeToConfig`.
+ * @param surface - The `ir` surface when the run builds through it.
  * @param entryName - Corpus entry name, used when recording errors.
  * @param inputSource - Original source text, used when recording errors.
  * @param errors - Mutable error list to append to on factory throw.
@@ -485,7 +486,7 @@ function buildFactoryNodeData(
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
 	factorySlots: Record<string, Record<string, FactorySlotMeta>>,
-	polymorphVariants: PolymorphVariantMap,
+	surface: IrSurface | undefined,
 	entryName: string,
 	inputSource: string,
 	errors: {
@@ -495,8 +496,7 @@ function buildFactoryNodeData(
 		input?: string;
 		rendered?: string;
 	}[],
-	kindNameFromId?: (id: number) => string | undefined,
-	kindLiteralText?: ReadonlyMap<number, string>
+	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData | null {
 	const factory = factoryMap[renderedKind];
 	if (!factory) return null;
@@ -504,8 +504,8 @@ function buildFactoryNodeData(
 		return buildFactoryNodeFromReference(
 			referenceData,
 			renderedKind,
-			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, kindLiteralText }
+			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId }
 		) as AnyNodeData | null;
 	} catch (e) {
 		errors.push({
@@ -520,7 +520,8 @@ function buildFactoryNodeData(
 
 export async function validateFactoryRenderParse(
 	grammar: string,
-	backend: 'native' = 'native'
+	backend: 'native' = 'native',
+	options: ValidateFactoryRenderParseOptions = {}
 ): Promise<FactoryRenderParseResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -535,13 +536,12 @@ export async function validateFactoryRenderParse(
 		fieldAliasMap,
 		factoryFields,
 		factorySlots,
-		polymorphVariants,
 		kindNameFromId,
-		kindLiteralText,
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -566,7 +566,10 @@ export async function validateFactoryRenderParse(
 	let total = 0;
 
 	recordFactoryModuleLoadFailure(importFailure, errors);
-	if (importFailure) {
+	if (options.surface === 'ir' && surface === undefined) {
+		errors.push({ kind: '(ir-surface-load)', message: `[validate-factory-roundtrip] no ir module for '${grammar}'` });
+	}
+	if (importFailure || (options.surface === 'ir' && surface === undefined)) {
 		return {
 			grammar,
 			total: 0,
@@ -590,7 +593,7 @@ export async function validateFactoryRenderParse(
 	} else {
 		try {
 			const probeTree = parser.parse('') as TSTree;
-			const probeHandle = buildReadHandle(grammar, probeTree, '', backend, undefined);
+			const probeHandle = await buildReadHandle(grammar, probeTree, '', backend, undefined);
 			if (!probeHandle.read) {
 				readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
 			}
@@ -625,7 +628,7 @@ export async function validateFactoryRenderParse(
 		// left child fields as unresolved stubs — the root cause of the
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
-		const handle = buildReadHandle(grammar, tree1, entry.source, backend, undefined);
+		const handle = await buildReadHandle(grammar, tree1, entry.source, backend, undefined);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
 		const seen = new Set<string>();
@@ -633,6 +636,7 @@ export async function validateFactoryRenderParse(
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
 			const span = (w as { $span?: { start: number; end: number } }).$span;
 			if (span == null) return;
 			const dedup = `${sourceKind}@${span.start}:${span.end}`;
@@ -674,12 +678,11 @@ export async function validateFactoryRenderParse(
 					fieldAliasMap,
 					factoryFields,
 					factorySlots,
-					polymorphVariants,
+					surface,
 					entry.name,
 					inputSource,
 					errors,
-					kindNameFromId,
-					kindLiteralText
+					kindNameFromId
 				);
 				if (factoryData === null) {
 					// No factory for this kind, or the factory threw (already

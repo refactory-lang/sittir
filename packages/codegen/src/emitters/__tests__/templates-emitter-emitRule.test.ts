@@ -25,7 +25,6 @@ import type {
 } from '../../types/rule.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
-import { DEDENT_MARK, INDENT_NEWLINE } from '../render-body.ts';
 import { showBody } from './support/show-body.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
@@ -111,6 +110,59 @@ describe('emitRule — pattern', () => {
 	});
 });
 
+describe('emitRule — kind-gated literal', () => {
+	// `for (init; cond; inc)`: the initializer is a choice of a declaration arm,
+	// an expression arm followed by `;`, and an empty-statement arm. The slot
+	// is emitted once and the `;` under a gate naming the expression arm's kinds.
+	function forInitializer(): ChoiceRule {
+		return {
+			type: CHOICE,
+			id: 'for_initializer',
+			members: [
+				{ type: SYMBOL, name: 'lexical_declaration', fieldName: 'initializer' } as SymbolRule,
+				{
+					type: SEQ,
+					members: [{ type: SYMBOL, name: '_expressions', fieldName: 'initializer' } as SymbolRule, { type: STRING, value: ';' }]
+				} as SeqRule,
+				{ type: SYMBOL, name: 'empty_statement', fieldName: 'initializer' } as SymbolRule
+			]
+		} as ChoiceRule;
+	}
+	const slot = makeSlot({ name: 'initializer', storageName: 'initializer', propertyName: 'initializer', fieldName: 'initializer' });
+
+	it('folds arms that share a slot and gates the arm literal on the arm kinds', () => {
+		const ctx = makeCtx({ ownerSlots: { initializer: slot } });
+		expect(shown(forInitializer(), ctx)).toBe('⟨initializer⟩⟨if initializer:_expressions⟩;⟨end⟩');
+	});
+
+	it('gates the literal inside a fielded choice by pushing the field onto the arms', () => {
+		const rule: ChoiceRule = {
+			type: CHOICE,
+			fieldName: 'condition',
+			members: [
+				{ type: SEQ, members: [{ type: SYMBOL, name: '_expressions' } as SymbolRule, { type: STRING, value: ';' }] } as SeqRule,
+				{ type: SYMBOL, name: 'empty_statement' } as SymbolRule
+			]
+		} as ChoiceRule;
+		const conditionSlot = makeSlot({ name: 'condition', storageName: 'condition', propertyName: 'condition', fieldName: 'condition' });
+		const ctx = makeCtx({ ownerSlots: { condition: conditionSlot } });
+		expect(shown(rule, ctx)).toBe('⟨condition⟩⟨if condition:_expressions⟩;⟨end⟩');
+	});
+
+	it('leaves a choice alone when an arm carries no slot', () => {
+		const rule: ChoiceRule = {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'declaration_list', fieldName: 'body' } as SymbolRule,
+				{ type: SEQ, members: [{ type: STRING, value: ';' }] } as SeqRule
+			]
+		} as ChoiceRule;
+		const bodySlot = makeSlot({ name: 'body', storageName: 'body', propertyName: 'body', fieldName: 'body' });
+		const ctx = makeCtx({ ownerSlots: { body: bodySlot } });
+		expect(shown(rule, ctx)).not.toContain(':');
+	});
+});
+
 describe('emitRule — enum', () => {
 	it('emits the first member as a literal', () => {
 		// PR-P: EnumRule is now ChoiceRule with all-STRING members.
@@ -136,11 +188,28 @@ describe('emitRule — seq', () => {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
-				{ type: STRING, value: ' ' },
 				{ type: STRING, value: 'main' }
 			]
 		};
 		expect(shown(rule, makeCtx())).toBe('fn main');
+	});
+
+	it('a whitespace-only STRING member is a token seam, glued to the literal before it with an adjacency call', () => {
+		// literalBody classifies a whitespace-only literal as a tokenSeam
+		// regardless of which render-body site produced it (STRING, SYMBOL's
+		// own literal, or a hidden kind's fixed text) — no real grammar's
+		// STRING/SYMBOL literal is ever whitespace-only in practice (its
+		// spacing comes from the static-spacing pass, not a literal member),
+		// so this exercises the classification itself, not a real shape.
+		const rule: SeqRule = {
+			type: SEQ,
+			members: [
+				{ type: STRING, value: 'fn' },
+				{ type: STRING, value: ' ' },
+				{ type: STRING, value: 'main' }
+			]
+		};
+		expect(shown(rule, makeCtx())).toBe('fn⟨adjacent⟩⟨tokenSeam " "⟩main');
 	});
 
 	it('recurses into nested seqs, inserting a word-boundary space between adjacent word literals', () => {
@@ -499,19 +568,19 @@ describe('emitRule — choice', () => {
 });
 
 describe('emitRule — structural whitespace', () => {
-	it('emits an indent as the writer mark followed by its line break', () => {
+	it('emits an indent as its own depth node', () => {
 		const rule: IndentRule = { type: INDENT };
-		expect(shown(rule, makeCtx())).toBe(`⟨ws ${JSON.stringify(INDENT_NEWLINE)}⟩`);
+		expect(shown(rule, makeCtx())).toBe('⟨indent⟩');
 	});
 
-	it('emits a dedent as the bare writer mark, since the line it closes ended with its own newline', () => {
+	it('emits a dedent as its own depth node', () => {
 		const rule: DedentRule = { type: DEDENT };
-		expect(shown(rule, makeCtx())).toBe(`⟨ws ${JSON.stringify(DEDENT_MARK)}⟩`);
+		expect(shown(rule, makeCtx())).toBe('⟨dedent⟩');
 	});
 
-	it('emits a newline in the same expression form as an indent', () => {
+	it('emits a newline as plain text, not a depth node', () => {
 		const rule: NewlineRule = { type: NEWLINE };
-		expect(shown(rule, makeCtx())).toBe('⟨ws "\\n"⟩');
+		expect(shown(rule, makeCtx())).toBe('\n');
 	});
 });
 
@@ -570,5 +639,55 @@ describe('emitRule — tag-boundary seams', () => {
 			}
 		});
 		expect(shown(seq('operand'), ctx)).toBe('type⟨left⟩');
+	});
+});
+
+function seamChoice(label: string): ChoiceRule {
+	return {
+		type: CHOICE,
+		nonterminal: true,
+		fieldName: label,
+		members: ['_tight', '_space', '_newline', '_blankline'].map((name, i) => ({
+			type: SYMBOL,
+			name,
+			nonterminal: true,
+			annotations: { preference: label, ...(i === 0 ? { default: true } : {}) }
+		}))
+	} as unknown as ChoiceRule;
+}
+
+describe('emitRule — token seams', () => {
+	it('prints a seam choice as a seam node between its neighbours', () => {
+		const rule = { type: SEQ, members: [{ type: STRING, value: 'fn' }, seamChoice('lparen_before'), { type: STRING, value: '(' }] } as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toBe('fn⟨seam lparen_before⟩(');
+	});
+
+	it('lets the seam replace a statically spaced seam, and places two seams on one boundary in order', () => {
+		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const spaced = { type: SEQ, members: [{ type: STRING, value: '..' }, seamChoice('eq_before'), { type: STRING, value: '=>' }] } as unknown as SeqRule;
+		expect(shown(spaced, hazardCtx)).toBe('..⟨seam eq_before⟩=>');
+		const two = { type: SEQ, members: [{ type: STRING, value: ')' }, seamChoice('rparen_after'), seamChoice('lbrace_before'), { type: STRING, value: '{' }] } as unknown as SeqRule;
+		expect(shown(two, makeCtx())).toBe(')⟨seam rparen_after⟩⟨seam lbrace_before⟩{');
+	});
+
+	it('keeps a seam that ends up first when the member before it renders nothing', () => {
+		const rule = { type: SEQ, members: [{ type: STRING, value: ';', multiplicity: 'optional' }, seamChoice('lparen_before'), { type: STRING, value: '(' }] } as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toBe('⟨seam lparen_before⟩(');
+	});
+
+	it('peels a seam at the edge of a nested group so it stands in for a statically spaced boundary', () => {
+		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
+		const group = { type: SEQ, members: [seamChoice('eq_before'), { type: STRING, value: '=>' }, { type: STRING, value: 'x' }], staticSeamBefore: 'spaced' } as unknown as SeqRule;
+		const rule = { type: SEQ, members: [{ type: STRING, value: '..' }, group] } as unknown as SeqRule;
+		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=>x');
+	});
+
+	it('never picks a seam choice as the conditional key of an optional seq', () => {
+		const rule = {
+			type: SEQ,
+			multiplicity: 'optional',
+			members: [{ type: STRING, value: '->' }, seamChoice('arrow_after'), { type: SYMBOL, name: 'ret', fieldName: 'ret', nonterminal: true }]
+		} as unknown as SeqRule;
+		expect(shown(rule, makeCtx())).toBe('⟨if ret⟩->⟨seam arrow_after⟩⟨ret⟩⟨end⟩');
 	});
 });

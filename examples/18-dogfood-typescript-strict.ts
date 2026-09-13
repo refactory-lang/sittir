@@ -6,10 +6,12 @@ import { ir, TSKindId } from '@sittir/typescript';
 // branch kinds, `.<form>.strict` on a namespaced form, and the bare factory on
 // leaves (leaves have no `.strict`; they are already it).
 //
-// The whole file rebuilds here: the import with its type modifier, both
-// function declarations with parameter and return annotations, and real
-// statement bodies. The coercion half renders the same functions with empty
-// bodies and no annotations; every one of those shapes is constructible below.
+// What rebuilds here is the file's skeleton: the import with its type
+// modifier and both function declarations with parameter and return
+// annotations. Each body holds two statements (`let result = …;` and
+// `return result;`); the real bodies are not written. The coercion half
+// renders the same functions with empty bodies and no annotations; every
+// shape below is constructible on this surface.
 //
 // Five spellings are worth naming, because getting one wrong reads as a
 // missing feature rather than a wrong call:
@@ -22,12 +24,12 @@ import { ir, TSKindId } from '@sittir/typescript';
 //     fragment (`ir.string.single.strict({ elements: [fragment] })`), where
 //     the coercer takes the quoted text whole.
 //   - A determined slot takes the stamped enum member on the strict surface
-//     (`TSKindId.AnonType`), where the coercer takes its text (`'type'`).
-//   - An ALIAS form yields its own kind rather than the parent's:
-//     `ir.importStatement.clauseFrom.strict(…)` builds the arm, and the caller seats
-//     it in `import_statement`'s `fromClause`. Rendered alone it carries
-//     neither the `import` keyword nor the terminator, because those belong to
-//     the parent's template.
+//     (`TSKindId.TypeKeyword`), where the coercer takes its text (`'type'`).
+//   - A hoisted arm is reached through its parent's sub-factory, which builds
+//     the PARENT: `ir.importStatement.clauseFrom.strict(…)` takes the import
+//     statement's own config. The arm's `importClause` key is also the
+//     statement's, so the arm's config sits whole under the `fromClause`
+//     slot instead of being merged into the statement's keys.
 // Open issues on this surface: docs/factory-surface-issues.md
 
 const id = (text: string) => ir.identifier.identifier(text);
@@ -35,19 +37,17 @@ const ann = (type: string) => ir.typeAnnotation.strict(id(type));
 
 /** `import type { FormatRecord, FormatTrivia } from '@sittir/types';` */
 export function importTypesStrict() {
-	return ir.importStatement.strict({
-		importClause: TSKindId.AnonType,
-		fromClause: ir.importStatement.clauseFrom.strict({
+	return ir.importStatement.clauseFrom.strict({
+		importClause: TSKindId.TypeKeyword,
+		fromClause: {
 			importClause: ir.importClause.namedImports(
 				ir.namedImports.strict(
 					ir.importSpecifier({ content: 'FormatRecord' }),
 					ir.importSpecifier({ content: 'FormatTrivia' })
 				)
 			),
-			source: ir.string.single.strict({
-				elements: [ir.unescapedSingleStringFragment('@sittir/types')],
-			}),
-		}),
+			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
+		},
 		terminator: ';',
 	});
 }

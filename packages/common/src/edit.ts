@@ -1,8 +1,37 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, AnyTreeNode, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, ByteRange, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
 import { rebaseTrivia } from './format.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
+
+// ---------------------------------------------------------------------------
+// toEditAt — an Edit that splices rendered text into a byte range
+// ---------------------------------------------------------------------------
+
+/**
+ * The Edit that replaces `startOrRange` (a `ByteRange`, or a start with
+ * `end`) with `insertedText`. Positions are validated here, once, for every
+ * caller that turns a rendered node into an edit.
+ */
+export function toEditAt(insertedText: string, startOrRange: number | ByteRange, end?: number): Edit {
+	if (typeof startOrRange === 'number') {
+		if (typeof end !== 'number') {
+			throw new Error('endPos is required when startPos is a number');
+		}
+		if (startOrRange < 0 || end < 0) {
+			throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+		}
+		if (startOrRange > end) {
+			throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
+		}
+		return { startPos: startOrRange, endPos: end, insertedText };
+	}
+	return {
+		startPos: startOrRange.start.index,
+		endPos: startOrRange.end.index,
+		insertedText
+	};
+}
 
 // ---------------------------------------------------------------------------
 // replace — loosely typed, any AnyNodeData

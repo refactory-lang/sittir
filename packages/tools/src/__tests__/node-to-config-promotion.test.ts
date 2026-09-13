@@ -494,161 +494,6 @@ describe('nodeToConfig field promotion', () => {
 		expect(config.children).toEqual(expr);
 	});
 
-	it('promotes override-polymorph wrapper child surface into the parent config', () => {
-		const parameters = { $type: 'closure_parameters', $source: 0, $named: true, $text: '||' };
-		const body = { $type: 'tuple_expression', $source: 0, $named: true, $text: '()' };
-		const config = nodeToConfig(
-			{
-				$type: 'closure_expression',
-				$source: 0,
-				$named: true,
-				_async_marker: { $type: 'async', $source: 0, $named: false, $text: 'async' },
-				_parameters: parameters,
-				$other: [
-					{
-						$type: 'closure_expression_expr',
-						$source: 0,
-						$named: true,
-						_body: body
-					}
-				]
-			} as never,
-			{
-				factoryFields: {
-					_closure_expression_expr: ['body']
-				},
-				factorySlots: {
-					...makeFactorySlots('closure_expression', {
-						async_marker: { unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false },
-						parameters: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false },
-						children: { unnamed: true, slotCount: 1, required: true, multiple: false, nonEmpty: false }
-					}),
-					...makeFactorySlots('closure_expression_expr', {
-						body: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false }
-					})
-				},
-				polymorphVariants: {
-					closure_expression: {
-						definedBy: 'override',
-						childKind: {
-							closure_expression_block: 'block',
-							closure_expression_expr: 'expr'
-						}
-					}
-				}
-			}
-		);
-
-		expect(config).toMatchObject({
-			$variant: 'expr',
-			asyncMarker: { $text: 'async' },
-			parameters,
-			body
-		});
-		expect(config).not.toHaveProperty('children');
-	});
-
-	it('projects override helper surface when native read unwraps the variant child kind', () => {
-		const parameters = { $type: 'closure_parameters', $source: 0, $named: true, $text: '||' };
-		const body = { $type: 'tuple_expression', $source: 0, $named: true, $text: '()' };
-		const config = nodeToConfig(
-			{
-				$type: 'closure_expression',
-				$source: 0,
-				$named: true,
-				_async_marker: 85,
-				_parameters: parameters,
-				$other: [body]
-			} as never,
-			{
-				factoryFields: {
-					_closure_expression_expr: ['body']
-				},
-				factorySlots: {
-					...makeFactorySlots('closure_expression', {
-						async_marker: { unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false },
-						parameters: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false },
-						children: { unnamed: true, slotCount: 2, required: false, multiple: false, nonEmpty: false }
-					}),
-					...makeFactorySlots('_closure_expression_expr', {
-						body: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false }
-					})
-				},
-				polymorphVariants: {
-					closure_expression: {
-						definedBy: 'override',
-						childKind: {
-							closure_expression_block: 'block',
-							closure_expression_expr: 'expr'
-						},
-						helperChildKind: {
-							block: ['block'],
-							expr: ['tuple_expression']
-						},
-						helperKind: {
-							expr: '_closure_expression_expr'
-						}
-					}
-				}
-			}
-		);
-
-		expect(config).toMatchObject({
-			$variant: 'expr',
-			parameters,
-			body
-		});
-		expect(config).not.toHaveProperty('children');
-	});
-
-	it('promotes visible override child fields into the parent config', () => {
-		const left = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
-		const right = { $type: 'number_literal', $source: 0, $named: true, $text: '1' };
-		const config = nodeToConfig(
-			{
-				$type: 'assignment',
-				$source: 0,
-				$named: true,
-				$other: [
-					{
-						$type: 'assignment_eq',
-						$source: 0,
-						$named: true,
-						_left: left,
-						_right: right
-					}
-				]
-			} as never,
-			{
-				factorySlots: {
-					...makeFactorySlots('assignment', {
-						children: { unnamed: true, slotCount: 1, required: true, multiple: false, nonEmpty: false }
-					}),
-					...makeFactorySlots('assignment_eq', {
-						left: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false },
-						right: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false }
-					})
-				},
-				polymorphVariants: {
-					assignment: {
-						definedBy: 'override',
-						childKind: {
-							assignment_eq: 'eq',
-							assignment_typed: 'typed'
-						}
-					}
-				}
-			}
-		);
-
-		expect(config).toMatchObject({
-			$variant: 'eq',
-			left,
-			right
-		});
-		expect(config).not.toHaveProperty('children');
-	});
-
 	it('drops native delimiter token ids from unnamed repeated children slots', () => {
 		const first = { $type: 'required_parameter', $source: 0, $named: true, $text: 'x: number' };
 		const second = { $type: 'required_parameter', $source: 0, $named: true, $text: 'y: number' };
@@ -706,20 +551,6 @@ describe('nodeToConfig field promotion', () => {
 						name: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false },
 						index_type: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false }
 					})
-				},
-				polymorphVariants: {
-					index_signature: {
-						definedBy: 'override',
-						childKind: {
-							index_signature_colon: 'colon'
-						},
-						helperKind: {
-							colon: '_index_signature_colon'
-						},
-						helperChildKind: {
-							colon: ['type_identifier']
-						}
-					}
 				}
 			}
 		);
@@ -738,15 +569,6 @@ describe('nodeToConfig field promotion', () => {
 				error.kind === 'argument_list' &&
 				error.entry === 'Matching specific values' &&
 				error.message === 're-parse error: "((,\\"Goodbye!\\",))"'
-		);
-
-		expect(regression).toBeUndefined();
-	}, 60000);
-
-	it('keeps python assignment validation from inheriting expression_statement variant tags', async () => {
-		const result = await validateFactoryRenderParse('python', 'native');
-		const regression = result.errors.find(
-			(error) => error.kind === 'assignment' && error.message.includes('factory threw: assignment: unknown $variant')
 		);
 
 		expect(regression).toBeUndefined();

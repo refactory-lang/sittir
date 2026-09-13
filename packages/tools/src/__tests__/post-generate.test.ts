@@ -8,7 +8,9 @@ const extractParityFixtures = vi.fn();
 vi.mock('../validate/parity-fixtures.ts', () => ({
 	extractParityFixtures: (...args: unknown[]) => extractParityFixtures(...args),
 	serializeFixtures: (fixtures: unknown[]) => JSON.stringify(fixtures, null, 2) + '\n',
-	fixturesOutputPath: () => fxPath
+	fixturesOutputPath: () => fxPath,
+	leftOutOutputPath: () => leftOutPath,
+	serializeLeftOut: (leftOut: Record<string, number>) => JSON.stringify(leftOut, null, 2) + '\n'
 }));
 
 import { emitParityFixtures } from '../post-generate.ts';
@@ -19,11 +21,13 @@ function makeTmp(): string {
 
 let tmp: string;
 let fxPath: string;
+let leftOutPath: string;
 
 describe('emitParityFixtures', () => {
 	beforeEach(() => {
 		tmp = makeTmp();
 		fxPath = join(tmp, 'test-fixtures.json');
+		leftOutPath = join(tmp, 'test-fixtures.left-out.json');
 		extractParityFixtures.mockReset();
 	});
 
@@ -39,6 +43,7 @@ describe('emitParityFixtures', () => {
 			fixtures: [],
 			renderCount: 0,
 			roundTripCount: 0,
+			leftOutByKind: {},
 			coveredKinds: new Set(),
 			warnings: []
 		});
@@ -57,6 +62,7 @@ describe('emitParityFixtures', () => {
 			fixtures: fresh,
 			renderCount: 1,
 			roundTripCount: 1,
+			leftOutByKind: {},
 			coveredKinds: new Set(),
 			warnings: []
 		});
@@ -72,6 +78,7 @@ describe('emitParityFixtures', () => {
 			fixtures: [],
 			renderCount: 0,
 			roundTripCount: 0,
+			leftOutByKind: {},
 			coveredKinds: new Set(),
 			warnings: []
 		});

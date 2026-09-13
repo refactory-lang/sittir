@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { RenderRules } from '../compiler/model/render-rules.ts';
-import { findEntryForKindName } from '../compiler/generated-metadata.ts';
-import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
+import { admitsDepth, type RenderRules } from '../compiler/model/render-rules.ts';
+import { findEntryForKindName, findEntryForLiteralText, type KindEntryLike } from '../compiler/generated-metadata.ts';
+import { supertypeMembersByPublicName, type SupertypeMembers } from '../compiler/model/supertype-members.ts';
 import {
 	collectSitePreferences,
 	publicKindName,
@@ -9,26 +9,12 @@ import {
 	type SitePreference
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
+import { spacingArmsOf, whitespaceArmsOf } from '../compiler/model/whitespace-arms.ts';
+import { addressSegments, addressSites, matchAddress, type AddressedSite } from '../compiler/model/site-addresses.ts';
+import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
 
 export { publicKindName } from '../compiler/model/site-preferences.ts';
-
-export interface OptionEntry {
-	readonly key: string;
-	readonly type: string;
-}
-
-export interface OptionGroup {
-	readonly key: string;
-	readonly entries: readonly OptionEntry[];
-}
-
-export interface OptionsShape {
-	readonly topLevel: readonly OptionEntry[];
-	readonly kinds: readonly OptionGroup[];
-	readonly supertypes: readonly OptionGroup[];
-}
-
-export const EMPTY_OPTIONS: OptionsShape = { topLevel: [], kinds: [], supertypes: [] };
 
 export type ArmTypeResolver = (arm: PreferenceArm) => string;
 
@@ -41,103 +27,126 @@ export function kindIdArmType(kindEntries: readonly KindEnumEntry[]): ArmTypeRes
 	};
 }
 
-function byKey<T extends { readonly key: string }>(a: T, b: T): number {
-	return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
-}
-
 function unionOf(parts: Iterable<string>): string {
 	return [...new Set([...parts].flatMap((p) => p.split(' | ')))].join(' | ');
 }
 
-export function deriveOptionsShape(
+export interface AddressBranchEntry {
+	readonly path: string;
+	readonly segments: readonly PreferenceSegment[];
+	readonly children: readonly string[];
+}
+
+export interface AddressLeafEntry {
+	readonly path: string;
+	readonly type: string;
+	readonly canonical: readonly (readonly PreferenceSegment[])[];
+	readonly segments: readonly PreferenceSegment[];
+}
+
+export interface AddressTables {
+	readonly roots: readonly string[];
+	readonly branches: readonly AddressBranchEntry[];
+	readonly leaves: readonly AddressLeafEntry[];
+	readonly depth: number;
+}
+
+export const EMPTY_ADDRESSES: AddressTables = { roots: [], branches: [], leaves: [], depth: 0 };
+
+export function nestedKey(segment: PreferenceSegment, kindEntries: readonly KindEntryLike[]): string {
+	switch (segment.kind) {
+		case 'literal': {
+			const entry = findEntryForLiteralText(kindEntries, segment.text);
+			if (entry === undefined) throw new Error(`options: literal ${JSON.stringify(segment.text)} has no kind name`);
+			return entry.kind;
+		}
+		case 'index':
+			return String(segment.value);
+		case 'wildcard':
+			return '_';
+		default:
+			return segment.name;
+	}
+}
+
+export function deriveAddressTables(
 	sites: readonly SitePreference[],
-	supertypeMembers: ReadonlyMap<string, readonly string[]>,
-	armType: ArmTypeResolver
-): OptionsShape {
-	const topLevel = new Map<string, { type: string; defaultArm: string; site: string }>();
-	const kinds = new Map<string, Map<string, string>>();
-	const flanks = new Map<string, Map<string, string>>();
-	for (const site of sites) {
-		const type = site.arms.map(armType).join(' | ');
-		const at = `${publicKindName(site.kind)}.${site.slot}`;
-		if (site.side === 'start' || site.side === 'end') {
-			const existing = topLevel.get(site.label);
-			if (existing === undefined) topLevel.set(site.label, { type, defaultArm: site.defaultArm, site: at });
-			else if (existing.type !== type) {
-				throw new Error(`options: preference '${site.label}' differs between ${existing.site} and ${at} (${existing.type} vs ${type})`);
-			}
-			if (site.address !== site.label) topLevel.set(site.address, { type, defaultArm: site.defaultArm, site: at });
-			const own = flanks.get(publicKindName(site.kind)) ?? new Map<string, string>();
-			own.set(site.side, type);
-			flanks.set(publicKindName(site.kind), own);
-			continue;
+	kindEntries: readonly KindEntryLike[],
+	armType: ArmTypeResolver,
+	membersOf: SupertypeMembers,
+	declared?: OptionsDeclarations
+): AddressTables {
+	const branches = new Map<string, Set<string>>();
+	const branchSegments = new Map<string, readonly PreferenceSegment[]>();
+	const leaves = new Map<string, { type: string; canonical: (readonly PreferenceSegment[])[]; segments: readonly PreferenceSegment[] }>();
+	const roots = new Set<string>();
+	let depth = 0;
+	const assertSameSegments = (path: string, segments: readonly PreferenceSegment[]): void => {
+		const prior = branchSegments.get(path) ?? leaves.get(path)?.segments;
+		if (prior !== undefined && formatPreferencePath(prior) !== formatPreferencePath(segments)) {
+			throw new Error(`options: address '${path}' names two segments`);
 		}
-		if (site.source !== 'delimiter') {
-			const existing = topLevel.get(site.label);
-			if (existing === undefined) {
-				topLevel.set(site.label, { type, defaultArm: site.defaultArm, site: at });
-			} else if (existing.type !== type) {
-				throw new Error(
-					`options: preference '${site.label}' differs between ${existing.site} and ${at} (${existing.type} vs ${type})`
-				);
-			}
-		}
-		const kindKey = publicKindName(site.kind);
-		const key = site.address;
-		const entries = kinds.get(kindKey) ?? new Map<string, string>();
-		if (entries.has(key)) throw new Error(`options: ${kindKey} declares '${key}' twice`);
-		entries.set(key, type);
-		kinds.set(kindKey, entries);
-	}
-
-	const supertypes = new Map<string, Map<string, Set<string>>>();
-	for (const [supertype, members] of supertypeMembers) {
-		const acc = new Map<string, Set<string>>();
-		for (const member of new Set(members.map(publicKindName))) {
-			const entries = kinds.get(member);
-			if (entries === undefined) continue;
-			for (const [key, type] of entries) {
-				const set = acc.get(key) ?? new Set<string>();
-				set.add(type);
-				acc.set(key, set);
-			}
-		}
-		if (acc.size > 0) supertypes.set(publicKindName(supertype), acc);
-		for (const side of ['start', 'end'] as const) {
-			const types = new Set<string>();
-			for (const member of new Set(members.map(publicKindName))) {
-				const t = flanks.get(member)?.get(side);
-				if (t !== undefined) types.add(t);
-			}
-			if (types.size > 0) topLevel.set(`${publicKindName(supertype)}_${side}`, { type: unionOf(types), defaultArm: '', site: 'members' });
-		}
-	}
-
-	const seen = new Map<string, string>();
-	const claim = (key: string, owner: string): void => {
-		const prior = seen.get(key);
-		if (prior !== undefined) throw new Error(`options: top-level key '${key}' is both ${prior} and ${owner}`);
-		seen.set(key, owner);
 	};
-	claim('indent', 'the indentation unit');
-	for (const label of topLevel.keys()) claim(label, 'a preference label');
-	for (const kind of kinds.keys()) claim(kind, 'a kind');
-	for (const supertype of supertypes.keys()) claim(supertype, 'a supertype');
+	for (const site of addressSites(sites, kindEntries)) {
+		const keys = site.path.map((segment) => nestedKey(segment, kindEntries));
+		depth = Math.max(depth, keys.length);
+		roots.add(keys[0]!);
+		for (let i = 0; i < keys.length - 1; i++) {
+			const path = keys.slice(0, i + 1).join('/');
+			assertSameSegments(path, site.path.slice(0, i + 1));
+			branchSegments.set(path, site.path.slice(0, i + 1));
+			const children = branches.get(path) ?? new Set<string>();
+			children.add(keys[i + 1]!);
+			branches.set(path, children);
+		}
+		const type = site.arms.map(armType).join(' | ');
+		const path = keys.join('/');
+		const prior = leaves.get(path);
+		if (prior !== undefined && prior.type !== type) throw new Error(`options: address '${path}' resolves to two types`);
+		assertSameSegments(path, site.path);
+		leaves.set(path, { type, canonical: [site.path], segments: site.path });
+	}
+	if (declared !== undefined) {
+		const addressed = addressSites(sites, kindEntries);
+		const reached = new Map<string, AddressedSite<SitePreference>[]>();
+		for (const binding of declared.bindings) {
+			const hits = matchAddress(addressSegments(binding.address), addressed, membersOf);
+			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...hits]);
+		}
+		for (const declaration of declared.declarations) {
+			if (matchAddress(addressSegments(declaration.path), addressed, membersOf).length > 0) continue;
+			const bound = reached.get(declaration.path) ?? [];
+			if (bound.length === 0) continue;
+			const declaredSegments = parsePreferencePath(declaration.path);
+			const keys = declaredSegments.map((segment) => nestedKey(segment, kindEntries));
+			depth = Math.max(depth, keys.length);
+			roots.add(keys[0]!);
+			for (let i = 0; i < keys.length - 1; i++) {
+				const at = keys.slice(0, i + 1).join('/');
+				assertSameSegments(at, declaredSegments.slice(0, i + 1));
+				branchSegments.set(at, declaredSegments.slice(0, i + 1));
+				const children = branches.get(at) ?? new Set<string>();
+				children.add(keys[i + 1]!);
+				branches.set(at, children);
+			}
+			assertSameSegments(keys.join('/'), declaredSegments);
+			leaves.set(keys.join('/'), {
+				type: unionOf(bound.map((site) => site.arms.map(armType).join(' | '))),
+				canonical: bound.map((site) => site.path),
+				segments: declaredSegments
+			});
+		}
+	}
 
-	const groups = (source: ReadonlyMap<string, ReadonlyMap<string, string | Set<string>>>): OptionGroup[] =>
-		[...source]
-			.map(([key, entries]) => ({
-				key,
-				entries: [...entries]
-					.map(([k, t]) => ({ key: k, type: typeof t === 'string' ? t : unionOf(t) }))
-					.sort(byKey)
-			}))
-			.sort(byKey);
-
+	for (const path of leaves.keys()) {
+		if (branches.has(path)) throw new Error(`options: address '${path}' is both a site and a path`);
+	}
+	const byPath = <T extends { readonly path: string }>(a: T, b: T): number => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 	return {
-		topLevel: [...topLevel].map(([key, { type }]) => ({ key, type })).sort(byKey),
-		kinds: groups(kinds),
-		supertypes: groups(supertypes)
+		roots: [...roots].sort(),
+		branches: [...branches].map(([path, children]) => ({ path, segments: branchSegments.get(path)!, children: [...children].sort() })).sort(byPath),
+		leaves: [...leaves].map(([path, { type, canonical, segments }]) => ({ path, type, canonical, segments })).sort(byPath),
+		depth
 	};
 }
 
@@ -145,39 +154,98 @@ function propertyName(key: string): string {
 	return /^[A-Za-z_$][\w$]*$/.test(key) ? key : `'${key.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 }
 
-export function renderOptionsModule(shape: OptionsShape): string {
-	const allTypes = [
-		...shape.topLevel.map((e) => e.type),
-		...shape.kinds.flatMap((g) => g.entries.map((e) => e.type)),
-		...shape.supertypes.flatMap((g) => g.entries.map((e) => e.type))
-	].join(' ');
+const literal = (key: string): string => `'${key.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+const union = (keys: readonly string[]): string => (keys.length === 0 ? 'never' : keys.map(literal).join(' | '));
+
+export interface OptionsModuleInputs {
+	readonly spacingType?: string;
+	readonly whitespaceType?: string;
+	readonly addresses?: AddressTables;
+}
+
+export function renderOptionsModule(inputs: OptionsModuleInputs = {}): string {
+	const spacingType = inputs.spacingType ?? 'never';
+	const whitespaceType = inputs.whitespaceType ?? spacingType;
+	const addresses = inputs.addresses ?? EMPTY_ADDRESSES;
+	const allTypes = [spacingType, whitespaceType, ...addresses.leaves.map((leaf) => leaf.type)].join(' ');
 	const imports = [...(/\bDelimiter\./.test(allTypes) ? ['Delimiter'] : []), ...(/\bTSKindId\./.test(allTypes) ? ['TSKindId'] : [])];
-	const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
-	if (imports.length > 0) lines.push(`import type { ${imports.join(', ')} } from './types.js';`, '');
-	lines.push('export interface Options {');
-	for (const e of shape.topLevel) lines.push(`\treadonly ${propertyName(e.key)}?: ${e.type};`);
-	for (const group of [...shape.kinds, ...shape.supertypes]) {
-		lines.push(`\treadonly ${propertyName(group.key)}?: {`);
-		for (const e of group.entries) lines.push(`\t\treadonly ${propertyName(e.key)}?: ${e.type};`);
-		lines.push('\t};');
+	const alias = (type: string): string =>
+		type === spacingType ? 'SpacingArm' : type === whitespaceType ? 'WhitespaceArm' : type;
+	const L: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
+	if (imports.length > 0) L.push(`import type { ${imports.join(', ')} } from './types.js';`, '');
+	L.push(`export type SpacingArm = ${spacingType};`, '');
+	L.push(`export type WhitespaceArm = ${whitespaceType};`, '');
+	L.push(...addressLines(addresses, alias));
+	L.push('export type Options = AddressedOptions & { readonly indent?: string };', '');
+	return L.join('\n');
+}
+
+function addressLines(addresses: AddressTables, alias: (type: string) => string): string[] {
+	const L: string[] = [];
+	L.push('/// The kinds an address can start at.');
+	L.push(`export type AddressRoot = ${union(addresses.roots)};`, '');
+	L.push('/// Every address that has something beneath it, and what that is.');
+	L.push('export interface AddressBranch {');
+	for (const branch of addresses.branches) L.push(`\treadonly ${propertyName(branch.path)}: ${union(branch.children)};`);
+	L.push('}', '');
+	L.push('/// Every address that names a site, and what that site admits.');
+	L.push('export interface AddressLeaf {');
+	for (const leaf of addresses.leaves) L.push(`\treadonly ${propertyName(leaf.path)}: ${alias(leaf.type)};`);
+	L.push('}', '');
+	L.push('type AddressLeafOf<P extends string> = P extends keyof AddressLeaf ? AddressLeaf[P] : never;');
+	const levels = Math.max(addresses.depth - 1, 0);
+	for (let level = levels; level >= 1; level--) {
+		const below = level === levels ? 'AddressLeafOf' : `AddressNode${level + 1}`;
+		L.push(
+			`type AddressNode${level}<P extends string> = P extends keyof AddressBranch`,
+			`\t? { readonly [K in AddressBranch[P]]?: ${below}<\`\${P}/\${K}\`> }`,
+			'\t: AddressLeafOf<P>;'
+		);
 	}
-	lines.push('\treadonly indent?: string;');
-	lines.push('}', '');
-	return lines.join('\n');
+	L.push('');
+	L.push('/// Every site by its address, nested as the path is written.');
+	L.push(
+		levels === 0
+			? 'export type AddressedOptions = unknown;'
+			: 'export type AddressedOptions = { readonly [K in AddressRoot]?: AddressNode1<K> };'
+	);
+	L.push('');
+	return L;
+}
+
+export function addressTablesFor(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
+	sites: readonly SitePreference[],
+	optionsBlock?: OptionsConfig
+): AddressTables {
+	const declared =
+		optionsBlock === undefined ? undefined : readOptionsBlock(optionsBlock, new Set([...nodeMap.nodes.keys()].map(publicKindName)));
+	return deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries), supertypeMembersByPublicName(nodeMap), declared);
 }
 
 export interface EmitOptionsConfig {
 	readonly nodeMap: NodeMap;
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly renderRules: RenderRules;
+	readonly options?: OptionsConfig;
+	readonly sites?: readonly SitePreference[];
+	readonly addresses?: AddressTables;
 }
 
 export function emitOptions(config: EmitOptionsConfig): string {
-	const sites = collectSitePreferences({
-		nodeMap: config.nodeMap,
-		kindEntries: config.kindEntries,
-		renderRules: config.renderRules
-	});
-	const shape = deriveOptionsShape(sites, buildSupertypeMembersMap(config.nodeMap), kindIdArmType(config.kindEntries));
-	return renderOptionsModule(shape);
+	const sites =
+		config.sites ??
+		collectSitePreferences({
+			nodeMap: config.nodeMap,
+			kindEntries: config.kindEntries,
+			renderRules: config.renderRules,
+			options: config.options
+		});
+	const armType = kindIdArmType(config.kindEntries);
+	const typeOf = (arms: readonly string[]): string => arms.map((arm) => armType({ value: arm, kind: arm })).join(' | ');
+	const spacingType = typeOf(spacingArmsOf(config.nodeMap));
+	const whitespaceType = sites.some((s) => admitsDepth({ arms: s.arms.map((arm) => arm.value) })) ? typeOf(whitespaceArmsOf(config.nodeMap)) : undefined;
+	const addresses = config.addresses ?? addressTablesFor(config.nodeMap, config.kindEntries, sites, config.options);
+	return renderOptionsModule({ spacingType, whitespaceType, addresses });
 }

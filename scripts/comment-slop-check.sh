@@ -30,11 +30,11 @@ esac
 # planning artifacts themselves (docs/superpowers: specs, plans, handoffs)
 # necessarily cite each other and are excluded.
 paths=(
-  -- '*.ts' '*.mts' '*.cts' '*.rs' 'docs/*.md' 'docs/glossary/*.md'
+  -- '*.ts' '*.mts' '*.cts' '*.rs' 'docs/*.md' 'docs/glossary/*.md' 'scripts/*.sh'
   ':!packages/rust/src' ':!packages/typescript/src' ':!packages/python/src'
   ':!packages/*/.sittir' ':!packages/*/tests'
   ':!rust/crates/sittir-rust' ':!rust/crates/sittir-typescript' ':!rust/crates/sittir-python'
-  ':!node_modules'
+  ':!docs/superpowers' ':!node_modules'
 )
 
 # Patterns, matched against lowercased comment text (portable ERE — no \b,
@@ -82,7 +82,7 @@ scan_added_lines() {
 if [ "$mode" = "--content" ]; then
   # Scope check mirrors the diff pathspec: code extensions, hand-written dirs.
   case "$content_path" in
-    *.ts|*.mts|*.cts|*.rs) ;;
+    *.ts|*.mts|*.cts|*.rs|*.sh) ;;
     *) exit 0 ;;
   esac
   case "$content_path" in

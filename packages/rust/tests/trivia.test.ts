@@ -24,7 +24,7 @@ function makeComment(text: string): LineComment {
  *  deliberately not part of the public node type surface. */
 type TriviaData = { leading?: unknown[]; trailing?: unknown[] };
 function triviaDataOf(node: object): TriviaData | undefined {
-	return (node as { $triviaData?: TriviaData }).$triviaData;
+	return (node as { $_trivia?: TriviaData }).$_trivia;
 }
 
 describe('$trivia() integration', () => {
@@ -74,7 +74,7 @@ describe('$trivia() integration', () => {
 
 	// `line_comment.jinja` renders `//{{ content }}` — content is the text
 	// AFTER the `//` marker, unlike `makeComment`'s raw-`//`-prefixed text
-	// above (whose callers never render, only assert `$triviaData` shape).
+	// above (whose callers never render, only assert `$_trivia` shape).
 	function buildLineComment(afterSlashes: string): LineComment {
 		return F.buildLineComment(F.buildLineCommentContent(afterSlashes));
 	}
@@ -85,7 +85,7 @@ describe('$trivia() integration', () => {
 	it('leading trivia renders before the node', () => {
 		const fn = makeFn('main');
 		fn.$trivia(buildLineComment(' hello'));
-		expect(fn.$render()).toBe('// hello\nfn main(){}');
+		expect(fn.$render()).toBe('// hello\nfn main() {}');
 	});
 
 	it('trailing trivia renders after the node', () => {
@@ -94,7 +94,7 @@ describe('$trivia() integration', () => {
 		// A line comment is newline-terminated by the spacing model — the
 		// final `\n` is part of the comment's own rendering, so a trailing
 		// comment leaves the output newline-terminated.
-		expect(fn.$render()).toBe('fn main(){}\n// bye\n');
+		expect(fn.$render()).toBe('fn main() {}\n// bye\n');
 	});
 
 	it('verbatim text renders as written, before and after the node', () => {
@@ -119,6 +119,6 @@ describe('$trivia() integration', () => {
 			leading: [buildLineComment(' top1'), buildLineComment(' top2')],
 			trailing: [buildLineComment(' bottom')]
 		});
-		expect(fn.$render()).toBe('// top1\n// top2\nfn main(){}\n// bottom\n');
+		expect(fn.$render()).toBe('// top1\n// top2\nfn main() {}\n// bottom\n');
 	});
 });

@@ -43,13 +43,13 @@
 **Files:**
 - Create (scratchpad, not committed): `<scratchpad>/dogfood.ts`
 
-- [ ] **Step 1: Branch**
+- [x] **Step 1: Branch**
 
 ```bash
 git checkout -b feat/punctuation-seams
 ```
 
-- [ ] **Step 2: Write the render-capture script**
+- [x] **Step 2: Write the render-capture script**
 
 Write `<scratchpad>/dogfood.ts` (absolute imports into the repo; `$render()` takes no options):
 
@@ -79,12 +79,12 @@ for (const [name, build] of cases) {
 }
 ```
 
-- [ ] **Step 3: Capture the baseline**
+- [x] **Step 3: Capture the baseline**
 
 Run from the repo root: `pnpm exec tsx <scratchpad>/dogfood.ts <scratchpad>/renders-baseline`
 Expected sizes: rust 2222, rust-strict 745, ts 473, ts-strict 569, py 196, py-strict 203. If a size differs, stop: the tree is not at the expected state.
 
-- [ ] **Step 4: Record the validator baseline**
+- [x] **Step 4: Record the validator baseline**
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts validate counts`
 Expected: the numbers in Global Constraints. (This is the pre-change run; the hook may auto-commit a `chore(validator)` record, which is fine.)
@@ -101,7 +101,7 @@ Expected: the numbers in Global Constraints. (This is the pre-change run; the ho
 **Interfaces:**
 - Produces: `seamLabel(token: string, side: SeparatorSide): string` → `` `${token}_${side}` ``; `parseSeamLabel(name: string): { readonly token: string; readonly side: SeparatorSide } | undefined` (undefined for any separator spacing label); `RenderDefaults.labels[<token>_<side>]` and `RenderDefaults.sites[<kind>][<token>_<side>]` populated from `patches:`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Append to `render-defaults.test.ts`:
 
@@ -158,12 +158,12 @@ describe('seam defaults declared in patches', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `pnpm exec vitest run --root packages/codegen src/dsl/__tests__/render-defaults.test.ts`
 Expected: FAIL (`seamLabel` is not exported).
 
-- [ ] **Step 3: Implement `spacing.ts`**
+- [x] **Step 3: Implement `spacing.ts`**
 
 Add after `parseSpacingLabel`:
 
@@ -181,7 +181,7 @@ export function parseSeamLabel(name: string): { readonly token: string; readonly
 }
 ```
 
-- [ ] **Step 4: Implement `wire.ts`**
+- [x] **Step 4: Implement `wire.ts`**
 
 Import `parseSeamLabel` from `../primitives/spacing.ts`. Add beside `isFlankDefaultKey`:
 
@@ -214,12 +214,12 @@ In the kind-level loop, replace `const address = siteKey(slot, label);` with:
 
 In `structuralPatchesOf`, extend the skip: `if (!entry || parseSpacingLabel(kind) !== undefined || isFlankDefaultKey(kind, rules) || isSeamDefaultKey(kind, rules)) continue;`
 
-- [ ] **Step 5: Run the test file and the dsl suite**
+- [x] **Step 5: Run the test file and the dsl suite**
 
 Run: `pnpm exec vitest run --root packages/codegen src/dsl`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add packages/codegen/src/dsl/primitives/spacing.ts packages/codegen/src/dsl/wire/wire.ts packages/codegen/src/dsl/__tests__/render-defaults.test.ts
@@ -236,7 +236,7 @@ git commit -m "feat(dsl): token seam labels; patches accept <token>_before|_afte
 **Interfaces:**
 - Produces: `pub const SEAM: char = '\u{FDD2}'`, `pub const SEAM_STR: &str`; `SpacingWriter::finish(&mut self) -> fmt::Result`. Contract: after a `SEAM`, `INDENT` or `DEDENT` mark, the whitespace run that follows it **in the same `write_str` call** is the mark's payload and is held, not written; consecutive payloads merge to the wider by rank (`""` < spaces < anything containing `\n`), ties keep the first; the held payload is written before the next non-empty text, and by `finish`. `INDENT`/`DEDENT` still move the depth at the mark. `ADJACENT` is unchanged. Literal text is never coalesced.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Add a module at the end of `spacing.rs`:
 
@@ -308,12 +308,12 @@ mod seam_tests {
 
 The existing `adjacent_tests` cases keep their expectations unchanged; they must still pass.
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `rtk cargo test -p sittir-core seam_tests`
 Expected: FAIL to compile (`finish` missing).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Constants beside `INDENT`/`DEDENT`:
 
@@ -412,12 +412,12 @@ Rename today's `write_chunk` body to `write_text` (unchanged logic, including th
 
 Delete `take_mark`; `is_mark` gains `|| c == SEAM`. Update the module doc's list of marks.
 
-- [ ] **Step 4: Run the core suite**
+- [x] **Step 4: Run the core suite**
 
 Run: `rtk cargo test -p sittir-core`
 Expected: PASS, including the pre-existing `adjacent_tests`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(core): the writer holds marked seam whitespace and coalesces neighbours to the wider" -- rust/crates/sittir-core/src/spacing.rs
@@ -435,7 +435,7 @@ git commit -m "feat(core): the writer holds marked seam whitespace and coalesces
 - Consumes: `seamLabel`, `parseSeamLabel` (Task 1); `matchesWordShape` from `../../util/word-matcher.ts`; the `staticSeamBefore?: 'glued' | 'spaced'` stamp on seq members (`types/rule.ts:69`).
 - Produces: `SpacingSide` gains `'seam'`; `seamRenderRules(spaced: RenderRules, config: RenderRulesConfig): RenderRules`; `isSeamChoice(rule: RenderRule): boolean`; `seamPartOf(rule: RenderRule): SpacingPart` (fieldName = label = `<token>_<side>`, side `'seam'`); `validateRenderDefaults(defaults: RenderDefaults | undefined, sites: readonly RuleSpacingSite[], nodeMap: NodeMap): void`; `spacingSitesOf` also returns seam sites (`slot` = token kind name, `address` = label, `side: 'seam'`). `spaceRenderRules` no longer validates defaults; `DefaultResolver` is constructed as `new DefaultResolver(defaults, nodeMap)`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 In `render-rules.test.ts`, extend `kindEntries` with the bracket kinds and add a `seamed` helper:
 
@@ -541,12 +541,12 @@ describe('seamRenderRules', () => {
 
 Delete the old `fails on a default that names no preference, no site or no arm` case under `describe('spaceRenderRules')` (validation moves), and in the `sym` helper allow `inline` through `extra` (it already spreads `extra`).
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler/model/__tests__/render-rules.test.ts`
 Expected: FAIL (`seamRenderRules` is not exported).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Imports: add `SEQ` is already imported; add `matchesWordShape` from `'../../util/word-matcher.ts'`; add `parseSeamLabel, seamLabel` and `type SeparatorSide` to the `spacing.ts` import.
 
@@ -716,12 +716,12 @@ export function seamRenderRules(spaced: RenderRules, config: RenderRulesConfig):
 			}
 ```
 
-- [ ] **Step 4: Run the test file and the compiler suite**
+- [x] **Step 4: Run the test file and the compiler suite**
 
 Run: `pnpm exec vitest run --root packages/codegen src/compiler`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "feat(render-rules): token seam choices injected after the seam stamps; defaults validated over every site" -- packages/codegen/src/compiler/model/render-rules.ts packages/codegen/src/compiler/model/__tests__/render-rules.test.ts
@@ -742,7 +742,7 @@ git commit -m "feat(render-rules): token seam choices injected after the seam st
 - Consumes: `isSeamChoice`, `seamPartOf` (Task 3).
 - Produces: `SeamNode { kind: 'seam'; field: string }`; `seam(field: string): Body`; `SEAM_MARK = '\u{FDD2}'`; `BodyReferences.seams: readonly string[]`; `printRustBody` prints a seam as `{<field>}` inside the `write!` format string; `joinStaticSeam(body, segment, spaced, seams = EMPTY)`.
 
-- [ ] **Step 1: Write the failing body tests**
+- [x] **Step 1: Write the failing body tests**
 
 In `render-body.test.ts` add `seam` and `SEAM_MARK` to the import and:
 
@@ -773,7 +773,7 @@ describe('seam nodes', () => {
 
 (`equalBodies` is exported already; add it to the import.)
 
-- [ ] **Step 2: Write the failing emitter tests**
+- [x] **Step 2: Write the failing emitter tests**
 
 In `templates-emitter-emitRule.test.ts` add a seam-choice builder after `makeCtx` and a `describe`:
 
@@ -824,12 +824,12 @@ describe('emitRule — token seams', () => {
 
 In `packages/tools/src/__tests__/render-bodies.test.ts`, extend the `bodyToLegacyRule` fixture with `{ kind: 'seam', field: 'lparen_before' }` between two text nodes and assert it contributes nothing to the template string.
 
-- [ ] **Step 3: Run to verify they fail**
+- [x] **Step 3: Run to verify they fail**
 
 Run: `pnpm exec vitest run --root packages/codegen src/emitters/__tests__/render-body.test.ts src/emitters/__tests__/templates-emitter-emitRule.test.ts`
 Expected: FAIL (`seam` is not exported).
 
-- [ ] **Step 4: Implement `render-body.ts`**
+- [x] **Step 4: Implement `render-body.ts`**
 
 ```ts
 export const SEAM_MARK = '\u{FDD2}';
@@ -848,7 +848,7 @@ export function seam(field: string): Body {
 
 Cases to add: `opensAsExpression`: `|| node.kind === 'seam'`; `edgeChar`: `case 'seam':` with `'whitespace' | 'slot' | 'if'` (braces); `equalNodes`: `case 'seam': return a.field === (b as SeamNode).field;`; `refersTo`/`mentions`: fall to `default: return false` (no change); `weight`: `case 'seam': total += node.field.length + EXPRESSION_OVERHEAD;`; `references`: collect `seams` (add `readonly seams: readonly string[]` to `BodyReferences`); `literalOf` in `liftGates`: unchanged (the default branch returns `undefined`, so a gate holding a seam stays a gate); `printStatements`: `case 'seam': format += \`{${printer.field(node.field)}}\`; interpolated = true; break;`. `isPlainText` unchanged (a seam is not plain text).
 
-- [ ] **Step 5: Implement `templates.ts`**
+- [x] **Step 5: Implement `templates.ts`**
 
 Imports: `isSeamChoice, seamPartOf` from `../compiler/model/render-rules.ts`; `seam` from `./render-body.ts`.
 
@@ -927,17 +927,17 @@ function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body 
 
 `scanArmBody`: `case 'seam':` grouped with `case 'space': break;`.
 
-- [ ] **Step 6: Implement the two body consumers**
+- [x] **Step 6: Implement the two body consumers**
 
 `show-body.ts`: `case 'seam': out += \`⟨seam ${node.field}⟩\`; break;`.
 `render-bodies.ts` (`bodyToLegacyRule`): `case 'seam': break;` beside `'adjacent'`.
 
-- [ ] **Step 7: Run the suites**
+- [x] **Step 7: Run the suites**
 
 Run: `pnpm exec vitest run --root packages/codegen src/emitters` and `pnpm exec vitest run --root packages/tools`
 Expected: PASS. If any pre-existing emitter test fails, isolate with stash-and-rerun before accepting it as unrelated.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git commit -m "feat(templates): the body IR carries token seams; the seq join holds them across a boundary" -- packages/codegen/src/emitters/render-body.ts packages/codegen/src/emitters/templates.ts packages/codegen/src/emitters/__tests__/support/show-body.ts packages/codegen/src/emitters/__tests__/render-body.test.ts packages/codegen/src/emitters/__tests__/templates-emitter-emitRule.test.ts packages/tools/src/validate/render-bodies.ts packages/tools/src/__tests__/render-bodies.test.ts
@@ -958,7 +958,7 @@ git commit -m "feat(templates): the body IR carries token seams; the seq join ho
 - Consumes: `seamRenderRules` (Task 3); `SEAM_MARK`, `rustStringLiteral`, `references(...).seams` (Task 4); `SpacingWriter::finish` (Task 2).
 - Produces: generated `options::spacing_text(id)` returns `"\u{FDD2}"`, `"\u{FDD2} "`, `"\u{FDD2}\n"` for the text kinds and the unchanged `INDENT_NEWLINE`/`DEDENT_NEWLINE` constants; `pub const LABEL_COUNT: usize`; `ResolvedOptions { spacing, delimiter, labels: Vec<Option<u16>>, indent }`; `defaults()` sets `labels: vec![None; LABEL_COUNT]`; `resolve` sets `table.labels[i] = Some(id)` for a top-level label key; every seam site of a kind is a transport field, filled by `fill_options`, and bound in the render function as `let <site> = options::spacing_text(node.<site>.unwrap_or(0));`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `render-options-rs.test.ts`, in the `renderOptionsRs` case, replace the two `spacing_text` expectations and add the label vector:
 
@@ -999,12 +999,12 @@ Add a seam site to `sites` and assert its plan row:
 
 `emitter-options.test.ts`: a seam site (`side: 'seam'`, `source: 'spacing'`) on `call_expression` yields top-level `lparen_before` typed `TSKindId.Tight | TSKindId.Space | TSKindId.Newline` and a `call_expression: { lparen_before }` group.
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `pnpm exec vitest run --root packages/codegen src/emitters/__tests__/render-options-rs.test.ts src/emitters/__tests__/render-module-emit.test.ts src/emitters/__tests__/emitter-options.test.ts`
 Expected: FAIL on the new expectations.
 
-- [ ] **Step 3: `emit.ts` pass order**
+- [x] **Step 3: `emit.ts` pass order**
 
 ```ts
 	const rulesConfig = kindEntries ? { nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) } : undefined;
@@ -1017,7 +1017,7 @@ Expected: FAIL on the new expectations.
 
 Every later consumer (`RenderModuleEmitter`, `emitOptions`) keeps reading `renderRules`. Import `seamRenderRules`.
 
-- [ ] **Step 4: `render-module.ts`**
+- [x] **Step 4: `render-module.ts`**
 
 `render_transport_dispatch`: after the `write_fmt` line push `    w.finish()?;`.
 
@@ -1034,7 +1034,7 @@ and the check loop iterates `[...refs.tests, ...refs.slots, ...refs.seams]`.
 
 `spacingFieldExprs`: `.filter((site) => site.slot === fieldName && site.side !== 'seam')`.
 
-- [ ] **Step 5: `render-options-rs.ts` and `options.rs`**
+- [x] **Step 5: `render-options-rs.ts` and `options.rs`**
 
 Import `SEAM_MARK, rustStringLiteral` from `./render-body.ts`. In `renderOptionsRs`:
 
@@ -1062,12 +1062,12 @@ with `set_spacing` refactored over a new `spacing_id(allowed, value, key) -> Res
 
 `options.rs`: add `pub labels: Vec<Option<u16>>,` with doc `/// The value set for each preference label at the top level, in generated label order; unset labels are None.` and `labels: Vec::new()` in `Default`. Fix any struct literal in the workspace that names every field (`rtk cargo build --workspace` tells you).
 
-- [ ] **Step 6: Run the suites and cargo**
+- [x] **Step 6: Run the suites and cargo**
 
 Run: `pnpm exec vitest run --root packages/codegen` and `rtk cargo test -p sittir-core`
 Expected: PASS (codegen at its known baseline; any new failure isolated by stash-and-rerun).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git commit -m "feat(render): seam sites bound from the transport; every option whitespace is seam-marked; label values kept in the resolved table" -- packages/codegen/src/emitters/emit.ts packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/render-options-rs.ts rust/crates/sittir-core/src/options.rs packages/codegen/src/emitters/__tests__/render-options-rs.test.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts packages/codegen/src/emitters/__tests__/emitter-options.test.ts
@@ -1083,7 +1083,7 @@ git commit -m "feat(render): seam sites bound from the transport; every option w
 - Modify: `docs/superpowers/specs/2026-09-06-punctuation-seam-spacing-design.md` (Out of scope)
 - Modify: `docs/glossary/dsl-primitives.md`, `docs/glossary/dsl-wire.md`, `docs/glossary/compiler-model.md`, `docs/glossary/emitters.md`, `docs/glossary/validate.md`
 
-- [ ] **Step 1: Regenerate all three grammars**
+- [x] **Step 1: Regenerate all three grammars**
 
 The core crate changed (`finish`, `labels`), so every napi build recompiles the workspace: run all three without stopping on the first failure, then rerun the first two.
 
@@ -1097,7 +1097,7 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output pa
 
 Expected: each gen writes its files; the final two succeed end to end. A `render body for '<kind>' names '<site>', which its transport has no slot for` error means a seam landed in a kind that gets no transport: stop and review which rule it came from (the inlined-helper skip in `seamRenderRules` is the first suspect).
 
-- [ ] **Step 2: Byte gate**
+- [x] **Step 2: Byte gate**
 
 ```bash
 pnpm exec tsx <scratchpad>/dogfood.ts <scratchpad>/renders-after
@@ -1106,7 +1106,7 @@ for f in rust rust-strict ts ts-strict py py-strict; do cmp <scratchpad>/renders
 
 Expected: six `identical` lines. A difference is a finding, not a revert: diff the two files, locate the seam, and review (Global Constraints, last bullet).
 
-- [ ] **Step 3: Validator gate and suites**
+- [x] **Step 3: Validator gate and suites**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts validate counts
@@ -1120,7 +1120,7 @@ bash scripts/assert-scope-boundaries.sh
 
 Expected: counts equal the Global Constraints numbers; every suite green; cargo green.
 
-- [ ] **Step 4: Options snapshots and the compile-time check**
+- [x] **Step 4: Options snapshots and the compile-time check**
 
 In `packages/rust/tests/options.test.ts` add to the `ok` object `lparen_before: TSKindId.Space,` and `function_item: { lparen_before: TSKindId.Tight },`, and to `bad` a `// @ts-expect-error a token seam admits no indent` line `lparen_before: TSKindId.Indent,`. Then:
 
@@ -1131,7 +1131,7 @@ for g in rust typescript python; do (cd packages/$g && pnpm exec vitest run); do
 
 Expected: snapshots updated with the new `<token>_before|_after` keys at the top level and under each kind; all three package suites green. Read the rust snapshot diff: every new top-level key parses with `parseSeamLabel`, and no separator key moved.
 
-- [ ] **Step 5: Dogfood demonstration**
+- [x] **Step 5: Dogfood demonstration**
 
 Write `<scratchpad>/dogfood-seam.ts` rendering the rust dogfood with the option set through the engine (per-call options are `RenderOptions.options`, `packages/common/src/engine.ts:255`):
 
@@ -1149,7 +1149,7 @@ console.log(text.length);
 
 Run it, diff against `renders-baseline/rust.txt`, and confirm every changed line is a `(` gaining one leading space and nothing else changes (`fn apply_edits (` and calls like `edits.sort_by (`). If `engine.render` returns a handle rather than a string, read the handle's text accessor from `packages/common/src/engine.ts` (`RenderHandle`) instead of `String(...)`. Keep the diff for the PR description.
 
-- [ ] **Step 6: Spec and glossary**
+- [x] **Step 6: Spec and glossary**
 
 Spec, Out of scope, add:
 
@@ -1171,7 +1171,7 @@ Glossary entries (one `###` per qualified name; describe the live constraint, no
 - `emitters.md`: `render-body.ts::Body` (seam node), `::SeamNode`, `::seam`, `::SEAM_MARK`, `::references`, `::printRustBody`; `templates.ts::emitRule` (seam parts held across a boundary), `::joinStaticSeam`, `::pickConditionalKey`, `::renderRuleEdge`; `emit.ts::emitAll` (pass order); `render-module.ts::buildTypedTemplateBody` (seam locals), `::spacingFieldExprs`, the dispatch entry (`finish`); `render-options-rs.ts::renderOptionsRs` (marked `spacing_text`, `LABEL_COUNT`, label vector).
 - `validate.md`: `render-bodies.ts::bodyToLegacyRule` (seam contributes nothing).
 
-- [ ] **Step 7: Commit generated output, tests, docs; push; PR**
+- [x] **Step 7: Commit generated output, tests, docs; push; PR**
 
 ```bash
 git add packages/rust/src packages/typescript/src packages/python/src packages/rust/.sittir packages/typescript/.sittir packages/python/.sittir rust/crates/sittir-rust/src rust/crates/sittir-typescript/src rust/crates/sittir-python/src packages/rust/tests packages/typescript/tests packages/python/tests
@@ -1182,3 +1182,26 @@ gh pr create --base feat/askama-retirement --title "feat(render): punctuation se
 ```
 
 The PR body: the spec link, the byte gate and validator numbers, the dogfood diff from Step 5, and the two deferrals (operator slots, path-form addressing).
+
+### Task 7: The braces carry the depth
+
+**Files:**
+- Modify: `packages/codegen/src/dsl/primitives/spacing.ts` (drop `FLANK_START_ARMS` / `FLANK_END_ARMS`; `WHITESPACE_ARMS` is the one indentation arm set)
+- Modify: `packages/codegen/src/compiler/model/render-rules.ts` (five arms on every seam, flank and edge when the grammar indents; `resolveSeam` returns the declared label; `spacingSitesOf` in rule order; `validateIndentPairs` → `validateIndentDepth`)
+- Modify: `packages/codegen/src/dsl/wire/wire.ts` (seam keys take any whitespace arm; a kind-scoped seam may declare its label; `isKindEdgeLabel` gone)
+- Modify: `packages/codegen/src/emitters/render-options-rs.ts`, `render-module.ts` (`INDENT_PAIRS` → `DEPTH_SITES`, resolve walks each kind's depth sites in rule order)
+- Modify: `packages/codegen/src/emitters/options.ts` (`Spacing` and `Whitespace`; `EdgeBefore` / `EdgeAfter` gone)
+- Modify: `rust/crates/sittir-core/src/spacing.rs` (an indent whose dedent arrives before any text is dropped)
+- Modify: `packages/rust/grammar.sittir.ts`, `packages/typescript/grammar.sittir.ts` (brace bodies declare `lbrace_after: preference('block_body_before', 'indent')` / `rbrace_before: preference('block_body_after', 'dedent')`; rust `block_end: newline`)
+- Tests: `render-rules.test.ts`, `render-defaults.test.ts`, `render-options-rs.test.ts`, `emitter-options.test.ts`, `packages/rust/tests/options.test.ts`, core `spacing.rs` tests, options snapshots
+- Docs: spec (Kind edges, Grammar declaration, Declared defaults, Coalescing), glossaries
+
+- [x] **Step 1: Baseline** — `pnpm exec tsx <scratchpad>/dogfood.ts <scratchpad>/renders-baseline` at HEAD 8417df70f.
+- [x] **Step 2: Arms** — every depth-capable site admits `tight | space | newline | indent | dedent` on both sides; separators keep three. `flanksOf` recognises five-arm flanks; `isAnyWhitespaceChoice` is a spacing choice or a five-arm choice.
+- [x] **Step 3: Declared labels on seams** — `resolveSeam(kind, address, fallback, arms)` returns `{ label, arm }`, the label from the kind's declared site default or the address; wire accepts `kind: { lbrace_after: preference('block_body_before', arm) }` when the label parses as a seam label.
+- [x] **Step 4: Depth walk** — `spacingSitesOf` yields sites in rule order; `validateIndentDepth` walks each kind's sites, depth never negative, zero at the end; `planRenderOptions` emits `DEPTH_SITES: &[(&str, &[usize])]` and `resolve()` runs the same walk over the resolved table.
+- [x] **Step 5: Writer** — `indent_armed` set by `INDENT`, cleared by the first text; a `DEDENT` while armed drops the held payload and its own, so `{}` stays `{}`.
+- [x] **Step 6: Options types** — `Whitespace` replaces `EdgeBefore` / `EdgeAfter`; `WhitespaceLabel`, `KindWhitespace` group the five-arm sites; flanks join them.
+- [x] **Step 7: Grammar defaults** — rust `block`, `declaration_list`, `field_declaration_list`, `enum_variant_list`, `match_block`; typescript `statement_block`, `class_body`; the flank and group-edge indent defaults they replace are removed; rust `block_end: preference('block_end', 'newline')`.
+- [x] **Step 8: Regen protocol, byte gate** — the only differences against the baseline are rust blocks whose last child is a trailing expression; counts identical; suites, cargo, type-check, scope script.
+- [x] **Step 9: Commit by pathspec, push, PR body.**

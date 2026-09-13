@@ -49,7 +49,7 @@ export function buildModule(...children: (T.SimpleStatements | T.CompoundStateme
 
 export function buildSimpleStatements(value: T.SimpleStatementsElements): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.SimpleStatement>
 ): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(
@@ -93,7 +93,7 @@ function _buildSimpleStatements(value: T.SimpleStatementsElements): T.SimpleStat
 
 export function buildImportStatement(value: T.ImportList): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
 ): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(
@@ -197,10 +197,9 @@ export function buildFutureImportStatement(
 
 export function buildImportFromStatement(config: T.ImportFromStatement.Config): T.ImportFromStatement.Built {
 	const _module_name = config.moduleName;
-	const _content = coerceMixedEnumStorage<T.ImportList | T.ParenthesizedImportList | TSKindId.WildcardImport>(
-		config.content,
-		[['*', TSKindId.WildcardImport] as const]
-	);
+	const _content = coerceMixedEnumStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content, [
+		['*', TSKindId.WildcardImport] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -229,23 +228,25 @@ export function buildImportList(
 	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
 ): ReturnType<typeof _buildImportList>;
 export function buildImportList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
 ): ReturnType<typeof _buildImportList>;
-export function buildImportList(...args: ({ delimiter?: Delimiter.Trailing } | (T.DottedName | T.AliasedImport))[]) {
+export function buildImportList(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.DottedName | T.AliasedImport))[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.DottedName | T.AliasedImport>;
 	return _buildImportList(elements, options);
 }
 function _buildImportList(
 	elements: NonEmptyArray<T.DottedName | T.AliasedImport>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportList.Built {
 	_assertNonEmpty(elements, '_import_list.elements');
 	const _name = elements;
@@ -260,7 +261,8 @@ function _buildImportList(
 				_delimiter,
 				$with: {
 					names: (...vs: NonEmptyArray<T.DottedName | T.AliasedImport>) => buildImportList(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildImportList({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildImportList({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -322,7 +324,7 @@ export function buildPrintStatement(value: T.PrintStatementChevron | T.PrintStat
 }
 
 export function buildChevron(value: T.Expression): T.Chevron.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.Chevron['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -331,7 +333,7 @@ export function buildChevron(value: T.Expression): T.Chevron.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildChevron(value)
+					expression: (value: NonNullable<T.Expression>) => buildChevron(value)
 				}
 			},
 			{
@@ -365,7 +367,7 @@ export function buildAssertStatement(...children: T.Expression[]): T.AssertState
 export function buildExpressionStatement(
 	value: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
 ): T.ExpressionStatement.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<NonNullable<T.ExpressionStatement['_content']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -375,7 +377,9 @@ export function buildExpressionStatement(
 				_content,
 				$with: {
 					content: (
-						value: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
+						value: NonNullable<
+							T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
+						>
 					) => buildExpressionStatement(value)
 				}
 			},
@@ -389,7 +393,7 @@ export function buildExpressionStatement(
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Built {
 	const _name = config.name;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<NonNullable<T.NamedExpression['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -400,7 +404,8 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 				_value,
 				$with: {
 					name: (value: T.Identifier) => buildNamedExpression({ ...config, name: value }),
-					value: (value: T.Expression) => buildNamedExpression({ ...config, value: value })
+					value: (value: NonNullable<T.NamedExpression.Config>['value']) =>
+						buildNamedExpression({ ...config, value: value })
 				}
 			},
 			{
@@ -413,7 +418,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 }
 
 export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T.ReturnStatement.Built {
-	const _expressions = value;
+	const _expressions = coerceMixedEnumStorage<NonNullable<T.ReturnStatement['_expressions']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -422,7 +427,7 @@ export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T
 				$named: true as const,
 				_expressions,
 				$with: {
-					expressions: (value?: T.Expression | T.ExpressionList) => buildReturnStatement(value)
+					expressions: (value?: NonNullable<T.Expression | T.ExpressionList>) => buildReturnStatement(value)
 				}
 			},
 			{
@@ -434,7 +439,7 @@ export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T
 }
 
 export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.DeleteStatement.Built {
-	const _expressions = value;
+	const _expressions = coerceMixedEnumStorage<NonNullable<T.DeleteStatement['_expressions']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -443,7 +448,7 @@ export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.
 				$named: true as const,
 				_expressions,
 				$with: {
-					expressions: (value: T.Expression | T.ExpressionList) => buildDeleteStatement(value)
+					expressions: (value: NonNullable<T.Expression | T.ExpressionList>) => buildDeleteStatement(value)
 				}
 			},
 			{
@@ -455,8 +460,8 @@ export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.
 }
 
 export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {}): T.RaiseStatement.Built {
-	const _expressions = config.expressions;
-	const _cause = config.cause;
+	const _expressions = coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions, []);
+	const _cause = coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -466,9 +471,10 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 				_expressions,
 				_cause,
 				$with: {
-					expressions: (value?: T.Expression | T.ExpressionList) =>
+					expressions: (value?: NonNullable<T.RaiseStatement.Config>['expressions']) =>
 						buildRaiseStatement({ ...config, expressions: value }),
-					cause: (value?: T.Expression) => buildRaiseStatement({ ...config, cause: value })
+					cause: (value?: NonNullable<T.RaiseStatement.Config>['cause']) =>
+						buildRaiseStatement({ ...config, cause: value })
 				}
 			},
 			{
@@ -493,11 +499,10 @@ export function buildContinueStatement(): TSKindId.ContinueStatement {
 }
 
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Built {
-	const _condition = config.condition;
-	const _consequence = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(
-		config.consequence,
-		[['\n', TSKindId._SuiteEmpty] as const]
-	);
+	const _condition = coerceMixedEnumStorage<NonNullable<T.IfStatement['_condition']>>(config.condition, []);
+	const _consequence = coerceMixedEnumStorage<NonNullable<T.IfStatement['_consequence']>>(config.consequence, [
+		['\n', TSKindId._SuiteEmpty] as const
+	]);
 	const _alternative = config.alternative ?? [];
 	return withMethods(
 		withAccessors(
@@ -509,7 +514,8 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bu
 				_consequence,
 				_alternative,
 				$with: {
-					condition: (value: T.Expression) => buildIfStatement({ ...config, condition: value }),
+					condition: (value: NonNullable<T.IfStatement.Config>['condition']) =>
+						buildIfStatement({ ...config, condition: value }),
 					consequence: (value: NonNullable<T.IfStatement.Config>['consequence']) =>
 						buildIfStatement({ ...config, consequence: value }),
 					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
@@ -527,11 +533,10 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bu
 }
 
 export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Built {
-	const _condition = config.condition;
-	const _consequence = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(
-		config.consequence,
-		[['\n', TSKindId._SuiteEmpty] as const]
-	);
+	const _condition = coerceMixedEnumStorage<NonNullable<T.ElifClause['_condition']>>(config.condition, []);
+	const _consequence = coerceMixedEnumStorage<NonNullable<T.ElifClause['_consequence']>>(config.consequence, [
+		['\n', TSKindId._SuiteEmpty] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -541,7 +546,8 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Built
 				_condition,
 				_consequence,
 				$with: {
-					condition: (value: T.Expression) => buildElifClause({ ...config, condition: value }),
+					condition: (value: NonNullable<T.ElifClause.Config>['condition']) =>
+						buildElifClause({ ...config, condition: value }),
 					consequence: (value: NonNullable<T.ElifClause.Config>['consequence']) =>
 						buildElifClause({ ...config, consequence: value })
 				}
@@ -556,7 +562,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Built
 }
 
 export function buildElseClause(value: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty): T.ElseClause.Built {
-	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(value, [
+	const _body = coerceMixedEnumStorage<NonNullable<T.ElseClause['_body']>>(value, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	return withMethods(
@@ -604,7 +610,7 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 }
 
 export function buildMatchBlock(value: T.MatchBlockBlock | TSKindId.Newline): T.MatchBlock.Built {
-	const _content = coerceMixedEnumStorage<T.MatchBlockBlock | TSKindId.Newline>(value, [
+	const _content = coerceMixedEnumStorage<NonNullable<T.MatchBlock['_content']>>(value, [
 		['\n', TSKindId.Newline] as const
 	]);
 	return withMethods(
@@ -629,10 +635,9 @@ export function buildMatchBlock(value: T.MatchBlockBlock | TSKindId.Newline): T.
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Built {
 	const _case_patterns = config.casePatterns;
 	const _guard = config.guard;
-	const _consequence = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(
-		config.consequence,
-		[['\n', TSKindId._SuiteEmpty] as const]
-	);
+	const _consequence = coerceMixedEnumStorage<NonNullable<T.CaseClause['_consequence']>>(config.consequence, [
+		['\n', TSKindId._SuiteEmpty] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -662,8 +667,8 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Built
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _left = config.left;
-	const _right = config.right;
-	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
+	const _right = coerceMixedEnumStorage<NonNullable<T.ForStatement['_right']>>(config.right, []);
+	const _body = coerceMixedEnumStorage<NonNullable<T.ForStatement['_body']>>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	const _alternative = config.alternative;
@@ -682,7 +687,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 					asyncMarker: (value?: NonNullable<T.ForStatement.Config>['asyncMarker']) =>
 						buildForStatement({ ...config, asyncMarker: value }),
 					left: (value: T.Pattern | T.PatternList) => buildForStatement({ ...config, left: value }),
-					right: (value: T.Expression | T.ExpressionList) => buildForStatement({ ...config, right: value }),
+					right: (value: NonNullable<T.ForStatement.Config>['right']) => buildForStatement({ ...config, right: value }),
 					body: (value: NonNullable<T.ForStatement.Config>['body']) => buildForStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildForStatement({ ...config, alternative: value })
 				}
@@ -700,8 +705,8 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 }
 
 export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileStatement.Built {
-	const _condition = config.condition;
-	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
+	const _condition = coerceMixedEnumStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition, []);
+	const _body = coerceMixedEnumStorage<NonNullable<T.WhileStatement['_body']>>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	const _alternative = config.alternative;
@@ -715,7 +720,8 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 				_body,
 				_alternative,
 				$with: {
-					condition: (value: T.Expression) => buildWhileStatement({ ...config, condition: value }),
+					condition: (value: NonNullable<T.WhileStatement.Config>['condition']) =>
+						buildWhileStatement({ ...config, condition: value }),
 					body: (value: NonNullable<T.WhileStatement.Config>['body']) =>
 						buildWhileStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildWhileStatement({ ...config, alternative: value })
@@ -732,7 +738,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 }
 
 export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement.Built {
-	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
+	const _body = coerceMixedEnumStorage<NonNullable<T.TryStatement['_body']>>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	const _except_clauses = config.exceptClauses ?? [];
@@ -769,7 +775,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Built {
 	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
 	const _exception = config.exception;
-	const _suite = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.suite, [
+	const _suite = coerceMixedEnumStorage<NonNullable<T.ExceptClause['_suite']>>(config.suite, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	return withMethods(
@@ -801,7 +807,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 export function buildFinallyClause(
 	value: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty
 ): T.FinallyClause.Built {
-	const _block = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(value, [
+	const _block = coerceMixedEnumStorage<NonNullable<T.FinallyClause['_block']>>(value, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	return withMethods(
@@ -827,7 +833,7 @@ export function buildFinallyClause(
 export function buildWithStatement(config: T.WithStatement.Config): T.WithStatement.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _with_clause = config.withClause;
-	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
+	const _body = coerceMixedEnumStorage<NonNullable<T.WithStatement['_body']>>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	return withMethods(
@@ -878,7 +884,7 @@ export function buildWithClause(value: T.WithClauseBare | T.WithClauseParen): T.
 }
 
 export function buildWithItem(value: T.Expression): T.WithItem.Built {
-	const _value = value;
+	const _value = coerceMixedEnumStorage<NonNullable<T.WithItem['_value']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -887,7 +893,7 @@ export function buildWithItem(value: T.Expression): T.WithItem.Built {
 				$named: true as const,
 				_value,
 				$with: {
-					value: (value: T.Expression) => buildWithItem(value)
+					value: (value: NonNullable<T.Expression>) => buildWithItem(value)
 				}
 			},
 			{
@@ -904,7 +910,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters;
 	const _return_type = config.returnType;
-	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
+	const _body = coerceMixedEnumStorage<NonNullable<T.FunctionDefinition['_body']>>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	return withMethods(
@@ -945,7 +951,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 
 export function buildParameters(value?: T._Parameters): ReturnType<typeof _buildParameters>;
 export function buildParameters(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _buildParameters>;
@@ -985,7 +991,7 @@ function _buildParameters(value?: T._Parameters): T.Parameters.Built {
 
 export function buildLambdaParameters(value: T._Parameters): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(
@@ -1026,7 +1032,7 @@ function _buildLambdaParameters(value: T._Parameters): T.LambdaParameters.Built 
 }
 
 export function buildListSplat(value: T.Expression): T.ListSplat.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.ListSplat['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1035,7 +1041,7 @@ export function buildListSplat(value: T.Expression): T.ListSplat.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildListSplat(value)
+					expression: (value: NonNullable<T.Expression>) => buildListSplat(value)
 				}
 			},
 			{
@@ -1047,7 +1053,7 @@ export function buildListSplat(value: T.Expression): T.ListSplat.Built {
 }
 
 export function buildDictionarySplat(value: T.Expression): T.DictionarySplat.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.DictionarySplat['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1056,7 +1062,7 @@ export function buildDictionarySplat(value: T.Expression): T.DictionarySplat.Bui
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildDictionarySplat(value)
+					expression: (value: NonNullable<T.Expression>) => buildDictionarySplat(value)
 				}
 			},
 			{
@@ -1109,7 +1115,7 @@ export function buildNonlocalStatement(...children: T.Identifier[]): T.NonlocalS
 
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Built {
 	const _code = config.code;
-	const _in_clause = config.inClause ?? [];
+	const _in_clause = coerceMixedEnumStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? [], []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1120,7 +1126,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 				_in_clause,
 				$with: {
 					code: (value: T.String | T.Identifier) => buildExecStatement({ ...config, code: value }),
-					inClauses: (...values: T.Expression[]) => buildExecStatement({ ...config, inClause: values })
+					inClauses: (value?: NonNullable<T.ExecStatement.Config>['inClause']) =>
+						buildExecStatement({ ...config, inClause: value })
 				}
 			},
 			{
@@ -1161,7 +1168,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _superclasses = config.superclasses;
-	const _body = coerceMixedEnumStorage<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(config.body, [
+	const _body = coerceMixedEnumStorage<NonNullable<T.ClassDefinition['_body']>>(config.body, [
 		['\n', TSKindId._SuiteEmpty] as const
 	]);
 	return withMethods(
@@ -1195,7 +1202,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 
 export function buildTypeParameter(value: T.Types): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypeParameter>;
@@ -1258,7 +1265,7 @@ export function buildParenthesizedListSplat(
 
 export function buildArgumentList(value?: T.ArgumentListElements): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 	>
@@ -1332,7 +1339,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 }
 
 export function buildDecorator(value: T.Expression): T.Decorator.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.Decorator['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1341,7 +1348,7 @@ export function buildDecorator(value: T.Expression): T.Decorator.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildDecorator(value)
+					expression: (value: NonNullable<T.Expression>) => buildDecorator(value)
 				}
 			},
 			{
@@ -1372,8 +1379,8 @@ export function buildBlock(...children: (T.SimpleStatements | T.CompoundStatemen
 }
 
 export function buildExpressionList(config: T.ExpressionList.Config): T.ExpressionList.Built {
-	const _expression = config.expression;
-	const _tail = coerceMixedEnumStorage<TSKindId.Comma | T.ExpressionListExpressions>(config.tail, [
+	const _expression = coerceMixedEnumStorage<NonNullable<T.ExpressionList['_expression']>>(config.expression, []);
+	const _tail = coerceMixedEnumStorage<NonNullable<T.ExpressionList['_tail']>>(config.tail, [
 		[',', TSKindId.Comma] as const
 	]);
 	return withMethods(
@@ -1385,7 +1392,8 @@ export function buildExpressionList(config: T.ExpressionList.Config): T.Expressi
 				_expression,
 				_tail,
 				$with: {
-					expression: (value: T.Expression) => buildExpressionList({ ...config, expression: value }),
+					expression: (value: NonNullable<T.ExpressionList.Config>['expression']) =>
+						buildExpressionList({ ...config, expression: value }),
 					tail: (value: NonNullable<T.ExpressionList.Config>['tail']) => buildExpressionList({ ...config, tail: value })
 				}
 			},
@@ -1438,25 +1446,7 @@ export function buildCasePattern(
 		| T.DottedName
 		| TSKindId.WildcardPattern
 ): T.CasePattern.Built {
-	const _content = coerceMixedEnumStorage<
-		| T.CaseAsPattern
-		| T.KeywordPattern
-		| T.ClassPattern
-		| T.SplatPattern
-		| T.UnionPattern
-		| T.CaseListPattern
-		| T.CaseTuplePattern
-		| T.DictPattern
-		| T.String
-		| T.ConcatenatedString
-		| TSKindId.True
-		| TSKindId.False
-		| TSKindId.None
-		| T.SimplePatternNegative
-		| T.ComplexPattern
-		| T.DottedName
-		| TSKindId.WildcardPattern
-	>(value, [
+	const _content = coerceMixedEnumStorage<NonNullable<T.CasePattern['_content']>>(value, [
 		['True', TSKindId.True] as const,
 		['False', TSKindId.False] as const,
 		['None', TSKindId.None] as const,
@@ -1561,7 +1551,7 @@ export function buildUnionPattern(
 
 export function buildDictPattern(value?: T.DictPatternElements): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>
 ): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(
@@ -1602,23 +1592,7 @@ function _buildDictPattern(value?: T.DictPatternElements): T.DictPattern.Built {
 }
 
 export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyValuePattern.Built {
-	const _key = coerceMixedEnumStorage<
-		| T.ClassPattern
-		| T.SplatPattern
-		| T.UnionPattern
-		| T.CaseListPattern
-		| T.CaseTuplePattern
-		| T.DictPattern
-		| T.String
-		| T.ConcatenatedString
-		| TSKindId.True
-		| TSKindId.False
-		| TSKindId.None
-		| T.SimplePatternNegative
-		| T.ComplexPattern
-		| T.DottedName
-		| TSKindId.WildcardPattern
-	>(config.key, [
+	const _key = coerceMixedEnumStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key, [
 		['True', TSKindId.True] as const,
 		['False', TSKindId.False] as const,
 		['None', TSKindId.None] as const,
@@ -1649,23 +1623,7 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 
 export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordPattern.Built {
 	const _name = config.name;
-	const _value = coerceMixedEnumStorage<
-		| T.ClassPattern
-		| T.SplatPattern
-		| T.UnionPattern
-		| T.CaseListPattern
-		| T.CaseTuplePattern
-		| T.DictPattern
-		| T.String
-		| T.ConcatenatedString
-		| TSKindId.True
-		| TSKindId.False
-		| TSKindId.None
-		| T.SimplePatternNegative
-		| T.ComplexPattern
-		| T.DottedName
-		| TSKindId.WildcardPattern
-	>(config.value, [
+	const _value = coerceMixedEnumStorage<NonNullable<T.KeywordPattern['_value']>>(config.value, [
 		['True', TSKindId.True] as const,
 		['False', TSKindId.False] as const,
 		['None', TSKindId.None] as const,
@@ -1695,12 +1653,12 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 }
 
 export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern.Built {
-	const _operator = coerceKindEnumStorage<number>(config.operator, [
+	const _operator = coerceKindEnumStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator, [
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
-	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.Anonymous>(config.name, [
-		['_', TSKindId.Anonymous] as const
+	const _name = coerceMixedEnumStorage<NonNullable<T.SplatPattern['_name']>>(config.name, [
+		['_', TSKindId.Underscore] as const
 	]);
 	return withMethods(
 		withAccessors(
@@ -1753,7 +1711,7 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexPattern.Built {
 	const _real = coerceBooleanKeywordStorage(config.real);
 	const _imaginary = config.imaginary;
-	const _operator = coerceKindEnumStorage<number>(config.operator, [
+	const _operator = coerceKindEnumStorage<NonNullable<T.ComplexPattern['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const
 	]);
@@ -1790,23 +1748,23 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 
 export function build_Parameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _build_Parameters>;
 export function build_Parameters(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
 ): ReturnType<typeof _build_Parameters>;
-export function build_Parameters(...args: ({ delimiter?: Delimiter.Trailing } | T.Parameter)[]) {
+export function build_Parameters(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Parameter)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Parameter>;
 	return _build_Parameters(elements, options);
 }
 function _build_Parameters(
 	elements: NonEmptyArray<T.Parameter>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T._Parameters.Built {
 	_assertNonEmpty(elements, '_parameters.elements');
 	const _parameter = elements;
@@ -1821,7 +1779,8 @@ function _build_Parameters(
 				_delimiter,
 				$with: {
 					parameters: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => build_Parameters({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						build_Parameters({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -1834,23 +1793,23 @@ function _build_Parameters(
 
 export function buildPatterns(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildPatterns>;
-export function buildPatterns(...args: ({ delimiter?: Delimiter.Trailing } | T.Pattern)[]) {
+export function buildPatterns(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Pattern)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern>;
 	return _buildPatterns(elements, options);
 }
 function _buildPatterns(
 	elements: NonEmptyArray<T.Pattern>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Patterns.Built {
 	_assertNonEmpty(elements, '_patterns.elements');
 	const _pattern = elements;
@@ -1865,7 +1824,8 @@ function _buildPatterns(
 				_delimiter,
 				$with: {
 					patterns: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildPatterns({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -1878,7 +1838,7 @@ function _buildPatterns(
 
 export function buildTuplePattern(value?: T.Patterns): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildTuplePattern>;
@@ -1918,7 +1878,7 @@ function _buildTuplePattern(value?: T.Patterns): T.TuplePattern.Built {
 
 export function buildListPattern(value?: T.Patterns): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildListPattern>;
@@ -1958,7 +1918,7 @@ function _buildListPattern(value?: T.Patterns): T.ListPattern.Built {
 
 export function buildDefaultParameter(config: T.DefaultParameter.Config): T.DefaultParameter.Built {
 	const _name = config.name;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<NonNullable<T.DefaultParameter['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1969,7 +1929,8 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 				_value,
 				$with: {
 					name: (value: T.Identifier | T.TuplePattern) => buildDefaultParameter({ ...config, name: value }),
-					value: (value: T.Expression) => buildDefaultParameter({ ...config, value: value })
+					value: (value: NonNullable<T.DefaultParameter.Config>['value']) =>
+						buildDefaultParameter({ ...config, value: value })
 				}
 			},
 			{
@@ -1984,7 +1945,7 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Config): T.TypedDefaultParameter.Built {
 	const _name = config.name;
 	const _type = config.type;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1997,7 +1958,8 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 				$with: {
 					name: (value: T.Identifier) => buildTypedDefaultParameter({ ...config, name: value }),
 					type: (value: T.Type) => buildTypedDefaultParameter({ ...config, type: value }),
-					value: (value: T.Expression) => buildTypedDefaultParameter({ ...config, value: value })
+					value: (value: NonNullable<T.TypedDefaultParameter.Config>['value']) =>
+						buildTypedDefaultParameter({ ...config, value: value })
 				}
 			},
 			{
@@ -2055,8 +2017,8 @@ export function buildDictionarySplatPattern(
 }
 
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
-	const _expression = config.expression;
-	const _alias = config.alias;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.AsPattern['_expression']>>(config.expression, []);
+	const _alias = coerceMixedEnumStorage<NonNullable<T.AsPattern['_alias']>>(config.alias, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2066,8 +2028,9 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 				_expression,
 				_alias,
 				$with: {
-					expression: (value: T.Expression) => buildAsPattern({ ...config, expression: value }),
-					alias: (value: T.Expression) => buildAsPattern({ ...config, alias: value })
+					expression: (value: NonNullable<T.AsPattern.Config>['expression']) =>
+						buildAsPattern({ ...config, expression: value }),
+					alias: (value: NonNullable<T.AsPattern.Config>['alias']) => buildAsPattern({ ...config, alias: value })
 				}
 			},
 			{
@@ -2080,7 +2043,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 }
 
 export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
-	const _argument = value;
+	const _argument = coerceMixedEnumStorage<NonNullable<T.NotOperator['_argument']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2089,7 +2052,7 @@ export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
 				$named: true as const,
 				_argument,
 				$with: {
-					argument: (value: T.Expression) => buildNotOperator(value)
+					argument: (value: NonNullable<T.Expression>) => buildNotOperator(value)
 				}
 			},
 			{
@@ -2101,12 +2064,12 @@ export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
 }
 
 export function buildBooleanOperator(config: T.BooleanOperator.Config): T.BooleanOperator.Built {
-	const _left = config.left;
-	const _operator = coerceKindEnumStorage<number>(config.operator, [
-		['and', TSKindId.And] as const,
-		['or', TSKindId.Or] as const
+	const _left = coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_left']>>(config.left, []);
+	const _operator = coerceKindEnumStorage<NonNullable<T.BooleanOperator['_operator']>>(config.operator, [
+		['and', TSKindId.AndKeyword] as const,
+		['or', TSKindId.OrKeyword] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2117,10 +2080,12 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 				_operator,
 				_right,
 				$with: {
-					left: (value: T.Expression) => buildBooleanOperator({ ...config, left: value }),
+					left: (value: NonNullable<T.BooleanOperator.Config>['left']) =>
+						buildBooleanOperator({ ...config, left: value }),
 					operator: (value: NonNullable<T.BooleanOperator.Config>['operator']) =>
 						buildBooleanOperator({ ...config, operator: value }),
-					right: (value: T.Expression) => buildBooleanOperator({ ...config, right: value })
+					right: (value: NonNullable<T.BooleanOperator.Config>['right']) =>
+						buildBooleanOperator({ ...config, right: value })
 				}
 			},
 			{
@@ -2134,8 +2099,8 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 }
 
 export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOperator.Built {
-	const _left = config.left;
-	const _operator = coerceKindEnumStorage<number>(config.operator, [
+	const _left = coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_left']>>(config.left, []);
+	const _operator = coerceKindEnumStorage<NonNullable<T.BinaryOperator['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
 		['*', TSKindId.Star] as const,
@@ -2150,7 +2115,7 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 		['<<', TSKindId.LtLt] as const,
 		['>>', TSKindId.GtGt] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2161,10 +2126,12 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 				_operator,
 				_right,
 				$with: {
-					left: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, left: value }),
+					left: (value: NonNullable<T.BinaryOperator.Config>['left']) =>
+						buildBinaryOperator({ ...config, left: value }),
 					operator: (value: NonNullable<T.BinaryOperator.Config>['operator']) =>
 						buildBinaryOperator({ ...config, operator: value }),
-					right: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, right: value })
+					right: (value: NonNullable<T.BinaryOperator.Config>['right']) =>
+						buildBinaryOperator({ ...config, right: value })
 				}
 			},
 			{
@@ -2178,12 +2145,12 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 }
 
 export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOperator.Built {
-	const _operator = coerceKindEnumStorage<number>(config.operator, [
+	const _operator = coerceKindEnumStorage<NonNullable<T.UnaryOperator['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
 		['~', TSKindId.Tilde] as const
 	]);
-	const _argument = config.argument;
+	const _argument = coerceMixedEnumStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2195,7 +2162,8 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 				$with: {
 					operator: (value: NonNullable<T.UnaryOperator.Config>['operator']) =>
 						buildUnaryOperator({ ...config, operator: value }),
-					argument: (value: T.PrimaryExpression) => buildUnaryOperator({ ...config, argument: value })
+					argument: (value: NonNullable<T.UnaryOperator.Config>['argument']) =>
+						buildUnaryOperator({ ...config, argument: value })
 				}
 			},
 			{
@@ -2208,7 +2176,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 }
 
 export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.ComparisonOperator.Built {
-	const _left = config.left;
+	const _left = coerceMixedEnumStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left, []);
 	const _comparators = config.comparators ?? [];
 	return withMethods(
 		withAccessors(
@@ -2219,7 +2187,8 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 				_left,
 				_comparators,
 				$with: {
-					left: (value: T.PrimaryExpression) => buildComparisonOperator({ ...config, left: value }),
+					left: (value: NonNullable<T.ComparisonOperator.Config>['left']) =>
+						buildComparisonOperator({ ...config, left: value }),
 					comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
 						buildComparisonOperator({ ...config, comparators: values })
 				}
@@ -2235,7 +2204,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 
 export function buildLambda(config: T.Lambda.Config): T.Lambda.Built {
 	const _parameters = config.parameters;
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<NonNullable<T.Lambda['_body']>>(config.body, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2246,7 +2215,7 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Built {
 				_body,
 				$with: {
 					parameters: (value?: T.LambdaParameters) => buildLambda({ ...config, parameters: value }),
-					body: (value: T.Expression) => buildLambda({ ...config, body: value })
+					body: (value: NonNullable<T.Lambda.Config>['body']) => buildLambda({ ...config, body: value })
 				}
 			},
 			{
@@ -2262,7 +2231,7 @@ export function buildLambdaWithinForInClause(
 	config: T.LambdaWithinForInClause.Config
 ): T.LambdaWithinForInClause.Built {
 	const _parameters = config.parameters;
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<NonNullable<T.LambdaWithinForInClause['_body']>>(config.body, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2273,7 +2242,7 @@ export function buildLambdaWithinForInClause(
 				_body,
 				$with: {
 					parameters: (value?: T.LambdaParameters) => buildLambdaWithinForInClause({ ...config, parameters: value }),
-					body: (value: T.Expression | T.LambdaWithinForInClause) =>
+					body: (value: NonNullable<T.LambdaWithinForInClause.Config>['body']) =>
 						buildLambdaWithinForInClause({ ...config, body: value })
 				}
 			},
@@ -2314,7 +2283,7 @@ export function buildAssignment(config: T.Assignment.Config): T.Assignment.Built
 
 export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): T.AugmentedAssignment.Built {
 	const _left = config.left;
-	const _operator = coerceKindEnumStorage<number>(config.operator, [
+	const _operator = coerceKindEnumStorage<NonNullable<T.AugmentedAssignment['_operator']>>(config.operator, [
 		['+=', TSKindId.PlusEq] as const,
 		['-=', TSKindId.DashEq] as const,
 		['*=', TSKindId.StarEq] as const,
@@ -2329,7 +2298,7 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 		['^=', TSKindId.CaretEq] as const,
 		['|=', TSKindId.PipeEq] as const
 	]);
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<NonNullable<T.AugmentedAssignment['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2343,9 +2312,8 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 					left: (value: T.Pattern | T.PatternList) => buildAugmentedAssignment({ ...config, left: value }),
 					operator: (value: NonNullable<T.AugmentedAssignment.Config>['operator']) =>
 						buildAugmentedAssignment({ ...config, operator: value }),
-					right: (
-						value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-					) => buildAugmentedAssignment({ ...config, right: value })
+					right: (value: NonNullable<T.AugmentedAssignment.Config>['right']) =>
+						buildAugmentedAssignment({ ...config, right: value })
 				}
 			},
 			{
@@ -2360,7 +2328,7 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 
 export function buildPatternList(config: T.PatternList.Config): T.PatternList.Built {
 	const _pattern = config.pattern;
-	const _tail = coerceMixedEnumStorage<TSKindId.Comma | T.PatternListPatterns>(config.tail, [
+	const _tail = coerceMixedEnumStorage<NonNullable<T.PatternList['_tail']>>(config.tail, [
 		[',', TSKindId.Comma] as const
 	]);
 	return withMethods(
@@ -2386,7 +2354,7 @@ export function buildPatternList(config: T.PatternList.Config): T.PatternList.Bu
 }
 
 export function buildYield(value?: T.YieldFromClause | T.Expression | T.ExpressionList): T.Yield.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<NonNullable<T.Yield['_content']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2395,7 +2363,7 @@ export function buildYield(value?: T.YieldFromClause | T.Expression | T.Expressi
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value?: T.YieldFromClause | T.Expression | T.ExpressionList) => buildYield(value)
+					content: (value?: NonNullable<T.YieldFromClause | T.Expression | T.ExpressionList>) => buildYield(value)
 				}
 			},
 			{
@@ -2407,7 +2375,7 @@ export function buildYield(value?: T.YieldFromClause | T.Expression | T.Expressi
 }
 
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
-	const _object = config.object;
+	const _object = coerceMixedEnumStorage<NonNullable<T.Attribute['_object']>>(config.object, []);
 	const _attribute = config.attribute;
 	return withMethods(
 		withAccessors(
@@ -2418,7 +2386,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 				_object,
 				_attribute,
 				$with: {
-					object: (value: T.PrimaryExpression) => buildAttribute({ ...config, object: value }),
+					object: (value: NonNullable<T.Attribute.Config>['object']) => buildAttribute({ ...config, object: value }),
 					attribute: (value: T.Identifier) => buildAttribute({ ...config, attribute: value })
 				}
 			},
@@ -2432,7 +2400,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 }
 
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<NonNullable<T.Subscript['_value']>>(config.value, []);
 	const _subscripts = config.subscripts;
 	return withMethods(
 		withAccessors(
@@ -2443,7 +2411,7 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
 				_value,
 				_subscripts,
 				$with: {
-					value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }),
+					value: (value: NonNullable<T.Subscript.Config>['value']) => buildSubscript({ ...config, value: value }),
 					subscripts: (value: T.Subscripts) => buildSubscript({ ...config, subscripts: value })
 				}
 			},
@@ -2457,8 +2425,8 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
 }
 
 export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Built {
-	const _start = config.start;
-	const _stop = config.stop;
+	const _start = coerceMixedEnumStorage<NonNullable<T.Slice['_start']>>(config.start, []);
+	const _stop = coerceMixedEnumStorage<NonNullable<T.Slice['_stop']>>(config.stop, []);
 	const _step = config.step;
 	return withMethods(
 		withAccessors(
@@ -2470,8 +2438,8 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Built 
 				_stop,
 				_step,
 				$with: {
-					start: (value?: T.Expression) => buildSlice({ ...config, start: value }),
-					stop: (value?: T.Expression) => buildSlice({ ...config, stop: value }),
+					start: (value?: NonNullable<T.Slice.Config>['start']) => buildSlice({ ...config, start: value }),
+					stop: (value?: NonNullable<T.Slice.Config>['stop']) => buildSlice({ ...config, stop: value }),
 					step: (value?: T.SliceGroup) => buildSlice({ ...config, step: value })
 				}
 			},
@@ -2490,7 +2458,7 @@ export function buildEllipsis(): TSKindId.Ellipsis {
 }
 
 export function buildCall(config: T.Call.Config): T.Call.Built {
-	const _function = config.function;
+	const _function = coerceMixedEnumStorage<NonNullable<T.Call['_function']>>(config.function, []);
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
@@ -2501,7 +2469,7 @@ export function buildCall(config: T.Call.Config): T.Call.Built {
 				_function,
 				_arguments,
 				$with: {
-					function: (value: T.PrimaryExpression) => buildCall({ ...config, function: value }),
+					function: (value: NonNullable<T.Call.Config>['function']) => buildCall({ ...config, function: value }),
 					arguments: (value: T.GeneratorExpression | T.ArgumentList) => buildCall({ ...config, arguments: value })
 				}
 			},
@@ -2543,7 +2511,7 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 export function buildType(
 	value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
 ): T.Type.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<NonNullable<T.Type['_content']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2553,7 +2521,9 @@ export function buildType(
 				_content,
 				$with: {
 					content: (
-						value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
+						value: NonNullable<
+							T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
+						>
 					) => buildType(value)
 				}
 			},
@@ -2566,7 +2536,7 @@ export function buildType(
 }
 
 export function buildSplatType(config: T.SplatType.Config): T.SplatType.Built {
-	const _operator = coerceKindEnumStorage<number>(config.operator, [
+	const _operator = coerceKindEnumStorage<NonNullable<T.SplatType['_operator']>>(config.operator, [
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
@@ -2595,8 +2565,8 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Built {
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Built {
-	const _name = coerceMixedEnumStorage<T.Identifier | TSKindId.AnonType>(config.name, [
-		['type', TSKindId.AnonType] as const
+	const _name = coerceMixedEnumStorage<NonNullable<T.GenericType['_name']>>(config.name, [
+		['type', TSKindId.TypeKeyword] as const
 	]);
 	const _type_parameter = config.typeParameter;
 	return withMethods(
@@ -2698,7 +2668,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Built
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Built {
 	const _name = config.name;
-	const _value = config.value;
+	const _value = coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2709,7 +2679,8 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 				_value,
 				$with: {
 					name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
-					value: (value: T.Expression) => buildKeywordArgument({ ...config, value: value })
+					value: (value: NonNullable<T.KeywordArgument.Config>['value']) =>
+						buildKeywordArgument({ ...config, value: value })
 				}
 			},
 			{
@@ -2723,7 +2694,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 
 export function buildList(value?: T.CollectionElements): ReturnType<typeof _buildList>;
 export function buildList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildList>;
 export function buildList(
@@ -2765,7 +2736,7 @@ function _buildList(value?: T.CollectionElements): T.List.Built {
 
 export function buildSet(value: T.CollectionElements): ReturnType<typeof _buildSet>;
 export function buildSet(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildSet>;
 export function buildSet(
@@ -2807,7 +2778,7 @@ function _buildSet(value: T.CollectionElements): T.Set.Built {
 
 export function buildTuple(value?: T.CollectionElements): ReturnType<typeof _buildTuple>;
 export function buildTuple(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildTuple>;
 export function buildTuple(
@@ -2849,7 +2820,7 @@ function _buildTuple(value?: T.CollectionElements): T.Tuple.Built {
 
 export function buildDictionary(value?: T.DictionaryElements): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
 ): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(
@@ -2890,8 +2861,8 @@ function _buildDictionary(value?: T.DictionaryElements): T.Dictionary.Built {
 }
 
 export function buildPair(config: T.Pair.Config): T.Pair.Built {
-	const _key = config.key;
-	const _value = config.value;
+	const _key = coerceMixedEnumStorage<NonNullable<T.Pair['_key']>>(config.key, []);
+	const _value = coerceMixedEnumStorage<NonNullable<T.Pair['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -2901,8 +2872,8 @@ export function buildPair(config: T.Pair.Config): T.Pair.Built {
 				_key,
 				_value,
 				$with: {
-					key: (value: T.Expression) => buildPair({ ...config, key: value }),
-					value: (value: T.Expression) => buildPair({ ...config, value: value })
+					key: (value: NonNullable<T.Pair.Config>['key']) => buildPair({ ...config, key: value }),
+					value: (value: NonNullable<T.Pair.Config>['value']) => buildPair({ ...config, value: value })
 				}
 			},
 			{
@@ -2915,7 +2886,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Built {
 }
 
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Built {
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<NonNullable<T.ListComprehension['_body']>>(config.body, []);
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
 		withAccessors(
@@ -2926,7 +2897,8 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 				_body,
 				_comprehension_clauses,
 				$with: {
-					body: (value: T.Expression) => buildListComprehension({ ...config, body: value }),
+					body: (value: NonNullable<T.ListComprehension.Config>['body']) =>
+						buildListComprehension({ ...config, body: value }),
 					comprehensionClauses: (value: T.ComprehensionClauses) =>
 						buildListComprehension({ ...config, comprehensionClauses: value })
 				}
@@ -2969,7 +2941,7 @@ export function buildDictionaryComprehension(
 }
 
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Built {
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<NonNullable<T.SetComprehension['_body']>>(config.body, []);
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
 		withAccessors(
@@ -2980,7 +2952,8 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 				_body,
 				_comprehension_clauses,
 				$with: {
-					body: (value: T.Expression) => buildSetComprehension({ ...config, body: value }),
+					body: (value: NonNullable<T.SetComprehension.Config>['body']) =>
+						buildSetComprehension({ ...config, body: value }),
 					comprehensionClauses: (value: T.ComprehensionClauses) =>
 						buildSetComprehension({ ...config, comprehensionClauses: value })
 				}
@@ -2995,7 +2968,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 }
 
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Built {
-	const _body = config.body;
+	const _body = coerceMixedEnumStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body, []);
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
 		withAccessors(
@@ -3006,7 +2979,8 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 				_body,
 				_comprehension_clauses,
 				$with: {
-					body: (value: T.Expression) => buildGeneratorExpression({ ...config, body: value }),
+					body: (value: NonNullable<T.GeneratorExpression.Config>['body']) =>
+						buildGeneratorExpression({ ...config, body: value }),
 					comprehensionClauses: (value: T.ComprehensionClauses) =>
 						buildGeneratorExpression({ ...config, comprehensionClauses: value })
 				}
@@ -3023,7 +2997,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 export function buildParenthesizedExpression(
 	value: T.Expression | T.Yield | T.ListSplat
 ): T.ParenthesizedExpression.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_content']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3032,7 +3006,7 @@ export function buildParenthesizedExpression(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Expression | T.Yield | T.ListSplat) => buildParenthesizedExpression(value)
+					content: (value: NonNullable<T.Expression | T.Yield | T.ListSplat>) => buildParenthesizedExpression(value)
 				}
 			},
 			{
@@ -3047,11 +3021,14 @@ export function buildCollectionElements(
 	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildCollectionElements>;
 export function buildCollectionElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>
 ): ReturnType<typeof _buildCollectionElements>;
 export function buildCollectionElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -3059,7 +3036,7 @@ export function buildCollectionElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat
 	>;
@@ -3067,7 +3044,7 @@ export function buildCollectionElements(
 }
 function _buildCollectionElements(
 	elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CollectionElements.Built {
 	_assertNonEmpty(elements, '_collection_elements.elements');
 	const _element = elements;
@@ -3083,7 +3060,8 @@ function _buildCollectionElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) =>
 						buildCollectionElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildCollectionElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildCollectionElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3097,7 +3075,7 @@ function _buildCollectionElements(
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _left = config.left;
-	const _right = config.right ?? [];
+	const _right = coerceMixedEnumStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? [], []);
 	const _comma = coerceBooleanKeywordStorage(config.comma);
 	return withMethods(
 		withAccessors(
@@ -3113,8 +3091,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bu
 					asyncMarker: (value?: NonNullable<T.ForInClause.Config>['asyncMarker']) =>
 						buildForInClause({ ...config, asyncMarker: value }),
 					left: (value: T.Pattern | T.PatternList) => buildForInClause({ ...config, left: value }),
-					rights: (...values: NonEmptyArray<T.Expression | T.LambdaWithinForInClause>) =>
-						buildForInClause({ ...config, right: values }),
+					rights: (value: NonNullable<T.ForInClause.Config>['right']) => buildForInClause({ ...config, right: value }),
 					comma: (value?: NonNullable<T.ForInClause.Config>['comma']) => buildForInClause({ ...config, comma: value })
 				}
 			},
@@ -3130,7 +3107,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bu
 }
 
 export function buildIfClause(value: T.Expression): T.IfClause.Built {
-	const _condition = value;
+	const _condition = coerceMixedEnumStorage<NonNullable<T.IfClause['_condition']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3139,7 +3116,7 @@ export function buildIfClause(value: T.Expression): T.IfClause.Built {
 				$named: true as const,
 				_condition,
 				$with: {
-					condition: (value: T.Expression) => buildIfClause(value)
+					condition: (value: NonNullable<T.Expression>) => buildIfClause(value)
 				}
 			},
 			{
@@ -3151,9 +3128,12 @@ export function buildIfClause(value: T.Expression): T.IfClause.Built {
 }
 
 export function buildConditionalExpression(config: T.ConditionalExpression.Config): T.ConditionalExpression.Built {
-	const _body = config.body;
-	const _condition = config.condition;
-	const _alternative = config.alternative;
+	const _body = coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body, []);
+	const _condition = coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition, []);
+	const _alternative = coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_alternative']>>(
+		config.alternative,
+		[]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3164,9 +3144,12 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 				_condition,
 				_alternative,
 				$with: {
-					body: (value: T.Expression) => buildConditionalExpression({ ...config, body: value }),
-					condition: (value: T.Expression) => buildConditionalExpression({ ...config, condition: value }),
-					alternative: (value: T.Expression) => buildConditionalExpression({ ...config, alternative: value })
+					body: (value: NonNullable<T.ConditionalExpression.Config>['body']) =>
+						buildConditionalExpression({ ...config, body: value }),
+					condition: (value: NonNullable<T.ConditionalExpression.Config>['condition']) =>
+						buildConditionalExpression({ ...config, condition: value }),
+					alternative: (value: NonNullable<T.ConditionalExpression.Config>['alternative']) =>
+						buildConditionalExpression({ ...config, alternative: value })
 				}
 			},
 			{
@@ -3254,7 +3237,7 @@ export function buildStringContent(
 }
 
 export function buildInterpolation(config: T.Interpolation.Config): T.Interpolation.Built {
-	const _expression = config.expression;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.Interpolation['_expression']>>(config.expression, []);
 	const _eq_marker = coerceBooleanKeywordStorage(config.eqMarker);
 	const _type_conversion = config.typeConversion;
 	const _format_specifier = config.formatSpecifier;
@@ -3269,7 +3252,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 				_type_conversion,
 				_format_specifier,
 				$with: {
-					expression: (value: T.Expression | T.ExpressionList | T.PatternList | T.Yield) =>
+					expression: (value: NonNullable<T.Interpolation.Config>['expression']) =>
 						buildInterpolation({ ...config, expression: value }),
 					eqMarker: (value?: NonNullable<T.Interpolation.Config>['eqMarker']) =>
 						buildInterpolation({ ...config, eqMarker: value }),
@@ -3394,7 +3377,7 @@ export function buildNone(): TSKindId.None {
 }
 
 export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.Await['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3403,7 +3386,7 @@ export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.PrimaryExpression) => buildAwait(value)
+					expression: (value: NonNullable<T.PrimaryExpression>) => buildAwait(value)
 				}
 			},
 			{
@@ -3456,23 +3439,25 @@ export function buildSimpleStatementsElements(
 	...elements: NonEmptyArray<T.SimpleStatement>
 ): ReturnType<typeof _buildSimpleStatementsElements>;
 export function buildSimpleStatementsElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.SimpleStatement>
 ): ReturnType<typeof _buildSimpleStatementsElements>;
-export function buildSimpleStatementsElements(...args: ({ delimiter?: Delimiter.Trailing } | T.SimpleStatement)[]) {
+export function buildSimpleStatementsElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.SimpleStatement)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.SimpleStatement>;
 	return _buildSimpleStatementsElements(elements, options);
 }
 function _buildSimpleStatementsElements(
 	elements: NonEmptyArray<T.SimpleStatement>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.SimpleStatementsElements.Built {
 	_assertNonEmpty(elements, '_simple_statements_elements.elements');
 	const _simple_statement = elements;
@@ -3487,7 +3472,7 @@ function _buildSimpleStatementsElements(
 				_delimiter,
 				$with: {
 					simpleStatements: (...vs: NonEmptyArray<T.SimpleStatement>) => buildSimpleStatementsElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -3501,23 +3486,23 @@ function _buildSimpleStatementsElements(
 
 export function buildSubjects(...elements: NonEmptyArray<T.Expression>): ReturnType<typeof _buildSubjects>;
 export function buildSubjects(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildSubjects>;
-export function buildSubjects(...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) {
+export function buildSubjects(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Expression)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
 	return _buildSubjects(elements, options);
 }
 function _buildSubjects(
 	elements: NonEmptyArray<T.Expression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subjects.Built {
 	_assertNonEmpty(elements, '_subjects.elements');
 	const _subject = elements;
@@ -3532,7 +3517,8 @@ function _buildSubjects(
 				_delimiter,
 				$with: {
 					subjects: (...vs: NonEmptyArray<T.Expression>) => buildSubjects(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildSubjects({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildSubjects({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3545,23 +3531,23 @@ function _buildSubjects(
 
 export function buildCasePatterns(...elements: NonEmptyArray<T.CasePattern>): ReturnType<typeof _buildCasePatterns>;
 export function buildCasePatterns(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.CasePattern>
 ): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns(...args: ({ delimiter?: Delimiter.Trailing } | T.CasePattern)[]) {
+export function buildCasePatterns(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.CasePattern)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.CasePattern>;
 	return _buildCasePatterns(elements, options);
 }
 function _buildCasePatterns(
 	elements: NonEmptyArray<T.CasePattern>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CasePatterns.Built {
 	_assertNonEmpty(elements, '_case_patterns.elements');
 	const _case_pattern = elements;
@@ -3576,7 +3562,8 @@ function _buildCasePatterns(
 				_delimiter,
 				$with: {
 					casePatterns: (...vs: NonEmptyArray<T.CasePattern>) => buildCasePatterns(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildCasePatterns({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildCasePatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3591,23 +3578,25 @@ export function buildWithClauseWithItems(
 	...elements: NonEmptyArray<T.WithItem>
 ): ReturnType<typeof _buildWithClauseWithItems>;
 export function buildWithClauseWithItems(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.WithItem>
 ): ReturnType<typeof _buildWithClauseWithItems>;
-export function buildWithClauseWithItems(...args: ({ delimiter?: Delimiter.Trailing } | T.WithItem)[]) {
+export function buildWithClauseWithItems(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.WithItem)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.WithItem>;
 	return _buildWithClauseWithItems(elements, options);
 }
 function _buildWithClauseWithItems(
 	elements: NonEmptyArray<T.WithItem>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseWithItems.Built {
 	_assertNonEmpty(elements, '_with_clause_with_items.elements');
 	const _with_item = elements;
@@ -3622,7 +3611,8 @@ function _buildWithClauseWithItems(
 				_delimiter,
 				$with: {
 					withItems: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseWithItems(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildWithClauseWithItems({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3635,21 +3625,24 @@ function _buildWithClauseWithItems(
 
 export function buildTypes(...elements: NonEmptyArray<T.Type>): ReturnType<typeof _buildTypes>;
 export function buildTypes(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Type>
 ): ReturnType<typeof _buildTypes>;
-export function buildTypes(...args: ({ delimiter?: Delimiter.Trailing } | T.Type)[]) {
+export function buildTypes(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Type)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Type>;
 	return _buildTypes(elements, options);
 }
-function _buildTypes(elements: NonEmptyArray<T.Type>, options: { delimiter?: Delimiter.Trailing }): T.Types.Built {
+function _buildTypes(
+	elements: NonEmptyArray<T.Type>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.Types.Built {
 	_assertNonEmpty(elements, '_types.elements');
 	const _type = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -3663,7 +3656,7 @@ function _buildTypes(elements: NonEmptyArray<T.Type>, options: { delimiter?: Del
 				_delimiter,
 				$with: {
 					types: (...vs: NonEmptyArray<T.Type>) => buildTypes(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildTypes({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) => buildTypes({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3680,14 +3673,14 @@ export function buildArgumentListElements(
 	>
 ): ReturnType<typeof _buildArgumentListElements>;
 export function buildArgumentListElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
 		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 	>
 ): ReturnType<typeof _buildArgumentListElements>;
 export function buildArgumentListElements(
 	...args: (
-		| { delimiter?: Delimiter.Trailing }
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)
 	)[]
 ) {
@@ -3697,7 +3690,7 @@ export function buildArgumentListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 	>;
@@ -3707,7 +3700,7 @@ function _buildArgumentListElements(
 	elements: NonEmptyArray<
 		T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 	>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ArgumentListElements.Built {
 	_assertNonEmpty(elements, '_argument_list_elements.elements');
 	const _element = elements;
@@ -3726,7 +3719,8 @@ function _buildArgumentListElements(
 							T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 						>
 					) => buildArgumentListElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildArgumentListElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildArgumentListElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3741,23 +3735,25 @@ export function buildExpressionListExpressions(
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildExpressionListExpressions>;
 export function buildExpressionListExpressions(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildExpressionListExpressions>;
-export function buildExpressionListExpressions(...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) {
+export function buildExpressionListExpressions(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Expression)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
 	return _buildExpressionListExpressions(elements, options);
 }
 function _buildExpressionListExpressions(
 	elements: NonEmptyArray<T.Expression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionListExpressions.Built {
 	_assertNonEmpty(elements, '_expression_list_expressions.elements');
 	const _expression = elements;
@@ -3772,7 +3768,7 @@ function _buildExpressionListExpressions(
 				_delimiter,
 				$with: {
 					expressions: (...vs: NonEmptyArray<T.Expression>) => buildExpressionListExpressions(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildExpressionListExpressions({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -3788,23 +3784,25 @@ export function buildListPatternCasePatterns(
 	...elements: NonEmptyArray<T.CasePattern>
 ): ReturnType<typeof _buildListPatternCasePatterns>;
 export function buildListPatternCasePatterns(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.CasePattern>
 ): ReturnType<typeof _buildListPatternCasePatterns>;
-export function buildListPatternCasePatterns(...args: ({ delimiter?: Delimiter.Trailing } | T.CasePattern)[]) {
+export function buildListPatternCasePatterns(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.CasePattern)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.CasePattern>;
 	return _buildListPatternCasePatterns(elements, options);
 }
 function _buildListPatternCasePatterns(
 	elements: NonEmptyArray<T.CasePattern>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ListPatternCasePatterns.Built {
 	_assertNonEmpty(elements, '_list_pattern_case_patterns.elements');
 	const _case_pattern = elements;
@@ -3819,7 +3817,8 @@ function _buildListPatternCasePatterns(
 				_delimiter,
 				$with: {
 					casePatterns: (...vs: NonEmptyArray<T.CasePattern>) => buildListPatternCasePatterns(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3834,11 +3833,11 @@ export function buildDictPatternElements(
 	...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>
 ): ReturnType<typeof _buildDictPatternElements>;
 export function buildDictPatternElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>
 ): ReturnType<typeof _buildDictPatternElements>;
 export function buildDictPatternElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.KeyValuePattern | T.SplatPattern))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.KeyValuePattern | T.SplatPattern))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -3846,13 +3845,13 @@ export function buildDictPatternElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>;
 	return _buildDictPatternElements(elements, options);
 }
 function _buildDictPatternElements(
 	elements: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.DictPatternElements.Built {
 	_assertNonEmpty(elements, '_dict_pattern_elements.elements');
 	const _element = elements;
@@ -3868,7 +3867,8 @@ function _buildDictPatternElements(
 				$with: {
 					elements: (...vs: NonEmptyArray<T.KeyValuePattern | T.SplatPattern>) =>
 						buildDictPatternElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildDictPatternElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildDictPatternElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3883,23 +3883,23 @@ export function buildPatternListPatterns(
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildPatternListPatterns>;
 export function buildPatternListPatterns(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pattern>
 ): ReturnType<typeof _buildPatternListPatterns>;
-export function buildPatternListPatterns(...args: ({ delimiter?: Delimiter.Trailing } | T.Pattern)[]) {
+export function buildPatternListPatterns(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Pattern)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern>;
 	return _buildPatternListPatterns(elements, options);
 }
 function _buildPatternListPatterns(
 	elements: NonEmptyArray<T.Pattern>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PatternListPatterns.Built {
 	_assertNonEmpty(elements, '_pattern_list_patterns.elements');
 	const _pattern = elements;
@@ -3914,7 +3914,8 @@ function _buildPatternListPatterns(
 				_delimiter,
 				$with: {
 					patterns: (...vs: NonEmptyArray<T.Pattern>) => buildPatternListPatterns(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildPatternListPatterns({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildPatternListPatterns({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3929,23 +3930,25 @@ export function buildSubscripts(
 	...elements: NonEmptyArray<T.Expression | T.Slice>
 ): ReturnType<typeof _buildSubscripts>;
 export function buildSubscripts(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression | T.Slice>
 ): ReturnType<typeof _buildSubscripts>;
-export function buildSubscripts(...args: ({ delimiter?: Delimiter.Trailing } | (T.Expression | T.Slice))[]) {
+export function buildSubscripts(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.Expression | T.Slice))[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression | T.Slice>;
 	return _buildSubscripts(elements, options);
 }
 function _buildSubscripts(
 	elements: NonEmptyArray<T.Expression | T.Slice>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subscripts.Built {
 	_assertNonEmpty(elements, '_subscripts.elements');
 	const _subscript = elements;
@@ -3960,7 +3963,8 @@ function _buildSubscripts(
 				_delimiter,
 				$with: {
 					subscripts: (...vs: NonEmptyArray<T.Expression | T.Slice>) => buildSubscripts(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildSubscripts({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildSubscripts({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -3975,11 +3979,11 @@ export function buildDictionaryElements(
 	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
 ): ReturnType<typeof _buildDictionaryElements>;
 export function buildDictionaryElements(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Pair | T.DictionarySplat>
 ): ReturnType<typeof _buildDictionaryElements>;
 export function buildDictionaryElements(
-	...args: ({ delimiter?: Delimiter.Trailing } | (T.Pair | T.DictionarySplat))[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.Pair | T.DictionarySplat))[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -3987,13 +3991,13 @@ export function buildDictionaryElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>;
 	return _buildDictionaryElements(elements, options);
 }
 function _buildDictionaryElements(
 	elements: NonEmptyArray<T.Pair | T.DictionarySplat>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.DictionaryElements.Built {
 	_assertNonEmpty(elements, '_dictionary_elements.elements');
 	const _element = elements;
@@ -4008,7 +4012,8 @@ function _buildDictionaryElements(
 				_delimiter,
 				$with: {
 					elements: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryElements(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildDictionaryElements({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildDictionaryElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4020,7 +4025,7 @@ function _buildDictionaryElements(
 }
 
 export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.SliceGroup['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4029,7 +4034,7 @@ export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value?: T.Expression) => buildSliceGroup(value)
+					expression: (value?: NonNullable<T.Expression>) => buildSliceGroup(value)
 				}
 			},
 			{
@@ -4040,34 +4045,24 @@ export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
 	);
 }
 
-export function buildAugmentedAssignmentOperator(
-	text: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
-): T.AugmentedAssignmentOperator.Built {
-	return withMethods(
-		{
-			$type: TSKindId.AugmentedAssignmentOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildExceptClauseAs(config: T.ExceptClauseAs.Config): T.ExceptClauseAs.Built {
-	const _value = config.value;
-	const _alias = config.alias;
+export function buildExceptClauseExceptionAs(
+	config: T.ExceptClauseExceptionAs.Config
+): T.ExceptClauseExceptionAs.Built {
+	const _value = coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_value']>>(config.value, []);
+	const _alias = coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_alias']>>(config.alias, []);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExceptClauseAs as const,
+				$type: TSKindId.ExceptClauseExceptionAs as const,
 				$source: 2 as const,
 				$named: true as const,
 				_value,
 				_alias,
 				$with: {
-					value: (value: T.Expression) => buildExceptClauseAs({ ...config, value: value }),
-					alias: (value?: T.Expression) => buildExceptClauseAs({ ...config, alias: value })
+					value: (value: NonNullable<T.ExceptClauseExceptionAs.Config>['value']) =>
+						buildExceptClauseExceptionAs({ ...config, value: value }),
+					alias: (value?: NonNullable<T.ExceptClauseExceptionAs.Config>['alias']) =>
+						buildExceptClauseExceptionAs({ ...config, alias: value })
 				}
 			},
 			{
@@ -4081,7 +4076,7 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config): T.ExceptCl
 
 export function buildCaseTuplePattern(value?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.CasePattern>
 ): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(
@@ -4125,7 +4120,7 @@ function _buildCaseTuplePattern(value?: T.ListPatternCasePatterns): T.CaseTupleP
 
 export function buildCaseListPattern(value?: T.ListPatternCasePatterns): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.CasePattern>
 ): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(
@@ -4213,7 +4208,7 @@ export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClau
 
 export function buildParenthesizedImportList(value: T.ImportList): ReturnType<typeof _buildParenthesizedImportList>;
 export function buildParenthesizedImportList(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
 ): ReturnType<typeof _buildParenthesizedImportList>;
 export function buildParenthesizedImportList(
@@ -4255,23 +4250,23 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 
 export function buildPrintArguments(...elements: NonEmptyArray<T.Expression>): ReturnType<typeof _buildPrintArguments>;
 export function buildPrintArguments(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildPrintArguments>;
-export function buildPrintArguments(...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) {
+export function buildPrintArguments(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Expression)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
 	return _buildPrintArguments(elements, options);
 }
 function _buildPrintArguments(
 	elements: NonEmptyArray<T.Expression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintArguments.Built {
 	_assertNonEmpty(elements, '_print_arguments.elements');
 	const _argument = elements;
@@ -4286,7 +4281,8 @@ function _buildPrintArguments(
 				_delimiter,
 				$with: {
 					arguments: (...vs: NonEmptyArray<T.Expression>) => buildPrintArguments(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildPrintArguments({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildPrintArguments({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4301,23 +4297,25 @@ export function buildPrintChevronArguments(
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildPrintChevronArguments>;
 export function buildPrintChevronArguments(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildPrintChevronArguments>;
-export function buildPrintChevronArguments(...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) {
+export function buildPrintChevronArguments(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Expression)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
 	return _buildPrintChevronArguments(elements, options);
 }
 function _buildPrintChevronArguments(
 	elements: NonEmptyArray<T.Expression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintChevronArguments.Built {
 	_assertNonEmpty(elements, '_print_chevron_arguments.elements');
 	const _argument = elements;
@@ -4332,7 +4330,8 @@ function _buildPrintChevronArguments(
 				_delimiter,
 				$with: {
 					arguments: (...vs: NonEmptyArray<T.Expression>) => buildPrintChevronArguments(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildPrintChevronArguments({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4345,10 +4344,9 @@ function _buildPrintChevronArguments(
 
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Built {
 	const _chevron = config.chevron;
-	const _print_chevron_arguments = coerceMixedEnumStorage<T.PrintChevronArguments | TSKindId.Comma>(
-		config.printChevronArguments,
-		[[',', TSKindId.Comma] as const]
-	);
+	const _print_chevron_arguments = coerceMixedEnumStorage<
+		NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>
+	>(config.printChevronArguments, [[',', TSKindId.Comma] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -4374,7 +4372,7 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 
 export function buildPrintStatementPlain(value: T.PrintArguments): ReturnType<typeof _buildPrintStatementPlain>;
 export function buildPrintStatementPlain(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildPrintStatementPlain>;
 export function buildPrintStatementPlain(
@@ -4440,17 +4438,17 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 	);
 }
 
-export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClauseList.Built {
-	_assertNonEmpty(children, '_except_clause_list.children');
+export function buildExceptClauseExceptionList(...children: T.Expression[]): T.ExceptClauseExceptionList.Built {
+	_assertNonEmpty(children, '_except_clause_exception_list.children');
 	const _value = children;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ExceptClauseList as const,
+				$type: TSKindId.ExceptClauseExceptionList as const,
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: { values: (...vs: T.Expression[]) => buildExceptClauseList(...vs) }
+				$with: { values: (...vs: T.Expression[]) => buildExceptClauseExceptionList(...vs) }
 			},
 			{
 				values: () => _value
@@ -4461,7 +4459,7 @@ export function buildExceptClauseList(...children: T.Expression[]): T.ExceptClau
 }
 
 export function buildExceptClauseException(
-	value: T.ExceptClauseAs | T.ExceptClauseList
+	value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList
 ): T.ExceptClauseException.Built {
 	const _content = value;
 	return withMethods(
@@ -4472,7 +4470,7 @@ export function buildExceptClauseException(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseException(value)
+					content: (value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList) => buildExceptClauseException(value)
 				}
 			},
 			{
@@ -4486,7 +4484,7 @@ export function buildExceptClauseException(
 export function buildAssignmentEq(
 	value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
 ): T.AssignmentEq.Built {
-	const _right = value;
+	const _right = coerceMixedEnumStorage<NonNullable<T.AssignmentEq['_right']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4496,7 +4494,9 @@ export function buildAssignmentEq(
 				_right,
 				$with: {
 					right: (
-						value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+						value: NonNullable<
+							T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
+						>
 					) => buildAssignmentEq(value)
 				}
 			},
@@ -4548,7 +4548,7 @@ function _buildAssignmentType(value: T.Type): T.AssignmentType.Built {
 
 export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.AssignmentTyped.Built {
 	const _type = config.type;
-	const _right = config.right;
+	const _right = coerceMixedEnumStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4559,9 +4559,8 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 				_right,
 				$with: {
 					type: (value: T.Type) => buildAssignmentTyped({ ...config, type: value }),
-					right: (
-						value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-					) => buildAssignmentTyped({ ...config, right: value })
+					right: (value: NonNullable<T.AssignmentTyped.Config>['right']) =>
+						buildAssignmentTyped({ ...config, right: value })
 				}
 			},
 			{
@@ -4577,23 +4576,25 @@ export function buildExpressionStatementTuple(
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildExpressionStatementTuple>;
 export function buildExpressionStatementTuple(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Expression>
 ): ReturnType<typeof _buildExpressionStatementTuple>;
-export function buildExpressionStatementTuple(...args: ({ delimiter?: Delimiter.Trailing } | T.Expression)[]) {
+export function buildExpressionStatementTuple(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Expression)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
 	return _buildExpressionStatementTuple(elements, options);
 }
 function _buildExpressionStatementTuple(
 	elements: NonEmptyArray<T.Expression>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionStatementTuple.Built {
 	_assertNonEmpty(elements, '_expression_statement_tuple.elements');
 	const _expression = elements;
@@ -4608,7 +4609,7 @@ function _buildExpressionStatementTuple(
 				_delimiter,
 				$with: {
 					expressions: (...vs: NonEmptyArray<T.Expression>) => buildExpressionStatementTuple(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) =>
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements)
 				}
 			},
@@ -4622,23 +4623,23 @@ function _buildExpressionStatementTuple(
 
 export function buildWithClauseBare(...elements: NonEmptyArray<T.WithItem>): ReturnType<typeof _buildWithClauseBare>;
 export function buildWithClauseBare(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.WithItem>
 ): ReturnType<typeof _buildWithClauseBare>;
-export function buildWithClauseBare(...args: ({ delimiter?: Delimiter.Trailing } | T.WithItem)[]) {
+export function buildWithClauseBare(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.WithItem)[]) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.Trailing };
+	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.WithItem>;
 	return _buildWithClauseBare(elements, options);
 }
 function _buildWithClauseBare(
 	elements: NonEmptyArray<T.WithItem>,
-	options: { delimiter?: Delimiter.Trailing }
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseBare.Built {
 	_assertNonEmpty(elements, '_with_clause_bare.elements');
 	const _with_item = elements;
@@ -4653,7 +4654,8 @@ function _buildWithClauseBare(
 				_delimiter,
 				$with: {
 					withItems: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseBare(options, ...vs),
-					delimiter: (v?: Delimiter.Trailing) => buildWithClauseBare({ ...options, delimiter: v }, ...elements)
+					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+						buildWithClauseBare({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -4666,7 +4668,7 @@ function _buildWithClauseBare(
 
 export function buildWithClauseParen(value: T.WithClauseWithItems): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(
-	options: { delimiter?: Delimiter.Trailing },
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.WithItem>
 ): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(...elements: NonEmptyArray<T.WithItem>): ReturnType<typeof _buildWithClauseParen>;
@@ -4706,8 +4708,8 @@ function _buildWithClauseParen(value: T.WithClauseWithItems): T.WithClauseParen.
 	);
 }
 
-export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> = {}): T.MatchBlockBlock.Built {
-	const _alternative = config.alternative ?? [];
+export function buildMatchBlockBlock(...children: T.CaseClause[]): T.MatchBlockBlock.Built {
+	const _alternative = children;
 	return withMethods(
 		withAccessors(
 			{
@@ -4715,9 +4717,7 @@ export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> =
 				$source: 2 as const,
 				$named: true as const,
 				_alternative,
-				$with: {
-					alternatives: (...values: T.CaseClause[]) => buildMatchBlockBlock({ ...config, alternative: values })
-				}
+				$with: { alternatives: (...vs: T.CaseClause[]) => buildMatchBlockBlock(...vs) }
 			},
 			{
 				alternatives: () => _alternative
@@ -4771,20 +4771,25 @@ function _buildSuiteBlock(value: T.Block): T.SuiteBlock.Built {
 export function buildComparisonOperatorComparator(
 	config: T.ComparisonOperatorComparator.Config
 ): T.ComparisonOperatorComparator.Built {
-	const _operators = coerceKindEnumStorage<number>(config.operators, [
-		['<', TSKindId.Lt] as const,
-		['<=', TSKindId.LtEq] as const,
-		['==', TSKindId.EqEq] as const,
-		['!=', TSKindId.BangEq] as const,
-		['>=', TSKindId.GtEq] as const,
-		['>', TSKindId.Gt] as const,
-		['<>', TSKindId.LtGt] as const,
-		['in', TSKindId.In] as const,
-		['not in', TSKindId._NotIn] as const,
-		['is', TSKindId.Is] as const,
-		['is not', TSKindId._IsNot] as const
-	]);
-	const _primary_expression = config.primaryExpression;
+	const _operators = coerceKindEnumStorage<NonNullable<T.ComparisonOperatorComparator['_operators']>>(
+		config.operators,
+		[
+			['<', TSKindId.Lt] as const,
+			['<=', TSKindId.LtEq] as const,
+			['==', TSKindId.EqEq] as const,
+			['!=', TSKindId.BangEq] as const,
+			['>=', TSKindId.GtEq] as const,
+			['>', TSKindId.Gt] as const,
+			['<>', TSKindId.LtGt] as const,
+			['in', TSKindId.InKeyword] as const,
+			['not in', TSKindId._NotIn] as const,
+			['is', TSKindId.IsKeyword] as const,
+			['is not', TSKindId._IsNot] as const
+		]
+	);
+	const _primary_expression = coerceMixedEnumStorage<
+		NonNullable<T.ComparisonOperatorComparator['_primary_expression']>
+	>(config.primaryExpression, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4796,7 +4801,7 @@ export function buildComparisonOperatorComparator(
 				$with: {
 					operators: (value: NonNullable<T.ComparisonOperatorComparator.Config>['operators']) =>
 						buildComparisonOperatorComparator({ ...config, operators: value }),
-					primaryExpression: (value: T.PrimaryExpression) =>
+					primaryExpression: (value: NonNullable<T.ComparisonOperatorComparator.Config>['primaryExpression']) =>
 						buildComparisonOperatorComparator({ ...config, primaryExpression: value })
 				}
 			},
@@ -4810,7 +4815,7 @@ export function buildComparisonOperatorComparator(
 }
 
 export function buildYieldFromClause(value: T.Expression): T.YieldFromClause.Built {
-	const _expression = value;
+	const _expression = coerceMixedEnumStorage<NonNullable<T.YieldFromClause['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -4819,7 +4824,7 @@ export function buildYieldFromClause(value: T.Expression): T.YieldFromClause.Bui
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value: T.Expression) => buildYieldFromClause(value)
+					expression: (value: NonNullable<T.Expression>) => buildYieldFromClause(value)
 				}
 			},
 			{
@@ -4914,90 +4919,6 @@ export function buildDedent(text: string): T.Dedent.Built {
 	return withMethods(
 		{
 			$type: TSKindId.Dedent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCloseBracket(text: string): T.CloseBracket.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`]: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rbrack as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCloseParen(text: string): T.CloseParen.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`): text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rparen as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildCloseBrace(text: string): T.CloseBrace.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`}: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Rbrace as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildExcept(text: string): T.Except.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`except: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Except as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildTight(text: string): T.Tight.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_tight: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Tight as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildSpace(text: string): T.Space.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_space: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Space as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5146,8 +5067,7 @@ export type FluentKindMap = {
 	_subscripts: T.Subscripts.Built;
 	_dictionary_elements: T.DictionaryElements.Built;
 	_slice_group: T.SliceGroup.Built;
-	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
-	_except_clause_as: T.ExceptClauseAs.Built;
+	_except_clause_exception_as: T.ExceptClauseExceptionAs.Built;
 	case_tuple_pattern: T.CaseTuplePattern.Built;
 	case_list_pattern: T.CaseListPattern.Built;
 	case_as_pattern: T.CaseAsPattern.Built;
@@ -5158,7 +5078,7 @@ export type FluentKindMap = {
 	print_statement_chevron: T.PrintStatementChevron.Built;
 	print_statement_plain: T.PrintStatementPlain.Built;
 	_simple_pattern_negative: T.SimplePatternNegative.Built;
-	_except_clause_list: T.ExceptClauseList.Built;
+	_except_clause_exception_list: T.ExceptClauseExceptionList.Built;
 	_except_clause_exception: T.ExceptClauseException.Built;
 	_assignment_eq: T.AssignmentEq.Built;
 	_assignment_type: T.AssignmentType.Built;
@@ -5176,12 +5096,6 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
-	']': T.CloseBracket;
-	')': T.CloseParen;
-	'}': T.CloseBrace;
-	except: T.Except;
-	_tight: T.Tight;
-	_space: T.Space;
 };
 
 export const _factoryMap = {
@@ -5324,8 +5238,7 @@ export const _factoryMap = {
 	_subscripts: buildSubscripts,
 	_dictionary_elements: buildDictionaryElements,
 	_slice_group: buildSliceGroup,
-	_augmented_assignment_operator: buildAugmentedAssignmentOperator,
-	_except_clause_as: buildExceptClauseAs,
+	_except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
 	case_as_pattern: buildCaseAsPattern,
@@ -5336,7 +5249,7 @@ export const _factoryMap = {
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
 	_simple_pattern_negative: buildSimplePatternNegative,
-	_except_clause_list: buildExceptClauseList,
+	_except_clause_exception_list: buildExceptClauseExceptionList,
 	_except_clause_exception: buildExceptClauseException,
 	_assignment_eq: buildAssignmentEq,
 	_assignment_type: buildAssignmentType,
@@ -5353,12 +5266,6 @@ export const _factoryMap = {
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
 	_indent: buildIndent,
-	_dedent: buildDedent,
-	']': buildCloseBracket,
-	')': buildCloseParen,
-	'}': buildCloseBrace,
-	except: buildExcept,
-	_tight: buildTight,
-	_space: buildSpace
+	_dedent: buildDedent
 } as const;
 export type _FactoryMap = typeof _factoryMap;

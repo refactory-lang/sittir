@@ -1,6 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import type { AnyNodeData, Edit, FormatRecord } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
+import { toTransportData } from './transport-data.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -48,13 +49,15 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, deep?: boolean): string;
 	readNode(handle: number, childIndex: number, deep?: boolean): string;
-	render(node: TTransport, treeId?: number, options?: string): string;
-	renderToFile?(node: TTransport, path: string, treeId?: number, options?: string): void;
+	render(node: TTransport, treeId?: number, options?: object): string;
+	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 	/** Drop one parsed tree. Driven by GC — see `treeDisposalRegistry`. */
 	disposeTree(treeId: number): void;
 	/** Trees the native engine still holds. Diagnostics only. */
 	readonly liveTreeCount: number;
+	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
+	readonly buildProfile?: string;
 	dispose(): void;
 }
 
@@ -62,7 +65,7 @@ export interface NativeModuleLike<
 	TTransport = unknown,
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
-	SittirEngine: new (options?: { format?: string; options?: string }) => TEngine;
+	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
 }
 
 export type NativeBackendStatusLike<TModule extends NativeModuleLike = NativeModuleLike> = {
@@ -116,6 +119,8 @@ export interface ParseOptions {
  * from inside the wrap layer or from validator/diagnostic tooling.
  */
 export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
+	/** The native binary's compile profile, for tooling that refuses a debug build. */
+	readonly buildProfile: string | undefined;
 	parseAndRead(source: string, options?: ParseOptions): ParseAndReadResult<TRoot>;
 	readNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
 }
@@ -155,13 +160,12 @@ export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData, O extends
 }
 
 /**
- * What a whole-source parse always stamps on its root and on nothing else
- * reliably: the root's span and the captured source text. Every other read
- * node carries both only optionally.
+ * What a whole-source parse always stamps on its root: the span covering the
+ * whole file. The text is the tree's, reachable as `tree.source`; every other
+ * read node carries its span only.
  */
 export interface ParsedRoot {
 	readonly $span: { start: number; end: number };
-	readonly $text: string;
 }
 
 export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
@@ -225,12 +229,12 @@ export function createNativeEngine<
 	try {
 		const nativeOptions = {
 			...(options?.format ? { format: JSON.stringify(options.format) } : {}),
-			...(options?.options ? { options: JSON.stringify(options.options) } : {})
+			...(options?.options ? { options: options.options } : {})
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
 
 		function renderNativeNode(node: AnyNodeData, opts?: RenderOptions<O>): RenderHandle {
-			const perCall = opts?.options === undefined ? undefined : JSON.stringify(opts.options);
+			const perCall = opts?.options;
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
@@ -238,11 +242,16 @@ export function createNativeEngine<
 						'until Task 4 (engine-owned format state) lands.'
 				);
 			}
+			// The projection is the one place a node's storage wins over the
+			// coordinate it read in with: it crosses here, on every render
+			// path, so a caller handing over raw read data cannot slice a
+			// pre-edit span past a rebuilt slot.
+			const transport = toTransportData(node) as TTransport;
 			return createRenderHandle(
-				() => engine.render(node as TTransport, undefined, perCall),
+				() => engine.render(transport, undefined, perCall),
 				(path) => {
 					if (engine.renderToFile) {
-						engine.renderToFile(node as TTransport, path, undefined, perCall);
+						engine.renderToFile(transport, path, undefined, perCall);
 						return true;
 					}
 					return false;
@@ -268,6 +277,7 @@ export function createNativeEngine<
 				},
 
 				diagnostics: {
+					buildProfile: engine.buildProfile,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const json = engine.parseAndRead(source, parseOptions?.deep);
 						const parsed = JSON.parse(json) as NativeParseResultShape;
@@ -290,6 +300,7 @@ export function createNativeEngine<
 									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
 								},
 								source,
+								render: (node) => renderNativeNode(node).toString(),
 								read: (handle, childIndex, deep) => {
 									if (handle === undefined) return root;
 									// Handles name their own tree, so this needs no tree

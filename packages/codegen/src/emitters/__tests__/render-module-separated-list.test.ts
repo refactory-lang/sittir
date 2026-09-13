@@ -14,9 +14,11 @@ import { emittedTemplates } from './support/emitted-templates.ts';
 import { slot } from '../render-body.ts';
 import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
+import { preference } from '../../dsl/primitives/preference.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
+	AssembledSupertype,
 	AssembledList,
 	type AssembledNode,
 	type SeparatedListElementRule
@@ -45,6 +47,7 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('_whitespace', new AssembledSupertype('_whitespace', { type: 'SUPERTYPE', name: '_whitespace', subtypes: [] } as never, []));
 	return makeNodeMapWith(nodes);
 }
 
@@ -75,6 +78,7 @@ function makeBranchWithListFieldNodeMap() {
 	const parentRender = flatten(parentRule);
 	nodes.set('branch_with_list_field', new AssembledBranch('branch_with_list_field', parentRender, parentRender));
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('_whitespace', new AssembledSupertype('_whitespace', { type: 'SUPERTYPE', name: '_whitespace', subtypes: [] } as never, []));
 	return makeNodeMapWith(nodes);
 }
 
@@ -87,7 +91,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 			parser: {
 				cSymbol: 'anon_sym_COMMA',
 				parserName: 'comma',
-				symbolName: ',',
+				symbolName: ',', literalText: ',',
 				anon: true,
 				aux: false,
 				alias: false,
@@ -99,7 +103,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 			parser: {
 				cSymbol: 'anon_sym_SEMI',
 				parserName: 'semi',
-				symbolName: ';',
+				symbolName: ';', literalText: ';',
 				anon: true,
 				aux: false,
 				alias: false,
@@ -191,6 +195,30 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		expect(emitted).toContain('token: match node.separator_kind {');
 		expect(emitted).toContain('Some(3) => ",",');
 		expect(emitted).toContain('Some(4) => ";",');
+	});
+
+	it('fills separator_kind from the declared separator site and falls back to the declared token', () => {
+		const sepChoice: RenderRule = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
+		};
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		const emitted = emitRenderModule('rust', emittedTemplates({ member_list: slot('member') }), nodeMap, GENERATED_ID_TABLES, {
+			renderRules: { rules: {} },
+			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
+		}).transportRs.contents;
+
+		expect(emitted).toContain('self.separator_kind.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_LIST_MEMBER_SEPARATOR]);');
+		expect(emitted).toContain('_ => ";",');
 	});
 
 	it('hardcodes leading: true for a mandatory leading flank while trailing still reads the wire-captured optional flank', () => {

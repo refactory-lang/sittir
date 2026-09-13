@@ -99,19 +99,22 @@ export function flatten(rule: Input): Output {
 	return rebuild(rule);
 }
 
-export function flattenRules(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {
+export function flattenRules(rules: Record<string, Rule<'link'>>, wordMatcher?: RegExp): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		const flat = fuseHeadRepeatLists(flatten(applySelfReferentialFold(name, rule)));
 		result[name] = withKindFacts(flat, rule);
 	}
-	return stampTerminality(factorChoiceArmsToFixpoint(result));
+	return stampTerminality(factorChoiceArmsToFixpoint(result), wordMatcher);
 }
 
-function stampTerminality(rules: Record<string, RenderRule>): Record<string, RenderRule> {
+function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp | undefined): Record<string, RenderRule> {
 	const isLiteralRule = (name: string): boolean => {
 		const target = rules[name];
-		return target !== undefined && collectFixedLiteral(target) !== undefined;
+		return (
+			target !== undefined &&
+			collectFixedLiteral(target, { tokenized: false, deterministic: false, wordMatcher }) !== undefined
+		);
 	};
 	const stamp = (rule: RenderRule): RenderRule => {
 		if (

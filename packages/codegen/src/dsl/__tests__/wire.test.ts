@@ -115,10 +115,10 @@ describe('wire()', () => {
 		// The hidden-rule fns should now return the captured content.
 		const eqFn = wired.rules._assignment_eq!;
 		const eqBody = eqFn.call({}, {});
-		expect(eqBody).toEqual(eqArm);
+		expect(eqBody).toEqual({ ...eqArm, annotations: { hoisted: true } });
 		const typeFn = wired.rules._assignment_type!;
 		const typeBody = typeFn.call({}, {});
-		expect(typeBody).toEqual(typeArm);
+		expect(typeBody).toEqual({ ...typeArm, annotations: { hoisted: true } });
 	});
 
 	it('skips alias-minting and deposits for transparent unit-production arms', () => {

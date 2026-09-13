@@ -1,3 +1,4 @@
+import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -21,11 +22,14 @@ import {
 	isNodeRef,
 	isTerminalValue,
 	kindsOf,
+	concreteKindsOf,
 	aliasTargetToSourceMapOf,
 	acceptedIdPairsByKindOf,
 	storageKindOfRef,
 	storageKindOfValue,
-	isLeftImmediateKind
+	isLeftImmediateKind,
+	isKindIdStored,
+	fixedTextOfKind
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { computeBundleHash, type BundleFile } from './bundle-hash.ts';
@@ -33,9 +37,14 @@ import { renderModuleSrcDir } from './render-module-paths.ts';
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import {
+	RESERVED_SUPERTYPE_ENUM_NAMES,
+	RUST_KEYWORDS,
 	acceptedTransportKinds,
-	buildSupertypeTransportSet,
-	classifySlot,
+	classifySlotForEmit,
+	findSupertypeKindByTypeName,
+	rustFieldIdent,
+	rustTypeIdent,
+	supertypeTransportKinds,
 	type SlotClass
 } from './transport-common.ts';
 import {
@@ -46,7 +55,8 @@ import {
 	type PrimitiveFieldStorage,
 	wordCharAsciiTable,
 	literalMergePairs,
-	fieldTypeComponents
+	fieldTypeComponents,
+	slotSeparatorTexts
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -60,9 +70,14 @@ import {
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
-import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
-import { publicKindName } from '../compiler/model/site-preferences.ts';
-import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
+import {
+	collectSitePreferences,
+	publicKindName,
+	type SitePreference,
+	type SpacingSide
+} from '../compiler/model/site-preferences.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import { whitespaceTextOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import {
 	escapeBraces,
@@ -71,6 +86,7 @@ import {
 	printRustBody,
 	references,
 	rustStringLiteral,
+	isWhitespaceOnly,
 	templateOf,
 	type Body,
 	type Flanks,
@@ -80,6 +96,7 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
+import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 
 export type Grammar = 'rust' | 'typescript' | 'python';
 const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
@@ -102,7 +119,11 @@ export interface RenderModuleBundle {
 
 export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
+	readonly options?: OptionsConfig;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly kindEntries?: readonly KindEnumEntry[];
+	readonly sites?: readonly SitePreference[];
+	readonly addresses?: AddressTables;
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -119,9 +140,9 @@ interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals } = config;
+	const { grammar, nodeMap, generatedIdTables, templates, renderRules, visibleExternals, options, kindEntries, sites, addresses } = config;
 	return {
-		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals })
+		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, { renderRules, visibleExternals, options, kindEntries, sites, addresses })
 	};
 }
 
@@ -135,14 +156,20 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#grammar = config.grammar;
 		this.#nodeMap = config.nodeMap;
 		this.#generatedIdTables = config.generatedIdTables;
-		this.#options = { renderRules: config.renderRules, visibleExternals: config.visibleExternals };
+		this.#options = {
+			renderRules: config.renderRules,
+			visibleExternals: config.visibleExternals,
+			options: config.options,
+			kindEntries: config.kindEntries,
+			sites: config.sites,
+			addresses: config.addresses
+		};
 	}
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}
 
 	emitBranch(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList): void {}
 
-	emitGroup(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph): void {}
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
 		return synthesizeRenderModuleBundle({
@@ -192,70 +219,9 @@ function transportRsHeader(lang: Grammar): string {
 
 type EmittedNonterminalView = 'scalar' | 'list' | 'field';
 
-export const RUST_KEYWORDS = new Set([
-	'as',
-	'break',
-	'const',
-	'continue',
-	'crate',
-	'else',
-	'enum',
-	'extern',
-	'false',
-	'fn',
-	'for',
-	'if',
-	'impl',
-	'in',
-	'let',
-	'loop',
-	'match',
-	'mod',
-	'move',
-	'mut',
-	'pub',
-	'ref',
-	'return',
-	'self',
-	'Self',
-	'static',
-	'struct',
-	'super',
-	'trait',
-	'true',
-	'type',
-	'unsafe',
-	'use',
-	'where',
-	'while',
-	'async',
-	'await',
-	'dyn',
-	'abstract',
-	'become',
-	'box',
-	'do',
-	'final',
-	'macro',
-	'override',
-	'priv',
-	'typeof',
-	'unsized',
-	'virtual',
-	'yield',
-	'try',
-	'union'
-]);
 
-const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
 const RESERVED_TRANSPORT_STRUCT_NAMES = new Set(['AnyTransport', 'ProtectedTransport', 'LiteralTransport']);
-
-function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
-	return (
-		node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
-	);
-}
 
 interface EffectiveSupertypeTransportSubtype {
 	readonly subKind: string;
@@ -270,67 +236,25 @@ interface EffectiveSupertypeTransportShape {
 
 function collectEffectiveSupertypeTransportShape(
 	supertypeNode: AssembledSupertype,
-	nodeMap: NodeMap,
-	seen: Set<string> = new Set(),
-	state: {
-		readonly variantKindByName: Map<string, string>;
-		readonly emittedKinds: Set<string>;
-		readonly suppressedKinds: Set<string>;
-		readonly subtypes: EffectiveSupertypeTransportSubtype[];
-		readonly parseNames: Map<string, string>;
-	} = {
-		variantKindByName: new Map(),
-		emittedKinds: new Set(),
-		suppressedKinds: new Set(),
-		subtypes: [],
-		parseNames: new Map()
-	}
+	nodeMap: NodeMap
 ): EffectiveSupertypeTransportShape {
-	const appendSubtype = (subKind: string, subNode: AssembledNode): void => {
+	const walk = supertypeTransportKinds(supertypeNode, nodeMap);
+	const variantKindByName = new Map<string, string>();
+	const subtypes: EffectiveSupertypeTransportSubtype[] = [];
+	for (const subKind of walk.kinds) {
+		const subNode = nodeMap.nodes.get(subKind);
+		if (subNode === undefined) continue;
 		const variantName = rustTypeIdent(subNode.typeName);
-		const existingKind = state.variantKindByName.get(variantName);
+		const existingKind = variantKindByName.get(variantName);
 		if (existingKind !== undefined && existingKind !== subKind) {
 			throw new Error(
 				`reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`
 			);
 		}
-		state.variantKindByName.set(variantName, subKind);
-		if (state.emittedKinds.has(subKind)) return;
-		state.emittedKinds.add(subKind);
-		state.subtypes.push({ subKind, subNode });
-	};
-
-	if (seen.has(supertypeNode.kind)) {
-		return {
-			subtypes: state.subtypes,
-			suppressedKinds: [...state.suppressedKinds],
-			parseNames: state.parseNames
-		};
+		variantKindByName.set(variantName, subKind);
+		subtypes.push({ subKind, subNode });
 	}
-	seen.add(supertypeNode.kind);
-	for (const [storage, parse] of Object.entries(supertypeNode.subtypeParseNames ?? {})) {
-		if (!state.parseNames.has(storage)) state.parseNames.set(storage, parse);
-	}
-	for (const subKind of supertypeNode.subtypeNames) {
-		const subNode = nodeMap.nodes.get(subKind);
-		if (subNode === undefined) continue;
-		if (isReservedSupertypeTransportNode(subNode)) {
-			state.suppressedKinds.add(subKind);
-			collectEffectiveSupertypeTransportShape(subNode, nodeMap, seen, state);
-			continue;
-		}
-		appendSubtype(subKind, subNode);
-	}
-	return {
-		subtypes: state.subtypes,
-		suppressedKinds: [...state.suppressedKinds],
-		parseNames: state.parseNames
-	};
-}
-
-export function rustFieldIdent(id: string): string {
-	if (RUST_KEYWORDS.has(id)) return `${id}_`;
-	return id;
+	return { subtypes, suppressedKinds: walk.suppressed, parseNames: walk.parseNames };
 }
 
 interface EmittedField {
@@ -358,7 +282,6 @@ interface EmittedStruct {
 	fields: EmittedField[];
 	transportHasChildren: boolean;
 	hasVariant: boolean;
-	hasText: boolean;
 }
 
 interface RenderSlotModel {
@@ -501,8 +424,7 @@ function emitStruct(
 		flanks: lifted.flanks,
 		fields,
 		transportHasChildren: slotModel.unnamed.length > 0,
-		hasVariant: surface.usesVariant,
-		hasText: surface.usesText
+		hasVariant: surface.usesVariant
 	};
 }
 
@@ -589,7 +511,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 					}
 				}
 			}
-			if (sep === undefined && node instanceof AbstractAssembledCompound && !node.hoisted) {
+			if (sep === undefined && node instanceof AbstractAssembledCompound) {
 				sep = node.separator ?? undefined;
 			}
 			if (sep !== undefined) separators.set(kind, sep);
@@ -598,34 +520,32 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	return { separators };
 }
 
-function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotClass {
-	const supertypeMap = buildSupertypeTransportSet(nodeMap);
-	const cls = classifySlot(kinds, supertypeMap);
-	if (cls.tag === 'concrete') {
-		const node = nodeMap.nodes.get(cls.kind);
-		if (node === undefined) return { tag: 'heterogeneous' };
-		if (node instanceof AssembledSupertype) {
-			const enumName = `${rustTypeIdent(node.typeName)}Transport`;
-			if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
-			return { tag: 'supertype', supertypeName: node.typeName };
-		}
-		return { tag: 'concrete', kind: cls.kind, typeName: node.typeName };
+
+function literalWrite(valueExpr: string, fixed: string | undefined): string {
+	if (fixed !== undefined && isDepthText(fixed)) {
+		return fixed === INDENT_TEXT
+			? `{ w.indent(); w.seam(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`
+			: `{ w.dedent(${rustStringLiteral(DEPTH_BREAK)}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
 	}
-	if (cls.tag === 'supertype') {
-		const enumName = `${rustTypeIdent(cls.supertypeName)}Transport`;
-		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
+	if (fixed !== undefined && isWhitespaceOnly(fixed)) {
+		return `{ w.token_seam(${valueExpr}); Ok::<(), ::sittir_core::render::RenderError>(()) }`;
 	}
-	return cls;
+	return `w.text(${valueExpr})`;
+}
+
+function literalWriteArm(text: string, immediate: boolean): string {
+	const tail = literalWrite(rustStringLiteral(text), text);
+	return immediate ? `{ w.adjacent(); ${tail} }` : tail;
 }
 
 function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 	switch (cls.tag) {
 		case 'concrete':
-			return `if let Some(v) = ${expr}.node_or_write(f)? { render_${rustSnakeIdent(cls.typeName)}(v, f)?; }`;
+			return `if let Some(v) = ${expr}.transport_or_write(w)? { render_${rustSnakeIdent(cls.typeName)}(v, w)?; }`;
 		case 'supertype':
-			return `if let Some(v) = ${expr}.node_or_write(f)? { render_${rustSnakeIdent(cls.supertypeName)}(v, f)?; }`;
+			return `if let Some(v) = ${expr}.transport_or_write(w)? { render_${rustSnakeIdent(cls.supertypeName)}(v, w)?; }`;
 		case 'heterogeneous':
-			return `write!(f, "{}", ${expr})?;`;
+			return `${expr}.render(w)?;`;
 		default:
 			return assertNever(cls);
 	}
@@ -639,7 +559,8 @@ function renderTypedDispatch(
 	nodeMap: NodeMap,
 	usedSupertypeNames: ReadonlySet<string> = new Set(),
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
@@ -657,7 +578,7 @@ function renderTypedDispatch(
 	}
 
 	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
-	const mergePairs = literalMergePairs(literals);
+	const mergePairs = literalMergePairs(literals, kindEntries ?? []);
 	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
 	lines.push(
 		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
@@ -678,30 +599,41 @@ function renderTypedDispatch(
 	lines.push(`/// the SAME single SpacingWriter wrap — a second entry point would be a`);
 	lines.push(`/// second place the root seam policy could drift.`);
 	lines.push(
-		`pub fn render_transport_dispatch(transport: &dyn ::std::fmt::Display, indent: &str) -> Result<String, ::std::fmt::Error> {`
+		`pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {`
 	);
 	lines.push(`    let mut s = String::new();`);
-	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
-	lines.push(`    // only where a word-class char would collide with a word-class char`);
-	lines.push(`    // across write seams, per this grammar's own word class. Wrap ONCE`);
-	lines.push(`    // here — never per level.`);
-	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_indent(indent);`);
-	lines.push(`    ::std::fmt::Write::write_fmt(&mut w, format_args!("{transport}"))?;`);
+	lines.push(
+		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources);`
+	);
+	lines.push(`    transport.render(&mut w)?;`);
+	lines.push(`    w.finish()?;`);
 	lines.push(`    Ok(s)`);
 	lines.push(`}`);
 	lines.push('');
 
-	lines.push(`impl ::std::fmt::Display for AnyTransport {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(
+		...kindOfImplLines(
+			'AnyTransport',
+			nodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
+			undefined,
+			undefined,
+			'false'
+		)
+	);
+	lines.push(`impl ::sittir_core::render::Render for AnyTransport {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	lines.push(`        match self {`);
 	for (const node of nodes) {
 		const variant = rustTransportVariantName(node);
-		lines.push(`            AnyTransport::${variant}(t) => ::std::fmt::Display::fmt(t, f),`);
+		lines.push(`            AnyTransport::${variant}(t) => t.render(w),`);
 	}
 	for (const [index, literal] of literals.entries()) {
 		const variant = rustLiteralTransportVariantName(literal, index);
-		lines.push(`            AnyTransport::${variant} => f.write_str(${JSON.stringify(literal.text)}),`);
+		lines.push(`            AnyTransport::${variant} => ${literalWrite(rustStringLiteral(literal.text), literal.text)},`);
 	}
+	lines.push(`            AnyTransport::Verbatim(t) => t.render(w),`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -754,9 +686,11 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	const slotModel = renderSlotModelOf(node);
 	const allSlots = [...slotModel.named, ...slotModel.unnamed];
 	const lines: string[] = [];
-	lines.push(`fn ${fnName}(node: &${structName}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(
+		`fn ${fnName}(node: &${structName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	if (allSlots.length === 0) {
-		lines.push(`    f.write_str(node.transport_text.as_deref().unwrap_or_default())`);
+		lines.push(`    Ok(())`);
 	} else {
 		for (const slot of allSlots) {
 			const slotIdent = rustFieldIdent(slot.storageName);
@@ -796,14 +730,18 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	return lines;
 }
 
+function leafTextWrite(node: AssembledNode, on: string): string {
+	return literalWrite(`&${on}.text`, fixedTextOfKind(node));
+}
+
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
-	const body = node instanceof AssembledEnum ? `::std::fmt::Display::fmt(t, f)` : `f.write_str(&t.text)`;
-	const mark = node instanceof AssembledLeaf && node.immediate ? [`    ::sittir_core::spacing::mark_adjacent(f)?;`] : [];
+	const body = node instanceof AssembledEnum ? `t.render(w)` : leafTextWrite(node, 't');
+	const adjacent = node instanceof AssembledLeaf && node.immediate ? [`    w.adjacent();`] : [];
 	return [
-		`fn ${fnName}(t: &${typeName}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`,
-		...mark,
+		`fn ${fnName}(t: &${typeName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+		...adjacent,
 		`    ${body}`,
 		`}`,
 		``
@@ -819,7 +757,7 @@ function renderTypedBranchFn(
 	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	return [
-		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`,
+		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan),
 		`}`,
 		''
@@ -867,47 +805,12 @@ function buildTypedTemplateBody(
 		}
 	}
 
-	if (slotModel !== undefined) {
-		const allSlots = [...slotModel.named, ...slotModel.unnamed];
-		const allCheckable = allSlots.every((slot) => {
-			if (isMultiple(slot)) return true;
-			if (primitiveByName.get(slot.name)?.kind === 'boolean') return true;
-			return !isRequired(slot);
-		});
-		if (allCheckable && allSlots.length > 0) {
-			const seenStorage = new Set<string>();
-			const checks: string[] = [];
-			for (const slot of allSlots) {
-				if (seenStorage.has(slot.storageName)) continue;
-				seenStorage.add(slot.storageName);
-				const rIdent = rustFieldIdent(slot.storageName);
-				if (primitiveByName.get(slot.name)?.kind === 'boolean') {
-					checks.push(`!node.${rIdent}.unwrap_or(false)`);
-				} else if (isMultiple(slot) && isRequired(slot)) {
-					checks.push(`node.${rIdent}.is_empty()`);
-				} else if (isMultiple(slot)) {
-					checks.push(`node.${rIdent}.as_deref().is_none_or(<[_]>::is_empty)`);
-				} else {
-					checks.push(`node.${rIdent}.is_none()`);
-				}
-			}
-			if (checks.length > 0) {
-				lines.push(`    if ${checks.join(' && ')} {`);
-				lines.push(`        if let Some(text) = node.transport_text.as_deref() {`);
-				lines.push(`            return f.write_str(text);`);
-				lines.push(`        }`);
-				lines.push(`    }`);
-			}
-		}
-	}
-
 	const bound = new Set<string>();
 	const bind = (ident: string, expr: string): void => {
 		bound.add(ident);
 		lines.push(`    let ${ident} = ${expr};`);
 	};
 	if (struct.hasVariant) bind('variant', '""');
-	if (struct.hasText) bind('text', 'node.transport_text.as_deref().unwrap_or("")');
 
 	for (const f of struct.fields) {
 		const rIdent = rustFieldIdent(f.storageName);
@@ -941,12 +844,14 @@ function buildTypedTemplateBody(
 					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
+			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
+			const fallback = separatorSite?.defaultText === undefined ? fieldSepLiteral : JSON.stringify(separatorSite.defaultText);
 			const separatorMatchLines =
 				separatedList?.separatorRule !== undefined
-					? buildSeparatorKindMatchLines(separatedList.separatorRule, fieldSepLiteral, kindIdByKind)
+					? buildSeparatorKindMatchLines(separatedList.separatorRule, fallback, kindIdByKind)
 					: undefined;
 			const spacing = spacingFieldExprs(plan, node, f.name);
-			const spaced = (site: string | undefined): string => (site === undefined ? '""' : `options::spacing_text(${site}.unwrap_or(0))`);
+			const spaced = (site: string | undefined): string => (site === undefined ? '0' : `${site}.unwrap_or(0)`);
 			bound.add(ident);
 			lines.push(`    let ${ident} = ListView {`);
 			lines.push(`        items: ${items},`);
@@ -970,7 +875,7 @@ function buildTypedTemplateBody(
 			continue;
 		}
 		if (f.backingTransportField) {
-			const backing = `node.${rustFieldIdent(f.backingTransportField)}.as_ref().and_then(|h| h.node())`;
+			const backing = `node.${rustFieldIdent(f.backingTransportField)}.as_ref().and_then(|h| h.transport())`;
 			const inner = f.backingInnerRequired ? `.map(|h| &h.${ident})` : `.and_then(|h| h.${ident}.as_ref())`;
 			const value = f.backingDirectField
 				? `node.${rustFieldIdent(f.backingDirectField)}.as_ref().or_else(|| ${backing}${inner})`
@@ -981,6 +886,12 @@ function buildTypedTemplateBody(
 		bind(ident, f.hasTransportField ? `View::new(&node.${rIdent}, ${template})` : `View::new(None::<&str>, ${template})`);
 	}
 
+	const seamFieldNames = new Set(
+		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.side === 'seam')).map((site) =>
+			rustFieldIdent(site.fieldIdent)
+		)
+	);
+
 	const refs = references(struct.body);
 	for (const name of [...refs.tests, ...refs.slots]) {
 		if (bound.has(rustFieldIdent(name))) continue;
@@ -988,8 +899,43 @@ function buildTypedTemplateBody(
 			`render body for '${struct.kind}' names '${name}', which its transport has no slot for (slots: ${struct.fields.map((f) => f.name).join(', ') || 'none'})`
 		);
 	}
-	lines.push(...printRustBody(struct.body, { field: rustFieldIdent }));
+	for (const name of refs.seams) {
+		if (seamFieldNames.has(rustFieldIdent(name))) continue;
+		throw new Error(
+			`render body for '${struct.kind}' names seam '${name}', which its transport has no spacing site for`
+		);
+	}
+	lines.push(
+		...printRustBody(struct.body, {
+			field: rustFieldIdent,
+			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
+		})
+	);
 	return lines;
+}
+
+function rustKindIdSlice(
+	names: readonly string[],
+	nodeMap: NodeMap | undefined,
+	kindIdByKind: ReadonlyMap<string, number> | undefined,
+	ownerKind: string
+): string {
+	if (nodeMap === undefined || kindIdByKind === undefined) {
+		throw new Error(`render body for '${ownerKind}' gates a literal on kinds [${names.join(', ')}] but has no kind id table`);
+	}
+	const ids = new Set<number>();
+	for (const name of names) {
+		const direct = kindIdByKind.get(name);
+		if (direct !== undefined) ids.add(direct);
+		for (const concrete of concreteKindsOf(name, nodeMap)) {
+			const id = kindIdByKind.get(concrete);
+			if (id !== undefined) ids.add(id);
+		}
+	}
+	if (ids.size === 0) {
+		throw new Error(`render body for '${ownerKind}' gates a literal on kinds [${names.join(', ')}], none of which has a kind id`);
+	}
+	return `&[${[...ids].sort((a, b) => a - b).map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}]`;
 }
 
 function libRsContents(lang: Grammar): string {
@@ -1030,22 +976,26 @@ export function emitHashFiles(
 
 type RenderPlan = RenderOptionsPlan;
 
-const EMPTY_PLAN: RenderPlan = { spacingSites: [], delimiterSites: [], labels: [], supertypes: [], whitespaceText: [] };
+interface PlannedRenderOptions {
+	readonly plan: RenderPlan;
+	readonly addresses: AddressTables;
+	readonly kindEntries: readonly KindEnumEntry[];
+}
+
+const EMPTY_PLAN: RenderPlan = { spacingSites: [], sitePaths: [], delimiterSites: [], depthSites: [], indentId: 0, dedentId: 0, whitespaceText: [] };
+const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
 
 function planRenderOptionsFor(
 	nodeMap: NodeMap,
 	generatedIdTables: GeneratedIdTables | undefined,
 	inputs: RenderOptionsInputs
-): RenderPlan {
-	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLAN;
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const sites = collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules });
-	return planRenderOptions(
-		sites,
-		kindEntries,
-		buildSupertypeMembersMap(nodeMap),
-		whitespaceTextOf(inputs.visibleExternals)
-	);
+): PlannedRenderOptions {
+	if (generatedIdTables === undefined || inputs.renderRules === undefined) return EMPTY_PLANNED_OPTIONS;
+	const kindEntries = inputs.kindEntries ?? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const sites = inputs.sites ?? collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
+	const plan = planRenderOptions(sites, kindEntries, whitespaceTextOf(inputs.visibleExternals, nodeMap));
+	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
+	return { plan, addresses, kindEntries };
 }
 
 export function emitRenderModule(
@@ -1055,7 +1005,7 @@ export function emitRenderModule(
 	generatedIdTables?: GeneratedIdTables,
 	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
-	const plan = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
+	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
 	for (const kind of [...templates.bodies.keys()].sort((a, b) => a.localeCompare(b))) {
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
@@ -1071,9 +1021,10 @@ export function emitRenderModule(
 			'use ::sittir_core::render_with_trivia;',
 			'use super::options;',
 			'',
+			armSeamSupport(),
 			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 		].join('\n') + '\n';
-	const optionsRs = renderOptionsRs(plan);
+	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
 		{ filename: 'transport.rs', content: transportRs },
 		{ filename: 'options.rs', content: optionsRs }
@@ -1160,15 +1111,55 @@ function renderTransportSupport(
 			...renderLiteralTransportStruct(projection.literals),
 			...renderTriviaTransportSupport(nodeMap, kindEntries),
 			'',
+			...renderVerbatimTransport(),
 			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
 			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)),
 			'',
 			'',
-			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan),
+			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan, kindEntries),
 			...renderTransportEntry()
 		].join('\n')
 	);
+}
+
+function renderVerbatimTransport(): string[] {
+	return [
+		'/// Text that is a slot\'s content with no kind of its own: a bare string in',
+		'/// a slot whose members all render from their own text, where the variant',
+		'/// tag is render-invisible and picking one would be a guess.',
+		'#[derive(Debug, Clone)]',
+		'pub struct VerbatimTransport {',
+		'    pub text: String,',
+		'}',
+		'',
+		'impl ::sittir_core::render::Render for VerbatimTransport {',
+		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
+		'        w.text(&self.text)',
+		'    }',
+		'}',
+		'',
+		...inertPrepareImpl('VerbatimTransport')
+	];
+}
+
+function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
+	return expandConcreteTransportKinds([supertypeNode.kind], nodeMap).some(({ node }) => node.modelType === 'pattern');
+}
+
+function supertypeVerbatimIsImmediate(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
+	let sawScalar = false;
+	for (const { node } of expandConcreteTransportKinds([supertypeNode.kind], nodeMap)) {
+		if (!(node instanceof AssembledLeaf)) continue;
+		sawScalar = true;
+		if (!node.immediate) return false;
+	}
+	return sawScalar;
+}
+
+function verbatimRenderArm(enumName: string, immediate: boolean): string {
+	const call = 'inner.render(w)';
+	return `${enumName}::Verbatim(inner) => ${immediate ? `{ w.adjacent(); ${call} }` : call},`;
 }
 
 function pruneUnreferencedBridges(rendered: string): string {
@@ -1196,13 +1187,71 @@ function pruneUnreferencedBridges(rendered: string): string {
 	return out.join('\n');
 }
 
+function armSeamSupport(): string {
+	return [
+		'pub trait ArmSeams {',
+		'    fn arm_seam_sites(&self) -> Option<(usize, usize)>;',
+		'}',
+		'',
+		'#[derive(Debug, Clone)]',
+		'pub struct Seamed<T> {',
+		'    pub value: T,',
+		'    pub seam_before: Option<u16>,',
+		'    pub seam_after: Option<u16>,',
+		'}',
+		'',
+		'impl<T> Seamed<T> {',
+		'    pub fn new(value: T) -> Self {',
+		'        Self { value, seam_before: None, seam_after: None }',
+		'    }',
+		'}',
+		'',
+		'impl<T: ::sittir_core::view::KindOf> ::sittir_core::view::KindOf for Seamed<T> {',
+		'    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {',
+		'        self.value.kind_in(kinds)',
+		'    }',
+		'}',
+		'',
+		`impl<T: ArmSeams> ${PREPARE_MOD}::Prepare for Seamed<T> {`,
+		`    ${PREPARE_SIG}`,
+		'        if let Some((before, after)) = self.value.arm_seam_sites() {',
+		'            self.seam_before.get_or_insert(ctx.options.spacing[before]);',
+		'            self.seam_after.get_or_insert(ctx.options.spacing[after]);',
+		'        }',
+		'        Ok(())',
+		'    }',
+		'}',
+		'',
+		'impl<T: ::sittir_core::render::Render> ::sittir_core::render::Render for Seamed<T> {',
+		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
+		'        w.site(self.seam_before.unwrap_or(0));',
+		'        self.value.render(w)?;',
+		'        w.site(self.seam_after.unwrap_or(0));',
+		'        Ok(())',
+		'    }',
+		'}',
+		'',
+		'#[cfg(feature = "napi-bindings")]',
+		'impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {',
+		'    unsafe fn from_napi_value(',
+		'        env: ::napi::sys::napi_env,',
+		'        napi_val: ::napi::sys::napi_value,',
+		'    ) -> ::napi::Result<Self> {',
+		'        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))',
+		'    }',
+		'}',
+		''
+	].join('\n');
+}
+
 function commonRustUseImports(hasNumericDispatch: boolean): string {
 	const lines: string[] = [];
 	lines.push(
 		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
 	);
 	lines.push('');
-	lines.push('use ::sittir_core::view::{View, ListView, NO_ITEMS};');
+	lines.push('use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};');
+	lines.push('use ::sittir_core::render::Render;');
 	lines.push('use ::sittir_core::types::{');
 	lines.push('    FieldValue, OneOrMany, Source, Span, NodeTrivia,');
 	lines.push('};');
@@ -1282,12 +1331,22 @@ function renderAnyTransportWithStringTag(
 			const variant = rustLiteralTransportVariantName(literal, index);
 			return [`    #[serde(rename = ${JSON.stringify(literal.kind)})]`, `    ${variant},`].join('\n');
 		}),
+		'    #[serde(skip)]',
+		'    Verbatim(VerbatimTransport),',
 		'}',
 		'',
-		...fillOptionsEnumImpl('AnyTransport', [
-			...nodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
-			...literals.map((literal, index) => ({ variant: rustLiteralTransportVariantName(literal, index), payload: false }))
-		])
+		...prepareEnumImpl('AnyTransport', anyTransportPrepareArms(nodes, literals))
+	];
+}
+
+function anyTransportPrepareArms(
+	nodes: readonly AssembledNode[],
+	literals: readonly TransportLiteral[]
+): { readonly variant: string; readonly payload: boolean }[] {
+	return [
+		...nodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
+		...literals.map((literal, index) => ({ variant: rustLiteralTransportVariantName(literal, index), payload: false })),
+		{ variant: 'Verbatim', payload: true }
 	];
 }
 
@@ -1315,7 +1374,7 @@ function boxedInEnum(
 	return false;
 }
 
-function emitTransportEnumFromNapiValueBody(enumName: string, kindIdArms: readonly string[]): string[] {
+function emitTransportEnumFromNapiValueBody(enumName: string, kindIdArms: readonly string[], admitsVerbatim: boolean): string[] {
 	const lines: string[] = [];
 	lines.push(`        match ::sittir_core::slot::transport_value_type(env, napi_val)? {`);
 	lines.push(`            ::napi::ValueType::Number => {`);
@@ -1334,9 +1393,14 @@ function emitTransportEnumFromNapiValueBody(enumName: string, kindIdArms: readon
 	for (const arm of kindIdArms) lines.push(`    ${arm}`);
 	lines.push(`                }`);
 	lines.push(`            }`);
+	if (admitsVerbatim) {
+		lines.push(
+			`            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),`
+		);
+	}
 	lines.push(
 		`            _ => Err(::napi::Error::from_reason(${JSON.stringify(
-			`${enumName}: expected u16 kind_id or object with $type`
+			`${enumName}: expected u16 kind_id${admitsVerbatim ? ', string,' : ''} or object with $type`
 		)})),`
 	);
 	lines.push(`        }`);
@@ -1392,6 +1456,10 @@ function aliasLeafTrialOrder(node: AssembledNode): number {
 	return -1;
 }
 
+function kindIdStoredFirst<T>(entries: readonly T[], nodeOf: (entry: T) => AssembledNode): T[] {
+	return [...entries].sort((a, b) => Number(isKindIdStored(nodeOf(b))) - Number(isKindIdStored(nodeOf(a))));
+}
+
 function supertypeClosureOf(kinds: readonly string[], nodeMap: NodeMap): Set<string> {
 	const seen = new Set<string>();
 	const queue = [...kinds];
@@ -1420,6 +1488,7 @@ function emitSupertypeTransportEnum(
 		parseNames
 	} = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
+	const admitsVerbatim = supertypeAdmitsVerbatim(supertypeNode, nodeMap);
 
 	const isBoxed = (subKind: string, subNode: AssembledNode): boolean =>
 		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
@@ -1454,13 +1523,14 @@ function emitSupertypeTransportEnum(
 		const variantType = isBoxed(subKind, subNode) ? `Box<${typeName}>` : typeName;
 		lines.push(`    ${variant}(${variantType}),`);
 	}
+	if (admitsVerbatim) lines.push(`    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
 	lines.push(``);
 	lines.push(
-		...fillOptionsEnumImpl(
-			enumName,
-			validSubtypes.map(({ subNode }) => ({ variant: rustTypeIdent(subNode.typeName), payload: true }))
-		)
+		...prepareEnumImpl(enumName, [
+			...validSubtypes.map(({ subNode }) => ({ variant: rustTypeIdent(subNode.typeName), payload: true })),
+			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
+		])
 	);
 
 	if (kindIdByKind !== undefined) {
@@ -1471,11 +1541,7 @@ function emitSupertypeTransportEnum(
 			if (selfId !== undefined) {
 				arms.push(`                ${selfId} => {`);
 				for (const t of emitDecodeTrials(false, '                    ')) arms.push(t);
-				arms.push(
-					`                    Err(::napi::Error::from_reason(${JSON.stringify(
-						`unknown aliased kind id {kind_id} in ${enumName}`
-					)}))`
-				);
+				arms.push(`                    Err(::napi::Error::from_reason(${JSON.stringify(`aliased kind id ${selfId} in ${enumName} decodes as none of its members`)}))`);
 				arms.push(`                },`);
 				emittedIds.add(selfId);
 			}
@@ -1484,11 +1550,7 @@ function emitSupertypeTransportEnum(
 				if (id === undefined || emittedIds.has(id)) continue;
 				arms.push(`                ${id} => {`);
 				for (const t of emitDecodeTrials(false, '                    ')) arms.push(t);
-				arms.push(
-					`                    Err(::napi::Error::from_reason(${JSON.stringify(
-						`unknown reserved supertype kind id {kind_id} in ${enumName}`
-					)}))`
-				);
+				arms.push(`                    Err(::napi::Error::from_reason(${JSON.stringify(`reserved supertype kind id ${id} in ${enumName} decodes as none of its members`)}))`);
 				arms.push(`                },`);
 				emittedIds.add(id);
 			}
@@ -1506,7 +1568,7 @@ function emitSupertypeTransportEnum(
 				emittedIds.add(aliasId);
 				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias', selfAliasLeafTrials));
 			}
-			for (const { subKind, subNode } of validSubtypes) {
+			for (const { subKind, subNode } of kindIdStoredFirst(validSubtypes, (s) => s.subNode)) {
 				const variant = rustTypeIdent(subNode.typeName);
 				const typeName = rustTransportStructName(subNode);
 				const acceptedIds = resolveAcceptedTransportIds({
@@ -1553,7 +1615,7 @@ function emitSupertypeTransportEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms));
+		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -1585,6 +1647,19 @@ function emitSupertypeTransportEnum(
 
 	lines.push(...renderBoxedEnumNapiImpls(enumName));
 
+	lines.push(
+		...kindOfImplLines(
+			enumName,
+			validSubtypes.map(({ subNode }) => ({ variant: rustTypeIdent(subNode.typeName), payload: true })),
+			admitsVerbatim
+				? validSubtypes
+						.filter(({ subNode }) => subNode.modelType === 'pattern')
+						.map(({ subKind }) => kindIdByKind?.get(subKind))
+						.filter((id): id is number => id !== undefined)
+				: undefined
+		)
+	);
+
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
 	for (const { subKind, subNode } of validSubtypes) {
@@ -1606,14 +1681,17 @@ function emitSupertypeTransportEnum(
 			}
 		}
 	}
+	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
 
 	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
-	lines.push(`impl ::std::fmt::Display for ${enumName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
-	lines.push(`        ${supertypeRenderFn}(self, f)`);
+	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
+	lines.push(`        ${supertypeRenderFn}(self, w)`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -1628,33 +1706,23 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
-	lines.push(`fn ${fnName}(t: &${enumName}, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(
+		`fn ${fnName}(t: &${enumName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	lines.push(`    match t {`);
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const innerExpr = boxedInEnum(subKind, ownerKind, subNode, nodeMap) ? `inner.as_ref()` : `inner`;
-		lines.push(`        ${enumName}::${variant}(inner) => ::std::fmt::Display::fmt(${innerExpr}, f),`);
+		lines.push(`        ${enumName}::${variant}(inner) => ${innerExpr}.render(w),`);
+	}
+	if (supertypeAdmitsVerbatim(supertypeNode, nodeMap)) {
+		lines.push(`        ${verbatimRenderArm(enumName, supertypeVerbatimIsImmediate(supertypeNode, nodeMap))}`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
 
 	return lines;
-}
-
-function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set<string> = new Set()): string[] {
-	if (seen.has(kind)) return [];
-	seen.add(kind);
-	const node = nodeMap.nodes.get(kind);
-	if (node === undefined) return [];
-	if (!(node instanceof AssembledSupertype)) return [kind];
-	const concreteKinds = new Set<string>();
-	for (const subtype of node.subtypeNames) {
-		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
-			concreteKinds.add(concreteKind);
-		}
-	}
-	return [...concreteKinds];
 }
 
 function collectConcreteTransportKindIds(kind: string, nodeMap: NodeMap, seen: Set<string> = new Set()): number[] {
@@ -1715,7 +1783,7 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
 		const nameKeyedIds = [
 			...new Set<string>([
-				...collectConcreteTransportKinds(kind, nodeMap),
+				...concreteKindsOf(kind, nodeMap),
 				...acceptedTransportKinds(kind, nodeMap, parseAliases)
 			])
 		]
@@ -1730,15 +1798,21 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const storageId = findKindEntry(kindEntries, kind)?.id;
 		if (storageId !== undefined && !acceptedIds.includes(storageId)) acceptedIds.push(storageId);
 	}
-	if (node instanceof AssembledEnum) {
-		acceptedIds.push(...enumMemberAcceptedIds(node));
+	for (const concreteKind of concreteKindsOf(kind, nodeMap)) {
+		const concrete = nodeMap.nodes.get(concreteKind);
+		if (concrete instanceof AssembledEnum) acceptedIds.push(...enumMemberAcceptedIds(concrete));
 	}
 	if (node.modelType === 'pattern' && node.fixedLiteralText !== undefined && kindEntries !== undefined) {
 		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
 		if (literalId !== undefined) acceptedIds.push(literalId);
 	}
-	const terminalIds = nodeMap?.terminalAliasWireIds?.get(kind);
-	if (terminalIds !== undefined) {
+	// An anonymous token the parser shows as a kind in this member's closure
+	// arrives under the token's own id (`print` shown as `identifier`,
+	// nested under `primary_expression`), so every concrete kind's terminal
+	// aliases are accepted here, not only the member's own.
+	for (const aliasedKind of [kind, ...concreteKindsOf(kind, nodeMap)]) {
+		const terminalIds = nodeMap?.terminalAliasWireIds?.get(aliasedKind);
+		if (terminalIds === undefined) continue;
 		for (const id of terminalIds) if (!acceptedIds.includes(id)) acceptedIds.push(id);
 	}
 	return acceptedIds;
@@ -1778,7 +1852,7 @@ function expandConcreteTransportKinds(
 			return;
 		}
 		if (!(node instanceof AssembledSupertype)) return;
-		for (const concreteKind of collectConcreteTransportKinds(kind, nodeMap)) {
+		for (const concreteKind of concreteKindsOf(kind, nodeMap)) {
 			includeKind(concreteKind);
 		}
 	};
@@ -1869,6 +1943,7 @@ interface PerSlotChildEnum {
 	literals: readonly TransportLiteral[];
 	parseAliases: Readonly<Record<string, string>>;
 	acceptedIdsByKind: ReadonlyMap<string, readonly number[]>;
+	verbatimImmediate: boolean;
 }
 
 function hasAnyConcreteChildKind(kinds: readonly string[], nodeMap: NodeMap): boolean {
@@ -1945,7 +2020,8 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 			kinds: slotKinds,
 			literals,
 			parseAliases,
-			acceptedIdsByKind
+			acceptedIdsByKind,
+			verbatimImmediate: slotVerbatimIsImmediate(field, nodeMap)
 		});
 	};
 
@@ -1996,6 +2072,7 @@ function emitPerSlotChildEnum(
 	const ownerKind = entry.ownerKind;
 
 	const validKinds = expandConcreteTransportKinds(entry.kinds, nodeMap);
+	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
 
 	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
 		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
@@ -2015,13 +2092,35 @@ function emitPerSlotChildEnum(
 			literalVariants.push(variant);
 		}
 	}
+	if (admitsVerbatim) lines.push(`    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
 	lines.push(``);
 	lines.push(
-		...fillOptionsEnumImpl(enumName, [
+		...prepareEnumImpl(enumName, [
 			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
-			...literalVariants.map((variant) => ({ variant, payload: false }))
+			...literalVariants.map((variant) => ({ variant, payload: false })),
+			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
+	);
+	lines.push(
+		...kindOfImplLines(
+			enumName,
+			[
+				...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
+				...entry.literals.flatMap((literal) => {
+					const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+					if (variant === undefined) return [];
+					const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
+					return [{ variant, payload: false, ids: id === undefined ? [] : [id] }];
+				})
+			],
+			admitsVerbatim
+				? validKinds
+						.filter(({ node }) => node.modelType === 'pattern')
+						.map(({ kind }) => kindIdByKind?.get(kind))
+						.filter((id): id is number => id !== undefined)
+				: undefined
+		)
 	);
 
 	if (kindIdByKind !== undefined) {
@@ -2034,10 +2133,7 @@ function emitPerSlotChildEnum(
 			emittedIds.add(id);
 			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
-		const enumArmsFirst = [...validKinds].sort(
-			(a, b) => Number(b.node instanceof AssembledEnum) - Number(a.node instanceof AssembledEnum)
-		);
-		for (const { kind, node, concreteName } of enumArmsFirst) {
+		for (const { kind, node, concreteName } of kindIdStoredFirst(validKinds, (v) => v.node)) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
 			const acceptedIds = resolveAcceptedTransportIds({
@@ -2106,7 +2202,7 @@ function emitPerSlotChildEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms));
+		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -2155,33 +2251,31 @@ function emitPerSlotChildEnum(
 			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
 		}
 	}
+	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
 
-	lines.push(`impl ::std::fmt::Display for ${enumName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	lines.push(`        match self {`);
 	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
-		const call = `::std::fmt::Display::fmt(${innerExpr}, f)`;
-		const arm =
-			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap)
-				? `{ ::sittir_core::spacing::mark_adjacent(f)?; ${call} }`
-				: call;
+		const call = `${innerExpr}.render(w)`;
+		const arm = !(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.adjacent(); ${call} }` : call;
 		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
 	}
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			const arm =
-				literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap)
-					? `{ ::sittir_core::spacing::mark_adjacent(f)?; f.write_str(${JSON.stringify(literal.text)}) }`
-					: `f.write_str(${JSON.stringify(literal.text)})`;
-			lines.push(`            ${enumName}::${variant} => ${arm},`);
+			const immediate = literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap);
+			lines.push(`            ${enumName}::${variant} => ${literalWriteArm(literal.text, immediate)},`);
 		}
 	}
+	if (admitsVerbatim) lines.push(`            ${verbatimRenderArm(enumName, entry.verbatimImmediate)}`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -2211,14 +2305,10 @@ function renderAnyTransportWithNapiFromValue(
 		const variant = rustLiteralTransportVariantName(literal, index);
 		lines.push(`    ${variant},`);
 	}
+	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('}');
 	lines.push('');
-	lines.push(
-		...fillOptionsEnumImpl('AnyTransport', [
-			...nodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
-			...literals.map((literal, index) => ({ variant: rustLiteralTransportVariantName(literal, index), payload: false }))
-		])
-	);
+	lines.push(...prepareEnumImpl('AnyTransport', anyTransportPrepareArms(nodes, literals)));
 
 	lines.push('#[cfg(feature = "napi-bindings")]');
 	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {');
@@ -2319,10 +2409,10 @@ function renderTransportEntry(): string[] {
 		'',
 		'pub fn render_transport_parts(',
 		'    mut transport: RenderRoot,',
-		'    table: &::sittir_core::options::ResolvedOptions,',
-		') -> Result<(TransportSource, String), ::std::fmt::Error> {',
-		'    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);',
-		'    let rendered = render_transport_dispatch(&transport, &table.indent)?;',
+		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
+		') -> Result<(TransportSource, String), ::sittir_core::render::RenderError> {',
+		'    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;',
+		'    let rendered = render_transport_dispatch(&transport, ctx)?;',
 		'    Ok((TransportSource::Factory, rendered))',
 		'}'
 	];
@@ -2350,22 +2440,26 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	for (const node of extrasNodes) {
 		lines.push(`    ${rustTransportVariantName(node)}(${rustTransportStructName(node)}),`);
 	}
+	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('}');
 	lines.push('');
 	lines.push(
-		...fillOptionsEnumImpl(
-			'TriviaTransport',
-			extrasNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true }))
-		)
+		...prepareEnumImpl('TriviaTransport', [
+			...extrasNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
+			{ variant: 'Verbatim', payload: true }
+		])
 	);
 
-	lines.push('impl ::std::fmt::Display for TriviaTransport {');
-	lines.push("    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {");
+	lines.push('impl ::sittir_core::render::Render for TriviaTransport {');
+	lines.push(
+		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
+	);
 	lines.push('        match self {');
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
-		lines.push(`            TriviaTransport::${variant}(t) => ::std::fmt::Display::fmt(t, f),`);
+		lines.push(`            TriviaTransport::${variant}(t) => t.render(w),`);
 	}
+	lines.push('            TriviaTransport::Verbatim(t) => t.render(w),');
 	lines.push('        }');
 	lines.push('    }');
 	lines.push('}');
@@ -2388,7 +2482,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('        env: ::napi::sys::napi_env,');
 	lines.push('        napi_val: ::napi::sys::napi_value,');
 	lines.push('    ) -> ::napi::Result<Self> {');
-	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms));
+	lines.push(...emitTransportEnumFromNapiValueBody('TriviaTransport', kindIdArms, true));
 	lines.push('    }');
 	lines.push('}');
 	lines.push('');
@@ -2465,18 +2559,20 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 	return undefined;
 }
 
-const OPTIONS_MOD = '::sittir_core::options';
+const PREPARE_MOD = '::sittir_core::prepare';
+const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`;
 
-function fillOptionsEnumImpl(
+function prepareEnumImpl(
 	enumName: string,
 	arms: readonly { readonly variant: string; readonly payload: boolean }[]
 ): string[] {
+	const anyPayload = arms.some((a) => a.payload);
 	return [
-		`impl ${OPTIONS_MOD}::FillOptions for ${enumName} {`,
-		`    fn fill_options(&mut self, ${arms.some((a) => a.payload) ? 'table' : '_table'}: &${OPTIONS_MOD}::ResolvedOptions) {`,
+		`impl ${PREPARE_MOD}::Prepare for ${enumName} {`,
+		`    ${anyPayload ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        match self {`,
 		...arms.map((a) =>
-			a.payload ? `            ${enumName}::${a.variant}(t) => t.fill_options(table),` : `            ${enumName}::${a.variant} => {}`
+			a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${enumName}::${a.variant} => Ok(()),`
 		),
 		`        }`,
 		`    }`,
@@ -2485,10 +2581,12 @@ function fillOptionsEnumImpl(
 	];
 }
 
-function noopFillOptionsImpl(typeName: string): string[] {
+function inertPrepareImpl(typeName: string): string[] {
 	return [
-		`impl ${OPTIONS_MOD}::FillOptions for ${typeName} {`,
-		`    fn fill_options(&mut self, _table: &${OPTIONS_MOD}::ResolvedOptions) {}`,
+		`impl ${PREPARE_MOD}::Prepare for ${typeName} {`,
+		`    ${PREPARE_SIG.replace('ctx:', '_ctx:')}`,
+		`        Ok(())`,
+		`    }`,
 		`}`,
 		''
 	];
@@ -2496,12 +2594,80 @@ function noopFillOptionsImpl(typeName: string): string[] {
 
 function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
 	const kind = publicKindName(node.kind);
-	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined);
+	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined && site.seat === undefined);
+}
+
+function seatedSitesOf(plan: RenderPlan, parentKind: string, slot: string): ReadonlyMap<string, SpacingSite> {
+	const kind = publicKindName(parentKind);
+	const out = new Map<string, SpacingSite>();
+	for (const site of plan.spacingSites) {
+		if (site.seat === undefined || site.kind !== kind || site.slot !== slot) continue;
+		out.set(site.seat.kind, site);
+	}
+	return out;
 }
 
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
 	const kind = publicKindName(node.kind);
 	return plan.delimiterSites.find((site) => site.kind === kind);
+}
+
+function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | undefined {
+	const kind = publicKindName(node.kind);
+	return plan.spacingSites.find((site) => site.kind === kind && site.role === 'separator');
+}
+
+function listGapSitesOf(
+	plan: RenderPlan,
+	node: AssembledNode,
+	slot: string
+): { readonly before?: SpacingSite; readonly after?: SpacingSite; readonly gap?: SpacingSite } {
+	const kind = publicKindName(node.kind);
+	const of = (side: SpacingSide) =>
+		plan.spacingSites.find((s) => s.kind === kind && s.slot === slot && s.side === side && s.seat === undefined);
+	return { before: of('before'), after: of('after'), gap: of('gap') };
+}
+
+function listGapTokenOf(field: AssembledNonterminal): string | undefined {
+	const texts = slotSeparatorTexts(field, false);
+	return texts.length === 1 ? texts[0] : undefined;
+}
+
+function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] {
+	const body: string[] = [];
+	const slotModel = renderSlotModelOf(node);
+	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
+		if (!isMultiple(field)) continue;
+		const sites = listGapSitesOf(plan, node, field.name);
+		const first = sites.gap ?? sites.before;
+		if (first === undefined && sites.after === undefined) continue;
+		const token = sites.gap !== undefined ? '' : listGapTokenOf(field);
+		if (token === undefined) continue;
+		const ident = rustFieldIdent(field.storageName);
+		const items = isRequired(field) ? `self.${ident}.iter()` : `self.${ident}.as_deref().unwrap_or(&[]).iter()`;
+		const each = hasOptionalElements(field) ? 'item.as_ref().and_then(|i| i.coord())' : 'item.coord()';
+		const allowedOf = (site: SpacingSite | undefined) =>
+			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
+		body.push(
+			`        {`,
+			`            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = ${items}.map(|item| ${each}).collect();`,
+			`            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE);`
+		);
+		if (first !== undefined) {
+			const f = rustFieldIdent(first.fieldIdent);
+			body.push(`            if self.${f}.is_none() { self.${f} = before; }`);
+		} else {
+			body.push(`            let _ = before;`);
+		}
+		if (sites.after !== undefined) {
+			const a = rustFieldIdent(sites.after.fieldIdent);
+			body.push(`            if self.${a}.is_none() { self.${a} = after; }`);
+		} else {
+			body.push(`            let _ = after;`);
+		}
+		body.push(`        }`);
+	}
+	return body;
 }
 
 function spacingFieldExprs(
@@ -2510,7 +2676,7 @@ function spacingFieldExprs(
 	fieldName: string
 ): { readonly before?: string; readonly after?: string; readonly head?: string; readonly tail?: string } {
 	if (node === undefined) return {};
-	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
+	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
 	return {
@@ -2521,34 +2687,175 @@ function spacingFieldExprs(
 	};
 }
 
-function fillOptionsStructImpl(
+function seatVariantArms(
+	field: AssembledNonterminal,
+	seats: ReadonlyMap<string, SpacingSite>,
+	nodeMap: NodeMap,
+	ownerTypeName: string
+): readonly string[] {
+	type Arm = { readonly pattern: string; readonly body: readonly string[] };
+	const indent = (lines: readonly string[]): string[] => lines.map((line) => `    ${line}`);
+	const matchOver = (arms: readonly Arm[]): string[] =>
+		arms.length === 0
+			? []
+			: [
+					`match t {`,
+					...arms.flatMap((arm) => [`    ${arm.pattern} => {`, ...indent(indent(arm.body)), `    }`]),
+					`    #[allow(unreachable_patterns)]`,
+					`    _ => {}`,
+					`}`
+				];
+	const bodyFor = (kind: string, node: AssembledNode, seen: Set<string>): string[] => {
+		const seat = seats.get(publicKindName(kind));
+		if (seat !== undefined) return [`t.${rustFieldIdent(seat.seat!.field)}.get_or_insert(ctx.options.spacing[options::${seat.constName}]);`];
+		if (seen.has(kind)) return [];
+		seen.add(kind);
+		if (node instanceof AssembledSupertype) return matchOver(supertypeArms(node, seen));
+		if (!(node instanceof AssembledPolymorph)) return [];
+		const model = renderSlotModelOf(node);
+		const slot = model.named[0] ?? model.unnamed[0];
+		if (slot?.name === undefined) return [];
+		const inner = slotBody(slot, node.typeName, seen);
+		if (inner.length === 0) return [];
+		const held = isRequired(slot) ? '::sittir_core::SlotValue::Transport(seated)' : 'Some(::sittir_core::SlotValue::Transport(seated))';
+		return [`if let ${held} = &mut t.${rustFieldIdent(slot.name)} {`, ...indent(inner), `}`];
+	};
+	const variantArms = (
+		enumName: string,
+		members: readonly { readonly kind: string; readonly node: AssembledNode }[],
+		seen: Set<string>
+	): Arm[] =>
+		members.flatMap(({ kind, node }) => {
+			const body = bodyFor(kind, node, seen);
+			return body.length === 0 ? [] : [{ pattern: `${enumName}::${rustTypeIdent(node.typeName)}(t)`, body }];
+		});
+	const supertypeArms = (node: AssembledSupertype, seen: Set<string>): Arm[] =>
+		variantArms(
+			`${rustTypeIdent(node.typeName)}Transport`,
+			collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.map(({ subKind, subNode }) => ({ kind: subKind, node: subNode })),
+			seen
+		);
+	const slotBody = (slot: AssembledNonterminal, slotOwnerTypeName: string, seen: Set<string>): string[] => {
+		const kinds = kindsOf(slot);
+		const cls = classifySlotForEmit(kinds, nodeMap);
+		const borrowed = (typeName: string, lines: readonly string[]): string[] =>
+			lines.length === 0 ? [] : [`let t: &mut ${typeName} = ::std::borrow::BorrowMut::borrow_mut(seated);`, ...lines];
+		if (cls.tag === 'concrete') {
+			const node = nodeMap.nodes.get(cls.kind);
+			const typeName = concreteTransportTypeName(cls.kind, nodeMap);
+			return node === undefined || typeName === null ? [] : borrowed(typeName, bodyFor(cls.kind, node, seen));
+		}
+		if (cls.tag === 'supertype') {
+			const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+			const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
+			if (!(node instanceof AssembledSupertype)) return [];
+			return borrowed(`${rustTypeIdent(cls.supertypeName)}Transport`, matchOver(supertypeArms(node, seen)));
+		}
+		const enumName = hasAnyConcreteChildKind(kinds, nodeMap) ? perSlotEnumName(slotOwnerTypeName, slot.name!) : 'AnyTransport';
+		return borrowed(enumName, matchOver(variantArms(enumName, expandConcreteTransportKinds(kinds, nodeMap), seen)));
+	};
+	return slotBody(field, ownerTypeName, new Set());
+}
+
+function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
+	const lines: string[] = [];
+	const slotModel = renderSlotModelOf(node);
+	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
+		if (field.name === undefined || !isMultiple(field)) continue;
+		const seats = seatedSitesOf(plan, node.kind, field.name);
+		if (seats.size === 0) continue;
+		const seated = seatVariantArms(field, seats, nodeMap, node.typeName);
+		if (seated.length === 0) continue;
+		const ident = rustFieldIdent(field.name);
+		const open = isRequired(field)
+			? [`        {`, `            let seated_items = &mut self.${ident};`]
+			: [`        if let Some(seated_items) = self.${ident}.as_mut() {`];
+		const element = hasOptionalElements(field)
+			? [`                let Some(item) = item.as_mut() else { continue };`]
+			: [];
+		lines.push(
+			...open,
+			`            let seated_last = seated_items.len().saturating_sub(1);`,
+			`            for (seated_at, item) in seated_items.iter_mut().enumerate() {`,
+			`                if seated_at == seated_last { continue; }`,
+			...element,
+			`                if let ::sittir_core::SlotValue::Transport(seated) = item {`,
+			...seated.map((line) => `                    ${line}`),
+			`                }`,
+			`            }`,
+			`        }`
+		);
+	}
+	return lines;
+}
+
+function prepareStructImpl(
 	structName: string,
 	node: AssembledNode,
 	fillFields: readonly string[],
 	plan: RenderPlan,
-	isCompound: boolean
+	isCompound: boolean,
+	nodeMap: NodeMap
 ): string[] {
 	const body: string[] = [];
 	if (isCompound) {
+		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
-			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(table.spacing[options::${site.constName}]);`);
+			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}]);`);
 		}
+		body.push(...seatLoops(plan, node, nodeMap));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
-			body.push(`        if table.delimiter[options::${delim.constName}] != 0 {`);
-			body.push(`            self.delimiter.get_or_insert(table.delimiter[options::${delim.constName}]);`);
-			body.push(`        }`);
+			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);
 		}
-		for (const f of fillFields) body.push(`        self.${f}.fill_options(table);`);
+		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
+		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}]);`);
+		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
 	}
 	return [
-		`impl ${OPTIONS_MOD}::FillOptions for ${structName} {`,
-		`    fn fill_options(&mut self, ${body.length > 0 ? 'table' : '_table'}: &${OPTIONS_MOD}::ResolvedOptions) {`,
+		`impl ${PREPARE_MOD}::Prepare for ${structName} {`,
+		`    ${body.length > 0 ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		...body,
+		`        Ok(())`,
 		`    }`,
 		`}`,
 		''
 	];
+}
+
+/** The `KindOf` answer a generated transport type gives a kind-gated body:
+ *  a struct is its own kind, an enum answers for the variant it holds, and a
+ *  verbatim value stands for whichever pattern kinds the position admits. */
+function kindOfImplLines(
+	typeName: string,
+	arms: readonly { variant: string; payload: boolean; ids?: readonly number[] }[],
+	verbatimIds: readonly number[] | undefined,
+	ownIds?: readonly number[],
+	rest: 'exhaustive' | 'false' = 'exhaustive'
+): string[] {
+	const idList = (ids: readonly number[]): string =>
+		`[${[...new Set(ids)].sort((a, b) => a - b).map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}]`;
+	const containsAny = (ids: readonly number[]): string =>
+		ids.length === 0 ? 'false' : `${idList(ids)}.iter().any(|k| kinds.contains(k))`;
+	const lines = [
+		`impl ::sittir_core::view::KindOf for ${typeName} {`,
+		`    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {`
+	];
+	if (ownIds !== undefined) {
+		lines.push(`        ${containsAny(ownIds)}`);
+	} else {
+		lines.push(`        match self {`);
+		for (const arm of arms) {
+			if (arm.payload && arm.ids === undefined) lines.push(`            Self::${arm.variant}(inner) => inner.kind_in(kinds),`);
+			else if (arm.payload) lines.push(`            Self::${arm.variant}(_) => ${containsAny(arm.ids!)},`);
+			else lines.push(`            Self::${arm.variant} => ${containsAny(arm.ids ?? [])},`);
+		}
+		if (verbatimIds !== undefined) lines.push(`            Self::Verbatim(_) => ${containsAny(verbatimIds)},`);
+		if (rest === 'false') lines.push(`            _ => false,`);
+		lines.push(`        }`);
+	}
+	lines.push(`    }`, `}`, ``);
+	return lines;
 }
 
 function renderTransportStruct(
@@ -2559,10 +2866,10 @@ function renderTransportStruct(
 	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	if (node instanceof AssembledEnum) {
-		return renderEnumType(node, hasNapi, kindEntries);
+		return renderEnumType(node, hasNapi, kindEntries, plan);
 	}
 	const slotModel = renderSlotModelOf(node);
-	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, plan);
+	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap, plan, kindEntries);
 }
 
 function renderTransportDataStruct(
@@ -2570,7 +2877,8 @@ function renderTransportDataStruct(
 	node: AssembledNode,
 	slotModel: RenderSlotModel,
 	nodeMap: NodeMap,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'token';
 	const lines: string[] = [];
@@ -2586,7 +2894,7 @@ function renderTransportDataStruct(
 		node.modelType === 'list' ||
 		(node.modelType === 'polymorph' && !(node instanceof AssembledSupertype));
 	if (isCompoundNode) {
-		lines.push(...renderTransportMetadataFields(true));
+		lines.push(...renderTransportMetadataFields());
 		for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 			lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
 			fillFields.push(rustFieldIdent(field.storageName));
@@ -2640,28 +2948,24 @@ function renderTransportDataStruct(
 	}
 	lines.push('}');
 	lines.push('');
-	lines.push(`impl ::std::fmt::Display for ${structName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	const ownId = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind)?.id;
+	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
+	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
 	if (isLeafNode) {
-		lines.push(`        render_with_trivia!(self, f, f.write_str(&self.text))`);
+		lines.push(`        render_with_trivia!(self, w, ${leafTextWrite(node, 'self')})`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
-		lines.push(`        render_with_trivia!(self, f, ${renderFn}(self, f))`);
+		lines.push(`        render_with_trivia!(self, w, ${renderFn}(self, w))`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...fillOptionsStructImpl(structName, node, fillFields, plan, isCompoundNode));
+	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundNode, nodeMap));
 	if (isLeafNode) {
-		const leafNamed = !(node instanceof AssembledToken);
-		lines.push(
-			...renderLeafTransportNapiImpls(
-				structName,
-				leafNamed,
-				leafDefaultTextLiteral(node),
-				leafBooleanPresenceLiteral(node, nodeMap)
-			)
-		);
+		lines.push(...renderLeafTransportNapiImpls(structName, leafDefaultTextLiteral(node), leafBooleanPresenceLiteral(node, nodeMap)));
 	}
 	lines.push(...renderBoxedEnumNapiImpls(structName));
 	return lines;
@@ -2671,12 +2975,7 @@ function declareLeafTriviaCapture(): string {
 	return `        let mut __trivia: Option<TransportTrivia> = None;`;
 }
 
-function renderLeafTransportNapiImpls(
-	structName: string,
-	named: boolean,
-	defaultTextLiteral?: string,
-	booleanLiteral?: string
-): string[] {
+function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: string, booleanLiteral?: string): string[] {
 	const lines: string[] = [];
 
 	lines.push(`#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`);
@@ -2706,7 +3005,7 @@ function renderLeafTransportNapiImpls(
 	}
 	lines.push(`            _ => {`);
 	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`                __trivia = obj.get("$triviaData")?;`);
+	lines.push(`                __trivia = obj.get("$_trivia")?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
 			? `                obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
@@ -2715,15 +3014,7 @@ function renderLeafTransportNapiImpls(
 	lines.push(`            }`);
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
-	for (const f of TRANSPORT_METADATA_FIELDS) {
-		if (f.rustName === 'transport_named') {
-			lines.push(`            transport_named: Some(${named}),`);
-		} else if (f.rustName === 'transport_trivia_data') {
-			lines.push(`            transport_trivia_data: __trivia,`);
-		} else {
-			lines.push(`            ${f.rustName}: None,`);
-		}
-	}
+	lines.push(`            transport_trivia_data: __trivia,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -2741,13 +3032,7 @@ function renderLeafTransportNapiImpls(
 		lines.push(`            ::napi::ValueType::String => {`);
 		lines.push(`                let text = String::from_napi_value(env, napi_val)?;`);
 		lines.push(`                return Ok(Self {`);
-		for (const f of TRANSPORT_METADATA_FIELDS) {
-			if (f.rustName === 'transport_named') {
-				lines.push(`                    transport_named: Some(${named}),`);
-			} else {
-				lines.push(`                    ${f.rustName}: None,`);
-			}
-		}
+		for (const f of TRANSPORT_METADATA_FIELDS) lines.push(`                    ${f.rustName}: None,`);
 		lines.push(`                    text,`);
 		lines.push(`                });`);
 		lines.push(`            }`);
@@ -2760,13 +3045,7 @@ function renderLeafTransportNapiImpls(
 		);
 		lines.push(`                }`);
 		lines.push(`                return Ok(Self {`);
-		for (const f of TRANSPORT_METADATA_FIELDS) {
-			if (f.rustName === 'transport_named') {
-				lines.push(`                    transport_named: Some(${named}),`);
-			} else {
-				lines.push(`                    ${f.rustName}: None,`);
-			}
-		}
+		for (const f of TRANSPORT_METADATA_FIELDS) lines.push(`                    ${f.rustName}: None,`);
 		lines.push(`                    text: ${JSON.stringify(booleanLiteral)}.to_string(),`);
 		lines.push(`                });`);
 		lines.push(`            }`);
@@ -2779,13 +3058,7 @@ function renderLeafTransportNapiImpls(
 			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string());`
 			: '        let text: String = obj.get("$text")?.unwrap_or_default();'
 	);
-	for (const f of TRANSPORT_METADATA_FIELDS) {
-		if (f.needsExplicitTypeAnnotation) {
-			lines.push(`        let ${f.rustName}: ${f.rustType} = obj.get(${JSON.stringify(f.jsName)})?;`);
-		} else {
-			lines.push(`        let ${f.rustName} = obj.get(${JSON.stringify(f.jsName)})?;`);
-		}
-	}
+	for (const f of TRANSPORT_METADATA_FIELDS) lines.push(`        let ${f.rustName} = obj.get(${JSON.stringify(f.jsName)})?;`);
 	lines.push(`        Ok(Self {`);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
 		lines.push(`            ${f.rustName},`);
@@ -2811,7 +3084,10 @@ function renderLeafTransportNapiImpls(
 }
 
 function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
-	if (node.modelType === 'token') return node.text || undefined;
+	if (node.modelType === 'token') {
+		const text = node.text || undefined;
+		return text !== undefined && isDepthText(text) ? undefined : text;
+	}
 	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
 	return undefined;
 }
@@ -2820,58 +3096,17 @@ interface TransportMetadataField {
 	jsName: string;
 	rustName: string;
 	rustType: string;
-	bridgeMap?: string;
-	needsExplicitTypeAnnotation?: boolean;
 }
 
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$source', rustName: 'transport_source', rustType: 'Option<Source>' },
-	{ jsName: '$named', rustName: 'transport_named', rustType: 'Option<bool>' },
-	{ jsName: '$span', rustName: 'transport_span', rustType: 'Option<Span>' },
-	{
-		jsName: '$nodeHandle',
-		rustName: 'transport_node_handle',
-		rustType: 'Option<f64>',
-		bridgeMap: '.map(|v| v as u32)'
-	},
-	{
-		jsName: '$childIndex',
-		rustName: 'transport_child_index',
-		rustType: 'Option<f64>',
-		bridgeMap: '.map(|v| v as u16)'
-	},
-	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
+	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
 ];
 
-const TRANSPORT_TEXT_FIELD: TransportMetadataField = {
-	jsName: '$text',
-	rustName: 'transport_text',
-	rustType: 'Option<String>'
-};
-
-function renderTransportMetadataFields(includeText: boolean): string[] {
-	const lines: string[] = [];
-	const source = TRANSPORT_METADATA_FIELDS[0]!;
-	const named = TRANSPORT_METADATA_FIELDS[1]!;
-	lines.push(
-		`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(source.jsName)}))]`,
-		`    pub ${source.rustName}: ${source.rustType},`,
-		`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(named.jsName)}))]`,
-		`    pub ${named.rustName}: ${named.rustType},`
-	);
-	if (includeText) {
-		lines.push(
-			`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(TRANSPORT_TEXT_FIELD.jsName)}))]`,
-			`    pub ${TRANSPORT_TEXT_FIELD.rustName}: ${TRANSPORT_TEXT_FIELD.rustType},`
-		);
-	}
-	for (const f of TRANSPORT_METADATA_FIELDS.slice(2)) {
-		lines.push(
-			`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(f.jsName)}))]`,
-			`    pub ${f.rustName}: ${f.rustType},`
-		);
-	}
-	return lines;
+function renderTransportMetadataFields(): string[] {
+	return TRANSPORT_METADATA_FIELDS.flatMap((f) => [
+		`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(f.jsName)}))]`,
+		`    pub ${f.rustName}: ${f.rustType},`
+	]);
 }
 
 function renderLeafTransportPlainFields(): string[] {
@@ -2978,20 +3213,6 @@ function rustTransportSlotType(
 	}
 }
 
-let supertypeKindByTypeNameCache: WeakMap<NodeMap, Map<string, string>> = new WeakMap();
-function findSupertypeKindByTypeName(supertypeName: string, nodeMap: NodeMap): string | undefined {
-	let map = supertypeKindByTypeNameCache.get(nodeMap);
-	if (map === undefined) {
-		map = new Map<string, string>();
-		for (const [kind, node] of nodeMap.nodes) {
-			if (node instanceof AssembledSupertype) {
-				map.set(node.typeName, kind);
-			}
-		}
-		supertypeKindByTypeNameCache.set(nodeMap, map);
-	}
-	return map.get(supertypeName);
-}
 
 function renderBoxedEnumNapiImpls(enumName: string): string[] {
 	return [
@@ -3068,12 +3289,6 @@ function rustLiteralTransportVariantName(literal: TransportLiteral, index: numbe
 	return rustTypeIdent(`Literal${index}_${suffix}`);
 }
 
-function rustTypeIdent(name: string): string {
-	const replaced = name.replace(/[^A-Za-z0-9_]/g, '_');
-	const withStart = /^[A-Za-z_]/.test(replaced) ? replaced : `Transport${replaced}`;
-	const ident = withStart.length > 0 ? withStart : 'Transport';
-	return RUST_KEYWORDS.has(ident) ? `${ident}_` : ident;
-}
 
 const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
 	['+', 'Plus'],
@@ -3284,8 +3499,52 @@ function enumTypeName(node: AssembledEnum): string {
 	return `${rustTypeIdent(node.typeName)}Enum`;
 }
 
-function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: readonly KindEnumEntry[]): string[] {
-	const enumName = enumTypeName(node);
+function armSeamPairsOf(plan: RenderPlan, node: AssembledEnum): Map<string, { before: string; after: string }> {
+	const kind = publicKindName(node.kind);
+	const bySlot = new Map<string, { before?: string; after?: string }>();
+	for (const site of plan.spacingSites) {
+		if (site.kind !== kind || site.side !== 'seam' || site.seat !== undefined) continue;
+		const seam = parseSeamLabel(site.address);
+		if (seam === undefined) continue;
+		const entry = bySlot.get(site.slot) ?? {};
+		bySlot.set(site.slot, { ...entry, [seam.side]: site.constName });
+	}
+	const out = new Map<string, { before: string; after: string }>();
+	for (const text of node.values) {
+		const armKind = node.resolvedByText.get(text)?.kind;
+		if (armKind === undefined) continue;
+		const pair = bySlot.get(publicKindName(armKind));
+		if (pair?.before === undefined || pair.after === undefined) continue;
+		out.set(text, { before: pair.before, after: pair.after });
+	}
+	return out;
+}
+
+function armSeamsImpl(valueName: string, values: readonly string[], pairs: ReadonlyMap<string, { before: string; after: string }>): string[] {
+	const lines = [
+		`impl ArmSeams for ${valueName} {`,
+		`    fn arm_seam_sites(&self) -> Option<(usize, usize)> {`,
+		`        match self {`
+	];
+	for (const v of values) {
+		const pair = pairs.get(v);
+		if (pair === undefined) continue;
+		lines.push(`            Self::${literalToVariantName(v)} => Some((options::${pair.before}, options::${pair.after})),`);
+	}
+	if (pairs.size < values.length) lines.push(`            _ => None,`);
+	lines.push(`        }`, `    }`, `}`, '');
+	return lines;
+}
+
+function renderEnumType(
+	node: AssembledEnum,
+	hasNapi: boolean,
+	kindEntries?: readonly KindEnumEntry[],
+	plan: RenderPlan = EMPTY_PLAN
+): string[] {
+	const publicName = enumTypeName(node);
+	const seamPairs = armSeamPairsOf(plan, node);
+	const enumName = seamPairs.size === 0 ? publicName : `${publicName.replace(/Enum$/, '')}Arm`;
 	const values = node.values;
 	const lines: string[] = [];
 
@@ -3296,7 +3555,7 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 	}
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...noopFillOptionsImpl(enumName));
+	lines.push(...inertPrepareImpl(enumName));
 
 	if (hasNapi) {
 		lines.push(`#[cfg(feature = "napi-bindings")]`);
@@ -3394,9 +3653,21 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 		lines.push('');
 	}
 
-	lines.push(`impl ::std::fmt::Display for ${enumName} {`);
-	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
-	lines.push(`        f.write_str(match self {`);
+	lines.push(
+		...kindOfImplLines(
+			enumName,
+			values.map((v) => {
+				const id = node.resolvedByText.get(v)?.id;
+				return { variant: literalToVariantName(v), payload: false, ids: id === undefined ? [] : [id] };
+			}),
+			undefined
+		)
+	);
+	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
+	lines.push(
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	);
+	lines.push(`        w.text(match self {`);
 	for (const v of values) {
 		const variant = literalToVariantName(v);
 		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);
@@ -3405,6 +3676,12 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
+
+	if (seamPairs.size > 0) {
+		lines.push(...armSeamsImpl(enumName, values, seamPairs));
+		lines.push(`pub type ${publicName} = Seamed<${enumName}>;`);
+		lines.push('');
+	}
 
 	return lines;
 }

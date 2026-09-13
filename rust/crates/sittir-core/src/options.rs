@@ -1,12 +1,5 @@
-//! Resolved render options and the fill walk that applies them.
-//!
-//! A transport arrives from JavaScript with its spacing and flank fields
-//! unset unless the wire carried a value. `FillOptions` walks the tree
-//! once before rendering and writes the resolved option into every unset
-//! field, so a wire value always wins and the render functions read
-//! fields only. The site indices are generated per grammar.
-
-use crate::slot::SlotValue;
+//! Resolved render options: one whitespace kind id per spacing site, one
+//! bitflag per flank site, and the indentation unit.
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResolvedOptions {
@@ -28,52 +21,24 @@ impl Default for ResolvedOptions {
     }
 }
 
-pub trait FillOptions {
-    fn fill_options(&mut self, table: &ResolvedOptions);
-}
-
-impl<T: FillOptions, const ADJACENT: bool> FillOptions for SlotValue<T, ADJACENT> {
-    fn fill_options(&mut self, table: &ResolvedOptions) {
-        if let SlotValue::Node(node) = self {
-            node.fill_options(table);
+/// Refuse a napi object whose keys are not all in `allowed`: an address-keyed
+/// deserializer's only defense against a typo, since napi otherwise drops an
+/// unknown property silently.
+#[cfg(feature = "napi-bindings")]
+pub fn reject_unknown_keys(
+    obj: &::napi::bindgen_prelude::Object,
+    allowed: &[&str],
+    at: &str,
+) -> ::napi::Result<()> {
+    for key in ::napi::bindgen_prelude::Object::keys(obj)? {
+        if !allowed.contains(&key.as_str()) {
+            let message = if at.is_empty() {
+                format!("options: unknown key {key}")
+            } else {
+                format!("options: {at}/{key} names no site")
+            };
+            return Err(::napi::Error::from_reason(message));
         }
     }
-}
-
-impl<T: FillOptions> FillOptions for Vec<T> {
-    fn fill_options(&mut self, table: &ResolvedOptions) {
-        for item in self {
-            item.fill_options(table);
-        }
-    }
-}
-
-impl<T: FillOptions> FillOptions for Option<T> {
-    fn fill_options(&mut self, table: &ResolvedOptions) {
-        if let Some(item) = self {
-            item.fill_options(table);
-        }
-    }
-}
-
-impl<T: FillOptions + ?Sized> FillOptions for Box<T> {
-    fn fill_options(&mut self, table: &ResolvedOptions) {
-        (**self).fill_options(table);
-    }
-}
-
-impl FillOptions for String {
-    fn fill_options(&mut self, _: &ResolvedOptions) {}
-}
-
-impl FillOptions for bool {
-    fn fill_options(&mut self, _: &ResolvedOptions) {}
-}
-
-impl FillOptions for u8 {
-    fn fill_options(&mut self, _: &ResolvedOptions) {}
-}
-
-impl FillOptions for u16 {
-    fn fill_options(&mut self, _: &ResolvedOptions) {}
+    Ok(())
 }
