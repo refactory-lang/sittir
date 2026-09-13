@@ -29,7 +29,6 @@ import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
 import type {
 	CodegenSurface,
-	PolymorphVariantDescriptor,
 	PolymorphVariantMap,
 	FactoryShape,
 	FactorySlotMeta,
@@ -1704,7 +1703,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
 	if (isAnonTokenPassthrough(c)) return child;
-	const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
+	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
 	const drilled = drillReadNode(c, opts);
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).

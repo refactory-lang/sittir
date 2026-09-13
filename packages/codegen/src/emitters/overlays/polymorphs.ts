@@ -445,11 +445,14 @@ const ERASED_HELPERS = [
 	'const _o = (config: unknown) => config as Record<string, unknown>;',
 	'const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> =>',
 	'\t({ ..._o(config), ...extra });',
-	'// A spliced group is present as a whole or absent as a whole: the second',
-	'// overload forbids every one of its keys.',
-	'type NoneOf<T> = { [K in keyof T]?: never };',
 	'const _built = (v: unknown): boolean => typeof v === \'object\' && v !== null && \'$type\' in v;',
 	''
+];
+
+const SPLICE_HELPER = [
+	'// A spliced group is present as a whole or absent as a whole: the second',
+	'// overload forbids every one of its keys.',
+	'type NoneOf<T> = { [K in keyof T]?: never };'
 ];
 
 interface WireShape {
@@ -857,5 +860,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import type { ArgsOf, OmitEach } from '../../utils.js';",
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : [])
 	];
+	const anchor = blocks.indexOf(ERASED_HELPERS[ERASED_HELPERS.length - 3]!);
+	if (anchor >= 0 && blocks.some((b) => b.includes('NoneOf<'))) blocks.splice(anchor + 1, 0, ...SPLICE_HELPER);
 	return [...overlayFrame(overlayImportPath(1), blocks, extraImports), ...blocks].join('\n');
 }

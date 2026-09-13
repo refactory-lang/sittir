@@ -2,8 +2,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { TemplateRule } from '@sittir/types';
-import type { RenderBody } from '../codegen-surface.ts';
-import { INDENT_TEXT, DEDENT_TEXT } from '../../../codegen/src/dsl/primitives/spacing.ts';
+import { load, type RenderBody } from '../codegen-surface.ts';
+
+const { INDENT_TEXT, DEDENT_TEXT } = await load('spacing');
 
 export function renderBodiesPath(grammar: string): string {
 	const packagesDir = resolve(fileURLToPath(new URL('../../..', import.meta.url)));

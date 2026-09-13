@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deriveAddressTables, kindIdArmType, publicKindName, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
+import { deriveAddressTables, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
 import type { PreferenceArm, SitePreference } from '../../compiler/model/site-preferences.ts';
 import { siteKey } from '../../dsl/primitives/spacing.ts';
 

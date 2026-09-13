@@ -14341,6 +14341,15 @@ passes straight to the parent, anything else is the group's config and is
 built first. The `$type` probe (`_built`) is what the raw forwarded wrapper
 used to do; it lives here now, once, because the seating is the overlay's.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::SPLICE_HELPER`
+
+The `NoneOf<T>` alias a spliced group's second overload uses to forbid every
+key of the group at once. It is kept apart from `ERASED_HELPERS` because only
+a grammar with a spliced group references it: the overlay prints it, spliced
+in after the config-merge helper, only when some emitted wire names `NoneOf<`,
+so a grammar without spliced groups carries no unused alias under the strict
+generated-package lint.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::elementsShape`
 
 The method behind an elements seat. An element is the group's config when

@@ -40,14 +40,10 @@ import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
 	RUST_KEYWORDS,
 	acceptedTransportKinds,
-	buildSupertypeTransportSet,
-	classifySlot,
 	classifySlotForEmit,
 	findSupertypeKindByTypeName,
-	isReservedSupertypeTransportNode,
 	rustFieldIdent,
 	rustTypeIdent,
-	slotElementKinds,
 	supertypeTransportKinds,
 	type SlotClass
 } from './transport-common.ts';
