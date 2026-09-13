@@ -156,8 +156,13 @@ export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
 
 type AnyFlavorFn = (...args: never[]) => unknown;
 
-export type ArgsOf<F> = F extends (...args: infer P) => unknown
-	? P
+export type ArgsOf<F> = F extends {
+	(...a: infer A): unknown;
+	(...b: infer B): unknown;
+	(...c: infer C): unknown;
+	(...d: infer D): unknown;
+}
+	? A | B | C | D
 	: F extends (...args: readonly (infer E)[]) => unknown
 		? E[]
 		: never;

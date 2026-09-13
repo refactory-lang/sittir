@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "5c0b9f9b11f3c35d69327f7e7b09b36c3fd23ffe587e2081826b86e75c9a7564",
+  "source_hash": "1815a4184a203a602fa4f00b1f92bc69c25fe4b66b508a7f1ee38ac500749f01",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "bc38b3d419ac0eddedf6dc05755de3b0c792cb6c31bc9ab1797b84ba3f0677f4",
     "packages/python/.sittir/grammar.js": "3973e06c63be7f2430a98e28925521026f7a19d61b6f8e9611e6aeb23100762c",
@@ -36,7 +36,7 @@
     "packages/python/src/options.ts": "d0074cd5ff8e61a8ebc007bf57ac12473e702a38017785e004607b123d5a6c7e",
     "packages/python/src/render-engine.ts": "fcc45ec4608a066a7491d575700c3f1d704dfcf4048c8883feeb659a9b569018",
     "packages/python/src/types.ts": "87578f6fd488c1bbbe1cd25ae147bc159abafc9304fd6f05b36ea94d11f6bac6",
-    "packages/python/src/utils.ts": "91eeb57378c3c69dbdef34333ef56a0ecb5a4eff742db1a4f290430e0c4eeee0",
+    "packages/python/src/utils.ts": "b137725a4fcdca0833f79bf5e61f2419ddca9e047e18239536cb3187fba71b02",
     "packages/python/src/wrap.ts": "e3d0a68e3e9341eb80eabe33ee599f4ad79a93311485f96d102f7a84e1eb2049",
     "rust/crates/sittir-python/index.d.ts": "bf4f78e30bb974b85feba6fbbfba4d230be18de3eb70e5e3ed5d563829314ec6",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",

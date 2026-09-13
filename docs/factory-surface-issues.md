@@ -55,17 +55,15 @@ Reference: `packages/typescript/src/factories/raw.ts::buildEnumBody`.
 
 ---
 
-### S2 — A no-argument form call is rejected
+### S2 — A no-argument form call is rejected — RESOLVED
 
-Generated: `ir.visibilityModifier.pub.strict()`, `ir.parameters.strict()`, python `ir.expressionStatement.strict()` (5 sites), typescript line 225.
-Error: `TS2554: Expected 1 arguments, but got 0.`
-A forwarded or direct form whose slot is empty in the source has no spelling on the strict surface; the coercing surface takes `()`.
+Was: `ir.visibilityModifier.pub.strict()` rejected with `TS2554: Expected 1 arguments, but got 0`, and the rebuild printed `strict(undefined)` for the empty slot.
+One cause with S3. The `pub` wrapper declares its own surface first, `(value?: T.VisibilityModifierGroup)`, and the group's surface after it, `(value: TSKindId.Self | … | T.VisibilityModifierPubInPath)`; `ArgsOf<F>` inferred the parameter tuple from a plain call signature, which matches only the LAST overload, so the form's type kept the required group member and lost the optional own-surface the runtime accepts. `ArgsOf` is now the union of every declared overload's tuple, and the rebuild prints a form's arguments only up to the last defined one, so an empty optional slot spells `strict()`.
 
-### S3 — A statement slot takes only the hidden statement wrappers
+### S3 — A prebuilt node is refused where a wrapper's seat forwards to its target — RESOLVED
 
-Generated: `ir.block.strict({ statements: [ir.letDeclaration.strict({ … })] })`; typescript `ir.program.strict({ statements: [ir.importStatement.strict(…)] })`.
-Error: `TS2322: Type 'Built' is not assignable to type 'ExpressionStatement | DeclarationStatement | KindEnum<";", TSKindId.Semi>'` (typescript: `'Statement | KindEnum<";", TSKindId.Semi>'`).
-The slot's union names the hidden `_declaration_statement` / `_statement` wrappers, which have no builder of their own, so a concrete item cannot be seated where the grammar seats it.
+Was: python `ir.classDefinition.block.strict({ body: [ir.block.strict(…)] })` rejected with `TS2322: Type 'Built' is not assignable to type 'SimpleStatements | CompoundStatement'` at six sites of the rebuild; the earlier spelling of this entry (a statement slot naming the hidden `_statement` wrappers) had already gone with the supertype expansion, and the surviving error was this one.
+The seat's config key is typed `ArgsOf<typeof F.buildSuiteBlock>`; that wrapper declares `(value: T.Block)` first and the block's `(...children: (SimpleStatements | CompoundStatement)[])` after it, and `ArgsOf` kept only the last, so the type admitted the statements but not the `Block` the read tree holds and the runtime wrapper accepts by its `$type`. With `ArgsOf` the union of every overload's tuple, `body: [ir.block.strict(…)]` and `body: [stmt, stmt]` are both admitted. The generated rebuilds type-check with no errors in all three grammars.
 
 ### S4 — The validators' config vocabulary is not the strict config's — RESOLVED
 

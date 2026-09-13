@@ -31,6 +31,22 @@ describe('utils engine facade emission', () => {
 		expect(wrapSrc).toContain('}, _treeEngine(tree));');
 	});
 
+	it("ArgsOf is the union of every declared overload's parameter tuple, not the last one alone", () => {
+		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
+
+		expect(contents).toContain(
+			[
+				'export type ArgsOf<F> = F extends {',
+				'  (...a: infer A): unknown;',
+				'  (...b: infer B): unknown;',
+				'  (...c: infer C): unknown;',
+				'  (...d: infer D): unknown;',
+				'}',
+				'  ? A | B | C | D'
+			].join('\n')
+		);
+	});
+
 	it('emits bundle() and hoist() beside attachProps()', () => {
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 

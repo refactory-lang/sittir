@@ -15,7 +15,7 @@ export function rebuildSpliceGenerated() {
 			path: ir.identifier("derive"),
 			arguments: ir.delimTokenTree.paren.strict(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
 		})).$trivia({ leading: ["/// Error returned from [`apply_edits`] when an edit is invalid.\n"] }), ir.enumItem.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(undefined),
+			visibilityModifier: ir.visibilityModifier.pub.strict(),
 			name: ir.identifier("SpliceError"),
 			body: ir.enumVariantList.strict(ir.enumVariantListElements.strict({ delimiter: Delimiter.Trailing }, {
 				enumVariant: ir.enumVariant.strict({
@@ -192,7 +192,7 @@ export function rebuildSpliceGenerated() {
 			type: ir.identifier("SpliceError"),
 			content: ir.implItemBody.strict(ir.declarationList.strict()),
 		}), ir.functionItem.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(undefined),
+			visibilityModifier: ir.visibilityModifier.pub.strict(),
 			name: ir.identifier("apply_edits"),
 			parameters: ir.parameters.strict(ir.parametersElements.strict({ delimiter: Delimiter.None }, {
 				content: ir.parameter.strict({

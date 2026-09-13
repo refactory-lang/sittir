@@ -384,7 +384,8 @@ function mountPrinter(
 	ctx: PrintContext
 ): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
-		const printed = args.map((a) =>
+		const given = args.slice(0, args.findLastIndex((a) => a !== undefined) + 1);
+		const printed = given.map((a) =>
 			printValue(
 				isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx),
 				ctx,
