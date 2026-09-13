@@ -107,7 +107,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const resolvedRules = rulesConfig
 		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
 		: undefined;
-	const spacedRules = resolvedRules?.spaced;
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
@@ -146,7 +145,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries && renderRules && sitePreferences
 			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
 			: undefined;
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules });
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'

@@ -3007,6 +3007,9 @@
 			"text": ":"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "seam",
 			"field": "colon_after"
 		},
@@ -3265,6 +3268,9 @@
 		{
 			"kind": "text",
 			"text": "("
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

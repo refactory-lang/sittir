@@ -77,18 +77,13 @@ export interface AnyNodeData {
 	$variant?: string;
 	$other?: NodeChildren;
 	/**
-	 * Source text for this node.
-	 *
-	 * **Leaf nodes** (no `_<name>` storage and no `$other`): always
-	 * populated — the render fast-path short-circuits to `$text` without
-	 * walking children.
-	 *
-	 * **Branch nodes** (`_<name>` storage and/or `$other` present): omitted by
-	 * default. Branches reconstruct their text via the render template,
-	 * so carrying `$text` is redundant and confusing. Set the environment
-	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/common` to
-	 * include `$text` on branch nodes (read once at module load time in
-	 * `readNode.ts`).
+	 * Source text for this node, present only where the text is the
+	 * node's content: anonymous tokens, and the named kinds the grammar
+	 * models as text (pattern and enum kinds). A named leaf the grammar
+	 * models as a token carries no text — its kind is its content — and a
+	 * branch (`_<name>` storage and/or `$other` present) rebuilds its text
+	 * from its slots through the render template. Every read node carries a
+	 * `$span`; an untouched node is addressed by it, never by text.
 	 *
 	 * Factory-built nodes never set `$text`; the `$TEXT` template
 	 * variable falls back to a best-effort field+children concatenation.

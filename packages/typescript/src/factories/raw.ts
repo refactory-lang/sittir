@@ -2347,8 +2347,8 @@ export function buildMetaProperty(
 	value: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta
 ): T.MetaProperty.Built {
 	const _content = coerceKindEnumStorage<NonNullable<T.MetaProperty['_content']>>(value, [
-		['new . target', TSKindId.MetaPropertyNewTarget] as const,
-		['import . meta', TSKindId.MetaPropertyImportMeta] as const
+		['new.target', TSKindId.MetaPropertyNewTarget] as const,
+		['import.meta', TSKindId.MetaPropertyImportMeta] as const
 	]);
 	return withMethods(
 		withAccessors(

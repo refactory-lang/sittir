@@ -5721,6 +5721,9 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 // value is non-default (absent stays absent).
 ```
 
+The fixed-literal join reads the word matcher off the context's grammar, so
+the text a SEQ collapses to is spaced by the grammar's word shape, not `\w`.
+
 ### `packages/codegen/src/compiler/trace.ts::tracePhaseRules`
 
 ```text
@@ -6027,6 +6030,11 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * template emitter renders a `false` reference as fixed text.
  */
 ```
+
+The literal test joins a fixed SEQ with the grammar's own word matcher
+(`flattenRules` hands `linked.wordMatcher` through), so a grammar whose word
+token admits a character `\w` does not (typescript's `$`) joins two word
+parts with the space its parser needs.
 
 ### `packages/codegen/src/compiler/flatten.ts::shapeKey`
 

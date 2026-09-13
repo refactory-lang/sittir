@@ -30,9 +30,8 @@ use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
 
-#[cfg(feature = "napi-bindings")]
 #[derive(Clone, Copy, Default)]
-struct PythonGrammar;
+pub struct PythonGrammar;
 
 #[cfg(feature = "napi-bindings")]
 impl EngineGrammar for PythonGrammar {
@@ -45,6 +44,21 @@ impl EngineGrammar for PythonGrammar {
 
     fn render_module_hash(self) -> &'static str {
         RENDER_MODULE_HASH
+    }
+}
+
+impl sittir_core::read_node::ReadModel for PythonGrammar {
+    fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
+        render::kind_ids::is_text_kind(kind)
+    }
+
+    fn is_slot_separator(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: &str,
+        child: sittir_core::types::KindId,
+    ) -> bool {
+        render::kind_ids::is_slot_separator(parent, field, child)
     }
 }
 

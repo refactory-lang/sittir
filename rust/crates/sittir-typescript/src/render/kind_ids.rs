@@ -916,3 +916,38 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         _ => "<unknown>",
     }
 }
+
+/// Whether the reader captures a named node of this kind as text: its
+/// template renders from that text, so the text is the node's content —
+/// free text for a pattern kind, the literal it holds for an enum kind.
+pub fn is_text_kind(kind: KindId) -> bool {
+    matches!(kind.0, 1 | 2 | 89 | 90 | 91 | 92 | 96 | 97 | 98 | 99 | 161 | 162 | 163 | 164 | 166 | 302 | 343 | 377 | 378 | 445 | 451)
+}
+
+/// (parent kind id, tree-sitter field name, punctuation kind ids) for every
+/// slot the parser field-tags a literal into: the separator of a repeated
+/// slot, or a literal a rule puts beside a singular slot under the same
+/// field. The template prints such a token itself, so the reader drops the
+/// child instead of seating it, and a native read and a wrapped read hand
+/// back the same slot contents.
+static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
+    (190, "declarators", &[14]),
+    (191, "declarators", &[14]),
+    (197, "condition", &[20]),
+    (219, "expression", &[3]),
+    (254, "expression", &[14]),
+    (288, "type", &[14]),
+    (297, "type", &[14]),
+    (368, "export_specifier", &[14]),
+    (369, "import_specifier", &[14]),
+    (370, "formal_parameter", &[14]),
+    (372, "type", &[14]),
+    (373, "type_parameter", &[14]),
+    (374, "tuple_type_member", &[14]),
+];
+
+pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
+    SLOT_SEPARATORS
+        .iter()
+        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
+}

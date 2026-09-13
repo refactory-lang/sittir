@@ -4034,11 +4034,8 @@ export function coerceToPrivatePropertyIdentifier(
 
 export function resolveMetaProperty_content(value: T.MetaProperty.LooseConfig['content']): T.MetaProperty['_content'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'new . target' | 'import . meta'>(value, _K2, _K2)),
-		[
-			['new . target', TSKindId.MetaPropertyNewTarget] as const,
-			['import . meta', TSKindId.MetaPropertyImportMeta] as const
-		]
+		_resolveKindEnumScalar(value, () => _resolveOne<'new.target' | 'import.meta'>(value, _K2, _K2)),
+		[['new.target', TSKindId.MetaPropertyNewTarget] as const, ['import.meta', TSKindId.MetaPropertyImportMeta] as const]
 	);
 }
 
@@ -4055,7 +4052,7 @@ export function coerceToMetaProperty(input: T.MetaProperty.Loose): ReturnType<ty
 						? input.content
 						: input,
 					() =>
-						_resolveOne<'new . target' | 'import . meta'>(
+						_resolveOne<'new.target' | 'import.meta'>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
@@ -4064,8 +4061,8 @@ export function coerceToMetaProperty(input: T.MetaProperty.Loose): ReturnType<ty
 						)
 				),
 				[
-					['new . target', TSKindId.MetaPropertyNewTarget] as const,
-					['import . meta', TSKindId.MetaPropertyImportMeta] as const
+					['new.target', TSKindId.MetaPropertyNewTarget] as const,
+					['import.meta', TSKindId.MetaPropertyImportMeta] as const
 				]
 			)
 		)

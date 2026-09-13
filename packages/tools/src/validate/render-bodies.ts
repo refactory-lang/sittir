@@ -2,8 +2,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { TemplateRule } from '@sittir/types';
-import type { RenderBody } from '../codegen-surface.ts';
-import { INDENT_TEXT, DEDENT_TEXT } from '../../../codegen/src/dsl/primitives/spacing.ts';
+import { load, type RenderBody } from '../codegen-surface.ts';
+
+const { INDENT_TEXT, DEDENT_TEXT } = await load('spacing');
 
 export function renderBodiesPath(grammar: string): string {
 	const packagesDir = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
@@ -50,8 +51,9 @@ export function bodyToLegacyRule(body: RenderBody): TemplateRule {
 					break;
 				case 'if':
 					for (const arm of node.arms) {
-						clauses[`${arm.test}_clause`] = legacy(arm.body);
-						out += `$${arm.test.toUpperCase()}_CLAUSE`;
+						const clause = arm.kinds === undefined ? arm.test : `${arm.test}_${arm.kinds.join('_')}`;
+						clauses[`${clause}_clause`] = legacy(arm.body);
+						out += `$${clause.toUpperCase()}_CLAUSE`;
 					}
 					if (node.fallback !== undefined) out += legacy(node.fallback);
 					break;

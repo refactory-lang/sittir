@@ -115,9 +115,9 @@ pub const DEFAULT_INDENT: &str = "    ";
 /// two blank lines outrank one, so a separator asking for more survives
 /// meeting a kind edge that asks for less. The grammar's whitespace kinds
 /// decide which runs exist; the writer only orders them.
-type SeamRank = usize;
+pub type SeamRank = usize;
 
-fn seam_rank(text: &str) -> SeamRank {
+pub fn seam_rank(text: &str) -> SeamRank {
     match text.matches('\n').count() {
         0 if text.is_empty() => 0,
         0 => 1,
@@ -139,6 +139,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam: Option<SeamRank>,
     seam_text: String,
     seam_is_token: bool,
+    sources: Option<&'a dyn crate::render::SourceTable>,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -156,6 +157,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam: None,
             seam_text: String::new(),
             seam_is_token: false,
+            sources: None,
         }
     }
 
@@ -168,6 +170,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// The grammar's whitespace vocabulary for [`crate::render::RenderSink::site`].
     /// A render that resolves sites must attach one; a writer with none
     /// attached is a debug-mode bug, not a supported no-table mode.
+    /// The live trees this render may slice. A writer with none refuses every
+    /// coordinate rather than writing nothing in its place.
+    pub fn with_sources(mut self, sources: &'a dyn crate::render::SourceTable) -> Self {
+        self.sources = Some(sources);
+        self
+    }
+
     pub fn with_table(mut self, table: &'a crate::render::WhitespaceTable) -> Self {
         self.table = Some(table);
         self
@@ -298,12 +307,6 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// a depth move plus its line break for the depth arms, otherwise the
     /// arm's text as a seam. A writer with no table attached treats every
     /// other kind as unknown and writes nothing.
-    ///
-    /// The DEDENT arm always merges a break seam after dedenting, unlike the
-    /// generated literal `w.dedent()` route in a rendered body, which only
-    /// follows with a seam when a payload is present at that edge. No
-    /// grammar exercises both routes on the same edge, so the two are free
-    /// to diverge on whether a trailing break is unconditional.
     fn site(&mut self, kind: u16) {
         if kind == 0 {
             return;
@@ -315,12 +318,15 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(table) = self.table else {
             return;
         };
-        if kind == table.indent {
-            self.indent();
-        } else if kind == table.dedent && !self.dedent() {
+        let text = (table.text_of)(kind);
+        if kind == table.dedent {
+            self.dedent(text);
             return;
         }
-        self.merge_seam((table.text_of)(kind));
+        if kind == table.indent {
+            self.indent();
+        }
+        self.merge_seam(text);
     }
 
     fn seam(&mut self, text: &str) {
@@ -332,26 +338,37 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.seam_is_token = true;
     }
 
+    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+        self.sources.and_then(|sources| sources.kind_of(coord))
+    }
+
+    fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
+        let sources = self
+            .sources
+            .ok_or(crate::render::CoordinateError::UnknownTree {
+                handle: coord.handle,
+                tree_id: coord.tree_id(),
+            })?;
+        let text = coord.resolve(sources)?;
+        self.write_chunk(text)?;
+        Ok(())
+    }
+
     fn indent(&mut self) {
         self.depth += 1;
         self.indent_armed = true;
     }
 
-    /// Shallows the depth. A dedent that arrives while the indent before it
-    /// has had no text written cancels it and its held payload, so an empty
-    /// body renders as its bare delimiters; the caller then writes no
-    /// payload of its own. Returns whether a payload may still follow (the
-    /// indent it closes had text written) — the printer's own seam call for
-    /// this dedent is conditioned on it, since a cancelled indent drops any
-    /// payload the mark path would have dropped too.
-    fn dedent(&mut self) -> bool {
+    fn dedent(&mut self, seam: &str) {
         self.depth = self.depth.saturating_sub(1);
         if std::mem::replace(&mut self.indent_armed, false) {
             self.seam = None;
             self.seam_text.clear();
-            return false;
+            return;
         }
-        true
+        if !seam.is_empty() {
+            self.merge_seam(seam);
+        }
     }
 
     fn ends_line(&self) -> bool {
@@ -610,8 +627,7 @@ mod sink_tests {
                 w.indent();
                 w.seam("\n");
                 w.text("a").unwrap();
-                w.dedent();
-                w.seam("\n");
+                w.dedent("\n");
                 w.text("}").unwrap();
             }),
             "{\n  a\n}"
@@ -629,31 +645,12 @@ mod sink_tests {
                 w.indent();
                 w.seam("\n\n");
                 w.text("c").unwrap();
-                w.dedent();
-                w.seam("\n");
-                w.dedent();
-                w.seam("\n");
+                w.dedent("\n");
+                w.dedent("\n");
                 w.text("d").unwrap();
             }),
             "a\n  b\n\n    c\nd"
         );
-    }
-
-    #[test]
-    fn a_verbatim_slot_renders_through_the_sink_and_keeps_its_adjacency() {
-        struct LetX;
-        impl Render for LetX {
-            fn render(&self, w: &mut dyn RenderSink) -> crate::render::RenderResult {
-                w.text("let")?;
-                let slot: crate::slot::SlotValue<&str, true> =
-                    crate::slot::SlotValue::Verbatim("x".to_owned());
-                slot.render(w)
-            }
-        }
-        let out =
-            crate::render::render_to_string(&LetX, WordMatcher::default_ident(), &TABLE, "  ")
-                .unwrap();
-        assert_eq!(out, "letx");
     }
 
     #[test]
@@ -674,9 +671,7 @@ mod sink_tests {
                 w.text("{").unwrap();
                 w.indent();
                 w.seam("\n");
-                if w.dedent() {
-                    w.seam("\n");
-                }
+                w.dedent("\n");
                 w.text("}").unwrap();
             }),
             "{}"
@@ -687,9 +682,7 @@ mod sink_tests {
                 w.indent();
                 w.seam("\n");
                 w.text("a").unwrap();
-                if w.dedent() {
-                    w.seam("\n");
-                }
+                w.dedent("\n");
                 w.text("}").unwrap();
             }),
             "{\n  a\n}"
@@ -731,8 +724,7 @@ mod sink_tests {
         assert_eq!(
             run(|w| {
                 w.text("a").unwrap();
-                w.dedent();
-                w.seam("\n");
+                w.dedent("\n");
                 w.text("b").unwrap();
             }),
             "a\nb"
@@ -782,9 +774,7 @@ mod sink_tests {
     fn a_dedent_below_zero_saturates() {
         let mut s = String::new();
         let mut w = SpacingWriter::new(&mut s, WordMatcher::default_ident()).with_indent("  ");
-        if w.dedent() {
-            w.seam("\n");
-        }
+        w.dedent("\n");
         w.text("x").unwrap();
         w.indent();
         w.seam("\n");

@@ -310,7 +310,7 @@ export async function validateReadProjection(grammar: string): Promise<ReadProje
 				continue;
 			}
 
-			const handle = buildReadHandle(grammar, tree, entry.source, undefined, kindIdFromName);
+			const handle = await buildReadHandle(grammar, tree, entry.source, undefined, kindIdFromName);
 			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 			// Skip alias-target kinds the native engine emits under a different
 			// rule name rather than falling back to a mismatched WASM ID.

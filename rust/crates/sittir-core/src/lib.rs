@@ -11,12 +11,14 @@
 //!   kind templates interpolate.
 
 pub mod boundary;
+pub mod classify;
 pub mod engine;
 pub mod format;
 pub mod macros;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;
+pub mod prepare;
 pub mod read_node;
 pub mod render;
 pub mod slot;
@@ -33,14 +35,16 @@ pub use types::KindId;
 // the trait a rendered value implements against it, and the one-writer
 // one-render root call.
 pub use render::{
-    render_to_string, Render, RenderError, RenderResult, RenderSink, WhitespaceTable,
+    render_to_string, CoordinateError, Render, RenderError, RenderResult, RenderSink, SourceTable,
+    WhitespaceTable,
 };
 // Flat re-export for the transport slot carrier — generated transport
 // structs name it at every slot position.
-pub use slot::SlotValue;
+pub use prepare::{Prepare, RenderContext};
+pub use slot::{NodeCoordinate, SlotValue};
 // Flat re-export for the read-expansion selector — grammar crates thread
 // it from the napi surface into `ParsedTree`.
-pub use read_node::ReadDepth;
+pub use read_node::{ReadDepth, ReadModel};
 // ParsedTree is the owned parse result; ParseResult is the JSON
 // envelope for parse_and_read. NodeCoords is an internal implementation detail.
 pub use engine::{apply_render_format, decode_handle, panic_msg, ParseResult, ParsedTree};

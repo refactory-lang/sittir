@@ -41,7 +41,7 @@ impl Render for Word {
 }
 
 fn node(s: &'static str) -> SlotValue<Word> {
-    SlotValue::Node(Word(s))
+    SlotValue::Transport(Word(s))
 }
 
 #[test]
@@ -61,7 +61,6 @@ fn a_missing_optional_writes_nothing_flanks_included() {
 #[test]
 fn a_required_slot_is_render_on_its_own() {
     assert_eq!(rt(&node("x")), "x");
-    assert_eq!(rt(&SlotValue::<Word>::Verbatim("raw".into())), "raw");
 }
 
 #[test]
@@ -155,10 +154,7 @@ fn between_items_writes_before_token_after() {
 #[test]
 fn a_leading_flank_writes_token_then_after_only() {
     let items = [node("A"), node("B")];
-    assert_eq!(
-        rt(&list(&items, SPACE, "|", SPACE, true, false)),
-        "| A | B"
-    );
+    assert_eq!(rt(&list(&items, SPACE, "|", SPACE, true, false)), "| A | B");
     assert_eq!(rt(&list(&items, TIGHT, ",", TIGHT, true, false)), ",A,B");
 }
 
@@ -166,10 +162,7 @@ fn a_leading_flank_writes_token_then_after_only() {
 fn a_trailing_flank_writes_before_then_token_only() {
     let items = [node("a"), node("b")];
     assert_eq!(rt(&list(&items, TIGHT, ",", SPACE, false, true)), "a, b,");
-    assert_eq!(
-        rt(&list(&items, SPACE, "|", SPACE, false, true)),
-        "a | b |"
-    );
+    assert_eq!(rt(&list(&items, SPACE, "|", SPACE, false, true)), "a | b |");
 }
 
 #[test]

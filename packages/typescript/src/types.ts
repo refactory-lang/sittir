@@ -6273,7 +6273,7 @@ export interface MetaProperty {
 	readonly _content: number;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<
-			'new . target' | 'import . meta',
+			'new.target' | 'import.meta',
 			TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta
 		>;
 	};

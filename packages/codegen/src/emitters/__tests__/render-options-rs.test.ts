@@ -168,6 +168,13 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOptions, String>');
 	});
 
+	it("exposes each site's admitted arms to the prepare walk", () => {
+		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
+		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
+		const source = renderOptionsRs(plan, addresses, kindEntries);
+		expect(source).toContain("pub fn allowed(site: usize) -> &'static [u16] {\n    SPACING_SITES[site].4\n}");
+	});
+
 	it('emits the whitespace table with plain text and the depth ids', () => {
 		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
 		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);

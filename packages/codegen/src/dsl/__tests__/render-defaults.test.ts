@@ -1,6 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { wire } from '../wire/wire.ts';
-import { preference } from '../primitives/preference.ts';
 import { parseSeamLabel, parseSpacingLabel, seamLabel } from '../primitives/spacing.ts';
 
 describe('spacing labels', () => {

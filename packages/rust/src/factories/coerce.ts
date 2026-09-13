@@ -255,10 +255,10 @@ interface _LeafEntry {
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement() },
-	unit_type: { values: ['( )'], factory: () => F.buildUnitType() },
+	unit_type: { values: ['()'], factory: () => F.buildUnitType() },
 	never_type: { values: ['!'], factory: () => F.buildNeverType() },
 	mutable_specifier: { values: ['mut'], factory: () => F.buildMutableSpecifier() },
-	unit_expression: { values: ['( )'], factory: () => F.buildUnitExpression() },
+	unit_expression: { values: ['()'], factory: () => F.buildUnitExpression() },
 	remaining_field_pattern: { values: ['..'], factory: () => F.buildRemainingFieldPattern() },
 	integer_literal: { factory: F.buildIntegerLiteral },
 	char_literal: { factory: F.buildCharLiteral },
@@ -4545,7 +4545,7 @@ export function resolveCallExpression_function(
 				| T.ArrayExpression
 				| T.TupleExpression
 				| T.MacroInvocation
-				| '( )'
+				| '()'
 				| T.BreakExpression
 				| T.ContinueExpression
 				| T.IndexExpression
@@ -4566,7 +4566,7 @@ export function resolveCallExpression_function(
 				| T.ConstBlock
 			>(value, _K15, _K51)
 		),
-		[['self', TSKindId.Self] as const, ['( )', TSKindId.UnitExpression] as const]
+		[['self', TSKindId.Self] as const, ['()', TSKindId.UnitExpression] as const]
 	);
 }
 
