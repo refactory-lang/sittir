@@ -1077,7 +1077,7 @@ Expected: the `node_modules` count is 0 before committing.
 
 ## Self-review
 
-**Spec coverage.** "Render side": fields on the transport, native fill, views from fields, templates without joins, three-part `Joined` — the writer, transport, template and re-pin work above. "Precedence" within an options object: `resolve` applies labels, then supertypes, then kinds; the stamp tier waits for the linked-rule injection and is out of scope, stated in the constraints. "Engine and boundary API": `options` once at construction and per call, only ids per node — the engine work above. "What is emitted": `options.ts` unchanged; `options.rs` added. `tree.options()`, `engine.ir`, `reformat` and indentation for newline joins belong to the later slices.
+**Spec coverage.** "Render side": fields on the transport, native fill, views from fields, templates without joins, three-part `Joined` — the writer, transport, template and re-pin work above. "Precedence" within an options object: `resolve` applies labels, then supertypes, then kinds; the stamp tier waits for the linked-rule injection and is out of scope, stated in the constraints. "Engine and boundary API": `options` once at construction and per call, only ids per node — the engine work above. "What is emitted": `options.ts` unchanged; `options.rs` added. `tree.inferOptions()`, `engine.ir`, `reformat` and indentation for newline joins belong to the later slices.
 
 **Placeholder scan.** Every code step carries code; the "if the helper is named differently" notes point at the file whose helper to use.
 

@@ -242,9 +242,14 @@ class is derived only where it is needed: when a rebuilt node's list items
 are still coordinates of one tree, the render's prepare walk classifies the
 bytes between consecutive items into the arm the site admits with the same
 seam rank, splits a separated gap around its token, and gives the site the
-majority class over its gaps. That derived class is the occurrence's stamp
-in the precedence below; the flank stamp is the list's existing
-`_delimiter`. The mechanism, its precedence and its limits are specified
+majority class over its gaps, the grammar's declared default breaking a
+tie. That derived class is the occurrence's stamp in the precedence below;
+the flank stamp is the list's existing `_delimiter`. `tree.inferOptions()`
+folds the same stamps over a whole tree: each list is one vote for its
+site's key, the majority wins, the declared default breaks a tie, and a key
+no list in the tree carries is absent. The walk is the read-side twin of
+the render's prepare walk, over the parsed tree in native code, so nothing
+but the resulting `Options` crosses the boundary. The mechanism, its precedence and its limits are specified
 under "Gaps between coordinates classify into option values" in the
 source-provenance design (`2026-08-26-text-content-vs-source-provenance.md`).
 
@@ -313,7 +318,10 @@ outrank engine options, and only an explicit `reformat` overrides them.
 - `EngineOptions.format` narrows to `boundary`.
 - `engine.ir` — the coercer surface with the engine's declared defaults.
 - `render(node, { options?, reformat? })` on engines and tree handles.
-- `tree.options()` — majority stamps per key for a parsed tree.
+- `tree.inferOptions()` — the `Options` a parsed tree's bytes evidence:
+  per key, the majority of the stamps its lists carry, absent where the tree
+  holds no list of that site. An inference, never a declaration: a caller
+  who renders with it is round-tripping the tree's own spacing.
 - Native: `SittirEngine` takes the options object once at construction and
   resolves it to one kind id per site there, applying the precedence above
   and rejecting unknown keys; per-call options travel the same way. Per
@@ -341,7 +349,9 @@ outrank engine options, and only an explicit `reformat` overrides them.
   stamps; `reformat` rewrites whitespace and never a parsed form;
   `engine.ir` picks the configured form while module `ir` picks the
   grammar's default; per-call options without `reformat` fill only unstamped
-  slots.
+  slots; `tree.inferOptions()` on a parsed tree names the spacing its lists
+  were written with, and rendering a rebuilt node with that result reproduces
+  the tree's list spacing.
 - Every existing gate stays identical: validator history compared
   numerically, the codegen suite at its baseline, package suites green,
   examples rendering the same bytes.

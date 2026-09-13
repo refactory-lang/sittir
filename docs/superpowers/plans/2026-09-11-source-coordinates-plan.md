@@ -3702,7 +3702,7 @@ Write `docs/superpowers/handoffs/2026-09-11-source-coordinates-handoff.md`:
 what landed per task, the measured wire numbers, the throughput share, the
 validate numbers before and after, the deep-kind-set recommendation, the
 byte-axis result (including any `it.fails` witness it left), and what is
-next — plan 4 of render options (`reformat`, `engine.ir`, `tree.options()`
+next — plan 4 of render options (`reformat`, `engine.ir`, `tree.inferOptions()`
 from classified gaps); per-tree render format is still out of scope, and
 `render_transport_parts` still hardcodes `TransportSource::Factory`.
 
