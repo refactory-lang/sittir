@@ -321,7 +321,11 @@ outrank engine options, and only an explicit `reformat` overrides them.
 - `tree.inferOptions()` — the `Options` a parsed tree's bytes evidence:
   per key, the majority of the stamps its lists carry, absent where the tree
   holds no list of that site. An inference, never a declaration: a caller
-  who renders with it is round-tripping the tree's own spacing.
+  who renders with it is round-tripping the tree's own spacing. The walk is
+  a native function over the parsed tree in the grammar crate, answering in
+  site and arm ids as the engine's resolved options do; the tree handle's
+  method calls it and projects the ids to `Options` keys, and a Rust
+  consumer calls it directly.
 - Native: `SittirEngine` takes the options object once at construction and
   resolves it to one kind id per site there, applying the precedence above
   and rejecting unknown keys; per-call options travel the same way. Per
