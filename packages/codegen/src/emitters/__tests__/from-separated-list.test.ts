@@ -19,7 +19,7 @@
  * let the original spread/index bug hide from the type checker undetected.
  */
 
-import { PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import {
@@ -56,8 +56,8 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 1, kind: 'member_list', member: 'MemberList' },
 	{ id: 2, kind: 'member', member: 'Member' },
-	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', anon: true },
-	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', anon: true }
+	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true },
+	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', literalText: ';', anon: true }
 ];
 
 function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
@@ -84,6 +84,26 @@ describe('from emitter — separatedList', () => {
 			/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<T\.Member>\)\)/
 		);
 		expect(emitted).toMatch(/F\.buildMemberList\(\.\.\.\(input as unknown as NonEmptyArray<T\.Member>\)\)/);
+	});
+
+	it('passes a captured separator kind id straight through on self-unwrap', () => {
+		const sepChoice: RenderRule = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: sepChoice, trailing: 'optional' }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
+
+		expect(emitted).toContain('separator: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator');
+		expect(emitted).not.toContain('KIND_LITERAL_TEXT');
 	});
 
 	it('_wrapWithChildren dispatches separatedList kinds by spreading the children array, never indexing', () => {

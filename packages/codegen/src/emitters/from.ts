@@ -50,7 +50,7 @@ import {
 	delimiterMembersFor,
 	separatedListSurface
 } from './factories.ts';
-import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
+import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
 	AssembledBranch,
 	AbstractAssembledCompound,
@@ -116,17 +116,11 @@ function buildKindInterner(
 	};
 }
 
-function emitNamespaceImports(
-	lines: string[],
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	usesKindLiteralText: boolean,
-	usesAttachProps: boolean
-): void {
+function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined, usesAttachProps: boolean): void {
 	lines.push(`import * as F from './raw.js';`);
 	lines.push(`import type * as T from '../types.js';`);
 	if (kindEntries) {
-		const valueImports = ['TSKindId', 'KIND_NAMES', ...(usesKindLiteralText ? ['KIND_LITERAL_TEXT'] : []), 'Delimiter'];
-		lines.push(`import { ${valueImports.join(', ')} } from '../types.js';`);
+		lines.push(`import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';`);
 	} else {
 		lines.push(`import { Delimiter } from '../types.js';`);
 	}
@@ -201,13 +195,6 @@ export namespace from {
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
 			result = emitStringLikeFrom(node);
-		} else if (node instanceof AssembledEnum) {
-			result = emitStringLikeFrom({
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				fromFunctionName: node.fromFunctionName,
-				enumValues: node.values
-			});
 		} else if (node instanceof AssembledKeyword) {
 			result = emitKeywordFrom(node);
 		}
@@ -277,7 +264,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	const branchTarget = targetNode instanceof AbstractAssembledCompound && !targetNode.hoisted ? targetNode : null;
+	const branchTarget = targetNode instanceof AbstractAssembledCompound ? targetNode : null;
 	if (branchTarget !== null && fromForwardsToChildFactory(branchTarget, nodeMap)) {
 		const facts = soleSlotFacts(branchTarget, nodeMap);
 		if (!facts) return null;
@@ -332,9 +319,10 @@ function emitBranchFrom(
 		const key = JSON.stringify(f.configKey);
 		const signature = `export function ${fieldResolverName(typeName, f)}(value: T.${typeName}.LooseConfig[${key}]): T.${typeName}[${JSON.stringify(f.storageKey)}] {`;
 		if (needsNonEmptyHoist(f, nodeMap)) {
+			const storageKeyExpr = JSON.stringify(f.storageKey);
 			lines.push(
 				signature,
-				`  const resolved = ${body};`,
+				`  const resolved: readonly T.${typeName}[${storageKeyExpr}][number][] = ${body};`,
 				`  _assertNonEmpty(resolved, '${node.kind}.${f.propertyName}');`,
 				'  return resolved;',
 				'}',
@@ -634,9 +622,6 @@ function emitSeparatedListFrom(
 	const contentStorageKey = node.slots.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
 
 	const hasSeparatorKindOption = node.separatorRule !== undefined;
-	const candidateKindNames = hasSeparatorKindOption
-		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
-		: [];
 	const hasLeadingOption = node.leadingDelimiter === 'optional';
 	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
@@ -648,12 +633,7 @@ function emitSeparatedListFrom(
 	const buildOptionsPreservingCall = (varExpr: string): string => {
 		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: T.Delimiter })';
 		const optionParts: string[] = [];
-		if (candidateKindNames.length > 0) {
-			const guard = candidateKindNames.map((k) => `t === ${JSON.stringify(k)}`).join(' || ');
-			optionParts.push(
-				`separator: (() => { const sk = ${sourceFields}._separator; const t = sk === undefined ? undefined : KIND_LITERAL_TEXT.get(sk); return ${guard} ? t : undefined; })()`
-			);
-		}
+		if (hasSeparatorKindOption) optionParts.push(`separator: ${sourceFields}._separator`);
 		if (hasLeadingOption || hasTrailingOption) {
 			const guard = delimiterMembersFor(node)
 				.map((m) => `d === ${m}`)
@@ -685,7 +665,6 @@ interface LeafFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	readonly enumValues?: readonly string[];
 }
 
 function emitStringLikeFrom(node: LeafFromNode): string {
@@ -800,7 +779,12 @@ function altKindDiscriminants(
 	});
 }
 
-function defaultArmKindOf(field: { values: readonly NodeOrTerminal[] }): string | undefined {
+function defaultArmKindOf(field: { values: readonly NodeOrTerminal[]; optionDefaultArm?: string }): string | undefined {
+	const declared = field.optionDefaultArm;
+	if (declared !== undefined) {
+		const chosen = field.values.find((v) => isNodeRef(v) && (v.variant ?? v.resolvedKind) === declared);
+		if (chosen !== undefined && isNodeRef(chosen)) return storageKindOfRef(chosen.node);
+	}
 	const flagged = field.values.filter((v) => v.default === true && isNodeRef(v));
 	if (flagged.length > 1) {
 		const names = flagged.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
@@ -899,12 +883,7 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 		if (!node.rawFactoryName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const factory = `F.${node.rawFactoryName}`;
-		if (node instanceof AssembledEnum) {
-			const values = node.values.map((v) => JSON.stringify(v)).join(', ');
-			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text as Parameters<typeof ${factory}>[0]) },`
-			);
-		} else if (node instanceof AssembledKeyword) {
+		if (node instanceof AssembledKeyword) {
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
@@ -1461,11 +1440,8 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const namedEntries = new Map<string, string>();
 		const internKinds = buildKindInterner(supertypeByKey, kindTableIndex, kindTableLiterals, namedEntries);
 
-		const usesKindLiteralText = [...nodeMap.nodes.values()].some(
-			(node) => node instanceof AssembledList && node.separatorRule !== undefined
-		);
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
-		emitNamespaceImports(lines, kindEntries, usesKindLiteralText, false);
+		emitNamespaceImports(lines, kindEntries, false);
 		emitFromFieldInputType(lines);
 
 		this.#nodeMap = nodeMap;

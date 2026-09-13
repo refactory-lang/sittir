@@ -14,6 +14,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -33,8 +34,8 @@ import {
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
-import { armIsConfigShaped, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
-import { collectPolymorphWires, type PolymorphWires } from './overlays/polymorphs.ts';
+import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
+import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
@@ -116,7 +117,6 @@ export function emitTests(config: EmitTestsConfig): string {
 				if (node instanceof AssembledKeyword) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
-				emitEnumTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 		}
 
@@ -139,7 +139,7 @@ function emitBranchTest(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.hoisted) return;
+	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || node.annotations?.hoisted === true) return;
 	if (testConstructsWithChildren(node, nodeMap)) {
 		emitChildrenTest(lines, node, kind, key, kindEntries, nodeMap);
 		return;
@@ -322,12 +322,15 @@ function subFactoryCallArgs(
 	if (sub.residual.length === 0) return childArgs;
 
 	const residualParts = requiredFieldParts(sub.residual, nodeMap, kindEntries);
-	const mergeShaped = path.length === 0 && armIsConfigShaped(sub, nodeMap, { isEmitted });
+	const mergeShaped = path.length === 0 && sub.merges;
 	if (mergeShaped) {
 		const inner = objectLiteralInner(childArgs);
 		if (inner === undefined) return undefined;
 		const parts = inner.length > 0 ? [...residualParts, inner] : residualParts;
 		return objectFrom(parts);
+	}
+	if (seatsConfigChild(sub, nodeMap)) {
+		return objectFrom([...residualParts, `${sub.slot.configKey}: ${childArgs === '' ? '{}' : childArgs}`]);
 	}
 	const tuple = childArgs === '' ? '[]' : `[${childArgs}]`;
 	return objectFrom([...residualParts, `${sub.slot.configKey}: ${tuple}`]);
@@ -354,24 +357,31 @@ function emitSubFactoryTests(
 	for (const sub of entries) {
 		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds);
 		if (args === undefined) continue;
+		const spelling = emittedArmPath(kind, [sub.name], polymorphWires).join('.');
 		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
 		cases.push(
-			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(sub.name)} builds the parent', () => {`
+			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(spelling)} builds the parent', () => {`
 		);
-		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${sub.name}` : `ir.${key}.${sub.name}`;
+		const callTarget = knownFailure !== undefined ? `(ir.${key} as any).${spelling}` : `ir.${key}.${spelling}`;
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const slotProp = sub.slot.propertyName;
-		const slotStorageKind = resolveFieldStorageInfo(sub.slot, nodeMap).kind;
-		const slotIsKindEnum = slotStorageKind === 'kindEnum' || slotStorageKind === 'mixedEnum';
+		const slotStorageInfo = resolveFieldStorageInfo(sub.slot, nodeMap);
+		const slotIsKindEnum = slotStorageInfo.kind === 'kindEnum' || slotStorageInfo.kind === 'mixedEnum';
+		const seatedEnumId =
+			slotIsKindEnum && sub.arm.via !== 'value' ? slotStorageInfo.enumKindsById.get(sub.arm.child.kind) : undefined;
 		if (sub.arm.via === 'value') {
-			const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), kindEntries);
+			const val = valueStorageExpr(sub.arm.storage, slotStorageInfo, kindEntries);
 			cases.push(`    const seated = (node as any).${slotProp}();`);
 			cases.push(`    expect(seated?.$text ?? seated).toBe(${val});`);
 		} else if (!slotIsKindEnum) {
 			cases.push(
 				`    expect((node as any).${slotProp}()?.$type).toBe(${testTypeDiscriminant(sub.arm.child.kind, kindEntries, nodeMap)});`
+			);
+		} else if (kindEntries && seatedEnumId !== undefined) {
+			cases.push(
+				`    expect((node as any).${slotProp}()).toBe(${kindDiscriminantExprForId(seatedEnumId, kindEntries)});`
 			);
 		} else {
 			cases.push(`    expect((node as any).${slotProp}()).toBeDefined();`);
@@ -539,33 +549,13 @@ function emitKeywordTest(
 	lines.push('');
 }
 
-function emitEnumTest(
-	lines: string[],
-	node: AssembledNode,
-	kind: string,
-	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): void {
-	if (node.modelType !== 'enum') return;
-	const first = node.values[0];
-	if (!first) return;
-	lines.push(`describe('${kind}', () => {`);
-	lines.push(`  it('factory accepts valid value', () => {`);
-	lines.push(`    const node = ir.${key}('${escForSource(first)}');`);
-	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe(2);`);
-	lines.push('  });');
-	lines.push('});');
-	lines.push('');
-}
-
 function resolveConcreteKind(
 	candidates: readonly string[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	const seen = new Set<string>();
+	const enumCandidates: string[] = [];
 	const nonLeafCandidates: string[] = [];
 	const queue = [...candidates];
 	while (queue.length > 0) {
@@ -579,12 +569,12 @@ function resolveConcreteKind(
 			continue;
 		}
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
-		if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
-			return current;
-		}
-		nonLeafCandidates.push(current);
+		if (current.startsWith('_')) continue;
+		if (node.modelType === 'pattern' || node.modelType === 'token') return current;
+		if (node.modelType === 'enum') enumCandidates.push(current);
+		else nonLeafCandidates.push(current);
 	}
-	return nonLeafCandidates[0] ?? candidates[0] ?? '';
+	return nonLeafCandidates[0] ?? enumCandidates[0] ?? candidates[0] ?? '';
 }
 
 const MAX_DUMMY_DEPTH = 6;

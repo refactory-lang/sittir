@@ -41,7 +41,7 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 2, kind: 'field_pattern', member: 'FieldPattern' },
 	{ id: 3, kind: 'remaining_field_pattern', member: 'RemainingFieldPattern' },
 	{ id: 4, kind: 'identifier', member: 'Identifier' },
-	{ id: 5, kind: 'comma', member: 'Comma', symbolName: ',', anon: true }
+	{ id: 5, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }
 ];
 
 function makeNodeMap() {

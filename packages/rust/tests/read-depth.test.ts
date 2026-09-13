@@ -1,10 +1,8 @@
 // Read depth: `engine.parse(source)` expands one level and leaves each child
 // with substructure as a stub the accessors expand on demand;
 // `engine.parse(source, { deep: true })` expands the whole tree up front.
-// The two render DIFFERENT text — nothing was rebuilt under a shallow parse so
-// nothing is re-spelled, while a deep parse rebuilds every level from its
-// template — which is the point of the flag, not a defect. What both must do
-// is re-parse to the same shape.
+// Nothing was rebuilt under either, so both fold back to the root's
+// coordinate and render the source byte for byte.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '../src/engine.js';
 import { is } from '../src/is.js';
@@ -60,13 +58,10 @@ describe('read depth', () => {
 		expect(first.body().statements().length).toBe(1);
 	});
 
-	it('renders a deep-parsed root canonically and a shallow one verbatim', () => {
+	it('renders a deep-parsed root byte for byte, like a shallow one', () => {
 		const engine = createEngine();
-		// Nothing below the root was expanded, so nothing is rebuilt and the
-		// source comes back byte for byte — the gap between items included.
 		expect(engine.parse(SOURCE).$render()).toBe(SOURCE);
-		// Every level was expanded, so every level rebuilds from its template.
-		expect(engine.parse(SOURCE, { deep: true }).$render()).toBe('pub fn main(){let x=1;}struct S{a:u8}');
+		expect(engine.parse(SOURCE, { deep: true }).$render()).toBe(SOURCE);
 	});
 
 	it('re-parses both renders to the same statement kinds', () => {

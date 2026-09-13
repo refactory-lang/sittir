@@ -816,7 +816,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 	});
 });
 
-describe('liftSeparators emits a warning for a non-literal separator', () => {
+describe('liftSeparators lifts a choice-of-literals separator without a diagnostic', () => {
 	function makeCtx(diagnostics: DiagnosticSink): LinkCtx {
 		return new LinkCtx({
 			grammar: makeRaw({}),
@@ -829,29 +829,23 @@ describe('liftSeparators emits a warning for a non-literal separator', () => {
 		});
 	}
 
-	it('records a compiler warning diagnostic when the detected separator is not a StringRule', () => {
+	it('lifts the choice as the separator value and records no diagnostic', () => {
 		const diagnostics = new DiagnosticSink();
 		const ctx = makeCtx(diagnostics);
+		const choice: Rule<'link'> = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
 		const rule: Rule<'link'> = {
 			type: REPEAT,
-			content: {
-				type: SEQ,
-				members: [
-					{
-						type: CHOICE,
-						members: [
-							{ type: STRING, value: ',' },
-							{ type: STRING, value: ';' }
-						]
-					},
-					{ type: SYMBOL, name: 'item' }
-				]
-			}
+			content: { type: SEQ, members: [choice, { type: SYMBOL, name: 'item' }] }
 		};
-		liftSeparators(rule, ctx);
-		const warnings = diagnostics.all().filter((d) => d.severity === 'warning');
-		expect(warnings).toHaveLength(1);
-		expect(warnings[0]!.code).toBe('non-literal-separator');
+		const lifted = liftSeparators(rule, ctx) as { separator?: { value: unknown } };
+		expect(lifted.separator?.value).toEqual(choice);
+		expect(diagnostics.all()).toHaveLength(0);
 	});
 
 	it('does NOT warn for the ordinary plain-literal separator case', () => {
@@ -1036,19 +1030,19 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		// lookup in this function.
 		const entries: GeneratedKindEntry[] = [
 			{ kind: 'type', id: 3 }, // a NAMED kind spelled the same as the literal
-			{ kind: 'anon_type_tok', id: 4, anon: true, symbolName: 'type' } // the actual anon token for 'type'
+			{ kind: 'type_keyword', id: 4, anon: true, symbolName: 'type', literalText: 'type' } // the actual anon token for 'type'
 		];
 		const misses = noMisses();
 		const rule: Rule<'link'> = { type: STRING, value: 'type' };
 		const result = canonicalizeRuleLiterals(rule, entries, true, misses) as SymbolRule<'link'>;
 		expect(result.type).toBe(SYMBOL);
-		expect(result.name).toBe('anon_type_tok');
+		expect(result.name).toBe('type_keyword');
 		expect(result.kindId).toBe(4);
 	});
 
-	it('stamps resolvedKindId on a STRING/PATTERN leaf via the same anon-token-first chain', () => {
+	it('stamps resolvedKindId on a STRING via literal text, and on a PATTERN via literal text or kind name', () => {
 		const entries: GeneratedKindEntry[] = [
-			{ kind: 'comma', id: 11, anon: true, symbolName: ',' },
+			{ kind: 'comma', id: 11, anon: true, symbolName: ',', literalText: ',' },
 			{ kind: 'digits', id: 12 }
 		];
 		const misses = noMisses();

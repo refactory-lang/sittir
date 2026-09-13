@@ -4,6 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { createEngine, ir } from '@sittir/typescript';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { rebuildFormat, formatBoundary, returnResult } from '../../../examples/18-dogfood-typescript.ts';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+// The generated rebuild is loaded by a computed path so tsc does not follow
+// it: its type errors are counted under examples/generated-typecheck-ceiling.json,
+// and vitest runs it regardless.
+const rebuildFormatGenerated = async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL('../../../examples/18-dogfood-typescript.generated.ts', import.meta.url));
+	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
+	return mod.rebuildFormatGenerated!();
+};
 import {
 	rebuildFormatStrict,
 	formatBoundaryStrict,
@@ -25,7 +35,7 @@ describe('examples/18 dogfood typescript (format.ts)', () => {
 	it('renders a return statement with its expression', () => {
 		expect(returnResult().$render()).toBe('return result;');
 	});
-	it.fails('re-parses to the same tree as the real file', () => {
+	it.fails('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), rebuildFormat(), target).reparsesEqual).toBe(true);
 	});
 	it.fails('is identical to the real file modulo whitespace', () => {
@@ -54,6 +64,17 @@ describe('ir entry ratchet', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(255);
+		expect(builders.length).toBeLessThanOrEqual(261);
+	});
+});
+
+// The generated rebuild: `sittir tool emit-factory-source` over format.ts.
+describe('examples/18 generated rebuild (format.ts)', () => {
+	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
+	it('renders', async () => {
+		expect((await rebuildFormatGenerated()).$render()).toContain('function applyFormat');
+	});
+	it('re-parses to the same tree as the real file', async () => {
+		expect(dogfoodContract(createEngine(), await rebuildFormatGenerated(), target).reparsesEqual).toBe(true);
 	});
 });

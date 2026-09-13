@@ -8,10 +8,10 @@ export function renderModuleSrcDir(grammar: RenderModuleGrammar): string {
 	return `${renderModuleRoot(grammar)}/src/render`;
 }
 
-export function renderModuleTemplatesDir(grammar: RenderModuleGrammar): string {
-	return `${renderModuleRoot(grammar)}/templates`;
-}
-
 export function renderModuleFixturesPath(grammar: RenderModuleGrammar): string {
 	return `${renderModuleRoot(grammar)}/test-fixtures.json`;
+}
+
+export function renderModuleLeftOutPath(grammar: RenderModuleGrammar): string {
+	return `${renderModuleRoot(grammar)}/test-fixtures.left-out.json`;
 }

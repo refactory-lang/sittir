@@ -10,7 +10,6 @@ export default defineConfig({
 			'@sittir/common/utils': src('../common/src/utils.ts'),
 			'@sittir/common': src('../common/src/index.ts'),
 			'@sittir/types': src('../types/src/index.ts'),
-			'@sittir/legacy-core/engine': src('../legacy-core/src/engine-boundary.ts'),
 			'@sittir/python/utils': src('../python/src/utils.ts'),
 			'@sittir/python': src('../python/src/index.ts'),
 			'@sittir/rust/utils': src('../rust/src/utils.ts'),

@@ -1,22 +1,17 @@
 import {
 	ALIAS,
 	CHOICE,
-	DEDENT,
 	FIELD,
-	INDENT,
-	NEWLINE,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
 	REPEAT1,
 	SEQ,
 	STRING,
-	SUPERTYPE,
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
-import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { withId } from './rule-attrs.ts';
 
@@ -65,32 +60,6 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 	}
 }
 
-export function hasAnyField(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case FIELD:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyField);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case ALIAS:
-		case TOKEN:
-			return hasAnyField(rule.content);
-		case SYMBOL:
-		case SUPERTYPE:
-		case STRING:
-		case PATTERN:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-			return false;
-		default:
-			return assertNever(rule);
-	}
-}
-
 export function pushAttrsToLeaves(
 	rule: AnyRule,
 	multiplicity: 'optional' | 'array' | 'nonEmptyArray' | undefined,
@@ -136,7 +105,6 @@ export function pushAttrsToLeaves(
 export interface InlineRefsCtx {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly inlineKinds?: ReadonlySet<string>;
-	readonly hoistedKinds?: ReadonlySet<string>;
 }
 
 const EMPTY_INLINE_KINDS: ReadonlySet<string> = new Set();
@@ -198,7 +166,7 @@ export function resolveGroupOrMultiInlineTarget(ref: { readonly name: string }, 
 	const targetMultiplicity = (target as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
 	const isMulti =
 		extractRepeatShape(target) !== null || targetMultiplicity === 'array' || targetMultiplicity === 'nonEmptyArray';
-	return ctx.hoistedKinds?.has(ref.name) === true || isMulti ? target : null;
+	return target.annotations?.hoisted === true || isMulti ? target : null;
 }
 
 function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
