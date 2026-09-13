@@ -3,8 +3,8 @@
 //! the numeric kind discriminant for the KindID runtime migration. See
 //! data-model.md §1 for the authoritative contract.
 //!
-//! Spec 012 tasks T009 + T010. Serde rename + skip-if-none invariants
-//! tested in `tests/boundary_roundtrip.rs` (T011).
+//! Serde rename + skip-if-none invariants are tested in
+//! `tests/boundary_roundtrip.rs`.
 //! `KindId` serde/conversion tests in `tests/kind_id.rs`.
 //!
 //! Invariants (enforced by struct + serde helpers):
@@ -26,10 +26,14 @@
 //! boundary and would be serialized dead weight on every hop
 //! (Constitution Principle X exception, documented in data-model.md §1).
 
+use indexmap::IndexMap;
 #[cfg(feature = "napi-bindings")]
 use napi_derive::napi;
-use serde::{de::{SeqAccess, Visitor}, ser::{SerializeMap, SerializeSeq}, Deserialize, Deserializer, Serialize, Serializer};
-use indexmap::IndexMap;
+use serde::{
+    de::{SeqAccess, Visitor},
+    ser::{SerializeMap, SerializeSeq},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
 use std::collections::HashMap;
 use std::fmt;
 
@@ -74,9 +78,10 @@ impl From<KindId> for u16 {
     }
 }
 
-/// Leading / trailing trivia (comments) for a `NodeData`. Attached by
-/// `$trivia()` on the TS side; carried across the wire for native
-/// render support. Mirrors `NodeTrivia` in `@sittir/types`.
+/// Leading / trailing trivia (comments) for a `NodeData`. A read computes
+/// it from the node's siblings; `$trivia()` attaches it on the TS side.
+/// Carried across the wire for native render support. Mirrors
+/// `NodeTrivia` in `@sittir/types`.
 ///
 /// Each entry is a fully-formed `NodeData` (e.g. a `line_comment` or
 /// `block_comment` factory node) that renders independently via its own
@@ -92,7 +97,7 @@ pub struct NodeTrivia {
 
 /// Primitive NodeData — the wire shape. Fixed `$`-metadata plus dynamic
 /// `_<slot>` storage keys (and optional `$other`) matching the
-/// ADR-0018 de-hoisted JS read/factory surface. Enrichment (`$variant`,
+/// de-hoisted JS read/factory surface. Enrichment (`$variant`,
 /// etc.) is TS-side only.
 ///
 /// `type_` is a numeric `KindId` (parser.c-derived symbol ID) rather than
@@ -110,7 +115,7 @@ pub struct NodeData {
 
     /// Stored named slots keyed by the raw tree-sitter field / promoted
     /// keyword name. On the wire these serialize as top-level `_<name>`
-    /// properties (ADR-0018 de-hoisted storage).
+    /// properties (de-hoisted storage).
     pub fields: Option<IndexMap<String, FieldValue>>,
 
     pub children: Option<Vec<NodeData>>,
@@ -139,13 +144,17 @@ pub struct NodeData {
     /// `None` on root nodes and factory-constructed nodes.
     pub child_index: Option<u16>,
 
-    /// Leading / trailing trivia (comments) attached via `$trivia()`.
-    /// Present only on factory-constructed nodes that have had trivia
-    /// attached — `readNode` never sets this. Each trivia item is a
-    /// fully-formed `NodeData` (e.g. a `line_comment` or `block_comment`
-    /// factory node) that renders independently via its own template.
+    /// Leading / trailing trivia: comments and the other tree-sitter extras
+    /// `read_children` skips because they carry no field name. A read fills
+    /// this from the node's siblings — see `read_node::compute_trivia` for
+    /// which run of extras attaches to which side, and for the one shape
+    /// that has nowhere to attach. A factory-constructed node gets it from
+    /// `$trivia()`, and both a `$with` rebuild and construction from a read
+    /// carry it onto the node they return, since trivia is not config.
     ///
-    /// Mirrors `NodeTrivia` in `@sittir/types` (spec 023 T016).
+    /// Each entry is a fully-formed `NodeData` (e.g. a `line_comment`) that
+    /// renders independently via its own template. Mirrors `NodeTrivia` in
+    /// `@sittir/types`.
     pub trivia_data: Option<NodeTrivia>,
 
     /// Document-order route names (field or kind) of this node's named
@@ -194,11 +203,7 @@ struct NodeDataSer<'a> {
         skip_serializing_if = "Option::is_none"
     )]
     child_index: &'a Option<u16>,
-    #[serde(
-        rename = "$triviaData",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "$_trivia", default, skip_serializing_if = "Option::is_none")]
     trivia_data: &'a Option<NodeTrivia>,
     #[serde(
         rename = "$slotOrder",
@@ -230,7 +235,7 @@ struct NodeDataDe {
     node_handle: Option<u64>,
     #[serde(rename = "$childIndex", default)]
     child_index: Option<u16>,
-    #[serde(rename = "$triviaData", default)]
+    #[serde(rename = "$_trivia", default)]
     trivia_data: Option<NodeTrivia>,
     #[serde(rename = "$slotOrder", default)]
     slot_order: Option<Vec<String>>,
@@ -277,10 +282,7 @@ where
     Ok(Some(fields))
 }
 
-fn serialize_children<S>(
-    children: &Option<Vec<NodeData>>,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
+fn serialize_children<S>(children: &Option<Vec<NodeData>>, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
@@ -316,7 +318,6 @@ where
     }
     Ok(Some(children))
 }
-
 
 impl Serialize for NodeData {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -498,15 +499,21 @@ impl<'de> Deserialize<'de> for FieldValue {
             type Value = FieldValue;
 
             fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-                formatter.write_str("a node object, scalar leaf, boolean flag, or array of node/scalar leaves")
+                formatter.write_str(
+                    "a node object, scalar leaf, boolean flag, or array of node/scalar leaves",
+                )
             }
 
             fn visit_bool<E: serde::de::Error>(self, value: bool) -> Result<Self::Value, E> {
                 Ok(FieldValue::Bool(value))
             }
 
-            fn visit_map<A: serde::de::MapAccess<'de>>(self, map: A) -> Result<Self::Value, A::Error> {
-                let node = NodeData::deserialize(serde::de::value::MapAccessDeserializer::new(map))?;
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                map: A,
+            ) -> Result<Self::Value, A::Error> {
+                let node =
+                    NodeData::deserialize(serde::de::value::MapAccessDeserializer::new(map))?;
                 Ok(FieldValue::Single(Box::new(node)))
             }
 
@@ -519,7 +526,8 @@ impl<'de> Deserialize<'de> for FieldValue {
             }
 
             fn visit_u64<E: serde::de::Error>(self, value: u64) -> Result<Self::Value, E> {
-                let kind = u16::try_from(value).map_err(|_| E::custom(format!("kind id {value} out of range")))?;
+                let kind = u16::try_from(value)
+                    .map_err(|_| E::custom(format!("kind id {value} out of range")))?;
                 Ok(FieldValue::Single(Box::new(scalar_kind_leaf(KindId(kind)))))
             }
 
@@ -587,7 +595,6 @@ fn scalar_child_value(node: &NodeData) -> Option<FieldScalar<'_>> {
     }
     Some(FieldScalar::KindId(node.type_))
 }
-
 
 fn scalar_text_leaf(text: String) -> NodeData {
     NodeData {
@@ -676,9 +683,7 @@ impl<T: napi::bindgen_prelude::FromNapiValue> napi::bindgen_prelude::FromNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: napi::bindgen_prelude::ToNapiValue> napi::bindgen_prelude::ToNapiValue
-    for OneOrMany<T>
-{
+impl<T: napi::bindgen_prelude::ToNapiValue> napi::bindgen_prelude::ToNapiValue for OneOrMany<T> {
     unsafe fn to_napi_value(
         env: napi::sys::napi_env,
         val: Self,
@@ -733,7 +738,7 @@ pub struct Edit {
 }
 
 /// Leading / trailing delimiters for a format region. Mirrors
-/// `FormatBoundary` in `@sittir/types` (FR-008).
+/// `FormatBoundary` in `@sittir/types`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FormatBoundary {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -744,7 +749,7 @@ pub struct FormatBoundary {
 }
 
 /// Per-slot separator / trailing-comma / absence hints. Mirrors
-/// `FormatSlot` in `@sittir/types` (FR-008). `rename_all = "camelCase"`
+/// `FormatSlot` in `@sittir/types`. `rename_all = "camelCase"`
 /// maps `trailing_present` → `trailingPresent` on the wire.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -760,14 +765,14 @@ pub struct FormatSlot {
 }
 
 /// A fixed literal token value override. Mirrors `FormatLiteral` in
-/// `@sittir/types` (FR-008).
+/// `@sittir/types`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FormatLiteral {
     pub raw: String,
 }
 
 /// A trivia (whitespace / comment) insertion at a byte offset. Mirrors
-/// `FormatTrivia` in `@sittir/types` (FR-008).
+/// `FormatTrivia` in `@sittir/types`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FormatTrivia {
     pub offset: u32,
@@ -776,7 +781,7 @@ pub struct FormatTrivia {
 
 /// Complete format record for a node kind. `kinds` enables per-kind
 /// overrides nested inside a parent record. Mirrors `FormatRecord` in
-/// `@sittir/types` (FR-008).
+/// `@sittir/types`.
 ///
 /// The recursive `kinds` field is fine in Rust because `HashMap` is
 /// heap-allocated, so the struct size is statically bounded.

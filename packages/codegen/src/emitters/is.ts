@@ -95,10 +95,10 @@ export function emitIs(config: EmitIsConfig): string {
 		switch (node.modelType) {
 			case 'branch':
 			case 'envelope':
-				structural = !node.hoisted;
+				structural = node.annotations?.hoisted !== true;
 				break;
 			case 'polymorph':
-				structural = !node.hoisted;
+				structural = node.annotations?.hoisted !== true;
 				break;
 			case 'supertype':
 				structural = false;
@@ -124,7 +124,7 @@ export function emitIs(config: EmitIsConfig): string {
 		if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(camel)) {
 			throw new Error(
 				`is emitter: camelCase kind '${camel}' collides with reserved guard key ` +
-					`or another kind. Rename '${kind}' before proceeding (spec 008 FR-017).`
+					`or another kind. Rename '${kind}' before proceeding.`
 			);
 		}
 		usedCamelKeys.add(guardKey);
@@ -331,7 +331,7 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push("    if (typeof v === 'number') return false;");
 	lines.push('    const o = v as Record<string, unknown>;');
 	lines.push(`    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));`);
-	lines.push(`    return hasFields || typeof o['$text'] === 'string';`);
+	lines.push(`    return hasFields || typeof o['$text'] === 'string' || typeof o['$nodeHandle'] === 'number';`);
 	lines.push('}');
 	lines.push('');
 

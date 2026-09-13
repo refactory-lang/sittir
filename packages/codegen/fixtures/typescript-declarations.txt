@@ -42,6 +42,7 @@ declare module Foo {
   do { } while (true);
   for (x in null) { }
   for (;;) { }
+  for (let i = 0; i < 3; i++) { }
   if (true) { } else { }
   1;
   return;

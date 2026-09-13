@@ -53,7 +53,7 @@ interface CommonModule {
 		source: string,
 		backend?: 'native' | 'js',
 		kindIdFromName?: (kind: string) => number | undefined
-	): ReadHandle;
+	): Promise<ReadHandle>;
 	findNativeNodeId(
 		handle: ReadHandle,
 		kind: string,
@@ -353,7 +353,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 			);
 			continue;
 		}
-		const handle = common.buildReadHandle(grammar, tree, exercise.source, undefined, kindIdFromName);
+		const handle = await common.buildReadHandle(grammar, tree, exercise.source, undefined, kindIdFromName);
 		const nativeCoords = common.findNativeNodeId(handle, exercise.find, kindNameFromId);
 		const readData = common.readNodeAt(handle, common.adaptNode(node), nativeCoords);
 		let rendered: string;

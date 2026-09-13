@@ -1,5 +1,8 @@
 import type { NodeMap } from '../types.ts';
 import { AssembledEnum, AssembledSupertype } from './node-map.ts';
+import { publicKindName } from './render-rules.ts';
+
+export type SupertypeMembers = ReadonlyMap<string, readonly string[]>;
 
 export function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 	const expandMembers = (kind: string, seen: Set<string>): string[] => {
@@ -25,6 +28,14 @@ export function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!(node instanceof AssembledSupertype)) continue;
 		out.set(kind, expandMembers(kind, new Set()));
+	}
+	return out;
+}
+
+export function supertypeMembersByPublicName(nodeMap: NodeMap): SupertypeMembers {
+	const out = new Map<string, string[]>();
+	for (const [supertype, members] of buildSupertypeMembersMap(nodeMap)) {
+		out.set(publicKindName(supertype), [...new Set(members.map(publicKindName))]);
 	}
 	return out;
 }

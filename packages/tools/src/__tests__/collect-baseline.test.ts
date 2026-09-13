@@ -125,7 +125,7 @@ describe('collect-baseline', () => {
 			}
 
 			const fixtures = entry['parityFixtures'] as Record<string, unknown>;
-			expect(Object.keys(fixtures).sort()).toEqual(['failingByKind', 'formatDeferredByKind', 'pass', 'total']);
+			expect(Object.keys(fixtures).sort()).toEqual(['failingByKind', 'formatDeferredByKind', 'leftOutByKind', 'pass', 'total']);
 		}
 	});
 

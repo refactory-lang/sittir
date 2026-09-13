@@ -17,6 +17,8 @@ import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // 
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import {
+	AssembledBranch,
+	AssembledNonterminal,
 	AssembledPattern,
 	AssembledList,
 	type AssembledNode,
@@ -25,7 +27,6 @@ import {
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
-import type { RenderDefaults } from '../../dsl/primitives/spacing.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
 // `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
@@ -51,12 +52,17 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 1, kind: 'member_list', member: 'MemberList' },
 	{ id: 2, kind: 'member', member: 'Member' },
-	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', anon: true },
-	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', anon: true }
+	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true },
+	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', literalText: ';', anon: true }
 ];
 
-function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, renderDefaults?: RenderDefaults): string {
-	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES, renderDefaults });
+function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, resolved?: { readonly separator?: string; readonly delimiter?: string }): string {
+	const node = nodeMap.nodes.get('member_list');
+	if (node instanceof AssembledList) {
+		if (resolved?.separator !== undefined) node.resolvedSeparatorArm = resolved.separator;
+		if (resolved?.delimiter !== undefined) node.resolvedDelimiterArm = resolved.delimiter;
+	}
+	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
 }
 
 function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
@@ -110,10 +116,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), {
-			labels: {},
-			sites: { member_list: { member_separator: { label: 'separator', arm: 'semi' } } }
-		});
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), { separator: 'semi' });
 
 		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
@@ -210,5 +213,43 @@ describe('factories emitter — separatedList', () => {
 		// setter is named after the canonical element slot — `content` when
 		// the grammar left it unnamed — not a sigil.
 		expect(emitted).toContain('content: (...vs: (T.MemberA | T.MemberB)[])');
+	});
+
+	it('an envelope forwarding to a repeat1 separated list gets the options-first overload, then the NonEmptyArray elements-only overload declared last', () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional', leading: 'optional' }
+		};
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const listNode = nodeMap.nodes.get('member_list')!;
+		const forwardingSlot = new AssembledNonterminal({
+			values: [{ node: listNode, multiplicity: 'single' }],
+			hasTrailingDelimiter: false,
+			hasLeadingDelimiter: false,
+			sourceRuleIds: []
+		});
+		nodeMap.nodes.set(
+			'wrapper',
+			new AssembledBranch('wrapper', MEMBER_ELEMENT_SIMPLIFIED_RULE, MEMBER_ELEMENT_RENDER_RULE, {
+				slots: [forwardingSlot]
+			})
+		);
+		const emitted = emitFactories({
+			grammar: 'test',
+			nodeMap,
+			kindEntries: [...KIND_ENTRIES, { id: 5, kind: 'wrapper', member: 'Wrapper' }]
+		});
+
+		const wrapperOverloads = [...emitted.matchAll(/^export function buildWrapper\(([^\n]*)\): ReturnType<typeof _buildWrapper>;$/gm)].map(
+			(m) => m[1]
+		);
+		const optionsFirstIndex = wrapperOverloads.findIndex((p) => p!.startsWith('options: ') && p!.includes('...elements: NonEmptyArray<T.Member>'));
+		const elementsOnlyIndex = wrapperOverloads.findIndex((p) => p === '...elements: NonEmptyArray<T.Member>');
+		expect(optionsFirstIndex).toBeGreaterThanOrEqual(0);
+		expect(elementsOnlyIndex).toBeGreaterThanOrEqual(0);
+		expect(elementsOnlyIndex).toBe(wrapperOverloads.length - 1);
+		expect(elementsOnlyIndex).toBeGreaterThan(optionsFirstIndex);
 	});
 });

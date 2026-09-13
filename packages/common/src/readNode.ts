@@ -3,7 +3,7 @@
  *
  * Returns ALL children including anonymous tokens (named: false for operators,
  * delimiters, keywords). Every entry carries `$nodeHandle` + `$childIndex` for
- * O(1) drill-in via `tree.nodes[handle].children()[childIndex]` (ADR-0017).
+ * O(1) drill-in via `tree.nodes[handle].children()[childIndex]`.
  *
  * Field placement comes from tree-sitter's own `fieldNameForChild(i)` —
  * the grammar-author-declared field names. Anonymous identifier-shaped
@@ -13,26 +13,15 @@
  * → compiled parser), so tree-sitter itself surfaces those fields.
  *
  * No recursion — lazy getters in wrap.ts call readNode again when needed.
- *
- * Branch `$text` is omitted by default (branches reconstruct their text
- * via the render template). Set `SITTIR_DEBUG_TEXT=1` to include `$text`
- * on branch nodes for debugging purposes.
  */
 
 import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
 
 /**
- * Whether to emit `$text` on branch nodes (those carrying named slot storage
- * or `$other`). Read once at module load from the environment.
- * Enable with `SITTIR_DEBUG_TEXT=1`.
- */
-const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === '1';
-
-/**
  * A handle to the parsed tree, providing node navigation via handle + childIndex.
  * Structurally compatible with ast-grep SgRoot and tree-sitter Tree.
  *
- * ADR-0017: replaces nodeById(id) with a nodes[] array. Child entries carry
+ * Replaces nodeById(id) with a nodes[] array. Child entries carry
  * $nodeHandle (parent index into nodes[]) + $childIndex (position in parent's
  * child array). O(1) drill-in via nodes[handle].children()[childIndex].
  */
@@ -49,9 +38,17 @@ export interface TreeHandle {
 	 * `engine.diagnostics.readNode(handle, childIndex)` (drill-in) so reads
 	 * stay inside the engine that owns the tree.
 	 *
-	 * ADR-0017: signature changed from `(nodeId?)` to `(handle?, childIndex?)`.
+	 * Signature changed from `(nodeId?)` to `(handle?, childIndex?)`.
 	 */
 	read?(handle?: number, childIndex?: number, deep?: boolean): AnyNodeData;
+	/**
+	 * Render a node of this tree through the engine that read it. A read
+	 * node's coordinates name that engine's tree, so no other engine can
+	 * slice them; a handle with no engine behind it (a JS-side read, a
+	 * factory-built tree) leaves this unset and renders through the
+	 * grammar's default engine.
+	 */
+	render?(node: AnyNodeData): string;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).
@@ -67,7 +64,7 @@ export interface TreeHandle {
 	 */
 	kindIdFromName?: (kind: string) => number | undefined;
 	/**
-	 * ADR-0017: per-handle node array. Each entry is a tree-sitter node
+	 * Per-handle node array. Each entry is a tree-sitter node
 	 * stored at construction time by pushNode(). Child entries reference
 	 * their parent via $nodeHandle (index into this array) + $childIndex
 	 * (position in parent's children()). Lazily created on first pushNode().
@@ -120,7 +117,7 @@ function promoteAnonymousKeyword(
  * - No recursion — wrap.ts provides lazy getters
  * - Field placement uses tree-sitter's native `fieldNameForChild`
  *
- * ADR-0017: navigation uses handle + childIndex instead of nodeId.
+ * Navigation uses handle + childIndex instead of nodeId.
  *
  * @param tree - The tree handle for node lookup
  * @param handle - If provided with childIndex, navigate via nodes[handle].children()[childIndex]
@@ -149,7 +146,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	// string for hidden/synthetic kinds (e.g. "_suite") and test fixtures.
 	const kindIdFromName = tree.kindIdFromName;
 
-	// ADR-0017: navigate to the target node via handle + childIndex when provided.
+	// Navigate to the target node via handle + childIndex when provided.
 	let node: AnyTreeNode;
 	if (handle != null && childIndex != null && tree.nodes) {
 		node = tree.nodes[handle]!.children()[childIndex]!;
@@ -166,7 +163,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	// entry, corrupting the accumulated array with a null-serializing
 	// function object. Others that can bite the same way: `toString`,
 	// `hasOwnProperty`, `valueOf`, `__proto__`.
-	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys
+	// Named slots are stored as `_<name>` top-level keys
 	// directly on the returned object (de-hoisted storage). No `$fields` wrapper.
 	const namedSlots: Record<string, AnyNodeData | AnyNodeData[]> = Object.create(null);
 	const children: AnyNodeData[] = [];
@@ -188,7 +185,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 		return 0;
 	}
 
-	// ADR-0017: push parent node ONCE before iterating children so all child
+	// Push parent node ONCE before iterating children so all child
 	// entries can reference it via $nodeHandle.
 	const parentHandle = pushNode(tree, node);
 
@@ -241,16 +238,15 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	const slotNames = Object.keys(namedSlots);
 	const hasStructure = slotNames.length > 0 || children.length > 0;
 
-	// ADR-0018 Phase 3a: build the result with `_<name>` top-level keys directly.
+	// Build the result with `_<name>` top-level keys directly.
 	// No `$fields` wrapper — de-hoisted storage shape per FR-001.
 	// Consumers (wrap.ts accessors, transport projection) read `_<name>` directly.
 	const result: AnyNodeData = {
 		$type: resolveKindId(node.type),
 		$source: 0,
-		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
-		// Leaf nodes (no named slots, no `$other`) always carry $text so the
-		// render fast-path and all leaf-consuming callers work correctly.
-		$text: !hasStructure || DEBUG_TEXT ? node.text() : undefined,
+		// A leaf (no named slots, no `$other`) carries its text; a structural
+		// node is addressed by its span.
+		$text: !hasStructure ? node.text() : undefined,
 		$other: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
 		$nodeHandle: parentHandle,

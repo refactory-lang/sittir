@@ -1,8 +1,8 @@
 # Retiring enrich's skip list
 
-> **Status:** Design (2026-09-07); class B landed for typescript's
-> `_enum_body_elements` on `feat/punctuation-seams`. Follows the
-> choice-separator spacing design; independent of it in mechanism.
+> **Status:** Landed (2026-09-07) on `feat/punctuation-seams`: classes A,
+> B and C, and `EnrichConfig.skip` is deleted. Follows the choice-separator
+> spacing design; independent of it in mechanism.
 
 ## Problem
 
@@ -48,8 +48,34 @@ now covers each collision, and to extend it to the path and wildcard
 override forms where it does not. The outer name always wins: it is the
 name the grammar author chose for the slot.
 
-An entry is retired by removing it, regenerating, and holding the gates.
-Rust's skip comment also records three kinds (`_where_predicates`,
+Two shapes the relabel did not cover surfaced under the gates and are
+answered where each fact is created:
+
+- A wildcard override (`function_modifiers: { _: field('modifier') }`)
+  descends through the field enrich minted over the whole span and lands
+  on its content, so the transform rebuilt the minted field around the
+  override's — the nested collision itself. A field rebuilt around a field
+  now yields to the inner one (`reconstructWrapper`); the author's name is
+  the slot.
+- A list whose element may be absent (typescript's `array`, `object`,
+  `arguments` and their pattern twins: `commaSep(optional(...))`) cannot
+  take a per-element field: the field marks only the elements that are
+  present, and the holes of `[, a, , b]` are visible only as consecutive
+  separators. The element mint declines on such an element
+  (`matchesEmpty`), the span stays unfielded, and the override's field over
+  the whole span keeps the separators as field children — the shape the
+  read counts holes from. The corpus case `Array with empty elements` is
+  the gate that found it.
+
+Retiring `tuple_type` was a no-op: its override extracts the list into a
+fully fielded `_tuple_type_elements` rule, so the mint has nothing to
+field. `trait_bounds` and the typescript declarations take the positional
+relabel: the field moves from the span onto each element and the separator
+leaves it. `function_modifiers`' literal arms take the keyword promotion
+every other rule gets (`_kw_async` and friends are minted); its factory
+signature is unchanged.
+
+Rust's skip comment also recorded three kinds (`_where_predicates`,
 `_closure_parameters_optional1`, `_use_clauses`) that regressed when
 enabled and were never diagnosed; they are not in the list today, so the
 comment states a constraint that no longer exists and is removed with the
@@ -81,15 +107,15 @@ fragments) keeps the any-arm rule.
 
 ### C. A kind whose content is verbatim text
 
-Python's `string_content` renders its runs through the `$TEXT` fallback
-because the plain-text runs between escapes are not children; fielding its
-choice would flip the walker onto join-the-elements rendering and drop the
-gaps. The fact that makes the pass wrong is a property of the kind: its
-text is not the concatenation of its children. That fact is declared on
-the rule (a `role` marking the kind verbatim, the same primitive that
-marks indent and newline externals), the walker's fallback decision reads
-it, and `applyNodeChoiceFieldWrap` declines on it. The name-keyed
-exemption goes.
+Python's `string_content` once rendered its runs through the `$TEXT`
+fallback because the plain-text runs between escapes were not children,
+and fielding its choice would have flipped the walker onto
+join-the-elements rendering. The fact is already stated on the rule: the
+override rewrites `string_content` wholesale, aliasing the text runs
+visible (`string_fragment`, `not_escape_sequence`) so the read captures
+them as leaf nodes. The rewrite replaces whatever enrich produced, so the
+entry was inert — the evaluated grammar is byte-identical with it gone —
+and no verbatim role is needed. The name-keyed exemption goes.
 
 ### Then the list goes
 
@@ -100,16 +126,19 @@ wrong.
 
 ## Blast radius
 
-- Typescript `object`, `array`, `arguments` and the declarations keep
-  their surface if the relabel holds: the outer field stays the slot, the
-  minted names disappear under it. A surface change here would be a
-  finding, not an accepted cost.
+- Typescript `object`, `array`, `arguments` and their pattern twins keep
+  their parser rule and surface exactly (the mint declines on their
+  absent-admitting element); the declarations keep their slot with the
+  field on each declarator, so `,` leaves the field's child types.
 - `_enum_body_elements` gains two separator spacing sites and their
   `Options` keys; `enum_body` gains the indentation defaults. Factory-built
   enums change layout, which the byte gate must show as the only
   difference.
-- Rust `tuple_type`, `trait_bounds`, `function_modifiers` and python
-  `string_content` are expected byte-identical.
+- Rust `tuple_type` and python `string_content` are byte-identical at
+  every layer. `trait_bounds` moves its field onto each element (`+`
+  leaves it); `function_modifiers` keeps its slot name and factory and
+  gains the `_kw_*` keyword kinds, renumbering rust's kind ids. Every
+  validation floor and the six dogfood renders are unchanged throughout.
 - Hoisting typescript's whole-span fielded lists into `*_elements` kinds
   the way rust's are is a separate surface decision and not part of this.
 

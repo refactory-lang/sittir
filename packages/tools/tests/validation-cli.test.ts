@@ -241,9 +241,9 @@ describe('@sittir/validator cli surface — runProbeFactoryCli behavior', () => 
 	it('defaults to native backend', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runProbeFactoryCli(['rust']);
-		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', 'native');
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', 'native', 'raw');
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
-		expect(allOutput).toMatch(/=== rust\/native ===/);
+		expect(allOutput).toMatch(/=== rust\/native\/raw ===/);
 		logSpy.mockRestore();
 	});
 });

@@ -2051,6 +2051,14 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 // primary slot lookup) resolve instead of degrading to fragile fallbacks.
 ```
 
+Also carries the source root's whole `annotations` bag (merged over the
+result's own), because the annotation is the only representation of a
+kind-level declaration such as `hoisted`: a pass that rebuilds the root
+(normalize's wrapper collapse and choice factoring, `inlineSingleUseHidden`,
+simplify's canonicalisation, flatten) would otherwise drop it. Every root
+rebuild goes through here.
+
+
 ### `packages/codegen/src/dsl/rule-attrs.ts::withId`
 
 ```text
@@ -2945,6 +2953,25 @@ registered but later unused still counts as a sibling.
 // the same `id: rule.id ?? input.id` every builder stamps.
 ```
 
+### `packages/codegen/src/dsl/annotations.ts::withAnnotations`
+
+Merge annotations onto a runtime rule. An ALIAS is transparent: the
+annotation lands on its content, which is the rule the alias faces, so a
+stamp on `alias($._x, $.x)` reads back from `$._x`'s body. Lives in its own
+module because both the transform (variant lift, `patches` lowering) and
+wire / enrich (the `groups:` and clause-hoist mints) stamp through it, and
+neither may import the other.
+
+
+### `packages/codegen/src/dsl/annotations.ts::withHoistedAnnotation`
+
+`withAnnotations(rule, { hoisted: true })`: the one spelling of the hoisted
+declaration. Every route that mints a rule which is a form of its parent
+stamps through here; link's `classifyHiddenRule` reads the stamp and nothing
+else decides hoisting. Stamp the body, not a wrapper around it — evaluate
+unwraps `prec` and a stamp on the wrapper is lost.
+
+
 ### `packages/codegen/src/dsl/builders.ts::slotShaped`
 
 ```text
@@ -3783,13 +3810,6 @@ registered but later unused still counts as a sibling.
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
 ```
 
-### `packages/codegen/src/dsl/rule-transforms.ts::hasAnyField`
-
-```text
-// Genuinely link-phase only — see "Rule IR and snapshots" in
-// docs/compiler-phase-glossary.md for the phase-scoping rationale.
-```
-
 ### `packages/codegen/src/dsl/rule-transforms.ts::Mult`
 
 ```text
@@ -3933,6 +3953,13 @@ registered but later unused still counts as a sibling.
  * exactly the same token sequence.
  */
 ```
+
+The SEQ join inserts a space only where the lexer needs one: when the last character of the left part and the first of the right are both word characters under `wordCharClass`. A punctuation pair joins tight (`seq('(', ')')` is `()`, not `( )`), a word pair keeps its space (`raw const`), and a `tokenized` context means the parts are one lexeme, so no seam exists at all. The joiner is the same question the render sink answers at write time; there is no fixed joiner string.
+
+`ctx.wordMatcher` is the grammar's Link-pinned word matcher; every caller
+that derives a literal for a grammar (flatten's terminality stamp, simplify's
+SEQ collapse, the assembled leaf's `fixedLiteralText`) supplies it, and only
+the unit tests over synthetic rules take the `\w` fallback.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::FixedLiteralCtx`
 
@@ -4608,23 +4635,6 @@ registered but later unused still counts as a sibling.
 // top-level `grammar()` call wraps its result; we preserve that shape.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::EnrichConfig.skip`
-
-```text
-/**
-	 * Rule names exempt from EVERY mechanical enrich pass — the fixed-point
-	 * loop (symbol-to-field, choice-arm-field-wrap, optional-keyword),
-	 * clause-hoist, un-aliasing, and `applyNodeChoiceFieldWrap`. Escape
-	 * hatch for a rule where the grammar shape looks like a pass's target
-	 * but empirically isn't — e.g. python's `string_content`, or rust's
-	 * `tuple_type`/`trait_bounds` whose own hand-authored override already
-	 * fields the exact position `applyNodeChoiceFieldWrap`'s separated-list
-	 * target would also try to field (see that function's doc comment) —
-	 * rather than a
-	 * per-pass knob that every future pass would need its own copy of.
-	 */
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::enrich`
 
 #### body
@@ -4875,6 +4885,13 @@ registered but later unused still counts as a sibling.
 // entire parser identity) with it, while the IR still models the kind —
 // the "VAPORIZED" phantom divergence. See getEnrichVisibleGroupSources.
 ```
+
+Each clause group is stamped `annotations.hoisted` (`withHoistedAnnotation`)
+in place, right after its unalias pass — not at the merge, because
+`collapseSingletonMintOrdinals` rereads `clauseGroupRules` after the merge and
+a stamp made there would be lost. The stamp is the declaration link collects
+`hoistedKinds` from; enrich is one of its minting routes.
+
 
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
@@ -5179,14 +5196,12 @@ registered but later unused still counts as a sibling.
  * because by this point they're the final atomic units; nothing later in
  * `enrich()` restructures them further.
  *
- * Some `repeat(choice(...))` shapes still can't be judged safe from grammar
- * structure alone even at this late point — e.g. python's `string_content`,
- * whose plain-text arm is an implicit gap (no real CST child), correctly
- * rendered today via a verbatim `$TEXT` fallback that fielding would
- * displace. That's a corpus fact, not a structural one, so callers pass an
- * explicit `EnrichConfig.skip` list for cases like it — see `enrich()`'s
- * `config` parameter (skips ALL enrich passes for the named rule, not just
- * this one).
+ * A `repeat(choice(...))` shape this pass would get wrong is answered on
+ * the rule, never by a name-keyed exemption: python's `string_content`,
+ * whose plain-text runs are implicit gaps (no CST child), is rewritten by
+ * its override to alias those runs visible, so the read captures them as
+ * leaf nodes and there is no verbatim fallback left for a field to
+ * displace.
  *
  * Note this still runs BEFORE `wire()`, so a rule split apart later by
  * `variant()` (e.g. `typescript`'s `string` choice, whose two arms
@@ -5263,6 +5278,13 @@ registered but later unused still counts as a sibling.
  * stack" — tree-sitter only keeps the innermost field name). Two sibling
  * fields at different positions carries no such risk.
  *
+ * Declines when the element may be absent (`matchesEmpty` — an
+ * `optional(...)` element, typescript's `[, a, , b]` holes): a per-element
+ * field marks only the elements that are present, so the holes, visible
+ * only as consecutive separators, would leave the slot. Such a list keeps
+ * its span unfielded; an override that fields the whole span (typescript's
+ * `array`, `object`, `arguments`) keeps the separators as field children,
+ * which is how the read counts the holes.
  * Declines when the leading position is already fielded (nothing to do),
  * when the repeat is the TRAILING-separator form (`seq(element, SEP)` —
  * `detected.trailing`, a different, rarer shape not handled here), or
@@ -5271,18 +5293,13 @@ registered but later unused still counts as a sibling.
  * an unrelated repeat happens to sit right after some other element).
  *
  * Runs everywhere the shape matches — same as case 1/case 2 above, no
- * pass-specific gate of its own. Rules whose own hand-authored override
- * already fields this exact position exempt themselves the standard way,
- * via `enrich()`'s `config.skip` (see `EnrichConfig.skip`'s doc comment):
- * enrich runs before any override, so it has no way to see one exists.
- * rust's `tuple_type: { '(_type)': field('type') }` was the first found
- * this way — this pass fielding `_type` first left the override's kind
- * search with zero occurrences to find, a hard `tree-sitter generate`
- * failure, not a silent one; `trait_bounds`'s own `'bounds'`-fielding
- * override showed up the same way, as an `accessor-throw: repeated slot
- * "bounds" requires at least one value` — both are skip-listed in their
- * grammar's own `enrich(base, { skip: [...] })` call, same discovery path
- * as python's `string_content`.
+ * pass-specific gate and no name-keyed exemption. Enrich runs before any
+ * override, so an override that fields the same span meets the fields
+ * minted here; the transform relabels them in place rather than nesting
+ * (`resolveFieldPlaceholder`), so the author's name wins: rust's
+ * `trait_bounds: { 1: field('bounds') }` and typescript's
+ * `lexical_declaration: { 1: field('declarators') }` keep their slot name
+ * with the field on each element, and the separator leaves the field.
  */
 ```
 
@@ -5819,16 +5836,6 @@ field labels instead of taking the minted `element` field.
  *  naming). */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::separatedListEnrichSkip`
-
-```text
-/** The current enrich() call's skip set — consulted by the mint-path list
- *  flattening (a skipped kind keeps its original body spelling: the skip
- *  exists because downstream fielding must not touch it, and the flat
- *  spelling changes its slot derivation). Same lifecycle as
- *  {@link separatedListNameCounts}. */
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::hiddenListPromotionNames`
 
 ```text
@@ -6003,6 +6010,10 @@ field labels instead of taking the minted `element` field.
 		   same decline as the per-arm path — the markers collapse into the
 		   parent's own slots instead of minting a group kind. */
 ```
+
+A promoted arm's body is re-registered with `annotations.hoisted` stamped: the
+promotion is a mint, and the seat it declares is what link collects.
+
 
 ### `packages/codegen/src/dsl/enrich.ts::synthesizeFieldEnumRules`
 
@@ -6222,19 +6233,13 @@ inline literals no longer type-checked. One helper, one cast.
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::preference`
 
-```text
-/**
- * `preference(label, default)` — a user-facing choice, declared on the
- * choice-shaped kind it lives on. As a kind-level patch value it labels
- * every arm of the kind's choice and marks the arm spelled `default`
- * (literal text, alias target, symbol name or variant name) as the one
- * that applies when the user sets nothing; as a path-level patch value it
- * does the same for the choice at that position. The label is the option
- * key in the generated catalog, shared by every site that references the
- * kind. Distinct from `arm.default`, which is the semantic default a bare
- * construction takes and is never an option.
- */
-```
+A preference's arm: the value chosen at the site an `options:` key addresses.
+The key is the address, so the arm is all a preference carries.
+
+A choice is addressable because it is a choice, not because anything labelled
+it. What names a site for a reader is the `options:` key, and a binding maps
+one address onto another key, so a name never has to be stamped onto the arms
+themselves.
 
 ### `packages/codegen/src/dsl/primitives/preference.ts::isPreference`
 

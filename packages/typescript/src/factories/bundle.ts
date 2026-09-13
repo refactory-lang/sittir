@@ -109,6 +109,7 @@ export const satisfiesExpression = bundle(F.buildSatisfiesExpression, C.coerceTo
 export const instantiationExpression = bundle(F.buildInstantiationExpression, C.coerceToInstantiationExpression);
 export const importRequireClause = bundle(F.buildImportRequireClause, C.coerceToImportRequireClause);
 export const extendsClause = bundle(F.buildExtendsClause, C.coerceToExtendsClause);
+export const extendsClauseSingle = bundle(F.buildExtendsClauseSingle, C.coerceToExtendsClauseSingle);
 export const implementsClause = bundle(F.buildImplementsClause, C.coerceToImplementsClause);
 export const ambientDeclaration = bundle(F.buildAmbientDeclaration, C.coerceToAmbientDeclaration);
 export const abstractClassDeclaration = bundle(F.buildAbstractClassDeclaration, C.coerceToAbstractClassDeclaration);
@@ -128,6 +129,14 @@ export const omittingTypeAnnotation = bundle(F.buildOmittingTypeAnnotation, C.co
 export const addingTypeAnnotation = bundle(F.buildAddingTypeAnnotation, C.coerceToAddingTypeAnnotation);
 export const optingTypeAnnotation = bundle(F.buildOptingTypeAnnotation, C.coerceToOptingTypeAnnotation);
 export const typeAnnotation = bundle(F.buildTypeAnnotation, C.coerceToTypeAnnotation);
+export const typeQueryMemberExpressionInTypeAnnotation = bundle(
+	F.buildTypeQueryMemberExpressionInTypeAnnotation,
+	C.coerceToTypeQueryMemberExpressionInTypeAnnotation
+);
+export const typeQueryCallExpressionInTypeAnnotation = bundle(
+	F.buildTypeQueryCallExpressionInTypeAnnotation,
+	C.coerceToTypeQueryCallExpressionInTypeAnnotation
+);
 export const asserts = bundle(F.buildAsserts, C.coerceToAsserts);
 export const assertsAnnotation = bundle(F.buildAssertsAnnotation, C.coerceToAssertsAnnotation);
 export const tupleParameter = bundle(F.buildTupleParameter, C.coerceToTupleParameter);
@@ -142,11 +151,22 @@ export const conditionalType = bundle(F.buildConditionalType, C.coerceToConditio
 export const genericType = bundle(F.buildGenericType, C.coerceToGenericType);
 export const typePredicate = bundle(F.buildTypePredicate, C.coerceToTypePredicate);
 export const typePredicateAnnotation = bundle(F.buildTypePredicateAnnotation, C.coerceToTypePredicateAnnotation);
+export const typeQueryMemberExpression = bundle(F.buildTypeQueryMemberExpression, C.coerceToTypeQueryMemberExpression);
+export const typeQuerySubscriptExpression = bundle(
+	F.buildTypeQuerySubscriptExpression,
+	C.coerceToTypeQuerySubscriptExpression
+);
+export const typeQueryCallExpression = bundle(F.buildTypeQueryCallExpression, C.coerceToTypeQueryCallExpression);
+export const typeQueryInstantiationExpression = bundle(
+	F.buildTypeQueryInstantiationExpression,
+	C.coerceToTypeQueryInstantiationExpression
+);
 export const typeQuery = bundle(F.buildTypeQuery, C.coerceToTypeQuery);
 export const indexTypeQuery = bundle(F.buildIndexTypeQuery, C.coerceToIndexTypeQuery);
 export const lookupType = bundle(F.buildLookupType, C.coerceToLookupType);
 export const mappedTypeClause = bundle(F.buildMappedTypeClause, C.coerceToMappedTypeClause);
 export const literalType = bundle(F.buildLiteralType, C.coerceToLiteralType);
+export const _number = bundle(F.build_Number, C.coerceTo_Number);
 export const flowMaybeType = bundle(F.buildFlowMaybeType, C.coerceToFlowMaybeType);
 export const parenthesizedType = bundle(F.buildParenthesizedType, C.coerceToParenthesizedType);
 export const typeArguments = bundle(F.buildTypeArguments, C.coerceToTypeArguments);
@@ -172,13 +192,16 @@ export const enumBodyElements = bundle(F.buildEnumBodyElements, C.coerceToEnumBo
 export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const typeParametersElements = bundle(F.buildTypeParametersElements, C.coerceToTypeParametersElements);
 export const tupleTypeMembers = bundle(F.buildTupleTypeMembers, C.coerceToTupleTypeMembers);
-export const importClauseGroup = bundle(F.buildImportClauseGroup, C.coerceToImportClauseGroup);
+export const ambientDeclarationGlobal = bundle(F.buildAmbientDeclarationGlobal, C.coerceToAmbientDeclarationGlobal);
+export const ambientDeclarationModule = bundle(F.buildAmbientDeclarationModule, C.coerceToAmbientDeclarationModule);
 export const objectTypeContent = bundle(F.buildObjectTypeContent, C.coerceToObjectTypeContent);
 export const exportStatementDefault = bundle(F.buildExportStatementDefault, C.coerceToExportStatementDefault);
-export const arrowFunctionParameter = bundle(F.buildArrowFunctionParameter, C.coerceToArrowFunctionParameter);
-export const importClauseDefaultImport = bundle(F.buildImportClauseDefaultImport, C.coerceToImportClauseDefaultImport);
-export const exportStatementDefaultFrom = bundle(
-	F.buildExportStatementDefaultFrom,
-	C.coerceToExportStatementDefaultFrom
+export const exportStatementNamespaceExport = bundle(
+	F.buildExportStatementNamespaceExport,
+	C.coerceToExportStatementNamespaceExport
 );
-export const forHeaderLhs = bundle(F.buildForHeaderLhs, C.coerceToForHeaderLhs);
+export const exportStatementTypeExport = bundle(F.buildExportStatementTypeExport, C.coerceToExportStatementTypeExport);
+export const exportStatementEqualsExport = bundle(
+	F.buildExportStatementEqualsExport,
+	C.coerceToExportStatementEqualsExport
+);

@@ -25,6 +25,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *                 Parentheses are required.
  *   - `name:`   — field traversal: descend through field('name', ...)
  *                 at the current position. Hard-errors on mismatch.
+ *   - `"text"`  — literal: the member whose fixed text is `text`.
+ *                 Quotes are required, and a literal may contain the
+ *                 path separator.
+ *   - `.`       — the rule itself (an empty segment list), for a patch
+ *                 that annotates the whole rule (`group()`).
  *
  * Migration errors:
  *   - `*`       — use `_` instead
@@ -55,6 +60,17 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 // ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
 ```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::splitSegments`
+
+A path's segments, splitting on `/` outside a quoted literal only. A literal
+may carry the separator — rust's token-tree punctuation has `/` and `/=` among
+its arms — so a bare split would leave those arms unaddressable.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::literalTextOfMember`
+
+The fixed text a member prints, or undefined when it prints anything decided
+elsewhere. It is what a literal segment matches against.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughPrecWrapper`
 
@@ -371,6 +387,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `metadata` above all, and a delimited repeat's
  * `separator`/`leading`/`trailing` — is absent from the result and has to
  * be carried over afterwards. See `carryOverProperties`.
+ *
+ * A field rebuilt around content that is itself a field yields to the inner
+ * one. Tree-sitter keeps only the innermost field name, so the outer field
+ * would be dead in the parser while sittir's model would still read its
+ * name — the nested-field collision an override's `field(name)` lands in
+ * when the path descends through a field enrich minted over the same span
+ * (`_: field('modifier')` on `field('elements', repeat1(...))`). The inner
+ * field is the one the override authored; it is the slot.
  *
  * Throws on an unknown wrapper type — safer than emitting a hand-rolled
  * shape that may be wrong-case in the tree-sitter runtime.
@@ -717,6 +741,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // declared via wire's placeholder injection.
 ```
 
+Each hoisted body is stamped `annotations.hoisted` BEFORE
+`wrapVariantBodyInParentPrec`: evaluate unwraps `prec` and a stamp on the
+wrapper is dropped, so the stamp must sit on the seq itself.
+
+
 ### `packages/codegen/src/dsl/transform/transform.ts::registerHoistedVariantConflicts`
 
 ```text
@@ -785,6 +814,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * unreferenced rule.
  */
 ```
+
+A lift deposited under the patch-chosen name is stamped `annotations.hoisted`
+on the way in; an authored body of that name is left as authored.
+
 
 ### `packages/codegen/src/dsl/transform/transform.ts::variantBranchIsUnmaterializable`
 
@@ -1015,17 +1048,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // a choice, a string) needs a hidden rule to carry it.
 ```
 
-### `packages/codegen/src/dsl/transform/transform.ts::matchesEmpty`
+The registered body is stamped `annotations.hoisted` inside `bodyWrapper`
+(before any prec wrapper), so the variant arm declares itself a seat on its
+parent; link collects the set from that stamp.
 
-```text
-/**
- * Conservative empty-match detector. Returns true when `rule` can
- * produce a zero-length match. Used only to decide whether the
- * factored non-empty core is actually non-empty — errs on the side of
- * saying "true" for unknown shapes so callers don't wrongly claim a
- * body is non-empty.
- */
-```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::factorOutEmptiness`
 
@@ -1411,6 +1437,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // the template would drop.
 ```
 
+A `group()` placeholder lowers to `annotations.hoisted` on the addressed
+rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
+
+
 ### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
 
 ```text
@@ -1685,19 +1715,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // Dispatched before reaching applyToMembers — should never arrive here.
-```
-
-### `packages/codegen/src/dsl/transform/transform.ts::applyPreference`
-
-```text
-/**
- * Lowers `preference(label, default)` onto the choice it was declared on:
- * every arm is stamped with the label and the arm spelled `default` (by
- * literal, alias target, variant or symbol name) is marked default; a
- * `default` no arm spells is a build error. Wrappers (fields, precedence,
- * aliases, repeats) are looked through; a rule that is not a choice is a
- * build error naming the kind.
- */
 ```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::armNamesOf`

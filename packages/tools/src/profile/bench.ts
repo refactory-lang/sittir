@@ -1,30 +1,39 @@
 /**
  * bench.ts — native render benchmark.
  *
- * For each grammar (rust, typescript, python):
- *   1. Parses all corpus fixtures with the override-compiled (or base) WASM parser.
- *   2. Calls readNode() on each parsed tree to produce NodeData.
- *   3. Times N iterations of render(nodeData) through the native path
- *      (skipped gracefully when the native binary is not compiled).
- *   4. Reports total time, renders/sec, mean, min, max per grammar.
- *      Memory deltas (heapUsed, heapTotal, rss) and approximate heap per render
- *      are captured around the timed loop (after a GC cycle when --expose-gc is
- *      available) and included in both JSON output and the stderr table.
+ * For each grammar (rust, typescript, python) two workloads are timed over
+ * N iterations through the grammar's own engine:
+ *   - coordinate: every corpus fixture parsed and read, rendered as read.
+ *     Nothing under the root was rebuilt, so it folds to one coordinate and
+ *     the render slices the source. Only the engine that read a node can
+ *     resolve its coordinates, so the read and the render share an engine.
+ *   - transport: the grammar's parity render fixtures (`test-fixtures.json`),
+ *     the self-contained inputs the validator captured and proved to render
+ *     standalone, so every node crosses as a transport and the render
+ *     rebuilds it from its template.
+ * Reports total time, renders/sec, mean, min, max and memory deltas per
+ * grammar and workload (heapUsed, heapTotal, rss around the timed loop,
+ * after a GC cycle when --expose-gc is available).
+ *
+ * A render that throws fails the benchmark: a count that included failures
+ * would measure exception throughput.
  *
  * Benchmarks default `NODE_ENV` to `production` when it is unset so native
  * boundary assertions stay out of timing / memory measurements. An explicit
  * `NODE_ENV` is respected.
  */
 
-import { resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createRequire } from 'node:module';
-
+import { readFileSync } from 'node:fs';
 import type { AnyNodeData } from '@sittir/types';
-import type { TSTree } from '../validate/common.ts';
+import type { SittirEngine } from '@sittir/common/engine';
+import { loadCorpusEntries } from '../validate/common.ts';
+import { fixturesOutputPath, type ParityFixture } from '../validate/parity-fixtures.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 type Grammar = (typeof GRAMMARS)[number];
+
+const WORKLOADS = ['coordinate', 'transport'] as const;
+type Workload = (typeof WORKLOADS)[number];
 
 const N = (() => {
 	const env = process.env['BENCH_ITERATIONS'];
@@ -41,41 +50,6 @@ function ensureBenchmarkNodeEnv(): void {
 	process.env.NODE_ENV ??= 'production';
 }
 
-type BenchmarkRuntime = {
-	readNode: typeof import('@sittir/common').readNode;
-	loadCorpusEntries: typeof import('../validate/common.ts').loadCorpusEntries;
-	loadLanguageForGrammar: typeof import('../validate/common.ts').loadLanguageForGrammar;
-	loadKindNames: typeof import('../validate/common.ts').loadKindNames;
-	loadKindIdFromName: typeof import('../validate/common.ts').loadKindIdFromName;
-	treeHandle: typeof import('../validate/common.ts').treeHandle;
-};
-
-let benchmarkRuntimePromise: Promise<BenchmarkRuntime> | undefined;
-
-async function loadBenchmarkRuntime(): Promise<BenchmarkRuntime> {
-	ensureBenchmarkNodeEnv();
-	benchmarkRuntimePromise ??= Promise.all([
-		import('@sittir/common'),
-		import('../validate/common.ts')
-	]).then(([common, validate]) => ({
-		readNode: common.readNode,
-		loadCorpusEntries: validate.loadCorpusEntries,
-		loadLanguageForGrammar: validate.loadLanguageForGrammar,
-		loadKindNames: validate.loadKindNames,
-		loadKindIdFromName: validate.loadKindIdFromName,
-		treeHandle: validate.treeHandle
-	}));
-	return benchmarkRuntimePromise;
-}
-
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-const requireFromHere = createRequire(import.meta.url);
-void requireFromHere;
-
-function boundaryPathFor(grammar: Grammar): string {
-	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
-}
-
 export interface MemoryDelta {
 	/** Delta in heapUsed (bytes) */
 	heapUsedDelta: number;
@@ -90,20 +64,14 @@ export interface MemoryDelta {
 export interface BenchResult {
 	grammar: Grammar;
 	backend: 'native';
+	workload: Workload;
 	iterations: number;
-	/** Total number of render calls (iterations × nodes) */
 	totalRenders: number;
-	/** Total wall time in milliseconds */
 	totalMs: number;
-	/** Renders per second */
 	rendersPerSec: number;
-	/** Mean time per render in ms */
 	meanMs: number;
-	/** Min time for a single render in ms */
 	minMs: number;
-	/** Max time for a single render in ms */
 	maxMs: number;
-	/** Number of corpus nodes sampled */
 	nodeCount: number;
 	/** Memory utilization metrics (undefined when totalRenders === 0) */
 	memory?: MemoryDelta;
@@ -116,57 +84,18 @@ export interface BenchOptions {
 	// intentionally empty
 }
 
-async function collectNodeData(grammar: Grammar): Promise<AnyNodeData[]> {
-	const { readNode, loadCorpusEntries, loadLanguageForGrammar, loadKindIdFromName, treeHandle } =
-		await loadBenchmarkRuntime();
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-
-	const entries = loadCorpusEntries(grammar);
-	const kindIdFromName = await loadKindIdFromName(grammar);
-
-	const safeKindIdFromName = kindIdFromName
-		? (name: string): number | undefined => {
-				try {
-					return kindIdFromName(name);
-				} catch {
-					return undefined;
-				}
-			}
-		: undefined;
-
-	const nodes: AnyNodeData[] = [];
-	for (const entry of entries) {
-		let tree: TSTree;
-		try {
-			tree = parser.parse(entry.source) as TSTree;
-		} catch {
-			continue;
-		}
-		if (tree.rootNode.hasError) continue;
-
-		const handle = treeHandle(tree as Parameters<typeof treeHandle>[0], entry.source, safeKindIdFromName);
-		try {
-			nodes.push(readNode(handle));
-		} catch {
-			// Skip any readNode failures — we only benchmark nodes we can read.
-		}
-	}
-	return nodes;
+async function loadEngine(grammar: Grammar): Promise<SittirEngine> {
+	const { createEngine } = (await import(`@sittir/${grammar}`)) as { createEngine(): SittirEngine };
+	return createEngine();
 }
 
-async function loadNativeRender(grammar: Grammar): Promise<((node: unknown) => string) | null> {
-	ensureBenchmarkNodeEnv();
-	const path = boundaryPathFor(grammar);
-	try {
-		const mod = await import(path);
-		const render = (mod as { render?: unknown }).render;
-		if (typeof render !== 'function') return null;
-		return render as (node: unknown) => string;
-	} catch {
-		return null;
+/** The nodes a workload renders: one read root per corpus fixture, or every parity render fixture's input. */
+function collectNodeData(grammar: Grammar, engine: SittirEngine, workload: Workload): AnyNodeData[] {
+	if (workload === 'coordinate') {
+		return loadCorpusEntries(grammar).map((entry) => engine.diagnostics.parseAndRead(entry.source).root);
 	}
+	const fixtures = JSON.parse(readFileSync(fixturesOutputPath(grammar), 'utf8')) as ParityFixture[];
+	return fixtures.flatMap((fixture) => (fixture.kind === 'render' ? [fixture.input as AnyNodeData] : []));
 }
 
 function hrNow(): bigint {
@@ -195,9 +124,9 @@ function memoryDelta(before: NodeJS.MemoryUsage, after: NodeJS.MemoryUsage, tota
 
 function runBench(
 	nodes: AnyNodeData[],
-	renderFn: (node: unknown) => string,
+	renderFn: (node: AnyNodeData) => string,
 	iterations: number
-): Omit<BenchResult, 'grammar' | 'backend'> {
+): Omit<BenchResult, 'grammar' | 'backend' | 'workload'> {
 	if (nodes.length === 0) {
 		return {
 			iterations,
@@ -212,13 +141,7 @@ function runBench(
 	}
 
 	for (let i = 0; i < WARMUP_ITERATIONS; i++) {
-		for (const node of nodes) {
-			try {
-				renderFn(node);
-			} catch {
-				// Ignore render failures in warmup
-			}
-		}
+		for (const node of nodes) renderFn(node);
 	}
 
 	tryGc();
@@ -232,12 +155,7 @@ function runBench(
 	for (let i = 0; i < iterations; i++) {
 		for (const node of nodes) {
 			const t0 = hrNow();
-			try {
-				renderFn(node);
-			} catch {
-				// Skip render failures — they're counted in totalRenders so
-				// throughput reflects the real workload size.
-			}
+			renderFn(node);
 			const dt = hrNow() - t0;
 			totalNs += dt;
 			if (dt < minNs) minNs = dt;
@@ -269,25 +187,23 @@ function runBench(
 async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
 	const results: BenchResult[] = [];
 
-	process.stderr.write(`[bench] ${grammar}: collecting corpus nodes...\n`);
-	const nodes = await collectNodeData(grammar);
-	process.stderr.write(`[bench] ${grammar}: ${nodes.length} nodes from corpus\n`);
+	process.stderr.write(`[bench] ${grammar}: loading native engine...\n`);
+	const engine = await loadEngine(grammar);
+	const render = (node: AnyNodeData): string => engine.render(node).toString();
 
-	if (nodes.length === 0) {
-		process.stderr.write(`[bench] ${grammar}: no nodes — skipping\n`);
-		return results;
+	for (const workload of WORKLOADS) {
+		process.stderr.write(`[bench] ${grammar}/${workload}: collecting corpus nodes...\n`);
+		const nodes = collectNodeData(grammar, engine, workload);
+		process.stderr.write(`[bench] ${grammar}/${workload}: ${nodes.length} nodes from corpus\n`);
+		if (nodes.length === 0) {
+			process.stderr.write(`[bench] ${grammar}/${workload}: no nodes — skipping\n`);
+			continue;
+		}
+		process.stderr.write(`[bench] ${grammar}/${workload}: native path (N=${N})...\n`);
+		results.push({ grammar, backend: 'native', workload, ...runBench(nodes, render, N) });
 	}
 
-	process.stderr.write(`[bench] ${grammar}: loading native backend...\n`);
-	const nativeRender = await loadNativeRender(grammar);
-	if (nativeRender === null) {
-		process.stderr.write(`[bench] ${grammar}: native backend not available — skipping\n`);
-	} else {
-		process.stderr.write(`[bench] ${grammar}: native path (N=${N})...\n`);
-		const nativeStats = runBench(nodes, nativeRender, N);
-		results.push({ grammar, backend: 'native', ...nativeStats });
-	}
-
+	engine.dispose();
 	return results;
 }
 
@@ -302,7 +218,7 @@ function fmtBytes(bytes: number): string {
 function formatTable(results: BenchResult[]): string {
 	const cols = [
 		'grammar',
-		'backend',
+		'workload',
 		'nodes',
 		'iterations',
 		'totalRenders',
@@ -317,7 +233,7 @@ function formatTable(results: BenchResult[]): string {
 	];
 	const rows: string[][] = results.map((r) => [
 		r.grammar,
-		r.backend,
+		r.workload,
 		r.nodeCount.toString(),
 		r.iterations.toString(),
 		r.totalRenders.toString(),
@@ -340,7 +256,7 @@ function formatTable(results: BenchResult[]): string {
 export async function run(_opts: BenchOptions): Promise<number> {
 	ensureBenchmarkNodeEnv();
 	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
-	process.stderr.write(`bench-render: N=${N} iterations per grammar\n`);
+	process.stderr.write(`bench-render: N=${N} iterations per grammar and workload\n`);
 	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);
 	process.stderr.write(`bench-render: NODE_ENV=${process.env.NODE_ENV}\n`);
 	process.stderr.write(

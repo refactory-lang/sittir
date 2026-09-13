@@ -34,6 +34,10 @@ export interface ValidationRun {
 	factoryRenderParsePass: number;
 	factoryRenderParseTotal: number;
 	factoryRenderParseAstMatchPass: number;
+	/** The `ir`-surface run of factory-render-parse; absent on rows recorded before it existed. */
+	irRenderParsePass?: number;
+	irRenderParseTotal?: number;
+	irRenderParseAstMatchPass?: number;
 	/** Legacy pre-rename fields kept optional for older rows. */
 	rtPass?: number;
 	rtTotal?: number;

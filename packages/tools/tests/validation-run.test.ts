@@ -97,9 +97,11 @@ describe('@sittir/validator run surface — forwarding behavior', () => {
 		expect(vi.mocked(validateReadRenderParse)).toHaveBeenCalledWith('rust', { backend: 'native' });
 	});
 
-	it('runFactory forwards (grammar, backend) to validateFactoryRenderParse', async () => {
+	it('runFactory forwards (grammar, backend, surface) to validateFactoryRenderParse', async () => {
 		await runFactory('python');
-		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('python', 'native');
+		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('python', 'native', { surface: 'raw' });
+		await runFactory('python', 'native', 'ir');
+		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('python', 'native', { surface: 'ir' });
 	});
 
 	it('runCoverage forwards to validateTemplateCoverage', () => {

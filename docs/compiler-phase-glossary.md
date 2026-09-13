@@ -131,12 +131,8 @@ per node in Assemble):
 `SimplifiedRule` additionally approaches the flat seq-of-leaves shape
 (assertable via `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`).
 
-`dsl/rule-transforms.ts::hasAnyField` is one of the few justified
-wrapper-shape-dependent consumers: it walks `OPTIONAL`/`REPEAT`/`REPEAT1`/
-`GROUP` wrapper nodes to answer "is there a FIELD anywhere in
-this still-wrapper-bearing tree", genuinely needed only where a real
-`Rule<'link'>` tree is in hand (`link.ts`'s own classification, and
-`AssembledBranch.isContainerShape`'s deliberately link-phase `.rule`). At
+Wrapper-shape-dependent consumers are rare and live where a real
+`Rule<'link'>` tree is in hand (`link.ts`'s own classification). At
 normalize/simplify a FIELD has already collapsed to the `fieldName` /
 `nonterminal` `RuleBase` attribute — a different, phase-appropriate check
 (`hasSlotBearingContent` in `compiler/assemble.ts`) answers the same
@@ -288,9 +284,8 @@ wrapper-COLLAPSIBLE (a `repeat1('.')` collapses to a bare-looking `STRING`
 carrying `multiplicity: 'nonEmptyArray'`), so a *decorated* one is really a
 field/repeat-wrapped leaf masquerading as bare and must fall through to
 `classifyTerminalFallback` instead of early-exiting as keyword/token/pattern.
-`hasSlotBearingContent` replaces the link-phase `hasAnyField(rule) ||
-hasAnyChild(rule)` walk with the SAME question — "is there a named field or
-a rule reference here" — narrower than "does this produce a slot at all"
+`hasSlotBearingContent` asks "is there a named field or a rule reference
+here" — narrower than "does this produce a slot at all"
 (a repeat over terminals genuinely IS a slot per Table 2, which
 `nonterminal` correctly reflects; `hasSlotBearingContent` isn't asking that).
 `isAllTextShape` is phase-invariant by construction: `OPTIONAL`/`REPEAT`/

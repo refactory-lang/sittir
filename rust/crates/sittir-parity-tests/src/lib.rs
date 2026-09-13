@@ -9,7 +9,6 @@
 //! when the integration-test binary builds.
 
 use serde::Deserialize;
-use sittir_core::types::NodeData;
 
 /// One entry in a grammar's `test-fixtures.json`. Discriminated by the
 /// `kind` tag (`"render"` / `"roundtrip"`) — matches the shape emitted
@@ -20,7 +19,9 @@ pub enum ParityFixture {
     #[serde(rename = "render")]
     Render {
         grammar: String,
-        input: NodeData,
+        /// Kept opaque: the harness asserts round-trip fixtures only, so a
+        /// render input is carried through without being read as a node.
+        input: serde_json::Value,
         #[serde(rename = "expectedOutput")]
         expected_output: String,
     },

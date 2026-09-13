@@ -18,7 +18,7 @@ import {
 import type { Rule, RuleId, SymbolRef } from '../types/rule.ts';
 import { classifyByType } from '../dsl/rule-patterns.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { RuleWalker } from '../dsl/rule-walker.ts';
+import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 
 interface BuildResult {
@@ -40,25 +40,7 @@ export interface RuleCatalogBuildResult {
 
 export interface BuildRuleCatalogCtx {
 	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
-}
-
-function computeReachableRuleNames(rules: Record<string, Rule<'evaluate'>>): Set<string> {
-	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
-	const reachable = new Set<string>();
-	for (const name of Object.keys(rules)) {
-		if (!name.startsWith('_')) reachable.add(name);
-	}
-	if (reachable.size === 0) return new Set(Object.keys(rules));
-	for (const name of Object.keys(rules)) {
-		if (name.startsWith('_')) continue;
-		const rule = rules[name];
-		if (!rule) continue;
-		walker.foldDeep<null>(rule, null, (acc, r) => {
-			if (r.type === SYMBOL) reachable.add(r.name);
-			return acc;
-		});
-	}
-	return reachable;
+	readonly roots?: readonly string[];
 }
 
 export function buildRuleCatalog(
@@ -70,12 +52,14 @@ export function buildRuleCatalog(
 	const rootsByKind = new Map<string, RuleId>();
 	const classificationById = new Map<RuleId, RuleClassification>();
 	const identifiedRules: Record<string, Rule<'evaluate'>> = {};
-	const reachable = computeReachableRuleNames(rules);
+	const unreachable = new Set(
+		Object.keys(rules).some((name) => !name.startsWith('_')) ? collectUnreachableHiddenRules(rules, new Set(ctx.roots)) : []
+	);
 
 	for (const ownerKind of Object.keys(rules)) {
 		const rule = rules[ownerKind];
 		if (!rule) continue;
-		if (ownerKind.startsWith('_') && !reachable.has(ownerKind)) continue;
+		if (unreachable.has(ownerKind)) continue;
 		const provenance = provenanceByKind.get(ownerKind) ?? 'grammar-authored';
 		const result = identifyRule({
 			rule,
