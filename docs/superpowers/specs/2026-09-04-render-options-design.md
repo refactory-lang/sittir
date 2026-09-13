@@ -133,22 +133,24 @@ engine.render(node, { options, reformat: true });       // per-call override
 5. **Synthesized preferences: array flanks and indentation.** Every kind
    that holds exactly one unseparated array gets two more choices written
    around that array in its render rule, `start` and `end`, whose arms are
-   the whitespace kinds plus `indent` for the start and `dedent` for the
-   end. They are addressed at the kind level — `block_start`, `block_end` —
+   the whitespace kinds plus `indent` and `dedent`, paired by the kind's
+   depth walk. They are addressed at the kind level — `block_start`, `block_end` —
    in `patches:`, in `Options` and in the native site table; a supertype
    address applies to each member. The label defaults to the address and a
    grammar may name it freely, so two kinds can share one label:
 
    ```ts
    patches: {
-     block_start:            preference('block_body_start', 'indent'),
-     block_end:              preference('block_body_end', 'dedent'),
-     declaration_list_start: preference('block_body_start', 'indent'),
+     arguments_start: preference('call_args_start', 'indent'),
+     arguments_end:   preference('call_args_end', 'dedent'),
    }
    ```
 
-   The default arm is `tight`, and both flanks are written only when the
-   array has items, so an empty block stays `{}`. `indent` is one level
+   A brace-owning body (`block`, `declaration_list`, `class_body`) carries
+   its depth on its braces rather than on its array's flanks, since the
+   trailing expression of a rust block sits outside the array; see the
+   punctuation seam spacing design. The default arm is `tight`, and both
+   flanks are written only when the array has items. `indent` is one level
    deeper then a newline; `dedent` is one level shallower then a newline; a
    plain newline keeps the depth. `_indent` and `_dedent` are never-scanned
    externals wherever the grammar has none of its own, declared through
@@ -232,13 +234,19 @@ formatting.
 
 ### Read side
 
-The native reader stamps, per occurrence, the whitespace kind on each side
-of a separator token and in each empty gap, by classifying the bytes: no
-bytes is `_tight`, spaces or tabs are `_space`, anything containing a line
-break is `_newline`. Comments in the gap are trivia already and do not
-affect the class. The stamps are the values of the injected choices; the
-flank stamp is the list's existing `_delimiter`. Mixed spellings in one list
-are kept as they are; the stamps are facts, not a consensus.
+The native reader stamps no whitespace. A parsed node carries its
+coordinate — the tagged tree handle and its byte span — and an untouched
+subtree renders by slicing the source the engine still holds, so every gap
+inside it is reproduced byte for byte without a class ever being named. A
+class is derived only where it is needed: when a rebuilt node's list items
+are still coordinates of one tree, the render's prepare walk classifies the
+bytes between consecutive items into the arm the site admits with the same
+seam rank, splits a separated gap around its token, and gives the site the
+majority class over its gaps. That derived class is the occurrence's stamp
+in the precedence below; the flank stamp is the list's existing
+`_delimiter`. The mechanism, its precedence and its limits are specified
+under "Gaps between coordinates classify into option values" in the
+source-provenance design (`2026-08-26-text-content-vs-source-provenance.md`).
 
 `extract_format` keeps producing `indent` by consensus over line starts.
 Its reserved `slots` and `literals` members are removed; this design is
@@ -263,8 +271,12 @@ wins and no owner fills another kind's fields. The emitted render function
 builds the slot's list view from those fields alone — `before`, `token`,
 `after` and the flanks — and `Joined` writes before + token + after between
 items, token + after for a leading flank, before + token for a trailing
-flank. Templates name the slot and nothing else; no template contains a
-join filter, and the askama pipeline stays.
+flank. A render body names the slot and nothing else — no body joins a
+list itself — and the body is emitted Rust: the template emitter builds a
+body IR from the same spaced render rules and prints one
+`write_body_<kind>` function per kind beside its typed render function, so
+the view types and the writer are the only render machinery between a
+transport and its text. There is no template engine in the render path.
 
 A `_newline` join writes the line break and then the current indentation
 unit repeated to the nesting depth the writer tracks from the block kinds it
@@ -336,9 +348,6 @@ outrank engine options, and only an explicit `reformat` overrides them.
 
 ## Out of scope
 
-- Retiring askama in favour of emitted Rust render bodies. Separators are
-  already built in emitted Rust, so this design does not depend on it; the
-  static-spacing plan remains the reason to do it.
 - Any change to lexically required spacing, or spacing around any token
   that is not a list separator.
 - Transforming a parsed node's form. That is an edit, expressed through

@@ -11,37 +11,7 @@
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
 import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
 
-const enrichedBase = enrich(base, {
-	// `lexical_declaration` and `variable_declaration` already field their
-	// separated declarator list's WHOLE span at positional index 1 as
-	// 'declarators' below. applyNodeChoiceFieldWrap's separated-list target
-	// fielding the leading/repeated element positions too nests a second,
-	// inner field under that outer one — tree-sitter keeps only the
-	// innermost field name, so 'declarators' ends up matching nothing
-	// (`accessor-throw: repeated slot "declarators" requires at least one
-	// value`).
-	// `_enum_body_elements`'s element is a choice of a `name`-fielded arm
-	// and a bare `enum_assignment` arm — a single uniform 'element' field
-	// would erase that distinction (the fielded arm routes by its field
-	// label at read time; the classifier merges the arms into one union
-	// content slot as-is): `accessor-throw: repeated slot "element"
-	// requires at least one value`.
-	// `object`, `object_pattern`, `array`, `array_pattern`, and `arguments`
-	// already field their separated list's WHOLE span at a positional
-	// index below ('properties', 'elements', 'arguments' respectively) —
-	// same outer/inner nested-field collision as
-	// `lexical_declaration`/`variable_declaration`.
-	skip: [
-		'lexical_declaration',
-		'variable_declaration',
-		'_enum_body_elements',
-		'object',
-		'object_pattern',
-		'array',
-		'array_pattern',
-		'arguments'
-	]
-});
+const enrichedBase = enrich(base);
 export default grammar(
 	enrichedBase,
 	wire(
@@ -205,13 +175,101 @@ export default grammar(
 						repeat(field('attribute', $._jsx_attribute))
 					)
 			},
+			options: {
+				body: { before: preference('indent'), after: preference('dedent') },
+				case_body: { start: preference('indent'), end: preference('dedent') },
+				gap: { separator: preference('newline') },
+				statements: { terminator: preference(';') },
+				quotes: { style: preference('double') },
+				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
+				program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
+
+				_: {
+					'decorator:/separator': preference('tight'),
+					'decorator:/(_)/after': preference('newline'),
+					'decorator:/end': preference('newline'),
+					'_/separator/","/before': preference('tight'),
+					'":"/after': preference('space'),
+					'"="/before': preference('space'),
+					'"="/after': preference('space'),
+					'"=>"/before': preference('space'),
+					'"=>"/after': preference('space'),
+					'"|"/before': preference('space'),
+					'"|"/after': preference('space'),
+					'"&"/before': preference('space'),
+					'"&"/after': preference('space'),
+					'operator:/before': preference('space'),
+					'operator:/after': preference('space'),
+					'"from"/after': preference('space'),
+					'"if"/after': preference('space'),
+					'"while"/after': preference('space'),
+					'"for"/after': preference('space'),
+					'"return"/before': preference('space'),
+					'"return"/after': preference('space'),
+					'"switch"/after': preference('space'),
+					'"catch"/after': preference('space'),
+					'"var"/after': preference('space'),
+					'kind:/after': preference('space')
+				},
+
+				object_type_content: {
+					'content:/separator/before': preference('tight'),
+					'content:/separator/after': preference('newline'),
+					'content:/separator/kind': preference('semi'),
+					'content:/delimiter': preference('Delimiter.Trailing')
+				},
+
+				statement_block: { before: preference('space') },
+				class_body: { before: preference('space') },
+				switch_body: { before: preference('space') },
+				named_imports: {
+					before: preference('space'),
+					after: preference('space'),
+					'"{"/after': preference('space'),
+					'"}"/before': preference('space')
+				},
+				export_clause: {
+					before: preference('space'),
+					after: preference('space'),
+					'"{"/after': preference('space'),
+					'"}"/before': preference('space')
+				},
+				object: { '"{"/after': preference('space'), '"}"/before': preference('space') },
+				object_pattern: { '"{"/after': preference('space'), '"}"/before': preference('space') },
+				ternary_expression: { '":"/before': preference('space') },
+				for_statement: { '"("/before': preference('space'), '";"/after': preference('space') },
+				lexical_declaration: { after: preference('space') },
+				variable_declaration: { after: preference('space') },
+				required_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
+				optional_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
+
+				_bindings: {
+					'_/terminator:': 'statements/terminator',
+					'_/automatic_semicolon:': 'statements/terminator',
+					'string/content:': 'quotes/style',
+					'class_body/"{"/after': 'body/before',
+					'class_body/"}"/before': 'body/after',
+					'statement_block/"{"/after': 'body/before',
+					'statement_block/"}"/before': 'body/after',
+					'switch_body/"{"/after': 'body/before',
+					'switch_body/"}"/before': 'body/after',
+					'enum_body/"{"/after': 'body/before',
+					'enum_body/"}"/before': 'body/after',
+					'object_type/opening:/after': 'body/before',
+					'object_type/closing:/before': 'body/after',
+					'switch_case/body:/start': 'case_body/start',
+					'switch_case/body:/end': 'case_body/end',
+					'switch_default/body:/start': 'case_body/start',
+					'switch_default/body:/end': 'case_body/end',
+					'class_body/content:/separator': 'gap/separator',
+					'statement_block/statements:/separator': 'gap/separator',
+					'switch_body/cases:/separator': 'gap/separator',
+					'switch_case/body:/separator': 'gap/separator',
+					'switch_default/body:/separator': 'gap/separator'
+				}
+			},
+
 			patches: {
-				comma_separator_space_before: preference('comma_separator_space_before', 'tight'),
-				empty_separator_space: preference('empty_separator_space', 'newline'),
-				statement_block_start: preference('block_body_start', 'indent'),
-				statement_block_end: preference('block_body_end', 'dedent'),
-				class_body_start: preference('block_body_start', 'indent'),
-				class_body_end: preference('block_body_end', 'dedent'),
 				binary_expression: {
 					24: variant('in')
 				},
@@ -233,6 +291,12 @@ export default grammar(
 				switch_body: {
 					1: field('cases')
 				},
+				object_type: {
+				},
+				enum_body: {
+				},
+
+
 				jsx_expression: {
 					1: field('expression')
 				},
@@ -512,9 +576,8 @@ export default grammar(
 					2: variant('member')
 				},
 
-				string: [{ 0: variant('double'), 1: variant('single') }, preference('quote_style', 'double')],
+				string: { 0: variant('double'), 1: variant('single') },
 
-				_semicolon: preference('statement_terminator', ';'),
 
 				update_expression: {
 					0: variant('postfix'),
@@ -563,13 +626,15 @@ export default grammar(
 					'1/2': variant('let_const_kind')
 				}
 			},
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._indent, $._dedent],
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),
 				_tight: string(''),
 				_space: string(' '),
 				_newline: string('\n'),
+				_blankline: string('\n\n'),
 				_indent: indent(),
 				_dedent: dedent()
 			}),
@@ -581,6 +646,7 @@ export default grammar(
 				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)'
 			},
 			rules: {
+				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no

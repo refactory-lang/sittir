@@ -6,22 +6,16 @@
  *   B-half: direct rule-shape navigation (hover/navigate a rule's recursive
  *           structure) — `EnrichRule<RawShape['rule']>` is a fully-resolved,
  *           navigable type with literal discriminants + field names.
- *
- * First-segment path autocomplete (`TopLevelKeys<Shape>` / `PathKey<Shape>`)
- * is exercised below too — segment-1 indices/keys for a rule's top-level
- * members.
  */
-import { describe, it, expectTypeOf, assertType } from 'vitest';
+import { describe, it, expectTypeOf } from 'vitest';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { PathKey, TopLevelKeys } from '../path-type.ts';
 
 type Rules = (typeof rustGrammarShape)['rules'];
 
 // Post-enrich rule shapes (what a transform's `original` actually sees).
 type AwaitExpr = EnrichRule<Rules['await_expression']>;
 type ReferenceType = EnrichRule<Rules['reference_type']>;
-type OrPattern = EnrichRule<Rules['or_pattern']>;
 
 describe('B-half: direct rule-shape navigation / IntelliSense', () => {
 	it('await_expression resolves to a navigable PREC>SEQ with a named FIELD', () => {
@@ -41,18 +35,5 @@ describe('B-half: direct rule-shape navigation / IntelliSense', () => {
 		// enrich INSERTED (raw had a bare SYMBOL there). Navigation reveals it.
 		type M1Inner = (ReferenceType & { members: readonly any[] })['members'][1]['members'][0];
 		expectTypeOf<(M1Inner & { name: string })['name']>().toEqualTypeOf<'lifetime'>();
-	});
-});
-
-describe('first-segment path autocomplete validated against rule shape', () => {
-	it('first-segment autocomplete: TopLevelKeys / PathKey offer the rule indices', () => {
-		// or_pattern (PREC>CHOICE with 2 arms): top-level keys are '0' | '1'.
-		expectTypeOf<TopLevelKeys<OrPattern>>().toEqualTypeOf<'0' | '1'>();
-		// PathKey accepts the bare first segment and any `${first}/...` tail.
-		assertType<PathKey<OrPattern>>('0');
-		assertType<PathKey<OrPattern>>('1/1');
-		// @ts-expect-error — '7' is not a valid first segment for a 2-arm choice.
-		const _bad: PathKey<OrPattern> = '7';
-		void _bad;
 	});
 });

@@ -20,7 +20,7 @@ import type {
 	NativeEngineLike as CoreNativeEngineLike,
 	NativeModuleLike
 } from '@sittir/common/engine';
-import { TEMPLATE_BUNDLE_HASH } from './hash.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 
 const NATIVE_RENDER_TRANSPORT_ABI = 2;
 
@@ -47,7 +47,7 @@ export type BackendStatus = NativeBackendStatus | JsBackendStatus;
  * type-checks even when the native package is not installed.
  */
 export interface NativeEngine extends CoreNativeEngineLike<unknown> {
-	readonly templateBundleHash: string;
+	readonly renderModuleHash: string;
 	readonly nativeRenderTransportAbi: number;
 	findAndRead(source: string, pattern: string): string;
 }
@@ -164,9 +164,9 @@ function computeBackend(): BackendStatus {
 	let nativeRenderTransportAbi: number;
 	try {
 		const engine = new loaded.SittirEngine();
-		nativeHash = engine.templateBundleHash;
+		nativeHash = engine.renderModuleHash;
 		nativeRenderTransportAbi = engine.nativeRenderTransportAbi;
-		hashMatch = nativeHash.toLowerCase() === TEMPLATE_BUNDLE_HASH.toLowerCase();
+		hashMatch = nativeHash.toLowerCase() === RENDER_MODULE_HASH.toLowerCase();
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
 		if (forced === 'native') {
@@ -178,10 +178,10 @@ function computeBackend(): BackendStatus {
 	if (!hashMatch) {
 		if (forced === 'native') {
 			throw new Error(
-				`SITTIR_BACKEND=native but template-bundle hash mismatch (native=${nativeHash}, ts=${TEMPLATE_BUNDLE_HASH})`
+				`SITTIR_BACKEND=native but render-module hash mismatch (native=${nativeHash}, ts=${RENDER_MODULE_HASH})`
 			);
 		}
-		return createJsStatus('template-bundle hash mismatch', false);
+		return createJsStatus('render-module hash mismatch', false);
 	}
 
 	if (nativeRenderTransportAbi !== NATIVE_RENDER_TRANSPORT_ABI) {

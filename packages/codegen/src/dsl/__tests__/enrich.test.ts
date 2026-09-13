@@ -212,6 +212,94 @@ describe('enrich()', () => {
 			});
 		});
 
+		it('leaves a separated list alone when an element arm already carries a field, but still flattens it', () => {
+			const element = (): Rule<'evaluate'> =>
+				({
+					type: CHOICE,
+					members: [
+						{ type: FIELD, name: 'name', content: { type: SYMBOL, name: '_name' } },
+						{ type: SYMBOL, name: 'assignment' }
+					]
+				}) as Rule<'evaluate'>;
+			const input = mkGrammar({
+				_elems: {
+					type: SEQ,
+					members: [
+						element(),
+						{ type: REPEAT, content: { type: SEQ, members: [{ type: STRING, value: ',' }, element()] } },
+						{ type: OPTIONAL, content: { type: STRING, value: ',' } }
+					]
+				} as Rule<'evaluate'>,
+				_name: { type: STRING, value: 'x' } as Rule<'evaluate'>,
+				assignment: { type: STRING, value: 'y' } as Rule<'evaluate'>
+			});
+			const body = JSON.stringify(runEnrich(input).grammar.rules._elems);
+			expect(body).not.toContain('"element"');
+			expect(body).toContain('"name"');
+		});
+
+		it('leaves a separated list alone when its element may be absent, so the span field keeps the holes', () => {
+			const element = (): Rule<'evaluate'> =>
+				({
+					type: OPTIONAL,
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'expression' },
+							{ type: SYMBOL, name: 'spread_element' }
+						]
+					}
+				}) as Rule<'evaluate'>;
+			const input = mkGrammar({
+				array: {
+					type: SEQ,
+					members: [
+						{ type: STRING, value: '[' },
+						element(),
+						{ type: REPEAT, content: { type: SEQ, members: [{ type: STRING, value: ',' }, element()] } },
+						{ type: STRING, value: ']' }
+					]
+				} as Rule<'evaluate'>,
+				expression: { type: STRING, value: 'x' } as Rule<'evaluate'>,
+				spread_element: { type: STRING, value: 'y' } as Rule<'evaluate'>
+			});
+			const body = JSON.stringify(runEnrich(input).grammar.rules.array);
+			expect(body).not.toContain('"FIELD"');
+		});
+
+		it('leaves a separated list alone when its element is a prec-wrapped optional', () => {
+			const element = (): Rule<'evaluate'> =>
+				({
+					type: 'PREC',
+					value: 1,
+					content: {
+						type: OPTIONAL,
+						content: {
+							type: CHOICE,
+							members: [
+								{ type: SYMBOL, name: 'expression' },
+								{ type: SYMBOL, name: 'spread_element' }
+							]
+						}
+					}
+				}) as unknown as Rule<'evaluate'>;
+			const input = mkGrammar({
+				array: {
+					type: SEQ,
+					members: [
+						{ type: STRING, value: '[' },
+						element(),
+						{ type: REPEAT, content: { type: SEQ, members: [{ type: STRING, value: ',' }, element()] } },
+						{ type: STRING, value: ']' }
+					]
+				} as Rule<'evaluate'>,
+				expression: { type: STRING, value: 'x' } as Rule<'evaluate'>,
+				spread_element: { type: STRING, value: 'y' } as Rule<'evaluate'>
+			});
+			const body = JSON.stringify(runEnrich(input).grammar.rules.array);
+			expect(body).not.toContain('"FIELD"');
+		});
+
 		it('skips hidden-kind references (leading underscore)', () => {
 			const input = mkGrammar({
 				foo: {

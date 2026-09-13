@@ -17,30 +17,19 @@ import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
-import { spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
+import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
-import { runTemplateEmitter } from '../templates.ts';
-import type { TemplateFile } from '../template-hash.ts';
+import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
-
-// ---------------------------------------------------------------------------
-// Regression: regen-templates-rs.ts must use the shared runner
-// ---------------------------------------------------------------------------
-
-it('regen-templates-rs uses the shared render-module runner', () => {
-	const script = readFileSync(resolve(repoRoot, 'packages/codegen/src/scripts/regen-templates-rs.ts'), 'utf8');
-	expect(script).toContain("from '../emitters/render-module-runner.ts'");
-	expect(script).toContain('runRenderModuleEmitter(');
-	expect(script).not.toContain('emitRenderModuleBundle(');
-});
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -135,6 +124,8 @@ describe('deriveChildrenKinds', () => {
 /** Cache for the rust emitRenderModule output. */
 let _rustTemplatesRs: string | undefined;
 let _typescriptTransportRs: string | undefined;
+/** The rust kind entries the cached emit was produced from. */
+let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
 
 async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
 	const grammarJsPath = resolveGrammarJsPath(grammar);
@@ -142,31 +133,26 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
-	const linked = link(raw);
-	const normalized = normalizeGrammar(linked);
 	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
 	const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
 		readFileSync(parserCPath, 'utf8'),
 		`packages/${grammar}/.sittir/src/parser.c`
 	);
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
-
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.bodies) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
+	const linked = link(raw, { generatedIdTables });
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar)));
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
-	const renderRules = spaceRenderRules({
-		nodeMap,
-		kindEntries,
-		defaults: raw.renderDefaults,
-		whitespaceText: whitespaceTextOf(raw.visibleExternals)
-	});
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables, {
+	if (grammar === 'rust') _rustKindEntries = kindEntries;
+	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap) };
+	const spacedRules = spaceRenderRules(rulesConfig);
+	stampStaticSpacing(nodeMap, grammar, spacedRules);
+	const renderRules = seamRenderRules(spacedRules, rulesConfig);
+	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
 		renderRules,
-		visibleExternals: raw.visibleExternals
+		visibleExternals: raw.visibleExternals,
+		options: raw.options
 	});
 	return emit.transportRs.contents;
 }
@@ -271,23 +257,21 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(src).toContain('Metavariable(MetavariableTransport),');
 	});
 
-	it('render_const_item uses Renderable::Transport for name (zero-alloc)', async () => {
+	it('render_const_item interpolates name directly as a required slot', async () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_const_item');
 		expect(fnBody).not.toBe('');
-		// name is single-kind (IdentifierTransport) → zero-alloc Transport coercion,
-		// no intermediate String allocation via render_identifier.
-		expect(fnBody).toContain('Renderable::Transport(&node.name');
+		expect(fnBody).toContain('let name = &node.name;');
+		expect(fnBody).not.toContain('View::new(&node.name');
 		expect(fnBody).not.toContain('render_identifier');
 	});
 
-	it('render_function_item uses Renderable::Transport for body (zero-alloc)', async () => {
+	it('render_function_item interpolates body directly as a required slot', async () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_function_item');
 		expect(fnBody).not.toBe('');
-		// body is single-kind (BlockTransport) → zero-alloc Transport coercion,
-		// no intermediate String allocation via render_block.
-		expect(fnBody).toContain('Renderable::Transport(&node.body');
+		expect(fnBody).toContain('let body = &node.body;');
+		expect(fnBody).not.toContain('View::new(&node.body');
 		expect(fnBody).not.toContain('render_block');
 	});
 
@@ -336,8 +320,17 @@ async function buildRustFixtureForParity() {
 		: await loadGeneratedIdTables(grammar);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
-	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
-	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
+	const renderRules =
+		generatedIdTables === undefined
+			? undefined
+			: spaceRenderRules({
+					nodeMap,
+					kindEntries: collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables),
+					options: raw.options,
+					whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
+				});
+	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	return { grammar, nodeMap, generatedIdTables, templates };
 }
 
 // ---------------------------------------------------------------------------
@@ -351,12 +344,8 @@ async function buildRustFixtureForParity() {
 // so the bug mapped array_expression_list → "semi" instead of "list".
 
 it('override-polymorph variant pairing: array_expression_list maps to "list" (not "semi")', async () => {
-	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.bodies) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
+	const { grammar, nodeMap, generatedIdTables, templates } = await buildRustFixtureForParity();
+	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables);
 	// bridge.rs has been retired (PR-E2) — variant pairing is now structural in transport.rs.
 	// Kind-named slots (2026-05-17) additionally collapsed array_expression's
 	// two polymorph forms onto ONE unnamed top-level-choice `content` slot
@@ -371,15 +360,15 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	expect(transport).toContain('pub enum ArrayExpressionContentTransportSlot {');
 	// Key regression guard: each variant must render via its OWN form, not
 	// both collapsing onto forms[0] (semi). Each arm now dispatches through
-	// `.render_into()` (not the per-kind render fn directly) so leading/
+	// `Render` (not the per-kind render fn directly) so leading/
 	// trailing comment trivia attached to the node renders too — the
 	// per-variant distinctness this test guards is still visible in the
 	// ArrayExpressionList vs ArrayExpressionSemi variant/inner-type pairing.
 	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => inner.render_into(dest),'
+		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => inner.render(w),'
 	);
 	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => inner.render_into(dest),'
+		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),'
 	);
 }, 60_000);
 
@@ -397,36 +386,165 @@ describe('render options on transports', () => {
 
 	it('a list fills its own fields from its own site indices; its owner only recurses', async () => {
 		const src = await getTypescriptTransportRs();
-		const listImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersElementsTransport {'));
+		const listImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransport {'));
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);'
+			'self.formal_parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);'
 		);
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_after.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
+			'self.formal_parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
 		);
-		expect(listFill).toContain('if table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER] != 0 {');
-		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::options::FillOptions for FormalParametersTransport {'));
+		expect(listFill).toContain('self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);');
+		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
-		expect(ownerFill).toContain('self.formal_parameters_elements.fill_options(table);');
-		expect(ownerFill).not.toContain('table.spacing[');
+		expect(ownerFill).toContain('self.formal_parameters_elements.prepare(ctx)?;');
+		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
+		expect(ownerFill).toContain('self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);');
 	});
 
 	it('the list view is built from the transport fields and never from a separator literal', async () => {
 		const src = await getTypescriptTransportRs();
 		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(view).toContain('before: options::spacing_text(node.formal_parameter_separator_space_before.unwrap_or(0)),');
-		expect(view).toContain('after: options::spacing_text(node.formal_parameter_separator_space_after.unwrap_or(0)),');
+		expect(view).toContain('before: node.formal_parameter_separator_space_before.unwrap_or(0),');
+		expect(view).toContain('after: node.formal_parameter_separator_space_after.unwrap_or(0),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
-		expect(src).not.toMatch(/ListNonterminalView \{[^}]*\bseparator: /);
+		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
 
-	it('the render entry fills the tree from the table before dispatch', async () => {
+	it('a token seam is a transport field, filled from its site, and resolved through a direct site call', async () => {
+		const src = await getTypescriptTransportRs();
+		const body = extractStructBody(src, 'ArgumentsTransport');
+		expect(body).toContain('napi(js_name = "_lparen_after")');
+		expect(body).toContain('pub lparen_after: Option<u16>,');
+		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsTransport {'));
+		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).toContain('self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);');
+		const fn = src.slice(src.indexOf('fn render_arguments('));
+		const render = fn.slice(0, fn.indexOf('\n}\n'));
+		expect(render).not.toContain('let lparen_after');
+		expect(render).toMatch(/w\.site\(node\.arguments_before\.unwrap_or\(0\)\);\s*\n\s*w\.site\(node\.lparen_before\.unwrap_or\(0\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site\(node\.lparen_after\.unwrap_or\(0\)\);/);
+		expect(src).toContain('    w.finish()?;');
+		const binary = extractStructBody(src, 'BinaryExpressionTransport');
+		expect(binary).toContain('pub operator_before: Option<u16>,');
+		expect(binary).toContain('pub operator_after: Option<u16>,');
+		const block = extractStructBody(src, 'StatementBlockTransport');
+		expect(block).toContain('pub statement_block_before: Option<u16>,');
+		expect(block).toContain('pub statement_block_after: Option<u16>,');
+		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
+		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/w\.site\(node\.statement_block_before\.unwrap_or\(0\)\);/);
+	});
+
+	it('the render entry prepares the tree through the context before dispatch', async () => {
 		const src = await getTypescriptTransportRs();
 		expect(src).toContain('pub fn render_transport_parts(');
-		expect(src).toContain('    table: &::sittir_core::options::ResolvedOptions,');
-		expect(src).toContain('    ::sittir_core::options::FillOptions::fill_options(&mut transport, table);');
+		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
+		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;');
 	});
 });
 
+
+describe('the typed sink replaces the mark-based Display path', () => {
+	it('accepts a token the parser shows as a nested member kind under the token id', async () => {
+		// rust shows the `default` keyword as an `identifier` (`_reserved_identifier`);
+		// an expression slot must decode `{ $type: <default>, $text }` through the
+		// nesting that reaches `identifier`.
+		const transportRs = await getRustTemplatesRs();
+		const tokenId = _rustKindEntries?.find((entry) => entry.literalText === 'default' || entry.symbolName === 'default')?.id;
+		expect(tokenId).toBeDefined();
+		const from = transportRs.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {');
+		expect(from).toBeGreaterThan(-1);
+		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		expect(body).toContain(`${tokenId} => Ok(Self::`);
+	});
+	it('classifies a rebuilt list from the gaps between its coordinates before the table fills it', async () => {
+		const transportRs = await getRustTemplatesRs();
+		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
+		expect(from).toBeGreaterThan(-1);
+		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		expect(body).toContain('::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ","');
+		expect(body).toContain('&options::WHITESPACE)');
+		// The class taken from the source beats the table and loses to the wire:
+		// the classification precedes every `get_or_insert` fill of the same site.
+		expect(body.indexOf('classify_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
+		expect(body).toContain('if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }');
+		expect(body).toContain('if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }');
+	});
+	it('renders through the typed sink and writes no mark character', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toContain('impl ::std::fmt::Display for');
+		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(transportRs).not.toContain('mark_adjacent');
+		expect(transportRs).toContain('impl ::sittir_core::render::Render for FunctionItemTransport {');
+		expect(transportRs).toContain(
+			'fn render_function_item(node: &FunctionItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
+		);
+		expect(transportRs).toContain(
+			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+		);
+		expect(transportRs).toContain(
+			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
+		);
+	});
+
+	it('carries every slot as Coord or Transport and never a bare string', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toContain('SlotValue::Node(');
+		expect(transportRs).not.toContain('SlotValue::Verbatim(');
+		expect(transportRs).toContain('SlotValue::Transport(');
+	});
+
+	it('declares no inert metadata on transports', async () => {
+		const transportRs = await getRustTemplatesRs();
+		for (const field of [
+			'transport_span',
+			'transport_node_handle',
+			'transport_child_index',
+			'transport_source',
+			'transport_named'
+		]) {
+			expect(transportRs).not.toContain(`pub ${field}:`);
+		}
+		expect(transportRs).toContain('pub transport_trivia_data: Option<TransportTrivia>');
+		expect(transportRs).not.toContain('pub transport_text: Option<String>');
+	});
+
+	it('reads a depth token off its kind and not off a sentinel default', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(transportRs).toContain('{ w.dedent("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }');
+	});
+
+	it('prepares every transport through the render context and renders with its sources', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).not.toContain('FillOptions');
+		expect(transportRs).toContain('impl ::sittir_core::prepare::Prepare for FunctionItemTransport {');
+		expect(transportRs).toContain(
+			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
+		);
+		expect(transportRs).toContain('.get_or_insert(ctx.options.spacing[options::');
+		expect(transportRs).toContain(
+			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+		);
+		expect(transportRs).toContain(
+			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
+		);
+	});
+
+	it('admits verbatim text only where a slot admits a pattern kind', async () => {
+		const transportRs = await getRustTemplatesRs();
+		expect(transportRs).toContain('pub struct VerbatimTransport {');
+		// FunctionItem.name admits identifier and metavariable, both pattern-modeled.
+		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
+		// MacroDefinition.content admits three envelopes and no pattern kind.
+		expect(transportRs).toMatch(/pub enum MacroDefinitionContentTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
+	});
+
+	it('binds a list view over site ids and writes a seam site as a call', async () => {
+		const transportRs = await getRustTemplatesRs();
+		const block = transportRs.slice(transportRs.indexOf('fn render_block('), transportRs.indexOf('fn render_block(') + 2000);
+		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(0\),/);
+		expect(block).toMatch(/w\.site\(node\.lbrace_after\.unwrap_or\(0\)\);/);
+		expect(block).toContain('w.text("{")?;');
+		expect(block).toContain('statements.render(w)?;');
+	});
+});

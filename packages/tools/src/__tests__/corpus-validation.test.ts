@@ -22,7 +22,6 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { resolve } from 'node:path';
 import { generate } from '../../../codegen/src/compiler/generate.ts';
 import { validateReadProjection } from '../validate/read-projection.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
@@ -48,12 +47,6 @@ const FLOORS = {
 
 type GrammarName = keyof typeof FLOORS;
 
-function resolveTemplatesPath(grammar: GrammarName): string {
-	// Per-rule `.jinja` layout (feature 011). Validators auto-detect
-	// directory vs legacy `.yaml` file via createRenderer dispatch.
-	return resolve(new URL('../../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
-}
-
 describe.each(Object.keys(FLOORS) as GrammarName[])('deep read-render-parse floor — %s', (grammar) => {
 	const floors = FLOORS[grammar];
 
@@ -62,8 +55,7 @@ describe.each(Object.keys(FLOORS) as GrammarName[])('deep read-render-parse floo
 		// variant-adopted — then native render + reparse. `astMatchPass`
 		// floors the strict-structural subset; its gap up to `pass` is
 		// the deep fidelity debt.
-		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native', recursive: true });
+		const result = await validateReadRenderParse(grammar, { backend: 'native', recursive: true });
 
 		expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
 		expect(result.pass).toBeGreaterThanOrEqual(floors.rtDeepPass);

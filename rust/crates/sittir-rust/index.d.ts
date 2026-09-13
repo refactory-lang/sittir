@@ -29,7 +29,7 @@ export interface Span {
 }
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
-  get templateBundleHash(): string
+  get renderModuleHash(): string
   get nativeRenderTransportAbi(): number
   /**
    * Compile profile baked into this binary — `"debug"` or `"release"`.
@@ -65,8 +65,8 @@ export declare class SittirEngine {
    * `treeId` names the parse whose detected format applies. It is
    * optional because factory-built nodes belong to no tree.
    */
-  render(transport: RenderRoot, treeId?: number | undefined | null, options?: string | undefined | null): string
-  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: string | undefined | null): void
+  render(transport: RenderRoot, treeId?: number | undefined | null, options?: Options | undefined | null): string
+  renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: Options | undefined | null): void
   applyEdits(source: string, edits: Array<Edit>): string
   /**
    * Drop one tree. Called from the boundary's `FinalizationRegistry`
@@ -85,2162 +85,1871 @@ export declare class SittirEngine {
 }
 
 export interface AbstractTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type_parameters?: SlotValue<TypeParametersTransport>
   _trait: SlotValue<Box<AbstractTypeTraitTransportSlot>>
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _impl_keyword_before?: number
+  _impl_keyword_after?: number
+  _abstract_type_before?: number
+  _abstract_type_after?: number
 }
 
 export interface ArgumentsElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<AttributedArgumentTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _arguments_elements_before?: number
+  _arguments_elements_after?: number
 }
 
 export interface ArgumentsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _arguments_elements?: SlotValue<ArgumentsElementsTransport>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _arguments_before?: number
+  _arguments_after?: number
 }
 
 export interface ArrayExpressionListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attributes?: Array<SlotValue<AttributeItemTransport>>
   _arguments_elements?: SlotValue<ArgumentsElementsTransport>
   _attributes_end?: number
   _attributes_start?: number
   _attributes_separator_space?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _array_expression_list_before?: number
+  _array_expression_list_after?: number
 }
 
 export interface ArrayExpressionSemiTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attributes?: Array<SlotValue<AttributeItemTransport>>
   _element: SlotValue<Box<ExpressionTransport>>
   _length: SlotValue<Box<ExpressionTransport>>
   _attributes_end?: number
   _attributes_start?: number
   _attributes_separator_space?: number
+  _semi_before?: number
+  _semi_after?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _array_expression_semi_before?: number
+  _array_expression_semi_after?: number
 }
 
 export interface ArrayExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<ArrayExpressionContentTransportSlot>>
 }
 
 export interface ArrayTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _element: SlotValue<Box<_TypeTransport>>
+  '$_trivia'?: TransportTrivia
+  _element: SlotValue<Box<TypeTransport>>
   _length?: SlotValue<Box<ExpressionTransport>>
+  _semi_before?: number
+  _semi_after?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _array_type_before?: number
+  _array_type_after?: number
 }
 
 export interface AssignmentExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<ExpressionTransport>>
   _right: SlotValue<Box<ExpressionTransport>>
+  _eq_before?: number
+  _eq_after?: number
+  _assignment_expression_before?: number
+  _assignment_expression_after?: number
 }
 
 export interface AssociatedTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _bounds?: SlotValue<TraitBoundsTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _type_keyword_before?: number
+  _type_keyword_after?: number
+  _associated_type_before?: number
+  _associated_type_after?: number
 }
 
 export interface AsyncBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _move_marker?: SlotValue<KwMoveMarkerTransport>
   _body: SlotValue<Box<BlockTransport>>
+  _async_keyword_before?: number
+  _async_keyword_after?: number
+  _async_block_before?: number
+  _async_block_after?: number
 }
 
 export interface AttributedArgumentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attribute_item?: Array<SlotValue<AttributeItemTransport>>
   _expression: SlotValue<ExpressionTransport>
   _attribute_item_end?: number
   _attribute_item_start?: number
   _attribute_item_separator_space?: number
+  _attributed_argument_before?: number
+  _attributed_argument_after?: number
 }
 
 export interface AttributedEnumVariantTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attribute_item?: Array<SlotValue<AttributeItemTransport>>
   _enum_variant: SlotValue<EnumVariantTransport>
   _attribute_item_end?: number
   _attribute_item_start?: number
   _attribute_item_separator_space?: number
+  _attributed_enum_variant_before?: number
+  _attributed_enum_variant_after?: number
 }
 
 export interface AttributedFieldDeclarationTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attribute_item?: Array<SlotValue<AttributeItemTransport>>
   _field_declaration: SlotValue<FieldDeclarationTransport>
   _attribute_item_end?: number
   _attribute_item_start?: number
   _attribute_item_separator_space?: number
+  _attributed_field_declaration_before?: number
+  _attributed_field_declaration_after?: number
 }
 
 export interface AttributedOrderedFieldTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type: SlotValue<_TypeTransport>
+  '$_trivia'?: TransportTrivia
+  _type: SlotValue<TypeTransport>
   _attribute_item?: Array<SlotValue<AttributeItemTransport>>
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _attribute_item_end?: number
   _attribute_item_start?: number
   _attribute_item_separator_space?: number
+  _attributed_ordered_field_before?: number
+  _attributed_ordered_field_after?: number
 }
 
 export interface AttributedParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attribute_item?: SlotValue<AttributeItemTransport>
   _content: SlotValue<AttributedParameterContentTransportSlot>
+  _underscore_before?: number
+  _attributed_parameter_before?: number
+  _attributed_parameter_after?: number
 }
 
 export interface AttributedTypeParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attribute_item?: Array<SlotValue<AttributeItemTransport>>
   _content: SlotValue<AttributedTypeParameterContentTransportSlot>
   _attribute_item_end?: number
   _attribute_item_start?: number
   _attribute_item_separator_space?: number
+  _attributed_type_parameter_before?: number
+  _attributed_type_parameter_after?: number
 }
 
 export interface AttributeInputTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value?: SlotValue<ExpressionTransport>
   _arguments?: SlotValue<DelimTokenTreeTransport>
+  _eq_after?: number
 }
 
 export interface AttributeItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attribute: SlotValue<AttributeTransport>
+  _pound_before?: number
+  _pound_after?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _attribute_item_before?: number
+  _attribute_item_after?: number
 }
 
 export interface AttributeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _path: SlotValue<AttributePathTransportSlot>
   _input?: SlotValue<AttributeInputTransport>
+  _attribute_before?: number
+  _attribute_after?: number
 }
 
 export interface AwaitExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
+  _dot_before?: number
+  _dot_after?: number
+  _await_keyword_before?: number
+  _await_keyword_after?: number
+  _await_expression_before?: number
+  _await_expression_after?: number
 }
 
 export interface BaseFieldInitializerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<ExpressionTransport>
+  _dot_dot_before?: number
+  _dot_dot_after?: number
+  _base_field_initializer_before?: number
+  _base_field_initializer_after?: number
 }
 
 export interface BinaryExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<ExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<ExpressionTransport>>
+  _operator_before?: number
+  _operator_after?: number
+  _binary_expression_before?: number
+  _binary_expression_after?: number
 }
 
 export interface BlockCommentDocInnerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _doc?: SlotValue<BlockCommentContentTransport>
+  _block_comment_doc_inner_before?: number
+  _block_comment_doc_inner_after?: number
 }
 
 export interface BlockCommentDocOuterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _doc?: SlotValue<BlockCommentContentTransport>
+  _block_comment_doc_outer_before?: number
+  _block_comment_doc_outer_after?: number
 }
 
 export interface BlockCommentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content?: SlotValue<BlockCommentContentTransportSlot>
+  _star_slash_before?: number
+  _star_slash_after?: number
+  _slash_star_before?: number
+  _slash_star_after?: number
+  _block_comment_before?: number
+  _block_comment_after?: number
 }
 
 export interface BlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
   _statements?: Array<SlotValue<BlockStatementsTransportSlot>>
   _trailing_expression?: SlotValue<Box<ExpressionTransport>>
   _statements_end?: number
   _statements_start?: number
   _statements_separator_space?: number
+  _colon_before?: number
+  _colon_after?: number
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _block_before?: number
+  _block_after?: number
 }
 
 export interface BoundedTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<BoundedTypeLeftTransportSlot>>
   _right: SlotValue<Box<BoundedTypeRightTransportSlot>>
+  _plus_before?: number
+  _plus_after?: number
+  _bounded_type_before?: number
+  _bounded_type_after?: number
 }
 
 export interface BracketedTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<BracketedTypeContentTransportSlot>>
+  _lt_before?: number
+  _lt_after?: number
+  _gt_before?: number
+  _gt_after?: number
+  _bracketed_type_before?: number
+  _bracketed_type_after?: number
 }
 
 export interface BreakExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
   _expression?: SlotValue<Box<ExpressionTransport>>
+  _break_keyword_before?: number
+  _break_keyword_after?: number
+  _break_expression_before?: number
+  _break_expression_after?: number
 }
 
 export interface CallExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _function: SlotValue<Box<CallExpressionFunctionTransportSlot>>
   _arguments: SlotValue<ArgumentsTransport>
+  _call_expression_before?: number
+  _call_expression_after?: number
 }
 
 export interface CapturedPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _pattern: SlotValue<Box<PatternTransport>>
+  _at_before?: number
+  _at_after?: number
+  _captured_pattern_before?: number
+  _captured_pattern_after?: number
 }
 
 export interface ClosureExpressionBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _return_type?: SlotValue<Box<_TypeTransport>>
+  '$_trivia'?: TransportTrivia
+  _return_type?: SlotValue<Box<TypeTransport>>
   _body: SlotValue<Box<BlockTransport>>
+  _dash_gt_before?: number
+  _dash_gt_after?: number
+  _closure_expression_block_before?: number
+  _closure_expression_block_after?: number
 }
 
 export interface ClosureExpressionExprTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<ClosureExpressionExprBodyTransportSlot>>
 }
 
 export interface ClosureExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _static_marker?: SlotValue<KwStaticMarkerTransport>
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _move_marker?: SlotValue<KwMoveMarkerTransport>
   _parameters: SlotValue<ClosureParametersTransport>
   _content: SlotValue<Box<ClosureExpressionContentTransportSlot>>
+  _closure_expression_before?: number
+  _closure_expression_after?: number
 }
 
 export interface ClosureParametersTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _parameters?: Array<SlotValue<ClosureParametersParametersTransportSlot>>
-  _parameters_separator_space_after?: number
+  _parameters_end?: number
+  _parameters_start?: number
   _parameters_separator_space_before?: number
+  _parameters_separator_space_after?: number
+  _pipe_before?: number
+  _pipe_after?: number
+  _closure_parameters_before?: number
+  _closure_parameters_after?: number
 }
 
 export interface CompoundAssignmentExprTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<ExpressionTransport>>
   _operator: SlotValue<CompoundAssignmentExprOperatorEnum>
   _right: SlotValue<Box<ExpressionTransport>>
+  _compound_assignment_expr_before?: number
+  _compound_assignment_expr_after?: number
 }
 
 export interface ConstBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<BlockTransport>>
+  _const_keyword_before?: number
+  _const_keyword_after?: number
+  _const_block_before?: number
+  _const_block_after?: number
 }
 
 export interface ConstItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
+  _colon_before?: number
+  _colon_after?: number
+  _semi_before?: number
+  _semi_after?: number
+  _eq_before?: number
+  _eq_after?: number
+  _const_keyword_before?: number
+  _const_keyword_after?: number
+  _const_item_before?: number
+  _const_item_after?: number
 }
 
 export interface ConstParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
   _value?: SlotValue<ConstParameterValueTransportSlot>
+  _colon_before?: number
+  _colon_after?: number
+  _eq_before?: number
+  _eq_after?: number
+  _const_keyword_before?: number
+  _const_keyword_after?: number
+  _const_parameter_before?: number
+  _const_parameter_after?: number
 }
 
 export interface ContinueExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
+  _continue_keyword_before?: number
+  _continue_keyword_after?: number
+  _continue_expression_before?: number
+  _continue_expression_after?: number
 }
 
 export interface DeclarationListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _declarations?: Array<SlotValue<DeclarationStatementTransport>>
   _declarations_end?: number
   _declarations_start?: number
   _declarations_separator_space?: number
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _declaration_list_before?: number
+  _declaration_list_after?: number
 }
 
 export interface DelimTokenTreeBraceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _delim_tokens?: Array<SlotValue<DelimTokenTreeBraceDelimTokensTransportSlot>>
   _delim_tokens_end?: number
   _delim_tokens_start?: number
   _delim_tokens_separator_space?: number
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _delim_token_tree_brace_before?: number
+  _delim_token_tree_brace_after?: number
 }
 
 export interface DelimTokenTreeBracketTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _delim_tokens?: Array<SlotValue<DelimTokenTreeBracketDelimTokensTransportSlot>>
   _delim_tokens_end?: number
   _delim_tokens_start?: number
   _delim_tokens_separator_space?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _delim_token_tree_bracket_before?: number
+  _delim_token_tree_bracket_after?: number
 }
 
 export interface DelimTokenTreeParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _delim_tokens?: Array<SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>
   _delim_tokens_end?: number
   _delim_tokens_start?: number
   _delim_tokens_separator_space?: number
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _delim_token_tree_paren_before?: number
+  _delim_token_tree_paren_after?: number
 }
 
 export interface DelimTokenTreeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<DelimTokenTreeContentTransportSlot>
 }
 
 export interface DynamicTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _trait: SlotValue<Box<DynamicTypeTraitTransportSlot>>
+  _dyn_keyword_before?: number
+  _dyn_keyword_after?: number
+  _dynamic_type_before?: number
+  _dynamic_type_after?: number
 }
 
 export interface ElseClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<ElseClauseContentTransportSlot>>
+  _else_keyword_before?: number
+  _else_keyword_after?: number
+  _else_clause_before?: number
+  _else_clause_after?: number
 }
 
 export interface EngineOptions {
   format?: string
   /**
-   * The render options object as JSON; resolved once here against the
-   * grammar's site table. Only the resolved ids are kept.
+   * Resolved once here against the grammar's site table at
+   * construction; only the resolved ids are kept. A `render` call
+   * carrying its own options resolves again, per call, over the
+   * engine's table — the engine's own table never changes.
    */
-  options?: string
+  options?: Options
 }
 
 export interface EnumItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<EnumVariantListTransport>
+  _enum_keyword_before?: number
+  _enum_keyword_after?: number
+  _enum_item_before?: number
+  _enum_item_after?: number
 }
 
 export interface EnumVariantListElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<AttributedEnumVariantTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _enum_variant_list_elements_before?: number
+  _enum_variant_list_elements_after?: number
 }
 
 export interface EnumVariantListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _enum_variant_list_elements?: SlotValue<EnumVariantListElementsTransport>
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _enum_variant_list_before?: number
+  _enum_variant_list_after?: number
 }
 
 export interface EnumVariantTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _body?: SlotValue<EnumVariantBodyTransportSlot>
   _value?: SlotValue<ExpressionTransport>
+  _eq_before?: number
+  _eq_after?: number
+  _enum_variant_before?: number
+  _enum_variant_after?: number
 }
 
 export interface ExpressionStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<ExpressionStatementContentTransportSlot>
 }
 
 export interface ExpressionStatementWithSemiTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _expression: SlotValue<ExpressionTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _expression_statement_with_semi_before?: number
+  _expression_statement_with_semi_after?: number
 }
 
 export interface ExternCrateDeclarationTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _alias?: SlotValue<IdentifierTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _as_keyword_before?: number
+  _as_keyword_after?: number
+  _extern_keyword_before?: number
+  _extern_keyword_after?: number
+  _extern_crate_declaration_before?: number
+  _extern_crate_declaration_after?: number
 }
 
 export interface ExternModifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _abi?: SlotValue<StringLiteralTransport>
+  _extern_keyword_before?: number
+  _extern_keyword_after?: number
+  _extern_modifier_before?: number
+  _extern_modifier_after?: number
 }
 
 export interface FieldDeclarationListElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<AttributedFieldDeclarationTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _field_declaration_list_elements_before?: number
+  _field_declaration_list_elements_after?: number
 }
 
 export interface FieldDeclarationListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _field_declaration_list_elements?: SlotValue<FieldDeclarationListElementsTransport>
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _field_declaration_list_before?: number
+  _field_declaration_list_after?: number
 }
 
 export interface FieldDeclarationTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
+  _colon_before?: number
+  _colon_after?: number
+  _field_declaration_before?: number
+  _field_declaration_after?: number
 }
 
 export interface FieldExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<Box<ExpressionTransport>>
   _field: SlotValue<FieldExpressionFieldTransportSlot>
+  _dot_before?: number
+  _dot_after?: number
+  _field_expression_before?: number
+  _field_expression_after?: number
 }
 
 export interface FieldInitializerListElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<FieldInitializerListElementsElementTransportSlot>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _field_initializer_list_elements_before?: number
+  _field_initializer_list_elements_after?: number
 }
 
 export interface FieldInitializerListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _initializers?: SlotValue<FieldInitializerListElementsTransport>
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _field_initializer_list_before?: number
+  _field_initializer_list_after?: number
 }
 
 export interface FieldInitializerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _field: SlotValue<FieldInitializerFieldTransportSlot>
   _value: SlotValue<ExpressionTransport>
   _attribute_item?: Array<SlotValue<AttributeItemTransport>>
-  _attribute_item_separator_space?: number
   _attribute_item_end?: number
   _attribute_item_start?: number
+  _attribute_item_separator_space?: number
+  _colon_before?: number
+  _colon_after?: number
+  _field_initializer_before?: number
+  _field_initializer_after?: number
 }
 
 export interface FieldPatternNamedTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _pattern: SlotValue<PatternTransport>
+  _colon_before?: number
+  _colon_after?: number
+  _field_pattern_named_before?: number
+  _field_pattern_named_after?: number
 }
 
 export interface FieldPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _ref_marker?: SlotValue<KwRefMarkerTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _content: SlotValue<FieldPatternContentTransportSlot>
+  _field_pattern_before?: number
+  _field_pattern_after?: number
 }
 
 export interface ForeignModItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _extern_modifier: SlotValue<ExternModifierTransport>
   _content: SlotValue<ForeignModItemContentTransportSlot>
+  _foreign_mod_item_before?: number
+  _foreign_mod_item_after?: number
 }
 
 export interface ForExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
   _pattern: SlotValue<Box<PatternTransport>>
   _value: SlotValue<Box<ExpressionTransport>>
   _body: SlotValue<Box<BlockTransport>>
+  _colon_before?: number
+  _colon_after?: number
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _in_keyword_before?: number
+  _in_keyword_after?: number
+  _for_expression_before?: number
+  _for_expression_after?: number
 }
 
 export interface ForLifetimesTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _lifetimes: SlotValue<LifetimesTransport>
+  _lt_before?: number
+  _lt_after?: number
+  _gt_before?: number
+  _gt_after?: number
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _for_lifetimes_before?: number
+  _for_lifetimes_after?: number
 }
 
 export interface FunctionItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _function_modifiers?: SlotValue<FunctionModifiersTransport>
   _name: SlotValue<FunctionItemNameTransportSlot>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<ParametersTransport>
-  _return_type?: SlotValue<_TypeTransport>
+  _return_type?: SlotValue<TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<BlockTransport>
+  _dash_gt_before?: number
+  _dash_gt_after?: number
+  _fn_keyword_before?: number
+  _fn_keyword_after?: number
+  _function_item_before?: number
+  _function_item_after?: number
 }
 
 export interface FunctionModifiersTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _modifier: Array<SlotValue<FunctionModifiersModifierTransportSlot>>
-  _modifier_separator_space?: number
   _modifier_end?: number
   _modifier_start?: number
+  _modifier_separator_space?: number
+  _function_modifiers_before?: number
+  _function_modifiers_after?: number
 }
 
 export interface FunctionSignatureItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _function_modifiers?: SlotValue<FunctionModifiersTransport>
   _name: SlotValue<FunctionSignatureItemNameTransportSlot>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<ParametersTransport>
-  _return_type?: SlotValue<_TypeTransport>
+  _return_type?: SlotValue<TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
+  _dash_gt_before?: number
+  _dash_gt_after?: number
+  _semi_before?: number
+  _semi_after?: number
+  _fn_keyword_before?: number
+  _fn_keyword_after?: number
+  _function_signature_item_before?: number
+  _function_signature_item_after?: number
 }
 
 export interface FunctionTypeFnFormTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _function_modifiers?: SlotValue<FunctionModifiersTransport>
+  _fn_keyword_before?: number
+  _fn_keyword_after?: number
+  _function_type_fn_form_before?: number
+  _function_type_fn_form_after?: number
 }
 
 export interface FunctionTypeTraitFormTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _trait: SlotValue<Box<FunctionTypeTraitFormTraitTransportSlot>>
 }
 
 export interface FunctionTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _for_lifetimes?: SlotValue<ForLifetimesTransport>
   _parameters: SlotValue<ParametersTransport>
-  _return_type?: SlotValue<Box<_TypeTransport>>
+  _return_type?: SlotValue<Box<TypeTransport>>
   _content: SlotValue<Box<FunctionTypeContentTransportSlot>>
+  _dash_gt_before?: number
+  _dash_gt_after?: number
+  _function_type_before?: number
+  _function_type_after?: number
 }
 
 export interface GenBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _move_marker?: SlotValue<KwMoveMarkerTransport>
   _body: SlotValue<Box<BlockTransport>>
+  _gen_keyword_before?: number
+  _gen_keyword_after?: number
+  _gen_block_before?: number
+  _gen_block_after?: number
 }
 
 export interface GenericFunctionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _function: SlotValue<Box<GenericFunctionFunctionTransportSlot>>
   _type_arguments: SlotValue<TypeArgumentsTransport>
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _generic_function_before?: number
+  _generic_function_after?: number
 }
 
 export interface GenericPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type_arguments: SlotValue<TypeArgumentsTransport>
   _content: SlotValue<Box<GenericPatternContentTransportSlot>>
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _generic_pattern_before?: number
+  _generic_pattern_after?: number
 }
 
 export interface GenericTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type: SlotValue<Box<GenericTypeTypeTransportSlot>>
   _type_arguments: SlotValue<TypeArgumentsTransport>
+  _generic_type_before?: number
+  _generic_type_after?: number
 }
 
 export interface GenericTypeWithTurbofishTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type: SlotValue<Box<GenericTypeWithTurbofishTypeTransportSlot>>
   _type_arguments: SlotValue<TypeArgumentsTransport>
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _generic_type_with_turbofish_before?: number
+  _generic_type_with_turbofish_after?: number
 }
 
 export interface HigherRankedTraitBoundTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type_parameters: SlotValue<TypeParametersTransport>
-  _type: SlotValue<Box<_TypeTransport>>
+  _type: SlotValue<Box<TypeTransport>>
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _higher_ranked_trait_bound_before?: number
+  _higher_ranked_trait_bound_after?: number
 }
 
 export interface IfExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _condition: SlotValue<Box<IfExpressionConditionTransportSlot>>
   _consequence: SlotValue<Box<BlockTransport>>
   _alternative?: SlotValue<Box<ElseClauseTransport>>
+  _if_keyword_before?: number
+  _if_keyword_after?: number
+  _if_expression_before?: number
+  _if_expression_after?: number
 }
 
 export interface ImplItemBodyTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _declaration_list: SlotValue<DeclarationListTransport>
 }
 
 export interface ImplItemNegativeClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _trait: SlotValue<ImplItemNegativeClauseTraitTransportSlot>
+  _bang_before?: number
+  _bang_after?: number
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _impl_item_negative_clause_before?: number
+  _impl_item_negative_clause_after?: number
 }
 
 export interface ImplItemPositiveClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _trait: SlotValue<ImplItemPositiveClauseTraitTransportSlot>
+  _for_keyword_before?: number
+  _for_keyword_after?: number
+  _impl_item_positive_clause_before?: number
+  _impl_item_positive_clause_after?: number
 }
 
 export interface ImplItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _unsafe_marker?: SlotValue<ImplItemUnsafeMarkerTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _trait_clause?: SlotValue<ImplItemTraitClauseTransportSlot>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _content: SlotValue<ImplItemContentTransportSlot>
+  _impl_keyword_before?: number
+  _impl_keyword_after?: number
+  _impl_item_before?: number
+  _impl_item_after?: number
 }
 
 export interface IndexExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _object: SlotValue<Box<ExpressionTransport>>
   _index: SlotValue<Box<ExpressionTransport>>
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _index_expression_before?: number
+  _index_expression_after?: number
 }
 
 export interface InnerAttributeItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attribute: SlotValue<AttributeTransport>
+  _bang_before?: number
+  _bang_after?: number
+  _pound_before?: number
+  _pound_after?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _inner_attribute_item_before?: number
+  _inner_attribute_item_after?: number
 }
 
 export interface LabelTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
+  _squote_before?: number
+  _squote_after?: number
+  _label_before?: number
+  _label_after?: number
 }
 
 export interface LastMatchArmTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attributes?: Array<SlotValue<LastMatchArmAttributesTransportSlot>>
   _pattern: SlotValue<Box<MatchPatternTransport>>
   _value: SlotValue<Box<ExpressionTransport>>
   _comma?: boolean
-  _attributes_separator_space?: number
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
+  _comma_before?: number
+  _comma_after?: number
+  _eq_gt_before?: number
+  _eq_gt_after?: number
+  _last_match_arm_before?: number
+  _last_match_arm_after?: number
 }
 
 export interface LetChainTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left?: SlotValue<Box<LetChainLeftTransportSlot>>
   _right?: Array<SlotValue<LetChainRightTransportSlot>>
-  _right_separator_space_after?: number
   _right_separator_space_before?: number
+  _right_separator_space_after?: number
+  _amp_amp_before?: number
+  _amp_amp_after?: number
 }
 
 export interface LetConditionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _pattern: SlotValue<Box<PatternTransport>>
   _value: SlotValue<Box<ExpressionTransport>>
+  _eq_before?: number
+  _eq_after?: number
+  _let_keyword_before?: number
+  _let_keyword_after?: number
+  _let_condition_before?: number
+  _let_condition_after?: number
 }
 
 export interface LetDeclarationTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _pattern: SlotValue<PatternTransport>
-  _type?: SlotValue<_TypeTransport>
+  _type?: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
   _alternative?: SlotValue<BlockTransport>
+  _colon_before?: number
+  _colon_after?: number
+  _semi_before?: number
+  _semi_after?: number
+  _eq_before?: number
+  _eq_after?: number
+  _else_keyword_before?: number
+  _else_keyword_after?: number
+  _let_keyword_before?: number
+  _let_keyword_after?: number
+  _let_declaration_before?: number
+  _let_declaration_after?: number
 }
 
 export interface LifetimeParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<LifetimeTransport>
   _bounds?: SlotValue<TraitBoundsTransport>
+  _lifetime_parameter_before?: number
+  _lifetime_parameter_after?: number
 }
 
 export interface LifetimesTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _lifetime: Array<SlotValue<LifetimeTransport>>
   _delimiter?: number
-  _lifetime_separator_space_after?: number
+  _lifetime_end?: number
+  _lifetime_start?: number
   _lifetime_separator_space_before?: number
+  _lifetime_separator_space_after?: number
+  _lifetimes_before?: number
+  _lifetimes_after?: number
 }
 
 export interface LifetimeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
+  _squote_before?: number
+  _squote_after?: number
+  _lifetime_before?: number
+  _lifetime_after?: number
 }
 
 export interface LineCommentDocInnerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _doc: SlotValue<LineDocContentTransport>
+  _line_comment_doc_inner_before?: number
+  _line_comment_doc_inner_after?: number
 }
 
 export interface LineCommentDocOuterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _doc: SlotValue<LineDocContentTransport>
+  _line_comment_doc_outer_before?: number
+  _line_comment_doc_outer_after?: number
 }
 
 export interface LineCommentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<LineCommentContentTransportSlot>
+  _slash_slash_before?: number
+  _slash_slash_after?: number
+  _line_comment_before?: number
+  _line_comment_after?: number
 }
 
 export interface LoopExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
   _body: SlotValue<Box<BlockTransport>>
+  _colon_before?: number
+  _colon_after?: number
+  _loop_keyword_before?: number
+  _loop_keyword_after?: number
+  _loop_expression_before?: number
+  _loop_expression_after?: number
 }
 
 export interface MacroDefinitionBraceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _macro_rules?: SlotValue<MacroRulesTransport>
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _macro_definition_brace_before?: number
+  _macro_definition_brace_after?: number
 }
 
 export interface MacroDefinitionBracketTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _macro_rules?: SlotValue<MacroRulesTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _macro_definition_bracket_before?: number
+  _macro_definition_bracket_after?: number
 }
 
 export interface MacroDefinitionParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _macro_rules?: SlotValue<MacroRulesTransport>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _semi_before?: number
+  _semi_after?: number
+  _macro_definition_paren_before?: number
+  _macro_definition_paren_after?: number
 }
 
 export interface MacroDefinitionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _content: SlotValue<MacroDefinitionContentTransportSlot>
+  _macro_rules_bang_before?: number
+  _macro_rules_bang_after?: number
+  _macro_definition_before?: number
+  _macro_definition_after?: number
 }
 
 export interface MacroInvocationTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _macro: SlotValue<Box<MacroInvocationMacroTransportSlot>>
   _arguments: SlotValue<DelimTokenTreeTransport>
+  _bang_before?: number
+  _bang_after?: number
+  _macro_invocation_before?: number
+  _macro_invocation_after?: number
 }
 
 export interface MacroRulesTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _macro_rule: Array<SlotValue<MacroRuleTransport>>
   _delimiter?: number
-  _macro_rule_separator_space_after?: number
+  _macro_rule_end?: number
+  _macro_rule_start?: number
   _macro_rule_separator_space_before?: number
+  _macro_rule_separator_space_after?: number
+  _macro_rules_before?: number
+  _macro_rules_after?: number
 }
 
 export interface MacroRuleTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<TokenTreePatternTransport>
   _right: SlotValue<TokenTreeTransport>
+  _eq_gt_before?: number
+  _eq_gt_after?: number
+  _macro_rule_before?: number
+  _macro_rule_after?: number
 }
 
 export interface MatchArmTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attributes?: Array<SlotValue<MatchArmAttributesTransportSlot>>
   _pattern: SlotValue<MatchPatternTransport>
   _content: SlotValue<MatchArmContentTransportSlot>
-  _attributes_separator_space?: number
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
+  _eq_gt_before?: number
+  _eq_gt_after?: number
+  _match_arm_before?: number
+  _match_arm_after?: number
 }
 
 export interface MatchArmWithCommaTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<ExpressionTransport>
+  _comma_before?: number
+  _comma_after?: number
+  _match_arm_with_comma_before?: number
+  _match_arm_with_comma_after?: number
 }
 
 export interface MatchBlockArmsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _last_arm: SlotValue<Box<LastMatchArmTransport>>
   _match_arm?: Array<SlotValue<MatchArmTransport>>
-  _match_arm_separator_space?: number
   _match_arm_end?: number
   _match_arm_start?: number
+  _match_arm_separator_space?: number
+  _match_block_arms_before?: number
+  _match_block_arms_after?: number
 }
 
 export interface MatchBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _match_block_arms?: SlotValue<Box<MatchBlockArmsTransport>>
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _match_block_before?: number
+  _match_block_after?: number
 }
 
 export interface MatchExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<Box<ExpressionTransport>>
   _body: SlotValue<Box<MatchBlockTransport>>
+  _match_keyword_before?: number
+  _match_keyword_after?: number
+  _match_expression_before?: number
+  _match_expression_after?: number
 }
 
 export interface MatchPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _pattern: SlotValue<Box<PatternTransport>>
   _condition?: SlotValue<Box<MatchPatternConditionTransportSlot>>
+  _if_keyword_before?: number
+  _if_keyword_after?: number
+  _match_pattern_before?: number
+  _match_pattern_after?: number
 }
 
 export interface ModItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _content: SlotValue<ModItemContentTransportSlot>
+  _mod_keyword_before?: number
+  _mod_keyword_after?: number
+  _mod_item_before?: number
+  _mod_item_after?: number
 }
 
 export interface MutPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _pattern: SlotValue<Box<PatternTransport>>
+  _mut_pattern_before?: number
+  _mut_pattern_after?: number
 }
 
 export interface NegativeLiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<NegativeLiteralValueTransportSlot>
+  _dash_before?: number
+  _dash_after?: number
+  _negative_literal_before?: number
+  _negative_literal_after?: number
 }
 
 export interface OrderedFieldDeclarationListElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<AttributedOrderedFieldTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _ordered_field_declaration_list_elements_before?: number
+  _ordered_field_declaration_list_elements_after?: number
 }
 
 export interface OrderedFieldDeclarationListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attributes?: SlotValue<OrderedFieldDeclarationListElementsTransport>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _ordered_field_declaration_list_before?: number
+  _ordered_field_declaration_list_after?: number
 }
 
 export interface OrPatternBinaryTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<PatternTransport>>
   _right: SlotValue<Box<PatternTransport>>
+  _pipe_before?: number
+  _pipe_after?: number
+  _or_pattern_binary_before?: number
+  _or_pattern_binary_after?: number
 }
 
 export interface OrPatternPrefixTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _right: SlotValue<Box<PatternTransport>>
+  _pipe_before?: number
+  _pipe_after?: number
+  _or_pattern_prefix_before?: number
+  _or_pattern_prefix_after?: number
 }
 
 export interface OrPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<OrPatternContentTransportSlot>>
 }
 
 export interface ParametersElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<AttributedParameterTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _parameters_elements_before?: number
+  _parameters_elements_after?: number
 }
 
 export interface ParametersTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _parameters_elements?: SlotValue<ParametersElementsTransport>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _parameters_before?: number
+  _parameters_after?: number
 }
 
 export interface ParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<ParameterNameTransportSlot>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
+  _colon_before?: number
+  _colon_after?: number
+  _parameter_before?: number
+  _parameter_after?: number
 }
 
 export interface ParenthesizedExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _parenthesized_expression_before?: number
+  _parenthesized_expression_after?: number
 }
 
 export interface PatternsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _pattern: Array<SlotValue<PatternTransport>>
   _delimiter?: number
-  _pattern_separator_space_after?: number
+  _pattern_end?: number
+  _pattern_start?: number
   _pattern_separator_space_before?: number
+  _pattern_separator_space_after?: number
+  _patterns_before?: number
+  _patterns_after?: number
 }
 
 export interface PointerTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type: SlotValue<Box<_TypeTransport>>
+  '$_trivia'?: TransportTrivia
+  _type: SlotValue<Box<TypeTransport>>
   _content: SlotValue<PointerTypeContentTransportSlot>
+  _star_before?: number
+  _star_after?: number
+  _pointer_type_before?: number
+  _pointer_type_after?: number
 }
 
 export interface QualifiedTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type: SlotValue<Box<_TypeTransport>>
-  _alias: SlotValue<Box<_TypeTransport>>
+  '$_trivia'?: TransportTrivia
+  _type: SlotValue<Box<TypeTransport>>
+  _alias: SlotValue<Box<TypeTransport>>
+  _as_keyword_before?: number
+  _as_keyword_after?: number
+  _qualified_type_before?: number
+  _qualified_type_after?: number
 }
 
 export interface RangeExpressionBinaryTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _start: SlotValue<Box<ExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
   _end: SlotValue<Box<ExpressionTransport>>
+  _operator_before?: number
+  _operator_after?: number
+  _range_expression_binary_before?: number
+  _range_expression_binary_after?: number
 }
 
 export interface RangeExpressionPostfixTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _start: SlotValue<Box<ExpressionTransport>>
+  _operator_before?: number
+  _operator_after?: number
+  _range_expression_postfix_before?: number
+  _range_expression_postfix_after?: number
 }
 
 export interface RangeExpressionPrefixTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _end: SlotValue<Box<ExpressionTransport>>
+  _operator_before?: number
+  _operator_after?: number
+  _range_expression_prefix_before?: number
+  _range_expression_prefix_after?: number
 }
 
 export interface RangeExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<RangeExpressionContentTransportSlot>>
 }
 
-export interface RangePatternLeftWithRightTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _right: SlotValue<Box<RangePatternLeftWithRightRightTransportSlot>>
-  _content: SlotValue<Box<AnyTransport>>
-}
-
 export interface RangePatternPrefixTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _right: SlotValue<Box<RangePatternPrefixRightTransportSlot>>
   _content: SlotValue<Box<AnyTransport>>
+  _dot_dot_after?: number
+  _dot_dot_eq_after?: number
+  _range_pattern_prefix_before?: number
+  _range_pattern_prefix_after?: number
 }
 
 export interface RangePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<Box<RangePatternContentTransportSlot>>
 }
 
 export interface RangePatternWithLeftTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<RangePatternWithLeftLeftTransportSlot>>
   _content: SlotValue<Box<RangePatternWithLeftContentTransportSlot>>
+  _range_pattern_with_left_before?: number
+  _range_pattern_with_left_after?: number
+}
+
+export interface RangePatternWithLeftWithRightTransport {
+  '$_trivia'?: TransportTrivia
+  _right: SlotValue<Box<RangePatternWithLeftWithRightRightTransportSlot>>
+  _content: SlotValue<Box<AnyTransport>>
+  _dot_dot_after?: number
+  _dot_dot_dot_after?: number
+  _dot_dot_eq_after?: number
+  _range_pattern_with_left_with_right_before?: number
+  _range_pattern_with_left_with_right_after?: number
 }
 
 export interface RawStringLiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _raw_string_literal_start: SlotValue<RawStringLiteralStartTransport>
   _string_content: SlotValue<RawStringLiteralContentTransport>
   _raw_string_literal_end: SlotValue<RawStringLiteralEndTransport>
+  _raw_string_literal_before?: number
+  _raw_string_literal_after?: number
 }
 
 export interface ReferenceExpressionRawMutTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
+  _raw_keyword_before?: number
+  _raw_keyword_after?: number
+  _reference_expression_raw_mut_before?: number
+  _reference_expression_raw_mut_after?: number
 }
 
 export interface ReferenceExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<Box<ExpressionTransport>>
   _content?: SlotValue<ReferenceExpressionContentTransportSlot>
+  _amp_before?: number
+  _amp_after?: number
+  _reference_expression_before?: number
+  _reference_expression_after?: number
 }
 
 export interface ReferencePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _pattern: SlotValue<Box<PatternTransport>>
+  _amp_before?: number
+  _amp_after?: number
+  _reference_pattern_before?: number
+  _reference_pattern_after?: number
 }
 
 export interface ReferenceTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _lifetime?: SlotValue<LifetimeTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
-  _type: SlotValue<Box<_TypeTransport>>
+  _type: SlotValue<Box<TypeTransport>>
+  _amp_before?: number
+  _amp_after?: number
+  _reference_type_before?: number
+  _reference_type_after?: number
 }
 
 export interface RefPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _pattern: SlotValue<Box<PatternTransport>>
+  _ref_keyword_before?: number
+  _ref_keyword_after?: number
+  _ref_pattern_before?: number
+  _ref_pattern_after?: number
 }
 
 export interface RemovedTraitBoundTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type: SlotValue<Box<_TypeTransport>>
+  '$_trivia'?: TransportTrivia
+  _type: SlotValue<Box<TypeTransport>>
+  _qmark_before?: number
+  _qmark_after?: number
+  _removed_trait_bound_before?: number
+  _removed_trait_bound_after?: number
 }
 
 export interface ReturnExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _expression?: SlotValue<Box<ExpressionTransport>>
+  _return_keyword_before?: number
+  _return_keyword_after?: number
+  _return_expression_before?: number
+  _return_expression_after?: number
 }
 
 export interface ScopedIdentifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _path?: SlotValue<Box<ScopedIdentifierPathTransportSlot>>
   _name: SlotValue<ScopedIdentifierNameTransportSlot>
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _scoped_identifier_before?: number
+  _scoped_identifier_after?: number
 }
 
 export interface ScopedTypeIdentifierInExpressionPositionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _path?: SlotValue<Box<ScopedTypeIdentifierInExpressionPositionPathTransportSlot>>
   _name: SlotValue<IdentifierTransport>
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _scoped_type_identifier_in_expression_position_before?: number
+  _scoped_type_identifier_in_expression_position_after?: number
 }
 
 export interface ScopedTypeIdentifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _path?: SlotValue<Box<ScopedTypeIdentifierPathTransportSlot>>
   _name: SlotValue<IdentifierTransport>
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _scoped_type_identifier_before?: number
+  _scoped_type_identifier_after?: number
 }
 
 export interface ScopedUseListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _path?: SlotValue<ScopedUseListPathTransportSlot>
   _list: SlotValue<UseListTransport>
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _scoped_use_list_before?: number
+  _scoped_use_list_after?: number
 }
 
 export interface SelfParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _reference?: boolean
   _lifetime?: SlotValue<LifetimeTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _reference_before?: number
+  _reference_after?: number
+  _self_parameter_before?: number
+  _self_parameter_after?: number
 }
 
 export interface ShorthandFieldInitializerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attributes?: Array<SlotValue<AttributeItemTransport>>
   _name: SlotValue<IdentifierTransport>
-  _attributes_separator_space?: number
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
+  _shorthand_field_initializer_before?: number
+  _shorthand_field_initializer_after?: number
 }
 
 export interface SlicePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _patterns?: SlotValue<PatternsTransport>
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _slice_pattern_before?: number
+  _slice_pattern_after?: number
 }
 
 export interface SourceFileTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _shebang?: SlotValue<ShebangTransport>
   _statements?: Array<SlotValue<SourceFileStatementsTransportSlot>>
-  _statements_separator_space?: number
   _statements_end?: number
   _statements_start?: number
+  _statements_separator_space?: number
+  _source_file_before?: number
+  _source_file_after?: number
 }
 
 export interface StaticItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _ref_marker?: SlotValue<KwRefMarkerTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<IdentifierTransport>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
+  _colon_before?: number
+  _colon_after?: number
+  _semi_before?: number
+  _semi_after?: number
+  _eq_before?: number
+  _eq_after?: number
+  _static_keyword_before?: number
+  _static_keyword_after?: number
+  _static_item_before?: number
+  _static_item_after?: number
 }
 
 export interface StringLiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _string_open: SlotValue<StringLiteralOpenTransport>
   _elements?: Array<SlotValue<StringLiteralElementsTransportSlot>>
+  _dquote_before?: number
+  _dquote_after?: number
+  _string_literal_before?: number
+  _string_literal_after?: number
 }
 
 export interface StructExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<Box<StructExpressionNameTransportSlot>>
   _body: SlotValue<FieldInitializerListTransport>
+  _struct_expression_before?: number
+  _struct_expression_after?: number
 }
 
 export interface StructItemBraceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _body: SlotValue<FieldDeclarationListTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
+  _struct_item_brace_before?: number
+  _struct_item_brace_after?: number
 }
 
 export interface StructItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _content: SlotValue<StructItemContentTransportSlot>
+  _struct_keyword_before?: number
+  _struct_keyword_after?: number
+  _struct_item_before?: number
+  _struct_item_after?: number
 }
 
 export interface StructItemTupleTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _body: SlotValue<OrderedFieldDeclarationListTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _struct_item_tuple_before?: number
+  _struct_item_tuple_after?: number
 }
 
 export interface StructPatternElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<StructPatternElementsElementTransportSlot>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _struct_pattern_elements_before?: number
+  _struct_pattern_elements_after?: number
 }
 
 export interface StructPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type: SlotValue<Box<StructPatternTypeTransportSlot>>
   _fields?: SlotValue<StructPatternElementsTransport>
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _struct_pattern_before?: number
+  _struct_pattern_after?: number
 }
 
 export interface TokenBindingPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<MetavariableTransport>
   _type: SlotValue<FragmentSpecifierEnum>
+  _type_before?: number
+  _type_after?: number
+  _colon_before?: number
+  _colon_after?: number
+  _token_binding_pattern_before?: number
+  _token_binding_pattern_after?: number
 }
 
 export interface TokenRepetitionPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _token_patterns?: Array<SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>
   _separator?: boolean
   _operator: SlotValue<Box<AnyTransport>>
-  _token_patterns_separator_space?: number
+  _operator_before?: number
+  _operator_after?: number
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
+  _dollar_before?: number
+  _dollar_after?: number
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _token_repetition_pattern_before?: number
+  _token_repetition_pattern_after?: number
 }
 
 export interface TokenRepetitionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
   _separator?: boolean
   _operator: SlotValue<Box<AnyTransport>>
-  _tokens_separator_space?: number
+  _operator_before?: number
+  _operator_after?: number
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
+  _dollar_before?: number
+  _dollar_after?: number
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _token_repetition_before?: number
+  _token_repetition_after?: number
 }
 
 export interface TokenTreeBraceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _tokens?: Array<SlotValue<TokenTreeBraceTokensTransportSlot>>
-  _tokens_separator_space?: number
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _token_tree_brace_before?: number
+  _token_tree_brace_after?: number
 }
 
 export interface TokenTreeBracketTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _tokens?: Array<SlotValue<TokenTreeBracketTokensTransportSlot>>
-  _tokens_separator_space?: number
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _token_tree_bracket_before?: number
+  _token_tree_bracket_after?: number
 }
 
 export interface TokenTreeParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _tokens?: Array<SlotValue<TokenTreeParenTokensTransportSlot>>
-  _tokens_separator_space?: number
   _tokens_end?: number
   _tokens_start?: number
+  _tokens_separator_space?: number
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _token_tree_paren_before?: number
+  _token_tree_paren_after?: number
 }
 
 export interface TokenTreePatternBraceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _token_patterns?: Array<SlotValue<TokenTreePatternBraceTokenPatternsTransportSlot>>
-  _token_patterns_separator_space?: number
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _token_tree_pattern_brace_before?: number
+  _token_tree_pattern_brace_after?: number
 }
 
 export interface TokenTreePatternBracketTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _token_patterns?: Array<SlotValue<TokenTreePatternBracketTokenPatternsTransportSlot>>
-  _token_patterns_separator_space?: number
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
+  _lbrack_before?: number
+  _lbrack_after?: number
+  _rbrack_before?: number
+  _rbrack_after?: number
+  _token_tree_pattern_bracket_before?: number
+  _token_tree_pattern_bracket_after?: number
 }
 
 export interface TokenTreePatternParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _token_patterns?: Array<SlotValue<TokenTreePatternParenTokenPatternsTransportSlot>>
-  _token_patterns_separator_space?: number
   _token_patterns_end?: number
   _token_patterns_start?: number
+  _token_patterns_separator_space?: number
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _token_tree_pattern_paren_before?: number
+  _token_tree_pattern_paren_after?: number
 }
 
 export interface TokenTreePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<TokenTreePatternContentTransportSlot>
 }
 
 export interface TokenTreeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<TokenTreeContentTransportSlot>
 }
 
 export interface TraitBoundsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _bounds: Array<SlotValue<TraitBoundsBoundsTransportSlot>>
-  _bounds_separator_space_after?: number
+  _bounds_end?: number
+  _bounds_start?: number
   _bounds_separator_space_before?: number
+  _bounds_separator_space_after?: number
+  _colon_before?: number
+  _colon_after?: number
+  _trait_bounds_before?: number
+  _trait_bounds_after?: number
 }
 
 export interface TraitItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _unsafe_marker?: SlotValue<KwUnsafeMarkerTransport>
   _name: SlotValue<IdentifierTransport>
@@ -2248,473 +1957,423 @@ export interface TraitItemTransport {
   _bounds?: SlotValue<TraitBoundsTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<DeclarationListTransport>
+  _trait_keyword_before?: number
+  _trait_keyword_after?: number
+  _trait_item_before?: number
+  _trait_item_after?: number
 }
 
 export interface TryBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<BlockTransport>>
+  _try_keyword_before?: number
+  _try_keyword_after?: number
+  _try_block_before?: number
+  _try_block_after?: number
 }
 
 export interface TryExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<Box<ExpressionTransport>>
+  _qmark_before?: number
+  _qmark_after?: number
+  _try_expression_before?: number
+  _try_expression_after?: number
 }
 
 export interface TupleExpressionElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<ExpressionTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _tuple_expression_elements_before?: number
+  _tuple_expression_elements_after?: number
 }
 
 export interface TupleExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _attributes?: Array<SlotValue<AttributeItemTransport>>
   _tuple_expression_elements: SlotValue<TupleExpressionElementsTransport>
-  _attributes_separator_space?: number
   _attributes_end?: number
   _attributes_start?: number
+  _attributes_separator_space?: number
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _tuple_expression_before?: number
+  _tuple_expression_after?: number
 }
 
 export interface TuplePatternElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<TuplePatternElementsElementTransportSlot>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _tuple_pattern_elements_before?: number
+  _tuple_pattern_elements_after?: number
 }
 
 export interface TuplePatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _elements?: SlotValue<TuplePatternElementsTransport>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _tuple_pattern_before?: number
+  _tuple_pattern_after?: number
 }
 
 export interface TupleStructPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type: SlotValue<Box<TupleStructPatternTypeTransportSlot>>
   _patterns?: SlotValue<PatternsTransport>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _tuple_struct_pattern_before?: number
+  _tuple_struct_pattern_after?: number
 }
 
 export interface TupleTypeElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type: Array<SlotValue<_TypeTransport>>
+  '$_trivia'?: TransportTrivia
+  _type: Array<SlotValue<TypeTransport>>
   _delimiter?: number
-  _type_separator_space_after?: number
+  _type_end?: number
+  _type_start?: number
   _type_separator_space_before?: number
+  _type_separator_space_after?: number
+  _tuple_type_elements_before?: number
+  _tuple_type_elements_after?: number
 }
 
 export interface TupleTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _tuple_type_elements: SlotValue<TupleTypeElementsTransport>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _tuple_type_before?: number
+  _tuple_type_after?: number
 }
 
 export interface TypeArgumentsElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<TypeArgumentTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _type_arguments_elements_before?: number
+  _type_arguments_elements_after?: number
 }
 
 export interface TypeArgumentsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type_arguments_elements: SlotValue<TypeArgumentsElementsTransport>
+  _lt_before?: number
+  _lt_after?: number
+  _gt_before?: number
+  _gt_after?: number
+  _type_arguments_before?: number
+  _type_arguments_after?: number
 }
 
 export interface TypeArgumentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<TypeArgumentContentTransportSlot>
   _trait_bounds?: SlotValue<TraitBoundsTransport>
+  _type_argument_before?: number
+  _type_argument_after?: number
 }
 
 export interface TypeBindingTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _type_arguments?: SlotValue<TypeArgumentsTransport>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
+  _eq_before?: number
+  _eq_after?: number
+  _type_binding_before?: number
+  _type_binding_after?: number
 }
 
 export interface TypeCastExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _value: SlotValue<Box<ExpressionTransport>>
-  _type: SlotValue<Box<_TypeTransport>>
+  _type: SlotValue<Box<TypeTransport>>
+  _as_keyword_before?: number
+  _as_keyword_after?: number
+  _type_cast_expression_before?: number
+  _type_cast_expression_after?: number
 }
 
 export interface TypeItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
-  _type: SlotValue<_TypeTransport>
+  _type: SlotValue<TypeTransport>
   _trailing_where_clause?: SlotValue<WhereClauseTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _eq_before?: number
+  _eq_after?: number
+  _type_keyword_before?: number
+  _type_keyword_after?: number
+  _type_item_before?: number
+  _type_item_after?: number
 }
 
 export interface TypeParametersElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<AttributedTypeParameterTransport>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _type_parameters_elements_before?: number
+  _type_parameters_elements_after?: number
 }
 
 export interface TypeParametersTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _type_parameters_elements: SlotValue<TypeParametersElementsTransport>
+  _lt_before?: number
+  _lt_after?: number
+  _gt_before?: number
+  _gt_after?: number
+  _type_parameters_before?: number
+  _type_parameters_after?: number
 }
 
 export interface TypeParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
   _bounds?: SlotValue<TraitBoundsTransport>
-  _default_type?: SlotValue<_TypeTransport>
+  _default_type?: SlotValue<TypeTransport>
+  _eq_before?: number
+  _eq_after?: number
+  _type_parameter_before?: number
+  _type_parameter_after?: number
 }
 
 export interface UnaryExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _operator: SlotValue<Box<AnyTransport>>
   _operand: SlotValue<Box<ExpressionTransport>>
+  _operator_before?: number
+  _operator_after?: number
+  _unary_expression_before?: number
+  _unary_expression_after?: number
 }
 
 export interface UnionItemTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<FieldDeclarationListTransport>
+  _union_keyword_before?: number
+  _union_keyword_after?: number
+  _union_item_before?: number
+  _union_item_after?: number
 }
 
 export interface UnsafeBlockTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _body: SlotValue<Box<BlockTransport>>
+  _unsafe_keyword_before?: number
+  _unsafe_keyword_after?: number
+  _unsafe_block_before?: number
+  _unsafe_block_after?: number
 }
 
 export interface UseAsClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _path: SlotValue<UseAsClausePathTransportSlot>
   _alias: SlotValue<IdentifierTransport>
+  _as_keyword_before?: number
+  _as_keyword_after?: number
+  _use_as_clause_before?: number
+  _use_as_clause_after?: number
 }
 
 export interface UseBoundsElementsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<UseBoundsElementsElementTransportSlot>>
   _delimiter?: number
-  _element_separator_space_after?: number
+  _element_end?: number
+  _element_start?: number
   _element_separator_space_before?: number
+  _element_separator_space_after?: number
+  _use_bounds_elements_before?: number
+  _use_bounds_elements_after?: number
 }
 
 export interface UseBoundsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _bounds?: SlotValue<UseBoundsElementsTransport>
+  _lt_before?: number
+  _lt_after?: number
+  _gt_before?: number
+  _gt_after?: number
+  _use_keyword_before?: number
+  _use_keyword_after?: number
+  _use_bounds_before?: number
+  _use_bounds_after?: number
 }
 
 export interface UseClausesTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _use_clause: Array<SlotValue<UseClausesUseClauseTransportSlot>>
   _delimiter?: number
-  _use_clause_separator_space_after?: number
+  _use_clause_end?: number
+  _use_clause_start?: number
   _use_clause_separator_space_before?: number
+  _use_clause_separator_space_after?: number
+  _use_clauses_before?: number
+  _use_clauses_after?: number
 }
 
 export interface UseDeclarationTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _argument: SlotValue<UseDeclarationArgumentTransportSlot>
+  _semi_before?: number
+  _semi_after?: number
+  _use_keyword_before?: number
+  _use_keyword_after?: number
+  _use_declaration_before?: number
+  _use_declaration_after?: number
 }
 
 export interface UseListTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _use_clauses?: SlotValue<UseClausesTransport>
+  _lbrace_before?: number
+  _lbrace_after?: number
+  _rbrace_before?: number
+  _rbrace_after?: number
+  _use_list_before?: number
+  _use_list_after?: number
 }
 
 export interface UseWildcardTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _path?: SlotValue<UseWildcardPathTransportSlot>
+  _star_before?: number
+  _star_after?: number
+  _colon_colon_before?: number
+  _colon_colon_after?: number
+  _use_wildcard_before?: number
+  _use_wildcard_after?: number
 }
 
 export interface VariadicParameterTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _pattern?: SlotValue<PatternTransport>
+  _dot_dot_dot_before?: number
+  _dot_dot_dot_after?: number
+  _colon_before?: number
+  _colon_after?: number
+  _variadic_parameter_before?: number
+  _variadic_parameter_after?: number
 }
 
 export interface VisibilityModifierGroupTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<VisibilityModifierGroupContentTransportSlot>
+  _lparen_before?: number
+  _lparen_after?: number
+  _rparen_before?: number
+  _rparen_after?: number
+  _visibility_modifier_group_before?: number
+  _visibility_modifier_group_after?: number
 }
 
-export interface VisibilityModifierInPathTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _path: SlotValue<VisibilityModifierInPathPathTransportSlot>
+export interface VisibilityModifierPubInPathTransport {
+  '$_trivia'?: TransportTrivia
+  _path: SlotValue<VisibilityModifierPubInPathPathTransportSlot>
+  _visibility_modifier_pub_in_path_before?: number
+  _visibility_modifier_pub_in_path_after?: number
 }
 
 export interface VisibilityModifierPubTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _visibility_modifier_group?: SlotValue<VisibilityModifierGroupTransport>
+  _pub_keyword_before?: number
+  _pub_keyword_after?: number
+  _visibility_modifier_pub_before?: number
+  _visibility_modifier_pub_after?: number
 }
 
 export interface VisibilityModifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _content: SlotValue<VisibilityModifierContentTransportSlot>
 }
 
 export interface WhereClauseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _where_predicates?: SlotValue<WherePredicatesTransport>
+  _where_keyword_before?: number
+  _where_keyword_after?: number
+  _where_clause_before?: number
+  _where_clause_after?: number
 }
 
 export interface WherePredicatesTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _where_predicate: Array<SlotValue<WherePredicateTransport>>
   _delimiter?: number
-  _where_predicate_separator_space_after?: number
+  _where_predicate_end?: number
+  _where_predicate_start?: number
   _where_predicate_separator_space_before?: number
+  _where_predicate_separator_space_after?: number
+  _where_predicates_before?: number
+  _where_predicates_after?: number
 }
 
 export interface WherePredicateTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _left: SlotValue<WherePredicateLeftTransportSlot>
   _bounds: SlotValue<TraitBoundsTransport>
+  _where_predicate_before?: number
+  _where_predicate_after?: number
 }
 
 export interface WhileExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
   _condition: SlotValue<Box<WhileExpressionConditionTransportSlot>>
   _body: SlotValue<Box<BlockTransport>>
+  _colon_before?: number
+  _colon_after?: number
+  _while_keyword_before?: number
+  _while_keyword_after?: number
+  _while_expression_before?: number
+  _while_expression_after?: number
 }
 
 export interface YieldExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
+  '$_trivia'?: TransportTrivia
   _expression?: SlotValue<Box<ExpressionTransport>>
+  _yield_keyword_before?: number
+  _yield_keyword_after?: number
+  _yield_expression_before?: number
+  _yield_expression_after?: number
 }

@@ -356,7 +356,6 @@ export const tupleTypeMember: {
 
 export const primaryType: {
 	readonly parenthesized: typeof F.parenthesizedType;
-	readonly predefined: typeof F.buildPredefinedType;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly nestedIdentifier: typeof F.nestedTypeIdentifier;
 	readonly generic: typeof F.genericType;
@@ -376,7 +375,6 @@ export const primaryType: {
 	readonly union: typeof F.unionType;
 } = {
 	parenthesized: F.parenthesizedType,
-	predefined: F.buildPredefinedType,
 	identifier: F.buildIdentifier,
 	nestedIdentifier: F.nestedTypeIdentifier,
 	generic: F.genericType,
@@ -492,6 +490,7 @@ export const ir: {
 	readonly instantiationExpression: typeof F.instantiationExpression;
 	readonly importRequireClause: typeof F.importRequireClause;
 	readonly extendsClause: typeof F.extendsClause;
+	readonly extendsClauseSingle: typeof F.extendsClauseSingle;
 	readonly implementsClause: typeof F.implementsClause;
 	readonly ambientDeclaration: typeof F.ambientDeclaration;
 	readonly abstractClassDeclaration: typeof F.abstractClassDeclaration;
@@ -511,6 +510,8 @@ export const ir: {
 	readonly addingTypeAnnotation: typeof F.addingTypeAnnotation;
 	readonly optingTypeAnnotation: typeof F.optingTypeAnnotation;
 	readonly typeAnnotation: typeof F.typeAnnotation;
+	readonly typeQueryMemberExpressionInTypeAnnotation: typeof F.typeQueryMemberExpressionInTypeAnnotation;
+	readonly typeQueryCallExpressionInTypeAnnotation: typeof F.typeQueryCallExpressionInTypeAnnotation;
 	readonly asserts: typeof F.asserts;
 	readonly assertsAnnotation: typeof F.assertsAnnotation;
 	readonly tupleParameter: typeof F.tupleParameter;
@@ -525,11 +526,16 @@ export const ir: {
 	readonly genericType: typeof F.genericType;
 	readonly typePredicate: typeof F.typePredicate;
 	readonly typePredicateAnnotation: typeof F.typePredicateAnnotation;
+	readonly typeQueryMemberExpression: typeof F.typeQueryMemberExpression;
+	readonly typeQuerySubscriptExpression: typeof F.typeQuerySubscriptExpression;
+	readonly typeQueryCallExpression: typeof F.typeQueryCallExpression;
+	readonly typeQueryInstantiationExpression: typeof F.typeQueryInstantiationExpression;
 	readonly typeQuery: typeof F.typeQuery;
 	readonly indexTypeQuery: typeof F.indexTypeQuery;
 	readonly lookupType: typeof F.lookupType;
 	readonly mappedTypeClause: typeof F.mappedTypeClause;
 	readonly literalType: typeof F.literalType;
+	readonly _number: typeof F._number;
 	readonly flowMaybeType: typeof F.flowMaybeType;
 	readonly parenthesizedType: typeof F.parenthesizedType;
 	readonly typeArguments: typeof F.typeArguments;
@@ -555,13 +561,13 @@ export const ir: {
 	readonly types: typeof F.types;
 	readonly typeParametersElements: typeof F.typeParametersElements;
 	readonly tupleTypeMembers: typeof F.tupleTypeMembers;
-	readonly importClauseGroup: typeof F.importClauseGroup;
+	readonly ambientDeclarationGlobal: typeof F.ambientDeclarationGlobal;
+	readonly ambientDeclarationModule: typeof F.ambientDeclarationModule;
 	readonly objectTypeContent: typeof F.objectTypeContent;
 	readonly exportStatementDefault: typeof F.exportStatementDefault;
-	readonly arrowFunctionParameter: typeof F.arrowFunctionParameter;
-	readonly importClauseDefaultImport: typeof F.importClauseDefaultImport;
-	readonly exportStatementDefaultFrom: typeof F.exportStatementDefaultFrom;
-	readonly forHeaderLhs: typeof F.forHeaderLhs;
+	readonly exportStatementNamespaceExport: typeof F.exportStatementNamespaceExport;
+	readonly exportStatementTypeExport: typeof F.exportStatementTypeExport;
+	readonly exportStatementEqualsExport: typeof F.exportStatementEqualsExport;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly optionalChain: typeof F.buildOptionalChain;
@@ -582,8 +588,7 @@ export const ir: {
 	readonly regexFlags: typeof F.buildRegexFlags;
 	readonly number: typeof F.buildNumber;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
-	readonly accessibilityModifier: typeof F.buildAccessibilityModifier;
-	readonly predefinedType: typeof F.buildPredefinedType;
+	readonly templateChars: typeof F.buildTemplateChars;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
 	readonly abstractClass: typeof F.abstractClassDeclaration;
@@ -627,7 +632,6 @@ export const ir: {
 	readonly optional: typeof F.optionalParameter;
 	readonly parameter: typeof F.tupleParameter;
 	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly predefined: typeof F.buildPredefinedType;
 	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
 	readonly query: typeof F.typeQuery;
 	readonly readonly: typeof F.readonlyType;
@@ -770,6 +774,7 @@ export const ir: {
 	instantiationExpression: F.instantiationExpression,
 	importRequireClause: F.importRequireClause,
 	extendsClause: F.extendsClause,
+	extendsClauseSingle: F.extendsClauseSingle,
 	implementsClause: F.implementsClause,
 	ambientDeclaration: F.ambientDeclaration,
 	abstractClassDeclaration: F.abstractClassDeclaration,
@@ -789,6 +794,8 @@ export const ir: {
 	addingTypeAnnotation: F.addingTypeAnnotation,
 	optingTypeAnnotation: F.optingTypeAnnotation,
 	typeAnnotation: F.typeAnnotation,
+	typeQueryMemberExpressionInTypeAnnotation: F.typeQueryMemberExpressionInTypeAnnotation,
+	typeQueryCallExpressionInTypeAnnotation: F.typeQueryCallExpressionInTypeAnnotation,
 	asserts: F.asserts,
 	assertsAnnotation: F.assertsAnnotation,
 	tupleParameter: F.tupleParameter,
@@ -803,11 +810,16 @@ export const ir: {
 	genericType: F.genericType,
 	typePredicate: F.typePredicate,
 	typePredicateAnnotation: F.typePredicateAnnotation,
+	typeQueryMemberExpression: F.typeQueryMemberExpression,
+	typeQuerySubscriptExpression: F.typeQuerySubscriptExpression,
+	typeQueryCallExpression: F.typeQueryCallExpression,
+	typeQueryInstantiationExpression: F.typeQueryInstantiationExpression,
 	typeQuery: F.typeQuery,
 	indexTypeQuery: F.indexTypeQuery,
 	lookupType: F.lookupType,
 	mappedTypeClause: F.mappedTypeClause,
 	literalType: F.literalType,
+	_number: F._number,
 	flowMaybeType: F.flowMaybeType,
 	parenthesizedType: F.parenthesizedType,
 	typeArguments: F.typeArguments,
@@ -833,13 +845,13 @@ export const ir: {
 	types: F.types,
 	typeParametersElements: F.typeParametersElements,
 	tupleTypeMembers: F.tupleTypeMembers,
-	importClauseGroup: F.importClauseGroup,
+	ambientDeclarationGlobal: F.ambientDeclarationGlobal,
+	ambientDeclarationModule: F.ambientDeclarationModule,
 	objectTypeContent: F.objectTypeContent,
 	exportStatementDefault: F.exportStatementDefault,
-	arrowFunctionParameter: F.arrowFunctionParameter,
-	importClauseDefaultImport: F.importClauseDefaultImport,
-	exportStatementDefaultFrom: F.exportStatementDefaultFrom,
-	forHeaderLhs: F.forHeaderLhs,
+	exportStatementNamespaceExport: F.exportStatementNamespaceExport,
+	exportStatementTypeExport: F.exportStatementTypeExport,
+	exportStatementEqualsExport: F.exportStatementEqualsExport,
 
 	// Keyword factories
 	import: F.buildImport,
@@ -864,8 +876,7 @@ export const ir: {
 	regexFlags: F.buildRegexFlags,
 	number: F.buildNumber,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
-	accessibilityModifier: F.buildAccessibilityModifier,
-	predefinedType: F.buildPredefinedType,
+	templateChars: F.buildTemplateChars,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
 
@@ -911,7 +922,6 @@ export const ir: {
 	optional: F.optionalParameter,
 	parameter: F.tupleParameter,
 	parenthesized: F.parenthesizedExpression,
-	predefined: F.buildPredefinedType,
 	privateIdentifier: F.buildPrivatePropertyIdentifier,
 	query: F.typeQuery,
 	readonly: F.readonlyType,

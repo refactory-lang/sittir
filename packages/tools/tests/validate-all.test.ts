@@ -1,17 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { resolve } from 'node:path';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
 import { validateFactoryRenderParse } from '../src/validate/factory-render-parse.ts';
-
-/**
- * Resolve the on-disk `.jinja` templates directory for `grammar`.
- * The validators (post-feature-011) auto-detect directory vs `.yaml`
- * and dispatch accordingly.
- */
-function templatesPath(grammar: string): string {
-	return resolve(new URL('../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
-}
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
@@ -68,7 +58,7 @@ for (const grammar of GRAMMARS) {
 		});
 
 		it('generates without errors', () => {
-			expect(result.jinjaTemplates.bodies.size).toBeGreaterThan(0);
+			expect(result.templates.bodies.size).toBeGreaterThan(0);
 			expect(result.factories).toBeDefined();
 			expect(result.types).toBeDefined();
 			expect(result.from).toBeDefined();
@@ -85,7 +75,7 @@ for (const grammar of GRAMMARS) {
 			const ceiling = RENDER_PARSE_CEILINGS[grammar]!;
 
 			it('parse → readNode → render → reparse preserves structure', async () => {
-				const rt = await validateReadRenderParse(grammar, templatesPath(grammar));
+				const rt = await validateReadRenderParse(grammar);
 				expect(rt.pass).toBeGreaterThan(0);
 				// Ceiling: fail count must not regress above known baseline
 				expect(rt.fail, `read-render-parse regressions (ceiling ${ceiling.readRenderParse})`).toBeLessThanOrEqual(
@@ -94,7 +84,7 @@ for (const grammar of GRAMMARS) {
 			}, 30_000);
 
 			it('factory render-parse — factory → render → parse matches', async () => {
-				const frt = await validateFactoryRenderParse(grammar, templatesPath(grammar));
+				const frt = await validateFactoryRenderParse(grammar);
 				expect(frt.pass).toBeGreaterThan(0);
 				expect(
 					frt.fail,

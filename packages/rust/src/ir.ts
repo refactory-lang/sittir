@@ -16,9 +16,6 @@ import * as F from './factories/index.js';
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
 export const synonym = {
-	boolean(value: boolean): ReturnType<typeof F.buildBooleanLiteral> {
-		return F.buildBooleanLiteral(value ? 'true' : 'false');
-	},
 	number: Object.assign(
 		function number(value: number): ReturnType<typeof F.buildIntegerLiteral> | ReturnType<typeof F.buildFloatLiteral> {
 			return Number.isInteger(value) ? F.buildIntegerLiteral(String(value)) : F.buildFloatLiteral(String(value));
@@ -182,7 +179,6 @@ export const nonSpecialToken: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -194,7 +190,6 @@ export const nonSpecialToken: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -278,7 +273,6 @@ export const expressionExceptRange: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -323,7 +317,6 @@ export const expressionExceptRange: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -370,7 +363,6 @@ export const expression: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -416,7 +408,6 @@ export const expression: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -496,7 +487,6 @@ export const condition: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -543,7 +533,6 @@ export const condition: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
@@ -582,7 +571,6 @@ export const pattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
@@ -606,7 +594,6 @@ export const pattern: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral,
@@ -632,14 +619,12 @@ export const literal: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral
 };
@@ -648,7 +633,6 @@ export const literalPattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly char: typeof F.buildCharLiteral;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
@@ -656,7 +640,6 @@ export const literalPattern: {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
 	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral
@@ -840,21 +823,8 @@ export const ir: {
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
 	readonly referenceExpressionRawMut: typeof F.referenceExpressionRawMut;
 	readonly implItemBody: typeof F.implItemBody;
-	readonly attributeInput: typeof F.attributeInput;
-	readonly closureExpressionExpr: typeof F.closureExpressionExpr;
-	readonly visibilityModifierPub: typeof F.visibilityModifierPub;
-	readonly visibilityModifierInPath: typeof F.visibilityModifierInPath;
-	readonly functionTypeTraitForm: typeof F.functionTypeTraitForm;
-	readonly functionTypeFnForm: typeof F.functionTypeFnForm;
-	readonly macroDefinitionParen: typeof F.macroDefinitionParen;
-	readonly macroDefinitionBracket: typeof F.macroDefinitionBracket;
-	readonly macroDefinitionBrace: typeof F.macroDefinitionBrace;
-	readonly attributedFieldDeclaration: typeof F.attributedFieldDeclaration;
-	readonly attributedEnumVariant: typeof F.attributedEnumVariant;
-	readonly attributedParameter: typeof F.attributedParameter;
-	readonly attributedTypeParameter: typeof F.attributedTypeParameter;
-	readonly attributedArgument: typeof F.attributedArgument;
-	readonly typeArgument: typeof F.typeArgument;
+	readonly implItemPositiveClause: typeof F.implItemPositiveClause;
+	readonly implItemNegativeClause: typeof F.implItemNegativeClause;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -864,17 +834,22 @@ export const ir: {
 	readonly self: typeof F.buildSelf;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
-	readonly fragmentSpecifier: typeof F.buildFragmentSpecifier;
 	readonly integerLiteral: typeof F.buildIntegerLiteral;
 	readonly charLiteral: typeof F.buildCharLiteral;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
-	readonly booleanLiteral: typeof F.buildBooleanLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly shebang: typeof F.buildShebang;
 	readonly metavariable: typeof F.buildMetavariable;
+	readonly stringLiteralOpen: typeof F.buildStringLiteralOpen;
+	readonly lineCommentRegularDslash: typeof F.buildLineCommentRegularDslash;
+	readonly lineCommentContent: typeof F.buildLineCommentContent;
 	readonly stringContent: typeof F.buildStringContent;
+	readonly rawStringLiteralStart: typeof F.buildRawStringLiteralStart;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
+	readonly rawStringLiteralEnd: typeof F.buildRawStringLiteralEnd;
 	readonly floatLiteral: typeof F.buildFloatLiteral;
+	readonly blockCommentContent: typeof F.buildBlockCommentContent;
+	readonly lineDocContent: typeof F.buildLineDocContent;
 	readonly abstract: typeof F.abstractType;
 	readonly array: typeof F.arrayType;
 	readonly as: typeof F.useAsClause;
@@ -884,7 +859,6 @@ export const ir: {
 	readonly await: typeof F.awaitExpression;
 	readonly binary: typeof F.binaryExpression;
 	readonly binding: typeof F.tokenBindingPattern;
-	readonly boolean: typeof F.buildBooleanLiteral;
 	readonly bounded: typeof F.boundedType;
 	readonly break: typeof F.breakExpression;
 	readonly call: typeof F.callExpression;
@@ -1129,21 +1103,8 @@ export const ir: {
 	tupleExpressionElements: F.tupleExpressionElements,
 	referenceExpressionRawMut: F.referenceExpressionRawMut,
 	implItemBody: F.implItemBody,
-	attributeInput: F.attributeInput,
-	closureExpressionExpr: F.closureExpressionExpr,
-	visibilityModifierPub: F.visibilityModifierPub,
-	visibilityModifierInPath: F.visibilityModifierInPath,
-	functionTypeTraitForm: F.functionTypeTraitForm,
-	functionTypeFnForm: F.functionTypeFnForm,
-	macroDefinitionParen: F.macroDefinitionParen,
-	macroDefinitionBracket: F.macroDefinitionBracket,
-	macroDefinitionBrace: F.macroDefinitionBrace,
-	attributedFieldDeclaration: F.attributedFieldDeclaration,
-	attributedEnumVariant: F.attributedEnumVariant,
-	attributedParameter: F.attributedParameter,
-	attributedTypeParameter: F.attributedTypeParameter,
-	attributedArgument: F.attributedArgument,
-	typeArgument: F.typeArgument,
+	implItemPositiveClause: F.implItemPositiveClause,
+	implItemNegativeClause: F.implItemNegativeClause,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,
@@ -1157,17 +1118,22 @@ export const ir: {
 	crate: F.buildCrate,
 
 	// Leaf node factories
-	fragmentSpecifier: F.buildFragmentSpecifier,
 	integerLiteral: F.buildIntegerLiteral,
 	charLiteral: F.buildCharLiteral,
 	escapeSequence: F.buildEscapeSequence,
-	booleanLiteral: F.buildBooleanLiteral,
 	identifier: F.buildIdentifier,
 	shebang: F.buildShebang,
 	metavariable: F.buildMetavariable,
+	stringLiteralOpen: F.buildStringLiteralOpen,
+	lineCommentRegularDslash: F.buildLineCommentRegularDslash,
+	lineCommentContent: F.buildLineCommentContent,
 	stringContent: F.buildStringContent,
+	rawStringLiteralStart: F.buildRawStringLiteralStart,
 	rawStringLiteralContent: F.buildRawStringLiteralContent,
+	rawStringLiteralEnd: F.buildRawStringLiteralEnd,
 	floatLiteral: F.buildFloatLiteral,
+	blockCommentContent: F.buildBlockCommentContent,
+	lineDocContent: F.buildLineDocContent,
 
 	// Supertype-stripped short aliases
 	abstract: F.abstractType,
@@ -1179,7 +1145,6 @@ export const ir: {
 	await: F.awaitExpression,
 	binary: F.binaryExpression,
 	binding: F.tokenBindingPattern,
-	boolean: F.buildBooleanLiteral,
 	bounded: F.boundedType,
 	break: F.breakExpression,
 	call: F.callExpression,

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 import { format as oxfmtFormat } from 'oxfmt';
@@ -23,7 +23,6 @@ import { getEnrichUnaliasDiagnostics } from './dsl/enrich.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
-import { writeJinjaTemplates } from './emitters/templates.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -239,10 +238,15 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'is.ts'), result.is);
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
-	writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
+	writeFileSync(
+		join(dirname(outDir), '.sittir', 'render-bodies.json'),
+		JSON.stringify(Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => a.localeCompare(b))), null, '\t') +
+			'\n',
+		'utf8'
+	);
 
 	{
-		const census = result.jinjaTemplates.seamCensus;
+		const census = result.templates.seamCensus;
 		const total = census.boundaries.length;
 		console.log(
 			`  seam census: ${total} template boundaries — ` +
@@ -280,21 +284,9 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		const emit = renderModule.emit;
 		await writeFile(emit.hashRs.path, emit.hashRs.contents);
 		await writeFile(emit.hashTs.path, emit.hashTs.contents);
-		await writeFile(emit.templatesRs.path, emit.templatesRs.contents);
 		await writeFile(emit.transportRs.path, emit.transportRs.contents);
 		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
-		const dstTemplatesDir = renderModule.templateCopies.directory;
-		mkdirSync(dstTemplatesDir, { recursive: true });
-		const emittedNames = new Set<string>();
-		for (const file of renderModule.templateCopies.files) {
-			await writeFile(file.path, file.contents);
-			emittedNames.add(file.path.split('/').pop() ?? file.path);
-		}
-		for (const existing of readdirSync(dstTemplatesDir)) {
-			if (!existing.endsWith('.jinja')) continue;
-			if (!emittedNames.has(existing)) rmSync(join(dstTemplatesDir, existing), { force: true });
-		}
 		if (result.kindIds) {
 			const kindIdsPath = `${renderModuleSrcDir(grammarTyped)}/kind_ids.rs`;
 			await writeFile(kindIdsPath, result.kindIds);
@@ -303,10 +295,9 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`  → Rust render module regenerated for ${grammar}:`);
 		console.log(`    ${emit.hashRs.path}`);
 		console.log(`    ${emit.hashTs.path}`);
-		console.log(`    ${emit.templatesRs.path}`);
+		console.log(`    ${emit.transportRs.path}`);
 		console.log(`    ${emit.optionsRs.path}`);
 		console.log(`    ${emit.libRs.path}`);
-		console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
 
 		if (buildNative !== false) {
 			const nativeCrate = `rust/crates/sittir-${grammar}`;
@@ -381,7 +372,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	console.log(`
 Done! Generated:
-  templates/*.jinja, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
+  .sittir/render-bodies.json, grammar.ts, types.ts, factories/, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
 	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);

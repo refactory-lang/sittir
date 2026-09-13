@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 
 export interface DefectHistogramOptions {
 	grammar: string;
@@ -54,9 +53,7 @@ function kindOfLabel(label: string): string {
  */
 export async function run(opts: DefectHistogramOptions): Promise<number> {
 	const { validateReadRenderParse } = await import('./read-render-parse.ts');
-	const tp = resolve(new URL('../../../..', import.meta.url).pathname, `packages/${opts.grammar}/templates`);
-
-	const r = await validateReadRenderParse(opts.grammar, tp, { backend: 'native' });
+	const r = await validateReadRenderParse(opts.grammar, { backend: 'native' });
 	const groups = new Map<string, { count: number; entries: Set<string> }>();
 	for (const e of r.errors) {
 		const sig = defectSignature(kindOfLabel(e.name), e.message);

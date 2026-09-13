@@ -106,6 +106,7 @@ export const satisfiesExpression: Hoisted<typeof O.satisfiesExpression> = hoist(
 export const instantiationExpression: Hoisted<typeof O.instantiationExpression> = hoist(O.instantiationExpression);
 export const importRequireClause: Hoisted<typeof O.importRequireClause> = hoist(O.importRequireClause);
 export const extendsClause: Hoisted<typeof O.extendsClause> = hoist(O.extendsClause);
+export const extendsClauseSingle: Hoisted<typeof O.extendsClauseSingle> = hoist(O.extendsClauseSingle);
 export const implementsClause: Hoisted<typeof O.implementsClause> = hoist(O.implementsClause);
 export const ambientDeclaration: Hoisted<typeof O.ambientDeclaration> = hoist(O.ambientDeclaration);
 export const abstractClassDeclaration: Hoisted<typeof O.abstractClassDeclaration> = hoist(O.abstractClassDeclaration);
@@ -125,6 +126,11 @@ export const omittingTypeAnnotation: Hoisted<typeof O.omittingTypeAnnotation> = 
 export const addingTypeAnnotation: Hoisted<typeof O.addingTypeAnnotation> = hoist(O.addingTypeAnnotation);
 export const optingTypeAnnotation: Hoisted<typeof O.optingTypeAnnotation> = hoist(O.optingTypeAnnotation);
 export const typeAnnotation: Hoisted<typeof O.typeAnnotation> = hoist(O.typeAnnotation);
+export const typeQueryMemberExpressionInTypeAnnotation: Hoisted<typeof O.typeQueryMemberExpressionInTypeAnnotation> =
+	hoist(O.typeQueryMemberExpressionInTypeAnnotation);
+export const typeQueryCallExpressionInTypeAnnotation: Hoisted<typeof O.typeQueryCallExpressionInTypeAnnotation> = hoist(
+	O.typeQueryCallExpressionInTypeAnnotation
+);
 export const asserts: Hoisted<typeof O.asserts> = hoist(O.asserts);
 export const assertsAnnotation: Hoisted<typeof O.assertsAnnotation> = hoist(O.assertsAnnotation);
 export const tupleParameter: Hoisted<typeof O.tupleParameter> = hoist(O.tupleParameter);
@@ -139,11 +145,22 @@ export const conditionalType: Hoisted<typeof O.conditionalType> = hoist(O.condit
 export const genericType: Hoisted<typeof O.genericType> = hoist(O.genericType);
 export const typePredicate: Hoisted<typeof O.typePredicate> = hoist(O.typePredicate);
 export const typePredicateAnnotation: Hoisted<typeof O.typePredicateAnnotation> = hoist(O.typePredicateAnnotation);
+export const typeQueryMemberExpression: Hoisted<typeof O.typeQueryMemberExpression> = hoist(
+	O.typeQueryMemberExpression
+);
+export const typeQuerySubscriptExpression: Hoisted<typeof O.typeQuerySubscriptExpression> = hoist(
+	O.typeQuerySubscriptExpression
+);
+export const typeQueryCallExpression: Hoisted<typeof O.typeQueryCallExpression> = hoist(O.typeQueryCallExpression);
+export const typeQueryInstantiationExpression: Hoisted<typeof O.typeQueryInstantiationExpression> = hoist(
+	O.typeQueryInstantiationExpression
+);
 export const typeQuery: Hoisted<typeof O.typeQuery> = hoist(O.typeQuery);
 export const indexTypeQuery: Hoisted<typeof O.indexTypeQuery> = hoist(O.indexTypeQuery);
 export const lookupType: Hoisted<typeof O.lookupType> = hoist(O.lookupType);
 export const mappedTypeClause: Hoisted<typeof O.mappedTypeClause> = hoist(O.mappedTypeClause);
 export const literalType: Hoisted<typeof O.literalType> = hoist(O.literalType);
+export const _number: Hoisted<typeof O._number> = hoist(O._number);
 export const flowMaybeType: Hoisted<typeof O.flowMaybeType> = hoist(O.flowMaybeType);
 export const parenthesizedType: Hoisted<typeof O.parenthesizedType> = hoist(O.parenthesizedType);
 export const typeArguments: Hoisted<typeof O.typeArguments> = hoist(O.typeArguments);
@@ -169,14 +186,16 @@ export const enumBodyElements: Hoisted<typeof O.enumBodyElements> = hoist(O.enum
 export const types: Hoisted<typeof O.types> = hoist(O.types);
 export const typeParametersElements: Hoisted<typeof O.typeParametersElements> = hoist(O.typeParametersElements);
 export const tupleTypeMembers: Hoisted<typeof O.tupleTypeMembers> = hoist(O.tupleTypeMembers);
-export const importClauseGroup: Hoisted<typeof O.importClauseGroup> = hoist(O.importClauseGroup);
+export const ambientDeclarationGlobal: Hoisted<typeof O.ambientDeclarationGlobal> = hoist(O.ambientDeclarationGlobal);
+export const ambientDeclarationModule: Hoisted<typeof O.ambientDeclarationModule> = hoist(O.ambientDeclarationModule);
 export const objectTypeContent: Hoisted<typeof O.objectTypeContent> = hoist(O.objectTypeContent);
 export const exportStatementDefault: Hoisted<typeof O.exportStatementDefault> = hoist(O.exportStatementDefault);
-export const arrowFunctionParameter: Hoisted<typeof O.arrowFunctionParameter> = hoist(O.arrowFunctionParameter);
-export const importClauseDefaultImport: Hoisted<typeof O.importClauseDefaultImport> = hoist(
-	O.importClauseDefaultImport
+export const exportStatementNamespaceExport: Hoisted<typeof O.exportStatementNamespaceExport> = hoist(
+	O.exportStatementNamespaceExport
 );
-export const exportStatementDefaultFrom: Hoisted<typeof O.exportStatementDefaultFrom> = hoist(
-	O.exportStatementDefaultFrom
+export const exportStatementTypeExport: Hoisted<typeof O.exportStatementTypeExport> = hoist(
+	O.exportStatementTypeExport
 );
-export const forHeaderLhs: Hoisted<typeof O.forHeaderLhs> = hoist(O.forHeaderLhs);
+export const exportStatementEqualsExport: Hoisted<typeof O.exportStatementEqualsExport> = hoist(
+	O.exportStatementEqualsExport
+);

@@ -83,7 +83,7 @@ function entry(): GrammarEntry {
 	};
 }
 
-function baseline(backend: 'js' | 'native' = 'js'): BackendBaseline {
+function baseline(backend: 'native' = 'native'): BackendBaseline {
 	return {
 		backend,
 		commit: '0000000',
@@ -121,6 +121,37 @@ describe('checkRegression', () => {
 			// Sanity: summary mentions both backends or at least confirms parity.
 			expect(verdict.summary.length).toBeGreaterThan(0);
 		}
+	});
+
+	it('left-out rise detected — a kind the regen newly leaves out names its path', () => {
+		const base = baseline();
+		const head = clone(base);
+		head.grammars.typescript.parityFixtures.leftOutByKind = { for_statement: 1 };
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('left-out-rise');
+		expect(verdict.details.path).toBe('grammars.typescript.parityFixtures.leftOutByKind.for_statement');
+		expect(verdict.details.before).toBe(0);
+		expect(verdict.details.after).toBe(1);
+	});
+
+	it('left-out shrink passes — a kind the template reproduces again may leave the list', () => {
+		const base = baseline();
+		base.grammars.typescript.parityFixtures.leftOutByKind = { for_statement: 2, program: 6 };
+		const head = clone(base);
+		head.grammars.typescript.parityFixtures.leftOutByKind = { program: 5 };
+		const verdict = checkRegression(base, head);
+		expect(verdict.ok).toBe(true);
+	});
+
+	it('left-out keys must be sorted — schema violation otherwise', () => {
+		const base = baseline();
+		const head = clone(base);
+		head.grammars.rust.parityFixtures.leftOutByKind = { program: 1, block: 1 };
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('schema-violation');
+		expect(verdict.details.path).toBe('head.grammars.rust.parityFixtures.leftOutByKind');
 	});
 
 	it('pass-count drop detected — names the dropped path', () => {
@@ -261,7 +292,7 @@ describe('checkRegression', () => {
 	});
 
 	it('backend mismatch — fail (schema)', () => {
-		const base = baseline('js');
+		const base = { ...baseline(), backend: 'js' as unknown as BackendBaseline['backend'] };
 		const head = clone(base);
 		head.backend = 'native';
 		const verdict = checkRegression(base, head);

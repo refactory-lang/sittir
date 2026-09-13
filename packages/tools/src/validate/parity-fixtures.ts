@@ -29,8 +29,10 @@ import {
 	type RoundTripFixture
 } from './read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
+import { loadNativeEngine } from './common.ts';
+import type { AnyNodeData } from '@sittir/types';
 
-const { renderModuleFixturesPath } = await load('renderModulePaths');
+const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
 
 /** FR-011 exception kinds — at least one fixture of each must appear
  *  in the extracted corpus for its matching grammar. See spec 012
@@ -47,6 +49,10 @@ export interface ExtractResult {
 	/** Render + round-trip counts for diagnostic logging. */
 	renderCount: number;
 	roundTripCount: number;
+	/** Render fixtures left out, counted by kind, because their input,
+	 *  detached from the tree the validator rendered it from, no longer
+	 *  renders the validated bytes. Keys sorted ascending. */
+	leftOutByKind: Record<string, number>;
 	/** Kinds covered by at least one roundtrip fixture. */
 	coveredKinds: Set<string>;
 	/**
@@ -70,14 +76,27 @@ export interface ExtractResult {
  *
  * @throws if a grammar's FR-011 required kinds aren't covered.
  */
-export async function extractParityFixtures(grammar: string, templatesPath: string): Promise<ExtractResult> {
+export async function extractParityFixtures(grammar: string): Promise<ExtractResult> {
 	const fixtures: ParityFixture[] = [];
 	const coveredKinds = new Set<string>();
 	const warnings: string[] = [];
 	let renderCount = 0;
 	let roundTripCount = 0;
+	const leftOut = new Map<string, number>();
 
-	await validateReadRenderParse(grammar, templatesPath, {
+	const engine = await loadNativeEngine(grammar);
+	const reproduces = (fx: RenderFixture): boolean => {
+		if (JSON.stringify(fx.input).includes('"$nodeHandle"')) {
+			throw new Error(`parity-fixtures[${grammar}]: a render fixture input still carries a coordinate`);
+		}
+		try {
+			return engine.render(fx.input as AnyNodeData).toString() === fx.expectedOutput;
+		} catch {
+			return false;
+		}
+	};
+
+	await validateReadRenderParse(grammar, {
 		backend: 'native',
 		// Deep materialization: parity fixtures capture FULL structural
 		// renders (every slot populated), not stub-bearing shallow data whose
@@ -85,12 +104,17 @@ export async function extractParityFixtures(grammar: string, templatesPath: stri
 		// kinds (rust: 900 fixtures / 69 kinds vs 277 / 41 shallow).
 		recursive: true,
 		onFixture: (fx) => {
-			fixtures.push(fx);
-			if (fx.kind === 'render') renderCount++;
-			else {
+			if (fx.kind === 'render') {
+				if (!reproduces(fx)) {
+					leftOut.set(fx.pattern, (leftOut.get(fx.pattern) ?? 0) + 1);
+					return;
+				}
+				renderCount++;
+			} else {
 				roundTripCount++;
 				coveredKinds.add(fx.pattern);
 			}
+			fixtures.push(fx);
 		}
 	});
 
@@ -122,7 +146,9 @@ export async function extractParityFixtures(grammar: string, templatesPath: stri
 		);
 	}
 
-	return { grammar, fixtures, renderCount, roundTripCount, coveredKinds, warnings };
+	const leftOutByKind: Record<string, number> = {};
+	for (const kind of [...leftOut.keys()].sort()) leftOutByKind[kind] = leftOut.get(kind)!;
+	return { grammar, fixtures, renderCount, roundTripCount, leftOutByKind, coveredKinds, warnings };
 }
 
 /**
@@ -141,6 +167,17 @@ export function serializeFixtures(fixtures: readonly ParityFixture[]): string {
  *  its test inputs. */
 export function fixturesOutputPath(grammar: string): string {
 	return renderModuleFixturesPath(grammar as 'rust' | 'typescript' | 'python');
+}
+
+/** The render fixtures a regen left out, by kind, beside the fixture file:
+ *  the baseline ratchet reads it, so a kind whose template stops
+ *  reproducing its source fails the build instead of vanishing. */
+export function leftOutOutputPath(grammar: string): string {
+	return renderModuleLeftOutPath(grammar as 'rust' | 'typescript' | 'python');
+}
+
+export function serializeLeftOut(leftOutByKind: Readonly<Record<string, number>>): string {
+	return JSON.stringify(leftOutByKind, null, 2) + '\n';
 }
 
 // Re-export the fixture types so cli.ts / tests can reference them

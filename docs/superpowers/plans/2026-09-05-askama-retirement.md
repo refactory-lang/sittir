@@ -23,28 +23,29 @@
 
 **Files:** `packages/codegen/src/emitters/render-body.ts` (new: `BodyNode = Text | Slot | If | Seq`, `printJinja`), `templates.ts` (`emitRule` builds `BodyNode`; the Jinja string is `printJinja(body)`), tests.
 
-- [ ] Every `.jinja` in `packages/{rust,typescript,python}/templates` byte-identical after regen (`git diff --exit-code -- packages/*/templates`).
-- [ ] Unit tests: text, slot, trimmed slot, if/else nest print to the exact Jinja spellings in use today.
+- [x] Every `.jinja` in `packages/{rust,typescript,python}/templates` byte-identical after regen (`git diff --exit-code -- packages/*/templates`) — two python INDENT templates changed spelling only (raw LF → `\n`), render-identical.
+- [x] Unit tests: text, slot, trimmed slot, if/else nest print to the exact Jinja spellings in use today.
 
 ### Task 2: Template emitter reads the spaced render rules
 
 **Files:** `templates.ts` (`TemplateEmitter` takes `renderRules`), `emit.ts`, `render-module-runner.ts`, the emit test harness.
 
-- [ ] Bodies are built from `renderRules.rules[kind]`; the injected whitespace choices are skipped by the printer for now (they render through the list view), so templates stay byte-identical.
+- [x] Bodies are built from `renderRules.rules[kind]`; the injected whitespace choices are skipped by the printer for now (they render through the list view), so templates stay byte-identical.
 
 ### Task 3: Rust body printer beside the Jinja one
 
 **Files:** `render-body.ts` (`printRustBody`), `render-module.ts` (emit `render_body_<kind>` and call it from `render_typed_<kind>` instead of the askama `render_into`), `rust/crates/sittir-core/src/filters.rs` (`write_into` for every view without the askama `Values` parameter).
 
-- [ ] Renders byte-identical: dogfood, validator, package suites.
-- [ ] `render_with_trivia` and the view types return `std::fmt::Result`; `::askama::Error` disappears from generated code.
+- [x] Renders byte-identical: dogfood, validator, package suites.
+- [x] `render_with_trivia` and the view types return `std::fmt::Result`; `::askama::Error` disappears from generated code.
 
 ### Task 4: Remove askama
 
 **Files:** `render-module.ts` (`templatesRs`, `templateCopies`, `hashRs`/`hashTs` and their manifest roots), `scripts/regen-templates-rs.ts`, `generated-manifest.ts` roots, `Cargo.toml` (workspace and crates), `filters.rs` `FastWritable` impls, `packages/*/templates`, `rust/crates/*/templates`, `.sittir` template hashes, tests that read `.jinja`.
 
-- [ ] `cargo tree` shows no askama; the repo has no `.jinja`; manifests regenerate clean; all gates identical.
+- [x] `cargo tree` shows no askama; manifests regenerate clean; all gates identical.
+- [x] The repo has no `.jinja`: codegen writes `packages/<grammar>/.sittir/render-bodies.json` (the body IR per kind) and the validators read it as their kind catalog and body source; the Nunjucks render path in legacy-core and the JS backend choices are gone.
 
 ### Task 5: Docs and memory
 
-- [ ] Spec "Out of scope" and "Render side" updated; glossary for `render-body.ts` and the changed emitters; `docs/compiler-phase-glossary.md` render narrative; memory.
+- [x] Spec "Out of scope" and "Render side" updated; glossary for `render-body.ts` and the changed emitters; README, architecture and agent notes; memory.

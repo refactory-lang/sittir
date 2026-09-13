@@ -3,13 +3,11 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
-	AssembledEnum,
 	AssembledSupertype,
 	AssembledList,
 	AssembledKeyword,
 	AssembledNonterminal,
-	valueParseKindsOf,
-	valueParseLabelsOf
+	valueParseKindsOf
 } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 
@@ -31,9 +29,12 @@ import {
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
 	kindEnumAltIdPairs,
-	fieldTypeComponents
+	fieldTypeComponents,
+	collectConcreteStorageKeys,
+	expandToConcreteParseKinds,
+	slotSeparatorTexts
 } from './shared.ts';
-import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
+import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
 import {
 	collectKindEntries,
@@ -46,30 +47,6 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
-	const expanded: string[] = [];
-	const seen = new Set<string>();
-	function add(name: string): void {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		if (seen.has(normalized)) return;
-		seen.add(normalized);
-		expanded.push(normalized);
-	}
-	for (const name of names) {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
-		if (!(node instanceof AssembledSupertype)) {
-			add(name);
-			continue;
-		}
-		for (const v of node.transitiveParseKinds ?? []) {
-			const parseName = v.parseKind?.name;
-			if (parseName !== undefined) add(parseName);
-		}
-	}
-	return expanded;
-}
-
 interface SlotModel {
 	readonly name: string;
 	readonly propertyName: string;
@@ -106,27 +83,6 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		if (!node.rawFactoryName) return;
-		const result = emitFieldCarryingWrap(
-			{
-				kind: node.kind,
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				exposesChildren: wrapExposesChildren(node, nodeMap)
-			},
-			node.slots,
-			[],
-			kindEntries,
-			nodeMap
-		);
-		output.push(renameUnusedTreeParam(result));
-	}
-
-	export function group(
-		output: string[],
-		node: BranchLikeForWrap,
-		kindEntries: readonly KindEnumEntry[] | undefined,
-		nodeMap: NodeMap
-	): void {
 		const result = emitFieldCarryingWrap(
 			{
 				kind: node.kind,
@@ -180,7 +136,8 @@ interface ResolveSlotDrillConfig {
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
 	readonly kindEnumAltIdPairs?: readonly (readonly [number, number])[];
 	readonly forceUnknownElement?: boolean;
-	readonly elidedSeparatorIdsExpr?: string;
+	readonly separatorIdsExpr?: string;
+	readonly elided?: boolean;
 }
 
 function resolveSlotDrillExprs(
@@ -190,20 +147,24 @@ function resolveSlotDrillExprs(
 	storeExpr: string;
 	accessorBody: string;
 } {
-	const slotStoreExpr = resolveSlotStoreExpr(
+	const rawStoreExpr = resolveSlotStoreExpr(
 		slot,
 		config.dataExpr,
 		config.candidateStorageKeys,
 		config.forceUnknownElement
 	);
-	if (config.elidedSeparatorIdsExpr !== undefined && slot.arity === 'many') {
+	if (config.separatorIdsExpr !== undefined && slot.arity === 'many' && config.elided) {
 		const allowedArg =
 			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
 		return {
-			storeExpr: `splitElidedWrapSlot(${slotStoreExpr}, ${config.elidedSeparatorIdsExpr}, ${allowedArg})`,
+			storeExpr: `splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg})`,
 			accessorBody: resolveSlotAccessorBody(slot, `${config.elemType} | undefined`)
 		};
 	}
+	const slotStoreExpr =
+		config.separatorIdsExpr !== undefined && slot.arity === 'many'
+			? `dropWireDelimiters(${rawStoreExpr}, ${config.separatorIdsExpr})`
+			: rawStoreExpr;
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
@@ -302,21 +263,6 @@ function resolveUnnamedSlotConfig(
 
 function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
-}
-
-function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
-	if (!slot.isUnnamed) return undefined;
-	const labelNames = valueParseLabelsOf(slot);
-	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
-	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
-	const concrete = kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [];
-	if (labelNames.length === 0 && concrete.length === 0) return undefined;
-	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
-	const legacyKey = `_${slot.name}`;
-	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
-		return undefined;
-	}
-	return storageKeys;
 }
 
 function computeConsumedCandidateKeys(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): readonly string[] {
@@ -421,7 +367,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		`  data = _keepModelledSlots(data, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
 		`  const kindKeyed = _firstKindKeyedWrapChild(data, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
 		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)});`,
-		`  if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {`,
+		`  if (filtered === undefined && (typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)) {`,
 		`    return drillInSelf<T.${node.typeName}>(data as T.${node.typeName}, tree);`,
 		`  }`,
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
@@ -578,7 +524,9 @@ function emitSeparatedListWrap(
 		const candidateExprs = candidateKindNames
 			.filter((k) => hasCatalogEntry(kindEntries, k))
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
-		lines.push(`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]),`);
+		lines.push(
+			`    _separator: _separatorKindOf(data, [${candidateExprs.join(', ')}]) ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)},`
+		);
 	}
 	const bothFlanksOptional = node.leadingDelimiter === 'optional' && node.trailingDelimiter === 'optional';
 	const delimiterParts: string[] = [];
@@ -650,11 +598,6 @@ function emitFieldStorageLines(
 	const collidedReclaimKinds = computeCollidedReclaimKinds(slots, ownerKind, nodeMap, kindEntries);
 	for (const f of slots) {
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
-		const allowedKinds =
-			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
-				: undefined;
 		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
 		const reclaimKindIdsExpr =
 			storageInfo.kind === 'kindEnum'
@@ -669,13 +612,13 @@ function emitFieldStorageLines(
 						return ids.length > 0 ? `[${ids.join(', ')}]` : undefined;
 					})()
 				: undefined;
+		const elided = hasOptionalElements(f);
 		const { storeExpr } = resolveSlotDrillExprs(f, {
 			dataExpr,
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
-			allowedKinds,
 			candidateStorageKeys,
 			reclaimKindIdsExpr,
 			kindEnumTextIdPairs:
@@ -686,22 +629,20 @@ function emitFieldStorageLines(
 				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
 					? kindEnumAltIdPairs(f, nodeMap)
 					: undefined,
-			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
+			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			elided
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
 }
 
-function elidedSeparatorIdsExprOf(
+function separatorIdsExprOf(
 	f: AssembledNonterminal,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	elided: boolean
 ): string | undefined {
-	if (!hasOptionalElements(f) || !kindEntries) return undefined;
-	const sepTexts = [
-		...new Set(
-			f.values.filter((v) => v.optionalElement === true && v.separator !== undefined).map((v) => v.separator as string)
-		)
-	];
+	if (!kindEntries) return undefined;
+	const sepTexts = slotSeparatorTexts(f, elided);
 	if (sepTexts.length === 0) return undefined;
 	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
 }
@@ -716,19 +657,15 @@ function emitFieldAccessorLines(
 	for (const f of slots) {
 		const propName = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
-		const allowedKinds =
-			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
-				: undefined;
+		const elided = hasOptionalElements(f);
 		const { accessorBody } = resolveSlotDrillExprs(f, {
 			dataExpr,
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
-			allowedKinds,
-			elidedSeparatorIdsExpr: elidedSeparatorIdsExprOf(f, kindEntries)
+			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			elided
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
@@ -934,11 +871,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
-	emitGroup(node: BranchLikeForWrap): void {
-		wrap.group(this.#output, node, this.#kindEntries, this.#nodeMap);
-		this.#emittedStructuralKinds.add(node.kind);
-	}
-
 	emitSupertype(node: AssembledSupertype): void {
 		wrap.supertype(this.#output, node, this.#kindEntries);
 		this.#emittedStructuralKinds.add(node.kind);
@@ -972,12 +904,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		switch (node.modelType) {
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'supertype':
 				this.emitSupertype(node);
@@ -1007,6 +937,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const usesSplitElided = /\bsplitElidedWrapSlot\b/.test(bodySource);
+		const usesDropWireDelimiters = /\bdropWireDelimiters\b/.test(bodySource);
+		const usesWireDelimiter = usesSplitElided || usesDropWireDelimiters;
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource) || usesSplitElided;
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
@@ -1029,7 +961,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'// Lazy view layer over readNode output — shape A surface.',
 			'',
-			"import { readNode as readNodeJs, toTransportData, markEdited as $edited } from '@sittir/common';",
+			"import { readNode as readNodeJs, toTransportData, toEditAt, markEdited as $edited } from '@sittir/common';",
 			"import type { TreeHandle } from '@sittir/common';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
@@ -1276,7 +1208,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// `$render`/`$toEdit` project it to plain data first — routing every',
 			'// level that carries storage back through `wrapNode`, which reconciles',
 			'// slot names and arity. An unexpanded stub carries no storage, so it',
-			'// passes through and the transport reproduces its own text verbatim.',
+			'// passes through as the coordinate the engine that read it slices —',
+			'// which is why a tree that knows its engine renders through it.',
 			'// One engine per tree — the closure is the only per-tree state.',
 			'const _treeEngines = new WeakMap<TreeHandle, typeof methodsEngine>();',
 			'function _treeEngine(tree: TreeHandle): typeof methodsEngine {',
@@ -1284,9 +1217,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'  if (engine === undefined) {',
 			'    const project = (node: AnyNodeData) =>',
 			'      toTransportData(node, (level) => wrapNode(level, tree) as AnyNodeData);',
+			'    const render = (node: AnyNodeData) =>',
+			'      tree.render === undefined ? methodsEngine.render(project(node)) : tree.render(project(node));',
 			'    engine = {',
-			'      render: (node) => methodsEngine.render(project(node)),',
-			'      toEdit: (node, startOrRange, endPos) => methodsEngine.toEdit(project(node), startOrRange, endPos),',
+			'      render,',
+			'      toEdit: (node, startOrRange, endPos) => toEditAt(render(node), startOrRange, endPos),',
 			'    };',
 			'    _treeEngines.set(tree, engine);',
 			'  }',
@@ -1558,19 +1493,52 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
+			...(usesWireDelimiter
+				? [
+						'',
+						'// A wire delimiter is a field-tagged separator token: either its bare',
+						'// numeric kind id (text-collapsed contexts) or an anonymous node stub',
+						'// `{ $type: <id>, $named: false }` (node-stub contexts).',
+						'type _WireDelimiter = number | { readonly $type: number; readonly $named: false };',
+						'function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {',
+						'  if (typeof e === "number") return separatorKindIds.includes(e);',
+						'  if (typeof e === "object" && e !== null) {',
+						'    const stub = e as { $type?: unknown; $named?: unknown };',
+						'    return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
+						'  }',
+						'  return false;',
+						'}'
+					]
+				: []),
+			...(usesDropWireDelimiters
+				? [
+						'',
+						'// A `many` slot with a separator fact whose separator the parser',
+						'// field-tagged into the slot: the render body re-joins the slot',
+						'// with its own separator, so the wire delimiter is dropped rather',
+						'// than stored.',
+						'// Assumes T itself is never an array type — slot elements are node unions.',
+						'function dropWireDelimiters<T>(',
+						'  value: T | readonly (T | _WireDelimiter)[] | undefined,',
+						'  separatorKindIds: readonly number[]',
+						'): T | readonly T[] | undefined {',
+						'  const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);',
+						'  if (value == null) return undefined;',
+						'  if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;',
+						'  return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));',
+						'}'
+					]
+				: []),
 			...(usesSplitElided
 				? [
 						'',
 						'// Elidable separated-list positions (array elision, `[a, , b]`): the',
-						'// raw wire array interleaves element entries with the separator token —',
-						'// either as its bare numeric kind id (text-collapsed contexts) or as an',
-						'// anonymous node stub `{ $type: <id>, $named: false }` (node-stub',
-						'// contexts). Segment on those delimiters — each segment is one position',
-						'// holding 0-or-1 element; an empty position stores `undefined`.',
-						'// Idempotent over already-positional storage (a `$with` re-wrap carries',
-						'// no delimiters): with no delimiter present every entry is its own',
-						'// position, `undefined` holes intact.',
-						'type _WireDelimiter = number | { readonly $type: number; readonly $named: false };',
+						'// raw wire array interleaves element entries with the separator token.',
+						'// Segment on those delimiters — each segment is one position holding',
+						'// 0-or-1 element; an empty position stores `undefined`. Idempotent over',
+						'// already-positional storage (a `$with` re-wrap carries no delimiters):',
+						'// with no delimiter present every entry is its own position, `undefined`',
+						'// holes intact.',
 						'function splitElidedWrapSlot<T>(',
 						'  value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,',
 						'  separatorKindIds: readonly number[],',
@@ -1580,14 +1548,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const isSlotList = (v: T | readonly (T | _WireDelimiter | undefined)[]): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);',
 						'  const items: readonly (T | _WireDelimiter | undefined)[] = value == null ? [] : isSlotList(value) ? value : [value];',
 						'  if (items.length === 0) return [];',
-						'  const isDelimiter = (e: unknown): e is _WireDelimiter => {',
-						'    if (typeof e === "number") return separatorKindIds.includes(e);',
-						'    if (typeof e === "object" && e !== null) {',
-						'      const stub = e as { $type?: unknown; $named?: unknown };',
-						'      return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
-						'    }',
-						'    return false;',
-						'  };',
+						'  const isDelimiter = (e: unknown): e is _WireDelimiter => _isWireDelimiter(e, separatorKindIds);',
 						'  const keepFirst = (seg: readonly (T | undefined)[]): T | undefined => {',
 						'    const present = seg.filter((e): e is T => e !== undefined);',
 						'    const kept = allowedKinds === undefined ? present : _filterWrapChildrenByKind(present, allowedKinds);',

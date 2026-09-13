@@ -10,11 +10,9 @@
 
 import { writeSync } from 'node:fs';
 
-import { createRenderer } from '@sittir/legacy-core';
-
 import type { AnyNodeData } from '@sittir/types';
-import { stripStructuralNodeText } from '@sittir/common';
-import { deriveRuleKinds } from './templates-path.ts';
+import { spanSlicer, stripStructuralProvenance } from '@sittir/common';
+import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -23,7 +21,6 @@ import {
 	loadLanguageForGrammar,
 	loadKindNameFromId,
 	loadCanonicalKindNameFromId,
-	loadKindNames,
 	loadKindIdFromName,
 	buildReadHandle,
 	buildKindToSupertypes,
@@ -33,6 +30,7 @@ import {
 	materializeWrappedNodeData,
 	emitValidatorMetrics,
 	loadNodeModel,
+	loadIsLeafKind,
 	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
@@ -41,15 +39,11 @@ import {
 } from './common.ts';
 
 /**
- * Build the set of `$type` values the validator should deep-read,
- * scoped to kinds that participate in variant() adoption (parents and
- * their child kinds). Other kinds stay on the shallow `$text`
- * short-circuit to preserve baseline rtPass numbers.
- *
- * Sources the set from the grammar's emitted `node-model.json5`
- * polymorphVariants section (PR-K; the codegen artifact that records which
- * kinds went through Link's push-down). Returns an empty set when no
- * variant adoption exists in the grammar.
+ * The kinds that participate in variant() adoption (each override-defined
+ * parent and every child kind it dispatches to), from the node model's
+ * `polymorphVariants`. Every candidate is deep-read regardless; this set
+ * only decides which candidates render inside a reparse wrapper. Empty
+ * when the grammar has no variant adoption.
  */
 /**
  * Owner-kind → visible variant child kinds, from the node model's
@@ -70,10 +64,8 @@ export async function loadVariantChildKindsByOwner(grammar: string): Promise<Rea
 }
 
 export async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
-	// PR-K: read the typed `polymorphVariants` map directly instead of
-	// regex-scanning raw JSON. Only `definedBy: 'override'` descriptors carry a
-	// `childKind` map (the first-named-child dispatch table); each such parent
-	// and every child kind it dispatches to participates in variant() adoption.
+	// Only `definedBy: 'override'` descriptors carry a `childKind` map (the
+	// first-named-child dispatch table).
 	const { polymorphVariants } = await loadNodeModel(grammar);
 	const kinds = new Set<string>();
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
@@ -93,7 +85,7 @@ export async function loadVariantAdoptedKinds(grammar: string): Promise<Readonly
  */
 
 /**
- * ADR-0017: find a tree-sitter node by its exact byte span (start + end).
+ * Find a tree-sitter node by its exact byte span (start + end).
  * Using both start and end eliminates the collision that arises from
  * start-only lookup: when a parent node and its first child share the same
  * startIndex (e.g. `parameter` and its child `identifier` both start at
@@ -419,10 +411,62 @@ export interface ReadRenderParseResult {
  * hard-fails decoding (`Missing field _content`).
  */
 export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
-	const leading = data.$triviaData?.leading;
+	const leading = data.$_trivia?.leading;
 	if (!leading || leading.length === 0) return 0;
-	const stripped = { ...data, $triviaData: { ...data.$triviaData, leading: undefined } } as AnyNodeData;
+	const stripped = { ...data, $_trivia: { ...data.$_trivia, leading: undefined } } as AnyNodeData;
 	return render(data).length - render(stripped).length;
+}
+
+/**
+ * A render fixture's input, detached from the engine that read it. A
+ * coordinate names the tree its engine still holds, so it means nothing
+ * in another process: every `$nodeHandle`/`$childIndex` is dropped. A
+ * storage-less leaf kind (`isLeafKind`) keeps its identity with its own
+ * bytes as `$text` (sliced from `source` when the reader captured none);
+ * a storage-less compound keeps only its identity and rebuilds from its
+ * empty slots, and a storage-less trivia entry becomes its text.
+ */
+export function selfContainedRenderInput(
+	data: unknown,
+	source: string,
+	isLeafKind: (kindId: number) => boolean
+): unknown {
+	const slice = spanSlicer(source);
+	const textOf = (record: Record<string, unknown>): string | undefined => {
+		if (typeof record.$text === 'string') return record.$text;
+		const span = record.$span as { start: number; end: number } | undefined;
+		return span === undefined ? undefined : slice(span);
+	};
+	const hasStorage = (record: Record<string, unknown>): boolean =>
+		Object.keys(record).some((key) => key.startsWith('_') || key === '$other');
+	const walkTrivia = (entries: unknown): unknown => {
+		if (!Array.isArray(entries)) return entries;
+		return entries.map((entry) => {
+			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>)) return walk(entry);
+			return textOf(entry as Record<string, unknown>) ?? walk(entry);
+		});
+	};
+	const walk = (value: unknown): unknown => {
+		if (Array.isArray(value)) return value.map(walk);
+		if (value === null || typeof value !== 'object') return value;
+		const record = value as Record<string, unknown>;
+		const out: Record<string, unknown> = {};
+		for (const [key, raw] of Object.entries(record)) {
+			if (key === '$nodeHandle' || key === '$childIndex') continue;
+			if (key === '$_trivia' && raw !== null && typeof raw === 'object') {
+				const sides = raw as Record<string, unknown>;
+				out[key] = { ...sides, leading: walkTrivia(sides.leading), trailing: walkTrivia(sides.trailing) };
+			} else {
+				out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
+			}
+		}
+		if (!hasStorage(out) && typeof out.$type === 'number' && isLeafKind(out.$type) && out.$text === undefined) {
+			const text = textOf(out);
+			if (text !== undefined) out.$text = text;
+		}
+		return out;
+	};
+	return walk(data);
 }
 
 /**
@@ -473,13 +517,14 @@ export function findReparsedNodeAtOffset(
 export interface RenderFixture {
 	kind: 'render';
 	grammar: string;
-	/** NodeData input — the deep-read result from readTreeNode, ready
-	 *  for the grammar boundary render path (native transport when
-	 *  `backend === 'native'`, TS `render()` otherwise). Serialized to
-	 *  JSON verbatim. */
+	/** The kind the fixture renders, by name. */
+	pattern: string;
+	/** NodeData input — the deep-read result from readTreeNode, made
+	 *  self-contained by `selfContainedRenderInput` so the boundary render
+	 *  path can take it in any process. Serialized to JSON verbatim. */
 	input: unknown;
-	/** The string the TS engine produced for `input`. Parity gate
-	 *  asserts the Rust engine produces the same bytes. */
+	/** The bytes the engine rendered for `input` when the fixture was
+	 *  captured; the parity gate asserts a fresh render reproduces them. */
 	expectedOutput: string;
 }
 
@@ -526,7 +571,7 @@ export interface ValidateReadRenderParseOptions {
 	onFixture?: (fx: ParityFixture) => void;
 	/** Backend to use for `buildReadHandle`. When provided, takes
 	 *  precedence over `process.env.SITTIR_BACKEND`. */
-	backend?: 'native' | 'js';
+	backend?: 'native';
 	/** When true, deep-read ALL named kinds (not just variant-adopted).
 	 *  Exercises full recursive materialization before render. */
 	recursive?: boolean;
@@ -541,7 +586,7 @@ export interface ValidateReadRenderParseOptions {
 
 export interface ReadRenderParseFailure {
 	grammar: string;
-	backend: 'native' | 'js';
+	backend: 'native';
 	recursive: boolean;
 	entryName: string;
 	entrySource: string;
@@ -556,7 +601,6 @@ export interface ReadRenderParseFailure {
 
 export async function validateReadRenderParse(
 	grammar: string,
-	templatesPath: string,
 	options: ValidateReadRenderParseOptions = {}
 ): Promise<ReadRenderParseResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
@@ -565,26 +609,19 @@ export async function validateReadRenderParse(
 
 	const rawEntries = loadRawEntries(grammar);
 	const kindNameFromId = await loadKindNameFromId(grammar);
-	const kindNames = await loadKindNames(grammar);
 	const { backend } = options;
-	// When backend is 'native', render through the grammar's boundary.ts
-	// (which dispatches to the native Askama engine). Otherwise use the
-	// JS Nunjucks renderer. Both paths receive the same NodeData shape.
-	let render: (node: AnyNodeData) => string;
-	if (backend === 'native') {
-		const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
-		render = await loadBoundaryRender(grammar as 'rust' | 'typescript' | 'python');
-	} else {
-		({ render } = createRenderer(templatesPath, { kindNames }));
-	}
-	// `ruleKinds` was historically derived from config.rules (from the
-	// YAML). For the Jinja path (directory of `.jinja` files), derive
-	// the kind set from the on-disk file listing. Works uniformly for
-	// both `.yaml` (use filesystem check) and directories.
-	const ruleKinds = deriveRuleKinds(templatesPath);
+	// Render through the grammar's boundary.ts, which dispatches to the
+	// native engine.
+	const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
+	const render: (node: AnyNodeData) => string = await loadBoundaryRender(
+		grammar as 'rust' | 'typescript' | 'python'
+	);
+	// The kinds the renderer can handle are those with an emitted body.
+	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
@@ -651,7 +688,7 @@ export async function validateReadRenderParse(
 			// wrappers; display names are resolved per candidate below, only at
 			// the WASM `.type` seams. Build the native read handle and walk the
 			// WRAPPED tree ONCE.
-			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+			const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 			const candidatesByKind = new Map<
 				string,
 				{ start: number; end: number; node: WrappedNodeData; displayKind: string }[]
@@ -751,7 +788,7 @@ export async function validateReadRenderParse(
 						data =
 							recursive !== true && cand.node.$nodeHandle != null && cand.node.$childIndex != null && handle.read
 								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
-								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
+								: (stripStructuralProvenance(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({
 							name: `${entry.name} [${kind}]`,
@@ -823,7 +860,7 @@ export async function validateReadRenderParse(
 							kindErrors.push(failure);
 							reportFailure(options, {
 								grammar,
-								backend: backend ?? 'js',
+								backend: backend ?? 'native',
 								recursive: recursive === true,
 								entryName: entry.name,
 								entrySource: entry.source,
@@ -861,7 +898,7 @@ export async function validateReadRenderParse(
 							kindErrors.push(failure);
 							reportFailure(options, {
 								grammar,
-								backend: backend ?? 'js',
+								backend: backend ?? 'native',
 								recursive: recursive === true,
 								entryName: entry.name,
 								entrySource: entry.source,
@@ -925,7 +962,8 @@ export async function validateReadRenderParse(
 								options.onFixture({
 									kind: 'render',
 									grammar,
-									input: data,
+									pattern: renderedKind,
+									input: selfContainedRenderInput(data, entry.source, isLeafKind),
 									expectedOutput: rendered
 								});
 								options.onFixture({
@@ -950,7 +988,7 @@ export async function validateReadRenderParse(
 						kindErrors.push(failure);
 						reportFailure(options, {
 							grammar,
-							backend: backend ?? 'js',
+							backend: backend ?? 'native',
 							recursive: recursive === true,
 							entryName: entry.name,
 							entrySource: entry.source,

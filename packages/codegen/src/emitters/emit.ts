@@ -1,5 +1,5 @@
-import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
-import { spaceRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -13,11 +13,12 @@ import { FromEmitter } from './from.ts';
 import { WrapEmitter } from './wrap.ts';
 import { emitTypes } from './types.ts';
 import { emitConsts } from './consts.ts';
-import { EMPTY_OPTIONS, emitOptions, renderOptionsModule } from './options.ts';
+import { addressTablesFor, emitOptions, renderOptionsModule } from './options.ts';
+import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
-import { TemplateEmitter } from './templates.ts';
+import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { isRenderModuleGrammar, RenderModuleEmitter } from './render-module.ts';
@@ -50,7 +51,7 @@ export interface EmitAllConfig {
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
-	renderDefaults?: RenderDefaults;
+	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 }
 
@@ -67,7 +68,7 @@ export interface EmitAllResult {
 	irNamespace: string;
 	is: string;
 	tests: string;
-	jinjaTemplates: EmittedTemplates;
+	templates: EmittedTemplates;
 	utils: string;
 	renderModule?: RenderModuleBundle;
 	rootTreeTypeName?: string;
@@ -93,15 +94,18 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		grammarRoles,
 		emitRenderModule,
 		expectTestFailures,
-		renderDefaults,
+		options: optionsBlock,
 		visibleExternals
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
-	const renderRules = kindEntries
-		? spaceRenderRules({ nodeMap, kindEntries, defaults: renderDefaults, whitespaceText: whitespaceTextOf(visibleExternals) })
+	const rulesConfig = kindEntries
+		? { nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals, nodeMap) }
+		: undefined;
+	const resolvedRules = rulesConfig
+		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
 		: undefined;
 
 	const factoryEmitter = new FactoryEmitter({
@@ -132,7 +136,16 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		rootKind: grammarRoles?.get('root')[0]
 	});
 
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap });
+	const renderRules = resolvedRules?.seamed;
+	const sitePreferences =
+		kindEntries && renderRules
+			? collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock })
+			: undefined;
+	const addressTables =
+		kindEntries && renderRules && sitePreferences
+			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
+			: undefined;
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
@@ -141,7 +154,11 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					nodeMap,
 					generatedIdTables,
 					renderRules,
-					visibleExternals
+					options: optionsBlock,
+					visibleExternals,
+					kindEntries,
+					sites: sitePreferences,
+					addresses: addressTables
 				})
 			: undefined;
 
@@ -153,12 +170,12 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const factories = factoryEmitter.finalize();
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
-	const jinjaTemplates = templateEmitter.finalize();
-	const renderModule = renderModuleEmitterInst?.finalize(jinjaTemplates);
+	const templates = templateEmitter.finalize();
+	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules }) : renderOptionsModule(EMPTY_OPTIONS);
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule();
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
@@ -185,7 +202,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		irNamespace,
 		is,
 		tests,
-		jinjaTemplates,
+		templates,
 		utils,
 		renderModule,
 		rootTreeTypeName: wrapEmitter.rootTreeTypeName
@@ -263,17 +280,10 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			case 'branch':
 			case 'polymorph':
 				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
-				if (node.hoisted) {
-					if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
-					if (templateEmission === 'emit') templateEmitter.emitGroup(node);
-					renderModuleEmitterInst?.emitGroup?.(node);
-				} else {
-					if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
-					if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
-					if (templateEmission === 'emit') templateEmitter.emitBranch(node);
-					renderModuleEmitterInst?.emitBranch?.(node);
-				}
+				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
+				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
+				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
+				renderModuleEmitterInst?.emitBranch?.(node);
 				break;
 			case 'supertype':
 				if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);

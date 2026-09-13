@@ -26,9 +26,6 @@ export default defineConfig({
 			'@sittir/common/utils': fileURLToPath(new URL('./packages/common/src/utils.ts', import.meta.url)),
 			'@sittir/common': fileURLToPath(new URL('./packages/common/src/index.ts', import.meta.url)),
 			'@sittir/types': fileURLToPath(new URL('./packages/types/src/index.ts', import.meta.url)),
-			'@sittir/legacy-core/engine': fileURLToPath(
-				new URL('./packages/legacy-core/src/engine-boundary.ts', import.meta.url)
-			),
 			'@sittir/python/utils': fileURLToPath(new URL('./packages/python/src/utils.ts', import.meta.url)),
 			'@sittir/python': fileURLToPath(new URL('./packages/python/src/index.ts', import.meta.url)),
 			'@sittir/rust/utils': fileURLToPath(new URL('./packages/rust/src/utils.ts', import.meta.url)),

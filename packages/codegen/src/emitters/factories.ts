@@ -17,6 +17,7 @@ import {
 	type AssembledBranch,
 	type AssembledPattern,
 	type AssembledEnum,
+	AbstractAssembledCompound,
 	AssembledList,
 	AssembledEnvelope,
 	AssembledPolymorph,
@@ -26,7 +27,14 @@ import {
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, storageKindOfRef, isKindIdStored, delimiterMembersFor } from '../compiler/model/node-map.ts';
+import {
+	isNodeRef,
+	isTerminalValue,
+	storageKindOfRef,
+	isFixedTextLeaf,
+	textStoragesOf,
+	delimiterMembersFor
+} from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import {
 	isRequired,
@@ -52,7 +60,8 @@ import {
 	escForSource,
 	emitsPlainBuiltAlias,
 	transparentWrapperContentSlot,
-	isAuthoredCompound
+	isAuthoredCompound,
+	enumMemberDiscriminant
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -253,11 +262,6 @@ export namespace factory {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
-			case 'enum': {
-				const literalUnion = buildEnumLiteralUnion(node);
-				result = emitTextFactory(node, `text: ${literalUnion}`, 'text', undefined, kindEntries, nodeMap);
-				break;
-			}
 			default:
 				break;
 		}
@@ -265,15 +269,6 @@ export namespace factory {
 	}
 
 	export function branch(
-		output: string[],
-		node: FieldCarryingNode,
-		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
-	): void {
-		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
-	}
-
-	export function group(
 		output: string[],
 		node: FieldCarryingNode,
 		nodeMap: NodeMap,
@@ -307,9 +302,6 @@ function buildLeafGuards(node: { kind: string }, leafReConsts: Map<string, strin
 	return guards;
 }
 
-function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
-	return node.values.map((v) => `'${escForSource(v)}'`).join(' | ');
-}
 
 type FieldCarryingNode = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 
@@ -325,7 +317,9 @@ export function childElementType(
 			const storage = valueStorageOf(value, nodeMap);
 			if (storage === undefined) continue;
 			if (storage.via !== 'node') {
-				parts.add(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
+				for (const text of textStoragesOf(storage)) {
+					parts.add(valueKindIdExpr(text, slotInfo, kindEntries) ?? JSON.stringify(text.text));
+				}
 				continue;
 			}
 			if (storage.missing) {
@@ -366,7 +360,7 @@ export function kindEnumTextMapExpr(
 		if (isNodeRef(value)) {
 			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
-			if (resolved !== undefined && isKindIdStored(resolved)) {
+			if (resolved !== undefined && isFixedTextLeaf(resolved)) {
 				const text = resolved.text;
 				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
 				const discriminant =
@@ -411,7 +405,8 @@ function slotStorageFromValueExpr(
 	f: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
 ): string {
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	switch (storageInfo.kind) {
@@ -419,18 +414,14 @@ function slotStorageFromValueExpr(
 			return `coerceBooleanKeywordStorage(${valueExpr})`;
 		case 'bitflag':
 			return `coerceBitflagStorage(${valueExpr}, ${bitflagTextsExpr(storageInfo.texts)})`;
-		case 'kindEnum': {
-			const storageType = isMultiple(f) && !storageInfo.collapsesMultiplicity ? 'number[]' : 'number';
+		case 'kindEnum':
 			return kindEntries
-				? `coerceKindEnumStorage<${storageType}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				? `coerceKindEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
 				: valueExpr;
-		}
-		case 'mixedEnum': {
-			if (!kindEntries) return valueExpr;
-			const elem = fieldElementType(f, nodeMap, kindEntries);
-			const storageType = isMultiple(f) && !storageInfo.collapsesMultiplicity ? `(${elem})[]` : elem;
-			return `coerceMixedEnumStorage<${storageType}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`;
-		}
+		case 'mixedEnum':
+			return kindEntries
+				? `coerceMixedEnumStorage<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				: valueExpr;
 		case 'verbatim':
 			return valueExpr;
 	}
@@ -440,11 +431,12 @@ function slotStorageExpr(
 	f: AssembledNonterminal,
 	configAccess: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
 ): string {
 	const valueExpr = `${configAccess}.${f.configKey}`;
 	const withDefault = isMultiple(f) ? `(${valueExpr} ?? [])` : valueExpr;
-	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries);
+	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries, typeName);
 }
 
 function setterValueSignature(f: AssembledNonterminal, elemType: string): string {
@@ -558,10 +550,6 @@ export function builtTypeSurfaceOf(
 	switch (node.modelType) {
 		case 'pattern':
 			return leafBuiltTypeSurface(node, 'text: string', 'string', nodeMap, kindEntries);
-		case 'enum': {
-			const union = buildEnumLiteralUnion(node);
-			return leafBuiltTypeSurface(node, `text: ${union}`, union, nodeMap, kindEntries);
-		}
 		default:
 			return undefined;
 	}
@@ -591,7 +579,9 @@ export function fieldElementType(
 			);
 			continue;
 		}
-		parts.push(valueKindIdExpr(storage, slotInfo, kindEntries) ?? JSON.stringify(storage.text));
+		for (const text of textStoragesOf(storage)) {
+			parts.push(valueKindIdExpr(text, slotInfo, kindEntries) ?? JSON.stringify(text.text));
+		}
 	}
 	return [...new Set(parts)].join(' | ');
 }
@@ -823,7 +813,7 @@ export function constructorSurface(
 		case 'pattern':
 			return { params: 'text: string', args: 'text' };
 		case 'enum':
-			return { params: `text: ${buildEnumLiteralUnion(target)}`, args: 'text' };
+			return { params: `value: ${enumMemberDiscriminant(target, kindEntries)}`, args: 'value' };
 		default:
 			return undefined;
 	}
@@ -866,13 +856,13 @@ function emitFieldCarryingFactory(
 		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
-		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries);
+		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries, node.typeName);
 		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		withLines = ['    $with: {', `      ${singleField.propertyName}: (${setterSig}) => ${fn}(value),`, '    },'];
 	} else {
 		const configAccess = 'config';
-		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries);
+		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
 		withLines = ['    $with: {'];
 		for (const f of slots) {
 			const method = f.propertyName;
@@ -922,7 +912,12 @@ function emitFieldCarryingFactory(
 		resolvedForwardTarget !== null && kindEntries !== undefined && !hasCatalogEntry(kindEntries, resolvedForwardTarget)
 			? null
 			: resolvedForwardTarget;
-	if (forwardTarget !== null) {
+	const forwardTargetNode = forwardTarget === null ? undefined : nodeMap.nodes.get(forwardTarget);
+	const forwardsToSeatedGroup =
+		forwardTargetNode instanceof AbstractAssembledCompound &&
+		forwardTargetNode.annotations?.hoisted === true &&
+		classifyFactoryShape(forwardTargetNode, nodeMap) === 'config';
+	if (forwardTarget !== null && !forwardsToSeatedGroup) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
 		const targetSurface = constructorSurface(forwardTarget, nodeMap, kindEntries);
@@ -1036,11 +1031,11 @@ function emitRefineFormFactory(
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
 			lines.push(
-				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries)};`
+				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries, info.typeName)};`
 			);
 			continue;
 		}
-		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
+		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries, info.typeName)};`);
 	}
 	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
@@ -1187,7 +1182,7 @@ export function separatedListSurface(
 		: [];
 	const hasDelimiterOption = node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
 	const separatorKindUnion =
-		candidateKindNames.length > 0 ? candidateKindNames.map((k) => JSON.stringify(k)).join(' | ') : 'never';
+		candidateKindNames.length > 0 ? candidateKindNames.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries)).join(' | ') : 'never';
 	const optionsTypeParts: string[] = [];
 	if (hasSeparatorKindOption) optionsTypeParts.push(`separator?: ${separatorKindUnion}`);
 	if (hasDelimiterOption) optionsTypeParts.push(`delimiter?: ${delimiterUnionFor(node)}`);
@@ -1232,6 +1227,20 @@ function listBuiltTypeSurface(
 	};
 }
 
+export function declaredSeparatorDefault(
+	node: AssembledList,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const declared = node.resolvedSeparatorArm;
+	if (declared === undefined) throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
+	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
+}
+
+function declaredDelimiterDefault(node: AssembledList): string {
+	return node.resolvedDelimiterArm ?? 'Delimiter.None';
+}
+
 function emitSeparatedListFactory(
 	node: AssembledList,
 	nodeMap: NodeMap,
@@ -1239,20 +1248,14 @@ function emitSeparatedListFactory(
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
+	const delimiterDefault = declaredDelimiterDefault(node);
 
 	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
 	const contentStorageKey = canonical?.storageKey ?? '_content';
 	const contentAccessorName = canonical?.propertyName ?? 'content';
 	const surface = separatedListSurface(node, nodeMap, kindEntries);
-	const {
-		elemTypeForArray,
-		elementsType,
-		separatorKindUnion,
-		candidateKindNames,
-		hasSeparatorKindOption,
-		hasDelimiterOption
-	} = surface;
+	const { elemTypeForArray, elementsType, separatorKindUnion, hasSeparatorKindOption, hasDelimiterOption } = surface;
 	const hasTrailingOption = node.trailingDelimiter === 'optional';
 	const delimiterUnion = delimiterUnionFor(node);
 	const hasOptions = surface.optionsType !== undefined;
@@ -1286,7 +1289,7 @@ function emitSeparatedListFactory(
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
 	if (node.terminatedSeparator && hasTrailingOption) {
-		lines.push(`  if (elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0) {`);
+		lines.push(`  if (elements.length === 1 && ((options.delimiter ?? ${delimiterDefault}) & Delimiter.Trailing) === 0) {`);
 		lines.push(`    throw new Error('${node.kind}: a single element requires a trailing delimiter (delimiter: 2)');`);
 		lines.push('  }');
 	}
@@ -1301,19 +1304,10 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = elements;`);
 	}
 	if (hasSeparatorKindOption) {
-		if (candidateKindNames.length > 0) {
-			const arms = candidateKindNames
-				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
-				.join(', ');
-			lines.push(
-				`  const _separator = options.separator === undefined ? undefined : ({ ${arms} } as Record<string, number>)[options.separator];`
-			);
-		} else {
-			lines.push('  const _separator = undefined;');
-		}
+		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)};`);
 	}
 	if (hasDelimiterOption) {
-		lines.push('  const _delimiter = options.delimiter ?? Delimiter.None;');
+		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
 	}
 
 	lines.push('  return withMethods(withAccessors({');
@@ -1510,10 +1504,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
-	emitGroup(node: FieldCarryingNode): void {
-		factory.group(this.#output, node, this.#nodeMap, this.#kindEntries);
-	}
-
 	emitSeparatedList(node: AssembledList): void {
 		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
@@ -1555,13 +1545,11 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'envelope':
 			case 'branch':
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'polymorph':
 				if (node instanceof AssembledSupertype) break;
-				if (node.hoisted) this.emitGroup(node);
-				else this.emitBranch(node);
+				this.emitBranch(node);
 				break;
 			case 'list':
 				this.emitSeparatedList(node);

@@ -5,24 +5,27 @@
 //! parse/read/render/edit state machine so `sittir-{lang}` crates stay
 //! thin and grammar-owned.
 //!
-//! ## ADR-0017 split
+//! ## Engine / ParsedTree split
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
 //! `ParsedTree<G>` that owns the tree, source, format, and a node coordinate
 //! table for drill-in navigation. Coordinates are stable child-index paths
 //! from the root, re-resolved on each access — no lifetime-erasure needed.
 
-use std::marker::PhantomData;
-use crate::options::ResolvedOptions;
 use crate::format::{apply_format, extract_format};
-use crate::read_node::{read_node, ReadDepth};
+use crate::options::ResolvedOptions;
+use crate::read_node::{read_node, ReadDepth, ReadModel};
+use crate::render::SourceTable;
 use crate::splice::apply_edits as splice_apply_edits;
-use crate::types::{Edit, FormatRecord, NodeData, Source};
+use crate::slot::NodeCoordinate;
+use crate::types::{Edit, FormatRecord, KindId, NodeData, Source};
+use std::collections::HashMap;
+use std::sync::Arc;
 
 /// Grammar-specific hooks used by the shared native engine.
-pub trait EngineGrammar: Copy {
+pub trait EngineGrammar: Copy + ReadModel {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
-    fn template_bundle_hash(self) -> &'static str;
+    fn render_module_hash(self) -> &'static str;
 }
 
 // ─── NodeCoord ────────────────────────────────────────────────────────────────────────────
@@ -80,10 +83,11 @@ impl NodeCoord {
 /// re-resolution is fast and fully sound — and pushing a coordinate no
 /// longer clones an O(depth) `Vec`.
 pub struct ParsedTree<G: EngineGrammar> {
-    _grammar: PhantomData<G>,
+    /// The grammar's read facts, consulted by every read of this tree.
+    grammar: G,
     /// The parsed tree-sitter tree.
     tree: tree_sitter::Tree,
-    source: String,
+    source: Arc<str>,
     format: Option<FormatRecord>,
     /// Identity this tree stamps into every handle it mints. Distinct per
     /// parse, so a handle names the tree it belongs to and cannot be spent
@@ -99,14 +103,51 @@ pub struct ParsedTree<G: EngineGrammar> {
 /// Handles cross into JavaScript as JSON numbers and come back as doubles, so
 /// the two fields together must stay inside the 53-bit range where a double
 /// still counts integers exactly. 32 bits of index (4B nodes in one tree) and
-/// 21 of tree id (2M parses on one engine) spends that budget exactly.
+/// 21 of tree id (2M parses in one process) spends that budget exactly.
 const HANDLE_INDEX_BITS: u32 = 32;
 const HANDLE_INDEX_MASK: u64 = (1u64 << HANDLE_INDEX_BITS) - 1;
 /// Largest tree id that still fits beside an index in an exact double.
 pub const MAX_TREE_ID: u32 = (1u32 << (53 - HANDLE_INDEX_BITS)) - 1;
 
+static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+
+/// Mint the next tree id from this linked image's counter. One counter
+/// serves every engine the image holds, so no two of them ever hold a tree
+/// under the same id: a coordinate names its tree unambiguously, and an
+/// engine handed another engine's coordinate finds no such tree and refuses
+/// it rather than slicing whatever tree sits at that index in its own table.
+/// Ids are never reused — a stale handle must not come back to life under a
+/// later tree — so once `MAX_TREE_ID` is claimed every later claim gets
+/// `None` and the counter stays put. Each grammar's addon is its own image
+/// with its own copy of this counter; the napi engine therefore claims from
+/// the JavaScript process instead (`claim_tree_id_from`), and this counter
+/// serves engines built in Rust alone.
+pub fn claim_tree_id() -> Option<u32> {
+    NEXT_TREE_ID
+        .fetch_update(
+            std::sync::atomic::Ordering::Relaxed,
+            std::sync::atomic::Ordering::Relaxed,
+            |next| (next <= MAX_TREE_ID).then_some(next + 1),
+        )
+        .ok()
+}
+
+/// Mint the next tree id from a counter shared by every image in the
+/// process. `next` is the last value the owner recorded (none on the first
+/// claim); the id and the value to record come back together, or nothing
+/// once `MAX_TREE_ID` has been claimed — the owner then records nothing, so
+/// the counter stays put and no id is ever reused.
+pub fn claim_tree_id_from(next: Option<f64>) -> Option<(u32, f64)> {
+    let next = next.unwrap_or(0.0);
+    if !(0.0..=MAX_TREE_ID as f64).contains(&next) || next.fract() != 0.0 {
+        return None;
+    }
+    let id = next as u32;
+    Some((id, f64::from(id) + 1.0))
+}
+
 /// Pack a tree id and a node index into one self-identifying handle.
-fn encode_handle(tree_id: u32, index: u32) -> u64 {
+pub fn encode_handle(tree_id: u32, index: u32) -> u64 {
     ((tree_id as u64) << HANDLE_INDEX_BITS) | index as u64
 }
 
@@ -178,7 +219,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// Read the root node of the parsed tree into a `NodeData`.
     pub fn read_root(&mut self, depth: ReadDepth) -> NodeData {
         let handle = self.push_coord(NodeCoord::root());
-        read_node(&self.tree, &self.source, None, Some(handle), depth)
+        read_node(
+            &self.tree,
+            &self.source,
+            None,
+            Some(handle),
+            depth,
+            &self.grammar,
+        )
     }
 
     /// Whether this tree minted `handle`.
@@ -203,13 +251,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
         // The returned `child_node` borrows `self.tree` (not `self.nodes`), so it
         // stays valid across the disjoint `&mut self.nodes` push below — no second
         // re-resolution needed.
-        let parent_node = Self::resolve_handle(&self.nodes, &self.tree, index).ok_or_else(|| {
-            if (index as usize) >= self.nodes.len() {
-                format!("handle {handle} not found in node table")
-            } else {
-                format!("handle {handle}: coordinate path could not be resolved")
-            }
-        })?;
+        let parent_node =
+            Self::resolve_handle(&self.nodes, &self.tree, index).ok_or_else(|| {
+                if (index as usize) >= self.nodes.len() {
+                    format!("handle {handle} not found in node table")
+                } else {
+                    format!("handle {handle}: coordinate path could not be resolved")
+                }
+            })?;
         let child_node = parent_node.child(child_index as u32).ok_or_else(|| {
             format!(
                 "child_index {child_index} out of bounds for handle {handle} (child_count={})",
@@ -231,6 +280,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             Some(child_node),
             Some(encode_handle(self.tree_id, new_index)),
             depth,
+            &self.grammar,
         );
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
@@ -310,8 +360,8 @@ impl<G: EngineGrammar> Engine<G> {
         &self.options
     }
 
-    pub fn template_bundle_hash(&self) -> &'static str {
-        self.grammar.template_bundle_hash()
+    pub fn render_module_hash(&self) -> &'static str {
+        self.grammar.render_module_hash()
     }
 
     /// Access the engine-level format override (if any).
@@ -331,9 +381,9 @@ impl<G: EngineGrammar> Engine<G> {
         })?;
         let format = extract_format(&source, &tree);
         Ok(ParsedTree {
-            _grammar: PhantomData,
+            grammar: self.grammar,
             tree,
-            source,
+            source: Arc::from(source.as_str()),
             format,
             tree_id,
             nodes: Vec::new(),
@@ -426,6 +476,12 @@ mod tests {
     #[derive(Clone, Copy)]
     struct TestGrammar;
 
+    impl ReadModel for TestGrammar {
+        fn is_text_kind(&self, _: crate::types::KindId) -> bool {
+            true
+        }
+    }
+
     impl EngineGrammar for TestGrammar {
         fn configure_parser(
             self,
@@ -437,10 +493,9 @@ mod tests {
                 .map_err(|e| format!("failed to set parser language: {e}"))
         }
 
-        fn template_bundle_hash(self) -> &'static str {
+        fn render_module_hash(self) -> &'static str {
             "test"
         }
-
     }
 
     fn format_record(prefix: &str, suffix: &str) -> FormatRecord {
@@ -477,7 +532,12 @@ mod tests {
 
     #[test]
     fn render_canonical_node_preserves_engine_format() {
-        let engine = Engine::new(TestGrammar, Some(format_record("<<", ">>")), ResolvedOptions::default()).unwrap();
+        let engine = Engine::new(
+            TestGrammar,
+            Some(format_record("<<", ">>")),
+            ResolvedOptions::default(),
+        )
+        .unwrap();
 
         let rendered = engine
             .render_canonical_node(&node(Source::Factory), "rendered:1".to_string(), None)
@@ -513,5 +573,18 @@ mod tests {
 
         assert_eq!(rendered, "canonical");
     }
+}
 
+/// The engine's live trees as the render context's source table: a handle's
+/// tag names the tree, and the tree owns the source its spans index into.
+impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
+    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+        self.get(&tree_id).map(|tree| &tree.source)
+    }
+
+    fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
+        let tree = self.get(&coord.tree_id())?;
+        let index = tree.local_index(coord.handle).ok()?;
+        ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
+    }
 }
