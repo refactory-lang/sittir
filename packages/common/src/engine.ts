@@ -1,9 +1,21 @@
 import { writeFileSync } from 'node:fs';
 import type { AnyNodeData, Edit, FormatRecord } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
+import { toTransportData } from './transport-data.ts';
 
-export interface EngineOptions {
+/** The options object a grammar package types as its `Options`. */
+export type RenderOptionValues = Readonly<Record<string, unknown>>;
+
+export interface EngineOptions<O extends object = RenderOptionValues> {
 	readonly format?: FormatRecord;
+	/** Render options, resolved once by the native engine against the grammar's site table. */
+	readonly options?: O;
+}
+
+export interface RenderOptions<O extends object = RenderOptionValues> {
+	readonly ignoreFormat?: boolean;
+	/** Per-call options, resolved over the engine's own. */
+	readonly options?: O;
 }
 
 export interface RenderHandle {
@@ -37,13 +49,15 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, deep?: boolean): string;
 	readNode(handle: number, childIndex: number, deep?: boolean): string;
-	render(node: TTransport, treeId?: number): string;
-	renderToFile?(node: TTransport, path: string, treeId?: number): void;
+	render(node: TTransport, treeId?: number, options?: object): string;
+	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 	/** Drop one parsed tree. Driven by GC — see `treeDisposalRegistry`. */
 	disposeTree(treeId: number): void;
 	/** Trees the native engine still holds. Diagnostics only. */
 	readonly liveTreeCount: number;
+	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
+	readonly buildProfile?: string;
 	dispose(): void;
 }
 
@@ -51,7 +65,7 @@ export interface NativeModuleLike<
 	TTransport = unknown,
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
-	SittirEngine: new (options?: { format?: string }) => TEngine;
+	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
 }
 
 export type NativeBackendStatusLike<TModule extends NativeModuleLike = NativeModuleLike> = {
@@ -105,6 +119,8 @@ export interface ParseOptions {
  * from inside the wrap layer or from validator/diagnostic tooling.
  */
 export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
+	/** The native binary's compile profile, for tooling that refuses a debug build. */
+	readonly buildProfile: string | undefined;
 	parseAndRead(source: string, options?: ParseOptions): ParseAndReadResult<TRoot>;
 	readNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
 }
@@ -117,8 +133,8 @@ export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
  * through `utils.ts`. Depending on the narrower contract there is what keeps
  * rendering from dragging in the parse surface, and the module graph acyclic.
  */
-export interface RenderEngine {
-	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): RenderHandle;
+export interface RenderEngine<O extends object = RenderOptionValues> {
+	render(node: AnyNodeData, options?: RenderOptions<O>): RenderHandle;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
@@ -138,18 +154,18 @@ export interface ParseEngine<TTree> {
  * internals under `diagnostics`. A grammar's own engine composes this with
  * `ParseEngine<TTree>` to add the public `parse`.
  */
-export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData> extends RenderEngine {
+export interface SittirEngine<TRoot extends AnyNodeData = AnyNodeData, O extends object = RenderOptionValues>
+	extends RenderEngine<O> {
 	readonly diagnostics: EngineDiagnostics<TRoot>;
 }
 
 /**
- * What a whole-source parse always stamps on its root and on nothing else
- * reliably: the root's span and the captured source text. Every other read
- * node carries both only optionally.
+ * What a whole-source parse always stamps on its root: the span covering the
+ * whole file. The text is the tree's, reachable as `tree.source`; every other
+ * read node carries its span only.
  */
 export interface ParsedRoot {
 	readonly $span: { start: number; end: number };
-	readonly $text: string;
 }
 
 export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
@@ -192,28 +208,33 @@ const treeDisposalRegistry = new FinalizationRegistry<{
  * `packages/tools/src/validate/common.ts`: `engine: null` always carries a
  * `reason` string (the real failure cause) instead of discarding it.
  */
-export type CreateNativeEngineResult<TRoot extends AnyNodeData = AnyNodeData> =
-	| { readonly engine: SittirEngine<TRoot>; readonly reason?: undefined }
+export type CreateNativeEngineResult<
+	TRoot extends AnyNodeData = AnyNodeData,
+	O extends object = RenderOptionValues
+> =
+	| { readonly engine: SittirEngine<TRoot, O>; readonly reason?: undefined }
 	| { readonly engine: null; readonly reason: string };
 
 export function createNativeEngine<
 	TRoot extends AnyNodeData = AnyNodeData,
+	O extends object = RenderOptionValues,
 	TTransport = unknown,
 	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
->(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions): CreateNativeEngineResult<TRoot> {
+>(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions<O>): CreateNativeEngineResult<TRoot, O> {
 	const status = config.getActiveBackend();
 	if (status.name !== 'native') {
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
 	}
 
 	try {
-		const nativeOptions = options?.format ? { format: JSON.stringify(options.format) } : undefined;
-		const engine = new status.native.SittirEngine(nativeOptions);
+		const nativeOptions = {
+			...(options?.format ? { format: JSON.stringify(options.format) } : {}),
+			...(options?.options ? { options: options.options } : {})
+		};
+		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
 
-		function renderNativeNode(
-			node: Parameters<RenderEngine['render']>[0],
-			opts?: Parameters<RenderEngine['render']>[1]
-		): RenderHandle {
+		function renderNativeNode(node: AnyNodeData, opts?: RenderOptions<O>): RenderHandle {
+			const perCall = opts?.options;
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
@@ -221,11 +242,16 @@ export function createNativeEngine<
 						'until Task 4 (engine-owned format state) lands.'
 				);
 			}
+			// The projection is the one place a node's storage wins over the
+			// coordinate it read in with: it crosses here, on every render
+			// path, so a caller handing over raw read data cannot slice a
+			// pre-edit span past a rebuilt slot.
+			const transport = toTransportData(node) as TTransport;
 			return createRenderHandle(
-				() => engine.render(node as TTransport),
+				() => engine.render(transport, undefined, perCall),
 				(path) => {
 					if (engine.renderToFile) {
-						engine.renderToFile(node as TTransport, path);
+						engine.renderToFile(transport, path, undefined, perCall);
 						return true;
 					}
 					return false;
@@ -251,6 +277,7 @@ export function createNativeEngine<
 				},
 
 				diagnostics: {
+					buildProfile: engine.buildProfile,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const json = engine.parseAndRead(source, parseOptions?.deep);
 						const parsed = JSON.parse(json) as NativeParseResultShape;
@@ -273,6 +300,7 @@ export function createNativeEngine<
 									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
 								},
 								source,
+								render: (node) => renderNativeNode(node).toString(),
 								read: (handle, childIndex, deep) => {
 									if (handle === undefined) return root;
 									// Handles name their own tree, so this needs no tree

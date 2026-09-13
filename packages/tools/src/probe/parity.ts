@@ -1,5 +1,3 @@
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 export interface ProbeParityOptions {
 	grammar: string;
@@ -8,11 +6,8 @@ export interface ProbeParityOptions {
 
 export async function run(opts: ProbeParityOptions): Promise<number> {
 	const { validateReadRenderParse } = await import('../validate/read-render-parse.ts');
-	const packagesDir = fileURLToPath(new URL('../../../', import.meta.url));
-	const templatesPath = resolve(packagesDir, opts.grammar, 'templates');
-
 	const covered = new Set<string>();
-	const r = await validateReadRenderParse(opts.grammar, templatesPath, {
+	const r = await validateReadRenderParse(opts.grammar, {
 		backend: 'native',
 		onFixture: (fx) => {
 			if (fx.kind === 'roundtrip') covered.add(fx.pattern);

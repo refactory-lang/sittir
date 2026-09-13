@@ -12,7 +12,7 @@ export const probeValidate: CommandModule = {
 			.option('--first-failing', 'Probe the first RT-failing entry for the grammar')
 			.option('-s, --source <text>', 'Source text to probe (same as probe-kind)')
 			.option('--stdin', 'Read source from stdin')
-			.option('--engine <engine>', 'Render engine: js | native | both (default: native)')
+			.option('--engine <engine>', 'Read path: js (TypeScript wrap) | native | both (default: native); rendering is always native')
 			.option('--trace', 'Emit full multi-lane trace')
 			.option('--pretty', 'Pretty-print JSON output')
 			.option('--no-render', 'Skip the render pass')

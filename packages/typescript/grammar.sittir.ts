@@ -9,39 +9,9 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { enrich, field, alias, wire, refine, variant } from '../codegen/src/dsl/index.ts';
+import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
 
-const enrichedBase = enrich(base, {
-	// `lexical_declaration` and `variable_declaration` already field their
-	// separated declarator list's WHOLE span at positional index 1 as
-	// 'declarators' below. applyNodeChoiceFieldWrap's separated-list target
-	// fielding the leading/repeated element positions too nests a second,
-	// inner field under that outer one — tree-sitter keeps only the
-	// innermost field name, so 'declarators' ends up matching nothing
-	// (`accessor-throw: repeated slot "declarators" requires at least one
-	// value`).
-	// `_enum_body_elements`'s element is a choice of a `name`-fielded arm
-	// and a bare `enum_assignment` arm — a single uniform 'element' field
-	// would erase that distinction (the fielded arm routes by its field
-	// label at read time; the classifier merges the arms into one union
-	// content slot as-is): `accessor-throw: repeated slot "element"
-	// requires at least one value`.
-	// `object`, `object_pattern`, `array`, `array_pattern`, and `arguments`
-	// already field their separated list's WHOLE span at a positional
-	// index below ('properties', 'elements', 'arguments' respectively) —
-	// same outer/inner nested-field collision as
-	// `lexical_declaration`/`variable_declaration`.
-	skip: [
-		'lexical_declaration',
-		'variable_declaration',
-		'_enum_body_elements',
-		'object',
-		'object_pattern',
-		'array',
-		'array_pattern',
-		'arguments'
-	]
-});
+const enrichedBase = enrich(base);
 export default grammar(
 	enrichedBase,
 	wire(
@@ -180,8 +150,8 @@ export default grammar(
 				[$.await_expression, $._update_expression_prefix],
 				[$.arrow_function, $._update_expression_postfix],
 				[$.arrow_function, $._update_expression_prefix],
-				[$.primary_expression, $._export_statement_default_from_arm],
-				[$.primary_expression, $._export_statement_default_decl_arm],
+				[$.primary_expression, $._export_statement_default_from],
+				[$.primary_expression, $._export_statement_default_declaration],
 				[$.primary_expression, $._parameter_name, $.readonly_type],
 				[$._class_body_method],
 				[$._class_body_method_sig, $._class_body_member],
@@ -205,6 +175,100 @@ export default grammar(
 						repeat(field('attribute', $._jsx_attribute))
 					)
 			},
+			options: {
+				body: { before: preference('indent'), after: preference('dedent') },
+				case_body: { start: preference('indent'), end: preference('dedent') },
+				gap: { separator: preference('newline') },
+				statements: { terminator: preference(';') },
+				quotes: { style: preference('double') },
+				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
+				program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
+
+				_: {
+					'decorator:/separator': preference('tight'),
+					'decorator:/(_)/after': preference('newline'),
+					'decorator:/end': preference('newline'),
+					'_/separator/","/before': preference('tight'),
+					'":"/after': preference('space'),
+					'"="/before': preference('space'),
+					'"="/after': preference('space'),
+					'"=>"/before': preference('space'),
+					'"=>"/after': preference('space'),
+					'"|"/before': preference('space'),
+					'"|"/after': preference('space'),
+					'"&"/before': preference('space'),
+					'"&"/after': preference('space'),
+					'operator:/before': preference('space'),
+					'operator:/after': preference('space'),
+					'"from"/after': preference('space'),
+					'"if"/after': preference('space'),
+					'"while"/after': preference('space'),
+					'"for"/after': preference('space'),
+					'"return"/before': preference('space'),
+					'"return"/after': preference('space'),
+					'"switch"/after': preference('space'),
+					'"catch"/after': preference('space'),
+					'"var"/after': preference('space'),
+					'kind:/after': preference('space')
+				},
+
+				object_type_content: {
+					'content:/separator/before': preference('tight'),
+					'content:/separator/after': preference('newline'),
+					'content:/separator/kind': preference('semi'),
+					'content:/delimiter': preference('Delimiter.Trailing')
+				},
+
+				statement_block: { before: preference('space') },
+				class_body: { before: preference('space') },
+				switch_body: { before: preference('space') },
+				named_imports: {
+					before: preference('space'),
+					after: preference('space'),
+					'"{"/after': preference('space'),
+					'"}"/before': preference('space')
+				},
+				export_clause: {
+					before: preference('space'),
+					after: preference('space'),
+					'"{"/after': preference('space'),
+					'"}"/before': preference('space')
+				},
+				object: { '"{"/after': preference('space'), '"}"/before': preference('space') },
+				object_pattern: { '"{"/after': preference('space'), '"}"/before': preference('space') },
+				ternary_expression: { '":"/before': preference('space') },
+				for_statement: { '"("/before': preference('space'), '";"/after': preference('space') },
+				lexical_declaration: { after: preference('space') },
+				variable_declaration: { after: preference('space') },
+				required_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
+				optional_parameter: { 'decorator:/(_)/after': preference('space'), 'decorator:/end': preference('space') },
+
+				_bindings: {
+					'_/terminator:': 'statements/terminator',
+					'_/automatic_semicolon:': 'statements/terminator',
+					'string/content:': 'quotes/style',
+					'class_body/"{"/after': 'body/before',
+					'class_body/"}"/before': 'body/after',
+					'statement_block/"{"/after': 'body/before',
+					'statement_block/"}"/before': 'body/after',
+					'switch_body/"{"/after': 'body/before',
+					'switch_body/"}"/before': 'body/after',
+					'enum_body/"{"/after': 'body/before',
+					'enum_body/"}"/before': 'body/after',
+					'object_type/opening:/after': 'body/before',
+					'object_type/closing:/before': 'body/after',
+					'switch_case/body:/start': 'case_body/start',
+					'switch_case/body:/end': 'case_body/end',
+					'switch_default/body:/start': 'case_body/start',
+					'switch_default/body:/end': 'case_body/end',
+					'class_body/content:/separator': 'gap/separator',
+					'statement_block/statements:/separator': 'gap/separator',
+					'switch_body/cases:/separator': 'gap/separator',
+					'switch_case/body:/separator': 'gap/separator',
+					'switch_default/body:/separator': 'gap/separator'
+				}
+			},
+
 			patches: {
 				binary_expression: {
 					24: variant('in')
@@ -227,6 +291,12 @@ export default grammar(
 				switch_body: {
 					1: field('cases')
 				},
+				object_type: {
+				},
+				enum_body: {
+				},
+
+
 				jsx_expression: {
 					1: field('expression')
 				},
@@ -240,7 +310,7 @@ export default grammar(
 				// paths then traverse the `content` field the second added.
 				class_body: [
 					{
-						'1/0/0/2': field('semicolon'),
+						'1/0/0/2': field('terminator'),
 						'1/0/1/1': field('terminator'),
 						'1/0/3/1': field('terminator')
 					},
@@ -268,13 +338,14 @@ export default grammar(
 				},
 
 				class_declaration: {
+					'4/0': field('heritage'),
 					6: field('automatic_semicolon')
 				},
 
 				import_alias: {
 					1: field('name'),
 					3: field('value'),
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				import_attribute: {
@@ -293,11 +364,14 @@ export default grammar(
 					{ '2/0': variant('colon'), '2/1': variant('mapped_type_clause') }
 				],
 
-				import_statement: {
-					1: field('import_clause'),
-					2: field('from_clause'),
-					4: field('semicolon')
-				},
+				import_statement: [
+					{ '2/0': variant('clause_from') },
+					{
+						1: field('import_clause'),
+						2: field('from_clause'),
+						4: field('terminator')
+					}
+				],
 
 				infer_type: {
 					// No field on position 2 (the optional `extends` clause group):
@@ -306,7 +380,7 @@ export default grammar(
 					// names the slot from the inner field — the wire and the model
 					// then disagree and the clause never renders. The enrich-supplied
 					// inner field('type') is the single naming source.
-					1: field('type_identifier')
+					1: field('name')
 				},
 
 				intersection_type: {
@@ -316,10 +390,11 @@ export default grammar(
 
 				lexical_declaration: {
 					1: field('declarators'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				lookup_type: {
+					0: field('type'),
 					2: field('index_type')
 				},
 
@@ -367,7 +442,7 @@ export default grammar(
 
 				variable_declaration: {
 					1: field('declarators'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				yield_expression: {
@@ -376,11 +451,11 @@ export default grammar(
 
 				expression_statement: {
 					0: field('expression'),
-					1: field('semicolon')
+					1: field('terminator')
 				},
 
 				type_alias_declaration: {
-					5: field('semicolon')
+					5: field('terminator')
 				},
 
 				// `_expressions` is one expression or a sequence_expression; the
@@ -388,12 +463,12 @@ export default grammar(
 				// hidden rule's plural.
 				return_statement: {
 					1: field('expression'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				throw_statement: {
 					1: field('expression'),
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				function_expression: {
@@ -413,19 +488,19 @@ export default grammar(
 				},
 
 				break_statement: {
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				continue_statement: {
-					2: field('semicolon')
+					2: field('terminator')
 				},
 
 				debugger_statement: {
-					1: field('semicolon')
+					1: field('terminator')
 				},
 
 				do_statement: {
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				constructor_type: {
@@ -437,7 +512,7 @@ export default grammar(
 				},
 
 				function_signature: {
-					4: field('semicolon')
+					4: field('terminator')
 				},
 
 				assignment_expression: {
@@ -501,10 +576,8 @@ export default grammar(
 					2: variant('member')
 				},
 
-				string: {
-					0: variant('double'),
-					1: variant('single')
-				},
+				string: { 0: variant('double'), 1: variant('single') },
+
 
 				update_expression: {
 					0: variant('postfix'),
@@ -522,14 +595,30 @@ export default grammar(
 				},
 
 				_export_statement_default: {
-					0: variant('from_arm'),
+					0: variant('from'),
 					'0/1/0': variant('star_from'),
 					'0/1/1': variant('ns_from'),
 					'0/1/2': variant('clause_from'),
-					1: variant('decl_arm'),
+					1: variant('declaration'),
 					'1/2/1': variant('default_kw'),
 					'1/2/1/1/1': variant('value')
 				},
+
+				variable_declarator: { 0: variant('plain'), 1: variant('definite') },
+				meta_property: { 0: variant('new_target'), 1: variant('import_meta') },
+
+				namespace_import: { 2: field('name') },
+				else_clause: { 1: field('body') },
+				jsx_element: { 1: field('children') },
+				class: { '4/0': field('heritage') },
+				abstract_class_declaration: { '5/0': field('heritage') },
+				import_require_clause: { 0: field('name') },
+				index_type_query: { 1: field('type') },
+				flow_maybe_type: { 1: field('type') },
+				array_type: { 0: field('type') },
+				_export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
+				_export_statement_type_export: { 4: field('terminator') },
+				_export_statement_equals_export: { 3: field('terminator') },
 
 				_for_header: {
 					'1/0': variant('lhs'),
@@ -537,10 +626,19 @@ export default grammar(
 					'1/2': variant('let_const_kind')
 				}
 			},
+			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
-				_function_signature_automatic_semicolon: string('\n')
+				_function_signature_automatic_semicolon: string('\n'),
+				_tight: string(''),
+				_space: string(' '),
+				_newline: string('\n'),
+				_blankline: string('\n\n'),
+				_indent: indent(),
+				_dedent: dedent()
 			}),
+
 			expectTestFailures: {
 				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
@@ -548,6 +646,7 @@ export default grammar(
 				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)'
 			},
 			rules: {
+				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no
@@ -653,14 +752,14 @@ export default grammar(
 							field('name', alias($.identifier, $.property_identifier)),
 							':',
 							field('type', $.type),
-							optional(field('semicolon', $._semicolon))
+							optional(field('terminator', $._semicolon))
 						)
 					),
 				optional_parameter: ($, original) => original,
 
 				public_field_definition: ($, original) => original,
 
-				required_parameter: ($, original) => original,
+				required_parameter: ($, original) => original, //TODO: remove?
 
 				object_type: ($) =>
 					refine(

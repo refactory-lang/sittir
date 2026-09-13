@@ -11,7 +11,7 @@ import {
 	typeEq,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
-import { matchesWordShape } from '../util/word-matcher.ts';
+import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -958,17 +958,18 @@ export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(a: Rule<P>, b
 }
 
 export interface FixedLiteralCtx {
-	joiner: string;
+	tokenized: boolean;
 	deterministic: boolean;
+	wordMatcher?: RegExp;
 }
 
 export function collectFixedLiteral(
 	rule: RenderRule,
-	ctxIn: FixedLiteralCtx = { joiner: ' ', deterministic: false }
+	ctxIn: FixedLiteralCtx = { tokenized: false, deterministic: false }
 ): string | undefined {
 	if (rule.nonterminal || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray') return undefined;
 	if (rule.multiplicity === 'optional' && ctxIn.deterministic) return undefined;
-	const ctx = rule.tokenized ? { ...ctxIn, joiner: '' } : ctxIn;
+	const ctx = rule.tokenized ? { ...ctxIn, tokenized: true } : ctxIn;
 	switch (rule.type) {
 		case STRING:
 			return rule.value || undefined;
@@ -1001,7 +1002,15 @@ export function collectFixedLiteral(
 				if (v === undefined) return undefined;
 				parts.push(v);
 			}
-			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
+			if (parts.length === 0) return undefined;
+			const isWord = wordCharClass(ctx.wordMatcher);
+			let out = '';
+			for (const part of parts) {
+				if (part === '') continue;
+				if (out !== '' && !ctx.tokenized && isWord(out.slice(-1)) && isWord(part.slice(0, 1))) out += ' ';
+				out += part;
+			}
+			return out || undefined;
 		}
 		default:
 			return undefined;

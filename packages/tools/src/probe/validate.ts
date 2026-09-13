@@ -5,8 +5,6 @@
  * entry name (or from the validator's first-failing entry).
  */
 
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { loadCorpusEntries, type CorpusEntry } from '../validate/common.ts';
 import { run as runProbeKind } from './kind.ts';
 
@@ -61,9 +59,8 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 			}
 		} else if (selector === 'first-failing') {
 			const { validateReadRenderParse } = await import('../validate/read-render-parse.ts');
-			const templatesPath = defaultTemplatesPath(grammar);
-			const result = await validateReadRenderParse(grammar, templatesPath, {
-				backend: engine === 'native' ? 'native' : 'js',
+			const result = await validateReadRenderParse(grammar, {
+				backend: 'native',
 				recursive: true
 			});
 			const firstFail = result.errors[0] ?? result.astMismatches[0];
@@ -116,7 +113,3 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 	});
 }
 
-function defaultTemplatesPath(grammar: string): string {
-	const packagesDir = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
-	return resolve(packagesDir, grammar, 'templates');
-}

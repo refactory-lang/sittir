@@ -17,6 +17,7 @@ function makeNodeMap(nodes: [string, AssembledNode][]): NodeMap {
 		name: 'test',
 		nodes: new Map(nodes),
 		nodeByRuleId: new Map(),
+		nodeByKindId: new Map(),
 		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
@@ -270,15 +271,7 @@ describe('emitConsts', () => {
 		expect(output).toContain('"source_file": 1,');
 		expect(output).toContain('";": 2,');
 		expect(output).not.toContain('export const enum TSKindId {');
-		// KIND rows come from the FULL parser-symbol catalog now (#129: the
-		// old nodeMap-name filtering could never include collision-
-		// disambiguated catalog keys like rust's `anon_block`, so emitters
-		// resolving those entries referenced ids these tables never carried).
-		// A catalog row absent from the nodeMap ('missing') is therefore
-		// INCLUDED on the kind side...
 		expect(output).toContain('"missing": 99,');
-		// ...while FIELD rows keep the nodeMap-derived universe: the same
-		// name in the fieldIds table stays excluded.
 		expect(output).not.toContain('FieldMissing');
 		expect(output).toContain('export const enum TSFieldId {');
 		expect(output).toContain('FieldItem = 7,');

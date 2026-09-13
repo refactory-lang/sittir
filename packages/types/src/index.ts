@@ -73,28 +73,6 @@ export type Simplify<T> = { [K in keyof T]: T[K] } & {};
 export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 
 /**
- * AutoStamp<T> — brands a storage entry as auto-stamped by the factory.
- *
- * The factory always writes a fixed constant for this field; the caller
- * never supplies it. `ConfigOf` and `LooseConfigOf` filter out all
- * `AutoStamp`-branded keys so the per-kind Config/Loose interfaces do not
- * expose a slot for values the caller cannot meaningfully change.
- *
- * The structural intersection (`T & { readonly __autoStamp__?: never }`)
- * means `AutoStamp<T>` is still assignable from `T` — NodeData round-trips
- * that produce a real T value can be stored in an AutoStamp<T> field without
- * a cast.
- */
-export type AutoStamp<T> = T & { readonly __autoStamp__?: never };
-
-/**
- * @internal — true when T carries the AutoStamp brand key.
- * Relies on `keyof AutoStamp<X>` including `'__autoStamp__'` while
- * plain types do not.
- */
-type IsAutoStamp<T> = '__autoStamp__' extends keyof T ? true : false;
-
-/**
  * BooleanKeyword<TText> — brands boolean storage for a keyword-presence
  * position. NodeData stores `boolean`; the brand preserves the keyword's
  * literal text so ConfigOf / LooseConfigOf can continue to widen to the
@@ -111,7 +89,7 @@ type IsBooleanKeyword<T> = T extends { readonly __booleanKeyword__?: unknown } ?
 type BooleanKeywordText<T> = T extends { readonly __booleanKeyword__?: infer V } ? V : never;
 
 /**
- * Bitflag<E, TStorage> — brands numeric bitflag storage (ADR-0012).
+ * Bitflag<E, TStorage> — brands numeric bitflag storage.
  * `E` is the const-enum type the Config / Loose surface expose; the
  * underlying NodeData storage is numeric and native-aligned.
  */
@@ -332,7 +310,7 @@ type ExpandNode<G, K extends NodeKind<G>, Visited extends (string | number)[]> =
  * Branch nodes (have fields in grammar): `{ $type, $fields, $other? }`
  * Leaf nodes (no fields): `{ $type, $text }`
  *
- * Metadata keys are `$`-prefixed (spec 008 US7) so user-facing field
+ * Metadata keys are `$`-prefixed so user-facing field
  * names like `type` (python's `type_alias_statement`) don't collide
  * with the kind discriminant.
  *
@@ -582,7 +560,7 @@ export type FluentNodeOf<T> = T extends { readonly $type: number }
 /**
  * Extract the fields record from a concrete node interface, or `{}` if none.
  *
- * ADR-0018 Phase 2: supports both the old `$fields: { name: T }` shape and
+ * Supports both the old `$fields: { name: T }` shape and
  * the new de-hoisted `_name: T` storage shape. When the interface uses
  * `_`-prefixed keys, FieldsOf extracts them and strips the underscore prefix
  * so that `ConfigOf<T>` / `RuntimeNodeOf<T>` / `FluentNodeOf<T>` see the
@@ -721,15 +699,13 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSl
  *    Parent-level shared fields + inner-level variant fields appear together
  *    at the top of the Config surface.
  *
- * Fields branded `AutoStamp<T>` are excluded — the factory stamps those
- * automatically and callers should not (and cannot) supply them.
  */
 export type ConfigOf<T> = T extends unknown
 	? Simplify<
 			{
-				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
-					? never
-					: EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
+				[K in keyof FieldsOf<T> as EscapeReservedAccessor<
+					CamelCase<K & string>
+				>]: IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
 					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | undefined
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
@@ -846,15 +822,11 @@ export type TreeNodeOf<T> = T extends { readonly $type: infer K extends string }
 	: never;
 
 /** @internal — non-auto-stamp required keys of T. */
-type RequiredNonAutoStampKeys<T> = {
-	[K in keyof T]-?: K extends RequiredKeys<T> ? (IsAutoStamp<T[K]> extends true ? never : K) : never;
+type OptionalKeys<T> = {
+	[K in keyof T]-?: K extends RequiredKeys<T> ? never : K;
 }[keyof T];
 
 /** @internal — non-auto-stamp optional keys of T. */
-type OptionalNonAutoStampKeys<T> = {
-	[K in keyof T]-?: K extends RequiredKeys<T> ? never : IsAutoStamp<T[K]> extends true ? never : K;
-}[keyof T];
-
 /**
  * LooseConfigOf<T, Scalars, Strings, Depth, NsMap> — widened input type derived
  * from a concrete node interface. Accepts NodeData passthroughs, strings for
@@ -919,11 +891,11 @@ type LooseConfigBody<
 }
 	? { readonly $type?: K }
 	: {}) & {
-	readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>>
+	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
 		: never]: WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & {
-	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
+	readonly [K in keyof FieldsOf<T> as K extends OptionalKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
 		: never]?: WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $other?: infer C }

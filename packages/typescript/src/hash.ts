@@ -1,9 +1,8 @@
-// @generated from packages/typescript/templates/*.jinja — do not hand-edit.
+// @generated from packages/typescript/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 //
-// Companion to rust/crates/sittir-typescript/src/render/hash.rs; the two must
-// agree byte-for-byte at runtime for the native backend to be picked
-// (FR-020). Mismatch is caught by packages/typescript/src/backend.ts and
-// falls through to the TS engine silently.
+// Companion to rust/crates/sittir-typescript/src/render/hash.rs; the two must agree at
+// runtime for the native backend to be picked. A mismatch means the native
+// binary predates the last regeneration.
 
-export const TEMPLATE_BUNDLE_HASH = '05dc1be979de4adb895aa337fe2c97e06e9ed43eb468e7144fdd90075e38e1a8';
+export const RENDER_MODULE_HASH = '0379374d09c608b67e391ece649270026d1ffea1b99f6cd9815b71bdadcc7612';

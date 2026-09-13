@@ -23,6 +23,11 @@
  *      may not exceed the corresponding sum on the base. Items may MOVE
  *      from `failingKinds` into `formatDeferredKinds` during a cluster
  *      commit; only the SUM is checked.
+ *   6. Left-out rise — `parityFixtures.leftOutByKind[kind]` may not grow
+ *      for any kind, and no kind may appear that the base did not have:
+ *      a render fixture the regen leaves out is a kind whose template no
+ *      longer reproduces its source, and it must fail here rather than
+ *      vanish from the fixture set.
  *
  * Importable surface: `checkRegression(base, head): RegressionVerdict`.
  * The CLI wrapper (bottom of file) reads `--base <path>` and `--head <path>`
@@ -49,7 +54,8 @@ export type RegressionVerdictReason =
 	| 'total-drop'
 	| 'total-fail-rise'
 	| 'schema-violation'
-	| 'format-deferred-rise';
+	| 'format-deferred-rise'
+	| 'left-out-rise';
 
 export type RegressionVerdict =
 	| { ok: true; summary: string }
@@ -219,6 +225,37 @@ function validateParityFixturesShape(v: unknown, path: string): RegressionVerdic
 					note: 'object keys must be sorted ascending'
 				}
 			};
+		}
+	}
+	const leftOut = obj['leftOutByKind'];
+	if (leftOut !== undefined) {
+		if (leftOut === null || typeof leftOut !== 'object' || Array.isArray(leftOut)) {
+			return {
+				ok: false,
+				reason: 'schema-violation',
+				summary: `schema violation: ${path}.leftOutByKind is not a plain object`,
+				details: { path: `${path}.leftOutByKind`, after: leftOut }
+			};
+		}
+		const keys = Object.keys(leftOut as object);
+		if (!isSorted(keys)) {
+			return {
+				ok: false,
+				reason: 'schema-violation',
+				summary: `schema violation: ${path}.leftOutByKind keys are not sorted ascending`,
+				details: { path: `${path}.leftOutByKind`, after: keys }
+			};
+		}
+		for (const kind of keys) {
+			const count = (leftOut as Record<string, unknown>)[kind];
+			if (typeof count !== 'number') {
+				return {
+					ok: false,
+					reason: 'schema-violation',
+					summary: `schema violation: ${path}.leftOutByKind.${kind} is not a number`,
+					details: { path: `${path}.leftOutByKind.${kind}`, after: count }
+				};
+			}
 		}
 	}
 	return null;
@@ -404,6 +441,25 @@ function checkPassCounts(base: BackendBaseline, head: BackendBaseline): Regressi
 // Total-drop / total-fail-rise (rules #2 / #3)
 // ---------------------------------------------------------------------------
 
+function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	for (const g of GRAMMARS) {
+		const before = base.grammars[g].parityFixtures.leftOutByKind ?? {};
+		const after = head.grammars[g].parityFixtures.leftOutByKind ?? {};
+		for (const kind of Object.keys(after)) {
+			const was = before[kind] ?? 0;
+			const now = after[kind]!;
+			if (now <= was) continue;
+			return {
+				ok: false,
+				reason: 'left-out-rise',
+				summary: `render fixtures left out grew at grammars.${g}.parityFixtures.leftOutByKind.${kind}: ${was} → ${now} (the ${kind} template no longer reproduces its source)`,
+				details: { path: `grammars.${g}.parityFixtures.leftOutByKind.${kind}`, before: was, after: now }
+			};
+		}
+	}
+	return null;
+}
+
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	if (head.totals.total < base.totals.total) {
 		return {
@@ -527,10 +583,11 @@ function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): 
  *   2. schema-violation (base)        — bad input → don't trust it
  *   3. schema-violation (backend mismatch) — comparing counts across
  *      backends is meaningless; reject before any count comparison.
- *   4. total-drop
- *   5. pass-count-drop
- *   6. total-fail-rise
- *   7. format-deferred-rise
+ *   4. left-out-rise
+ *   5. total-drop
+ *   6. pass-count-drop
+ *   7. total-fail-rise
+ *   8. format-deferred-rise
  *
  * The schema check runs first so subsequent checks may safely cast to
  * the typed shape. Within the rest, total-drop precedes pass-count-drop
@@ -556,6 +613,9 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 			details: { path: 'backend', before: base.backend, after: head.backend }
 		};
 	}
+
+	const leftOutRise = checkLeftOutRise(base, head);
+	if (leftOutRise) return leftOutRise;
 
 	const totalDrop = checkTotalDrop(base, head);
 	if (totalDrop) return totalDrop;

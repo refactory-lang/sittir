@@ -2,6 +2,7 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"composite": true,
+		"incremental": true,
 		"declaration": true,
 		"declarationMap": true,
 		"rootDir": "./src",
@@ -11,8 +12,7 @@
 	},
 	"references": [
 		{ "path": "../types/tsconfig.build.json" },
-		{ "path": "../common/tsconfig.build.json" },
-		{ "path": "../legacy-core/tsconfig.build.json" }
+		{ "path": "../common/tsconfig.build.json" }
 	],
 	"include": ["src"],
 	"exclude": ["node_modules", "dist", "tests", "src/__tests__", "**/__tests__", "**/*.test.ts", "src/emitters/*-ir.ts"]
