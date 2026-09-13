@@ -1,0 +1,371 @@
+"""Derive the base vocabulary from the grammars' bindings files.
+
+Reads packages/<grammar>/bindings.scm and each grammar package's generated
+types.ts, joins every claim to the claimed rule's slots, and prints the
+union tree. Modes:
+
+  derive-vocabulary.py <draft.ts>            the typemap and interfaces as one draft
+  derive-vocabulary.py /dev/null --members   member names and kinds per shared kind
+  derive-vocabulary.py /dev/null --emit DIR  one file per top-level namespace plus
+                                             the context typemap, formatted
+
+The emitted files are generated output: regenerate, never edit. This script
+is the seed of the bindings-inventory tool.
+"""
+import re,json,collections,sys
+import os
+ROOT=os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..','..'))
+GRAMMARS=['python','typescript','rust']
+def snake(pascal): return re.sub(r'(?<!^)(?=[A-Z])','_',pascal).lower()
+def camel(s): return re.sub(r'_([a-z0-9])',lambda m:m.group(1).upper(),s.lstrip('_'))
+def pascal_path(path): return '.'.join(''.join(w.capitalize() for w in seg.split('_')) for seg in path.split('.'))
+TOK=re.compile(r'"(?:[^"\\]|\\.)*"|\(|\)|\[|\]|@[\w.]+|#[\w?!]+|[\w.]+:|[\w.]+|[*+?!.]')
+class Node:
+    def __init__(s,kind): s.kind=kind; s.children=[]; s.captures=[]; s.preds=[]; s.strings=[]; s.fieldlits={}; s._field=None; s.field=None; s.text=None
+def parse(text):
+    text=re.sub(r';[^\n]*','',text)
+    toks=TOK.findall(text); i=0; top=[]
+    def node():
+        nonlocal i
+        assert toks[i]=='('; i+=1
+        n=Node(None); last=None
+        while toks[i]!=')':
+            t=toks[i]
+            if t=='(':
+                if n.kind is None: n.kind='<group>'
+                f=n._field; n._field=None
+                c=node(); c.field=f; n.children.append(c); last=c; continue
+            if t.startswith('#'):
+                j=i+1
+                while toks[j]!=')': j+=1
+                n.preds.append(toks[i:j]); i=j; continue
+            if t.startswith('@'):
+                (last if last is not None else n).captures.append(t[1:]); i+=1; continue
+            if t.startswith('"'):
+                n.strings.append(t)
+                if n._field: n.fieldlits[n._field]=t[1:-1]
+                tok=Node('<token>'); tok.field=n._field; tok.text=t[1:-1]; n.children.append(tok)
+                n._field=None; last=tok; i+=1; continue
+            if t=='[':
+                i+=1
+                while toks[i]!=']':
+                    if toks[i]=='(': c=node(); n.children.append(c); continue
+                    i+=1
+                last=n; i+=1; continue
+            if t.endswith(':'): n._field=t[:-1]; i+=1; continue
+            if t in ('*','+','?','!','.'): i+=1; continue
+            if n.kind is None: n.kind=t
+            else:
+                c=Node(t); n.children.append(c); last=c
+            i+=1
+        i+=1
+        return n
+    while i<len(toks):
+        if toks[i]=='(':
+            n=node(); top.append(n)
+            while i<len(toks) and toks[i].startswith('@'): n.captures.append(toks[i][1:]); i+=1
+        else: i+=1
+    return top
+def walk(n):
+    yield n
+    for c in n.children: yield from walk(c)
+claims=collections.defaultdict(lambda:collections.defaultdict(list)); content=collections.defaultdict(set); allvocab=set(); members_declared=collections.defaultdict(set)
+renames=collections.defaultdict(dict)   # (g,gk) -> {field_or_childkind: member}
+for g in GRAMMARS:
+    for top in parse(open(f'{ROOT}/packages/{g}/bindings.scm').read()):
+        haspred=any(n.preds for n in walk(top))
+        for n in walk(top):
+            for cap in n.captures:
+                if '.' in cap or (n is top and not cap.startswith('_')):
+                    allvocab.add(cap)
+                    k=n.kind if n.kind not in (None,'<group>') else (n.children[0].kind if n.children else None)
+                    if haspred: content[cap].add(g)
+                    toplevel = n is top or (top.kind=='<group>' and n in top.children)
+                    if k and k!='<token>': claims[g][k].append((cap,haspred,dict(n.fieldlits) if n.kind not in (None,'<group>') else {},toplevel))
+                elif not cap.startswith('_'):
+                    members_declared[cap].add(g)
+                    # find the parent node of n
+                    for par in walk(top):
+                        if n in par.children and par.kind not in (None,'<group>'):
+                            key=n.field or n.kind
+                            if key: renames[(g,par.kind)][key]=cap
+NODE=re.compile(r'^export interface (\w+) \{\n\treadonly \$type: TSKindId\.\w+;\n((?:\t[^\n]*\n)*?)\}',re.M)
+HINT=re.compile(r'readonly (\w+)\??:\s*(?:\|\s*)?KindEnum<\s*((?:\'[^\']*\'\s*\|?\s*)+),',re.S)
+MEM=re.compile(r'^\treadonly (_\w+)(\??):((?:[^;{\n]|\n\t\t\|)+);',re.M)
+UNION=re.compile(r'^export type (\w+) =\n((?:\t\| \w+\n)+)',re.M)
+unions={}
+ifaces={}
+for g in GRAMMARS:
+    t=open(f'{ROOT}/packages/{g}/src/types.ts').read(); d={}
+    unions[g]={snake(m.group(1)):[snake(x) for x in re.findall(r'\| (\w+)',m.group(2))] for m in UNION.finditer(t)}
+    for m in NODE.finditer(t):
+        mems=[]
+        for mm in MEM.finditer(m.group(2)):
+            n,opt,ty=mm.group(1),mm.group(2)=='?',' '.join(mm.group(3).split())
+            multiple=bool(re.match(r'readonly |NonEmptyArray<',ty))
+            ty=re.sub(r'^readonly |\[\]$|^NonEmptyArray<|>$','',ty).strip()
+            ty=ty[1:-1] if ty.startswith('(') and ty.endswith(')') else ty
+            mems.append(dict(name=n,optional=opt,multiple=multiple,kinds=[k.strip() for k in ty.split('|') if k.strip()]))
+        hints={h.group(1):sorted(set(re.findall(r"'([^']*)'",h.group(2)))) for h in HINT.finditer(m.group(2))}
+        for mem in mems:
+            key=mem['name'].lstrip('_')
+            if key in hints and mem['kinds']==['number']: mem['kinds']=[f"text:{x}" for x in hints[key]]
+        d[snake(m.group(1))]=mems
+    ifaces[g]=d
+# parent claim per grammar kind = a non-predicate claim if any, else the first
+gk2v={}
+for g in GRAMMARS:
+    gk2v[g]={}
+    for gk,vs in claims[g].items():
+        plain=[v for v,p,lits,tl in vs if not p and not lits and tl]
+        if plain: gk2v[g][gk]=plain[0]
+        elif any(tl for *_,tl in vs): gk2v[g][gk]=[v for v,p,l,tl in vs if tl][0]
+derived_super={}
+incl={}
+def common_prefix(paths):
+    if not paths: return None
+    parts=[p.split('.') for p in paths]; out=[]
+    for i in range(min(map(len,parts))):
+        if all(p[i]==parts[0][i] for p in parts): out.append(parts[0][i])
+        else: break
+    return '.'.join(out) or None
+def supertype_kind(g,sk,seen=()):
+    if (g,sk) in derived_super: return derived_super[(g,sk)]
+    members=unions[g].get(sk)
+    if not members or sk in seen: return None
+    vs=[]
+    for m in members:
+        v=gk2v[g].get(m) or supertype_kind(g,m,seen+(sk,))
+        if v: vs.append(v)
+    flat=[]
+    for v in vs: flat.extend(v.split(' | '))
+    if not flat or len(vs)<max(2,len(members)//2): derived_super[(g,sk)]=None; return None
+    byns=collections.defaultdict(list)
+    for v in flat: byns[v.split('.')[0]].append(v)
+    # a namespace is admitted as a set only when the union names at least half of its claimed kinds in this grammar
+    parts=[]
+    for ns,ps in byns.items():
+        claimed_in_ns={x for x in gk2v[g].values() if x==ns or x.startswith(ns+'.')}
+        cover=len(set(ps))/max(1,len(claimed_in_ns))
+        parts.append(ns if cover>=1.0 else ' | '.join(sorted(set(ps))))
+    res=' | '.join(sorted(parts))
+    # a set may include another set only when that set does not include it back
+    incl.setdefault((g,sk),set()).update(x for x in parts if '.' not in x and x!=sk)
+    derived_super[(g,sk)]=res; return res
+provisional_used=collections.Counter()
+def kind_to_vocab(g,tname):
+    if tname in ('number','boolean','string'): return tname
+    if tname.startswith('text:'): return tname
+    if tname.startswith('TSKindId.') and tname.endswith('Keyword'): return gk2v[g].get('identifier','identifier')
+    if tname.startswith('TSKindId.'): return f"literal:{tname[9:]}"
+    sk=snake(tname)
+    if sk in gk2v[g]: return gk2v[g][sk]
+    ds=supertype_kind(g,sk)
+    if ds: provisional_used[(g,sk,ds)]+=1; return ds
+    return f'<{g}:{sk}>'
+refinements={}
+vk=collections.defaultdict(lambda:collections.defaultdict(lambda:dict(kinds=set(),optional=False,multiple=False,scalar=False,grammars=set())))
+claimers=collections.defaultdict(set)
+for g in GRAMMARS:
+    for gk,vs in claims[g].items():
+        for v,p,lits,tl in vs:
+            claimers[v].add(g)
+            if p: continue
+            if lits:
+                parent=gk2v[g][gk]
+                if parent!=v: refinements[v]=(parent,lits); continue
+            for mem in ifaces[g].get(gk,[]):
+                raw=mem['name'].lstrip('_'); rn=renames.get((g,gk),{})
+                cm=camel(rn.get(raw) or next((m for k,m in rn.items() if k==raw or snake(k)==raw), None) or raw)
+                slot=vk[v][cm]
+                for k in mem['kinds']: slot['kinds'].update(kind_to_vocab(g,k).split(' | ')); slot['optional']|=mem['optional']; slot['multiple']|=mem['multiple']; slot['scalar']|=not mem['multiple']; slot['grammars'].add(g)
+def collapse(kinds):
+    ks=set(kinds)
+    if any(k.startswith('text:') for k in ks): ks.discard('number')
+    # collapse to a set only when the set itself is admitted; a partial set stays as its leaves
+    for ns in ('expression','statement','pattern','type','declaration'):
+        subs={k for k in ks if k.startswith(ns+'.')}
+        if ns in ks: ks-=subs
+    return ks
+for v,m in vk.items():
+    for cm,slot in m.items(): slot['kinds']=collapse(slot['kinds'])
+prefixes=set()
+for v in allvocab:
+    parts=v.split('.')
+    for i in range(1,len(parts)): prefixes.add('.'.join(parts[:i]))
+out=['// BaseContext — the typemap: every vocabulary kind, keyed by its dotted path; prefixes are kind-sets.','export interface BaseContext {']
+for v in sorted(allvocab|prefixes):
+    gs=''.join(sorted(x[0] for x in claimers.get(v,())))
+    out.append(f"  '{v}': {pascal_path(v)};{'   // prefix' if v not in allvocab else ''}{'   // '+gs if gs else ''}")
+out.append('}\n')
+byns=collections.defaultdict(list)
+for v in sorted(allvocab): byns[v.split('.')[0]].append(v)
+def tyof(k):
+    if k in ('number','boolean','string'): return k
+    if k.startswith('text:'): return repr(k[5:])
+    if k.startswith('literal:'): return f"'{k[8:]}'"
+    if k.startswith('<'): return k
+    return f"G['{k}']"
+for ns,vs in byns.items():
+    out.append(f'export namespace {pascal_path(ns)} {{')
+    for v in vs:
+        rest=v.split('.',1)[1] if '.' in v else v
+        name=pascal_path(rest).replace('.','_')
+        mems=vk.get(v,{}); gs=''.join(sorted(x[0] for x in claimers[v])); cd=' content-derived' if v in content else ''
+        if v in refinements:
+            parent,lits=refinements[v]
+            rest_p=parent.split('.',1)[1] if '.' in parent else parent
+            pname=pascal_path(rest_p).replace('.','_') if parent.split('.')[0]==ns else pascal_path(parent)
+            lit=' & '.join(f"{{ {camel(f)}: {repr(t)} }}" for f,t in lits.items())
+            out.append(f"  export type {name}<G extends GrammarContext> = {pname}<G> & {lit};   // {gs}"); continue
+        head=f"  export type {name}<G extends GrammarContext> = {{   // {gs}{cd}"
+        if not mems: out.append(head+' }'); continue
+        out.append(head)
+        for cm,slot in sorted(mems.items()):
+            ks=' | '.join(tyof(k) for k in sorted(slot['kinds']))
+            if slot['multiple']: ks=f'({ks})[]' if '|' in ks else ks+'[]'
+            gtag=''.join(sorted(x[0] for x in slot['grammars']))
+            only='' if slot['grammars']==claimers[v] else f'   // {gtag} only'
+            out.append(f"    {cm}{'?' if slot['optional'] else ''}: {ks};{only}")
+        out.append('  }')
+    out.append('}\n')
+open(sys.argv[1],'w').write('\n'.join(out))
+empties=[(g,gk,m['name'],m['kinds']) for g in GRAMMARS for gk,ms in ifaces[g].items() for m in ms if '' in m['kinds'] or any(k=='' for k in m['kinds'])]
+print('empty-kind members:',empties[:4])
+print('refinements folded:',len(refinements))
+print('vocab kinds',len(allvocab),'prefixes',len(prefixes),'content-derived',len(content),'members total',sum(len(m) for m in vk.values()))
+unmapped=collections.Counter()
+for v,m in vk.items():
+    for cm,slot in m.items():
+        for k in slot['kinds']:
+            if k.startswith('<'): unmapped[k]+=1
+cyc=[(g,a,b) for (g,a),bs in incl.items() for b in bs if a in incl.get((g,b),())]
+print('set-inclusion cycles:',cyc or 'none')
+print('derived supertype → namespace:',sorted({(g,sk,ds) for (g,sk,ds) in provisional_used}))
+byns_un=collections.defaultdict(collections.Counter)
+for v,m in vk.items():
+    for cm,slot in m.items():
+        for k in slot['kinds']:
+            if k.startswith('<'): byns_un[v.split('.')[0]][k]+=1
+for ns,c in sorted(byns_un.items()): print(f'  [{ns}] unmapped refs {sum(c.values())}: '+' '.join(f'{k[1:-1]}×{n}' for k,n in c.most_common(12)))
+print('unmapped member kinds:',len(unmapped)); print(' ', ' '.join(f'{k}×{c}' for k,c in unmapped.most_common(40)))
+
+if len(sys.argv)>2 and sys.argv[2]=='--members':
+    print('\n=== member names per shared kind (grammars carrying each name) ===')
+    for v in sorted(vk):
+        if len(claimers[v])<2 or v in refinements: continue
+        rows=[]
+        for cm,slot in sorted(vk[v].items()):
+            gt=''.join(sorted(x[0] for x in slot['grammars']))
+            mark='' if slot['grammars']==claimers[v] else '*'
+            ks=' | '.join(sorted(k for k in slot['kinds']))
+            rows.append(f'  {cm}({gt}){mark}: {ks}')
+        print(f"{v} [{''.join(sorted(x[0] for x in claimers[v]))}]"); print('\n'.join(rows))
+
+# ── emit: one file per top-level namespace, interface + namespace at every level, interface alone at a leaf ──
+if len(sys.argv)>2 and sys.argv[2]=='--emit':
+    import os
+    outdir=sys.argv[3]; os.makedirs(outdir,exist_ok=True)
+    tops=sorted({v.split('.')[0] for v in allvocab})
+    def tsname(seg): return ''.join(w.capitalize() for w in seg.split('_'))
+    def ref(path): return 'V.'+'.'.join(tsname(s) for s in path.split('.'))+'<G>'
+    CONTAINER_ELEMENTS={'parameters':"V.Declaration.Parameter<G>[]",'formal_parameters':"V.Declaration.Parameter<G>[]",'lambda_parameters':"V.Declaration.Parameter<G>[]",'closure_parameters':"V.Declaration.Parameter<G>[]",
+        'type_parameters':"V.Declaration.Parameter.Type<G>[]",'type_arguments':"G['type'][]",'arguments':"(G['expression'] | G['element'])[]",'argument_list':"(G['expression'] | G['element'] | G['argument'])[]",
+        'class_body':"G['declaration'][]",'declaration_list':"G['declaration'][]",'enum_body':"V.Declaration.EnumMember<G>[]",'enum_variant_list':"V.Declaration.EnumMember<G>[]",'field_declaration_list':"V.Declaration.Field<G>[]",'ordered_field_declaration_list':"V.Declaration.Field<G>[]",
+        'suite_block':"V.Statement.Block<G>",'simple_statements':"V.Statement.Block<G>",'block':"V.Statement.Block<G>",'type_annotation':"G['type']",'class_heritage':"(G['type'] | G['expression'])[]",'object_type_content':"G['declaration'][]",'switch_body':"V.Clause.Case<G>[]",'named_imports':"V.Clause.Import.Specifier<G>[]",'field_initializer_list':"G['element'][]",'use_list':"G['clause'][]",'scoped_use_list':"G['clause'][]",'expression_list':"G['expression'][]",'pattern_list':"G['pattern'][]"}
+    LAYOUT={'terminator','automaticSemicolon','separator','stringStart','stringEnd','stringOpen','stringClose','newline','hashBangLine','shebang'}
+    def tyof_member(kinds):
+        out=[]; drop=[]
+        byns=collections.defaultdict(set)
+        for k in kinds:
+            if '.' in k and not k.startswith(('text:','literal:','<')): byns[k.split('.')[0]].add(k)
+        kinds=set(kinds)
+        for ns,ks in byns.items():
+            if ns in kinds or len(ks)>=3: kinds-=ks; kinds.add(ns)
+        for k in sorted(kinds):
+            if k in ('boolean','string','number'): out.append(k)
+            elif k.startswith('text:'): out.append(repr(k[5:]))
+            elif k.startswith('literal:'): drop.append(k)
+            elif k.startswith('<'):
+                gk=k[1:-1].split(':',1)[1]
+                if gk in CONTAINER_ELEMENTS: out.append(CONTAINER_ELEMENTS[gk])
+                else: out.append(f"V.Unmapped<{repr(k[1:-1])}>"); drop.append(k)
+            elif '.' not in k: out.append(f"G['{k}']")
+            else: out.append(ref(k))
+        return (' | '.join(dict.fromkeys(out)) or 'unknown'), drop
+    def is_leaf(v): return not any(o!=v and o.startswith(v+'.') for o in allvocab|prefixes)
+    def level_members(v):
+        if v in refinements: return {}
+        merged={}
+        for o in allvocab:
+            if o!=v and not o.startswith(v+'.'): continue
+            if o in refinements:
+                parent,lits=refinements[o]
+                for f,t in lits.items():
+                    cm=camel(f); m=merged.setdefault(cm,dict(kinds=set(),optional=False,multiple=False,scalar=True,grammars=set()))
+                    m['kinds'].add('text:'+t); m['grammars']|=claimers.get(o,set())
+                continue
+            for cm,slot in vk.get(o,{}).items():
+                m=merged.setdefault(cm,dict(kinds=set(),optional=False,multiple=False,scalar=False,grammars=set()))
+                m['kinds']|=slot['kinds']; m['optional']|=slot['optional'] or o!=v; m['multiple']|=slot['multiple']; m['scalar']|=slot.get('scalar',not slot['multiple']); m['grammars']|=slot['grammars']
+        own=set(vk.get(v,{}))
+        for cm,m in merged.items():
+            if cm in own: m['optional']=vk[v][cm]['optional'] or any(cm not in vk.get(o,{}) for o in allvocab if o.startswith(v+'.') and o not in refinements)
+        return merged
+    def emit_level(v, depth, lines):
+        seg=v.split('.')[-1]; name=tsname(seg); ind='  '*depth
+        parent='.'.join(v.split('.')[:-1])
+        ext=f" extends {ref(parent) if parent and parent.split('.')[0]==v.split('.')[0] else ''}" if parent and '.' in v else ''
+        if parent and parent.split('.')[0]!=v.split('.')[0]: ext=''
+        # refinement: parent & literal
+        if v in refinements:
+            p_,lits=refinements[v]
+            body=' '.join(f"readonly {camel(f)}: {repr(t)};" for f,t in lits.items())
+            lines.append(f"{ind}export interface {name}<G extends GrammarContext> extends {ref(p_)} {{ {body} }}")
+        else:
+            mems=level_members(v)
+            gs=''.join(sorted(x[0] for x in claimers.get(v,())))
+            tag=f"   // claimed by {gs}" if gs else ''
+            if not mems:
+                lines.append(f"{ind}export interface {name}<G extends GrammarContext>{ext} {{}}{tag}")
+            else:
+                lines.append(f"{ind}export interface {name}<G extends GrammarContext>{ext} {{{tag}")
+                for cm,slot in sorted(mems.items()):
+                    if cm in LAYOUT: continue
+                    ty,drop=tyof_member(slot['kinds'])
+                    if slot['multiple'] and not ty.endswith('[]'):
+                        arr=f"({ty})[]" if '|' in ty else ty+'[]'
+                        ty=f"{ty} | {arr}" if slot.get('scalar') else arr
+                    gt=''.join(sorted(x[0] for x in slot['grammars'])); only='' if slot['grammars']==claimers.get(v,set()) else f"   // {gt} only"
+                    dropc=f"   // unmapped: {' '.join(drop)}" if drop else ''
+                    lines.append(f"{ind}  readonly {cm}{'?' if slot['optional'] else ''}: {ty};{only}{dropc}")
+                lines.append(f"{ind}}}")
+        kids=sorted({o for o in allvocab|prefixes if o.startswith(v+'.') and o.count('.')==v.count('.')+1})
+        if kids:
+            lines.append(f"{ind}export namespace {name} {{")
+            for k in kids: emit_level(k, depth+1, lines)
+            leaves=[o for o in allvocab if o.startswith(v+'.') and is_leaf(o)]
+            lines.append(f"{ind}  export type Kinds<G extends GrammarContext> = "+(' | '.join(ref(o) for o in sorted(leaves)) if leaves else 'never')+';')
+            lines.append(f"{ind}}}")
+    for top in tops:
+        lines=["// Generated from the grammars' bindings.scm and slot models. Do not edit.","import type { GrammarContext } from './context.ts';"]
+        others=sorted(t for t in tops if t!=top)
+        lines.append("import type * as V from './index.ts';")
+        lines.append('')
+        emit_level(top,0,lines)
+        # top-level Kinds alias when the top itself has no namespace block (all leaves)
+        if not any(o.startswith(top+'.') for o in allvocab|prefixes):
+            lines.append(f"export namespace {tsname(top)} {{ export type Kinds<G extends GrammarContext> = {tsname(top)}<G>; }}")
+        open(f'{outdir}/{top}.ts','w').write('\n'.join(lines)+'\n')
+    ctx=["// Generated from the grammars' bindings.scm. Do not edit.","import type * as V from './index.ts';","",
+         "/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */",
+         "export interface GrammarContext {"]+[f"  readonly '{t}': unknown;" for t in tops]+["}","",
+         "/** A grammar kind a member admits that no binding claims yet; the name says which. */",
+         "export interface Unmapped<K extends string> { readonly $unmapped: K }","",
+         "/** The permissive closure: every namespace's full kind-set. */","export interface BaseContext extends GrammarContext {"]+[f"  readonly '{t}': V.{tsname(t)}.Kinds<BaseContext>;" for t in tops]+["}"]
+    open(f'{outdir}/context.ts','w').write('\n'.join(ctx)+'\n')
+    idx=["// Generated from the grammars' bindings.scm. Do not edit."]+[f"export * from './{t}.ts';" for t in tops]+["export type { GrammarContext, BaseContext, Unmapped } from './context.ts';"]
+    open(f'{outdir}/index.ts','w').write('\n'.join(idx)+'\n')
+    import subprocess
+    subprocess.run(['pnpm','exec','oxfmt',*[f'{outdir}/{t}.ts' for t in tops],f'{outdir}/context.ts',f'{outdir}/index.ts'],cwd=ROOT,check=False,capture_output=True)
+    print('emitted',len(tops),'namespace files into',outdir)
