@@ -12,8 +12,25 @@
 //! recursive `$fields` payloads no longer appear on native reads.
 
 use serde_json::Value;
-use sittir_core::read_node::{read_node, ReadDepth};
-use sittir_core::types::{NodeData, Source};
+use sittir_core::read_node::{read_node, ReadDepth, ReadModel};
+use sittir_core::types::{KindId, NodeData, Source};
+
+/// Every kind is a text kind: the pre-gate behaviour, for the cases that
+/// assert on it.
+struct AllText;
+impl ReadModel for AllText {
+    fn is_text_kind(&self, _kind: KindId) -> bool {
+        true
+    }
+}
+
+/// Only the kinds named here are text kinds.
+struct TextKinds(Vec<u16>);
+impl ReadModel for TextKinds {
+    fn is_text_kind(&self, kind: KindId) -> bool {
+        self.0.contains(&kind.0)
+    }
+}
 
 /// Recursively assert that every object-shaped JSON node in `value`
 /// (matching the NodeData wire shape) has only keys in
@@ -63,7 +80,7 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
-    read_node(&tree, source, None, Some(0), ReadDepth::Shallow)
+    read_node(&tree, source, None, Some(0), ReadDepth::Shallow, &AllText)
 }
 
 fn parse_tree(language: tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -157,15 +174,137 @@ fn anonymous_leaf_children_do_not_invent_fields() {
     let tree = parse_tree(lang, source);
     let params = find_first_ts_node_by_kind(tree.root_node(), "closure_parameters")
         .expect("closure_parameters cst node");
-    let node = read_node(&tree, source, Some(params), Some(0), ReadDepth::Shallow);
+    let node = read_node(
+        &tree,
+        source,
+        Some(params),
+        Some(0),
+        ReadDepth::Shallow,
+        &TextKinds(vec![]),
+    );
     let json = serde_json::to_value(&node).expect("serialize");
     let params = json.as_object().expect("closure_parameters object");
     assert!(
         !params.contains_key("_|"),
         "native read must not invent _<text> fields for anonymous children"
     );
-    assert!(params.get("$other").is_none(), "anonymous-only leaf nodes should still collapse to text");
-    assert_eq!(params.get("$text").and_then(Value::as_str), Some("||"));
+    assert!(
+        params.get("$other").is_none(),
+        "anonymous-only leaf nodes should still collapse to text"
+    );
+    assert!(params.get("$text").is_none());
+    assert_eq!(
+        params
+            .get("$span")
+            .and_then(|s| s.get("end"))
+            .and_then(Value::as_u64),
+        params
+            .get("$span")
+            .and_then(|s| s.get("start"))
+            .and_then(Value::as_u64)
+            .map(|start| start + 2)
+    );
+}
+
+#[test]
+fn structural_nodes_carry_a_span_and_no_text_while_text_kinds_keep_theirs() {
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "fn main() { let x = 1; }";
+    let tree = parse_tree(lang, source);
+    let identifier = tree.language().id_for_node_kind("identifier", true);
+    let model = TextKinds(vec![identifier]);
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &model);
+    let json = serde_json::to_value(&root).expect("serialize");
+
+    fn walk(v: &Value, seen: &mut Vec<(u16, bool, bool)>) {
+        if let Some(map) = v.as_object() {
+            if let Some(t) = map.get("$type").and_then(Value::as_u64) {
+                seen.push((
+                    t as u16,
+                    map.contains_key("$text"),
+                    map.contains_key("$span"),
+                ));
+            }
+            for (k, child) in map {
+                if k.starts_with('_') || k == "$other" {
+                    walk(child, seen);
+                }
+            }
+        } else if let Some(arr) = v.as_array() {
+            for c in arr {
+                walk(c, seen);
+            }
+        }
+    }
+    let mut seen = Vec::new();
+    walk(&json, &mut seen);
+
+    let named_structural: Vec<_> = seen
+        .iter()
+        .filter(|(t, _, _)| *t != identifier && tree.language().node_kind_is_named(*t))
+        .collect();
+    assert!(!named_structural.is_empty());
+    assert!(
+        named_structural
+            .iter()
+            .all(|(_, has_text, has_span)| !has_text && *has_span),
+        "{seen:?}"
+    );
+    assert!(seen
+        .iter()
+        .filter(|(t, _, _)| *t == identifier)
+        .all(|(_, has_text, _)| *has_text));
+    // Anonymous tokens are never gated: their text is their content.
+    let anonymous: Vec<_> = seen
+        .iter()
+        .filter(|(t, _, _)| !tree.language().node_kind_is_named(*t))
+        .collect();
+    assert!(
+        anonymous.iter().all(|(_, has_text, _)| *has_text),
+        "{seen:?}"
+    );
+}
+
+#[test]
+fn an_aliased_node_keeps_its_text_when_either_identity_is_a_text_kind() {
+    // rust's `type_identifier` is `alias($.identifier, $.type_identifier)`:
+    // the node parses as `identifier` and is shown as `type_identifier`.
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "struct Foo;";
+    let tree = parse_tree(lang, source);
+    let name = find_first_ts_node_by_kind(tree.root_node(), "type_identifier")
+        .expect("type_identifier node");
+    let identifier = tree.language().id_for_node_kind("identifier", true);
+    let type_identifier = tree.language().id_for_node_kind("type_identifier", true);
+    let text_under = |model: &dyn ReadModel| {
+        read_node(&tree, source, Some(name), Some(0), ReadDepth::Shallow, model).text
+    };
+    assert_eq!(text_under(&TextKinds(vec![identifier])).as_deref(), Some("Foo"));
+    assert_eq!(
+        text_under(&TextKinds(vec![type_identifier])).as_deref(),
+        Some("Foo")
+    );
+    assert_eq!(text_under(&TextKinds(vec![])), None);
+}
+
+#[test]
+fn the_root_covers_the_whole_file_by_span_and_carries_no_text() {
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "\n\n// only a comment\n";
+    let tree = parse_tree(lang, source);
+    let root = read_node(
+        &tree,
+        source,
+        None,
+        Some(0),
+        ReadDepth::Shallow,
+        &TextKinds(vec![]),
+    );
+    assert_eq!(
+        root.span.map(|s| (s.start, s.end)),
+        Some((0, source.len() as u32))
+    );
+    assert!(root.text.is_none());
 }
 
 #[test]
@@ -174,7 +313,7 @@ fn raw_native_children_payload_stays_array_shaped() {
     let source = "fn f() { g(x); }";
     let tree = parse_tree(lang, source);
     let args = find_first_ts_node_by_kind(tree.root_node(), "arguments").expect("arguments node");
-    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::Shallow);
+    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::Shallow, &AllText);
     let json = serde_json::to_value(&node).expect("serialize");
 
     assert!(
@@ -229,7 +368,7 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$span"
             | "$nodeHandle"
             | "$childIndex"
-            | "$triviaData"
+            | "$_trivia"
             | "$slotOrder"
     ) || key.starts_with('_')
 }

@@ -176,6 +176,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * bundled with the source change that produced it (standing discipline, not
  * hook-enforced). Tracking its hash would couple the two: every source
  * commit would fail verification until the fixtures commit followed.
+ * `test-fixtures.left-out.json`, the render fixtures that regen left out by
+ * kind, is written by the same pass and lands in the same commit, so it is
+ * excluded for the same reason.
  *
  * Both keep the write side (manifest generation) and the read side
  * (verification) in agreement: no entry written, none expected.
@@ -592,22 +595,6 @@ reconciliation gate. Three clusters, one per root cause:
 // `process.argv[1]` is a filesystem path; convert it to a normalized file:// URL
 // (handles absolute paths / escaping) rather than string-interpolating, so the
 // `npx tsx reconcile-naming.ts` invocation is detected reliably.
-```
-
-### `packages/codegen/src/scripts/regen-templates-rs.ts::module`
-
-```text
-/**
- * regen-templates-rs — regenerate only templates.rs for one or more grammars.
- *
- * Usage:
- *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust
- *   npx tsx packages/codegen/src/scripts/regen-templates-rs.ts --grammar rust,typescript,python
- *
- * This bypasses the full generate() pipeline (which calls all emitters
- * including factories.ts / wrap.ts). Use when you only need templates.rs
- * regenerated without touching TS output files.
- */
 ```
 
 ### `packages/codegen/src/scripts/emit-diff.ts::module`

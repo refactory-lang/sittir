@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
-import { AssembledSupertype, isKindIdStored, storageTargetOf } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, isFixedTextLeaf, storageTargetOf } from '../compiler/model/node-map.ts';
 import { fieldTypeComponents } from './shared.ts';
 
 export interface TransportLiteral {
@@ -113,6 +113,6 @@ function terminalTransportLiteralForKind(kind: string, nodeMap: NodeMap): Transp
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) return undefined;
 	const target = storageTargetOf(node, nodeMap);
-	if (!isKindIdStored(target)) return undefined;
+	if (!isFixedTextLeaf(target)) return undefined;
 	return { kind, text: target.text, resolvedKindId: target.resolvedKindId };
 }

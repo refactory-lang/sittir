@@ -1,6 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
+import type { RenderRules } from '../compiler/model/render-rules.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
 import { RenderModuleEmitter } from './render-module.ts';
 import { TemplateEmitter } from './templates.ts';
@@ -10,15 +11,17 @@ export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
-	jinjaTemplates?: EmittedTemplates;
+	templates?: EmittedTemplates;
+	renderRules?: RenderRules;
 }
 
 export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): RenderModuleBundle {
-	const templateEmitter = new TemplateEmitter({ grammar: config.grammar, nodeMap: config.nodeMap });
+	const templateEmitter = new TemplateEmitter({ grammar: config.grammar, nodeMap: config.nodeMap, renderRules: config.renderRules });
 	const renderModuleEmitter = new RenderModuleEmitter({
 		grammar: config.grammar,
 		nodeMap: config.nodeMap,
-		generatedIdTables: config.generatedIdTables
+		generatedIdTables: config.generatedIdTables,
+		renderRules: config.renderRules
 	});
 
 	for (const [, node] of config.nodeMap.nodes) {
@@ -36,23 +39,13 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				break;
 			case 'branch':
 			case 'envelope':
-				if (node.hoisted) {
-					templateEmitter.emitGroup?.(node);
-					renderModuleEmitter.emitGroup?.(node);
-				} else {
-					templateEmitter.emitBranch?.(node);
-					renderModuleEmitter.emitBranch?.(node);
-				}
+				templateEmitter.emitBranch?.(node);
+				renderModuleEmitter.emitBranch?.(node);
 				break;
 			case 'polymorph':
 				if (node instanceof AssembledSupertype) break;
-				if (node.hoisted) {
-					templateEmitter.emitGroup?.(node);
-					renderModuleEmitter.emitGroup?.(node);
-				} else {
-					templateEmitter.emitBranch?.(node);
-					renderModuleEmitter.emitBranch?.(node);
-				}
+				templateEmitter.emitBranch?.(node);
+				renderModuleEmitter.emitBranch?.(node);
 				break;
 			case 'list':
 				templateEmitter.emitBranch?.(node);
@@ -61,6 +54,6 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 		}
 	}
 
-	const templates = config.jinjaTemplates ?? templateEmitter.finalize();
+	const templates = config.templates ?? templateEmitter.finalize();
 	return renderModuleEmitter.finalize(templates);
 }

@@ -5,7 +5,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _future_import_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -19,11 +19,11 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "grammar": "python",
-    "ownerKind": "...",
-    "message": "[assemble] literal \"...\" has no anonymous parser symbol — not minted",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "..."
+      "literalText": "﷑\n"
     }
   },
   {
@@ -31,35 +31,11 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "grammar": "python",
-    "ownerKind": "True",
-    "message": "[assemble] literal \"True\" has no anonymous parser symbol — not minted",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "True"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "False",
-    "message": "[assemble] literal \"False\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "False"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "None",
-    "message": "[assemble] literal \"None\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "None"
+      "literalText": "﷐\n"
     }
   },
   {
@@ -99,11 +75,11 @@
     "canProceed": true,
     "details": {
       "texts": [
+        "",
         "\n",
-        "...",
-        "False",
-        "None",
-        "True"
+        "\n\n",
+        "\n\n\n",
+        " "
       ]
     },
     "severity": "warning",
@@ -131,11 +107,11 @@
     "severity": "info",
     "details": {
       "texts": [
+        "",
         "\n",
-        "...",
-        "False",
-        "None",
-        "True"
+        "\n\n",
+        "\n\n\n",
+        " "
       ]
     },
     "scope": "grammar",

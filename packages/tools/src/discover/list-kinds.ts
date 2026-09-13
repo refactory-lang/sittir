@@ -39,7 +39,7 @@ export interface ListKindsOptions {
 
 function listGroups(nm: NodeMap): void {
 	const groups = [...nm.nodes.entries()]
-		.filter(([, n]) => 'hoisted' in n && n.hoisted)
+		.filter(([, n]) => 'annotations' in n && (n.annotations as { hoisted?: true } | undefined)?.hoisted === true)
 		.map(([k]) => k)
 		.sort();
 	process.stdout.write(`${groups.length} group kinds\n`);
@@ -58,14 +58,14 @@ function listGroups(nm: NodeMap): void {
  */
 function listUnaliased(nm: NodeMap): void {
 	const groups = [...nm.nodes.entries()].filter(
-		([k, n]) => 'hoisted' in n && n.hoisted && k.startsWith('_') && !k.includes('__form_') && !/_form\d+$/.test(k)
+		([k, n]) => 'annotations' in n && (n.annotations as { hoisted?: true } | undefined)?.hoisted === true && k.startsWith('_') && !k.includes('__form_') && !/_form\d+$/.test(k)
 	);
 
 	const unaliased: string[] = [];
 	for (const [k] of groups) {
 		const visibleTwinKey = k.slice(1); // strip leading underscore
 		const twin = nm.nodes.get(visibleTwinKey);
-		if (!twin || ('hoisted' in twin && twin.hoisted)) unaliased.push(k);
+		if (!twin || ('annotations' in twin && (twin.annotations as { hoisted?: true } | undefined)?.hoisted === true)) unaliased.push(k);
 	}
 	unaliased.sort();
 

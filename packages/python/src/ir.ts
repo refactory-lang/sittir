@@ -379,6 +379,7 @@ export const ir: {
 	readonly casePattern: typeof F.casePattern;
 	readonly unionPattern: typeof F.unionPattern;
 	readonly dictPattern: typeof F.dictPattern;
+	readonly keyValuePattern: typeof F.keyValuePattern;
 	readonly keywordPattern: typeof F.keywordPattern;
 	readonly splatPattern: typeof F.splatPattern;
 	readonly classPattern: typeof F.classPattern;
@@ -447,23 +448,18 @@ export const ir: {
 	readonly patternListPatterns: typeof F.patternListPatterns;
 	readonly subscripts: typeof F.subscripts;
 	readonly dictionaryElements: typeof F.dictionaryElements;
-	readonly futureImportStatementArm: typeof F.futureImportStatementArm;
-	readonly exceptClauseArm: typeof F.exceptClauseArm;
-	readonly sliceGroup: typeof F.sliceGroup;
+	readonly exceptClauseExceptionAs: typeof F.exceptClauseExceptionAs;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
 	readonly caseListPattern: typeof F.caseListPattern;
 	readonly caseAsPattern: typeof F.caseAsPattern;
 	readonly comprehensionClauses: typeof F.comprehensionClauses;
+	readonly parenthesizedImportList: typeof F.parenthesizedImportList;
 	readonly printArguments: typeof F.printArguments;
 	readonly printChevronArguments: typeof F.printChevronArguments;
-	readonly printStatementArm1: typeof F.printStatementArm1;
-	readonly printStatementArm2: typeof F.printStatementArm2;
-	readonly exceptClauseList: typeof F.exceptClauseList;
+	readonly printStatementChevron: typeof F.printStatementChevron;
+	readonly printStatementPlain: typeof F.printStatementPlain;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
-	readonly withClauseParen: typeof F.withClauseParen;
-	readonly suiteBlock: typeof F.suiteBlock;
-	readonly yieldFromClause: typeof F.yieldFromClause;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -485,7 +481,6 @@ export const ir: {
 	readonly stringStart: typeof F.buildStringStart;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
-	readonly except: typeof F.buildExcept;
 	readonly as: typeof F.asPattern;
 	readonly assert: typeof F.assertStatement;
 	readonly binary: typeof F.binaryOperator;
@@ -598,6 +593,7 @@ export const ir: {
 	casePattern: F.casePattern,
 	unionPattern: F.unionPattern,
 	dictPattern: F.dictPattern,
+	keyValuePattern: F.keyValuePattern,
 	keywordPattern: F.keywordPattern,
 	splatPattern: F.splatPattern,
 	classPattern: F.classPattern,
@@ -666,23 +662,18 @@ export const ir: {
 	patternListPatterns: F.patternListPatterns,
 	subscripts: F.subscripts,
 	dictionaryElements: F.dictionaryElements,
-	futureImportStatementArm: F.futureImportStatementArm,
-	exceptClauseArm: F.exceptClauseArm,
-	sliceGroup: F.sliceGroup,
+	exceptClauseExceptionAs: F.exceptClauseExceptionAs,
 	caseTuplePattern: F.caseTuplePattern,
 	caseListPattern: F.caseListPattern,
 	caseAsPattern: F.caseAsPattern,
 	comprehensionClauses: F.comprehensionClauses,
+	parenthesizedImportList: F.parenthesizedImportList,
 	printArguments: F.printArguments,
 	printChevronArguments: F.printChevronArguments,
-	printStatementArm1: F.printStatementArm1,
-	printStatementArm2: F.printStatementArm2,
-	exceptClauseList: F.exceptClauseList,
+	printStatementChevron: F.printStatementChevron,
+	printStatementPlain: F.printStatementPlain,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
-	withClauseParen: F.withClauseParen,
-	suiteBlock: F.suiteBlock,
-	yieldFromClause: F.yieldFromClause,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -708,7 +699,6 @@ export const ir: {
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
-	except: F.buildExcept,
 
 	// Supertype-stripped short aliases
 	as: F.asPattern,

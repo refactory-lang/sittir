@@ -74,8 +74,8 @@ export function useEdit() {
 export function spliceErrorDerive() {
 	return (
 		ir
-			// CLOSED (was GAP A): the argument list is the `attributeArm` slot, and
-			// `ir.attributeItem({ attribute: { path: 'derive', attributeArm: {
+			// CLOSED (was GAP A): the argument list is the `input` slot, and
+			// `ir.attributeItem({ attribute: { path: 'derive', input: {
 			// arguments: ir.delimTokenTree.paren({ delimTokens: [...] }) } } })`
 			// renders `#[derive(Debug,Clone,PartialEq,Eq)]`. An unrecognised config
 			// key is dropped in silence, which is what made a wrong spelling look
@@ -152,7 +152,15 @@ export function displayImpl() {
 									path: { kind: 'scoped_identifier', path: 'std', name: 'fmt' },
 									name: 'Formatter',
 								},
-								typeArguments: ["'_"],
+								// A `typeArguments: [...]` array would collapse to its first string in
+								// the list envelope slot, which admits no text (the list-envelope
+								// coercion gap in docs/factory-surface-issues.md), so the list is built.
+								typeArguments: ir.typeArguments.strict(
+									ir.typeArgumentsElements.strict(
+										{ delimiter: Delimiter.None },
+										{ content: ir.lifetime.strict(ir.identifier('_')) }
+									)
+								),
 							},
 						}),
 					})
@@ -243,13 +251,27 @@ export function applyEditsFn() {
 				ir.parameter({
 					mutableSpecifier: true,
 					name: 'edits',
-					type: { kind: 'generic_type', type: 'Vec', typeArguments: ['Edit'] },
+					type: {
+						kind: 'generic_type',
+						type: 'Vec',
+						// The list is built for the same reason as the type arguments above.
+						typeArguments: ir.typeArguments.strict(
+							ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, { content: ir.identifier('Edit') })
+						),
+					},
 				})
 			),
 			returnType: {
 				kind: 'generic_type',
 				type: 'Result',
-				typeArguments: ['String', 'SpliceError'],
+				// The list is built for the same reason as the type arguments above.
+				typeArguments: ir.typeArguments.strict(
+					ir.typeArgumentsElements.strict(
+						{ delimiter: Delimiter.None },
+						{ content: ir.identifier('String') },
+						{ content: ir.identifier('SpliceError') }
+					)
+				),
 			},
 			body: ir.block.strict({
 				statements: [
@@ -283,11 +305,16 @@ export function applyEditsFn() {
 						pattern: 'buf',
 						value: ir.callExpression({
 							function: { kind: 'scoped_identifier', path: 'String', name: 'from' },
-							arguments: ['source'],
+							// The list is built for the same reason as the type arguments above.
+							arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, { expression: ir.identifier('source') })),
 						}),
 					}),
 				],
-				trailingExpression: ir.callExpression({ function: 'Ok', arguments: ['buf'] }),
+				// The list is built for the same reason as the type arguments above.
+				trailingExpression: ir.callExpression({
+					function: 'Ok',
+					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, { expression: ir.identifier('buf') })),
+				}),
 			}),
 		})
 		.$trivia({

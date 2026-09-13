@@ -15,7 +15,6 @@ import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import { computeFieldStorageInfo } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
@@ -32,7 +31,7 @@ import { addUnnamedChoiceListener } from './collect-slots.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
-import { stampStaticSpacing, type EmittedTemplates } from '../emitters/templates.ts';
+import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { OverlayName } from '../emitters/overlays/module.ts';
@@ -42,7 +41,7 @@ export interface GeneratedFiles {
 	types: string;
 	engine: string;
 	renderEngine: string;
-	jinjaTemplates: EmittedTemplates;
+	templates: EmittedTemplates;
 	factories: string;
 	overlays: Record<OverlayName, string>;
 	factoriesBundle: string;
@@ -52,6 +51,7 @@ export interface GeneratedFiles {
 	from: string;
 	irNamespace: string;
 	consts: string;
+	options: string;
 	index: string;
 	tests: string;
 	config: string;
@@ -132,13 +132,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
-	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap });
+	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap, generatedIdTables });
 
 	hydrateSlotRefs(nodeMap);
 
 	nodeMap.scc = computeTransportSCC(nodeMap);
-
-	stampStaticSpacing(nodeMap, cfg.grammar);
 
 	const emitted = emitAll({
 		grammar: cfg.grammar,
@@ -150,7 +148,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		triviaKinds,
 		grammarRoles,
 		emitRenderModule: cfg.emitRenderModule,
-		expectTestFailures: raw.expectTestFailures
+		expectTestFailures: raw.expectTestFailures,
+		options: raw.options,
+		visibleExternals: raw.visibleExternals
 	});
 
 	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
@@ -171,7 +171,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 		renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 		types: emitted.types,
-		jinjaTemplates: emitted.jinjaTemplates,
+		templates: emitted.templates,
 		factories: emitted.factories,
 		overlays: emitted.overlays,
 		factoriesBundle: emitted.factoriesBundle,
@@ -181,6 +181,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		from: emitted.from,
 		irNamespace: emitted.irNamespace,
 		consts: emitted.consts,
+		options: emitted.options,
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 		tests: emitted.tests,
 		config: emitConfig({ grammar: cfg.grammar }),

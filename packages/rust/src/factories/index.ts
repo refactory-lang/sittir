@@ -170,7 +170,6 @@ export const fieldInitializerListElements: Hoisted<typeof O.fieldInitializerList
 export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hoist(O.tuplePatternElements);
 export const patterns: Hoisted<typeof O.patterns> = hoist(O.patterns);
 export const structPatternElements: Hoisted<typeof O.structPatternElements> = hoist(O.structPatternElements);
-export const attributeArm: Hoisted<typeof O.attributeArm> = hoist(O.attributeArm);
 export const visibilityModifierGroup: Hoisted<typeof O.visibilityModifierGroup> = hoist(O.visibilityModifierGroup);
 export const tupleTypeElements: Hoisted<typeof O.tupleTypeElements> = hoist(O.tupleTypeElements);
 export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoist(O.tupleExpressionElements);
@@ -178,19 +177,5 @@ export const referenceExpressionRawMut: Hoisted<typeof O.referenceExpressionRawM
 	O.referenceExpressionRawMut
 );
 export const implItemBody: Hoisted<typeof O.implItemBody> = hoist(O.implItemBody);
-export const closureExpressionExpr: Hoisted<typeof O.closureExpressionExpr> = hoist(O.closureExpressionExpr);
-export const visibilityModifierPub: Hoisted<typeof O.visibilityModifierPub> = hoist(O.visibilityModifierPub);
-export const visibilityModifierInPath: Hoisted<typeof O.visibilityModifierInPath> = hoist(O.visibilityModifierInPath);
-export const functionTypeTraitForm: Hoisted<typeof O.functionTypeTraitForm> = hoist(O.functionTypeTraitForm);
-export const functionTypeFnForm: Hoisted<typeof O.functionTypeFnForm> = hoist(O.functionTypeFnForm);
-export const macroDefinitionParen: Hoisted<typeof O.macroDefinitionParen> = hoist(O.macroDefinitionParen);
-export const macroDefinitionBracket: Hoisted<typeof O.macroDefinitionBracket> = hoist(O.macroDefinitionBracket);
-export const macroDefinitionBrace: Hoisted<typeof O.macroDefinitionBrace> = hoist(O.macroDefinitionBrace);
-export const attributedFieldDeclaration: Hoisted<typeof O.attributedFieldDeclaration> = hoist(
-	O.attributedFieldDeclaration
-);
-export const attributedEnumVariant: Hoisted<typeof O.attributedEnumVariant> = hoist(O.attributedEnumVariant);
-export const attributedParameter: Hoisted<typeof O.attributedParameter> = hoist(O.attributedParameter);
-export const attributedTypeParameter: Hoisted<typeof O.attributedTypeParameter> = hoist(O.attributedTypeParameter);
-export const attributedArgument: Hoisted<typeof O.attributedArgument> = hoist(O.attributedArgument);
-export const typeArgument: Hoisted<typeof O.typeArgument> = hoist(O.typeArgument);
+export const implItemPositiveClause: Hoisted<typeof O.implItemPositiveClause> = hoist(O.implItemPositiveClause);
+export const implItemNegativeClause: Hoisted<typeof O.implItemNegativeClause> = hoist(O.implItemNegativeClause);

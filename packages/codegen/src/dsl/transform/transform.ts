@@ -15,12 +15,17 @@ import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
-import { isVariantPlaceholder } from '../primitives/variant.ts';
+import { isVariantPlaceholder, variantMintName } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
+import type { PreferencePlaceholder } from '../primitives/preference.ts';
+import { isGroupPlaceholder } from '../primitives/group.ts';
+import type { GroupPlaceholder } from '../primitives/group.ts';
+import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import {
 	wireRegisterSymbolRename,
+	wireHasAuthoredRule,
 	wireRegisterSyntheticRule,
 	wireRegisterConflict,
 	wireGetCurrentRuleKind,
@@ -34,26 +39,13 @@ import {
 	isWrapperType,
 	isSeqType,
 	isChoiceType,
-	isBlankType,
 	isOptionalType,
-	isPlainRepeatType
+	isPlainRepeatType,
+	matchesEmpty
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import type { RuleAnnotations } from '../../types/rule.ts';
 import { nativeRuleFn } from '../enrich.ts';
-
-function withAnnotations(rule: unknown, extra: RuleAnnotations): RuntimeRule {
-	const node = rule as { type?: string; content?: unknown; annotations?: RuleAnnotations };
-	if (node?.type === 'ALIAS' && node.content !== null && typeof node.content === 'object') {
-		const content = node.content as { annotations?: RuleAnnotations };
-		return {
-			...(node as object),
-			content: { ...(content as object), annotations: { ...content.annotations, ...extra } }
-		} as unknown as RuntimeRule;
-	}
-	return { ...(node as object), annotations: { ...node.annotations, ...extra } } as unknown as RuntimeRule;
-}
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
 	return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
@@ -70,7 +62,9 @@ export type PatchValue =
 	| FieldPlaceholder
 	| AliasPlaceholder
 	| VariantPlaceholder
-	| ArmDefaultPlaceholder;
+	| ArmDefaultPlaceholder
+	| PreferencePlaceholder
+	| GroupPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -79,7 +73,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v)
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -94,10 +88,7 @@ function requiresPathMode(patches: PatchSet): boolean {
 	return Object.keys(patches).some((k) => !/^\d+$/.test(k));
 }
 
-function applyPathPatches(
-	original: RuntimeRule,
-	patches: Record<number | string, PatchValue>
-): RuntimeRule {
+function applyPathPatches(original: RuntimeRule, patches: Record<number | string, PatchValue>): RuntimeRule {
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
@@ -120,9 +111,7 @@ function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly 
 	});
 }
 
-function partitionPatchesByVariant(
-	patches: Record<number | string, PatchValue>
-): {
+function partitionPatchesByVariant(patches: Record<number | string, PatchValue>): {
 	variantEntries: Array<[string, VariantPlaceholder]>;
 	otherEntries: Array<[string, PatchValue]>;
 } {
@@ -252,18 +241,21 @@ function buildHoistedVariants(
 	const refs: RuntimeRule[] = [];
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
-		const altContent = choiceMembers[resolvedAlt]!;
+		const altMember = choiceMembers[resolvedAlt]!;
+		const visibleName = polymorphVisibleName(parentKind, variantMintName(p.v));
+		const hiddenName = polymorphHiddenName(parentKind, variantMintName(p.v));
+		const lift = enrichLiftArmOf(altMember);
+		if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
+		const altContent = lift === null ? altMember : lift.body;
 		const hoistedMembers = seqMembers.map((m, i) => (i === resolvedPos ? altContent : m));
 		const hoistedSeq = reconstructContainer(core, hoistedMembers);
-		const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
-		const visibleName = polymorphVisibleName(parentKind, p.v.name);
-		const hiddenName = polymorphHiddenName(parentKind, p.v.name);
+		const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
 		if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
 			throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 		}
 		refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
 	}
-	registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
+	registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))));
 	const newChoice = reconstructContainer(choice, refs);
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -299,6 +291,33 @@ function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } 
 	const content = (rule as { content?: RuntimeRule }).content;
 	if (content && typeof content === 'object') return countBodyAnchors(content);
 	return { tokens: 0, named: 0 };
+}
+
+function enrichLiftArmOf(
+	member: RuntimeRule
+): { body: RuntimeRule; liftName: string; symbol: { type?: string; name?: string } } | null {
+	if ((member as { type?: string }).type !== 'ALIAS') return null;
+	const symbol = (member as { content?: unknown }).content as { type?: string; name?: string } | undefined;
+	if (symbol?.type !== 'SYMBOL' || typeof symbol.name !== 'string' || !isEnrichGroupLiftSymbol(symbol as RuntimeRule)) {
+		return null;
+	}
+	const body = getGroupLiftRuleBody(symbol.name);
+	return body === undefined ? null : { body, liftName: symbol.name, symbol };
+}
+
+function renameEnrichLift(
+	aliasMember: RuntimeRule,
+	lift: NonNullable<ReturnType<typeof enrichLiftArmOf>>,
+	hiddenName: string,
+	visibleName: string
+): RuntimeRule {
+	if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, withHoistedAnnotation(lift.body));
+	wireRegisterSymbolRename(lift.liftName, hiddenName);
+	return {
+		...(aliasMember as object),
+		content: { ...lift.symbol, name: hiddenName },
+		value: visibleName
+	} as unknown as RuntimeRule;
 }
 
 function variantBranchIsUnmaterializable(rule: RuntimeRule): boolean {
@@ -407,27 +426,22 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	if (isArmDefault(patch)) {
 		return withAnnotations(originalMember, { default: true });
 	}
+	if (isGroupPlaceholder(patch)) {
+		return withAnnotations(originalMember, { hoisted: true });
+	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
-		const visibleName = polymorphVisibleName(parentKind, patch.name);
+		const visibleName = polymorphVisibleName(parentKind, variantMintName(patch));
 		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind);
 		if ((originalMember as { type?: string }).type === 'ALIAS') {
-			const content = (originalMember as { content?: unknown }).content as { type?: string; name?: string } | undefined;
-			if (content?.type === 'SYMBOL' && typeof content.name === 'string' && isEnrichGroupLiftSymbol(content as RuntimeRule)) {
-				const body = getGroupLiftRuleBody(content.name);
-				if (body !== undefined) {
-					const depositName = polymorphHiddenName(parentKind, patch.name);
-					wireRegisterSyntheticRule(depositName, body);
-					wireRegisterSymbolRename(content.name, depositName);
-					return annotated({
-						...(originalMember as object),
-						content: { ...content, name: depositName },
-						value: visibleName
-					});
-				}
+			const lift = enrichLiftArmOf(originalMember);
+			if (lift !== null) {
+				return annotated(
+					renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, variantMintName(patch)), visibleName)
+				);
 			}
 			return annotated({ ...(originalMember as object), value: visibleName });
 		}
@@ -437,8 +451,10 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
 			});
 		}
-		const hiddenName = polymorphHiddenName(parentKind, patch.name);
-		return annotated(registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack)));
+		const hiddenName = polymorphHiddenName(parentKind, variantMintName(patch));
+		return annotated(
+			registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
+		);
 	}
 	if (isAliasPlaceholder(patch)) {
 		return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -661,10 +677,12 @@ function resolveAliasPlaceholder(
 	originalMember: RuntimeRule,
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
+	const hiddenName = '_' + patch.name;
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
+		const lift = enrichLiftArmOf(originalMember);
+		if (lift !== null) return renameEnrichLift(originalMember, lift, hiddenName, patch.name);
 		return { ...(originalMember as object), value: patch.name } as unknown as RuntimeRule;
 	}
-	const hiddenName = '_' + patch.name;
 	return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 
@@ -689,7 +707,7 @@ export function registerAliasedVariant(
 		);
 	}
 	const body = factored ? factored.nonEmpty : originalMember;
-	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))) {
+	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(withHoistedAnnotation(body as RuntimeRule)))) {
 		throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 	}
 	const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);
@@ -703,20 +721,6 @@ export function registerAliasedVariant(
 		return optional(aliasNode) as RuntimeRule;
 	}
 	return aliasNode;
-}
-
-export function matchesEmpty(rule: RuntimeRule): boolean {
-	const t = rule.type;
-	if (isBlankType(t)) return true;
-	if (isOptionalType(t)) return true;
-	if (isPlainRepeatType(t)) return true;
-	if (isChoiceType(t)) {
-		return membersOf(rule).some((m) => matchesEmpty(m));
-	}
-	if (isSeqType(t)) {
-		return membersOf(rule).every((m) => matchesEmpty(m));
-	}
-	return false;
 }
 
 function factorOutEmptiness(rule: RuntimeRule): { nonEmpty: unknown } | null {

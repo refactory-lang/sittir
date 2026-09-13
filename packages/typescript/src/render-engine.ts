@@ -13,6 +13,7 @@
  */
 import { createNativeEngine, type SittirEngine, type EngineOptions } from '@sittir/common/engine';
 import { KIND_NAMES, type Program } from './types.js';
+import type { Options } from './options.js';
 import type { NodeDataOf } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
@@ -30,8 +31,8 @@ export type ProgramRoot = NodeDataOf<Program>;
  * Throws if the native backend is unavailable rather than silently falling
  * back to a JS engine.
  */
-export function createRenderEngine(options?: EngineOptions): SittirEngine<ProgramRoot> {
-	const result = createNativeEngine<ProgramRoot>(
+export function createRenderEngine(options?: EngineOptions<Options>): SittirEngine<ProgramRoot, Options> {
+	const result = createNativeEngine<ProgramRoot, Options>(
 		{
 			templatesPath: join(__dirname, '..', 'templates'),
 			kindNames: KIND_NAMES,
