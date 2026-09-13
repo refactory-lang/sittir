@@ -35,6 +35,8 @@
 		"test:watch": "vitest --watch",
 		"type-check": "pnpm -r --no-bail run type-check",
 		"type-check:examples": "tsc -p examples/tsconfig.json --noEmit",
+		"type-check:generated-examples": "tsc -p examples/tsconfig.generated.json --noEmit",
+		"gen:examples": "tsx packages/cli/src/cli.ts tool emit-factory-source --grammar rust --file rust/crates/sittir-core/src/splice.rs --export rebuildSpliceGenerated --out examples/17-dogfood-rust.generated.ts && tsx packages/cli/src/cli.ts tool emit-factory-source --grammar typescript --file packages/common/src/format.ts --export rebuildFormatGenerated --out examples/18-dogfood-typescript.generated.ts && tsx packages/cli/src/cli.ts tool emit-factory-source --grammar python --file tests/format-roundtrip/fixtures/python-4space.py --export rebuildPython4spaceGenerated --out examples/19-dogfood-python.generated.ts && oxfmt examples/17-dogfood-rust.generated.ts examples/18-dogfood-typescript.generated.ts examples/19-dogfood-python.generated.ts",
 		"changeset": "changeset",
 		"changeset:version": "changeset version",
 		"changeset:publish": "pnpm run build && changeset publish",

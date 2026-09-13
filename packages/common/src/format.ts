@@ -66,7 +66,7 @@ function applyTrivia(s: string, format: FormatRecord): string {
  * @returns A new `FormatRecord` with adjusted trivia offsets.
  *
  * @remarks
- * FR-004: rebaseTrivia is the single derivation for trivia offset adjustment
+ * RebaseTrivia is the single derivation for trivia offset adjustment
  * after any edit. Callers must not adjust offsets manually.
  */
 export function rebaseTrivia(format: FormatRecord, editStart: number, delta: number): FormatRecord {

@@ -87,5 +87,6 @@ export function matchesEmpty(rule: RuntimeRule): boolean {
 	const members = (rule as { members?: readonly RuntimeRule[] }).members ?? [];
 	if (isChoiceType(t)) return members.some(matchesEmpty);
 	if (isSeqType(t)) return members.every(matchesEmpty);
+	if (isPrecWrapper(rule as { type: string })) return matchesEmpty((rule as { content?: RuntimeRule }).content!);
 	return false;
 }

@@ -1,3 +1,4 @@
+import { withHoistedAnnotation } from './annotations.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
@@ -148,7 +149,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			clauseGroupRules,
 			supertypeNames
 		);
-		clauseGroupRules[groupName] = groupUnaliasResult.rule;
+		clauseGroupRules[groupName] = withHoistedAnnotation(groupUnaliasResult.rule);
 		for (const diagnostic of groupUnaliasResult.diagnostics) {
 			recordUnaliasDiagnostic(unaliasSink, diagnostic);
 		}
@@ -2322,6 +2323,7 @@ function mintStructuredChoiceArm(
 		if (isSupertypeLike(body)) return null;
 		const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, 'arm');
 		if (!promoted) return null;
+		rulesBag[name] = withHoistedAnnotation(body);
 		visibleGroupHiddenNames.add(name);
 		if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
 		return makeVisibleGroupAlias(arm, promoted.visibleName);

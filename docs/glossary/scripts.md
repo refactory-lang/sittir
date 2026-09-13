@@ -176,6 +176,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * bundled with the source change that produced it (standing discipline, not
  * hook-enforced). Tracking its hash would couple the two: every source
  * commit would fail verification until the fixtures commit followed.
+ * `test-fixtures.left-out.json`, the render fixtures that regen left out by
+ * kind, is written by the same pass and lands in the same commit, so it is
+ * excluded for the same reason.
  *
  * Both keep the write side (manifest generation) and the read side
  * (verification) in agreement: no entry written, none expected.

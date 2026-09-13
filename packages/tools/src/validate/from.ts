@@ -10,6 +10,7 @@
  */
 
 import type { AnyNodeData } from '@sittir/types';
+import { sliceSpan } from '@sittir/common';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
 	loadStorageKindNameFromId,
@@ -220,7 +221,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
@@ -238,13 +238,12 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
-		// factorySlots, polymorphVariants) lives in node-model.json5 (PR-K).
+		// factorySlots) lives in node-model.json5.
 		const model = await loadNodeModel(grammar);
 		factoryShapes = model.factoryShapes;
 		factoryFields = model.factoryFields;
 		factorySlots = model.factorySlots;
 		fieldAliasMap = model.fieldAliasMap;
-		polymorphVariants = model.polymorphVariants;
 	} catch (e) {
 		errors.push({
 			kind: '(factory-module-load)',
@@ -300,7 +299,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 
 			let readData: AnyNodeData;
 			try {
-				const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+				const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 				// Resolve via the native data tree; if the kind is an alias target
 				// the native engine emits under a different rule name, skip rather
@@ -406,7 +405,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					const shape = factoryShapes[readKind] ?? 'config';
 					const factory = factoryMap[readKind]!;
 					if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-						// ADR-0018: readNode emits `_<name>` top-level keys, not
+						// ReadNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
 						const config = nodeToConfig(readData, {
@@ -415,7 +414,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factoryFields,
 							factorySlots,
 							fieldAliasMap,
-							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
 						if (shape === 'direct' || shape === 'forwarded') {
@@ -436,11 +434,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							);
 						}
 					} else if (shape === 'text') {
-						// readData.$text is absent on branch nodes (gated by
-						// SITTIR_DEBUG_TEXT). For text-shaped factories, fall back to
-						// slicing the source span directly when $text is absent.
-						const textForFactory =
-							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
+						// A text-shaped factory takes the node's bytes, which its span
+						// addresses whether or not the reader captured them as `$text`.
+						const textForFactory = readData.$span ? sliceSpan(entry.source, readData.$span) : (readData.$text ?? '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else if (shape === 'elements') {
 						// separatedList factory: spread with a LEADING optional
@@ -454,7 +450,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factoryFields,
 							factorySlots,
 							fieldAliasMap,
-							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
 						const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
@@ -468,7 +463,6 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							factoryFields,
 							factorySlots,
 							fieldAliasMap,
-							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
 						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);

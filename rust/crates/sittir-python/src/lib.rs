@@ -30,9 +30,8 @@ use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
 
-#[cfg(feature = "napi-bindings")]
 #[derive(Clone, Copy, Default)]
-struct PythonGrammar;
+pub struct PythonGrammar;
 
 #[cfg(feature = "napi-bindings")]
 impl EngineGrammar for PythonGrammar {
@@ -48,12 +47,28 @@ impl EngineGrammar for PythonGrammar {
     }
 }
 
+impl sittir_core::read_node::ReadModel for PythonGrammar {
+    fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
+        render::kind_ids::is_text_kind(kind)
+    }
+
+    fn is_slot_separator(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: &str,
+        child: sittir_core::types::KindId,
+    ) -> bool {
+        render::kind_ids::is_slot_separator(parent, field, child)
+    }
+}
+
 // The engine class itself — parse, read, render, edits, and the live-tree
 // table — is defined once in `sittir_core::napi_engine`.
 #[cfg(feature = "napi-bindings")]
 sittir_core::napi_engine!(
     PythonGrammar,
     RenderRoot,
+    render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
     render::options::defaults,

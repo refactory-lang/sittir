@@ -8,7 +8,11 @@
 
 
 import { validateFrom, formatFromReport } from './validate/from.ts';
-import { validateFactoryRenderParse, formatFactoryRenderParseReport } from './validate/factory-render-parse.ts';
+import {
+	validateFactoryRenderParse,
+	formatFactoryRenderParseReport,
+	type FactorySurface
+} from './validate/factory-render-parse.ts';
 import { validateReadRenderParse, formatReadRenderParseReport } from './validate/read-render-parse.ts';
 import type { ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
 import { validateTemplateCoverage } from './validate/template-coverage.ts';
@@ -18,7 +22,7 @@ export type Backend = 'native';
 
 // Re-export result types so callers only need @sittir/tools.
 export type { FromValidationResult, FromValidationError } from './validate/from.ts';
-export type { FactoryRenderParseResult } from './validate/factory-render-parse.ts';
+export type { FactoryRenderParseResult, FactorySurface } from './validate/factory-render-parse.ts';
 export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
 export type { TemplateCoverageResult, CoverageIssue } from './validate/template-coverage.ts';
 
@@ -44,7 +48,7 @@ export function runCoverage(grammar: Grammar) {
 	return validateTemplateCoverage(grammar);
 }
 
-/** Run factory-render-parse validation with an explicit backend. */
-export function runFactory(grammar: Grammar, backend: Backend = 'native') {
-	return validateFactoryRenderParse(grammar, backend);
+/** Run factory-render-parse validation with an explicit backend, through the raw or the `ir` surface. */
+export function runFactory(grammar: Grammar, backend: Backend = 'native', surface: FactorySurface = 'raw') {
+	return validateFactoryRenderParse(grammar, backend, { surface });
 }

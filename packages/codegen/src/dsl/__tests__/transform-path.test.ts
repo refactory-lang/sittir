@@ -42,6 +42,32 @@ describe('parsePath()', () => {
 		]);
 	});
 
+	it('parses a quoted literal segment', () => {
+		expect(parsePath('","')).toEqual([{ kind: 'literal', text: ',' }]);
+		expect(parsePath('"::"')).toEqual([{ kind: 'literal', text: '::' }]);
+	});
+
+	it('parses a literal that contains the separator', () => {
+		expect(parsePath('"/"')).toEqual([{ kind: 'literal', text: '/' }]);
+		expect(parsePath('(token_tree_punctuation)/"/="')).toEqual([
+			{ kind: 'kind-match', name: 'token_tree_punctuation' },
+			{ kind: 'literal', text: '/=' }
+		]);
+	});
+
+	it('parses a literal alongside the other segment kinds', () => {
+		expect(parsePath('(block)/"{"/0')).toEqual([
+			{ kind: 'kind-match', name: 'block' },
+			{ kind: 'literal', text: '{' },
+			{ kind: 'index', value: 0 }
+		]);
+	});
+
+	it('rejects an unterminated literal', () => {
+		expect(() => parsePath('(block)/","')).not.toThrow();
+		expect(() => parsePath('(block)/",')).toThrow(/unterminated literal/);
+	});
+
 	it('parses wildcard _ segments', () => {
 		expect(parsePath('_')).toEqual([{ kind: 'wildcard' }]);
 		expect(parsePath('0/_/1')).toEqual([
@@ -89,13 +115,13 @@ describe('parsePath()', () => {
 	});
 
 	it('rejects * with migration error — use _ instead', () => {
-		expect(() => parsePath('*')).toThrow(/path segment '\*' is no longer valid — use '_' for wildcard; see ADR-0010/);
+		expect(() => parsePath('*')).toThrow(/path segment '\*' is no longer valid — use '_' for wildcard/);
 		expect(() => parsePath('0/*/1')).toThrow(/path segment '\*' is no longer valid/);
 	});
 
 	it('rejects bare kind name with migration error — use (name) instead', () => {
 		expect(() => parsePath('foo')).toThrow(
-			/bare kind name 'foo' is no longer valid as a path segment — use '\(foo\)' instead; see ADR-0010/
+			/bare kind name 'foo' is no longer valid as a path segment — use '\(foo\)' instead/
 		);
 		expect(() => parsePath('0/_expression/1')).toThrow(/bare kind name '_expression' is no longer valid/);
 	});
@@ -106,6 +132,17 @@ describe('parsePath()', () => {
 });
 
 describe('applyPath()', () => {
+	it('applies a patch at a literal segment', () => {
+		const rule = seq(str('{'), sym('body'), str('}'));
+		const out = applyPath(rule, parsePath('"}"'), str('END'));
+		expect((out as any).members[2]).toEqual(str('END'));
+	});
+
+	it('skips a literal that no member carries', () => {
+		const rule = seq(str('{'), sym('body'));
+		expect(() => applyPath(rule, parsePath('"}"'), str('END'))).toThrow(/no literal/);
+	});
+
 	it('replaces at a single top-level index', () => {
 		const rule = seq(str('('), sym('expr'), str(')'));
 		const result = applyPath(rule, [{ kind: 'index', value: 1 }], fld('content', sym('expr')));
@@ -186,11 +223,6 @@ describe('applyPath()', () => {
 		});
 
 		it('an override field applied through a field wrapper replaces it instead of nesting', () => {
-			// enrich minted `field('elements', repeat1(choice(...)))`; the author's
-			// `_: field('modifier')` lands on the repeat. The rebuilt wrapper must
-			// be the override field alone — tree-sitter keeps only the innermost
-			// field, so the minted one would be dead and the model would still
-			// read its name.
 			const rule = fld('elements', { type: 'REPEAT1', content: choice(sym('a'), sym('b')) });
 			const result = applyPath(rule, [{ kind: 'wildcard' }], (m) => fld('modifier', m));
 			expect(result).toMatchObject({ type: 'FIELD', name: 'modifier', content: { type: 'REPEAT1' } });
@@ -570,11 +602,6 @@ describe('applyPath() — a patch preserves the wrappers it descends through', (
 	});
 
 	it('rebuilds through the runtime constructor rather than spreading the original', () => {
-		// The constructor call is load-bearing: the evaluate-side
-		// `field()` stamps `fieldName` on the refs beneath its content.
-		// A reconstruction that spread the original would produce the
-		// right shape with none of that, so pin that the runtime's own
-		// `field()` is what produced the result.
 		installFakeDsl({
 			field: (name: string, content: unknown) => ({ type: 'FIELD', name, content, builtByRuntime: true })
 		});

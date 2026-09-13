@@ -28,7 +28,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 	const enumEntries: { kind: string; values: string[] }[] = [];
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if ((node instanceof AbstractAssembledCompound && !node.hoisted) || node instanceof AssembledList) {
+		if ((node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) || node instanceof AssembledList) {
 			nodeKinds.push(kind);
 		} else if (node instanceof AssembledPattern) {
 			leafKinds.push(kind);
@@ -326,7 +326,7 @@ function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
 	if (bindings.length === 0) return;
 	bindings.sort((a, b) => a.constName.localeCompare(b.constName));
 
-	lines.push('// Bitflag const enums — ordered-unique literal sets per bitflag field (ADR-0012)');
+	lines.push('// Bitflag const enums — ordered-unique literal sets per bitflag field');
 	const seen = new Set<string>();
 	for (const b of bindings) {
 		if (seen.has(b.constName)) continue;

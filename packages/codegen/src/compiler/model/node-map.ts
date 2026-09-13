@@ -154,9 +154,29 @@ export type ValueStorage =
 			readonly text: string;
 			readonly immediate?: boolean;
 	  }
+	| { readonly via: 'kindId'; readonly kind: string; readonly members: readonly EnumMemberStorage[] }
 	| { readonly via: 'literal'; readonly text: string; readonly immediate?: boolean };
 
+export interface EnumMemberStorage {
+	readonly kind: string;
+	readonly kindId: number;
+	readonly text: string;
+}
+
 export type TextValueStorage = Extract<ValueStorage, { text: string }>;
+export type NodeValueStorage = Extract<ValueStorage, { via: 'node' }>;
+
+export function isTextStorage(storage: ValueStorage): storage is TextValueStorage {
+	return 'text' in storage;
+}
+
+export function textStoragesOf(storage: ValueStorage): readonly TextValueStorage[] {
+	if (isTextStorage(storage)) return [storage];
+	if (storage.via === 'kindId') {
+		return storage.members.map((m) => ({ via: 'kindId', kind: m.kind, kindId: m.kindId, text: m.text }));
+	}
+	return [];
+}
 
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly node?: T | UnresolvedRef;
@@ -171,7 +191,6 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
-	readonly preferenceLabel?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -701,7 +720,6 @@ export interface ArmFacts {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
-	readonly preferenceLabel?: string;
 }
 
 export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
@@ -710,7 +728,6 @@ export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
 	return {
 		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
 		...(annotations.default === true ? { default: true as const } : {}),
-		...(annotations.preference === undefined ? {} : { preferenceLabel: annotations.preference })
 	};
 }
 
@@ -965,6 +982,7 @@ export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enu
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
 	readonly kindEntry?: GeneratedKindEntry;
+	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
 	factoryName?: string;
 	irKey?: string;
@@ -1011,7 +1029,9 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	factoryInline: boolean = false;
 
-	readonly enrichment: NodeEnrichment;
+	get annotations(): RuleAnnotations | undefined {
+		return this.rule.annotations;
+	}
 
 	constructor(
 		kind: string,
@@ -1020,13 +1040,13 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 			factoryName?: string;
 			irKey?: string;
 			hidden?: boolean;
-			enrichment?: NodeEnrichment;
 			kindEntries?: readonly GeneratedKindEntry[];
+			wordMatcher?: RegExp;
 		}
 	) {
 		this.kind = kind;
 		this.rule = rule;
-		this.enrichment = opts?.enrichment ?? {};
+		this.wordMatcher = opts?.wordMatcher;
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
@@ -1104,6 +1124,7 @@ export class AssembledNonterminal {
 	readonly metadata: OpaqueFacts;
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
+	optionDefaultArm?: string;
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;
@@ -1163,6 +1184,21 @@ export class AssembledNonterminal {
 			...overrides
 		});
 	}
+}
+
+export function concreteKindsOf(kind: string, ctx: NodesCtx): string[] {
+	const seen = new Set<string>();
+	const walk = (name: string): string[] => {
+		if (seen.has(name)) return [];
+		seen.add(name);
+		const node = ctx.nodes.get(name);
+		if (node === undefined) return [];
+		if (!(node instanceof AssembledSupertype)) return [name];
+		const concrete = new Set<string>();
+		for (const subtype of node.subtypeNames) for (const found of walk(subtype)) concrete.add(found);
+		return [...concrete];
+	};
+	return walk(kind);
 }
 
 export function kindsOf(slot: AssembledNonterminal): readonly string[] {
@@ -1425,7 +1461,7 @@ function existingSupertypeClosureOf(slot: AssembledNonterminal, ctx: KindedDeriv
 export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | undefined {
 	if (node === undefined) return undefined;
 	const assembled = node as AssembledNode;
-	return isKindIdStored(assembled) ? assembled.text : undefined;
+	return isFixedTextLeaf(assembled) ? assembled.text : undefined;
 }
 
 export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNode {
@@ -1436,12 +1472,12 @@ export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNo
 	return node;
 }
 
-export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken | AssembledEnum {
 	return node.storage === 'kindId';
 }
 
-export interface NodeEnrichment {
-	readonly hoisted?: true;
+export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
 export interface CompoundOpts {
@@ -1449,7 +1485,6 @@ export interface CompoundOpts {
 	irKey?: string;
 	hidden?: boolean;
 	variantChildKinds?: readonly VariantChild[];
-	hoisted?: true;
 	kindEntries?: readonly GeneratedKindEntry[];
 	parseKindCollisionContext?: ParseKindCollisionContext;
 	slots?: readonly AssembledNonterminal[];
@@ -1462,10 +1497,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	readonly renderRule: RenderRule;
 	readonly variantChildKinds: readonly VariantChild[];
 
-	get hoisted(): boolean {
-		return this.enrichment.hoisted === true;
-	}
-
 	protected readonly _slots: readonly AssembledNonterminal[];
 
 	constructor(
@@ -1475,10 +1506,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		opts?: CompoundOpts,
 		rule: R = renderRule as R
 	) {
-		const hoisted = opts?.hoisted === true;
+		const hoisted = renderRule.annotations?.hoisted === true;
 		const factoryName =
 			opts?.factoryName ?? (hoisted && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
-		super(kind, rule, { ...opts, factoryName, enrichment: hoisted ? { hoisted: true } : {} });
+		super(kind, rule, { ...opts, factoryName });
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
@@ -1670,7 +1701,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	constructor(
 		kind: string,
 		rule: RenderRule,
-		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[] }
+		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[]; wordMatcher?: RegExp }
 	) {
 		super(kind, rule, opts);
 	}
@@ -1681,7 +1712,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 
 	get fixedLiteralText(): string | undefined {
 		if (this.rule.type === PATTERN) return undefined;
-		return collectFixedLiteral(this.rule);
+		return collectFixedLiteral(this.rule, { tokenized: false, deterministic: false, wordMatcher: this.wordMatcher });
 	}
 }
 
@@ -1826,6 +1857,22 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	get values(): string[] {
 		return [...new Set(this.rule.members.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
 	}
+
+	override get storage(): KindStorage {
+		return 'kindId';
+	}
+
+	override get rawFactoryName(): undefined {
+		return undefined;
+	}
+
+	override get fromFunctionName(): undefined {
+		return undefined;
+	}
+
+	get members(): readonly EnumMemberStorage[] {
+		return [...this.resolvedByText].map(([text, entry]) => ({ kind: entry.kind, kindId: entry.id, text }));
+	}
 }
 
 export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
@@ -1877,6 +1924,8 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 	readonly separatorRule: RenderRule | undefined;
 	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	resolvedDelimiterArm?: string;
+	resolvedSeparatorArm?: string;
 
 	constructor(
 		kind: string,
@@ -1894,7 +1943,11 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			kind,
 			opts.simplifiedRule,
 			opts.renderRule,
-			{ kindEntries: opts.kindEntries, parseKindCollisionContext: opts.parseKindCollisionContext },
+			{
+				factoryName: nameNode(kind).factoryName,
+				kindEntries: opts.kindEntries,
+				parseKindCollisionContext: opts.parseKindCollisionContext
+			},
 			rule
 		);
 		const sep = rule.separator;

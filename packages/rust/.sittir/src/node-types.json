@@ -4598,51 +4598,6 @@
     }
   },
   {
-    "type": "range_pattern_left_bare",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "range_pattern_left_with_right",
-    "named": true,
-    "fields": {
-      "right": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_literal_pattern",
-            "named": true
-          },
-          {
-            "type": "crate",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "scoped_identifier",
-            "named": true
-          },
-          {
-            "type": "self",
-            "named": true
-          },
-          {
-            "type": "super",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "range_pattern_prefix",
     "named": true,
     "fields": {
@@ -4726,14 +4681,59 @@
       "required": true,
       "types": [
         {
-          "type": "range_pattern_left_bare",
+          "type": "range_pattern_with_left_bare",
           "named": true
         },
         {
-          "type": "range_pattern_left_with_right",
+          "type": "range_pattern_with_left_with_right",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "range_pattern_with_left_bare",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "range_pattern_with_left_with_right",
+    "named": true,
+    "fields": {
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_literal_pattern",
+            "named": true
+          },
+          {
+            "type": "crate",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "scoped_identifier",
+            "named": true
+          },
+          {
+            "type": "self",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6842,16 +6842,42 @@
           "named": true
         },
         {
-          "type": "visibility_modifier_in_path",
+          "type": "visibility_modifier_pub_in_path",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "visibility_modifier_in_path",
+    "type": "visibility_modifier_pub",
     "named": true,
     "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "visibility_modifier_group",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "visibility_modifier_pub_in_path",
+    "named": true,
+    "fields": {
+      "in": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "in",
+            "named": false
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": false,
       "required": true,
@@ -6878,21 +6904,6 @@
         },
         {
           "type": "super",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "visibility_modifier_pub",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "visibility_modifier_group",
           "named": true
         }
       ]

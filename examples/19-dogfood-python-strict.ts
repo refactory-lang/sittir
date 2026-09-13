@@ -3,10 +3,12 @@ import { ir } from '@sittir/python';
 // The strict half of the python dogfood: the same items through `.strict`
 // alone, so each gap is attributed to the layer that owns it.
 //
-// The whole shape rebuilds here — real `import` statements, a `def` carrying an
-// indented suite, and a module holding them. The coercion half renders the
-// imports as comments and the module as a single call line; none of that is a
-// surface limit.
+// What rebuilds here is the file's skeleton: real `import` statements, a
+// `def main()` carrying an indented suite, and a module holding them. The
+// suite holds one call statement; the real function bodies and the helper
+// functions are not written. The coercion half renders the imports as
+// comments and the module as a single call line; none of that is a surface
+// limit.
 //
 // Two spellings carry most of the difficulty, because getting either wrong
 // reads as a missing feature rather than a wrong call:

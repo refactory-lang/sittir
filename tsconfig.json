@@ -40,7 +40,7 @@
 		"isolatedModules": true,
 		"declaration": true,
 		"declarationMap": true,
-		"incremental": true
+		"incremental": false
 	},
 	"files": [],
 	"references": [

@@ -1,4 +1,4 @@
-import type { RenderDefaults } from '../dsl/primitives/spacing.ts';
+import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -359,6 +359,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	});
 
 	inheritBaseGrammarMetadata(opts, ctx);
+	const wireCtx = getWireContext(opts);
+	if (wireCtx) prunePlaceholderOrphans(rules, ctx, wireCtx);
 
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);
@@ -367,10 +369,10 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const orphanedSyntheticGroups = drainOrphanedSyntheticGroupsMetadata(opts);
 	const renderAs = drainRenderAsMetadata(opts, ctx);
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
-	const renderDefaults = drainRenderDefaultsMetadata(opts);
+	const optionsBlock = drainOptionsMetadata(opts);
 
 	synthesizeInlineAliasSources(rules, ctx);
-	const identified = buildRuleCatalog(rules, { provenanceByKind });
+	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
 
 	const grammarResult = {
@@ -390,7 +392,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		groups,
 		renderAs,
 		visibleExternals,
-		renderDefaults,
+		options: optionsBlock,
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
@@ -535,8 +537,8 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	return e;
 }
 
-function drainRenderDefaultsMetadata(opts: GrammarOptions): RenderDefaults | undefined {
-	const declared = getWireContext(opts)?.defaults;
+function drainOptionsMetadata(opts: GrammarOptions): OptionsConfig | undefined {
+	const declared = getWireContext(opts)?.options;
 	return declared === undefined || Object.keys(declared).length === 0 ? undefined : declared;
 }
 
@@ -641,7 +643,6 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 		}
 		applyPatternReplacement(rules, ctx, wireCtx);
 		applyVisibleExternalsRewrite(rules, { evaluateCtx: ctx, wireCtx });
-		prunePlaceholderOrphans(rules, wireCtx);
 	}
 }
 
@@ -662,8 +663,12 @@ function adoptFinalBaseRules(
 	}
 }
 
-function prunePlaceholderOrphans(rules: Record<string, Rule<'evaluate'>>, wireCtx: WireContext): void {
-	const protectedNames = new Set<string>(wireCtx.deposits.keys());
+function prunePlaceholderOrphans(
+	rules: Record<string, Rule<'evaluate'>>,
+	ctx: EvaluateCtx,
+	wireCtx: WireContext
+): void {
+	const protectedNames = new Set<string>([...wireCtx.deposits.keys(), ...ctx.sinks.supertypes]);
 	for (const name of collectUnreachableHiddenRules(rules, protectedNames)) {
 		delete rules[name];
 	}

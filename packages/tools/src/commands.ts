@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
-import { runFrom, runRt, runCoverage, runFactory, type Grammar, type Backend } from './run.ts';
+import { runFrom, runRt, runCoverage, runFactory, type Grammar, type Backend, type FactorySurface } from './run.ts';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
@@ -70,6 +70,7 @@ export interface GrammarCounts {
 	readonly readRenderParse: Awaited<ReturnType<typeof runRt>>;
 	readonly readRenderParseShallow: Awaited<ReturnType<typeof runRt>>;
 	readonly factoryRenderParse: Awaited<ReturnType<typeof runFactory>>;
+	readonly irRenderParse: Awaited<ReturnType<typeof runFactory>>;
 }
 
 export async function collectGrammarCounts(grammar: Grammar, backend: Backend): Promise<GrammarCounts> {
@@ -77,10 +78,11 @@ export async function collectGrammarCounts(grammar: Grammar, backend: Backend): 
 	// wasn't rebuilt after the last regen, so these counts would not be true
 	// native. Warn loudly rather than mislead.
 	if (backend === 'native') warnIfNativeBinaryStale(grammar);
-	const [from, coverage, factoryRenderParse] = await Promise.all([
+	const [from, coverage, factoryRenderParse, irRenderParse] = await Promise.all([
 		runFrom(grammar, backend),
 		runCoverage(grammar),
-		runFactory(grammar, backend)
+		runFactory(grammar, backend),
+		runFactory(grammar, backend, 'ir')
 	]);
 	// Native RT validation reuses a cached grammar engine per process, so run the
 	// recursive and shallow passes sequentially to avoid cross-run interference.
@@ -93,19 +95,22 @@ export async function collectGrammarCounts(grammar: Grammar, backend: Backend): 
 		coverage,
 		readRenderParse,
 		readRenderParseShallow,
-		factoryRenderParse
+		factoryRenderParse,
+		irRenderParse
 	};
 }
 
 export function formatGrammarCounts(counts: GrammarCounts): string {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse, irRenderParse } =
+		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
 		`  fromPass=${from.pass}    fromTotal=${from.total}`,
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
 		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}`,
 		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}`,
-		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`
+		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`,
+		`  ir-render-parsePass=${irRenderParse.pass}    ir-render-parseTotal=${irRenderParse.total}    ir-render-parseAstMatchPass=${irRenderParse.astMatchPass}`
 	];
 	const rtFails = formatFirstFailures(
 		'read-render-parse',
@@ -130,6 +135,14 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		factoryRenderParse.errors.map((e) => ({ label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message }))
 	);
 	if (factoryFails) lines.push(factoryFails);
+	const irFails = formatFirstFailures(
+		'ir-render-parse',
+		[...irRenderParse.errors, ...irRenderParse.astMismatches].map((e) => ({
+			label: e.entry ? `${e.entry} (${e.kind})` : e.kind,
+			message: e.message
+		}))
+	);
+	if (irFails) lines.push(irFails);
 	const fromFails = formatFirstFailures(
 		'from',
 		from.errors.map((e) => ({ label: e.kind, message: e.message }))
@@ -157,7 +170,8 @@ export function formatFirstFailures(
 }
 
 export function toValidationRun(counts: GrammarCounts): ValidationRun {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse, irRenderParse } =
+		counts;
 	return {
 		ts: new Date().toISOString(),
 		grammar,
@@ -174,18 +188,25 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		readRenderParseShallowAstMatchPass: readRenderParseShallow.astMatchPass,
 		factoryRenderParsePass: factoryRenderParse.pass,
 		factoryRenderParseTotal: factoryRenderParse.total,
-		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass
+		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass,
+		irRenderParsePass: irRenderParse.pass,
+		irRenderParseTotal: irRenderParse.total,
+		irRenderParseAstMatchPass: irRenderParse.astMatchPass
 	};
 }
 
-/** Print top-8 error buckets from factory-render-parse for one grammar. */
-export async function grammarProbeFactory(grammar: Grammar, backend: Backend): Promise<void> {
-	const r = await runFactory(grammar, backend);
+/** Print top-8 error buckets from factory-render-parse for one grammar, on the raw or the `ir` surface. */
+export async function grammarProbeFactory(
+	grammar: Grammar,
+	backend: Backend,
+	surface: FactorySurface = 'raw'
+): Promise<void> {
+	const r = await runFactory(grammar, backend, surface);
 	console.log(
-		`\n=== ${grammar}/${formatBackendLabel(backend)} === total=${r.total} pass=${r.pass} fail=${r.fail} skip=${r.skip} astMatch=${r.astMatchPass}`
+		`\n=== ${grammar}/${formatBackendLabel(backend)}/${surface} === total=${r.total} pass=${r.pass} fail=${r.fail} skip=${r.skip} astMatch=${r.astMatchPass}`
 	);
 	const buckets = new Map<string, Array<{ kind: string; msg: string }>>();
-	for (const err of r.errors) {
+	for (const err of [...r.errors, ...r.astMismatches]) {
 		const key = (err.message.split(':')[0] ?? '').slice(0, 60);
 		if (!buckets.has(key)) buckets.set(key, []);
 		buckets.get(key)!.push({ kind: err.kind, msg: err.message });
@@ -761,12 +782,16 @@ export async function runCountsCli(
 }
 
 /** Exported entry: probe-factory subcommand — error-bucket diagnostics for factory-render-parse. */
-export async function runProbeFactoryCli(args: string[], backendMode: CliBackend = 'native'): Promise<void> {
+export async function runProbeFactoryCli(
+	args: string[],
+	backendMode: CliBackend = 'native',
+	surface: FactorySurface = 'raw'
+): Promise<void> {
 	const grammars = resolveGrammars(args);
 	for (const backend of resolveBackends(backendMode)) {
 		for (const grammar of grammars) {
 			try {
-				await grammarProbeFactory(grammar, backend);
+				await grammarProbeFactory(grammar, backend, surface);
 			} catch (e) {
 				console.log(`${grammar}/${formatBackendLabel(backend)}: ERROR ${(e as Error).message}`);
 			}
@@ -790,7 +815,8 @@ export function runHistoryCli(args: string[]): void {
 				`  cov=${r.covPass}/${r.covTotal}` +
 				`  read-render-parse=${r.readRenderParsePass}/${r.readRenderParseTotal}` +
 				`  read-render-parse-shallow=${r.readRenderParseShallowPass}/${r.readRenderParseShallowTotal}` +
-				`  factory-render-parse=${r.factoryRenderParsePass}/${r.factoryRenderParseTotal}`
+				`  factory-render-parse=${r.factoryRenderParsePass}/${r.factoryRenderParseTotal}` +
+				(r.irRenderParseTotal === undefined ? '' : `  ir-render-parse=${r.irRenderParsePass}/${r.irRenderParseTotal}`)
 		);
 	}
 }

@@ -87,7 +87,7 @@ function trackedPaths(): ReadonlySet<string> {
 
 function isManifestExcluded(relPath: string): boolean {
 	if (!trackedPaths().has(relPath)) return true;
-	return relPath.endsWith('/test-fixtures.json');
+	return relPath.endsWith('/test-fixtures.json') || relPath.endsWith('/test-fixtures.left-out.json');
 }
 
 function collectFiles(grammar: Grammar): string[] {

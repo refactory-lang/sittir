@@ -2,9 +2,15 @@ import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
-import { admitsDepth, type WhitespaceText } from '../compiler/model/render-rules.ts';
+import { admitsDepth } from '../compiler/model/render-rules.ts';
+import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf } from '../dsl/primitives/spacing.ts';
+import { pathOf } from '../compiler/model/site-addresses.ts';
+import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
+import { toPascal } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
-import { SEAM_MARK, rustStringLiteral } from './render-body.ts';
+import { rustStringLiteral } from './render-body.ts';
+import { rustFieldIdent, rustTypeIdent } from './transport-common.ts';
+import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type AddressTables } from './options.ts';
 
 export interface SpacingSite {
 	readonly kind: string;
@@ -19,6 +25,8 @@ export interface SpacingSite {
 	readonly side?: SpacingSide;
 	readonly role?: 'separator';
 	readonly defaultText?: string;
+	readonly seat?: { readonly kind: string; readonly field: string };
+	readonly path?: readonly PreferenceSegment[];
 }
 
 export interface DelimiterSite {
@@ -34,15 +42,21 @@ export interface DepthSites {
 	readonly sites: readonly number[];
 }
 
+export interface SitePath {
+	readonly path: string;
+	readonly segments: readonly PreferenceSegment[];
+	readonly site: 'spacing' | 'delimiter';
+	readonly index: number;
+}
+
 export interface RenderOptionsPlan {
 	readonly spacingSites: readonly SpacingSite[];
+	readonly sitePaths: readonly SitePath[];
 	readonly delimiterSites: readonly DelimiterSite[];
 	readonly depthSites: readonly DepthSites[];
 	readonly indentId: number;
 	readonly dedentId: number;
-	readonly labels: readonly { readonly label: string; readonly allowedIds: readonly number[] }[];
-	readonly supertypes: readonly { readonly name: string; readonly members: readonly string[] }[];
-	readonly whitespaceText: readonly { readonly id: number; readonly text: WhitespaceText }[];
+	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 }
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = {
@@ -74,24 +88,25 @@ function screaming(s: string): string {
 export function planRenderOptions(
 	sites: readonly SitePreference[],
 	kindEntries: readonly IdEntry[],
-	supertypeMembers: ReadonlyMap<string, readonly string[]>,
-	whitespaceText: ReadonlyMap<string, WhitespaceText>
+	whitespaceText: ReadonlyMap<string, string>
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
+	const delimiterPaths = new Map<DelimiterSite, readonly PreferenceSegment[]>();
 	const depthCapable: SpacingSite[] = [];
-	const labels = new Map<string, readonly number[]>();
 	for (const site of sites) {
 		const kind = publicKindName(site.kind);
 		const at = `${kind}.${site.slot}`;
 		if (site.source === 'delimiter') {
 			const allowed = site.arms.reduce((acc, arm) => acc | (DELIMITER_BITS[arm.value] ?? 0), 0);
-			delimiters.push({ kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 });
+			const row: DelimiterSite = { kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 };
+			delimiters.push(row);
+			delimiterPaths.set(row, pathOf(site, kindEntries));
 			continue;
 		}
 		if (site.source === 'separator') {
 			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
-			if (defaultEntry?.symbolName === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
+			if (defaultEntry?.literalText === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
 			spacing.push({
 				kind,
 				slot: site.slot,
@@ -103,7 +118,7 @@ export function planRenderOptions(
 				defaultId: idOf(kindEntries, site.defaultArm, at),
 				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
 				role: 'separator',
-				defaultText: defaultEntry.symbolName
+				defaultText: defaultEntry.literalText
 			});
 			continue;
 		}
@@ -122,26 +137,33 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
-			...(site.side === undefined ? {} : { side: site.side })
+			...(site.side === undefined ? {} : { side: site.side }),
+			...(site.seat === undefined ? {} : { seat: site.seat }),
+			...(site.path === undefined ? {} : { path: site.path })
 		});
-		labels.set(site.label, allowedIds);
 		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
-	spacing.sort((a, b) => byTuple([a.kind, a.slot, a.label], [b.kind, b.slot, b.label]));
+	const paths = new Map(spacing.map((site) => [site, pathOf(site, kindEntries)]));
+	spacing.sort((a, b) => comparePreferencePaths(paths.get(a)!, paths.get(b)!));
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
 	const depthSites = new Map<string, number[]>();
 	for (const s of depthCapable) depthSites.set(s.kind, [...(depthSites.get(s.kind) ?? []), spacing.indexOf(s)]);
-	const idOfText = (constant: string): number => whitespaceText.size === 0 ? 0 : ([...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)?.[0] ?? undefined) === undefined ? 0 : idOf(kindEntries, [...whitespaceText].find(([, t]) => 'constant' in t && t.constant === constant)![0], 'visibleExternals');
+	const idOfText = (text: string): number => {
+		const kind = [...whitespaceText].find(([, t]) => t === text)?.[0];
+		return kind === undefined ? 0 : idOf(kindEntries, kind, 'visibleExternals');
+	};
 	return {
 		spacingSites: spacing,
+		sitePaths: [
+			...spacing.map((site, index) => ({ path: paths.get(site)!, site: 'spacing' as const, index })),
+			...delimiters.map((site, index) => ({ path: delimiterPaths.get(site)!, site: 'delimiter' as const, index }))
+		]
+			.sort((a, b) => comparePreferencePaths(a.path, b.path))
+			.map(({ path, site, index }) => ({ path: formatPreferencePath(path), segments: path, site, index })),
 		delimiterSites: delimiters,
 		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
-		indentId: idOfText('INDENT_NEWLINE'),
-		dedentId: idOfText('DEDENT_NEWLINE'),
-		labels: [...labels].map(([label, allowedIds]) => ({ label, allowedIds })).sort((a, b) => byTuple([a.label], [b.label])),
-		supertypes: [...supertypeMembers]
-			.map(([name, members]) => ({ name: publicKindName(name), members: [...new Set(members.map(publicKindName))].sort() }))
-			.sort((a, b) => byTuple([a.name], [b.name])),
+		indentId: idOfText(INDENT_TEXT),
+		dedentId: idOfText(DEDENT_TEXT),
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'visibleExternals'), text }))
 			.sort((a, b) => a.id - b.id)
@@ -150,8 +172,219 @@ export function planRenderOptions(
 
 const q = (s: string): string => JSON.stringify(s);
 
-export function renderOptionsRs(plan: RenderOptionsPlan): string {
+function structNameOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
+	return `${segments.map((segment) => rustTypeIdent(toPascal(nestedKey(segment, kindEntries)))).join('')}Options`;
+}
+
+type SiteIndex = ReadonlyMap<string, readonly SitePath[]>;
+
+function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
+	const index = new Map<string, SitePath[]>();
+	for (const p of plan.sitePaths) {
+		const key = formatPreferencePath(p.segments);
+		const bucket = index.get(key);
+		if (bucket === undefined) index.set(key, [p]);
+		else bucket.push(p);
+	}
+	return index;
+}
+
+function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
+	return leaf.canonical.map((segments) => {
+		const site = siteIndex.get(formatPreferencePath(segments))?.[0];
+		if (site === undefined) throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is no site`);
+		return site;
+	});
+}
+
+interface DirectChild {
+	readonly key: string;
+	readonly branch?: AddressBranchEntry;
+	readonly leaf?: AddressLeafEntry;
+}
+
+type ChildIndex = ReadonlyMap<string, readonly DirectChild[]>;
+
+function childIndexOf(addresses: AddressTables, kindEntries: readonly KindEntryLike[]): ChildIndex {
+	const index = new Map<string, DirectChild[]>();
+	const add = (parent: readonly PreferenceSegment[], child: DirectChild): void => {
+		const key = formatPreferencePath(parent);
+		const bucket = index.get(key);
+		if (bucket === undefined) index.set(key, [child]);
+		else bucket.push(child);
+	};
+	for (const b of addresses.branches) add(b.segments.slice(0, -1), { key: nestedKey(b.segments[b.segments.length - 1]!, kindEntries), branch: b });
+	for (const l of addresses.leaves) add(l.segments.slice(0, -1), { key: nestedKey(l.segments[l.segments.length - 1]!, kindEntries), leaf: l });
+	return index;
+}
+
+function directChildrenOf(prefix: readonly PreferenceSegment[], childIndex: ChildIndex): readonly DirectChild[] {
+	return childIndex.get(formatPreferencePath(prefix)) ?? [];
+}
+
+interface AddressField {
+	readonly key: string;
+	readonly ident: string;
+	readonly type: string;
+}
+
+function fieldsOf(
+	prefix: readonly PreferenceSegment[],
+	children: readonly string[],
+	childIndex: ChildIndex,
+	siteIndex: SiteIndex,
+	kindEntries: readonly KindEntryLike[]
+): AddressField[] {
+	const direct = directChildrenOf(prefix, childIndex);
+	return children.map((key) => {
+		const child = direct.find((c) => c.key === key);
+		if (child === undefined) throw new Error(`options.rs: address '${key}' beneath '${formatPreferencePath(prefix)}' is neither a site nor a path`);
+		const ident = rustFieldIdent(key);
+		if (child.branch !== undefined) return { key, ident, type: `Option<${structNameOf(child.branch.segments, kindEntries)}>` };
+		const refs = siteRefsOf(child.leaf!, siteIndex);
+		const delimiterRefs = refs.filter((r) => r.site === 'delimiter').length;
+		if (delimiterRefs > 0 && delimiterRefs < refs.length) {
+			throw new Error(`options.rs: address '${child.leaf!.path}' mixes spacing and delimiter sites`);
+		}
+		return { key, ident, type: delimiterRefs > 0 ? 'Option<u8>' : 'Option<u16>' };
+	});
+}
+
+function emitOptionsStructs(plan: RenderOptionsPlan, addresses: AddressTables, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): string[] {
 	const L: string[] = [];
+	const childIndex = childIndexOf(addresses, kindEntries);
+	const structsOf = [
+		{ segments: [] as readonly PreferenceSegment[], name: 'Options', children: [...addresses.roots] },
+		...addresses.branches.map((b) => ({ segments: b.segments, name: structNameOf(b.segments, kindEntries), children: b.children }))
+	];
+	for (const s of structsOf) {
+		const fields = fieldsOf(s.segments, s.children, childIndex, siteIndex, kindEntries);
+		const isRoot = s.segments.length === 0;
+		L.push('#[derive(Debug, Clone, Default)]');
+		L.push(`pub struct ${s.name} {`);
+		if (isRoot) L.push('    pub indent: Option<String>,');
+		for (const f of fields) L.push(`    pub ${f.ident}: ${f.type},`);
+		L.push('}', '');
+		const allowed = isRoot ? ['indent', ...fields.map((f) => f.key)] : fields.map((f) => f.key);
+		const at = isRoot ? '' : formatPreferencePath(s.segments);
+		L.push('#[cfg(feature = "napi-bindings")]');
+		L.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${s.name} {`);
+		L.push('    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {');
+		L.push('        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };');
+		L.push(`        ::sittir_core::options::reject_unknown_keys(&obj, &[${allowed.map(q).join(', ')}], ${q(at)})?;`);
+		L.push('        Ok(Self {');
+		if (isRoot) L.push('            indent: obj.get("indent")?,');
+		for (const f of fields) L.push(`            ${f.ident}: obj.get(${q(f.key)})?,`);
+		L.push('        })');
+		L.push('    }');
+		L.push('}', '');
+		L.push('#[cfg(feature = "napi-bindings")]');
+		L.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${s.name} {`);
+		L.push('    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {');
+		L.push('        let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;');
+		if (isRoot) L.push('        obj.set("indent", val.indent)?;');
+		for (const f of fields) L.push(`        obj.set(${q(f.key)}, val.${f.ident})?;`);
+		L.push('        Ok(::napi::bindgen_prelude::JsValue::raw(&obj))');
+		L.push('    }');
+		L.push('}', '');
+	}
+	return L;
+}
+
+function chainOf(segments: readonly PreferenceSegment[], kindEntries: readonly KindEntryLike[]): string {
+	const idents = segments.map((segment) => rustFieldIdent(nestedKey(segment, kindEntries)));
+	if (idents.length === 1) return `options.${idents[0]}`;
+	const last = idents[idents.length - 1]!;
+	const middle = idents.slice(1, -1);
+	let expr = `options.${idents[0]}.as_ref()`;
+	for (const m of middle) expr += `.and_then(|o| o.${m}.as_ref())`;
+	expr += `.and_then(|o| o.${last})`;
+	return expr;
+}
+
+function literalOf(segments: readonly PreferenceSegment[], value: number, kindEntries: readonly KindEntryLike[]): string {
+	const idents = segments.map((segment) => rustFieldIdent(nestedKey(segment, kindEntries)));
+	let inner = `Some(${value})`;
+	for (let i = idents.length - 1; i >= 1; i--) {
+		const structName = structNameOf(segments.slice(0, i), kindEntries);
+		inner = `Some(${structName} { ${idents[i]}: ${inner}, ..::std::default::Default::default() })`;
+	}
+	return `Options { ${idents[0]}: ${inner}, ..::std::default::Default::default() }`;
+}
+
+function resolverBody(addresses: AddressTables, plan: RenderOptionsPlan, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): string[] {
+	const L: string[] = [];
+	for (const leaf of addresses.leaves) {
+		const refs = siteRefsOf(leaf, siteIndex);
+		L.push(`    if let Some(v) = ${chainOf(leaf.segments, kindEntries)} {`);
+		for (const ref of refs) {
+			if (ref.site === 'spacing') {
+				const site = plan.spacingSites[ref.index]!;
+				L.push(`        set_spacing(&mut table, ${site.constName}, SPACING_SITES[${site.constName}].4, v, ${q(ref.path)})?;`);
+			} else {
+				const site = plan.delimiterSites[ref.index]!;
+				L.push(`        set_delimiter(&mut table, ${site.constName}, DELIMITER_SITES[${site.constName}].2, v, ${q(ref.path)})?;`);
+			}
+		}
+		L.push('    }');
+	}
+	return L;
+}
+
+function differingArmOf(ref: SitePath, plan: RenderOptionsPlan): number | undefined {
+	if (ref.site === 'spacing') {
+		const site = plan.spacingSites[ref.index]!;
+		return site.allowedIds.find((id) => id !== site.defaultId);
+	}
+	const site = plan.delimiterSites[ref.index]!;
+	return site.allowed !== site.defaultBits ? site.allowed : undefined;
+}
+
+function resolveTests(plan: RenderOptionsPlan, kindEntries: readonly KindEntryLike[]): string[] {
+	const L: string[] = [
+		'#[cfg(test)]',
+		'mod resolve_tests {',
+		'    use super::*;',
+		'',
+		'    #[test]',
+		'    fn no_options_leaves_the_defaults() {',
+		'        assert_eq!(resolve(&Options::default(), &defaults()).unwrap(), defaults());',
+		'    }'
+	];
+	const differing = plan.sitePaths.find((site) => differingArmOf(site, plan) !== undefined);
+	if (differing !== undefined) {
+		const value = differingArmOf(differing, plan)!;
+		const table = differing.site === 'spacing' ? 'spacing' : 'delimiter';
+		const constName = differing.site === 'spacing' ? plan.spacingSites[differing.index]!.constName : plan.delimiterSites[differing.index]!.constName;
+		L.push(
+			'',
+			'    #[test]',
+			'    fn a_differing_admitted_value_changes_only_its_own_site() {',
+			`        let options = ${literalOf(differing.segments, value, kindEntries)};`,
+			'        let table = resolve(&options, &defaults()).unwrap();',
+			'        let expected = defaults();',
+			`        assert_eq!(table.${table}[${constName}], ${value});`,
+			'        for i in 0..table.spacing.len() {',
+			table === 'spacing'
+				? `            if i != ${constName} { assert_eq!(table.spacing[i], expected.spacing[i]); }`
+				: '            assert_eq!(table.spacing[i], expected.spacing[i]);',
+			'        }',
+			'        for i in 0..table.delimiter.len() {',
+			table === 'delimiter'
+				? `            if i != ${constName} { assert_eq!(table.delimiter[i], expected.delimiter[i]); }`
+				: '            assert_eq!(table.delimiter[i], expected.delimiter[i]);',
+			'        }',
+			'        assert_eq!(table.indent, expected.indent);',
+			'    }'
+		);
+	}
+	L.push('}');
+	return L;
+}
+
+export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly KindEntryLike[]): string {
+	const L: string[] = [];
+	const siteIndex = siteIndexOf(plan);
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
 	L.push('use ::sittir_core::options::ResolvedOptions;', '');
 	L.push(`pub const SPACING_SITE_COUNT: usize = ${plan.spacingSites.length};`);
@@ -159,19 +392,11 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	plan.spacingSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
-	L.push('/// (kind, address, label, default kind id, allowed kind ids), in site order. A');
-	L.push('/// separator site is addressed under its kind; an array flank is addressed at');
-	L.push('/// the top level by `<kind>_start` / `<kind>_end`.');
+	L.push('/// (kind, address, label, default kind id, allowed kind ids), in canonical path order.');
 	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[');
 	for (const s of plan.spacingSites) {
 		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
 	}
-	L.push('];', '');
-	L.push('/// Site indices of the array flanks, keyed by their top-level address.');
-	L.push('pub static FLANK_SITES: &[(&str, usize)] = &[');
-	plan.spacingSites.forEach((s, i) => {
-		if (s.side === 'start' || s.side === 'end') L.push(`    (${q(s.address)}, ${i}),`);
-	});
 	L.push('];', '');
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
@@ -183,20 +408,19 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('pub static DEPTH_SITES: &[(&str, &[usize])] = &[');
 	for (const d of plan.depthSites) L.push(`    (${q(d.kind)}, &[${d.sites.join(', ')}]),`);
 	L.push('];', '');
-	L.push('pub static LABELS: &[(&str, &[u16])] = &[');
-	for (const l of plan.labels) L.push(`    (${q(l.label)}, &[${l.allowedIds.join(', ')}]),`);
-	L.push('];', '');
-	L.push('pub static SUPERTYPE_MEMBERS: &[(&str, &[&str])] = &[');
-	for (const s of plan.supertypes) L.push(`    (${q(s.name)}, &[${s.members.map(q).join(', ')}]),`);
-	L.push('];', '');
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
-		L.push(`        ${w.id} => ${'text' in w.text ? rustStringLiteral(SEAM_MARK + w.text.text) : `::sittir_core::spacing::${w.text.constant}`},`);
+		L.push(`        ${w.id} => ${rustStringLiteral(depthBreakOf(w.text))},`);
 	}
 	L.push('        _ => "",');
 	L.push('    }');
 	L.push('}', '');
+	L.push("pub fn allowed(site: usize) -> &'static [u16] {", '    SPACING_SITES[site].4', '}', '');
+	L.push(
+		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };',
+		''
+	);
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
@@ -204,143 +428,58 @@ export function renderOptionsRs(plan: RenderOptionsPlan): string {
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
-	L.push(...RESOLVER_BODY);
+	L.push(...emitOptionsStructs(plan, addresses, siteIndex, kindEntries));
+	L.push(...RESOLVER_HELPERS);
+	L.push('/// Resolve an options object over `base`: `indent` and every address that');
+	L.push('/// names a site. A value a site does not admit is an error naming the address.');
+	L.push('pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {');
+	L.push('    let mut table = base.clone();');
+	L.push('    if let Some(indent) = options.indent.as_ref() {');
+	L.push('        table.indent = indent.clone();');
+	L.push('    }');
+	L.push(...resolverBody(addresses, plan, siteIndex, kindEntries));
+	L.push('    for (kind, sites) in DEPTH_SITES {');
+	L.push('        let mut depth = 0usize;');
+	L.push('        for site in sites.iter() {');
+	L.push('            let value = table.spacing[*site];');
+	L.push('            if INDENT_KIND != 0 && value == INDENT_KIND {');
+	L.push('                depth += 1;');
+	L.push('            } else if DEDENT_KIND != 0 && value == DEDENT_KIND {');
+	L.push('                if depth == 0 {');
+	L.push('                    return Err(format!("options: {kind} dedents an indent it never opened"));');
+	L.push('                }');
+	L.push('                depth -= 1;');
+	L.push('            }');
+	L.push('        }');
+	L.push('        if depth != 0 {');
+	L.push('            return Err(format!("options: {kind} opens an indent it never dedents"));');
+	L.push('        }');
+	L.push('    }');
+	L.push('    Ok(table)');
+	L.push('}', '');
+	L.push(...resolveTests(plan, kindEntries));
 	return L.join('\n') + '\n';
 }
 
-const RESOLVER_BODY: readonly string[] = [
-	'fn spacing_id(allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<u16, String> {',
-	'    let id = value.as_u64().and_then(|v| u16::try_from(v).ok()).ok_or_else(|| format!("options: {key} must be a kind id"))?;',
+const RESOLVER_HELPERS: readonly string[] = [
+	'fn spacing_id(allowed: &[u16], id: u16, key: &str) -> Result<u16, String> {',
 	'    if !allowed.contains(&id) {',
 	'        return Err(format!("options: {key} does not admit kind id {id} (allowed: {allowed:?})"));',
 	'    }',
 	'    Ok(id)',
 	'}',
 	'',
-	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: &::serde_json::Value, key: &str) -> Result<(), String> {',
+	'fn set_spacing(table: &mut ResolvedOptions, index: usize, allowed: &[u16], value: u16, key: &str) -> Result<(), String> {',
 	'    table.spacing[index] = spacing_id(allowed, value, key)?;',
 	'    Ok(())',
 	'}',
 	'',
-	'fn set_delimiter(table: &mut ResolvedOptions, index: usize, allowed: u8, value: &::serde_json::Value, key: &str) -> Result<(), String> {',
-	'    let bits = value.as_u64().and_then(|v| u8::try_from(v).ok()).ok_or_else(|| format!("options: {key} must be a Delimiter member"))?;',
-	'    if bits & !allowed != 0 {',
-	'        return Err(format!("options: {key} does not admit delimiter {bits} (allowed bits: {allowed})"));',
+	'fn set_delimiter(table: &mut ResolvedOptions, index: usize, allowed: u8, value: u8, key: &str) -> Result<(), String> {',
+	'    if value & !allowed != 0 {',
+	'        return Err(format!("options: {key} does not admit delimiter {value} (allowed bits: {allowed})"));',
 	'    }',
-	'    table.delimiter[index] = bits;',
+	'    table.delimiter[index] = value;',
 	'    Ok(())',
 	'}',
-	'',
-	"/// Apply one kind's entries to its sites. `owner` is the key the entries",
-	'/// came under: the kind itself, or a supertype whose members include it —',
-	'/// a key no site of a member owns is skipped there, and an error under',
-	'/// the kind itself.',
-	'fn apply_kind(table: &mut ResolvedOptions, kind: &str, entries: &::serde_json::Map<String, ::serde_json::Value>, owner: &str) -> Result<(), String> {',
-	'    for (key, value) in entries {',
-	'        if let Some(i) = SPACING_SITES.iter().position(|s| s.0 == kind && s.1 == key) {',
-	'            set_spacing(table, i, SPACING_SITES[i].4, value, &format!("{owner}.{key}"))?;',
-	'            continue;',
-	'        }',
-	'        if let Some(i) = DELIMITER_SITES.iter().position(|s| s.0 == kind && s.1 == key) {',
-	'            set_delimiter(table, i, DELIMITER_SITES[i].2, value, &format!("{owner}.{key}"))?;',
-	'            continue;',
-	'        }',
-	'        if owner == kind {',
-	'            return Err(format!("options: unknown key {owner}.{key}"));',
-	'        }',
-	'    }',
-	'    Ok(())',
-	'}',
-	'',
-	'/// A `<supertype>_start` / `<supertype>_end` key: the supertype, its members and the side.',
-	"fn flank_supertype(key: &str) -> Option<(&'static str, &'static [&'static str], &'static str)> {",
-	'    for side in ["start", "end"] {',
-	'        if let Some(name) = key.strip_suffix(&format!("_{side}")) {',
-	'            if let Some((n, members)) = SUPERTYPE_MEMBERS.iter().find(|(n, _)| *n == name) {',
-	'                return Some((n, members, side));',
-	'            }',
-	'        }',
-	'    }',
-	'    None',
-	'}',
-	'',
-	'/// Resolve a JSON options object over `base`: the label\'s top-level value',
-	'/// first, then supertype × slot, then kind × slot, so the more specific',
-	'/// tier overwrites. Unknown keys and values a site does not admit are',
-	'/// errors naming the key.',
-	'pub fn resolve(json: &str, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {',
-	'    let value: ::serde_json::Value = ::serde_json::from_str(json).map_err(|e| format!("options: not a JSON object: {e}"))?;',
-	'    let object = value.as_object().ok_or_else(|| "options: not a JSON object".to_string())?;',
-	'    let mut table = base.clone();',
-	'    let mut kinds: Vec<(&String, &::serde_json::Map<String, ::serde_json::Value>)> = Vec::new();',
-	'    let mut supertypes: Vec<(&str, &[&str], &::serde_json::Map<String, ::serde_json::Value>)> = Vec::new();',
-	'    for (key, value) in object {',
-	'        if key == "indent" {',
-	'            table.indent = value.as_str().ok_or_else(|| "options: indent must be a string".to_string())?.to_string();',
-	'            continue;',
-	'        }',
-	'        if let Some((_, allowed)) = LABELS.iter().find(|(label, _)| label == key) {',
-	'            let id = spacing_id(allowed, value, key)?;',
-	'            for (j, site) in SPACING_SITES.iter().enumerate() {',
-	'                if site.2 == key {',
-	'                    table.spacing[j] = id;',
-	'                }',
-	'            }',
-	'            continue;',
-	'        }',
-	'        if let Some((_, i)) = FLANK_SITES.iter().find(|(address, _)| address == key) {',
-	'            set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, key)?;',
-	'            continue;',
-	'        }',
-	'        if let Some((name, members, side)) = flank_supertype(key) {',
-	'            let mut any = false;',
-	'            for member in members.iter() {',
-	'                let address = format!("{member}_{side}");',
-	'                if let Some((_, i)) = FLANK_SITES.iter().find(|(a, _)| *a == address) {',
-	'                    set_spacing(&mut table, *i, SPACING_SITES[*i].4, value, &format!("{name}_{side}"))?;',
-	'                    any = true;',
-	'                }',
-	'            }',
-	'            if any {',
-	'                continue;',
-	'            }',
-	'        }',
-	'        let entries = value.as_object().ok_or_else(|| format!("options: {key} must be an object of <slot>_<label> entries"))?;',
-	'        if let Some((name, members)) = SUPERTYPE_MEMBERS.iter().find(|(name, _)| name == key) {',
-	'            supertypes.push((name, members, entries));',
-	'            continue;',
-	'        }',
-	'        if SPACING_SITES.iter().any(|s| s.0 == key) || DELIMITER_SITES.iter().any(|s| s.0 == key) {',
-	'            kinds.push((key, entries));',
-	'            continue;',
-	'        }',
-	'        return Err(format!("options: unknown key {key}"));',
-	'    }',
-	'    for (name, members, entries) in supertypes {',
-	'        for member in members.iter() {',
-	'            apply_kind(&mut table, member, entries, name)?;',
-	'        }',
-	'    }',
-	'    for (kind, entries) in kinds {',
-	'        apply_kind(&mut table, kind, entries, kind)?;',
-	'    }',
-	'    for (kind, sites) in DEPTH_SITES {',
-	'        let mut depth = 0usize;',
-	'        for site in sites.iter() {',
-	'            let value = table.spacing[*site];',
-	'            if INDENT_KIND != 0 && value == INDENT_KIND {',
-	'                depth += 1;',
-	'            } else if DEDENT_KIND != 0 && value == DEDENT_KIND {',
-	'                if depth == 0 {',
-	'                    return Err(format!("options: {kind} dedents an indent it never opened"));',
-	'                }',
-	'                depth -= 1;',
-	'            }',
-	'        }',
-	'        if depth != 0 {',
-	'            return Err(format!("options: {kind} opens an indent it never dedents"));',
-	'        }',
-	'    }',
-	'    Ok(table)',
-	'}'
+	''
 ];

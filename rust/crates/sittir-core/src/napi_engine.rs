@@ -24,17 +24,22 @@
 ///
 /// - `$grammar` — the crate's [`EngineGrammar`](crate::engine::EngineGrammar) adapter.
 /// - `$render_root` — the generated transport root type accepted by `render`.
+/// - `$options` — the generated per-grammar options struct (`render::options::Options`), the napi-typed shape `EngineOptions.options` and `render`/`render_to_file` accept.
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
 /// - `$abi` — the render transport ABI version this crate was generated against.
+/// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
+/// - `$resolve` — `fn(&$options, &ResolvedOptions) -> Result<ResolvedOptions, String>`, applying an options object over a base table.
 #[macro_export]
 macro_rules! napi_engine {
-    ($grammar:ty, $render_root:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
+    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
         #[::napi_derive::napi(object)]
         pub struct EngineOptions {
             pub format: Option<String>,
-            /// The render options object as JSON; resolved once here against the
-            /// grammar's site table. Only the resolved ids are kept.
-            pub options: Option<String>,
+            /// Resolved once here against the grammar's site table at
+            /// construction; only the resolved ids are kept. A `render` call
+            /// carrying its own options resolves again, per call, over the
+            /// engine's table — the engine's own table never changes.
+            pub options: Option<$options>,
         }
 
         #[::napi_derive::napi]
@@ -43,7 +48,6 @@ macro_rules! napi_engine {
             /// Every tree still reachable from JavaScript, keyed by the id its
             /// handles carry. Entries leave only via `disposeTree`/`dispose`.
             trees: ::std::collections::HashMap<u32, $crate::ParsedTree<$grammar>>,
-            next_tree_id: u32,
             /// Newest parse, for `render` calls that do not name a tree.
             last_tree_id: Option<u32>,
         }
@@ -52,7 +56,7 @@ macro_rules! napi_engine {
         impl SittirEngine {
             #[::napi_derive::napi(constructor)]
             pub fn new(options: Option<EngineOptions>) -> ::napi::Result<Self> {
-                let (format_json, options_json) = match options {
+                let (format_json, opts) = match options {
                     Some(opts) => (opts.format, opts.options),
                     None => (None, None),
                 };
@@ -62,15 +66,20 @@ macro_rules! napi_engine {
                     .map_err(|e| {
                         ::napi::Error::from_reason(format!("parse engine format failed: {e}"))
                     })?;
-                let table = match options_json {
-                    Some(json) => $resolve(&json, &$defaults()).map_err(::napi::Error::from_reason)?,
+                let table = match opts {
+                    Some(opts) => {
+                        $resolve(&opts, &$defaults()).map_err(::napi::Error::from_reason)?
+                    }
                     None => $defaults(),
                 };
                 Ok(Self {
-                    engine: $crate::engine::Engine::new(<$grammar as ::std::default::Default>::default(), format, table)
-                        .map_err(::napi::Error::from_reason)?,
+                    engine: $crate::engine::Engine::new(
+                        <$grammar as ::std::default::Default>::default(),
+                        format,
+                        table,
+                    )
+                    .map_err(::napi::Error::from_reason)?,
                     trees: ::std::collections::HashMap::new(),
-                    next_tree_id: 0,
                     last_tree_id: None,
                 })
             }
@@ -121,10 +130,11 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn parse_and_read(
                 &mut self,
+                env: ::napi::Env,
                 source: String,
                 deep: Option<bool>,
             ) -> ::napi::Result<String> {
-                let tree_id = self.claim_tree_id()?;
+                let tree_id = self.claim_tree_id(&env)?;
                 let depth = $crate::napi_engine::read_depth(deep);
                 let mut parsed = self
                     .engine
@@ -142,9 +152,7 @@ macro_rules! napi_engine {
                             tree_id,
                         })
                         .map_err(|e| {
-                            ::napi::Error::from_reason(format!(
-                                "serialize ParseResult failed: {e}"
-                            ))
+                            ::napi::Error::from_reason(format!("serialize ParseResult failed: {e}"))
                         })?;
                         self.trees.insert(tree_id, parsed);
                         self.last_tree_id = Some(tree_id);
@@ -197,13 +205,22 @@ macro_rules! napi_engine {
                 &self,
                 transport: $render_root,
                 tree_id: Option<f64>,
-                options: Option<String>,
+                options: Option<$options>,
             ) -> ::napi::Result<String> {
+                let resolved;
                 let table = match options {
-                    Some(json) => $resolve(&json, self.engine.options()).map_err(::napi::Error::from_reason)?,
-                    None => self.engine.options().clone(),
+                    Some(opts) => {
+                        resolved = $resolve(&opts, self.engine.options())
+                            .map_err(::napi::Error::from_reason)?;
+                        &resolved
+                    }
+                    None => self.engine.options(),
                 };
-                let (source, canonical) = $render_parts(transport, &table).map_err(|e| {
+                let ctx = $crate::prepare::RenderContext {
+                    options: table,
+                    sources: &self.trees,
+                };
+                let (source, canonical) = $render_parts(transport, &ctx).map_err(|e| {
                     ::napi::Error::from_reason(format!("render_transport failed: {e}"))
                 })?;
                 // A node knows which tree it came from, but the wrap layer
@@ -232,7 +249,7 @@ macro_rules! napi_engine {
                 transport: $render_root,
                 path: String,
                 tree_id: Option<f64>,
-                options: Option<String>,
+                options: Option<$options>,
             ) -> ::napi::Result<()> {
                 let rendered = self.render(transport, tree_id, options)?;
                 ::std::fs::write(&path, rendered).map_err(|e| {
@@ -267,7 +284,9 @@ macro_rules! napi_engine {
                 let Ok(tree_id) = $crate::napi_engine::checked_index(tree_id, "treeId") else {
                     return;
                 };
-                let Ok(tree_id) = u32::try_from(tree_id) else { return };
+                let Ok(tree_id) = u32::try_from(tree_id) else {
+                    return;
+                };
                 self.trees.remove(&tree_id);
                 if self.last_tree_id == Some(tree_id) {
                     self.last_tree_id = None;
@@ -290,21 +309,26 @@ macro_rules! napi_engine {
         }
 
         impl SittirEngine {
-            /// Take the next tree id, refusing to wrap.
+            /// Take the next tree id from the JavaScript process, refusing to wrap.
             ///
-            /// Ids share a handle's bits with the node index, so they cannot
-            /// run forever; reusing one would make a stale handle look valid
-            /// against the tree that took its id, which is the exact failure
-            /// the tag exists to prevent. Refusing is the honest end state.
-            fn claim_tree_id(&mut self) -> ::napi::Result<u32> {
-                if self.next_tree_id > $crate::engine::MAX_TREE_ID {
-                    return Err(::napi::Error::from_reason(format!(
-                        "engine exhausted its {} tree ids; construct a new engine",
+            /// Every grammar's addon is its own linked image, so a counter in
+            /// Rust static memory would be one counter per addon and a rust
+            /// engine and a typescript engine could both mint tree 0. The
+            /// process's one `globalThis` is the owner every addon shares: the
+            /// next id lives there, so a coordinate minted by any engine names
+            /// no tree in any other, whatever grammar it speaks. Ids are never
+            /// reused, so exhausting them is the honest end state.
+            fn claim_tree_id(&mut self, env: &::napi::Env) -> ::napi::Result<u32> {
+                const KEY: &str = "__sittirNextTreeId";
+                let mut global = env.get_global()?;
+                let next: Option<f64> = ::napi::bindgen_prelude::JsObjectValue::get_named_property(&global, KEY)?;
+                let (id, record) = $crate::engine::claim_tree_id_from(next).ok_or_else(|| {
+                    ::napi::Error::from_reason(format!(
+                        "this process exhausted its {} tree ids",
                         $crate::engine::MAX_TREE_ID
-                    )));
-                }
-                let id = self.next_tree_id;
-                self.next_tree_id += 1;
+                    ))
+                })?;
+                ::napi::bindgen_prelude::JsObjectValue::set_named_property(&mut global, KEY, record)?;
                 Ok(id)
             }
         }
@@ -322,7 +346,9 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
     /// could not survive the trip through JavaScript intact.
     const MAX_EXACT: f64 = 9_007_199_254_740_991.0; // 2^53 - 1
     if !value.is_finite() {
-        return Err(napi::Error::from_reason(format!("{label} must be a finite number")));
+        return Err(napi::Error::from_reason(format!(
+            "{label} must be a finite number"
+        )));
     }
     if value < 0.0 {
         return Err(napi::Error::from_reason(format!(

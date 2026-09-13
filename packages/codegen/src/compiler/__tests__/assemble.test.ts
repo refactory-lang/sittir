@@ -24,8 +24,7 @@ import {
 	isMultiple,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword,
-	AbstractAssembledCompound
+	AssembledKeyword
 } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
@@ -52,7 +51,7 @@ function makeNormalized(
 	const normalizedRules = flattenRules(stamped);
 	const simplifiedRules = computeSimplifiedRules(
 		new SimplifyCtx({
-			grammar: { ...makeNormalizedGrammar(normalizedRules), hoistedKinds: overrides?.hoistedKinds },
+			grammar: makeNormalizedGrammar(normalizedRules),
 			diagnostics: new DiagnosticSink()
 		})
 	);
@@ -290,15 +289,16 @@ describe('Assemble — classifyNode', () => {
 							name: 'params',
 							content: { type: SYMBOL, name: 'parameters' }
 						}
-					]
+					],
+					annotations: { hoisted: true }
 				},
 				parameters: { type: PATTERN, value: '[a-z]+' }
 			},
-			{ hoistedKinds: new Set(['_sig']) }
+			{}
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_sig');
 		expect(node?.modelType).toBe('envelope');
-		expect((node as AbstractAssembledCompound).hoisted).toBe(true);
+		expect(node?.annotations?.hoisted).toBe(true);
 	});
 
 	it('classifies a group-wrapped lifted separated list as separatedList (fielded element)', () => {
@@ -320,7 +320,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('_args', flatten(rule), { hoisted: true })).toBe('list');
+		expect(classifyNode('_args', flatten({ ...rule, annotations: { hoisted: true } }), { hoisted: true })).toBe('list');
 	});
 
 	it('classifies a group-wrapped separated list of mixed field/bare choice arms as separatedList', () => {
@@ -989,6 +989,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				cSymbol: `anon_sym_${id}`,
 				parserName: symbolName,
 				symbolName,
+				literalText: symbolName,
 				anon: true,
 				aux: false,
 				alias: false,
