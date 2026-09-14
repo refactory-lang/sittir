@@ -1,6 +1,11 @@
 # Polymorph flattening
 
-A polymorph parent is a kind whose rule is a pure choice of its variants. It exists in the parse tree only to wrap one of them, which costs a level of nesting in every tree and a `content` slot in every model, factory and vocabulary interface. This design lists every such parent as a tree-sitter supertype. The parent disappears from the parse tree, its variants become its subtypes, and each variant carries everything the parent carried. The factory overlay keeps the ergonomic surface, `ir.<parent>.<variant>(…)`, so construction reads the same.
+A polymorph parent is a kind whose rule is a pure choice of its variants. It costs a `content` slot in every model, factory and vocabulary interface, and when the parent is visible it also costs a level of nesting in every parse tree. This design lists every such parent as a tree-sitter supertype, so its variants become its subtypes and each variant carries everything the parent carried.
+
+What that removes depends on whether the parent is visible:
+
+- **A visible parent** (`with_clause`, `assignment`) has a node in the parse tree today. Flattening removes that node, so the variant sits directly in the slot.
+- **A hidden or inlined parent** (python's `_suite`, which is in the grammar's `inline` list) has no node today; `suite_inline` and `suite_block` already sit directly in the slot. Flattening removes only sittir's wrapper: the model's `content` slot and the parent factory. The parser gains supertype metadata for the rule and no parse tree changes. The factory overlay keeps the ergonomic surface, `ir.<parent>.<variant>(…)`, so construction reads the same.
 
 It depends on the whole-arm variant hoist, which makes a variant parent a pure choice, and it precedes the rule re-authoring retirement, whose gate snapshots the flattened model.
 
@@ -8,7 +13,7 @@ It depends on the whole-arm variant hoist, which makes a variant parent a pure c
 
 - Every parent whose rule is a pure choice of `variant()` aliases is a supertype in both pipelines. Its variants are its subtypes, and a slot that admitted the parent admits the supertype.
 - Every variant is a kind in both pipelines, including a variant whose arm is a single symbol or a single token. The parser already emits such a variant as its own node; sittir mints the same kind.
-- The parse tree has no node for a flattened parent. A node's variant is its own kind, and the reader dispatches on it.
+- The parse tree has no node for a flattened parent. For a visible parent that is a change; for a hidden or inlined parent it was already so. A node's variant is its own kind, and the reader dispatches on it.
 - The strict surface has no factory for a flattened parent. The overlay entry `ir.<parent>` remains, with one route per variant and the chained routes the variants already carry.
 - A patch that addresses a flattened parent descends through it by the variant structure (§4). No grammar file's patches change.
 
@@ -17,7 +22,7 @@ It depends on the whole-arm variant hoist, which makes a variant parent a pure c
 Listing four pure python parents (`expression_statement`, `with_clause`, `_match_block`, `_suite`) under `supertypes:` with no other change:
 
 - `tree-sitter generate` succeeds and no rule body changes. `node-types.json` lists each parent as a supertype whose subtypes are its variant kinds.
-- The parse tree loses the level: `with_statement with_clause: (with_clause_bare …) body: (suite_inline …)`.
+- A visible parent's level leaves the parse tree: `with_statement with_clause: (with_clause_bare …)` where master has a `with_clause` node around it. `_suite` was already inlined on master, so `body: (suite_inline …)` is unchanged.
 - A query still matches through a supertype: tree-sitter-rust's own highlights query uses `(_expression)`.
 - Listing hides a rule without an underscore rename: python's `expression` is a supertype and never appears in a parse tree.
 
@@ -63,14 +68,15 @@ After the hoist: python 6 of 7 variant parents, typescript 15 of 18, rust 19 of 
 - **Strict factories.** No factory for the parent. A slot that admits it takes any variant's built node.
 - **Overlay.** `ir.<parent>` keeps a route per variant, `strict` and `coerce`, plus the chained routes a variant carries. Its type is the union of the variant routes. It is the one construction spelling for a flattened parent.
 - **Options.** An address that names the parent reaches its variants through the supertype member map, which already treats a polymorph parent as the union of its variants.
-- **Vocabulary and bindings.** A variant is a refinement of its parent's claim, and a binding claims the variant node directly (`(struct_item_brace) @declaration.struct.brace`). Queries upstream wrote against the parent keep matching through the supertype.
+- **Vocabulary and bindings.** Flattening makes a variant node claimable directly (`(struct_item_brace) @declaration.struct.brace`), as a refinement of its parent's claim. This design only enables that: existing bindings that capture the parent keep matching through the supertype, and moving claims onto variants is the later bindings pass (§8).
 
 ## 7. Verification
 
-- **Grammar diff.** Per grammar, the generated grammar and node model before and after differ exactly by the listed parents becoming supertypes, their wrapper nodes and `content` slots disappearing, and the bare-symbol and token variants gaining kinds. Anything else is a failure.
-- **Validators.** `sittir validate history` numbers per grammar at or above the pre-change run in every lane, with accessor throws at zero.
-- **Suite and examples.** The unit suite green, the examples type-check clean, the dogfood rebuild examples regenerated by their generator, API-surface and options snapshots updated with the listed parent factories removed.
-- **Unit tests.** Path descent through a flattened parent: arm selection, fan-out, and the missing-position error. Minting a bare-symbol variant and a token variant on sittir's side.
+- **Fresh validation.** `pnpm run validate:native` regenerates all three grammars and records a new run; `sittir validate history` then compares that run against the last pre-change run, per grammar and lane. Every lane at or above the pre-change run, accessor throws at zero. History alone is never the gate, since it only prints recorded rows.
+- **Grammar diff.** Per grammar, the generated grammar and node model before and after differ exactly by the listed parents becoming supertypes, their `content` slots (and, for visible parents, their wrapper nodes) disappearing, and the bare-symbol and token variants gaining kinds. Anything else is a failure.
+- **Workspace and native checks.** `pnpm run build`, `pnpm run type-check`, `pnpm run type-check:examples` and `pnpm run lint` clean, and an independent `cargo check` of the generated crates, since the regeneration's own native build is not the check.
+- **Suite and examples.** The unit suite green, run on its own; the dogfood rebuild examples regenerated by their generator; API-surface and options snapshots updated with the listed parent factories removed.
+- **Unit tests.** Path descent through a flattened parent: arm selection, fan-out, and the missing-position error. Minting a bare-symbol variant and a token variant on sittir's side. The eligibility classifier (§5) on synthetic grammars: a positive case that flattens, and negative cases proving that an extra, a parent with an unmaterializable arm, and an alias-target parent each stay wrapped, so a future grammar shape cannot flatten into an invalid parser grammar unnoticed.
 
 ## 8. Out of scope
 
