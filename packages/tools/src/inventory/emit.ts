@@ -137,6 +137,24 @@ const LAYOUT = new Set([
 	'shebang'
 ]);
 
+const literalUnion = (texts: readonly string[]): TypeExpr => {
+	const sorted = [...texts].sort();
+	const first = sorted[0] ?? '';
+	return sorted.length === 1
+		? { k: 'lit', text: first }
+		: { k: 'union', of: sorted.map((t) => ({ k: 'lit', text: t }) as TypeExpr) };
+};
+const kindMember = (paths: readonly string[]): Member => ({
+	name: 'kind',
+	optional: false,
+	type: literalUnion(paths),
+	trailing: []
+});
+function kindsBeneath(d: Derivation, v: string): string[] {
+	const byPath = [...d.allvocab].filter((o) => o === v || o.startsWith(`${v}.`));
+	const byClaim = [...d.refinements].filter(([, r]) => r.parent === v || r.parent.startsWith(`${v}.`)).map(([o]) => o);
+	return [...new Set([...byPath, ...byClaim])].sort();
+}
 const refOf = (path: string): TypeExpr => ({ k: 'ref', path: path.split('.').map(tsname), generic: true });
 const setOf = (path: string): TypeExpr => ({
 	k: 'ref',
@@ -261,15 +279,15 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 			k: 'interface',
 			name,
 			extendsType: refOf(base),
-			members: [...refinement.literals].map(([f, ts]) => ({
-				name: camel(f),
-				optional: false,
-				type:
-					ts.size === 1
-						? { k: 'lit', text: [...ts][0] ?? '' }
-						: { k: 'union', of: [...ts].sort().map((t) => ({ k: 'lit', text: t })) },
-				trailing: []
-			})),
+			members: [
+				kindMember([v]),
+				...[...refinement.literals].map(([f, ts]) => ({
+					name: camel(f),
+					optional: false,
+					type: literalUnion([...ts]),
+					trailing: []
+				}))
+			],
 			bodyLeading: [],
 			trailing: [],
 			generic: true,
@@ -279,7 +297,8 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 	} else {
 		const mems = levelMembers(d, v);
 		const ext = sameTop ? refOf(parentPath) : null;
-		const members: Member[] = [];
+		const paths = kindsBeneath(d, v);
+		const members: Member[] = paths.length > 0 ? [kindMember(paths)] : [];
 		for (const [cm, f] of [...mems].sort(([a], [b]) => a.localeCompare(b))) {
 			if (LAYOUT.has(cm)) continue;
 			members.push(memberDecl(d, v, cm, f));

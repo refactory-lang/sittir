@@ -165,13 +165,18 @@ function collect(
 					if (hasPredicate)
 						(contentDerived.get(cap) ?? contentDerived.set(cap, new Set<string>()).get(cap))?.add(input.grammar);
 					const toplevel = n === top || (top.kind === '<group>' && top.children.includes(n));
-					if (k !== null && k !== '<token>')
-						push(claims, k, {
-							vocab: cap,
-							predicate: hasPredicate,
-							fieldLiterals: n.kind !== null && n.kind !== '<group>' ? { ...n.fieldLiterals } : {},
-							toplevel
-						});
+					if (k !== null && k !== '<token>') {
+						const fieldLiterals = n.kind !== null && n.kind !== '<group>' ? { ...n.fieldLiterals } : {};
+						const slots = modelNode(input.model, k)?.slots ?? [];
+						for (const child of n.children) {
+							if (child.kind !== '<token>' || child.field !== null || child.text === null || child.captures.length > 0)
+								continue;
+							const text = child.text;
+							const pinned = slots.find((sl) => sl.terminals.includes(text));
+							if (pinned && !(pinned.name in fieldLiterals)) fieldLiterals[pinned.name] = text;
+						}
+						push(claims, k, { vocab: cap, predicate: hasPredicate, fieldLiterals, toplevel });
+					}
 					continue;
 				}
 				if (cap.startsWith('_') || cap === 'element') continue;
@@ -440,59 +445,41 @@ export function childrenOf(d: Derivation, v: string): string[] {
 		.sort();
 }
 
+export function claimedBeneath(d: Derivation, v: string): string[] {
+	return [...d.allvocab].filter((o) => (o === v || o.startsWith(`${v}.`)) && !d.refinements.has(o)).sort();
+}
+
 export function levelMembers(d: Derivation, v: string): Map<string, MemberFacts> {
 	const merged = new Map<string, MemberFacts>();
 	if (d.refinements.has(v)) return merged;
-	const at = (cm: string, scalar: boolean): MemberFacts => {
-		const f = merged.get(cm) ?? { ...facts(), scalar };
-		merged.set(cm, f);
-		return f;
+	const superset = (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean => [...b].every((x) => a.has(x));
+	const requiredIn = (o: string, cm: string): boolean => {
+		const own = d.members.get(o)?.get(cm);
+		return own !== undefined && !own.optional && superset(own.grammars, d.claimers.get(o) ?? new Set());
 	};
-	for (const o of d.allvocab) {
-		const byPath = o === v || o.startsWith(`${v}.`);
-		const byClaim = d.refinements.get(o)?.parent === v;
-		if (!byPath && !byClaim) continue;
-		const refinement = d.refinements.get(o);
-		if (refinement) {
-			for (const [f, ts] of refinement.literals) {
-				const m = at(camel(f), true);
-				for (const t of ts) m.kinds.add(`text:${t}`);
-				for (const g of d.claimers.get(o) ?? []) m.grammars.add(g);
-			}
-			continue;
-		}
-		for (const [cm, slot] of d.members.get(o) ?? []) {
-			const m = at(cm, false);
+	const carriers = d.members.has(v) ? [v] : claimedBeneath(d, v);
+	if (carriers.length === 0) return merged;
+	const shared = [...(d.members.get(carriers[0] ?? v)?.keys() ?? [])].filter((cm) =>
+		carriers.every((o) => d.members.get(o)?.has(cm))
+	);
+	const beneath = claimedBeneath(d, v);
+	for (const cm of shared.sort()) {
+		const m: MemberFacts = { ...facts(), scalar: false };
+		for (const o of beneath) {
+			const slot = d.members.get(o)?.get(cm);
+			if (!slot) continue;
 			for (const k of slot.kinds) m.kinds.add(k);
-			m.optional ||= slot.optional || o !== v;
 			m.multiple ||= slot.multiple;
 			m.scalar ||= slot.scalar;
 			for (const g of slot.grammars) m.grammars.add(g);
 		}
-	}
-	const requiredMemo = new Map<string, boolean>();
-	const superset = (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean => [...b].every((x) => a.has(x));
-	const requiredAt = (o: string, cm: string): boolean => {
-		const key = `${o} ${cm}`;
-		const memo = requiredMemo.get(key);
-		if (memo !== undefined) return memo;
-		requiredMemo.set(key, true);
-		const own = d.members.get(o)?.get(cm);
-		const ownOk = own !== undefined && !own.optional && superset(own.grammars, d.claimers.get(o) ?? new Set());
-		const kids = childrenOf(d, o).every((c) => (d.members.has(c) ? requiredAt(c, cm) : true));
-		const result = ownOk && kids;
-		requiredMemo.set(key, result);
-		return result;
-	};
-	const kids = childrenOf(d, v);
-	for (const [cm, m] of merged) {
-		const own = d.members.get(v)?.get(cm);
-		if (own === undefined && d.members.has(v)) continue;
-		const ownOk = own === undefined ? true : !own.optional && superset(own.grammars, d.claimers.get(v) ?? new Set());
-		const kidsOk = kids.length > 0 && kids.every((c) => (d.members.has(c) ? requiredAt(c, cm) : true));
-		m.optional = !(
-			ownOk && (own !== undefined ? kids.every((c) => (d.members.has(c) ? requiredAt(c, cm) : true)) : kidsOk)
-		);
+		for (const [o, r] of d.refinements) {
+			if (r.parent !== v && !r.parent.startsWith(`${v}.`)) continue;
+			for (const t of r.literals.get(snake(cm)) ?? r.literals.get(cm) ?? []) m.kinds.add(`text:${t}`);
+			for (const g of d.claimers.get(o) ?? []) m.grammars.add(g);
+		}
+		m.optional = !beneath.every((o) => requiredIn(o, cm));
+		merged.set(cm, m);
 	}
 	return merged;
 }

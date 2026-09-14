@@ -1,45 +1,51 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
+
 import type * as V from './index.ts';
 
 export interface Attribute<G extends GrammarContext> {
 	// claimed by r
-	readonly arguments?: (G['expression'] | G['element'])[]; // t only
-	readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>; // rt only
-	readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
-	readonly function?: V.Attribute.Content.Member<G> | G['identifier']; // t only
-	readonly input?: V.Unmapped<'rust:attribute_input'>; // unmapped: <rust:attribute_input>
-	readonly object?: V.Attribute.Content.Member<G> | G['identifier']; // t only
-	readonly path?: G['identifier'];
-	readonly property?: G['identifier']; // t only
-	readonly typeArguments?: G['type'][]; // t only
+	readonly kind:
+		| 'attribute'
+		| 'attribute.content'
+		| 'attribute.content.call'
+		| 'attribute.content.member'
+		| 'attribute.content.parenthesized'
+		| 'attribute.decorator'
+		| 'attribute.inner';
+	readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>;
+	// rt only
 }
+
 export namespace Attribute {
 	export interface Content<G extends GrammarContext> extends V.Attribute<G> {
 		// claimed by r
-		readonly arguments?: (G['expression'] | G['element'])[]; // t only
-		readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>; // t only
-		readonly function?: V.Attribute.Content.Member<G> | G['identifier']; // t only
-		readonly input?: V.Unmapped<'rust:attribute_input'>; // unmapped: <rust:attribute_input>
-		readonly object?: V.Attribute.Content.Member<G> | G['identifier']; // t only
+		readonly kind:
+			| 'attribute.content'
+			| 'attribute.content.call'
+			| 'attribute.content.member'
+			| 'attribute.content.parenthesized';
+		readonly input?: V.Unmapped<'rust:attribute_input'>;
+		// unmapped: <rust:attribute_input>
 		readonly path?: G['identifier'];
-		readonly property?: G['identifier']; // t only
-		readonly typeArguments?: G['type'][]; // t only
 	}
 	export namespace Content {
 		export interface Call<G extends GrammarContext> extends V.Attribute.Content<G> {
 			// claimed by t
+			readonly kind: 'attribute.content.call';
 			readonly arguments: (G['expression'] | G['element'])[];
 			readonly function: V.Attribute.Content.Member<G> | G['identifier'];
 			readonly typeArguments?: G['type'][];
 		}
 		export interface Member<G extends GrammarContext> extends V.Attribute.Content<G> {
 			// claimed by t
+			readonly kind: 'attribute.content.member';
 			readonly object: V.Attribute.Content.Member<G> | G['identifier'];
 			readonly property: G['identifier'];
 		}
 		export interface Parenthesized<G extends GrammarContext> extends V.Attribute.Content<G> {
 			// claimed by t
+			readonly kind: 'attribute.content.parenthesized';
 			readonly content: G['identifier'] | V.Attribute.Content.Kinds<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
@@ -50,11 +56,15 @@ export namespace Attribute {
 	}
 	export interface Decorator<G extends GrammarContext> extends V.Attribute<G> {
 		// claimed by pt
-		readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>; // t only
-		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
+		readonly kind: 'attribute.decorator';
+		readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>;
+		// t only
+		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		// p only
 	}
 	export interface Inner<G extends GrammarContext> extends V.Attribute<G> {
 		// claimed by r
+		readonly kind: 'attribute.inner';
 		readonly content: V.Attribute.Content<G>;
 	}
 	export type Kinds<G extends GrammarContext> =
