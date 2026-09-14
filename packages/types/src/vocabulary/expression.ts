@@ -169,7 +169,7 @@ export interface Expression<G extends GrammarContext> {
 		| '||'
 		| '||='
 		| '~'; // prt only
-	readonly operators: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in'; // prt only
+	readonly operators?: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in'; // prt only
 	readonly optionalChain?: boolean; // t only
 	readonly parameters?: V.Declaration.Parameter<G>[]; // prt only
 	readonly properties?: (
@@ -211,7 +211,7 @@ export interface Expression<G extends GrammarContext> {
 export namespace Expression {
 	export interface Assignment<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
-		readonly left: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
+		readonly left?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
 		readonly name?: V.Unmapped<'python:pattern'> | V.Pattern.Tuple.Bare<G>; // p only   // unmapped: <python:pattern>
 		readonly operator?:
 			| '%='
@@ -231,7 +231,7 @@ export namespace Expression {
 			| '^='
 			| '|='
 			| '||=';
-		readonly right:
+		readonly right?:
 			| V.Declaration.Module<G>
 			| G['expression']
 			| G['identifier']
@@ -244,7 +244,7 @@ export namespace Expression {
 	export namespace Assignment {
 		export interface Compound<G extends GrammarContext> extends V.Expression.Assignment<G> {
 			// claimed by prt
-			readonly left: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
+			readonly left?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
 			readonly name?: V.Unmapped<'python:pattern'> | V.Pattern.Tuple.Bare<G>; // p only   // unmapped: <python:pattern>
 			readonly operator:
 				| '%='
@@ -264,7 +264,7 @@ export namespace Expression {
 				| '^='
 				| '|='
 				| '||=';
-			readonly right: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
+			readonly right?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
 			readonly value?: V.Declaration.Variable<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 		}
 		export namespace Compound {
@@ -406,7 +406,7 @@ export namespace Expression {
 			| 'or'
 			| '|'
 			| '||';
-		readonly operators: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in';
+		readonly operators?: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in';
 		readonly right?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
 		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	}
@@ -465,10 +465,10 @@ export namespace Expression {
 		}
 		export interface Comparison<G extends GrammarContext> extends V.Expression.Binary<G> {
 			// claimed by p
-			readonly comparators: V.Unmapped<'python:comparison_operator_comparator'>[]; // unmapped: <python:comparison_operator_comparator>
-			readonly name: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
-			readonly operator: '!=' | '!==' | '<' | '<=' | '==' | '===' | '>' | '>=' | 'in'; // prt only
-			readonly operators: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in'; // prt only
+			readonly comparators?: V.Unmapped<'python:comparison_operator_comparator'>[]; // unmapped: <python:comparison_operator_comparator>
+			readonly name?: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
+			readonly operator?: '!=' | '!==' | '<' | '<=' | '==' | '===' | '>' | '>=' | 'in'; // prt only
+			readonly operators?: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in'; // prt only
 		}
 		export namespace Comparison {
 			export interface Equal<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
@@ -528,9 +528,9 @@ export namespace Expression {
 		}
 		export interface Logical<G extends GrammarContext> extends V.Expression.Binary<G> {
 			// claimed by p
-			readonly name: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+			readonly name?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 			readonly operator: '&&' | 'and' | 'or' | '||'; // prt only
-			readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		}
 		export namespace Logical {
 			export interface And<G extends GrammarContext> extends V.Expression.Binary.Logical<G> {
@@ -548,8 +548,8 @@ export namespace Expression {
 			readonly operator: '@';
 		}
 		export interface Membership<G extends GrammarContext> extends V.Expression.Binary<G> {
-			readonly operator: 'in' | 'instanceof'; // pt only
-			readonly operators: 'in' | 'not in'; // pt only
+			readonly operator?: 'in' | 'instanceof'; // pt only
+			readonly operators?: 'in' | 'not in'; // pt only
 		}
 		export namespace Membership {
 			export interface In<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
@@ -1044,7 +1044,7 @@ export namespace Expression {
 		// claimed by prt
 		readonly argument?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>; // pt only
 		readonly operand?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
-		readonly operator: '!' | '*' | '+' | '-' | 'delete' | 'typeof' | 'void' | '~';
+		readonly operator?: '!' | '*' | '+' | '-' | 'delete' | 'typeof' | 'void' | '~';
 	}
 	export namespace Unary {
 		export interface BitwiseNot<G extends GrammarContext> extends V.Expression.Unary<G> {
@@ -1059,10 +1059,10 @@ export namespace Expression {
 			readonly operator: '!' | '*' | '-';
 		}
 		export interface Negation<G extends GrammarContext> extends V.Expression.Unary<G> {
-			readonly operator: '-';
+			readonly operator?: '-';
 		}
 		export interface Not<G extends GrammarContext> extends V.Expression.Unary<G> {
-			readonly operator: '!';
+			readonly operator?: '!';
 		}
 		export interface Plus<G extends GrammarContext> extends V.Expression.Unary<G> {
 			readonly operator: '+';
@@ -1087,10 +1087,10 @@ export namespace Expression {
 	export interface Unit<G extends GrammarContext> extends V.Expression<G> {} // claimed by r
 	export interface Update<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by t
-		readonly content:
+		readonly content?:
 			| V.Unmapped<'typescript:update_expression_postfix'>
 			| V.Unmapped<'typescript:update_expression_prefix'>; // unmapped: <typescript:update_expression_postfix> <typescript:update_expression_prefix>
-		readonly operator: '++' | '--';
+		readonly operator?: '++' | '--';
 	}
 	export namespace Update {
 		export interface Decrement<G extends GrammarContext> extends V.Expression.Update<G> {

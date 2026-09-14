@@ -408,7 +408,7 @@ export namespace Clause {
 	}
 	export interface Let<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by r
-		readonly left:
+		readonly left?:
 			| G['expression']
 			| G['identifier']
 			| G['literal']
@@ -421,7 +421,7 @@ export namespace Clause {
 	export namespace Let {
 		export interface Chain<G extends GrammarContext> extends V.Clause.Let<G> {
 			// claimed by r
-			readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Kinds<G> | G['statement'];
+			readonly left?: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Kinds<G> | G['statement'];
 			readonly right?: (V.Clause.Let<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
 		}
 		export type Kinds<G extends GrammarContext> = V.Clause.Let<G> | V.Clause.Let.Chain<G>;
