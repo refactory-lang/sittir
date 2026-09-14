@@ -3,14 +3,14 @@ import type { GrammarContext } from './context.ts';
 import type * as V from './index.ts';
 
 export interface Attribute<G extends GrammarContext> {
-	// claimed by prt
+	// claimed by r
 	readonly arguments?: (G['expression'] | G['element'])[]; // t only
 	readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>; // rt only
 	readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	readonly function?: V.Attribute.Content.Member<G> | G['identifier']; // t only
-	readonly input?: V.Unmapped<'rust:attribute_input'>; // r only   // unmapped: <rust:attribute_input>
+	readonly input?: V.Unmapped<'rust:attribute_input'>; // unmapped: <rust:attribute_input>
 	readonly object?: V.Attribute.Content.Member<G> | G['identifier']; // t only
-	readonly path?: G['identifier']; // r only
+	readonly path?: G['identifier'];
 	readonly property?: G['identifier']; // t only
 	readonly typeArguments?: G['type'][]; // t only
 }
@@ -48,6 +48,11 @@ export namespace Attribute {
 			| V.Attribute.Content.Member<G>
 			| V.Attribute.Content.Parenthesized<G>;
 	}
+	export interface Decorator<G extends GrammarContext> extends V.Attribute<G> {
+		// claimed by pt
+		readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>; // t only
+		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
+	}
 	export interface Inner<G extends GrammarContext> extends V.Attribute<G> {
 		// claimed by r
 		readonly content: V.Attribute.Content<G>;
@@ -58,5 +63,6 @@ export namespace Attribute {
 		| V.Attribute.Content.Call<G>
 		| V.Attribute.Content.Member<G>
 		| V.Attribute.Content.Parenthesized<G>
+		| V.Attribute.Decorator<G>
 		| V.Attribute.Inner<G>;
 }

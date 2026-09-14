@@ -245,7 +245,7 @@ export namespace Pattern {
 		readonly fields?: V.Unmapped<'rust:struct_pattern_elements'>; // unmapped: <rust:struct_pattern_elements>
 		readonly mutableSpecifier?: boolean;
 		readonly ref?: boolean;
-		readonly type?: G['identifier'] | V.Type.Scoped<G>;
+		readonly type?: G['identifier'] | V.Type.Path<G>;
 	}
 	export namespace Struct {
 		export interface Field<G extends GrammarContext> extends V.Pattern.Struct<G> {

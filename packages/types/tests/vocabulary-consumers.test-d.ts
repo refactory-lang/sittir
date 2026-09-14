@@ -35,5 +35,5 @@ export const operandless: Expression.Update.Increment<BaseContext> = { operator:
 export const trait: Declaration.Interface.Trait<BaseContext> = { name: {}, body: [], unsafe: true };
 export const asInterface: Declaration.Interface<BaseContext> = trait;
 
-// A for statement's C-style members are the refinement's, not the family's.
-export const forIn: Statement.For.In<BaseContext> = { right: {}, body: {} };
+// A loop family: the shared for-in is a refinement of loop, and needs its subject and body.
+export const forIn: Statement.Loop.For<BaseContext> = { right: {}, body: {} };

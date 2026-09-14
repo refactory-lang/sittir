@@ -5,8 +5,7 @@ import type * as V from './index.ts';
 export interface Identifier<G extends GrammarContext> {
 	// claimed by prt
 	readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
-	readonly module?: G['identifier']; // t only
-	readonly name?: G['identifier']; // rt only
+	readonly name?: G['identifier']; // r only
 	readonly names?: G['identifier'][]; // p only
 	readonly object?: G['identifier']; // t only
 	readonly path?: G['identifier'] | G['type']; // r only
@@ -63,19 +62,7 @@ export namespace Identifier {
 	}
 	export interface Self<G extends GrammarContext> extends V.Identifier<G> {} // claimed by rt
 	export interface Super<G extends GrammarContext> extends V.Identifier<G> {} // claimed by rt
-	export interface Type<G extends GrammarContext> extends V.Identifier<G> {
-		// claimed by prt
-		readonly module?: G['identifier']; // t only
-		readonly name?: G['identifier']; // t only
-	}
-	export namespace Type {
-		export interface Nested<G extends GrammarContext> extends V.Identifier.Type<G> {
-			// claimed by t
-			readonly module: G['identifier'];
-			readonly name: G['identifier'];
-		}
-		export type Kinds<G extends GrammarContext> = V.Identifier.Type<G> | V.Identifier.Type.Nested<G>;
-	}
+	export interface Type<G extends GrammarContext> extends V.Identifier<G> {} // claimed by prt
 	export type Kinds<G extends GrammarContext> =
 		| V.Identifier<G>
 		| V.Identifier.Crate<G>
@@ -95,6 +82,5 @@ export namespace Identifier {
 		| V.Identifier.Scoped<G>
 		| V.Identifier.Self<G>
 		| V.Identifier.Super<G>
-		| V.Identifier.Type<G>
-		| V.Identifier.Type.Nested<G>;
+		| V.Identifier.Type<G>;
 }

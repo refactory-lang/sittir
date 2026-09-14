@@ -7,6 +7,8 @@
 ; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
 ; The names rules for markers and modifiers (`async_marker` is `async`, `visibility_modifier` is
 ; `visibility`) are applied by the derivation to every slot, so no claim spells them.
+; A container that wraps one declaration or statement is never claimed: a pattern that captures the wrapped
+; node as `@element` assigns its other captures (`@declare`, `@decorator`, `@label`) to that element.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (source_file) @module
@@ -19,19 +21,23 @@
 (function_item (function_modifiers "default" @default))
 (function_item (function_modifiers (extern_modifier) @extern))
 (function_signature_item) @declaration.function.signature
+(trait_item (declaration_list (function_signature_item) @declaration.method.signature))
 (impl_item (declaration_list (function_item (parameters . (self_parameter) @receiver)) @declaration.method))
 (impl_item (declaration_list (function_item (parameters . (_) @_first)) @declaration.method.static))
-(impl_item) @declaration.impl
-(trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method.trait)) @declaration.interface.trait
+(impl_item) @declaration.extension
+(impl_item trait: (_) @implements) @declaration.extension.conformance
+(trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method)) @declaration.interface.trait
 (struct_item) @declaration.struct
 (enum_item) @declaration.enum
 (enum_variant) @declaration.enum_member
+(enum_variant body: (ordered_field_declaration_list)) @declaration.enum_member.tuple
+(enum_variant body: (field_declaration_list)) @declaration.enum_member.struct
 (union_item) @declaration.union
 (type_item type: (_) @value) @declaration.type_alias
 (associated_type) @declaration.type_alias.associated
 (mod_item) @declaration.module
 (foreign_mod_item) @declaration.module.foreign
-(extern_crate_declaration) @declaration.module.extern_crate
+(extern_crate_declaration) @statement.import.crate
 (const_item) @declaration.constant
 (static_item) @declaration.variable.static
 (let_declaration pattern: (_) @name) @declaration.variable
@@ -43,16 +49,16 @@
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
-(type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.parameter.type
-(const_parameter) @declaration.parameter.type.const
-(lifetime_parameter) @declaration.parameter.type.lifetime
+(type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.type_parameter
+(const_parameter) @declaration.type_parameter.const
+(lifetime_parameter) @declaration.type_parameter.lifetime
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
 (if_expression) @statement.if
 (loop_expression) @statement.loop
-(while_expression) @statement.while
-(for_expression pattern: (_) @left value: (_) @right) @statement.for.in
+(while_expression) @statement.loop.while
+(for_expression pattern: (_) @left value: (_) @right) @statement.loop.for
 (return_expression (_)? @expression) @statement.return
 (match_expression value: (_) @subject) @statement.match
 (use_declaration) @statement.import
@@ -144,10 +150,10 @@
 (await_expression (_)? @expression) @expression.await
 (yield_expression) @expression.yield
 (range_expression) @expression.range
-(type_cast_expression) @expression.cast
+(type_cast_expression) @expression.cast.as
 (parenthesized_expression) @expression.parenthesized
 (tuple_expression) @expression.collection.tuple
-(array_expression) @expression.collection.array
+(array_expression) @expression.collection.list
 (struct_expression) @expression.collection.struct
 (unit_expression) @expression.unit
 (unsafe_block) @expression.block.unsafe
@@ -155,7 +161,7 @@
 (const_block) @expression.block.const
 (try_block) @expression.block.try
 (gen_block) @expression.block.gen
-(generic_function) @expression.generic
+(generic_function) @expression.instantiation
 (scoped_identifier) @identifier.scoped
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
@@ -183,15 +189,15 @@
 (array_type) @type.array
 (tuple_type) @type.tuple
 (unit_type) @type.unit
-(never_type) @type.never
+(never_type) @type.primitive.never
 (function_type) @type.function
 (abstract_type) @type.abstract
 (dynamic_type) @type.dynamic
 (bounded_type) @type.bounded
 (qualified_type) @type.qualified
 (bracketed_type) @type.bracketed
-(scoped_type_identifier) @type.scoped
-(scoped_type_identifier_in_expression_position) @type.scoped.expression
+(scoped_type_identifier) @type.path
+(scoped_type_identifier_in_expression_position) @type.path.expression
 ((type_identifier) @type.named.prelude (#match? @type.named.prelude "^(Option|Result|String|Vec|Box)$"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────

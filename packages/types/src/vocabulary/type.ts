@@ -35,8 +35,9 @@ export interface Type<G extends GrammarContext> {
 	readonly length?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 	readonly lifetime?: V.Identifier.Lifetime<G>; // r only
 	readonly members?: G['declaration'][]; // t only
+	readonly module?: G['identifier']; // t only
 	readonly mutableSpecifier?: boolean; // r only
-	readonly name?: G['identifier']; // prt only   // unmapped: literal:Unique
+	readonly name?: G['identifier'] | V.Type.Path<G>; // prt only   // unmapped: literal:Unique
 	readonly opening?: '{' | '{|'; // t only
 	readonly operator?: '*' | '**';
 	readonly parameters?: V.Declaration.Parameter<G>[]; // rt only
@@ -48,14 +49,14 @@ export interface Type<G extends GrammarContext> {
 	readonly tupleTypeMembers?: V.Unmapped<'typescript:tuple_type_members'>; // t only   // unmapped: <typescript:tuple_type_members>
 	readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type']; // rt only
 	readonly typeArguments?: G['type'][]; // rt only
-	readonly typeParameter?: V.Declaration.Parameter.Type<G>;
-	readonly typeParameters?: V.Declaration.Parameter.Type<G>[]; // rt only
+	readonly typeParameter?: V.Declaration.TypeParameter<G>;
+	readonly typeParameters?: V.Declaration.TypeParameter<G>[]; // rt only
 }
 export namespace Type {
 	export interface Abstract<G extends GrammarContext> extends V.Type<G> {
 		// claimed by r
 		readonly trait: V.Clause.Bounds.Removed<G> | G['identifier'] | G['type'];
-		readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
+		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export interface Array<G extends GrammarContext> extends V.Type<G> {
 		// claimed by rt
@@ -97,7 +98,7 @@ export namespace Type {
 		readonly parameters: V.Declaration.Parameter<G>[];
 		readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly type?: G['identifier'] | G['type']; // t only
-		readonly typeParameters?: V.Declaration.Parameter.Type<G>[]; // t only
+		readonly typeParameters?: V.Declaration.TypeParameter<G>[]; // t only
 	}
 	export namespace Function {
 		export interface Constructor<G extends GrammarContext> extends V.Type.Function<G> {
@@ -105,16 +106,16 @@ export namespace Type {
 			readonly abstract?: boolean;
 			readonly parameters: V.Declaration.Parameter<G>[];
 			readonly type: G['identifier'] | G['type'];
-			readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
+			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export type Kinds<G extends GrammarContext> = V.Type.Function<G> | V.Type.Function.Constructor<G>;
 	}
 	export interface Generic<G extends GrammarContext> extends V.Type<G> {
 		// claimed by prt
-		readonly name?: G['identifier']; // pt only
-		readonly type?: G['identifier'] | V.Type.Scoped<G>; // r only
+		readonly name?: G['identifier'] | V.Type.Path<G>; // pt only
+		readonly type?: G['identifier'] | V.Type.Path<G>; // r only
 		readonly typeArguments?: G['type'][]; // rt only
-		readonly typeParameter?: V.Declaration.Parameter.Type<G>; // p only
+		readonly typeParameter?: V.Declaration.TypeParameter<G>; // p only
 	}
 	export namespace Generic {
 		export interface Turbofish<G extends GrammarContext> extends V.Type.Generic<G> {
@@ -151,17 +152,11 @@ export namespace Type {
 		// claimed by t
 		readonly type: G['identifier'] | G['type'];
 	}
-	export interface Member<G extends GrammarContext> extends V.Type<G> {
-		// claimed by p
-		readonly baseType: G['type'];
-		readonly name: G['identifier'];
-	}
 	export interface Named<G extends GrammarContext> extends V.Type<G> {}
 	export namespace Named {
 		export interface Prelude<G extends GrammarContext> extends V.Type.Named<G> {} // claimed by r
 		export type Kinds<G extends GrammarContext> = V.Type.Named.Prelude<G>;
 	}
-	export interface Never<G extends GrammarContext> extends V.Type<G> {} // claimed by r
 	export interface Object<G extends GrammarContext> extends V.Type<G> {
 		// claimed by t
 		readonly closing: '|}' | '}';
@@ -175,6 +170,21 @@ export namespace Type {
 	export interface Parenthesized<G extends GrammarContext> extends V.Type<G> {
 		// claimed by t
 		readonly type: G['identifier'] | G['type'];
+	}
+	export interface Path<G extends GrammarContext> extends V.Type<G> {
+		// claimed by prt
+		readonly baseType?: G['type']; // p only
+		readonly module?: G['identifier']; // t only
+		readonly name: G['identifier'];
+		readonly path?: G['identifier'] | G['type']; // r only
+	}
+	export namespace Path {
+		export interface Expression<G extends GrammarContext> extends V.Type.Path<G> {
+			// claimed by r
+			readonly name: G['identifier'];
+			readonly path?: G['identifier'] | V.Type.Generic.Turbofish<G>;
+		}
+		export type Kinds<G extends GrammarContext> = V.Type.Path<G> | V.Type.Path.Expression<G>;
 	}
 	export interface Pointer<G extends GrammarContext> extends V.Type<G> {
 		// claimed by r
@@ -195,6 +205,10 @@ export namespace Type {
 		export type Kinds<G extends GrammarContext> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
 	}
 	export interface Primitive<G extends GrammarContext> extends V.Type<G> {} // claimed by rt
+	export namespace Primitive {
+		export interface Never<G extends GrammarContext> extends V.Type.Primitive<G> {} // claimed by rt
+		export type Kinds<G extends GrammarContext> = V.Type.Primitive<G> | V.Type.Primitive.Never<G>;
+	}
 	export interface Qualified<G extends GrammarContext> extends V.Type<G> {
 		// claimed by r
 		readonly alias: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
@@ -222,19 +236,6 @@ export namespace Type {
 	export interface Rest<G extends GrammarContext> extends V.Type<G> {
 		// claimed by t
 		readonly type: G['identifier'] | G['type'];
-	}
-	export interface Scoped<G extends GrammarContext> extends V.Type<G> {
-		// claimed by r
-		readonly name: G['identifier'];
-		readonly path?: G['identifier'] | G['type'];
-	}
-	export namespace Scoped {
-		export interface Expression<G extends GrammarContext> extends V.Type.Scoped<G> {
-			// claimed by r
-			readonly name: G['identifier'];
-			readonly path?: G['identifier'] | V.Type.Generic.Turbofish<G>;
-		}
-		export type Kinds<G extends GrammarContext> = V.Type.Scoped<G> | V.Type.Scoped.Expression<G>;
 	}
 	export interface Splat<G extends GrammarContext> extends V.Type<G> {
 		// claimed by p
@@ -276,23 +277,22 @@ export namespace Type {
 		| V.Type.Literal<G>
 		| V.Type.Lookup<G>
 		| V.Type.Maybe<G>
-		| V.Type.Member<G>
 		| V.Type.Named.Prelude<G>
-		| V.Type.Never<G>
 		| V.Type.Object<G>
 		| V.Type.Optional<G>
 		| V.Type.Parenthesized<G>
+		| V.Type.Path<G>
+		| V.Type.Path.Expression<G>
 		| V.Type.Pointer<G>
 		| V.Type.Predicate<G>
 		| V.Type.Predicate.Asserts<G>
 		| V.Type.Primitive<G>
+		| V.Type.Primitive.Never<G>
 		| V.Type.Qualified<G>
 		| V.Type.Query<G>
 		| V.Type.Readonly<G>
 		| V.Type.Reference<G>
 		| V.Type.Rest<G>
-		| V.Type.Scoped<G>
-		| V.Type.Scoped.Expression<G>
 		| V.Type.Splat<G>
 		| V.Type.Template<G>
 		| V.Type.Tuple<G>
