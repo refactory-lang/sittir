@@ -3,12 +3,14 @@
 ; field is missing, or its name differs from the converged member name. A single-segment
 ; capture on a nested node names a member; on the pattern's top node it names the namespace
 ; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
+; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
+; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (source_file) @module
 
 ; ── declaration ────────────────────────────────────────────────────────────────
-(function_item visibility_modifier: (_) @visibility) @declaration.function
+(function_item visibility_modifier: (_)? @visibility) @declaration.function
 (function_item (function_modifiers "async" @async))
 (function_item (function_modifiers "const" @const))
 (function_item (function_modifiers "unsafe" @unsafe))
@@ -35,10 +37,11 @@
 (macro_definition) @declaration.macro
 (parameter pattern: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
-(self_parameter (mutable_specifier) @mutable) @declaration.parameter.self
+(self_parameter) @declaration.parameter.self
+(self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
-(type_parameter bounds: (_) @constraint default_type: (_) @default) @declaration.parameter.type
+(type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.parameter.type
 (const_parameter) @declaration.parameter.type.const
 (lifetime_parameter) @declaration.parameter.type.lifetime
 
@@ -48,7 +51,7 @@
 (loop_expression) @statement.loop
 (while_expression) @statement.while
 (for_expression pattern: (_) @left value: (_) @right) @statement.for.in
-(return_expression (_) @expression) @statement.return
+(return_expression (_)? @expression) @statement.return
 (match_expression value: (_) @subject) @statement.match
 (use_declaration) @statement.import
 (expression_statement) @statement.expression
@@ -135,8 +138,8 @@
 (assignment_expression) @expression.assignment
 (field_expression value: (_) @object field: (_) @property) @expression.member
 (index_expression (_) @object (_) @index) @expression.subscript
-(closure_expression body: (_) @body) @expression.lambda
-(await_expression (_) @expression) @expression.await
+(closure_expression body: (_)? @body) @expression.lambda
+(await_expression (_)? @expression) @expression.await
 (yield_expression) @expression.yield
 (range_expression) @expression.range
 (type_cast_expression) @expression.cast
@@ -190,8 +193,8 @@
 ((type_identifier) @type.named.prelude (#match? @type.named.prelude "^(Option|Result|String|Vec|Box)$"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
-(string_literal (string_content) @content) @literal.string
-(raw_string_literal (raw_string_literal_content) @content) @literal.string.raw
+(string_literal (string_content)* @content) @literal.string
+(raw_string_literal (raw_string_literal_content)? @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
 (integer_literal) @literal.number.integer
@@ -220,8 +223,8 @@
 (extern_modifier) @modifier.extern
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(attribute_item (attribute) @content) @attribute
-(inner_attribute_item (attribute) @content) @attribute.inner
+(attribute_item (attribute)? @content) @attribute
+(inner_attribute_item (attribute)? @content) @attribute.inner
 (attribute) @attribute.content
 
 ; ── comment ────────────────────────────────────────────────────────────────────

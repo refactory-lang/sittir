@@ -3,8 +3,14 @@ import type { GrammarContext } from './context.ts';
 import type * as V from './index.ts';
 
 export interface Expression<G extends GrammarContext> {
-	readonly alternative?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // pt only
-	readonly argument?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // prt only
+	readonly alternative?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // pt only
+	readonly argument?:
+		| V.Declaration.Module<G>
+		| G['expression']
+		| G['identifier']
+		| G['literal']
+		| V.Pattern.Splat<G>
+		| G['statement']; // prt only
 	readonly arguments?:
 		| (G['expression'] | G['element'] | G['argument'])[]
 		| (G['expression'] | G['element'])[]
@@ -22,12 +28,13 @@ export interface Expression<G extends GrammarContext> {
 		| G['expression']
 		| G['identifier']
 		| G['literal']
+		| G['pattern']
 		| V.Statement.Block<G>; // prt only
 	readonly collectionElements?: V.Unmapped<'python:collection_elements'>; // p only   // unmapped: <python:collection_elements>
 	readonly comparators?: V.Unmapped<'python:comparison_operator_comparator'>[]; // p only   // unmapped: <python:comparison_operator_comparator>
 	readonly comprehensionClauses?: V.Clause.Comprehension<G>; // p only
-	readonly condition?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // pt only
-	readonly consequence?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // pt only
+	readonly condition?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // pt only
+	readonly consequence?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // pt only
 	readonly content?:
 		| V.Unmapped<'python:yield_from_clause'>
 		| V.Unmapped<'rust:array_expression_list'>
@@ -42,13 +49,13 @@ export interface Expression<G extends GrammarContext> {
 		| V.Unmapped<'typescript:parenthesized_expression_typed'>
 		| V.Unmapped<'typescript:update_expression_postfix'>
 		| V.Unmapped<'typescript:update_expression_prefix'>
-		| V.Attribute.Content.Call<G>
-		| V.Attribute.Content.Member<G>
 		| V.Declaration.Signature.Call<G>
 		| V.Element.Splat<G>
 		| G['expression']
 		| G['identifier']
 		| G['literal']
+		| G['pattern']
+		| V.Attribute.Content.Kinds<G>
 		| 'import.meta'
 		| 'new.target'; // prt only   // unmapped: <python:yield_from_clause> <rust:array_expression_list> <rust:array_expression_semi> <rust:closure_expression_block> <rust:closure_expression_expr> <rust:range_expression_binary> <rust:range_expression_postfix> <rust:range_expression_prefix> <rust:reference_expression_raw_mut> <typescript:arrow_function_parameter> <typescript:parenthesized_expression_typed> <typescript:update_expression_postfix> <typescript:update_expression_prefix> literal:MutableSpecifier literal:RangeExpressionBare literal:ReferenceExpressionRawConst
 	readonly decorator?: G['attribute'][]; // t only
@@ -66,16 +73,9 @@ export interface Expression<G extends GrammarContext> {
 		| G['expression']
 		| G['identifier']
 		| G['literal']
-		| V.Pattern.Tuple.Bare<G>
+		| G['pattern']
 		| G['statement']
-		| (
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| V.Pattern.Tuple.Bare<G>
-				| G['statement']
-		  )[]; // prt only
+		| (V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'])[]; // prt only
 	readonly formatSpecifier?: V.Expression.Interpolation.Format<G>; // p only
 	readonly function?:
 		| V.Unmapped<'rust:literal'>
@@ -83,7 +83,8 @@ export interface Expression<G extends GrammarContext> {
 		| G['expression']
 		| G['identifier']
 		| G['literal']
-		| G['statement']; // prt only   // unmapped: <rust:literal> literal:Import literal:Self literal:UnitExpression
+		| V.Pattern.Splat<G>
+		| G['statement']; // prt only   // unmapped: <rust:literal>
 	readonly heritage?: (G['type'] | G['expression'])[]; // t only
 	readonly index?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
 	readonly left?:
@@ -95,8 +96,14 @@ export interface Expression<G extends GrammarContext> {
 		| G['pattern']
 		| G['statement']; // prt only   // unmapped: <python:pattern>
 	readonly moveMarker?: boolean; // r only
-	readonly name?: G['identifier'] | V.Type.Generic.Turbofish<G> | V.Type.Scoped.Expression<G>; // rt only
-	readonly object?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // prt only   // unmapped: literal:Import
+	readonly name?: G['identifier'] | G['type']; // rt only
+	readonly object?:
+		| V.Declaration.Module<G>
+		| G['expression']
+		| G['identifier']
+		| G['literal']
+		| V.Pattern.Splat<G>
+		| G['statement']; // prt only
 	readonly operand?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 	readonly operator?:
 		| '!'
@@ -152,30 +159,22 @@ export interface Expression<G extends GrammarContext> {
 		| '||'
 		| '||='
 		| '~'; // prt only
-	readonly operators: 'is' | 'is not' | 'not in'; // p only
+	readonly operators: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in'; // prt only
 	readonly optionalChain?: boolean; // t only
 	readonly parameters?: V.Declaration.Parameter<G>[]; // prt only
 	readonly properties?: (
 		| V.Declaration.Method<G>
-		| V.Element.Pair<G>
-		| V.Element.Splat<G>
+		| G['element']
 		| V.Identifier.Property.Shorthand<G>
 		| V.Literal.Null.Undefined<G>
 	)[]; // t only
 	readonly property?: G['identifier'] | V.Literal.Number.Integer<G>; // prt only
-	readonly returnType?: G['clause']; // t only
-	readonly right?:
-		| V.Declaration.Module<G>
-		| V.Declaration.Variable<G>
-		| G['expression']
-		| G['identifier']
-		| G['literal']
-		| V.Pattern.Tuple.Bare<G>
-		| G['statement']; // prt only
-	readonly start?: G['expression'] | G['identifier'] | G['literal']; // p only
+	readonly returnType?: V.Clause.Annotation.Kinds<G>; // t only
+	readonly right?: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement']; // prt only
+	readonly start?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	readonly staticMarker?: boolean; // r only
 	readonly step?: V.Unmapped<'python:slice_group'>; // p only   // unmapped: <python:slice_group>
-	readonly stop?: G['expression'] | G['identifier'] | G['literal']; // p only
+	readonly stop?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	readonly subscripts?: V.Unmapped<'python:subscripts'>; // p only   // unmapped: <python:subscripts>
 	readonly tail?: V.Unmapped<'python:expression_list_expressions'>; // p only   // unmapped: <python:expression_list_expressions> literal:Comma
 	readonly tupleExpressionElements?: V.Unmapped<'rust:tuple_expression_elements'>; // r only   // unmapped: <rust:tuple_expression_elements>
@@ -215,14 +214,7 @@ export namespace Expression {
 			| '^='
 			| '|='
 			| '||=';
-		readonly right:
-			| V.Declaration.Module<G>
-			| V.Declaration.Variable<G>
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| V.Pattern.Tuple.Bare<G>
-			| G['statement'];
+		readonly right: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
 		readonly usingMarker?: boolean; // t only
 	}
 	export namespace Assignment {
@@ -254,12 +246,11 @@ export namespace Expression {
 				| '|='
 				| '||=';
 			readonly right:
-				| V.Declaration.Module<G>
-				| V.Declaration.Variable<G>
+				| G['declaration']
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Tuple.Bare<G>
+				| G['pattern']
 				| G['statement'];
 		}
 		export namespace Compound {
@@ -315,6 +306,7 @@ export namespace Expression {
 				readonly operator: '-=';
 			}
 			export type Kinds<G extends GrammarContext> =
+				| V.Expression.Assignment.Compound<G>
 				| V.Expression.Assignment.Compound.Add<G>
 				| V.Expression.Assignment.Compound.And<G>
 				| V.Expression.Assignment.Compound.BitwiseAnd<G>
@@ -334,6 +326,8 @@ export namespace Expression {
 				| V.Expression.Assignment.Compound.Subtract<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Assignment<G>
+			| V.Expression.Assignment.Compound<G>
 			| V.Expression.Assignment.Compound.Add<G>
 			| V.Expression.Assignment.Compound.And<G>
 			| V.Expression.Assignment.Compound.BitwiseAnd<G>
@@ -354,13 +348,25 @@ export namespace Expression {
 	}
 	export interface Await<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
-		readonly expression: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly expression:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| V.Pattern.Splat<G>
+			| G['statement'];
 	}
 	export interface Binary<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
 		readonly binaryExpressionIn?: V.Unmapped<'typescript:binary_expression_in'>; // t only   // unmapped: <typescript:binary_expression_in>
 		readonly comparators?: V.Unmapped<'python:comparison_operator_comparator'>[]; // p only   // unmapped: <python:comparison_operator_comparator>
-		readonly left?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly left?:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| G['statement'];
 		readonly operator?:
 			| '!='
 			| '!=='
@@ -391,33 +397,39 @@ export namespace Expression {
 			| 'or'
 			| '|'
 			| '||';
-		readonly operators: 'is' | 'is not' | 'not in'; // p only
-		readonly right?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly operators: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in';
+		readonly right?:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| G['statement'];
 	}
 	export namespace Binary {
 		export interface Arithmetic<G extends GrammarContext> extends V.Expression.Binary<G> {
 			readonly operator: '%' | '*' | '**' | '+' | '-' | '/' | '//'; // prt only
 		}
 		export namespace Arithmetic {
-			export interface Add<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Add<G extends GrammarContext> extends V.Expression.Binary.Arithmetic<G> {
 				readonly operator: '+';
 			}
-			export interface Divide<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Divide<G extends GrammarContext> extends V.Expression.Binary.Arithmetic<G> {
 				readonly operator: '/';
 			}
-			export interface Exponent<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Exponent<G extends GrammarContext> extends V.Expression.Binary.Arithmetic<G> {
 				readonly operator: '**';
 			}
-			export interface FloorDivide<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface FloorDivide<G extends GrammarContext> extends V.Expression.Binary.Arithmetic<G> {
 				readonly operator: '//';
 			}
-			export interface Modulo<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Modulo<G extends GrammarContext> extends V.Expression.Binary.Arithmetic<G> {
 				readonly operator: '%';
 			}
-			export interface Multiply<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Multiply<G extends GrammarContext> extends V.Expression.Binary.Arithmetic<G> {
 				readonly operator: '*';
 			}
-			export interface Subtract<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Subtract<G extends GrammarContext> extends V.Expression.Binary.Arithmetic<G> {
 				readonly operator: '-';
 			}
 			export type Kinds<G extends GrammarContext> =
@@ -433,13 +445,13 @@ export namespace Expression {
 			readonly operator: '&' | '^' | '|'; // prt only
 		}
 		export namespace Bitwise {
-			export interface And<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface And<G extends GrammarContext> extends V.Expression.Binary.Bitwise<G> {
 				readonly operator: '&';
 			}
-			export interface Or<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Or<G extends GrammarContext> extends V.Expression.Binary.Bitwise<G> {
 				readonly operator: '|';
 			}
-			export interface Xor<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Xor<G extends GrammarContext> extends V.Expression.Binary.Bitwise<G> {
 				readonly operator: '^';
 			}
 			export type Kinds<G extends GrammarContext> =
@@ -450,35 +462,43 @@ export namespace Expression {
 		export interface Comparison<G extends GrammarContext> extends V.Expression.Binary<G> {
 			// claimed by p
 			readonly comparators: V.Unmapped<'python:comparison_operator_comparator'>[]; // unmapped: <python:comparison_operator_comparator>
-			readonly left: G['expression'] | G['identifier'] | G['literal'];
-			readonly operator: '!=' | '!==' | '<' | '<=' | '==' | '===' | '>' | '>='; // prt only
+			readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
+			readonly operator: '!=' | '!==' | '<' | '<=' | '==' | '===' | '>' | '>=' | 'in'; // prt only
+			readonly operators: '!=' | '<' | '<=' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in'; // prt only
 		}
 		export namespace Comparison {
-			export interface Equal<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Equal<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+				readonly operators: '==';
 				readonly operator: '==';
 			}
-			export interface Greater<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Greater<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+				readonly operators: '>';
 				readonly operator: '>';
 			}
-			export interface GreaterEqual<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface GreaterEqual<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+				readonly operators: '>=';
 				readonly operator: '>=';
 			}
-			export interface Less<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Less<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+				readonly operators: '<';
 				readonly operator: '<';
 			}
-			export interface LessEqual<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface LessEqual<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+				readonly operators: '<=';
 				readonly operator: '<=';
 			}
-			export interface NotEqual<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface NotEqual<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+				readonly operators: '!=';
 				readonly operator: '!=';
 			}
-			export interface StrictEqual<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface StrictEqual<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
 				readonly operator: '===';
 			}
-			export interface StrictNotEqual<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface StrictNotEqual<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
 				readonly operator: '!==';
 			}
 			export type Kinds<G extends GrammarContext> =
+				| V.Expression.Binary.Comparison<G>
 				| V.Expression.Binary.Comparison.Equal<G>
 				| V.Expression.Binary.Comparison.Greater<G>
 				| V.Expression.Binary.Comparison.GreaterEqual<G>
@@ -492,10 +512,10 @@ export namespace Expression {
 			readonly operators: 'is' | 'is not'; // p only
 		}
 		export namespace Identity {
-			export interface Is<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+			export interface Is<G extends GrammarContext> extends V.Expression.Binary.Identity<G> {
 				readonly operators: 'is';
 			}
-			export interface IsNot<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+			export interface IsNot<G extends GrammarContext> extends V.Expression.Binary.Identity<G> {
 				readonly operators: 'is not';
 			}
 			export type Kinds<G extends GrammarContext> =
@@ -504,18 +524,19 @@ export namespace Expression {
 		}
 		export interface Logical<G extends GrammarContext> extends V.Expression.Binary<G> {
 			// claimed by p
-			readonly left: G['expression'] | G['identifier'] | G['literal'];
+			readonly left: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 			readonly operator: '&&' | 'and' | 'or' | '||'; // prt only
-			readonly right: G['expression'] | G['identifier'] | G['literal'];
+			readonly right: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		}
 		export namespace Logical {
-			export interface And<G extends GrammarContext> extends V.Expression.Binary<G> {
-				readonly operator: '&&';
+			export interface And<G extends GrammarContext> extends V.Expression.Binary.Logical<G> {
+				readonly operator: '&&' | 'and';
 			}
-			export interface Or<G extends GrammarContext> extends V.Expression.Binary<G> {
-				readonly operator: '||';
+			export interface Or<G extends GrammarContext> extends V.Expression.Binary.Logical<G> {
+				readonly operator: 'or' | '||';
 			}
 			export type Kinds<G extends GrammarContext> =
+				| V.Expression.Binary.Logical<G>
 				| V.Expression.Binary.Logical.And<G>
 				| V.Expression.Binary.Logical.Or<G>;
 		}
@@ -524,16 +545,17 @@ export namespace Expression {
 		}
 		export interface Membership<G extends GrammarContext> extends V.Expression.Binary<G> {
 			readonly operator: 'in' | 'instanceof'; // pt only
-			readonly operators: 'not in'; // p only
+			readonly operators: 'in' | 'not in'; // pt only
 		}
 		export namespace Membership {
-			export interface In<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface In<G extends GrammarContext> extends V.Expression.Binary.Membership<G> {
+				readonly operators: 'in';
 				readonly operator: 'in';
 			}
-			export interface Instanceof<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Instanceof<G extends GrammarContext> extends V.Expression.Binary.Membership<G> {
 				readonly operator: 'instanceof';
 			}
-			export interface NotIn<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+			export interface NotIn<G extends GrammarContext> extends V.Expression.Binary.Membership<G> {
 				readonly operators: 'not in';
 			}
 			export type Kinds<G extends GrammarContext> =
@@ -548,13 +570,13 @@ export namespace Expression {
 			readonly operator: '<<' | '>>' | '>>>'; // prt only
 		}
 		export namespace Shift {
-			export interface Left<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Left<G extends GrammarContext> extends V.Expression.Binary.Shift<G> {
 				readonly operator: '<<';
 			}
-			export interface Right<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface Right<G extends GrammarContext> extends V.Expression.Binary.Shift<G> {
 				readonly operator: '>>';
 			}
-			export interface RightUnsigned<G extends GrammarContext> extends V.Expression.Binary<G> {
+			export interface RightUnsigned<G extends GrammarContext> extends V.Expression.Binary.Shift<G> {
 				readonly operator: '>>>';
 			}
 			export type Kinds<G extends GrammarContext> =
@@ -563,6 +585,7 @@ export namespace Expression {
 				| V.Expression.Binary.Shift.RightUnsigned<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Binary<G>
 			| V.Expression.Binary.Arithmetic.Add<G>
 			| V.Expression.Binary.Arithmetic.Divide<G>
 			| V.Expression.Binary.Arithmetic.Exponent<G>
@@ -573,6 +596,7 @@ export namespace Expression {
 			| V.Expression.Binary.Bitwise.And<G>
 			| V.Expression.Binary.Bitwise.Or<G>
 			| V.Expression.Binary.Bitwise.Xor<G>
+			| V.Expression.Binary.Comparison<G>
 			| V.Expression.Binary.Comparison.Equal<G>
 			| V.Expression.Binary.Comparison.Greater<G>
 			| V.Expression.Binary.Comparison.GreaterEqual<G>
@@ -583,6 +607,7 @@ export namespace Expression {
 			| V.Expression.Binary.Comparison.StrictNotEqual<G>
 			| V.Expression.Binary.Identity.Is<G>
 			| V.Expression.Binary.Identity.IsNot<G>
+			| V.Expression.Binary.Logical<G>
 			| V.Expression.Binary.Logical.And<G>
 			| V.Expression.Binary.Logical.Or<G>
 			| V.Expression.Binary.Matmul<G>
@@ -642,7 +667,8 @@ export namespace Expression {
 			| G['expression']
 			| G['identifier']
 			| G['literal']
-			| G['statement']; // unmapped: <rust:literal> literal:Import literal:Self literal:UnitExpression
+			| V.Pattern.Splat<G>
+			| G['statement']; // unmapped: <rust:literal>
 		readonly typeArguments?: G['type'][]; // t only
 	}
 	export namespace Call {
@@ -658,7 +684,13 @@ export namespace Expression {
 				| (G['expression'] | G['element'] | G['argument'])[]
 				| (G['expression'] | G['element'])[]
 				| V.Expression.Comprehension.Generator<G>;
-			readonly function: V.Unmapped<'rust:literal'> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // unmapped: <rust:literal> literal:Self literal:UnitExpression
+			readonly function:
+				| V.Unmapped<'rust:literal'>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement']; // unmapped: <rust:literal>
 			readonly typeArguments?: G['type'][]; // t only
 		}
 		export interface New<G extends GrammarContext> extends V.Expression.Call<G> {
@@ -670,7 +702,7 @@ export namespace Expression {
 		export interface Path<G extends GrammarContext> extends V.Expression.Call<G> {
 			// claimed by r
 			readonly arguments: (G['expression'] | G['element'])[];
-			readonly function: V.Unmapped<'rust:literal'> | G['expression'] | G['identifier'] | G['statement']; // unmapped: <rust:literal> literal:Self literal:UnitExpression
+			readonly function: V.Unmapped<'rust:literal'> | G['expression'] | G['identifier'] | G['statement']; // unmapped: <rust:literal>
 		}
 		export interface Template<G extends GrammarContext> extends V.Expression.Call<G> {
 			// claimed by t
@@ -678,6 +710,7 @@ export namespace Expression {
 			readonly function: G['expression'] | G['identifier'] | G['literal'];
 		}
 		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Call<G>
 			| V.Expression.Call.Import<G>
 			| V.Expression.Call.Macro<G>
 			| V.Expression.Call.Member<G>
@@ -714,6 +747,7 @@ export namespace Expression {
 			readonly typeAnnotation: G['identifier'] | G['type'];
 		}
 		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Cast<G>
 			| V.Expression.Cast.As<G>
 			| V.Expression.Cast.Assertion<G>
 			| V.Expression.Cast.NonNull<G>
@@ -740,12 +774,11 @@ export namespace Expression {
 			| G['literal']
 		)[]; // t only
 		readonly entries?: V.Unmapped<'python:dictionary_elements'>; // p only   // unmapped: <python:dictionary_elements>
-		readonly expression?: G['expression'] | G['identifier'] | G['literal']; // p only
-		readonly name?: G['identifier'] | V.Type.Generic.Turbofish<G> | V.Type.Scoped.Expression<G>; // r only
+		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
+		readonly name?: G['identifier'] | G['type']; // r only
 		readonly properties?: (
 			| V.Declaration.Method<G>
-			| V.Element.Pair<G>
-			| V.Element.Splat<G>
+			| G['element']
 			| V.Identifier.Property.Shorthand<G>
 			| V.Literal.Null.Undefined<G>
 		)[]; // t only
@@ -755,7 +788,7 @@ export namespace Expression {
 	export namespace Collection {
 		export interface Array<G extends GrammarContext> extends V.Expression.Collection<G> {
 			// claimed by rt
-			readonly content: V.Unmapped<'rust:array_expression_list'> | V.Unmapped<'rust:array_expression_semi'>; // r only   // unmapped: <rust:array_expression_list> <rust:array_expression_semi>
+			readonly content?: V.Unmapped<'rust:array_expression_list'> | V.Unmapped<'rust:array_expression_semi'>; // r only   // unmapped: <rust:array_expression_list> <rust:array_expression_semi>
 			readonly elements?: (
 				| V.Declaration.Module<G>
 				| V.Element.Splat<G>
@@ -776,8 +809,7 @@ export namespace Expression {
 			// claimed by t
 			readonly properties?: (
 				| V.Declaration.Method<G>
-				| V.Element.Pair<G>
-				| V.Element.Splat<G>
+				| G['element']
 				| V.Identifier.Property.Shorthand<G>
 				| V.Literal.Null.Undefined<G>
 			)[];
@@ -789,23 +821,25 @@ export namespace Expression {
 		export interface Struct<G extends GrammarContext> extends V.Expression.Collection<G> {
 			// claimed by r
 			readonly body: G['element'][];
-			readonly name: G['identifier'] | V.Type.Generic.Turbofish<G> | V.Type.Scoped.Expression<G>;
+			readonly name: G['identifier'] | G['type'];
 		}
 		export interface Tuple<G extends GrammarContext> extends V.Expression.Collection<G> {
 			// claimed by pr
 			readonly attributes?: G['attribute'][]; // r only
 			readonly collectionElements?: V.Unmapped<'python:collection_elements'>; // p only   // unmapped: <python:collection_elements>
-			readonly expression?: G['expression'] | G['identifier'] | G['literal']; // p only
+			readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 			readonly tail?: V.Unmapped<'python:expression_list_expressions'>; // p only   // unmapped: <python:expression_list_expressions> literal:Comma
 			readonly tupleExpressionElements?: V.Unmapped<'rust:tuple_expression_elements'>; // r only   // unmapped: <rust:tuple_expression_elements>
 		}
 		export namespace Tuple {
 			export interface Bare<G extends GrammarContext> extends V.Expression.Collection.Tuple<G> {
 				// claimed by p
-				readonly expression: G['expression'] | G['identifier'] | G['literal'];
+				readonly expression: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 				readonly tail: V.Unmapped<'python:expression_list_expressions'>; // unmapped: <python:expression_list_expressions> literal:Comma
 			}
-			export type Kinds<G extends GrammarContext> = V.Expression.Collection.Tuple.Bare<G>;
+			export type Kinds<G extends GrammarContext> =
+				| V.Expression.Collection.Tuple<G>
+				| V.Expression.Collection.Tuple.Bare<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
 			| V.Expression.Collection.Array<G>
@@ -814,10 +848,11 @@ export namespace Expression {
 			| V.Expression.Collection.Object<G>
 			| V.Expression.Collection.Set<G>
 			| V.Expression.Collection.Struct<G>
+			| V.Expression.Collection.Tuple<G>
 			| V.Expression.Collection.Tuple.Bare<G>;
 	}
 	export interface Comprehension<G extends GrammarContext> extends V.Expression<G> {
-		readonly body?: V.Element.Pair<G> | G['expression'] | G['identifier'] | G['literal']; // p only
+		readonly body?: V.Element.Pair<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 		readonly comprehensionClauses?: V.Clause.Comprehension<G>; // p only
 	}
 	export namespace Comprehension {
@@ -828,17 +863,17 @@ export namespace Expression {
 		}
 		export interface Generator<G extends GrammarContext> extends V.Expression.Comprehension<G> {
 			// claimed by p
-			readonly body: G['expression'] | G['identifier'] | G['literal'];
+			readonly body: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 			readonly comprehensionClauses: V.Clause.Comprehension<G>;
 		}
 		export interface List<G extends GrammarContext> extends V.Expression.Comprehension<G> {
 			// claimed by p
-			readonly body: G['expression'] | G['identifier'] | G['literal'];
+			readonly body: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 			readonly comprehensionClauses: V.Clause.Comprehension<G>;
 		}
 		export interface Set<G extends GrammarContext> extends V.Expression.Comprehension<G> {
 			// claimed by p
-			readonly body: G['expression'] | G['identifier'] | G['literal'];
+			readonly body: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 			readonly comprehensionClauses: V.Clause.Comprehension<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
@@ -849,9 +884,9 @@ export namespace Expression {
 	}
 	export interface Conditional<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by pt
-		readonly alternative: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
-		readonly condition: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
-		readonly consequence: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
+		readonly alternative: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly condition: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly consequence: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Function<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by t
@@ -859,7 +894,7 @@ export namespace Expression {
 		readonly body: V.Statement.Block<G>;
 		readonly name?: G['identifier'];
 		readonly parameters: V.Declaration.Parameter<G>[];
-		readonly returnType?: G['clause'];
+		readonly returnType?: V.Clause.Annotation.Kinds<G>;
 		readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
 	}
 	export namespace Function {
@@ -869,10 +904,10 @@ export namespace Expression {
 			readonly body: V.Statement.Block<G>;
 			readonly name?: G['identifier'];
 			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?: G['clause'];
+			readonly returnType?: V.Clause.Annotation.Kinds<G>;
 			readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
 		}
-		export type Kinds<G extends GrammarContext> = V.Expression.Function.Generator<G>;
+		export type Kinds<G extends GrammarContext> = V.Expression.Function<G> | V.Expression.Function.Generator<G>;
 	}
 	export interface Generic<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by r
@@ -887,12 +922,7 @@ export namespace Expression {
 	export interface Interpolation<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by pt
 		readonly eqMarker?: boolean; // p only
-		readonly expression?:
-			| V.Declaration.Module<G>
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| V.Pattern.Tuple.Bare<G>;
+		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly formatSpecifier?: V.Expression.Interpolation.Format<G>; // p only
 		readonly typeConversion?: V.Expression.Interpolation.Conversion<G>; // p only
 	}
@@ -900,6 +930,7 @@ export namespace Expression {
 		export interface Conversion<G extends GrammarContext> extends V.Expression.Interpolation<G> {} // claimed by p
 		export interface Format<G extends GrammarContext> extends V.Expression.Interpolation<G> {} // claimed by p
 		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Interpolation<G>
 			| V.Expression.Interpolation.Conversion<G>
 			| V.Expression.Interpolation.Format<G>;
 	}
@@ -911,12 +942,14 @@ export namespace Expression {
 			export interface Opening<G extends GrammarContext> extends V.Expression.Jsx.Element<G> {} // claimed by t
 			export interface SelfClosing<G extends GrammarContext> extends V.Expression.Jsx.Element<G> {} // claimed by t
 			export type Kinds<G extends GrammarContext> =
+				| V.Expression.Jsx.Element<G>
 				| V.Expression.Jsx.Element.Closing<G>
 				| V.Expression.Jsx.Element.Opening<G>
 				| V.Expression.Jsx.Element.SelfClosing<G>;
 		}
 		export interface Expression<G extends GrammarContext> extends V.Expression.Jsx<G> {} // claimed by t
 		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Jsx.Element<G>
 			| V.Expression.Jsx.Element.Closing<G>
 			| V.Expression.Jsx.Element.Opening<G>
 			| V.Expression.Jsx.Element.SelfClosing<G>
@@ -925,8 +958,14 @@ export namespace Expression {
 	export interface Lambda<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
 		readonly asyncMarker?: boolean; // rt only
-		readonly body: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | V.Statement.Block<G>; // pt only
-		readonly content:
+		readonly body?:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| V.Statement.Block<G>; // pt only
+		readonly content?:
 			| V.Unmapped<'rust:closure_expression_block'>
 			| V.Unmapped<'rust:closure_expression_expr'>
 			| V.Unmapped<'typescript:arrow_function_parameter'>
@@ -937,7 +976,13 @@ export namespace Expression {
 	}
 	export interface Member<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
-		readonly object: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // unmapped: literal:Import
+		readonly object:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| V.Pattern.Splat<G>
+			| G['statement'];
 		readonly property: G['identifier'] | V.Literal.Number.Integer<G>;
 	}
 	export interface Meta<G extends GrammarContext> extends V.Expression<G> {
@@ -946,15 +991,15 @@ export namespace Expression {
 	}
 	export interface Parenthesized<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
-		readonly content:
+		readonly content?:
 			| V.Unmapped<'typescript:parenthesized_expression_typed'>
-			| V.Attribute.Content.Call<G>
-			| V.Attribute.Content.Member<G>
 			| V.Element.Splat<G>
 			| G['expression']
 			| G['identifier']
-			| G['literal']; // pt only   // unmapped: <typescript:parenthesized_expression_typed>
-		readonly expression: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
+			| G['literal']
+			| G['pattern']
+			| V.Attribute.Content.Kinds<G>; // pt only   // unmapped: <typescript:parenthesized_expression_typed>
+		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 	}
 	export interface Range<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by r
@@ -974,16 +1019,22 @@ export namespace Expression {
 	}
 	export interface Slice<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by p
-		readonly start?: G['expression'] | G['identifier'] | G['literal'];
+		readonly start?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly step?: V.Unmapped<'python:slice_group'>; // unmapped: <python:slice_group>
-		readonly stop?: G['expression'] | G['identifier'] | G['literal'];
+		readonly stop?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Subscript<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
-		readonly index: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
-		readonly object: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly index?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
+		readonly object:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| V.Pattern.Splat<G>
+			| G['statement'];
 		readonly optionalChain?: boolean; // t only
-		readonly subscripts: V.Unmapped<'python:subscripts'>; // p only   // unmapped: <python:subscripts>
+		readonly subscripts?: V.Unmapped<'python:subscripts'>; // p only   // unmapped: <python:subscripts>
 	}
 	export interface Try<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by r
@@ -991,8 +1042,8 @@ export namespace Expression {
 	}
 	export interface Unary<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
-		readonly argument?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // pt only
-		readonly operand: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
+		readonly argument?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>; // pt only
+		readonly operand?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 		readonly operator: '!' | '*' | '+' | '-' | 'delete' | 'typeof' | 'void' | '~';
 	}
 	export namespace Unary {
@@ -1023,6 +1074,7 @@ export namespace Expression {
 			readonly operator: 'void';
 		}
 		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Unary<G>
 			| V.Expression.Unary.BitwiseNot<G>
 			| V.Expression.Unary.Delete<G>
 			| V.Expression.Unary.Deref<G>
@@ -1047,14 +1099,24 @@ export namespace Expression {
 		export interface Increment<G extends GrammarContext> extends V.Expression.Update<G> {
 			readonly operator: '++';
 		}
-		export type Kinds<G extends GrammarContext> = V.Expression.Update.Decrement<G> | V.Expression.Update.Increment<G>;
+		export type Kinds<G extends GrammarContext> =
+			| V.Expression.Update<G>
+			| V.Expression.Update.Decrement<G>
+			| V.Expression.Update.Increment<G>;
 	}
 	export interface Yield<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by prt
-		readonly content?: V.Unmapped<'python:yield_from_clause'> | G['expression'] | G['identifier'] | G['literal']; // p only   // unmapped: <python:yield_from_clause>
+		readonly content?:
+			| V.Unmapped<'python:yield_from_clause'>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']; // p only   // unmapped: <python:yield_from_clause>
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
 	}
 	export type Kinds<G extends GrammarContext> =
+		| V.Expression.Assignment<G>
+		| V.Expression.Assignment.Compound<G>
 		| V.Expression.Assignment.Compound.Add<G>
 		| V.Expression.Assignment.Compound.And<G>
 		| V.Expression.Assignment.Compound.BitwiseAnd<G>
@@ -1073,6 +1135,7 @@ export namespace Expression {
 		| V.Expression.Assignment.Compound.ShiftRightUnsigned<G>
 		| V.Expression.Assignment.Compound.Subtract<G>
 		| V.Expression.Await<G>
+		| V.Expression.Binary<G>
 		| V.Expression.Binary.Arithmetic.Add<G>
 		| V.Expression.Binary.Arithmetic.Divide<G>
 		| V.Expression.Binary.Arithmetic.Exponent<G>
@@ -1083,6 +1146,7 @@ export namespace Expression {
 		| V.Expression.Binary.Bitwise.And<G>
 		| V.Expression.Binary.Bitwise.Or<G>
 		| V.Expression.Binary.Bitwise.Xor<G>
+		| V.Expression.Binary.Comparison<G>
 		| V.Expression.Binary.Comparison.Equal<G>
 		| V.Expression.Binary.Comparison.Greater<G>
 		| V.Expression.Binary.Comparison.GreaterEqual<G>
@@ -1093,6 +1157,7 @@ export namespace Expression {
 		| V.Expression.Binary.Comparison.StrictNotEqual<G>
 		| V.Expression.Binary.Identity.Is<G>
 		| V.Expression.Binary.Identity.IsNot<G>
+		| V.Expression.Binary.Logical<G>
 		| V.Expression.Binary.Logical.And<G>
 		| V.Expression.Binary.Logical.Or<G>
 		| V.Expression.Binary.Matmul<G>
@@ -1108,12 +1173,14 @@ export namespace Expression {
 		| V.Expression.Block.Gen<G>
 		| V.Expression.Block.Try<G>
 		| V.Expression.Block.Unsafe<G>
+		| V.Expression.Call<G>
 		| V.Expression.Call.Import<G>
 		| V.Expression.Call.Macro<G>
 		| V.Expression.Call.Member<G>
 		| V.Expression.Call.New<G>
 		| V.Expression.Call.Path<G>
 		| V.Expression.Call.Template<G>
+		| V.Expression.Cast<G>
 		| V.Expression.Cast.As<G>
 		| V.Expression.Cast.Assertion<G>
 		| V.Expression.Cast.NonNull<G>
@@ -1125,17 +1192,21 @@ export namespace Expression {
 		| V.Expression.Collection.Object<G>
 		| V.Expression.Collection.Set<G>
 		| V.Expression.Collection.Struct<G>
+		| V.Expression.Collection.Tuple<G>
 		| V.Expression.Collection.Tuple.Bare<G>
 		| V.Expression.Comprehension.Dictionary<G>
 		| V.Expression.Comprehension.Generator<G>
 		| V.Expression.Comprehension.List<G>
 		| V.Expression.Comprehension.Set<G>
 		| V.Expression.Conditional<G>
+		| V.Expression.Function<G>
 		| V.Expression.Function.Generator<G>
 		| V.Expression.Generic<G>
 		| V.Expression.Instantiation<G>
+		| V.Expression.Interpolation<G>
 		| V.Expression.Interpolation.Conversion<G>
 		| V.Expression.Interpolation.Format<G>
+		| V.Expression.Jsx.Element<G>
 		| V.Expression.Jsx.Element.Closing<G>
 		| V.Expression.Jsx.Element.Opening<G>
 		| V.Expression.Jsx.Element.SelfClosing<G>
@@ -1150,6 +1221,7 @@ export namespace Expression {
 		| V.Expression.Slice<G>
 		| V.Expression.Subscript<G>
 		| V.Expression.Try<G>
+		| V.Expression.Unary<G>
 		| V.Expression.Unary.BitwiseNot<G>
 		| V.Expression.Unary.Delete<G>
 		| V.Expression.Unary.Deref<G>
@@ -1159,6 +1231,7 @@ export namespace Expression {
 		| V.Expression.Unary.Typeof<G>
 		| V.Expression.Unary.Void<G>
 		| V.Expression.Unit<G>
+		| V.Expression.Update<G>
 		| V.Expression.Update.Decrement<G>
 		| V.Expression.Update.Increment<G>
 		| V.Expression.Yield<G>;

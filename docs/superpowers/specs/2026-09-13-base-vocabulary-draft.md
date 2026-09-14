@@ -14,9 +14,11 @@ in a bindings file, not here.
 
 ## How to read it
 
-- `BaseContext` is the typemap: one key per vocabulary kind, keyed by its
-  dotted path. A prefix is a kind-set (the union of its leaves) and is marked.
-  The trailing letters name the grammars that claim the kind (`p`, `t`, `r`).
+- `GrammarContext` is the typemap: one key per top-level namespace, and
+  `BaseContext` projects each key to that namespace's flattened kind-set. In
+  the draft below the typemap is shown expanded by dotted path for review;
+  a prefix is a kind-set (the union of its leaves) and is marked. The
+  trailing letters name the grammars that claim the kind (`p`, `t`, `r`).
 - Each namespace holds one type per kind, generic over the grammar context
   `G`. Members come from the slot models of the claiming grammars, unioned:
   a member is optional when any grammar leaves it optional, a list when any
