@@ -18,7 +18,6 @@ export interface Pattern<G extends GrammarContext> {
 		| G['identifier']
 		| G['literal']
 		| V.Pattern.Case.Kinds<G>; // pr only   // unmapped: <python:simple_pattern_negative> <rust:field_pattern_named> <rust:or_pattern_binary> <rust:or_pattern_prefix> <rust:range_pattern_prefix> <rust:range_pattern_with_left> literal:WildcardPattern
-	readonly default?: V.Unmapped<'typescript:pattern'> | V.Pattern.Assignment<G>; // t only   // unmapped: <typescript:pattern>
 	readonly dictPatternElements?: V.Unmapped<'python:dict_pattern_elements'>; // p only   // unmapped: <python:dict_pattern_elements>
 	readonly elements?:
 		| V.Unmapped<'rust:tuple_pattern_elements'>
@@ -39,28 +38,26 @@ export interface Pattern<G extends GrammarContext> {
 	readonly left?:
 		| V.Unmapped<'typescript:pattern'>
 		| V.Unmapped<'typescript:shorthand_property_identifier_pattern'>
-		| G['expression']
-		| G['identifier']
-		| G['literal']
-		| G['pattern']; // prt only   // unmapped: <typescript:pattern> <typescript:shorthand_property_identifier_pattern> literal:Underscore
+		| G['pattern']; // t only   // unmapped: <typescript:pattern> <typescript:shorthand_property_identifier_pattern>
 	readonly lhsExpression?: G['expression'] | G['identifier'] | V.Literal.Null.Undefined<G> | G['pattern']; // t only
 	readonly listPatternCasePatterns?: V.Unmapped<'python:list_pattern_case_patterns'>; // p only   // unmapped: <python:list_pattern_case_patterns>
 	readonly mutableSpecifier?: boolean; // r only
-	readonly name?: G['identifier']; // r only
-	readonly object?:
-		| V.Unmapped<'python:simple_pattern_negative'>
-		| V.Identifier.Dotted<G>
-		| G['literal']
-		| V.Pattern.Case.Kinds<G>; // p only   // unmapped: <python:simple_pattern_negative> literal:WildcardPattern
+	readonly name?: G['identifier']; // pr only   // unmapped: literal:Underscore
 	readonly operator?: '*' | '**' | '+' | '-'; // p only
-	readonly pattern?: V.Unmapped<'python:pattern'>; // p only   // unmapped: <python:pattern>
+	readonly pattern?: V.Unmapped<'python:pattern'> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // pr only   // unmapped: <python:pattern>
 	readonly patterns?: V.Unmapped<'python:patterns'> | V.Unmapped<'rust:patterns'>; // pr only   // unmapped: <python:patterns> <rust:patterns>
 	readonly real?: boolean; // p only
-	readonly refMarker?: boolean; // r only
+	readonly ref?: boolean; // r only
 	readonly right?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
 	readonly tail?: V.Unmapped<'python:pattern_list_patterns'>; // p only   // unmapped: <python:pattern_list_patterns> literal:Comma
+	readonly type?: G['identifier'] | G['type']; // r only
 	readonly typeArguments?: G['type'][]; // r only
-	readonly value?: G['identifier'] | G['type']; // r only
+	readonly value?:
+		| V.Unmapped<'python:simple_pattern_negative'>
+		| V.Unmapped<'typescript:pattern'>
+		| V.Identifier.Dotted<G>
+		| G['literal']
+		| G['pattern']; // pt only   // unmapped: <python:simple_pattern_negative> <typescript:pattern> literal:WildcardPattern
 }
 export namespace Pattern {
 	export interface Array<G extends GrammarContext> extends V.Pattern<G> {
@@ -79,8 +76,8 @@ export namespace Pattern {
 	}
 	export interface Captured<G extends GrammarContext> extends V.Pattern<G> {
 		// claimed by r
-		readonly left: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly name: G['identifier'];
+		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Case<G extends GrammarContext> extends V.Pattern<G> {
 		// claimed by p
@@ -94,15 +91,15 @@ export namespace Pattern {
 		readonly dictPatternElements?: V.Unmapped<'python:dict_pattern_elements'>; // unmapped: <python:dict_pattern_elements>
 		readonly identifier?: G['identifier'];
 		readonly imaginary?: V.Literal.Number.Kinds<G>;
-		readonly left?: G['identifier']; // unmapped: literal:Underscore
 		readonly listPatternCasePatterns?: V.Unmapped<'python:list_pattern_case_patterns'>; // unmapped: <python:list_pattern_case_patterns>
-		readonly object?:
+		readonly name?: G['identifier']; // unmapped: literal:Underscore
+		readonly operator?: '*' | '**' | '+' | '-';
+		readonly real?: boolean;
+		readonly value?:
 			| V.Unmapped<'python:simple_pattern_negative'>
 			| V.Identifier.Dotted<G>
 			| G['literal']
 			| V.Pattern.Case.Kinds<G>; // unmapped: <python:simple_pattern_negative> literal:WildcardPattern
-		readonly operator?: '*' | '**' | '+' | '-';
-		readonly real?: boolean;
 	}
 	export namespace Case {
 		export interface As<G extends GrammarContext> extends V.Pattern.Case<G> {
@@ -113,7 +110,7 @@ export namespace Pattern {
 		export interface Class<G extends GrammarContext> extends V.Pattern.Case<G> {
 			// claimed by p
 			readonly arguments?: V.Unmapped<'python:list_pattern_case_patterns'>; // unmapped: <python:list_pattern_case_patterns>
-			readonly left: V.Identifier.Dotted<G>;
+			readonly name: V.Identifier.Dotted<G>;
 		}
 		export interface Complex<G extends GrammarContext> extends V.Pattern.Case<G> {
 			// claimed by p
@@ -128,8 +125,8 @@ export namespace Pattern {
 		}
 		export interface Keyword<G extends GrammarContext> extends V.Pattern.Case<G> {
 			// claimed by p
-			readonly left: G['identifier'];
-			readonly object:
+			readonly name: G['identifier'];
+			readonly value:
 				| V.Unmapped<'python:simple_pattern_negative'>
 				| V.Identifier.Dotted<G>
 				| G['literal']
@@ -142,7 +139,7 @@ export namespace Pattern {
 		export interface Or<G extends GrammarContext> extends V.Pattern.Case<G> {} // claimed by p
 		export interface Splat<G extends GrammarContext> extends V.Pattern.Case<G> {
 			// claimed by p
-			readonly left: G['identifier']; // unmapped: literal:Underscore
+			readonly name: G['identifier']; // unmapped: literal:Underscore
 			readonly operator: '*' | '**';
 		}
 		export interface Tuple<G extends GrammarContext> extends V.Pattern.Case<G> {
@@ -173,18 +170,18 @@ export namespace Pattern {
 	export interface Match<G extends GrammarContext> extends V.Pattern<G> {
 		// claimed by r
 		readonly condition?: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Kinds<G> | G['statement'];
-		readonly left: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Mutable<G extends GrammarContext> extends V.Pattern<G> {
 		// claimed by r
-		readonly left: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Object<G extends GrammarContext> extends V.Pattern<G> {
 		// claimed by t
-		readonly default?: V.Unmapped<'typescript:pattern'> | V.Pattern.Assignment<G>; // unmapped: <typescript:pattern>
 		readonly key?: V.Unmapped<'typescript:__property_identifier'> | G['literal'] | V.Identifier.Property.Kinds<G>; // unmapped: <typescript:__property_identifier>
 		readonly left?: V.Unmapped<'typescript:shorthand_property_identifier_pattern'> | G['pattern']; // unmapped: <typescript:shorthand_property_identifier_pattern>
 		readonly right?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
+		readonly value?: V.Unmapped<'typescript:pattern'> | V.Pattern.Assignment<G>; // unmapped: <typescript:pattern>
 	}
 	export namespace Object {
 		export interface Assignment<G extends GrammarContext> extends V.Pattern.Object<G> {
@@ -194,8 +191,8 @@ export namespace Pattern {
 		}
 		export interface Pair<G extends GrammarContext> extends V.Pattern.Object<G> {
 			// claimed by t
-			readonly default: V.Unmapped<'typescript:pattern'> | V.Pattern.Assignment<G>; // unmapped: <typescript:pattern>
 			readonly key: V.Unmapped<'typescript:__property_identifier'> | G['literal'] | V.Identifier.Property.Kinds<G>; // unmapped: <typescript:__property_identifier>
+			readonly value: V.Unmapped<'typescript:pattern'> | V.Pattern.Assignment<G>; // unmapped: <typescript:pattern>
 		}
 		export type Kinds<G extends GrammarContext> =
 			| V.Pattern.Object<G>
@@ -212,14 +209,14 @@ export namespace Pattern {
 	}
 	export interface Reference<G extends GrammarContext> extends V.Pattern<G> {
 		// claimed by r
-		readonly left: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly mutableSpecifier?: boolean;
+		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export namespace Reference {
 		export interface Value<G extends GrammarContext> extends V.Pattern.Reference<G> {
 			// claimed by r
-			readonly left: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 			readonly mutableSpecifier?: boolean;
+			readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		}
 		export type Kinds<G extends GrammarContext> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;
 	}
@@ -247,15 +244,15 @@ export namespace Pattern {
 		readonly content?: V.Unmapped<'rust:field_pattern_named'> | G['identifier']; // unmapped: <rust:field_pattern_named>
 		readonly fields?: V.Unmapped<'rust:struct_pattern_elements'>; // unmapped: <rust:struct_pattern_elements>
 		readonly mutableSpecifier?: boolean;
-		readonly refMarker?: boolean;
-		readonly value?: G['identifier'] | V.Type.Scoped<G>;
+		readonly ref?: boolean;
+		readonly type?: G['identifier'] | V.Type.Scoped<G>;
 	}
 	export namespace Struct {
 		export interface Field<G extends GrammarContext> extends V.Pattern.Struct<G> {
 			// claimed by r
 			readonly content: V.Unmapped<'rust:field_pattern_named'> | G['identifier']; // unmapped: <rust:field_pattern_named>
 			readonly mutableSpecifier?: boolean;
-			readonly refMarker?: boolean;
+			readonly ref?: boolean;
 		}
 		export interface Rest<G extends GrammarContext> extends V.Pattern.Struct<G> {} // claimed by r
 		export type Kinds<G extends GrammarContext> =
@@ -269,7 +266,7 @@ export namespace Pattern {
 		readonly pattern?: V.Unmapped<'python:pattern'>; // p only   // unmapped: <python:pattern>
 		readonly patterns?: V.Unmapped<'python:patterns'> | V.Unmapped<'rust:patterns'>; // unmapped: <python:patterns> <rust:patterns>
 		readonly tail?: V.Unmapped<'python:pattern_list_patterns'>; // p only   // unmapped: <python:pattern_list_patterns> literal:Comma
-		readonly value?: G['identifier'] | V.Type.Generic.Turbofish<G>; // r only
+		readonly type?: G['identifier'] | V.Type.Generic.Turbofish<G>; // r only
 	}
 	export namespace Tuple {
 		export interface Bare<G extends GrammarContext> extends V.Pattern.Tuple<G> {
@@ -280,7 +277,7 @@ export namespace Pattern {
 		export interface Struct<G extends GrammarContext> extends V.Pattern.Tuple<G> {
 			// claimed by r
 			readonly patterns?: V.Unmapped<'rust:patterns'>; // unmapped: <rust:patterns>
-			readonly value: G['identifier'] | V.Type.Generic.Turbofish<G>;
+			readonly type: G['identifier'] | V.Type.Generic.Turbofish<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
 			| V.Pattern.Tuple<G>

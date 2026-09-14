@@ -5,12 +5,14 @@
 ; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
 ; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
 ; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
+; The names rules for markers and modifiers (`async_marker` is `async`, `visibility_modifier` is
+; `visibility`) are applied by the derivation to every slot, so no claim spells them.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (source_file) @module
 
 ; ── declaration ────────────────────────────────────────────────────────────────
-(function_item visibility_modifier: (_)? @visibility) @declaration.function
+(function_item) @declaration.function
 (function_item (function_modifiers "async" @async))
 (function_item (function_modifiers "const" @const))
 (function_item (function_modifiers "unsafe" @unsafe))
@@ -20,7 +22,7 @@
 (impl_item (declaration_list (function_item (parameters . (self_parameter) @receiver)) @declaration.method))
 (impl_item (declaration_list (function_item (parameters . (_) @_first)) @declaration.method.static))
 (impl_item) @declaration.impl
-(trait_item (declaration_list (function_item) @declaration.method.trait)) @declaration.trait
+(trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method.trait)) @declaration.interface.trait
 (struct_item) @declaration.struct
 (enum_item) @declaration.enum
 (enum_variant) @declaration.enum_member
