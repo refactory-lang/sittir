@@ -47,7 +47,7 @@
 (public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
-(lexical_declaration) @declaration.variable.lexical
+(lexical_declaration kind: _ @keyword) @declaration.variable.lexical
 (variable_declaration) @declaration.variable.var
 (variable_declarator_arm2) @declaration.variable
 (variable_declarator_arm1) @declaration.variable.pattern
