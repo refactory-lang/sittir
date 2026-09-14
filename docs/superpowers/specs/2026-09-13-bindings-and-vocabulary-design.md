@@ -30,14 +30,21 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, executed by the
 - **Sixteen sections in a fixed order**, identical in every file, an empty section left visible where a grammar has nothing: `module`, `declaration`, `statement`, `clause`, `argument`, `element`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`, `keyword / punctuation`, `unclaimed`.
 - **One claim per line**, the parent before its refinements, refinements in the order of the base tree.
 - **Kind claims** are dotted captures on nodes: `(binary_expression) @expression.binary`. A single-segment capture on a pattern's top node claims the namespace's root kind (`(identifier) @identifier`).
-- **Member captures** are single-segment captures on nested nodes or tokens, and appear only under the delta principle: where the upstream field is missing, or its name differs from the converged member name (§6). A grammar field that already carries the converged name says nothing.
+- **Member captures are constructive and exhaustive.** A claim's members are exactly its single-segment captures on nested nodes or tokens; a grammar slot no capture names is not a member. The slot model types a captured member (kinds, multiplicity, requiredness) and confirms the capture resolves; it never adds one. Nesting artefacts (`content`, body wrappers, hidden arms) exist only where a capture names them, and a deep capture reaches through a wrapper to the node that matters: `(class_declaration (class_heritage (extends_clause (_) @extends)))`. The capture name is the converged member name (§6), whether or not the upstream field already spells it.
 - **Refinements** are the parent's pattern with a literal fixed: `(binary_expression operator: "+") @expression.binary.arithmetic.add`.
 - **Content-derived kinds** are predicate claims: `((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))`. A kind is claimed wherever content, position or finite text determines it, whether or not the grammar has a node for it; the grammar's kind list is the floor of coverage, never its ceiling.
 - **Template regexes** name every hole: `(#match? @name "^__(?<stem>.*)__$")`. A bare hole is a lift error (§7).
 - **A container that wraps one node** is never claimed; a pattern that captures the wrapped node as `@element` assigns its other captures to that element: `(decorated_definition (decorator)* @decorator definition: (_) @element)`, `(ambient_declaration "declare" @declare (_) @element)`, `(labeled_statement label: (_) @label body: (_) @element)`.
 - **Unclaimed** kinds are stated in the file with a reason, never in a comment: `((line_continuation) @unclaimed (#set! reason "layout token"))`. The directive is for parser artefacts only, and the unclaimed count is a ratchet toward zero.
 
-### 2.2 What is never claimed
+### 2.2 Seed and override
+
+- **Two files per grammar.** `bindings.seed.scm` is generated (`sittir tool bindings-inventory --seed <grammar>`), committed, never hand-edited, and regenerated when the grammar package bumps. `bindings.scm` is authored and overrides it. The inventory composes the two with one rule: a kind claimed in the override drops every seed claim on that kind, so an override is either the whole story for a kind or silent about it.
+- **The seed comes from the upstream queries and the slot model.** Each grammar package vendors tree-sitter's `queries/tags.scm` and `queries/highlights.scm`. Tags decide claims and the `@name` capture through one table shared by every grammar: `definition.class` → `declaration.class`, `definition.function` → `declaration.function`, `definition.method` → `declaration.method`, `definition.interface` → `declaration.interface`, `definition.module` → `declaration.module`, `definition.macro` → `declaration.macro`, `definition.constant` → `declaration.constant`, `reference.call` → `expression.call`. Highlights decide token captures: `@keyword`, `@operator`, `@property`, `@type`, `@constructor`, `@comment`, `@string`, `@number` name the token or leaf under the claim. The slot model expands every remaining slot of a claimed kind into a candidate capture under the names rules (§6), and lists every kind the tags never mention in the `unclaimed` section with the reason `unseeded`.
+- **The seed is coarse by construction.** Tags file rust's struct, enum, union and type alias all as `definition.class`; the override splits them. Tags cover a tenth of a grammar's claims; the model expansion is the bulk, and the override is where the vocabulary's judgement lives. Locals and injections carry nothing the bindings need.
+- **A seed is never the vocabulary's source.** The tree stays hand-maintained (§5); the seed lowers the cost of a new grammar and of a grammar bump, nothing else.
+
+### 2.3 What is never claimed
 
 - **Grammar supertypes.** Namespaces are the vocabulary's supertypes (§3.2); a grammar union maps to its members' claims.
 - **Containers.** A list holder with no members of its own (`argument_list`, `parameters`, a class body, a use list) is bound through its elements: by the elements' own claims where they have them, and by a positional claim only where the role's kind has members the node supplies by being the node — a bare identifier in a python parameter list is a `declaration.parameter` whose `name` is that identifier; a bare name in a typescript enum body is an `enum_member`. A value in argument position supplies nothing but itself, so there is no `argument` role kind: a positional argument is the expression.
@@ -208,6 +215,8 @@ Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.s
 - The feature table as `packages/types/src/vocabulary/features.ts`, hand-maintained, from §4.3; one composition per language beside its context, with its term bindings.
 - Per-language contexts from each language's composition narrowed by its claims, which is what makes cross-language errors fire.
 - Applied: the reversals the feature lens forces, in the tree and the bindings: `accessibility` into `visibility`; `heritage` into `extends` / `implements` / `bases`; `declaration.trait` under `declaration.interface` as the refinement `declaration.interface.trait`; and the placement audit of every single-grammar kind (§12).
+- The seed generator (§2.2): the tags table, highlights token captures, model expansion, the compose rule in the inventory, and the migration of the three authored files into overrides by diffing each against its seed; python first, as the proof.
+- The exhaustive-capture pass that §2.1 now requires: every member the tree keeps is spelled by a capture, and the tool reports members the tree carries that no capture names.
 - The next bindings pass, driven by the `Unmapped` counts.
 - The inventory's totality and injectivity gates, and a diff mode reporting where the bindings and the authored tree disagree.
 - The structure builders and `$structure()`, then the round-trip lane, then the coercer's retirement.
@@ -237,6 +246,8 @@ Open: trivia and provenance on a structure (a structure has no coordinates; `doc
 | per-language contexts projected from each grammar's claims alone | a language is a composition of features, narrowed by its claims; features and terms are the portability API |
 | `heritage` converged across `extends`, `implements` and python's bases | three members of three features; members are shared by feature, never by slot |
 | `accessibility` beside `visibility` | one `visibility` member, its shape per language |
+| member captures under the delta principle, the slot model supplying the rest | captures are constructive and exhaustive; the slot model only types what a capture names |
+| one authored `bindings.scm` per grammar | a generated `bindings.seed.scm` from upstream tags and highlights plus the model, overridden per claimed kind by the authored `bindings.scm` |
 | `declaration.trait` beside `declaration.interface` | a refinement, `declaration.interface.trait`: an interface with what only a trait has |
 | `declaration.impl` | `declaration.extension`, rust's `impl` and Swift's `extension`; `impl Trait for T` is `extension.conformance` |
 | `declaration.property` for a typescript property signature | `declaration.field.signature`, as `method.signature` is to `method` |
