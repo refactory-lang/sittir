@@ -31,5 +31,9 @@ export const notAdd: Expression.Binary.Arithmetic.Add<BaseContext> = { operator:
 // @ts-expect-error an increment supplies its operand
 export const operandless: Expression.Update.Increment<BaseContext> = { operator: '++' };
 
+// A trait is an interface with more: the refinement is assignable to its parent, and a plain interface has no unsafe marker to pin.
+export const trait: Declaration.Interface.Trait<BaseContext> = { name: {}, body: [], unsafe: true };
+export const asInterface: Declaration.Interface<BaseContext> = trait;
+
 // A for statement's C-style members are the refinement's, not the family's.
-export const forIn: Statement.For.In<BaseContext> = {};
+export const forIn: Statement.For.In<BaseContext> = { right: {}, body: {} };

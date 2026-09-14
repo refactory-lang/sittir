@@ -21,12 +21,12 @@ export interface Literal<G extends GrammarContext> {
 		| V.Literal.String.Escape<G>
 	)[]; // rt only   // unmapped: <rust:string_content> <typescript:template_chars>
 	readonly flags?: V.Literal.Regex.Flags<G>; // t only
-	readonly name?: V.Literal.Regex.Pattern<G>; // t only
-	readonly object?: V.Literal.Number.Kinds<G>; // r only
+	readonly pattern?: V.Literal.Regex.Pattern<G>; // t only
 	readonly rawStringLiteralEnd?: V.Unmapped<'rust:raw_string_literal_end'>; // r only   // unmapped: <rust:raw_string_literal_end>
 	readonly rawStringLiteralStart?: V.Unmapped<'rust:raw_string_literal_start'>; // r only   // unmapped: <rust:raw_string_literal_start>
 	readonly string?: V.Literal.String<G>[]; // p only
 	readonly stringContent?: V.Unmapped<'rust:raw_string_literal_content'>; // r only   // unmapped: <rust:raw_string_literal_content>
+	readonly value?: V.Literal.Number.Kinds<G>; // r only
 }
 export namespace Literal {
 	export interface Boolean<G extends GrammarContext> extends V.Literal<G> {} // claimed by r
@@ -48,7 +48,7 @@ export namespace Literal {
 	}
 	export interface Number<G extends GrammarContext> extends V.Literal<G> {
 		// claimed by t
-		readonly object?: V.Literal.Number.Kinds<G>; // r only
+		readonly value?: V.Literal.Number.Kinds<G>; // r only
 	}
 	export namespace Number {
 		export interface Float<G extends GrammarContext> extends V.Literal.Number<G> {} // claimed by pr
@@ -59,7 +59,7 @@ export namespace Literal {
 		}
 		export interface Negative<G extends GrammarContext> extends V.Literal.Number<G> {
 			// claimed by r
-			readonly object: V.Literal.Number.Kinds<G>;
+			readonly value: V.Literal.Number.Kinds<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
 			| V.Literal.Number<G>
@@ -71,7 +71,7 @@ export namespace Literal {
 	export interface Regex<G extends GrammarContext> extends V.Literal<G> {
 		// claimed by t
 		readonly flags?: V.Literal.Regex.Flags<G>;
-		readonly name?: V.Literal.Regex.Pattern<G>;
+		readonly pattern?: V.Literal.Regex.Pattern<G>;
 	}
 	export namespace Regex {
 		export interface Flags<G extends GrammarContext> extends V.Literal.Regex<G> {} // claimed by t

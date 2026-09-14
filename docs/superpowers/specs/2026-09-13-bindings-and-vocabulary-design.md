@@ -66,7 +66,7 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
 
 - **A refinement narrows, never widens.** A leaf's members are its parent's with a literal fixed; a leaf that admits a kind its parent does not is a bindings error, and the level interface (§5) is typed as the union over its descendants so the compiler reports the widening.
 - **Enumerations are const strings**: the token's text as the language spells it, `'const'`, `'&&'`, `'of'`, never a sittir kind name or a kind id, typed per language as a string-literal union through the context. A choice that is a refined leaf is carried by the kind and its string is derived from it per language, so `logical.and` builds as `&&` in typescript and `and` in python.
-- **Keyword modifiers decompose into members**: `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite`, `generator` are booleans; `visibility` and `accessor` (`get`/`set`) are text where the language spells them as keywords; typescript's accessibility keywords are its `visibility`, one member with one concept behind it, whose shape is the language's (§4.2). Rust's modifier set projects to the same booleans. A modifier with structure (`pub(in path)`, `extern "C"`) is a kind.
+- **Keyword modifiers decompose into members**: `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite`, `generator` are booleans; `visibility` and `accessorKind` (`get`/`set`) are text where the language spells them as keywords; typescript's accessibility keywords are its `visibility`, one member with one concept behind it, whose shape is the language's (§4.2). Rust's modifier set projects to the same booleans. A modifier with structure (`pub(in path)`, `extern "C"`) is a kind.
 - **Refinement routes are sugar.** `d.method('__init__', …)` builds the same tree as `d.method.dunder('init', …)`, and both read back as `declaration.method.dunder`, because classification is by match, never by construction route. `$structure()` reports the most specific kind.
 
 ## 4. The portability API: features and terms
@@ -84,10 +84,10 @@ Nothing in the vocabulary is language-specific; it is feature-specific. A langua
 
 ### 4.2 Terms
 
-- **A feature declares its parameters; a language binds the terms.** Every kind and member a feature introduces is a parameter of that feature, defaulting to the canonical vocabulary name. A composition binds terms to parameters: Swift composes `interfaces` with `interface` bound to `protocol` and `associatedType` to `associatedtype`; rust binds `interface` to `trait`; typescript leaves the defaults.
-- **A term reaches the high-level API everywhere a name shows**: the type alias (`Swift.Declaration.Protocol`), the builder (`protocol(...)`), the documentation, and the accepted spelling of `kind` when a structure is written in that language's context.
-- **The canonical path stays the identity.** `$structure()` emits `declaration.interface` for a Swift protocol, and the structure builds through the rust builder as a trait, because the two languages share the feature. A term is an alias in both directions, never a second kind. Terms as kinds would make `protocol` and `trait` different things and reintroduce the language-specific surface the taxonomy exists to remove.
-- **Terms and qualifiers are different tools.** A qualifier is a refinement, a different kind under the semantic one: `expression.call.macro`. A term is the same kind under a language's name. The rule for choosing: if two languages' constructs type-check against each other's builders, it is one kind with two terms; if not, it is a refinement.
+- **A feature declares its parameters; a language binds the terms.** Every kind and member a feature introduces is a parameter of that feature, defaulting to the canonical vocabulary name. A composition binds terms to parameters: Swift composes `type-aliases` with `typeAlias` bound to `typealias`, rust binds it to `type`, and typescript leaves the default; rust composes `modules` with `module` bound to `mod`.
+- **A term reaches the high-level API everywhere a name shows**: the type alias (`Swift.Declaration.Typealias`), the builder (`typealias(...)`), the documentation, and the accepted spelling of `kind` when a structure is written in that language's context.
+- **The canonical path stays the identity.** `$structure()` emits `declaration.type_alias` for a Swift `typealias`, and the structure builds through the rust builder as a `type` item, because the two languages share the feature. A term is an alias in both directions, never a second kind.
+- **Terms and qualifiers are different tools.** A qualifier is a refinement, a different kind under the semantic one: `expression.call.macro`. A term is the same kind under a language's name. The rule for choosing: if two languages' constructs type-check against each other's builders, it is one kind with two terms; if not, it is a refinement. A rust trait and a typescript interface fail that test in both directions (default method bodies and associated items one way, index and call signatures the other), so `trait` is not a term: it is the refinement `declaration.interface.trait`, and a Swift protocol is `declaration.interface.protocol`. That keeps the distinction SCIP keeps between interface, trait and protocol, while cross-language reading still sees every one of them as an interface.
 - **Consequence.** The base API and each language's API are the same interfaces under two naming layers, and the only thing maintained per language is its composition.
 
 ### 4.4 Presence and requiredness are projected per kind and member
@@ -102,7 +102,7 @@ The first version of the hand-maintained table. ✓ composed; † composed by co
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | classes | class declaration, methods, fields, `this` | ✓ | ✓ | | ✓ | | ✓ | ✓ |
 | structs | value-type declaration | | | ✓ | ✓ | ✓ | ✓ | ✓ |
-| interfaces | abstract type declaration (interface, protocol, trait) | | ✓ | ✓ | ✓ | ✓ | | ✓ |
+| interfaces | abstract type declaration; `trait` and `protocol` are refinements under it | | ✓ | ✓ | ✓ | ✓ | | ✓ |
 | type-aliases | `type X = …`, `typealias`, `using X =` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | enumerations | named constants | | ✓ | ✓ | ✓ | | ✓ | ✓ |
 | algebraic-data-types | sum types with payloads | | | ✓ | | | | ✓ |
@@ -137,7 +137,7 @@ The first version of the hand-maintained table. ✓ composed; † composed by co
 | labeled-control-flow | labels on loops and blocks | | ✓ | ✓ | | ✓ | ✓ | ✓ |
 | modules | import, export, re-export, namespace | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-Decisions the table records: `enumerations` and `algebraic-data-types` are separate features, since a C# enum and a rust enum share a keyword and nothing else; `decorators` and `attributes` are separate, since Swift's `@` forms are never evaluated applications; `exceptions` and `error-propagation` are separate, since Swift has both and rust has only the second. `oop` as a superset reads as `classes`, one of the inheritance features, `interface-conformance`, `accessors`, `visibility`; that composition names typescript, C# and Swift exactly, and python and C++ with the other inheritance feature. Two rows are held loosely: `interfaces` places rust's trait beside typescript's interface as a declaration with `typeclasses` carrying the conformance side, and `open-type-extension` is kept apart from `typeclasses` because C# and Go have the former without the latter. `comprehensions` and `jsx` are real features shaped by one language each and compose as leaves under `expression` without a row here.
+Decisions the table records: `enumerations` and `algebraic-data-types` are separate features, since a C# enum and a rust enum share a keyword and nothing else; `decorators` and `attributes` are separate, since Swift's `@` forms are never evaluated applications; `exceptions` and `error-propagation` are separate, since Swift has both and rust has only the second. `oop` as a superset reads as `classes`, one of the inheritance features, `interface-conformance`, `accessors`, `visibility`; that composition names typescript, C# and Swift exactly, and python and C++ with the other inheritance feature. Two rows are held loosely: `interfaces` places rust's trait under typescript's interface as a refinement, with `typeclasses` carrying the conformance side, and `open-type-extension` is kept apart from `typeclasses` because C# and Go have the former without the latter. `comprehensions` and `jsx` are real features shaped by one language each and compose as leaves under `expression` without a row here.
 
 ## 5. The base type tree
 
@@ -157,7 +157,7 @@ Decisions the table records: `enumerations` and `algebraic-data-types` are separ
 
 Names converge before kinds. Both passes are recorded, member by member, in `2026-09-13-base-vocabulary-draft.md`; the rules are:
 
-**Names.** (0) Two languages share a member only when the feature behind it is the same, never because the slots look alike: typescript's `extends` (single inheritance), its `implements` (interface conformance) and python's bases (multiple inheritance) are three members of three features, and the earlier `heritage` that merged them is reversed. (1) A marker boolean takes the keyword it marks. (2) A modifier enum takes the noun. (3) Layout is not a member. (4) Containers keep the shared name (`parameters`, `arguments`, `body`, `statements`, `typeParameters`, `typeArguments`). (5) Otherwise the majority upstream name over the claiming grammars wins; a tie is a recorded choice.
+**Names.** Rules (1) and (2) are applied by the derivation to every slot, so the bindings never spell them; a capture renames a slot only for the kinds whose claims carry it, never grammar-wide. (0) Two languages share a member only when the feature behind it is the same, never because the slots look alike: typescript's `extends` (single inheritance), its `implements` (interface conformance) and python's bases (multiple inheritance) are three members of three features, and the earlier `heritage` that merged them is reversed. (1) A marker boolean takes the keyword it marks. (2) A modifier enum takes the noun. (3) Layout is not a member. (4) Containers keep the shared name (`parameters`, `arguments`, `body`, `statements`, `typeParameters`, `typeArguments`). (5) Otherwise the majority upstream name over the claiming grammars wins; a tie is a recorded choice.
 
 **Kinds.** (1) Containers unwrap to their element kind-set as a list. (2) A wrapper clause that carries one member around punctuation is transparent: typescript's type annotation makes `returnType: type`; python's suite forms make a function body `statement.block`, the encoding chosen at build time. (3) A member's kind is the smallest kind-set covering every grammar's admitted set. (4) Text leaves are strings. (5) Exclusive markers decompose. (6) Inclusion is a DAG with full-coverage admission and flattened unions. (7) Refinements narrow, never widen.
 
@@ -193,14 +193,14 @@ Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.s
 8. **Cross-language errors**: `Python.Declaration.Interface` and a rust `whereClause` handed to python fail at compile time, because python composes neither `interfaces` nor `bounded-quantification`'s where clause; a `Base.Declaration.Function` consumer compiles unchanged against all three contexts.
 9. **Feature closure**: a member's feature set is a subset of the union of its kind's feature sets; a claim outside the language's composition and a composed feature with no claim behind it are both inventory diagnostics.
 
-10. **Terms are aliases**: a Swift `protocol` structure read as `declaration.interface` builds in rust as a `trait` and reads back with the same path; a term never changes what `$structure()` emits.
+10. **Terms are aliases**: a Swift `typealias` structure read as `declaration.type_alias` builds in rust as a `type` item and reads back with the same path; a term never changes what `$structure()` emits.
 11. **Consumer-seat checks**, compile-time, in `packages/types/tests/vocabulary-consumers.test-d.ts`: an ordinary function, method, call and binary satisfy their base interfaces; a getter pins `'get'`, `Add` pins `'+'`, an increment cannot omit its operand; once the per-language projections exist, a rust `whereClause` on a python function and a rust function without a body are the negative cases.
 
 ## 11. Next
 
 - The feature table as `packages/types/src/vocabulary/features.ts`, hand-maintained, from §4.3; one composition per language beside its context, with its term bindings.
 - Per-language contexts from each language's composition narrowed by its claims, which is what makes cross-language errors fire.
-- The reversals the feature lens forces, in the tree and the bindings: `accessibility` into `visibility`; `heritage` into `extends` / `implements` / `bases`; `declaration.trait` into `declaration.interface` with `trait` as rust's term, since a trait and an interface share a name, type parameters, a supertype list and a member body, and today's `Trait` interface is wrong anyway, carrying a method's slots from the nested method claim in the rust binding.
+- Applied: the reversals the feature lens forces, in the tree and the bindings: `accessibility` into `visibility`; `heritage` into `extends` / `implements` / `bases`; `declaration.trait` under `declaration.interface` as the refinement `declaration.interface.trait`.
 - The next bindings pass, driven by the `Unmapped` counts.
 - `sittir tool bindings-inventory`, the derivation promoted from `packages/tools/scripts/derive-vocabulary.py` with the totality, injectivity and DAG gates, reporting where the bindings and the authored tree disagree.
 - The structure builders and `$structure()`, then the round-trip lane, then the coercer's retirement.
@@ -230,5 +230,5 @@ Open: trivia and provenance on a structure (a structure has no coordinates; `doc
 | per-language contexts projected from each grammar's claims alone | a language is a composition of features, narrowed by its claims; features and terms are the portability API |
 | `heritage` converged across `extends`, `implements` and python's bases | three members of three features; members are shared by feature, never by slot |
 | `accessibility` beside `visibility` | one `visibility` member, its shape per language |
-| `declaration.trait` beside `declaration.interface` | one kind, `declaration.interface`, with `trait` as rust's term |
+| `declaration.trait` beside `declaration.interface` | a refinement, `declaration.interface.trait`: an interface with what only a trait has |
 | language-specific names erased into the canonical vocabulary | terms: a feature's names are parameters a language binds, aliases in both directions over one canonical path |

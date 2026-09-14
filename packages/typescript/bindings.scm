@@ -5,46 +5,39 @@
 ; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
 ; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
 ; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
+; The names rules for markers and modifiers (`async_marker` is `async`, `visibility_modifier` is
+; `visibility`) are applied by the derivation to every slot, so no claim spells them.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (program) @module
 
 ; ── declaration ────────────────────────────────────────────────────────────────
-(function_declaration async_marker: _? @async) @declaration.function
+(function_declaration) @declaration.function
 (generator_function_declaration) @declaration.function.generator
 (class_declaration) @declaration.class
-(class_declaration (class_heritage (class_heritage_extends_clause (_) @heritage)))
-(class_declaration (class_heritage (implements_clause type: (_) @heritage)))
+(class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
+(class_declaration (class_heritage (implements_clause type: (_) @implements)))
 (abstract_class_declaration) @declaration.class.abstract
-(interface_declaration) @declaration.interface
+(interface_declaration (extends_type_clause)? @extends) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
 (enum_body (_) @declaration.enum_member)
 (type_alias_declaration) @declaration.type_alias
 (method_definition) @declaration.method
-(method_definition (accessibility_modifier) @accessibility)
-(method_definition static_marker: _? @static)
-(method_definition (override_modifier) @override)
-(method_definition readonly_marker: _? @readonly)
-(method_definition async_marker: _? @async)
+(method_definition (accessibility_modifier) @visibility)
 (method_definition "*" @generator)
-(method_definition accessor_kind: "get" @accessor)
-(method_definition accessor_kind: "set" @accessor)
 (method_definition "?" @optional)
 (method_definition accessor_kind: "get") @declaration.getter
 (method_definition accessor_kind: "set") @declaration.setter
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
 (method_signature) @declaration.method.signature
+(method_signature (accessibility_modifier) @visibility)
 (abstract_method_signature) @declaration.method.abstract
+(abstract_method_signature (accessibility_modifier) @visibility)
 (property_signature) @declaration.property
+(property_signature (accessibility_modifier) @visibility)
 (public_field_definition) @declaration.field
-(public_field_definition (accessibility_modifier) @accessibility)
-(public_field_definition static_marker: _? @static)
-(public_field_definition readonly_marker: _? @readonly)
-(public_field_definition abstract_marker: _? @abstract)
-(public_field_definition declare_marker: _? @declare)
-(public_field_definition (override_modifier) @override)
-(public_field_definition accessor_marker: _? @accessor)
+(public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
 (lexical_declaration) @declaration.variable.lexical
@@ -52,7 +45,9 @@
 (variable_declarator_arm2) @declaration.variable
 (variable_declarator_arm1) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
+(required_parameter (accessibility_modifier) @visibility)
 (optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter.optional
+(optional_parameter (accessibility_modifier) @visibility)
 (type_parameter value: (_)? @default) @declaration.parameter.type
 (ambient_declaration) @declaration.ambient
 (internal_module) @declaration.module
@@ -212,6 +207,8 @@
 (import) @expression.call.import
 (meta_property) @expression.meta
 (class) @expression.class
+(class (class_heritage (class_heritage_extends_clause (_) @extends)))
+(class (class_heritage (implements_clause type: (_) @implements)))
 (decorator_member_expression) @attribute.content.member
 (decorator_call_expression) @attribute.content.call
 (decorator_parenthesized_expression) @attribute.content.parenthesized
@@ -275,7 +272,7 @@
 (this) @identifier.self
 (super) @identifier.super
 
-; every TypeScript modifier is a keyword: `accessibility` is a member whose value is the keyword text,
+; every TypeScript modifier is a keyword: `visibility` is a member whose value is the keyword text,
 ; the markers are boolean members; no modifier is a kind
 (computed_property_name) @identifier.property.computed
 (jsx_identifier) @identifier.jsx

@@ -18,9 +18,8 @@ export interface Element<G extends GrammarContext> {
 		| G['identifier']
 		| V.Element.Splat.Kinds<G>
 		| G['type']; // prt only   // unmapped: <rust:delim_token_tree_brace> <rust:delim_token_tree_bracket> <rust:delim_token_tree_paren> <rust:token_tree_brace> <rust:token_tree_bracket> <rust:token_tree_paren> <rust:token_tree_pattern_brace> <rust:token_tree_pattern_bracket> <rust:token_tree_pattern_paren>
-	readonly default?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
 	readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // pt only
-	readonly heritage?: V.Clause.Annotation<G>; // t only
+	readonly field?: G['identifier'] | V.Literal.Number.Integer<G>; // r only
 	readonly key?:
 		| V.Unmapped<'typescript:__property_identifier'>
 		| G['expression']
@@ -28,12 +27,17 @@ export interface Element<G extends GrammarContext> {
 		| G['literal']
 		| G['pattern']; // pt only   // unmapped: <typescript:__property_identifier>
 	readonly name?: G['identifier'] | V.Pattern.Rest<G>; // rt only
-	readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement']; // pr only
 	readonly operator?: '*' | '+' | '?'; // r only
-	readonly property?: G['identifier'] | V.Literal.Number.Integer<G>; // r only
 	readonly tokens?: (G['identifier'] | G['literal'] | V.Element.Macro.Kinds<G> | V.Type.Primitive<G>)[]; // r only
+	readonly type?: G['clause'] | V.Expression.Call.Macro<G> | G['identifier'] | number | G['type']; // rt only
 	readonly typeArguments?: G['type'][]; // r only
-	readonly value?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | number | G['type']; // r only
+	readonly value?:
+		| V.Declaration.Module<G>
+		| G['expression']
+		| G['identifier']
+		| G['literal']
+		| G['pattern']
+		| G['statement']; // prt only
 }
 export namespace Element {
 	export interface Jsx<G extends GrammarContext> extends V.Element<G> {}
@@ -55,14 +59,14 @@ export namespace Element {
 		readonly name?: V.Identifier.Metavariable<G>; // r only
 		readonly operator?: '*' | '+' | '?'; // r only
 		readonly tokens?: (G['identifier'] | G['literal'] | V.Element.Macro.Kinds<G> | V.Type.Primitive<G>)[]; // r only
-		readonly value?: number; // r only
+		readonly type?: number; // r only
 	}
 	export namespace Macro {
 		export interface Fragment<G extends GrammarContext> extends V.Element.Macro<G> {} // claimed by r
 		export interface TokenBinding<G extends GrammarContext> extends V.Element.Macro<G> {
 			// claimed by r
 			readonly name: V.Identifier.Metavariable<G>;
-			readonly value: number;
+			readonly type: number;
 		}
 		export interface TokenRepetition<G extends GrammarContext> extends V.Element.Macro<G> {
 			// claimed by r
@@ -122,14 +126,13 @@ export namespace Element {
 	}
 	export interface Pair<G extends GrammarContext> extends V.Element<G> {
 		// claimed by pt
-		readonly default?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
 		readonly key:
 			| V.Unmapped<'typescript:__property_identifier'>
 			| G['expression']
 			| G['identifier']
 			| G['literal']
 			| G['pattern']; // unmapped: <typescript:__property_identifier>
-		readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
+		readonly value: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export interface Splat<G extends GrammarContext> extends V.Element<G> {
 		// claimed by pt
@@ -153,22 +156,22 @@ export namespace Element {
 	export interface Struct<G extends GrammarContext> extends V.Element<G> {
 		readonly attributeItem?: G['attribute'][]; // r only
 		readonly attributes?: G['attribute'][]; // r only
+		readonly field?: G['identifier'] | V.Literal.Number.Integer<G>; // r only
 		readonly name?: G['identifier']; // r only
-		readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
-		readonly property?: G['identifier'] | V.Literal.Number.Integer<G>; // r only
+		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 	}
 	export namespace Struct {
 		export interface Base<G extends GrammarContext> extends V.Element.Struct<G> {
 			// claimed by r
-			readonly object: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+			readonly value: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		}
 		export interface Field<G extends GrammarContext> extends V.Element.Struct<G> {
 			// claimed by r
 			readonly attributeItem?: G['attribute'][];
 			readonly attributes?: G['attribute'][];
+			readonly field?: G['identifier'] | V.Literal.Number.Integer<G>;
 			readonly name?: G['identifier'];
-			readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
-			readonly property?: G['identifier'] | V.Literal.Number.Integer<G>;
+			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		}
 		export namespace Field {
 			export interface Shorthand<G extends GrammarContext> extends V.Element.Struct.Field<G> {
@@ -194,20 +197,20 @@ export namespace Element {
 		export type Kinds<G extends GrammarContext> = V.Element.Template.Substitution<G>;
 	}
 	export interface Tuple<G extends GrammarContext> extends V.Element<G> {
-		readonly heritage?: V.Clause.Annotation<G>; // t only
 		readonly name?: G['identifier'] | V.Pattern.Rest<G>; // t only
+		readonly type?: V.Clause.Annotation<G>; // t only
 	}
 	export namespace Tuple {
 		export interface Member<G extends GrammarContext> extends V.Element.Tuple<G> {
 			// claimed by t
-			readonly heritage: V.Clause.Annotation<G>;
 			readonly name: G['identifier'] | V.Pattern.Rest<G>;
+			readonly type: V.Clause.Annotation<G>;
 		}
 		export namespace Member {
 			export interface Optional<G extends GrammarContext> extends V.Element.Tuple.Member<G> {
 				// claimed by t
-				readonly heritage: V.Clause.Annotation<G>;
 				readonly name: G['identifier'];
+				readonly type: V.Clause.Annotation<G>;
 			}
 			export type Kinds<G extends GrammarContext> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 		}
@@ -216,8 +219,8 @@ export namespace Element {
 	export interface TypeBinding<G extends GrammarContext> extends V.Element<G> {
 		// claimed by r
 		readonly name: G['identifier'];
+		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly typeArguments?: G['type'][];
-		readonly value: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 	}
 	export type Kinds<G extends GrammarContext> =
 		| V.Element.Jsx.Attribute<G>

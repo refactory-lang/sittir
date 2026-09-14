@@ -5,14 +5,16 @@
 ; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
 ; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
 ; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
+; The names rules for markers and modifiers (`async_marker` is `async`, `visibility_modifier` is
+; `visibility`) are applied by the derivation to every slot, so no claim spells them.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (module) @module
 
 ; ── declaration ────────────────────────────────────────────────────────────────
-(function_definition async_marker: _? @async) @declaration.function
+(function_definition) @declaration.function
 (function_definition body: (block . (expression_statement (string) @doc @literal.string.docstring)))
-(class_definition superclasses: (_)? @heritage) @declaration.class
+(class_definition superclasses: (_)? @bases) @declaration.class
 (class_definition body: (block . (expression_statement (string) @doc @literal.string.docstring)))
 (class_definition (block (function_definition) @declaration.method))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
