@@ -104,7 +104,9 @@ for g in GRAMMARS:
                     for par in walk(top):
                         if n in par.children and par.kind not in (None,'<group>'):
                             key=n.field or n.kind
-                            if key: renames[(g,par.kind)][key]=cap
+                            if key:
+                                renames[(g,par.kind)][key]=cap
+                                if n.field: renames[(g,'*')][n.field]=cap   # a converged member name is a grammar-wide fact for that field
 NODE=re.compile(r'^export interface (\w+) \{\n\treadonly \$type: TSKindId\.\w+;\n((?:\t[^\n]*\n)*?)\}',re.M)
 HINT=re.compile(r'readonly (\w+)\??:\s*(?:\|\s*)?KindEnum<\s*((?:\'[^\']*\'\s*\|?\s*)+),',re.S)
 MEM=re.compile(r'^\treadonly (_\w+)(\??):((?:[^;{\n]|\n\t\t\|)+);',re.M)
@@ -200,7 +202,7 @@ for g in GRAMMARS:
                     for f,t in lits.items(): entry[1].setdefault(f,set()).add(t)
                     continue
             for mem in ifaces[g].get(gk,[]):
-                raw=mem['name'].lstrip('_'); rn=renames.get((g,gk),{})
+                raw=mem['name'].lstrip('_'); rn={**renames.get((g,'*'),{}),**renames.get((g,gk),{})}
                 cm=camel(rn.get(raw) or next((m for k,m in rn.items() if k==raw or snake(k)==raw), None) or raw)
                 slot=vk[v][cm]
                 for k in mem['kinds']: slot['kinds'].update(kind_to_vocab(g,k).split(' | ')); slot['optional']|=mem['optional']; slot['multiple']|=mem['multiple']; slot['scalar']|=not mem['multiple']; slot['grammars'].add(g)
@@ -364,7 +366,7 @@ if len(sys.argv)>2 and sys.argv[2]=='--emit':
         if v in refinements:
             p_,lits=refinements[v]
             path_parent='.'.join(v.split('.')[:-1])
-            base=path_parent if path_parent in allvocab|prefixes else p_
+            base=path_parent if path_parent in allvocab else p_   # an unclaimed prefix carries no members of its own
             body=' '.join(f"readonly {camel(f)}: {' | '.join(repr(t) for t in sorted(ts))};" for f,ts in lits.items())
             lines.append(f"{ind}export interface {name}<G extends GrammarContext> extends {ref(base)} {{ {body} }}")
         else:

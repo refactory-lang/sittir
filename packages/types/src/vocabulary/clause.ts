@@ -5,17 +5,21 @@ import type * as V from './index.ts';
 export interface Clause<G extends GrammarContext> {
 	readonly alias?: G['identifier'] | V.Literal.String<G> | G['type']; // prt only
 	readonly asserts?: V.Type.Predicate.Asserts<G>; // t only
-	readonly asyncMarker?: boolean; // p only
+	readonly async?: boolean; // p only
 	readonly attributeKind?: 'assert' | 'with'; // t only
 	readonly attributes?: G['attribute'][]; // r only
 	readonly block?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty
 	readonly body?:
-		| V.Statement.Block<G>
 		| V.Clause.Import.Alias<G>
 		| G['declaration']
 		| G['statement']
-		| (V.Statement.Block<G> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'])[]; // pt only   // unmapped: literal:_SuiteEmpty
-	readonly bounds?:
+		| (V.Clause.Import.Alias<G> | G['declaration'] | G['statement'])[]; // t only
+	readonly casePatterns?: V.Unmapped<'python:case_patterns'>; // p only   // unmapped: <python:case_patterns>
+	readonly catchClauseGroup?: V.Unmapped<'typescript:catch_clause_group'>; // t only   // unmapped: <typescript:catch_clause_group>
+	readonly comma?: boolean; // pr only
+	readonly condition?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
+	readonly consequence?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty
+	readonly constraint?:
 		| V.Unmapped<'rust:use_bounds_elements'>
 		| V.Expression.Call.Macro<G>
 		| G['identifier']
@@ -28,11 +32,6 @@ export interface Clause<G extends GrammarContext> {
 				| V.Clause.Bounds.Kinds<G>
 				| G['type']
 		  )[]; // r only   // unmapped: <rust:use_bounds_elements>
-	readonly casePatterns?: V.Unmapped<'python:case_patterns'>; // p only   // unmapped: <python:case_patterns>
-	readonly catchClauseGroup?: V.Unmapped<'typescript:catch_clause_group'>; // t only   // unmapped: <typescript:catch_clause_group>
-	readonly comma?: boolean; // pr only
-	readonly condition?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
-	readonly consequence?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty
 	readonly content?:
 		| V.Unmapped<'python:with_clause_bare'>
 		| V.Unmapped<'python:with_clause_paren'>
@@ -60,31 +59,30 @@ export interface Clause<G extends GrammarContext> {
 				| ':'
 				| 'extends'
 		  )[]; // prt only   // unmapped: <python:with_clause_bare> <python:with_clause_paren> <rust:match_arm_with_comma> <typescript:import_clause_default_import> <typescript:import_specifier_as>
+	readonly default?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
 	readonly exception?: V.Unmapped<'python:except_clause_exception'>; // p only   // unmapped: <python:except_clause_exception>
 	readonly exportKind?: 'type' | 'typeof'; // t only
 	readonly exportSpecifiers?: V.Unmapped<'typescript:export_specifiers'>; // t only   // unmapped: <typescript:export_specifiers>
 	readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	readonly extendsClauseSingle?: V.Unmapped<'typescript:extends_clause_single'>[]; // t only   // unmapped: <typescript:extends_clause_single>
 	readonly guard?: V.Clause.Comprehension.If<G>; // p only
-	readonly heritage?: (G['identifier'] | G['type'])[]; // t only
+	readonly heritage?: G['identifier'] | G['type'] | (G['identifier'] | G['type'])[]; // t only
 	readonly importKind?: 'type' | 'typeof'; // t only
 	readonly left?:
-		| V.Unmapped<'python:pattern'>
 		| G['clause']
 		| V.Element.Macro.TokenTree.Pattern<G>
 		| G['expression']
 		| G['identifier']
 		| G['literal']
-		| V.Pattern.Tuple.Bare<G>
+		| G['pattern']
 		| G['statement']
-		| G['type']; // pr only   // unmapped: <python:pattern>
+		| G['type']; // pr only
 	readonly lifetimes?: V.Unmapped<'rust:lifetimes'>; // r only   // unmapped: <rust:lifetimes>
 	readonly list?: V.Clause.Import.List<G>; // r only
 	readonly moduleExportName?: G['identifier'] | V.Literal.String<G>; // t only
-	readonly name?: G['identifier'] | V.Literal.String<G>; // pt only
-	readonly object?: V.Expression.Collection.Object<G>; // t only
+	readonly name?: V.Unmapped<'python:pattern'> | G['identifier'] | V.Literal.String<G> | V.Pattern.Tuple.Bare<G>; // pt only   // unmapped: <python:pattern>
+	readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement']; // prt only
 	readonly path?: G['identifier']; // r only
-	readonly pattern?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // r only
 	readonly prefix?: V.Clause.Import.Relative.Prefix<G>; // p only
 	readonly right?:
 		| V.Clause.Let<G>
@@ -92,7 +90,6 @@ export interface Clause<G extends GrammarContext> {
 		| G['expression']
 		| G['identifier']
 		| G['literal']
-		| G['pattern']
 		| G['statement']
 		| (
 				| V.Clause.Let<G>
@@ -100,41 +97,35 @@ export interface Clause<G extends GrammarContext> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| G['pattern']
 				| G['statement']
-		  )[]; // pr only
+		  )[]; // r only
 	readonly source?: V.Literal.String<G>; // t only
 	readonly starMarker?: boolean; // p only
 	readonly suite?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty
-	readonly type?:
-		| V.Clause.Bounds.Removed<G>
-		| V.Expression.Call.Macro<G>
-		| G['identifier']
-		| G['type']
-		| (V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'])[]; // rt only
 	readonly typeParameters?: V.Declaration.Parameter.Type<G>[]; // r only
 	readonly typePredicate?: V.Type.Predicate<G>; // t only
 	readonly useClauses?: V.Unmapped<'rust:use_clauses'>; // r only   // unmapped: <rust:use_clauses>
 	readonly value?:
-		| V.Declaration.Module<G>
+		| V.Clause.Bounds.Removed<G>
 		| G['expression']
 		| G['identifier']
 		| G['literal']
 		| G['pattern']
-		| G['statement']; // prt only
+		| G['type']
+		| (V.Clause.Bounds.Removed<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['type'])[]; // pr only
 	readonly wherePredicates?: V.Unmapped<'rust:where_predicates'>; // r only   // unmapped: <rust:where_predicates>
 }
 export namespace Clause {
 	export interface Annotation<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by t
 		readonly asserts?: V.Type.Predicate.Asserts<G>;
-		readonly type?: G['identifier'] | G['type'];
+		readonly heritage?: G['identifier'] | G['type'];
 		readonly typePredicate?: V.Type.Predicate<G>;
 	}
 	export namespace Annotation {
 		export interface Adding<G extends GrammarContext> extends V.Clause.Annotation<G> {
 			// claimed by t
-			readonly type: G['identifier'] | G['type'];
+			readonly heritage: G['identifier'] | G['type'];
 		}
 		export interface Asserts<G extends GrammarContext> extends V.Clause.Annotation<G> {
 			// claimed by t
@@ -142,11 +133,11 @@ export namespace Clause {
 		}
 		export interface Omitting<G extends GrammarContext> extends V.Clause.Annotation<G> {
 			// claimed by t
-			readonly type: G['identifier'] | G['type'];
+			readonly heritage: G['identifier'] | G['type'];
 		}
 		export interface Opting<G extends GrammarContext> extends V.Clause.Annotation<G> {
 			// claimed by t
-			readonly type: G['identifier'] | G['type'];
+			readonly heritage: G['identifier'] | G['type'];
 		}
 		export interface Predicate<G extends GrammarContext> extends V.Clause.Annotation<G> {
 			// claimed by t
@@ -162,7 +153,7 @@ export namespace Clause {
 	}
 	export interface Bounds<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by r
-		readonly bounds?:
+		readonly constraint?:
 			| V.Unmapped<'rust:use_bounds_elements'>
 			| V.Expression.Call.Macro<G>
 			| G['identifier']
@@ -175,22 +166,22 @@ export namespace Clause {
 					| V.Clause.Bounds.Kinds<G>
 					| G['type']
 			  )[]; // unmapped: <rust:use_bounds_elements>
-		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
+		readonly value?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 	}
 	export namespace Bounds {
 		export interface HigherRanked<G extends GrammarContext> extends V.Clause.Bounds<G> {
 			// claimed by r
-			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 			readonly typeParameters: V.Declaration.Parameter.Type<G>[];
+			readonly value: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		}
 		export interface Removed<G extends GrammarContext> extends V.Clause.Bounds<G> {
 			// claimed by r
-			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+			readonly value: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		}
 		export interface Use<G extends GrammarContext> extends V.Clause.Bounds<G> {
 			// claimed by r
-			readonly bounds?: V.Unmapped<'rust:use_bounds_elements'>; // unmapped: <rust:use_bounds_elements>
+			readonly constraint?: V.Unmapped<'rust:use_bounds_elements'>; // unmapped: <rust:use_bounds_elements>
 		}
 		export type Kinds<G extends GrammarContext> =
 			| V.Clause.Bounds<G>
@@ -203,8 +194,8 @@ export namespace Clause {
 		readonly body?: (V.Clause.Import.Alias<G> | G['declaration'] | G['statement'])[]; // t only
 		readonly casePatterns?: V.Unmapped<'python:case_patterns'>; // p only   // unmapped: <python:case_patterns>
 		readonly consequence?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty
+		readonly default?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
 		readonly guard?: V.Clause.Comprehension.If<G>; // p only
-		readonly value?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
 	}
 	export namespace Case {
 		export interface Default<G extends GrammarContext> extends V.Clause.Case<G> {
@@ -220,20 +211,20 @@ export namespace Clause {
 	}
 	export interface Comprehension<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by p
-		readonly asyncMarker?: boolean;
+		readonly async?: boolean;
 		readonly comma?: boolean;
 		readonly condition?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		readonly content?: V.Clause.Comprehension.Kinds<G>[];
-		readonly left?: V.Unmapped<'python:pattern'> | V.Pattern.Tuple.Bare<G>; // unmapped: <python:pattern>
-		readonly right?: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
+		readonly name?: V.Unmapped<'python:pattern'> | V.Pattern.Tuple.Bare<G>; // unmapped: <python:pattern>
+		readonly value?: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
 	}
 	export namespace Comprehension {
 		export interface For<G extends GrammarContext> extends V.Clause.Comprehension<G> {
 			// claimed by p
-			readonly asyncMarker?: boolean;
+			readonly async?: boolean;
 			readonly comma?: boolean;
-			readonly left: V.Unmapped<'python:pattern'> | V.Pattern.Tuple.Bare<G>; // unmapped: <python:pattern>
-			readonly right: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
+			readonly name: V.Unmapped<'python:pattern'> | V.Pattern.Tuple.Bare<G>; // unmapped: <python:pattern>
+			readonly value: (G['expression'] | G['identifier'] | G['literal'] | G['pattern'])[];
 		}
 		export interface If<G extends GrammarContext> extends V.Clause.Comprehension<G> {
 			// claimed by p
@@ -247,11 +238,11 @@ export namespace Clause {
 	export interface Constraint<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by t
 		readonly content: ':' | 'extends';
-		readonly type: G['identifier'] | G['type'];
+		readonly heritage: G['identifier'] | G['type'];
 	}
 	export interface Default<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by t
-		readonly type: G['identifier'] | G['type'];
+		readonly heritage: G['identifier'] | G['type'];
 	}
 	export interface Elif<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by p
@@ -260,7 +251,8 @@ export namespace Clause {
 	}
 	export interface Else<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by prt
-		readonly body?: V.Statement.Block<G> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement']; // pt only   // unmapped: literal:_SuiteEmpty
+		readonly body?: V.Clause.Import.Alias<G> | G['declaration'] | G['statement']; // t only
+		readonly consequence?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty
 		readonly content?: G['statement']; // r only
 	}
 	export interface Except<G extends GrammarContext> extends V.Clause<G> {
@@ -296,12 +288,12 @@ export namespace Clause {
 	export interface Extends<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by t
 		readonly extendsClauseSingle?: V.Unmapped<'typescript:extends_clause_single'>[]; // unmapped: <typescript:extends_clause_single>
-		readonly type?: (G['identifier'] | V.Type.Generic<G>)[];
+		readonly heritage?: (G['identifier'] | V.Type.Generic<G>)[];
 	}
 	export namespace Extends {
 		export interface Type<G extends GrammarContext> extends V.Clause.Extends<G> {
 			// claimed by t
-			readonly type: (G['identifier'] | V.Type.Generic<G>)[];
+			readonly heritage: (G['identifier'] | V.Type.Generic<G>)[];
 		}
 		export type Kinds<G extends GrammarContext> = V.Clause.Extends<G> | V.Clause.Extends.Type<G>;
 	}
@@ -323,22 +315,24 @@ export namespace Clause {
 			| V.Clause.Import.Specifier<G>[]
 			| V.Clause.Import.Namespace<G>
 			| G['identifier']; // t only   // unmapped: <typescript:import_clause_default_import> <typescript:import_specifier_as>
+		readonly default?: G['identifier']; // t only
 		readonly importKind?: 'type' | 'typeof'; // t only
+		readonly left?: V.Identifier.Dotted<G>; // p only
 		readonly list?: V.Clause.Import.List<G>; // r only
-		readonly name?: G['identifier']; // pt only
+		readonly name?: G['identifier']; // t only
 		readonly object?: V.Expression.Collection.Object<G>; // t only
 		readonly path?: G['identifier']; // r only
 		readonly prefix?: V.Clause.Import.Relative.Prefix<G>; // p only
 		readonly source?: V.Literal.String<G>; // t only
 		readonly useClauses?: V.Unmapped<'rust:use_clauses'>; // r only   // unmapped: <rust:use_clauses>
-		readonly value?: G['identifier']; // t only
 	}
 	export namespace Import {
 		export interface Alias<G extends GrammarContext> extends V.Clause.Import<G> {
 			// claimed by pt
 			readonly alias?: G['identifier']; // p only
-			readonly name: G['identifier'];
-			readonly value?: G['identifier']; // t only
+			readonly default?: G['identifier']; // t only
+			readonly left?: V.Identifier.Dotted<G>; // p only
+			readonly name?: G['identifier']; // t only
 		}
 		export interface As<G extends GrammarContext> extends V.Clause.Import<G> {
 			// claimed by r
@@ -377,7 +371,7 @@ export namespace Clause {
 		}
 		export interface Relative<G extends GrammarContext> extends V.Clause.Import<G> {
 			// claimed by p
-			readonly name?: V.Identifier.Dotted<G>;
+			readonly left?: V.Identifier.Dotted<G>;
 			readonly prefix?: V.Clause.Import.Relative.Prefix<G>;
 		}
 		export namespace Relative {
@@ -414,10 +408,15 @@ export namespace Clause {
 	}
 	export interface Let<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by r
-		readonly left?: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Kinds<G> | G['statement'];
-		readonly pattern?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly left:
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| V.Clause.Let.Kinds<G>
+			| G['statement'];
+		readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		readonly right?: (V.Clause.Let<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
-		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 	}
 	export namespace Let {
 		export interface Chain<G extends GrammarContext> extends V.Clause.Let<G> {
@@ -446,15 +445,15 @@ export namespace Clause {
 	export interface MappedType<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by t
 		readonly alias?: G['identifier'] | G['type'];
+		readonly heritage: G['identifier'] | G['type'];
 		readonly name: G['identifier'];
-		readonly type: G['identifier'] | G['type'];
 	}
 	export interface Match<G extends GrammarContext> extends V.Clause<G> {
 		readonly attributes?: G['attribute'][]; // r only
 		readonly comma?: boolean; // r only
 		readonly content?: V.Unmapped<'rust:match_arm_with_comma'> | V.Expression.Block.Kinds<G> | G['statement']; // r only   // unmapped: <rust:match_arm_with_comma>
-		readonly pattern?: V.Pattern.Match<G>; // r only
-		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
+		readonly left?: V.Pattern.Match<G>; // r only
+		readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 	}
 	export namespace Match {
 		export interface Arm<G extends GrammarContext> extends V.Clause.Match<G> {
@@ -462,16 +461,16 @@ export namespace Clause {
 			readonly attributes?: G['attribute'][];
 			readonly comma?: boolean;
 			readonly content?: V.Unmapped<'rust:match_arm_with_comma'> | V.Expression.Block.Kinds<G> | G['statement']; // unmapped: <rust:match_arm_with_comma>
-			readonly pattern: V.Pattern.Match<G>;
-			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+			readonly left: V.Pattern.Match<G>;
+			readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		}
 		export namespace Arm {
 			export interface Last<G extends GrammarContext> extends V.Clause.Match.Arm<G> {
 				// claimed by r
 				readonly attributes?: G['attribute'][];
 				readonly comma?: boolean;
-				readonly pattern: V.Pattern.Match<G>;
-				readonly value: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+				readonly left: V.Pattern.Match<G>;
+				readonly object: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 			}
 			export type Kinds<G extends GrammarContext> = V.Clause.Match.Arm<G> | V.Clause.Match.Arm.Last<G>;
 		}
@@ -489,14 +488,14 @@ export namespace Clause {
 	}
 	export interface Where<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by r
-		readonly bounds?: V.Clause.Bounds<G>;
+		readonly constraint?: V.Clause.Bounds<G>;
 		readonly left?: V.Clause.Bounds.HigherRanked<G> | G['identifier'] | G['type'];
 		readonly wherePredicates?: V.Unmapped<'rust:where_predicates'>; // unmapped: <rust:where_predicates>
 	}
 	export namespace Where {
 		export interface Predicate<G extends GrammarContext> extends V.Clause.Where<G> {
 			// claimed by r
-			readonly bounds: V.Clause.Bounds<G>;
+			readonly constraint: V.Clause.Bounds<G>;
 			readonly left: V.Clause.Bounds.HigherRanked<G> | G['identifier'] | G['type'];
 		}
 		export type Kinds<G extends GrammarContext> = V.Clause.Where<G> | V.Clause.Where.Predicate<G>;
@@ -504,12 +503,12 @@ export namespace Clause {
 	export interface With<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by p
 		readonly content?: V.Unmapped<'python:with_clause_bare'> | V.Unmapped<'python:with_clause_paren'>; // unmapped: <python:with_clause_bare> <python:with_clause_paren>
-		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly object?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export namespace With {
 		export interface Item<G extends GrammarContext> extends V.Clause.With<G> {
 			// claimed by p
-			readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+			readonly object: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		}
 		export type Kinds<G extends GrammarContext> = V.Clause.With<G> | V.Clause.With.Item<G>;
 	}
