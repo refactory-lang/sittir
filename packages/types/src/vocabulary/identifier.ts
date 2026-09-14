@@ -25,8 +25,8 @@ export namespace Identifier {
 	}
 	export interface Keyword<G extends GrammarContext> extends V.Identifier<G> {} // claimed by p
 	export interface Label<G extends GrammarContext> extends V.Identifier<G> {
-		// claimed by r
-		readonly name: G['identifier'];
+		// claimed by rt
+		readonly name?: G['identifier']; // r only
 	}
 	export interface Lifetime<G extends GrammarContext> extends V.Identifier<G> {
 		// claimed by r

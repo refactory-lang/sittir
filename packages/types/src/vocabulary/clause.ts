@@ -59,6 +59,7 @@ export interface Clause<G extends GrammarContext> {
 				| ':'
 				| 'extends'
 		  )[]; // prt only   // unmapped: <python:with_clause_bare> <python:with_clause_paren> <rust:match_arm_with_comma> <typescript:import_clause_default_import> <typescript:import_specifier_as>
+	readonly declare?: boolean; // t only
 	readonly exception?: V.Unmapped<'python:except_clause_exception'>; // p only   // unmapped: <python:except_clause_exception>
 	readonly exportKind?: 'type' | 'typeof'; // t only
 	readonly exportSpecifiers?: V.Unmapped<'typescript:export_specifiers'>; // t only   // unmapped: <typescript:export_specifiers>
@@ -67,6 +68,7 @@ export interface Clause<G extends GrammarContext> {
 	readonly guard?: V.Clause.Comprehension.If<G>; // p only
 	readonly implements?: (G['identifier'] | G['type'])[]; // t only
 	readonly importKind?: 'type' | 'typeof'; // t only
+	readonly label?: V.Identifier.Label<G>; // t only
 	readonly left?:
 		| V.Unmapped<'python:pattern'>
 		| G['clause']
@@ -286,7 +288,9 @@ export namespace Clause {
 			| V.Clause.Import.Specifier<G>[]
 			| V.Clause.Import.Namespace<G>
 			| G['identifier']; // t only   // unmapped: <typescript:import_clause_default_import> <typescript:import_specifier_as>
+		readonly declare?: boolean; // t only
 		readonly importKind?: 'type' | 'typeof'; // t only
+		readonly label?: V.Identifier.Label<G>; // t only
 		readonly list?: V.Clause.Import.List<G>; // r only
 		readonly name?: G['identifier']; // pt only
 		readonly object?: V.Expression.Collection.Object<G>; // t only
@@ -300,6 +304,8 @@ export namespace Clause {
 		export interface Alias<G extends GrammarContext> extends V.Clause.Import<G> {
 			// claimed by pt
 			readonly alias?: G['identifier']; // p only
+			readonly declare?: boolean; // t only
+			readonly label?: V.Identifier.Label<G>; // t only
 			readonly name: G['identifier'];
 			readonly value?: G['identifier']; // t only
 		}

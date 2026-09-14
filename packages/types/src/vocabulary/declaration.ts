@@ -35,7 +35,7 @@ export interface Declaration<G extends GrammarContext> {
 		| V.Pattern.Splat.Kinds<G>; // prt only   // unmapped: <python:assignment_eq> <python:assignment_type> <python:assignment_typed> <rust:impl_item_body> <rust:macro_definition_brace> <rust:macro_definition_bracket> <rust:macro_definition_paren> <rust:struct_item_brace> <rust:struct_item_tuple> <typescript:index_signature_colon> literal:ForeignModItemSemi literal:ImplItemSemi literal:ModItemExternal literal:StructItemUnit
 	readonly declarators?: V.Unmapped<'typescript:variable_declarator'>[]; // t only   // unmapped: <typescript:variable_declarator>
 	readonly declare?: boolean; // t only
-	readonly decorator?: V.Attribute.Decorator<G>[]; // t only
+	readonly decorator?: V.Attribute.Decorator<G>[]; // pt only
 	readonly default?:
 		| G['clause']
 		| V.Declaration.Module<G>
@@ -49,6 +49,7 @@ export interface Declaration<G extends GrammarContext> {
 	readonly extends?: V.Clause.Extends.Type<G> | V.Clause.Bounds<G> | G['expression']; // t only
 	readonly implements?: G['type'][]; // t only
 	readonly kind?: 'const' | 'let'; // t only
+	readonly label?: V.Identifier.Label<G>; // t only
 	readonly left?: G['type']; // p only
 	readonly lifetime?: V.Identifier.Lifetime<G>; // r only
 	readonly mutable?: boolean; // r only
@@ -109,9 +110,11 @@ export namespace Declaration {
 		// claimed by pt
 		readonly bases?: (G['expression'] | G['element'] | G['argument'])[]; // p only
 		readonly body: V.Statement.Block<G> | G['declaration'][]; // unmapped: literal:_SuiteEmpty
-		readonly decorator?: V.Attribute.Decorator<G>[]; // t only
+		readonly declare?: boolean; // t only
+		readonly decorator?: V.Attribute.Decorator<G>[];
 		readonly extends?: G['expression']; // t only
 		readonly implements?: G['type'][]; // t only
+		readonly label?: V.Identifier.Label<G>; // t only
 		readonly name: G['identifier'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[] | V.Declaration.TypeParameter<G>;
 	}
@@ -119,9 +122,11 @@ export namespace Declaration {
 		export interface Abstract<G extends GrammarContext> extends V.Declaration.Class<G> {
 			// claimed by t
 			readonly body: G['declaration'][];
+			readonly declare?: boolean;
 			readonly decorator?: V.Attribute.Decorator<G>[];
 			readonly extends?: G['expression'];
 			readonly implements?: G['type'][];
+			readonly label?: V.Identifier.Label<G>;
 			readonly name: G['identifier'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
@@ -139,6 +144,8 @@ export namespace Declaration {
 		// claimed by rt
 		readonly body: V.Declaration.EnumMember<G>[];
 		readonly const?: boolean; // t only
+		readonly declare?: boolean; // t only
+		readonly label?: V.Identifier.Label<G>; // t only
 		readonly name: G['identifier'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[]; // r only
 		readonly visibility?: V.Modifier.Visibility<G>; // r only
@@ -227,7 +234,10 @@ export namespace Declaration {
 		// claimed by prt
 		readonly async?: boolean; // pt only
 		readonly body?: V.Statement.Block<G>; // unmapped: literal:_SuiteEmpty
+		readonly declare?: boolean; // t only
+		readonly decorator?: V.Attribute.Decorator<G>[]; // p only
 		readonly functionModifiers?: V.Unmapped<'rust:function_modifiers'>; // r only   // unmapped: <rust:function_modifiers>
+		readonly label?: V.Identifier.Label<G>; // t only
 		readonly name: G['identifier'];
 		readonly parameters: V.Declaration.Parameter<G>[];
 		readonly returnType?:
@@ -246,6 +256,8 @@ export namespace Declaration {
 			// claimed by t
 			readonly async?: boolean;
 			readonly body: V.Statement.Block<G>;
+			readonly declare?: boolean;
+			readonly label?: V.Identifier.Label<G>;
 			readonly name: G['identifier'];
 			readonly parameters: V.Declaration.Parameter<G>[];
 			readonly returnType?:
@@ -257,7 +269,9 @@ export namespace Declaration {
 		export interface Signature<G extends GrammarContext> extends V.Declaration.Function<G> {
 			// claimed by rt
 			readonly async?: boolean; // t only
+			readonly declare?: boolean; // t only
 			readonly functionModifiers?: V.Unmapped<'rust:function_modifiers'>; // r only   // unmapped: <rust:function_modifiers>
+			readonly label?: V.Identifier.Label<G>; // t only
 			readonly name: G['identifier'];
 			readonly parameters: V.Declaration.Parameter<G>[];
 			readonly returnType?:
@@ -282,7 +296,9 @@ export namespace Declaration {
 	export interface Interface<G extends GrammarContext> extends V.Declaration<G> {
 		// claimed by t
 		readonly body: G['declaration'][] | V.Type.Object<G>; // rt only
+		readonly declare?: boolean;
 		readonly extends?: V.Clause.Extends.Type<G> | V.Clause.Bounds<G>; // rt only
+		readonly label?: V.Identifier.Label<G>;
 		readonly name: G['identifier']; // rt only
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[]; // rt only
 		readonly unsafe?: boolean; // r only
@@ -403,7 +419,9 @@ export namespace Declaration {
 		// claimed by rt
 		readonly body?: V.Statement.Block<G>; // t only
 		readonly content?: G['declaration'][]; // r only   // unmapped: literal:ForeignModItemSemi literal:ModItemExternal
+		readonly declare?: boolean; // t only
 		readonly extern?: V.Modifier.Extern<G>; // r only
+		readonly label?: V.Identifier.Label<G>; // t only
 		readonly name?: G['identifier'] | V.Literal.String<G>;
 		readonly visibility?: V.Modifier.Visibility<G>; // r only
 	}
@@ -411,6 +429,8 @@ export namespace Declaration {
 		export interface External<G extends GrammarContext> extends V.Declaration.Module<G> {
 			// claimed by t
 			readonly body?: V.Statement.Block<G>;
+			readonly declare?: boolean;
+			readonly label?: V.Identifier.Label<G>;
 			readonly name: G['identifier'] | V.Literal.String<G>;
 		}
 		export interface Foreign<G extends GrammarContext> extends V.Declaration.Module<G> {
@@ -550,6 +570,8 @@ export namespace Declaration {
 	export interface TypeAlias<G extends GrammarContext> extends V.Declaration<G> {
 		// claimed by prt
 		readonly bounds?: V.Clause.Bounds<G>; // r only
+		readonly declare?: boolean; // t only
+		readonly label?: V.Identifier.Label<G>; // t only
 		readonly left?: G['type']; // p only
 		readonly name?: G['identifier']; // rt only
 		readonly right?: G['type']; // p only
@@ -617,7 +639,9 @@ export namespace Declaration {
 			| V.Unmapped<'python:assignment_type'>
 			| V.Unmapped<'python:assignment_typed'>; // p only   // unmapped: <python:assignment_eq> <python:assignment_type> <python:assignment_typed>
 		readonly declarators?: V.Unmapped<'typescript:variable_declarator'>[]; // t only   // unmapped: <typescript:variable_declarator>
+		readonly declare?: boolean; // t only
 		readonly kind?: 'const' | 'let'; // t only
+		readonly label?: V.Identifier.Label<G>; // t only
 		readonly mutableSpecifier?: boolean; // r only
 		readonly name?: V.Unmapped<'python:pattern'> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // pr only   // unmapped: <python:pattern>
 		readonly ref?: boolean; // r only
@@ -629,7 +653,9 @@ export namespace Declaration {
 		export interface Lexical<G extends GrammarContext> extends V.Declaration.Variable<G> {
 			// claimed by t
 			readonly declarators: V.Unmapped<'typescript:variable_declarator'>[]; // unmapped: <typescript:variable_declarator>
+			readonly declare?: boolean;
 			readonly kind: 'const' | 'let';
+			readonly label?: V.Identifier.Label<G>;
 		}
 		export interface Pattern<G extends GrammarContext> extends V.Declaration.Variable<G> {} // claimed by t
 		export interface Static<G extends GrammarContext> extends V.Declaration.Variable<G> {
@@ -644,6 +670,8 @@ export namespace Declaration {
 		export interface Var<G extends GrammarContext> extends V.Declaration.Variable<G> {
 			// claimed by t
 			readonly declarators: V.Unmapped<'typescript:variable_declarator'>[]; // unmapped: <typescript:variable_declarator>
+			readonly declare?: boolean;
+			readonly label?: V.Identifier.Label<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
 			| V.Declaration.Variable<G>

@@ -272,6 +272,7 @@
 (shorthand_property_identifier) @identifier.property.shorthand
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
+(statement_identifier) @identifier.label
 (this) @identifier.self
 (super) @identifier.super
 
