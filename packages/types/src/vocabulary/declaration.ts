@@ -7,7 +7,7 @@ export interface Declaration<G extends GrammarContext> {
 	readonly accessibility?: 'private' | 'protected' | 'public'; // t only
 	readonly accessibilityModifier?: 'private' | 'protected' | 'public'; // t only
 	readonly accessor?: boolean | '*' | 'get' | 'set'; // t only
-	readonly accessorKind: 'get' | 'set'; // t only
+	readonly accessorKind?: 'get' | 'set'; // t only
 	readonly alias?: G['identifier']; // r only
 	readonly alternative?: V.Statement.Block<G>; // r only
 	readonly async?: boolean; // pt only
@@ -248,7 +248,7 @@ export namespace Declaration {
 		readonly accessibility?: 'private' | 'protected' | 'public'; // t only
 		readonly accessibilityModifier?: 'private' | 'protected' | 'public'; // t only
 		readonly accessor?: '*' | 'get' | 'set'; // t only
-		readonly accessorKind: 'get' | 'set'; // t only
+		readonly accessorKind?: 'get' | 'set'; // t only
 		readonly async?: boolean; // pt only
 		readonly body?: V.Statement.Block<G>; // rt only
 		readonly consequence?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty

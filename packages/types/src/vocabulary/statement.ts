@@ -163,7 +163,7 @@ export namespace Statement {
 		readonly alternative?: V.Clause.Else<G>; // p only
 		readonly async?: boolean; // p only
 		readonly awaitMarker?: boolean;
-		readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement']; // rt only
+		readonly body?: V.Clause.Import.Alias<G> | G['declaration'] | G['statement']; // rt only
 		readonly condition?:
 			| V.Declaration.Module<G>
 			| G['expression']
@@ -190,7 +190,7 @@ export namespace Statement {
 			readonly alternative?: V.Clause.Else<G>; // p only
 			readonly async?: boolean; // p only
 			readonly awaitMarker?: boolean; // t only
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement']; // rt only
+			readonly body?: V.Clause.Import.Alias<G> | G['declaration'] | G['statement']; // rt only
 			readonly consequence?: V.Statement.Block<G>; // p only   // unmapped: literal:_SuiteEmpty
 			readonly content?:
 				| V.Unmapped<'typescript:for_header_let_const_kind'>
