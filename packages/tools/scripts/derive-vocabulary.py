@@ -9,8 +9,9 @@ union tree. Modes:
   derive-vocabulary.py /dev/null --emit DIR  one file per top-level namespace plus
                                              the context typemap, formatted
 
-The emitted files are generated output: regenerate, never edit. This script
-is the seed of the bindings-inventory tool.
+The tree under packages/types/src/vocabulary/ is authored and hand-maintained;
+this script drafted its first cut and now emits into a scratch DIR for
+comparison. It is the seed of the bindings-inventory tool.
 """
 import re,collections,sys
 import os
