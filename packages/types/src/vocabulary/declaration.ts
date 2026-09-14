@@ -71,25 +71,18 @@ export interface Declaration<G extends GrammarContext> {
 	readonly ref?: boolean; // r only
 	readonly reference?: boolean; // r only
 	readonly returnType?:
-		| V.Unmapped<'typescript:asserts_annotation'>
+		| V.Type.Predicate.Asserts<G>
 		| G['type']
-		| V.Unmapped<'typescript:type_predicate_annotation'>
+		| V.Type.Predicate<G>
 		| V.Clause.Bounds.Removed<G>
 		| V.Expression.Call.Macro<G>
-		| G['identifier']; // prt only   // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+		| G['identifier']; // prt only
 	readonly right?: G['type']; // p only
 	readonly sign?: '+' | '-'; // t only
 	readonly static?: boolean; // t only
 	readonly trailingWhereClause?: V.Clause.Where<G>; // r only
 	readonly traitClause?: V.Unmapped<'rust:impl_item_negative_clause'> | V.Unmapped<'rust:impl_item_positive_clause'>; // r only   // unmapped: <rust:impl_item_negative_clause> <rust:impl_item_positive_clause>
-	readonly type?:
-		| V.Unmapped<'typescript:adding_type_annotation'>
-		| V.Unmapped<'typescript:omitting_type_annotation'>
-		| V.Unmapped<'typescript:opting_type_annotation'>
-		| G['type']
-		| V.Clause.Bounds.Removed<G>
-		| V.Expression.Call.Macro<G>
-		| G['identifier']; // prt only   // unmapped: <typescript:adding_type_annotation> <typescript:omitting_type_annotation> <typescript:opting_type_annotation>
+	readonly type?: G['type'] | V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier']; // prt only
 	readonly typeParameters?: V.Declaration.TypeParameter<G>[] | V.Declaration.TypeParameter<G>; // prt only
 	readonly types?: V.Unmapped<'python:types'>; // p only   // unmapped: <python:types>
 	readonly unsafe?: boolean; // r only
@@ -241,12 +234,12 @@ export namespace Declaration {
 		readonly name: G['identifier'];
 		readonly parameters: V.Declaration.Parameter<G>[];
 		readonly returnType?:
-			| V.Unmapped<'typescript:asserts_annotation'>
+			| V.Type.Predicate.Asserts<G>
 			| G['type']
-			| V.Unmapped<'typescript:type_predicate_annotation'>
+			| V.Type.Predicate<G>
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
-			| G['identifier']; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+			| G['identifier'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[] | V.Declaration.TypeParameter<G>;
 		readonly visibility?: V.Modifier.Visibility<G>; // r only
 		readonly whereClause?: V.Clause.Where<G>; // r only
@@ -260,10 +253,7 @@ export namespace Declaration {
 			readonly label?: V.Identifier.Label<G>;
 			readonly name: G['identifier'];
 			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?:
-				| V.Unmapped<'typescript:asserts_annotation'>
-				| G['type']
-				| V.Unmapped<'typescript:type_predicate_annotation'>; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+			readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export interface Signature<G extends GrammarContext> extends V.Declaration.Function<G> {
@@ -275,12 +265,12 @@ export namespace Declaration {
 			readonly name: G['identifier'];
 			readonly parameters: V.Declaration.Parameter<G>[];
 			readonly returnType?:
-				| V.Unmapped<'typescript:asserts_annotation'>
+				| V.Type.Predicate.Asserts<G>
 				| G['type']
-				| V.Unmapped<'typescript:type_predicate_annotation'>
+				| V.Type.Predicate<G>
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
-				| G['identifier']; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+				| G['identifier'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 			readonly visibility?: V.Modifier.Visibility<G>; // r only
 			readonly whereClause?: V.Clause.Where<G>; // r only
@@ -338,12 +328,12 @@ export namespace Declaration {
 		readonly parameters?: V.Declaration.Parameter<G>[];
 		readonly readonly?: boolean; // t only
 		readonly returnType?:
-			| V.Unmapped<'typescript:asserts_annotation'>
+			| V.Type.Predicate.Asserts<G>
 			| G['type']
-			| V.Unmapped<'typescript:type_predicate_annotation'>
+			| V.Type.Predicate<G>
 			| V.Clause.Bounds.Removed<G>
 			| V.Expression.Call.Macro<G>
-			| G['identifier']; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+			| G['identifier'];
 		readonly static?: boolean; // t only
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[] | V.Declaration.TypeParameter<G>;
 		readonly visibility?: V.Modifier.Visibility<G> | 'private' | 'protected' | 'public'; // rt only
@@ -366,12 +356,12 @@ export namespace Declaration {
 			readonly parameters: V.Declaration.Parameter<G>[];
 			readonly readonly?: boolean; // t only
 			readonly returnType?:
-				| V.Unmapped<'typescript:asserts_annotation'>
+				| V.Type.Predicate.Asserts<G>
 				| G['type']
-				| V.Unmapped<'typescript:type_predicate_annotation'>
+				| V.Type.Predicate<G>
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
-				| G['identifier']; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+				| G['identifier'];
 			readonly static?: boolean; // t only
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 			readonly visibility?: V.Modifier.Visibility<G> | 'private' | 'protected' | 'public';
@@ -385,10 +375,7 @@ export namespace Declaration {
 				readonly optional?: boolean;
 				readonly override?: boolean;
 				readonly parameters: V.Declaration.Parameter<G>[];
-				readonly returnType?:
-					| V.Unmapped<'typescript:asserts_annotation'>
-					| G['type']
-					| V.Unmapped<'typescript:type_predicate_annotation'>; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+				readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
 				readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 				readonly visibility?: 'private' | 'protected' | 'public';
 			}
@@ -515,26 +502,16 @@ export namespace Declaration {
 		readonly content?: V.Unmapped<'typescript:index_signature_colon'> | V.Clause.MappedType<G>; // t only   // unmapped: <typescript:index_signature_colon>
 		readonly parameters?: V.Declaration.Parameter<G>[]; // t only
 		readonly readonly?: boolean; // t only
-		readonly returnType?:
-			| V.Unmapped<'typescript:asserts_annotation'>
-			| G['type']
-			| V.Unmapped<'typescript:type_predicate_annotation'>; // t only   // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+		readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>; // t only
 		readonly sign?: '+' | '-'; // t only
-		readonly type?:
-			| V.Unmapped<'typescript:adding_type_annotation'>
-			| V.Unmapped<'typescript:omitting_type_annotation'>
-			| V.Unmapped<'typescript:opting_type_annotation'>
-			| G['type']; // t only   // unmapped: <typescript:adding_type_annotation> <typescript:omitting_type_annotation> <typescript:opting_type_annotation>
+		readonly type?: G['type']; // t only
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[]; // t only
 	}
 	export namespace Signature {
 		export interface Call<G extends GrammarContext> extends V.Declaration.Signature<G> {
 			// claimed by t
 			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?:
-				| V.Unmapped<'typescript:asserts_annotation'>
-				| G['type']
-				| V.Unmapped<'typescript:type_predicate_annotation'>; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+			readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export interface Construct<G extends GrammarContext> extends V.Declaration.Signature<G> {
@@ -549,11 +526,7 @@ export namespace Declaration {
 			readonly content: V.Unmapped<'typescript:index_signature_colon'> | V.Clause.MappedType<G>; // unmapped: <typescript:index_signature_colon>
 			readonly readonly?: boolean;
 			readonly sign?: '+' | '-';
-			readonly type:
-				| V.Unmapped<'typescript:adding_type_annotation'>
-				| V.Unmapped<'typescript:omitting_type_annotation'>
-				| V.Unmapped<'typescript:opting_type_annotation'>
-				| G['type']; // unmapped: <typescript:adding_type_annotation> <typescript:omitting_type_annotation> <typescript:opting_type_annotation>
+			readonly type: G['type'];
 		}
 		export type Kinds<G extends GrammarContext> =
 			| V.Declaration.Signature.Call<G>

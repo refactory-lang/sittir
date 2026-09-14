@@ -171,10 +171,7 @@ export interface Expression<G extends GrammarContext> {
 		| V.Literal.Null.Undefined<G>
 	)[]; // t only
 	readonly property?: G['identifier'] | V.Literal.Number.Integer<G>; // prt only
-	readonly returnType?:
-		| V.Unmapped<'typescript:asserts_annotation'>
-		| G['type']
-		| V.Unmapped<'typescript:type_predicate_annotation'>; // t only   // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+	readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>; // t only
 	readonly right?: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement']; // prt only
 	readonly start?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	readonly static?: boolean; // r only
@@ -896,10 +893,7 @@ export namespace Expression {
 		readonly body: V.Statement.Block<G>;
 		readonly name?: G['identifier'];
 		readonly parameters: V.Declaration.Parameter<G>[];
-		readonly returnType?:
-			| V.Unmapped<'typescript:asserts_annotation'>
-			| G['type']
-			| V.Unmapped<'typescript:type_predicate_annotation'>; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+		readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export namespace Function {
@@ -909,10 +903,7 @@ export namespace Expression {
 			readonly body: V.Statement.Block<G>;
 			readonly name?: G['identifier'];
 			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?:
-				| V.Unmapped<'typescript:asserts_annotation'>
-				| G['type']
-				| V.Unmapped<'typescript:type_predicate_annotation'>; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+			readonly returnType?: V.Type.Predicate.Asserts<G> | G['type'] | V.Type.Predicate<G>;
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export type Kinds<G extends GrammarContext> = V.Expression.Function<G> | V.Expression.Function.Generator<G>;
