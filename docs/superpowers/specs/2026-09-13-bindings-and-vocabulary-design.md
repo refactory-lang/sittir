@@ -1,7 +1,7 @@
 # Bindings and the vocabulary — the high-level API
 
 **Status:** Design spec. Supersedes the earlier "Role Interfaces & `roles.scm`" design; §11 states what changed and why.
-**Realized so far:** `packages/<grammar>/bindings.scm` for python, typescript and rust; the derived base interface tree under `packages/types/src/vocabulary/`; the derivation `packages/tools/scripts/derive-vocabulary.py`; the convergence record `2026-09-13-base-vocabulary-draft.md`.
+**Realized so far:** `packages/<grammar>/bindings.scm` for python, typescript and rust; the hand-maintained base interface tree under `packages/types/src/vocabulary/`, first drafted by `packages/tools/scripts/derive-vocabulary.py`; the convergence record `2026-09-13-base-vocabulary-draft.md`.
 **Not yet realized:** per-language contexts, the structure builders, the retirement of the coercer, the CLI form of the inventory (§10).
 
 ---
@@ -68,9 +68,9 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
 - **Keyword modifiers decompose into members**: `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite`, `generator` are booleans; `accessibility` and `accessor` (`get`/`set`) are text. Rust's modifier set projects to the same booleans. A modifier with structure (`pub(in path)`, `extern "C"`) is a kind.
 - **Refinement routes are sugar.** `d.method('__init__', …)` builds the same tree as `d.method.dunder('init', …)`, and both read back as `declaration.method.dunder`, because classification is by match, never by construction route. `$structure()` reports the most specific kind.
 
-## 4. The derived type tree
+## 4. The base type tree
 
-`packages/types/src/vocabulary/` is generated from the bindings and each grammar's slot model; nothing in it is authored.
+`packages/types/src/vocabulary/` is **authored and hand-maintained**. The derivation drafted its first cut from the bindings and each grammar's slot model, and it stays a draft and inventory aid: it prints what the bindings imply so an editor can compare, and it never overwrites the files. The base vocabulary is a designed surface; convergence (§5) is an editorial act on these files, with the bindings edited to match.
 
 - **One file per top-level namespace**, plus `context.ts` and `index.ts`.
 - **Every level is an interface merged with a namespace**: the interface carries the level's members, the namespace its children. A leaf is an interface alone. A refinement is `extends Parent<G> { readonly operator: '+' }`.
@@ -79,6 +79,7 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
 - **`GrammarContext` is the typemap**: one key per top-level namespace, `unknown` in the constraint. **`BaseContext`** projects each key to `V.<Namespace>.Kinds<BaseContext>`, the permissive closure. A per-language context is the same projection over that grammar's claims, narrowed by its slot model; the derivation of those is the next step (§10).
 - **A level's members are the union over its descendants**: optional where not every descendant carries the member, `T | T[]` where descendants disagree on multiplicity. A base member is typed by a namespace set (`G['expression']`) where a namespace contributes several kinds, and by the specific interface (`V.Identifier.Label<G>`) where it contributes one.
 - **`Unmapped<'grammar:kind'>`** is a nominal placeholder for a grammar kind a member admits that no binding claims yet. It keeps the gap visible in the types and keeps the subtype relation honest; its count is the work list of the next bindings pass (381 at the time of writing).
+- **A refinement only narrows.** It may add members, narrow a member's kind-set, and pin an enumeration; it never makes a parent's required member optional. The compiler reports the widening as an incorrect `extends`.
 - **The derived union table** (grammar union → vocabulary kinds) is printed by the derivation and recorded in the draft; it is how the per-context kind-sets are read.
 
 ## 5. Convergence rules
@@ -113,7 +114,7 @@ Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.s
 
 1. **Totality and injectivity**, computed from `grammar.json` and the bindings by the inventory: every meaningful visible kind claimed or unclaimed with a reason; no two kinds in one grammar share a leaf; the unclaimed count only falls.
 2. **Inclusion is a DAG**: the derivation reports cycles; there are none.
-3. **The vocabulary type-checks** as generated; a widening refinement fails there.
+3. **The vocabulary type-checks**; a widening refinement fails there.
 4. **`Unmapped` only falls.**
 5. **Read-side differential** against the generated readers, unchanged.
 6. **Structure round trip**: read, `$structure()`, `from()`, render, parse-equal, over the corpus, as the validator lane that measures coverage for the coercer's retirement.
@@ -124,7 +125,7 @@ Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.s
 
 - Per-language contexts from each grammar's claims, which is what makes cross-language errors fire.
 - The next bindings pass, driven by the `Unmapped` counts.
-- `sittir tool bindings-inventory`, the derivation promoted from `packages/tools/scripts/derive-vocabulary.py` with the totality, injectivity and DAG gates.
+- `sittir tool bindings-inventory`, the derivation promoted from `packages/tools/scripts/derive-vocabulary.py` with the totality, injectivity and DAG gates, reporting where the bindings and the authored tree disagree.
 - The structure builders and `$structure()`, then the round-trip lane, then the coercer's retirement.
 
 Open: trivia and provenance on a structure (a structure has no coordinates; `doc` survives as a member, free trivia needs a `trivia` member or is declared lost); the names of the read-side consumer surface (`roles.as/is/find`) now that the file is `bindings.scm`.
@@ -145,6 +146,6 @@ Open: trivia and provenance on a structure (a structure has no coordinates; `doc
 | enumerations as kind ids or per-label enums | const strings, the token's text |
 | free-text predicates never liftable | template regexes with named holes invert; only the non-template residue is read-only |
 | language-only kinds unclaimed or in extension namespaces | bound under their semantic namespace with a qualifier |
-| authored `vocabulary.ts` type tree | fully derived: interface + namespace per level, `Kinds<G>`, `GrammarContext` typemap keyed by top-level namespace |
+| authored `vocabulary.ts` type tree, one file | authored, one file per namespace, drafted once by the derivation: interface + namespace per level, `Kinds<G>`, `GrammarContext` typemap keyed by top-level namespace |
 | context `G` keyed by vocabulary kind | keyed by top-level namespace, projecting kind-sets |
 | `Base<G> & Delta` per grammar as the checker | subtyping by construction; the level-as-union rule makes the compiler report a widening refinement |

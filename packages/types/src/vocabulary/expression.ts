@@ -244,7 +244,7 @@ export namespace Expression {
 	export namespace Assignment {
 		export interface Compound<G extends GrammarContext> extends V.Expression.Assignment<G> {
 			// claimed by prt
-			readonly left?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
+			readonly left: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
 			readonly name?: V.Unmapped<'python:pattern'> | V.Pattern.Tuple.Bare<G>; // p only   // unmapped: <python:pattern>
 			readonly operator:
 				| '%='
@@ -264,7 +264,7 @@ export namespace Expression {
 				| '^='
 				| '|='
 				| '||=';
-			readonly right?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
+			readonly right: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement']; // rt only
 			readonly value?: V.Declaration.Variable<G> | G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 		}
 		export namespace Compound {
