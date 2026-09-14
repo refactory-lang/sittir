@@ -4,7 +4,6 @@ import type * as V from './index.ts';
 
 export interface Clause<G extends GrammarContext> {
 	readonly alias?: G['identifier'] | V.Literal.String<G> | G['type']; // prt only
-	readonly asserts?: V.Type.Predicate.Asserts<G>; // t only
 	readonly async?: boolean; // p only
 	readonly attributeKind?: 'assert' | 'with'; // t only
 	readonly attributes?: G['attribute'][]; // r only
@@ -112,8 +111,7 @@ export interface Clause<G extends GrammarContext> {
 		| G['identifier']
 		| G['type']
 		| (V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'])[]; // rt only
-	readonly typeParameters?: V.Declaration.Parameter.Type<G>[]; // r only
-	readonly typePredicate?: V.Type.Predicate<G>; // t only
+	readonly typeParameters?: V.Declaration.TypeParameter<G>[]; // r only
 	readonly useClauses?: V.Unmapped<'rust:use_clauses'>; // r only   // unmapped: <rust:use_clauses>
 	readonly value?:
 		| V.Declaration.Module<G>
@@ -125,41 +123,6 @@ export interface Clause<G extends GrammarContext> {
 	readonly wherePredicates?: V.Unmapped<'rust:where_predicates'>; // r only   // unmapped: <rust:where_predicates>
 }
 export namespace Clause {
-	export interface Annotation<G extends GrammarContext> extends V.Clause<G> {
-		// claimed by t
-		readonly asserts?: V.Type.Predicate.Asserts<G>;
-		readonly type?: G['identifier'] | G['type'];
-		readonly typePredicate?: V.Type.Predicate<G>;
-	}
-	export namespace Annotation {
-		export interface Adding<G extends GrammarContext> extends V.Clause.Annotation<G> {
-			// claimed by t
-			readonly type: G['identifier'] | G['type'];
-		}
-		export interface Asserts<G extends GrammarContext> extends V.Clause.Annotation<G> {
-			// claimed by t
-			readonly asserts: V.Type.Predicate.Asserts<G>;
-		}
-		export interface Omitting<G extends GrammarContext> extends V.Clause.Annotation<G> {
-			// claimed by t
-			readonly type: G['identifier'] | G['type'];
-		}
-		export interface Opting<G extends GrammarContext> extends V.Clause.Annotation<G> {
-			// claimed by t
-			readonly type: G['identifier'] | G['type'];
-		}
-		export interface Predicate<G extends GrammarContext> extends V.Clause.Annotation<G> {
-			// claimed by t
-			readonly typePredicate: V.Type.Predicate<G>;
-		}
-		export type Kinds<G extends GrammarContext> =
-			| V.Clause.Annotation<G>
-			| V.Clause.Annotation.Adding<G>
-			| V.Clause.Annotation.Asserts<G>
-			| V.Clause.Annotation.Omitting<G>
-			| V.Clause.Annotation.Opting<G>
-			| V.Clause.Annotation.Predicate<G>;
-	}
 	export interface Bounds<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by r
 		readonly bounds?:
@@ -176,13 +139,13 @@ export namespace Clause {
 					| G['type']
 			  )[]; // unmapped: <rust:use_bounds_elements>
 		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-		readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
+		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export namespace Bounds {
 		export interface HigherRanked<G extends GrammarContext> extends V.Clause.Bounds<G> {
 			// claimed by r
 			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-			readonly typeParameters: V.Declaration.Parameter.Type<G>[];
+			readonly typeParameters: V.Declaration.TypeParameter<G>[];
 		}
 		export interface Removed<G extends GrammarContext> extends V.Clause.Bounds<G> {
 			// claimed by r
@@ -296,12 +259,12 @@ export namespace Clause {
 	export interface Extends<G extends GrammarContext> extends V.Clause<G> {
 		// claimed by t
 		readonly extendsClauseSingle?: V.Unmapped<'typescript:extends_clause_single'>[]; // unmapped: <typescript:extends_clause_single>
-		readonly type?: (G['identifier'] | V.Type.Generic<G>)[];
+		readonly type?: (G['identifier'] | G['type'])[];
 	}
 	export namespace Extends {
 		export interface Type<G extends GrammarContext> extends V.Clause.Extends<G> {
 			// claimed by t
-			readonly type: (G['identifier'] | V.Type.Generic<G>)[];
+			readonly type: (G['identifier'] | G['type'])[];
 		}
 		export type Kinds<G extends GrammarContext> = V.Clause.Extends<G> | V.Clause.Extends.Type<G>;
 	}
@@ -514,12 +477,6 @@ export namespace Clause {
 		export type Kinds<G extends GrammarContext> = V.Clause.With<G> | V.Clause.With.Item<G>;
 	}
 	export type Kinds<G extends GrammarContext> =
-		| V.Clause.Annotation<G>
-		| V.Clause.Annotation.Adding<G>
-		| V.Clause.Annotation.Asserts<G>
-		| V.Clause.Annotation.Omitting<G>
-		| V.Clause.Annotation.Opting<G>
-		| V.Clause.Annotation.Predicate<G>
 		| V.Clause.Bounds<G>
 		| V.Clause.Bounds.HigherRanked<G>
 		| V.Clause.Bounds.Removed<G>

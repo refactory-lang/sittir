@@ -7,6 +7,8 @@
 ; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
 ; The names rules for markers and modifiers (`async_marker` is `async`, `visibility_modifier` is
 ; `visibility`) are applied by the derivation to every slot, so no claim spells them.
+; A container that wraps one declaration or statement is never claimed: a pattern that captures the wrapped
+; node as `@element` assigns its other captures (`@declare`, `@decorator`, `@label`) to that element.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (module) @module
@@ -21,14 +23,14 @@
 ((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.class) (#eq? @_d "classmethod"))
-(decorated_definition) @declaration.decorated
+(decorated_definition (decorator)* @decorator definition: (_) @element)
 (parameters (identifier) @declaration.parameter)
 (parameters . (identifier) @declaration.parameter.self)
 (lambda_parameters (identifier) @declaration.parameter)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
 (typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
-(type_parameter) @declaration.parameter.type
+(type_parameter) @declaration.type_parameter
 (assignment left: (_) @name right: (_) @value) @declaration.variable
 ((assignment left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 (type_alias_statement) @declaration.type_alias
@@ -36,8 +38,8 @@
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
 (if_statement) @statement.if
-(for_statement) @statement.for.in
-(while_statement) @statement.while
+(for_statement) @statement.loop.for
+(while_statement) @statement.loop.while
 (return_statement (_)? @expression) @statement.return
 (try_statement (except_clause)* @handlers (else_clause)? @alternative (finally_clause)? @finalizer) @statement.try
 (raise_statement (_)? @expression) @statement.throw
@@ -182,7 +184,7 @@
 (generic_type) @type.generic
 (union_type) @type.union
 (constrained_type) @type.constrained
-(member_type) @type.member
+(member_type) @type.path
 (splat_type) @type.splat
 
 ; ── literal ────────────────────────────────────────────────────────────────────
@@ -210,7 +212,7 @@
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(decorator (_)? @content) @attribute
+(decorator (_)? @content) @attribute.decorator
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (comment) @comment.line

@@ -58,7 +58,7 @@ export interface Expression<G extends GrammarContext> {
 		| V.Attribute.Content.Kinds<G>
 		| 'import.meta'
 		| 'new.target'; // prt only   // unmapped: <python:yield_from_clause> <rust:array_expression_list> <rust:array_expression_semi> <rust:closure_expression_block> <rust:closure_expression_expr> <rust:range_expression_binary> <rust:range_expression_postfix> <rust:range_expression_prefix> <rust:reference_expression_raw_mut> <typescript:arrow_function_parameter> <typescript:parenthesized_expression_typed> <typescript:update_expression_postfix> <typescript:update_expression_prefix> literal:MutableSpecifier literal:RangeExpressionBare literal:ReferenceExpressionRawConst
-	readonly decorator?: G['attribute'][]; // t only
+	readonly decorator?: V.Attribute.Decorator<G>[]; // t only
 	readonly elements?: (
 		| V.Declaration.Module<G>
 		| V.Element.Splat<G>
@@ -171,7 +171,10 @@ export interface Expression<G extends GrammarContext> {
 		| V.Literal.Null.Undefined<G>
 	)[]; // t only
 	readonly property?: G['identifier'] | V.Literal.Number.Integer<G>; // prt only
-	readonly returnType?: V.Clause.Annotation.Kinds<G>; // t only
+	readonly returnType?:
+		| V.Unmapped<'typescript:asserts_annotation'>
+		| G['type']
+		| V.Unmapped<'typescript:type_predicate_annotation'>; // t only   // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
 	readonly right?: G['declaration'] | G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement']; // prt only
 	readonly start?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	readonly static?: boolean; // r only
@@ -184,7 +187,7 @@ export interface Expression<G extends GrammarContext> {
 	readonly typeAnnotation?: G['identifier'] | G['type']; // t only
 	readonly typeArguments?: G['type'][]; // rt only
 	readonly typeConversion?: V.Expression.Interpolation.Conversion<G>; // p only
-	readonly typeParameters?: V.Declaration.Parameter.Type<G>[]; // t only
+	readonly typeParameters?: V.Declaration.TypeParameter<G>[]; // t only
 	readonly using?: boolean; // t only
 	readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 }
@@ -721,18 +724,19 @@ export namespace Expression {
 			| V.Expression.Call.Template<G>;
 	}
 	export interface Cast<G extends GrammarContext> extends V.Expression<G> {
-		// claimed by r
 		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
-		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type']; // r only
 		readonly typeAnnotation?: G['identifier'] | G['type']; // t only
 		readonly typeArguments?: G['type'][]; // t only
-		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 	}
 	export namespace Cast {
 		export interface As<G extends GrammarContext> extends V.Expression.Cast<G> {
-			// claimed by t
-			readonly expression: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
-			readonly typeAnnotation: G['identifier'] | G['type'];
+			// claimed by rt
+			readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
+			readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type']; // r only
+			readonly typeAnnotation?: G['identifier'] | G['type']; // t only
+			readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement']; // r only
 		}
 		export interface Assertion<G extends GrammarContext> extends V.Expression.Cast<G> {
 			// claimed by t
@@ -749,7 +753,6 @@ export namespace Expression {
 			readonly typeAnnotation: G['identifier'] | G['type'];
 		}
 		export type Kinds<G extends GrammarContext> =
-			| V.Expression.Cast<G>
 			| V.Expression.Cast.As<G>
 			| V.Expression.Cast.Assertion<G>
 			| V.Expression.Cast.NonNull<G>
@@ -758,11 +761,11 @@ export namespace Expression {
 	export interface Class<G extends GrammarContext> extends V.Expression<G> {
 		// claimed by t
 		readonly body: G['declaration'][];
-		readonly decorator?: G['attribute'][];
+		readonly decorator?: V.Attribute.Decorator<G>[];
 		readonly extends?: G['expression'];
 		readonly implements?: G['type'][];
 		readonly name?: G['identifier'];
-		readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
+		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export interface Collection<G extends GrammarContext> extends V.Expression<G> {
 		readonly attributes?: G['attribute'][]; // r only
@@ -789,8 +792,13 @@ export namespace Expression {
 		readonly tupleExpressionElements?: V.Unmapped<'rust:tuple_expression_elements'>; // r only   // unmapped: <rust:tuple_expression_elements>
 	}
 	export namespace Collection {
-		export interface Array<G extends GrammarContext> extends V.Expression.Collection<G> {
-			// claimed by rt
+		export interface Dictionary<G extends GrammarContext> extends V.Expression.Collection<G> {
+			// claimed by p
+			readonly entries?: V.Unmapped<'python:dictionary_elements'>; // unmapped: <python:dictionary_elements>
+		}
+		export interface List<G extends GrammarContext> extends V.Expression.Collection<G> {
+			// claimed by prt
+			readonly collectionElements?: V.Unmapped<'python:collection_elements'>; // p only   // unmapped: <python:collection_elements>
 			readonly content?: V.Unmapped<'rust:array_expression_list'> | V.Unmapped<'rust:array_expression_semi'>; // r only   // unmapped: <rust:array_expression_list> <rust:array_expression_semi>
 			readonly elements?: (
 				| V.Declaration.Module<G>
@@ -799,14 +807,6 @@ export namespace Expression {
 				| G['identifier']
 				| G['literal']
 			)[]; // t only
-		}
-		export interface Dictionary<G extends GrammarContext> extends V.Expression.Collection<G> {
-			// claimed by p
-			readonly entries?: V.Unmapped<'python:dictionary_elements'>; // unmapped: <python:dictionary_elements>
-		}
-		export interface List<G extends GrammarContext> extends V.Expression.Collection<G> {
-			// claimed by p
-			readonly collectionElements?: V.Unmapped<'python:collection_elements'>; // unmapped: <python:collection_elements>
 		}
 		export interface Object<G extends GrammarContext> extends V.Expression.Collection<G> {
 			// claimed by t
@@ -845,7 +845,6 @@ export namespace Expression {
 				| V.Expression.Collection.Tuple.Bare<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
-			| V.Expression.Collection.Array<G>
 			| V.Expression.Collection.Dictionary<G>
 			| V.Expression.Collection.List<G>
 			| V.Expression.Collection.Object<G>
@@ -897,8 +896,11 @@ export namespace Expression {
 		readonly body: V.Statement.Block<G>;
 		readonly name?: G['identifier'];
 		readonly parameters: V.Declaration.Parameter<G>[];
-		readonly returnType?: V.Clause.Annotation.Kinds<G>;
-		readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
+		readonly returnType?:
+			| V.Unmapped<'typescript:asserts_annotation'>
+			| G['type']
+			| V.Unmapped<'typescript:type_predicate_annotation'>; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 	}
 	export namespace Function {
 		export interface Generator<G extends GrammarContext> extends V.Expression.Function<G> {
@@ -907,19 +909,18 @@ export namespace Expression {
 			readonly body: V.Statement.Block<G>;
 			readonly name?: G['identifier'];
 			readonly parameters: V.Declaration.Parameter<G>[];
-			readonly returnType?: V.Clause.Annotation.Kinds<G>;
-			readonly typeParameters?: V.Declaration.Parameter.Type<G>[];
+			readonly returnType?:
+				| V.Unmapped<'typescript:asserts_annotation'>
+				| G['type']
+				| V.Unmapped<'typescript:type_predicate_annotation'>; // unmapped: <typescript:asserts_annotation> <typescript:type_predicate_annotation>
+			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
 		export type Kinds<G extends GrammarContext> = V.Expression.Function<G> | V.Expression.Function.Generator<G>;
 	}
-	export interface Generic<G extends GrammarContext> extends V.Expression<G> {
-		// claimed by r
-		readonly function: V.Expression.Member<G> | G['identifier'];
-		readonly typeArguments: G['type'][];
-	}
 	export interface Instantiation<G extends GrammarContext> extends V.Expression<G> {
-		// claimed by t
-		readonly expression: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
+		// claimed by rt
+		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal']; // t only
+		readonly function?: V.Expression.Member<G> | G['identifier']; // r only
 		readonly typeArguments: G['type'][];
 	}
 	export interface Interpolation<G extends GrammarContext> extends V.Expression<G> {
@@ -1183,13 +1184,11 @@ export namespace Expression {
 		| V.Expression.Call.New<G>
 		| V.Expression.Call.Path<G>
 		| V.Expression.Call.Template<G>
-		| V.Expression.Cast<G>
 		| V.Expression.Cast.As<G>
 		| V.Expression.Cast.Assertion<G>
 		| V.Expression.Cast.NonNull<G>
 		| V.Expression.Cast.Satisfies<G>
 		| V.Expression.Class<G>
-		| V.Expression.Collection.Array<G>
 		| V.Expression.Collection.Dictionary<G>
 		| V.Expression.Collection.List<G>
 		| V.Expression.Collection.Object<G>
@@ -1204,7 +1203,6 @@ export namespace Expression {
 		| V.Expression.Conditional<G>
 		| V.Expression.Function<G>
 		| V.Expression.Function.Generator<G>
-		| V.Expression.Generic<G>
 		| V.Expression.Instantiation<G>
 		| V.Expression.Interpolation<G>
 		| V.Expression.Interpolation.Conversion<G>

@@ -7,6 +7,8 @@
 ; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
 ; The names rules for markers and modifiers (`async_marker` is `async`, `visibility_modifier` is
 ; `visibility`) are applied by the derivation to every slot, so no claim spells them.
+; A container that wraps one declaration or statement is never claimed: a pattern that captures the wrapped
+; node as `@element` assigns its other captures (`@declare`, `@decorator`, `@label`) to that element.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (program) @module
@@ -14,10 +16,12 @@
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
 (generator_function_declaration) @declaration.function.generator
+(generator_function_declaration "*" @generator)
 (class_declaration) @declaration.class
 (class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
 (abstract_class_declaration) @declaration.class.abstract
+(abstract_class_declaration "abstract" @abstract)
 (interface_declaration (extends_type_clause)? @extends) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
@@ -32,9 +36,10 @@
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
 (method_signature) @declaration.method.signature
 (method_signature (accessibility_modifier) @visibility)
-(abstract_method_signature) @declaration.method.abstract
+(abstract_method_signature) @declaration.method.signature.abstract
+(abstract_method_signature "abstract" @abstract)
 (abstract_method_signature (accessibility_modifier) @visibility)
-(property_signature) @declaration.property
+(property_signature) @declaration.field.signature
 (property_signature (accessibility_modifier) @visibility)
 (public_field_definition) @declaration.field
 (public_field_definition (accessibility_modifier) @visibility)
@@ -47,13 +52,14 @@
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (required_parameter (accessibility_modifier) @visibility)
 (optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter.optional
+(optional_parameter "?" @optional)
 (optional_parameter (accessibility_modifier) @visibility)
-(type_parameter value: (_)? @default) @declaration.parameter.type
-(ambient_declaration) @declaration.ambient
+(type_parameter value: (_)? @default) @declaration.type_parameter
+(ambient_declaration "declare" @declare (_) @element)
 (internal_module) @declaration.module
 (module) @declaration.module.external
 (field_definition) @declaration.field
-(class_static_block) @declaration.class.static_block
+(class_static_block) @statement.block.static
 (function_signature) @declaration.function.signature
 (call_signature) @declaration.signature.call
 (construct_signature) @declaration.signature.construct
@@ -62,10 +68,10 @@
 ; ── statement ──────────────────────────────────────────────────────────────────
 (statement_block) @statement.block
 (if_statement) @statement.if
-(for_statement) @statement.for
-(for_in_statement) @statement.for.in
-(while_statement) @statement.while
-(do_statement) @statement.while.do
+(for_statement) @statement.loop.counted
+(for_in_statement) @statement.loop.for
+(while_statement) @statement.loop.while
+(do_statement) @statement.loop.do_while
 (return_statement) @statement.return
 (switch_statement) @statement.switch
 (try_statement handler: (_)? @handlers) @statement.try
@@ -77,8 +83,8 @@
 (continue_statement) @statement.continue
 (debugger_statement) @statement.debugger
 (empty_statement) @statement.empty
-(labeled_statement) @statement.labeled
-(with_statement) @statement.with
+(labeled_statement label: (_) @label body: (_) @element)
+(with_statement) @statement.scope
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (else_clause) @clause.else
@@ -99,12 +105,7 @@
 (namespace_export) @clause.export.namespace
 (export_specifier) @clause.export.specifier
 (mapped_type_clause) @clause.mapped_type
-(type_annotation) @clause.annotation
-(type_predicate_annotation) @clause.annotation.predicate
-(asserts_annotation) @clause.annotation.asserts
-(omitting_type_annotation) @clause.annotation.omitting
-(adding_type_annotation) @clause.annotation.adding
-(opting_type_annotation) @clause.annotation.opting
+; type annotations are transparent wrappers: the annotated member takes the type
 (constraint) @clause.constraint
 (default_type) @clause.default
 
@@ -187,13 +188,14 @@
 (arrow_function parameter: (_)? @parameters) @expression.lambda
 (function_expression) @expression.function
 (generator_function) @expression.function.generator
+(generator_function "*" @generator)
 (await_expression) @expression.await
 (yield_expression) @expression.yield
 (template_substitution) @expression.interpolation
 (parenthesized_expression) @expression.parenthesized
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
-(array) @expression.collection.array
+(array) @expression.collection.list
 (as_expression) @expression.cast.as
 (satisfies_expression) @expression.cast.satisfies
 (non_null_expression) @expression.cast.non_null
@@ -223,6 +225,7 @@
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (predefined_type) @type.primitive
+((predefined_type) @type.primitive.never (#eq? @type.primitive.never "never"))
 (generic_type) @type.generic
 (union_type) @type.union
 (intersection_type) @type.intersection
@@ -268,7 +271,7 @@
 (private_property_identifier) @identifier.property.private
 (shorthand_property_identifier) @identifier.property.shorthand
 (nested_identifier) @identifier.nested
-(nested_type_identifier) @identifier.type.nested
+(nested_type_identifier) @type.path
 (this) @identifier.self
 (super) @identifier.super
 
@@ -281,7 +284,7 @@
 ; ── modifier ───────────────────────────────────────────────────────────────────
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(decorator (_)? @content) @attribute
+(decorator (_)? @content) @attribute.decorator
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (comment) @comment

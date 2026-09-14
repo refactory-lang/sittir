@@ -29,7 +29,7 @@ export interface Element<G extends GrammarContext> {
 	readonly name?: G['identifier'] | V.Pattern.Rest<G>; // rt only
 	readonly operator?: '*' | '+' | '?'; // r only
 	readonly tokens?: (G['identifier'] | G['literal'] | V.Element.Macro.Kinds<G> | V.Type.Primitive<G>)[]; // r only
-	readonly type?: G['clause'] | V.Expression.Call.Macro<G> | G['identifier'] | number | G['type']; // rt only
+	readonly type?: G['type'] | V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | number; // rt only
 	readonly typeArguments?: G['type'][]; // r only
 	readonly value?:
 		| V.Declaration.Module<G>
@@ -198,19 +198,19 @@ export namespace Element {
 	}
 	export interface Tuple<G extends GrammarContext> extends V.Element<G> {
 		readonly name?: G['identifier'] | V.Pattern.Rest<G>; // t only
-		readonly type?: V.Clause.Annotation<G>; // t only
+		readonly type?: G['type']; // t only
 	}
 	export namespace Tuple {
 		export interface Member<G extends GrammarContext> extends V.Element.Tuple<G> {
 			// claimed by t
 			readonly name: G['identifier'] | V.Pattern.Rest<G>;
-			readonly type: V.Clause.Annotation<G>;
+			readonly type: G['type'];
 		}
 		export namespace Member {
 			export interface Optional<G extends GrammarContext> extends V.Element.Tuple.Member<G> {
 				// claimed by t
 				readonly name: G['identifier'];
-				readonly type: V.Clause.Annotation<G>;
+				readonly type: G['type'];
 			}
 			export type Kinds<G extends GrammarContext> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 		}
