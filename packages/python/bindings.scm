@@ -3,14 +3,16 @@
 ; field is missing, or its name differs from the converged member name. A single-segment
 ; capture on a nested node names a member; on the pattern's top node it names the namespace
 ; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
+; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
+; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (module) @module
 
 ; ── declaration ────────────────────────────────────────────────────────────────
-(function_definition async_marker: _ @async) @declaration.function
+(function_definition async_marker: _? @async) @declaration.function
 (function_definition body: (block . (expression_statement (string) @doc @literal.string.docstring)))
-(class_definition superclasses: (_) @heritage) @declaration.class
+(class_definition superclasses: (_)? @heritage) @declaration.class
 (class_definition body: (block . (expression_statement (string) @doc @literal.string.docstring)))
 (class_definition (block (function_definition) @declaration.method))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
@@ -22,8 +24,8 @@
 (parameters . (identifier) @declaration.parameter.self)
 (lambda_parameters (identifier) @declaration.parameter)
 (typed_parameter) @declaration.parameter.typed
-(default_parameter value: (_) @default) @declaration.parameter.default
-(typed_default_parameter value: (_) @default) @declaration.parameter.typed_default
+(default_parameter value: (_)? @default) @declaration.parameter.default
+(typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
 (type_parameter) @declaration.parameter.type
 (assignment left: (_) @name right: (_) @value) @declaration.variable
 ((assignment left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
@@ -34,12 +36,12 @@
 (if_statement) @statement.if
 (for_statement) @statement.for.in
 (while_statement) @statement.while
-(return_statement (_) @expression) @statement.return
-(try_statement (except_clause) @handlers (else_clause) @alternative (finally_clause) @finalizer) @statement.try
-(raise_statement (_) @expression) @statement.throw
+(return_statement (_)? @expression) @statement.return
+(try_statement (except_clause)* @handlers (else_clause)? @alternative (finally_clause)? @finalizer) @statement.try
+(raise_statement (_)? @expression) @statement.throw
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
-(match_statement subject: (_) @subject) @statement.match
+(match_statement subject: (_)+ @subject) @statement.match
 (with_statement) @statement.with
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
@@ -102,7 +104,7 @@
 (boolean_operator) @expression.binary.logical
 (boolean_operator operator: "and") @expression.binary.logical.and
 (boolean_operator operator: "or") @expression.binary.logical.or
-(comparison_operator) @expression.binary.comparison
+(comparison_operator operators: (_)+ @operator) @expression.binary.comparison
 (comparison_operator operators: "==") @expression.binary.comparison.equal
 (comparison_operator operators: "!=") @expression.binary.comparison.not_equal
 (comparison_operator operators: "<") @expression.binary.comparison.less
@@ -133,12 +135,12 @@
 (augmented_assignment operator: "<<=") @expression.assignment.compound.shift_left
 (augmented_assignment operator: ">>=") @expression.assignment.compound.shift_right
 (named_expression name: (_) @left value: (_) @right) @expression.assignment
-(conditional_expression body: (_) @consequence) @expression.conditional
+(conditional_expression body: (_)? @consequence) @expression.conditional
 (attribute attribute: (_) @property) @expression.member
-(subscript value: (_) @object subscript: (_) @index) @expression.subscript
+(subscript value: (_) @object subscript: (_)+ @index) @expression.subscript
 (slice) @expression.slice
 (lambda) @expression.lambda
-(await (_) @expression) @expression.await
+(await (_)? @expression) @expression.await
 (yield) @expression.yield
 (interpolation) @expression.interpolation
 (list_comprehension) @expression.comprehension.list
@@ -206,7 +208,7 @@
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(decorator (_) @content) @attribute
+(decorator (_)? @content) @attribute
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (comment) @comment.line

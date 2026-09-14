@@ -1,6 +1,6 @@
 # Bindings and the vocabulary — the high-level API
 
-**Status:** Design spec, v3. Supersedes `sittir-role-interfaces-scm-spec.md` (v2, "Role Interfaces & `roles.scm`"); §11 lists the corrections.
+**Status:** Design spec. Supersedes the earlier "Role Interfaces & `roles.scm`" design; §11 states what changed and why.
 **Realized so far:** `packages/<grammar>/bindings.scm` for python, typescript and rust; the derived base interface tree under `packages/types/src/vocabulary/`; the derivation `packages/tools/scripts/derive-vocabulary.py`; the convergence record `2026-09-13-base-vocabulary-draft.md`.
 **Not yet realized:** per-language contexts, the structure builders, the retirement of the coercer, the CLI form of the inventory (§10).
 
@@ -75,7 +75,7 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
 - **One file per top-level namespace**, plus `context.ts` and `index.ts`.
 - **Every level is an interface merged with a namespace**: the interface carries the level's members, the namespace its children. A leaf is an interface alone. A refinement is `extends Parent<G> { readonly operator: '+' }`.
 - **Every interface is generic over the grammar context**: `Name<G extends GrammarContext>`, with `G` passed through every cross-reference. Cross-references go through one import alias (`V.Expression.Call<G>`) so a local interface never shadows a namespace.
-- **Each namespace exports `Kinds<G>`**, the flattened union of its leaf interfaces.
+- **Each namespace exports `Kinds<G>`**, the flattened union of every claimed kind beneath it, the prefix itself included when it is claimed.
 - **`GrammarContext` is the typemap**: one key per top-level namespace, `unknown` in the constraint. **`BaseContext`** projects each key to `V.<Namespace>.Kinds<BaseContext>`, the permissive closure. A per-language context is the same projection over that grammar's claims, narrowed by its slot model; the derivation of those is the next step (§10).
 - **A level's members are the union over its descendants**: optional where not every descendant carries the member, `T | T[]` where descendants disagree on multiplicity. A base member is typed by a namespace set (`G['expression']`) where a namespace contributes several kinds, and by the specific interface (`V.Identifier.Label<G>`) where it contributes one.
 - **`Unmapped<'grammar:kind'>`** is a nominal placeholder for a grammar kind a member admits that no binding claims yet. It keeps the gap visible in the types and keeps the subtype relation honest; its count is the work list of the next bindings pass (381 at the time of writing).
@@ -107,7 +107,7 @@ A **structure** is a plain object satisfying a vocabulary interface, discriminat
 
 ## 8. Runtime model
 
-Unchanged from v2 in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.scm`, flat captures materialized to `NodeData`, a native layer that knows captures and nothing about roles, range-scoped and on demand, user-pluggable without regeneration. Totality of the reader is gated by a differential harness against the generated readers on corpora including malformed files before the executor replaces anything. The ast-grep seam shares the tree.
+Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.scm`, flat captures materialized to `NodeData`, a native layer that knows captures and nothing about roles, range-scoped and on demand, user-pluggable without regeneration. Totality of the reader is gated by a differential harness against the generated readers on corpora including malformed files before the executor replaces anything. The ast-grep seam shares the tree.
 
 ## 9. Verification
 
@@ -115,7 +115,7 @@ Unchanged from v2 in mechanism: one query pass over `shape.scm ++ bindings.scm +
 2. **Inclusion is a DAG**: the derivation reports cycles; there are none.
 3. **The vocabulary type-checks** as generated; a widening refinement fails there.
 4. **`Unmapped` only falls.**
-5. **Read-side differential** against the generated readers (v2 task 1), unchanged.
+5. **Read-side differential** against the generated readers, unchanged.
 6. **Structure round trip**: read, `$structure()`, `from()`, render, parse-equal, over the corpus, as the validator lane that measures coverage for the coercer's retirement.
 7. **Template regexes**: a dunder built from a stem re-parses to the claim; a bare hole is rejected at lift.
 8. **Cross-language errors**: `Python.Declaration.Trait` and a rust `whereClause` handed to python fail at compile time; a `Base.Declaration.Function` consumer compiles unchanged against all three contexts.
@@ -129,9 +129,9 @@ Unchanged from v2 in mechanism: one query pass over `shape.scm ++ bindings.scm +
 
 Open: trivia and provenance on a structure (a structure has no coordinates; `doc` survives as a member, free trivia needs a `trivia` member or is declared lost); the names of the read-side consumer surface (`roles.as/is/find`) now that the file is `bindings.scm`.
 
-## 11. Corrections to v2
+## 11. What changed from the earlier design
 
-| v2 | v3 |
+| earlier | now |
 | --- | --- |
 | `roles.scm` at the repo root | `packages/<grammar>/bindings.scm`; the file maps the high-level API onto the low-level one |
 | the normalized surface is per grammar and cross-language construction is not a goal | the structure API is the cross-language path, typed by base against language contexts |

@@ -5,12 +5,12 @@ import type * as V from './index.ts';
 export interface Attribute<G extends GrammarContext> {
 	// claimed by prt
 	readonly arguments?: (G['expression'] | G['element'])[]; // t only
-	readonly content?: G['attribute'] | G['identifier']; // rt only
-	readonly expression?: G['expression'] | G['identifier'] | G['literal']; // p only
+	readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>; // rt only
+	readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 	readonly function?: V.Attribute.Content.Member<G> | G['identifier']; // t only
 	readonly input?: V.Unmapped<'rust:attribute_input'>; // r only   // unmapped: <rust:attribute_input>
 	readonly object?: V.Attribute.Content.Member<G> | G['identifier']; // t only
-	readonly path?: G['identifier']; // r only   // unmapped: literal:Crate literal:Self literal:Super
+	readonly path?: G['identifier']; // r only
 	readonly property?: G['identifier']; // t only
 	readonly typeArguments?: G['type'][]; // t only
 }
@@ -18,11 +18,11 @@ export namespace Attribute {
 	export interface Content<G extends GrammarContext> extends V.Attribute<G> {
 		// claimed by r
 		readonly arguments?: (G['expression'] | G['element'])[]; // t only
-		readonly content?: V.Attribute.Content.Call<G> | V.Attribute.Content.Member<G> | G['identifier']; // t only
+		readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>; // t only
 		readonly function?: V.Attribute.Content.Member<G> | G['identifier']; // t only
 		readonly input?: V.Unmapped<'rust:attribute_input'>; // unmapped: <rust:attribute_input>
 		readonly object?: V.Attribute.Content.Member<G> | G['identifier']; // t only
-		readonly path?: G['identifier']; // unmapped: literal:Crate literal:Self literal:Super
+		readonly path?: G['identifier'];
 		readonly property?: G['identifier']; // t only
 		readonly typeArguments?: G['type'][]; // t only
 	}
@@ -40,9 +40,10 @@ export namespace Attribute {
 		}
 		export interface Parenthesized<G extends GrammarContext> extends V.Attribute.Content<G> {
 			// claimed by t
-			readonly content: V.Attribute.Content.Call<G> | V.Attribute.Content.Member<G> | G['identifier'];
+			readonly content: G['identifier'] | V.Attribute.Content.Kinds<G>;
 		}
 		export type Kinds<G extends GrammarContext> =
+			| V.Attribute.Content<G>
 			| V.Attribute.Content.Call<G>
 			| V.Attribute.Content.Member<G>
 			| V.Attribute.Content.Parenthesized<G>;
@@ -52,6 +53,8 @@ export namespace Attribute {
 		readonly content: V.Attribute.Content<G>;
 	}
 	export type Kinds<G extends GrammarContext> =
+		| V.Attribute<G>
+		| V.Attribute.Content<G>
 		| V.Attribute.Content.Call<G>
 		| V.Attribute.Content.Member<G>
 		| V.Attribute.Content.Parenthesized<G>

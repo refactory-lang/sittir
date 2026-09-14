@@ -3,44 +3,48 @@
 ; field is missing, or its name differs from the converged member name. A single-segment
 ; capture on a nested node names a member; on the pattern's top node it names the namespace
 ; root kind. Namespaces are the supertypes: no grammar supertype is ever claimed.
+; A kind claim is unconditional: an optional member named in the same pattern carries a quantifier
+; (`?`, `*`, `+`) so the claim matches whether or not the member is present.
 
 ; ── module ─────────────────────────────────────────────────────────────────────
 (program) @module
 
 ; ── declaration ────────────────────────────────────────────────────────────────
-(function_declaration async_marker: _ @async) @declaration.function
+(function_declaration async_marker: _? @async) @declaration.function
 (generator_function_declaration) @declaration.function.generator
-(class_declaration
-  (class_heritage (class_heritage_extends_clause (_) @heritage)
-                  (implements_clause type: (_) @heritage))) @declaration.class
+(class_declaration) @declaration.class
+(class_declaration (class_heritage (class_heritage_extends_clause (_) @heritage)))
+(class_declaration (class_heritage (implements_clause type: (_) @heritage)))
 (abstract_class_declaration) @declaration.class.abstract
 (interface_declaration) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
 (enum_body (_) @declaration.enum_member)
 (type_alias_declaration) @declaration.type_alias
-(method_definition (accessibility_modifier) @accessibility) @declaration.method
-(method_definition static_marker: _ @static)
+(method_definition) @declaration.method
+(method_definition (accessibility_modifier) @accessibility)
+(method_definition static_marker: _? @static)
 (method_definition (override_modifier) @override)
-(method_definition readonly_marker: _ @readonly)
-(method_definition async_marker: _ @async)
+(method_definition readonly_marker: _? @readonly)
+(method_definition async_marker: _? @async)
 (method_definition "*" @generator)
 (method_definition accessor_kind: "get" @accessor)
 (method_definition accessor_kind: "set" @accessor)
 (method_definition "?" @optional)
-((method_definition) @declaration.getter (#eq? accessor_kind "get"))
-((method_definition) @declaration.setter (#eq? accessor_kind "set"))
+(method_definition accessor_kind: "get") @declaration.getter
+(method_definition accessor_kind: "set") @declaration.setter
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
 (method_signature) @declaration.method.signature
 (abstract_method_signature) @declaration.method.abstract
 (property_signature) @declaration.property
-(public_field_definition (accessibility_modifier) @accessibility) @declaration.field
-(public_field_definition static_marker: _ @static)
-(public_field_definition readonly_marker: _ @readonly)
-(public_field_definition abstract_marker: _ @abstract)
-(public_field_definition declare_marker: _ @declare)
+(public_field_definition) @declaration.field
+(public_field_definition (accessibility_modifier) @accessibility)
+(public_field_definition static_marker: _? @static)
+(public_field_definition readonly_marker: _? @readonly)
+(public_field_definition abstract_marker: _? @abstract)
+(public_field_definition declare_marker: _? @declare)
 (public_field_definition (override_modifier) @override)
-(public_field_definition accessor_marker: _ @accessor)
+(public_field_definition accessor_marker: _? @accessor)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
 (lexical_declaration) @declaration.variable.lexical
@@ -49,7 +53,7 @@
 (variable_declarator_arm1) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter.optional
-(type_parameter value: (_) @default) @declaration.parameter.type
+(type_parameter value: (_)? @default) @declaration.parameter.type
 (ambient_declaration) @declaration.ambient
 (internal_module) @declaration.module
 (module) @declaration.module.external
@@ -69,7 +73,7 @@
 (do_statement) @statement.while.do
 (return_statement) @statement.return
 (switch_statement) @statement.switch
-(try_statement handler: (_) @handlers) @statement.try
+(try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import
 (export_statement) @statement.export
@@ -124,7 +128,7 @@
 (call_expression_call) @expression.call
 (call_expression_member) @expression.call.member
 (call_expression_template_call) @expression.call.template
-(new_expression constructor: (_) @function) @expression.call.new
+(new_expression constructor: (_)? @function) @expression.call.new
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
 (binary_expression operator: "-") @expression.binary.arithmetic.subtract
@@ -185,7 +189,7 @@
 (subscript_expression (optional_chain) @optional_chain)
 (call_expression_call (optional_chain) @optional_chain)
 (subscript_expression) @expression.subscript
-(arrow_function parameter: (_) @parameters) @expression.lambda
+(arrow_function parameter: (_)? @parameters) @expression.lambda
 (function_expression) @expression.function
 (generator_function) @expression.function.generator
 (await_expression) @expression.await
@@ -280,7 +284,7 @@
 ; ── modifier ───────────────────────────────────────────────────────────────────
 
 ; ── attribute ──────────────────────────────────────────────────────────────────
-(decorator (_) @content) @attribute
+(decorator (_)? @content) @attribute
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (comment) @comment

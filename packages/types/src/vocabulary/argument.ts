@@ -4,13 +4,13 @@ import type * as V from './index.ts';
 
 export interface Argument<G extends GrammarContext> {
 	readonly name?: G['identifier']; // p only
-	readonly value?: G['expression'] | G['identifier'] | G['literal']; // p only
+	readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['pattern']; // p only
 }
 export namespace Argument {
 	export interface Keyword<G extends GrammarContext> extends V.Argument<G> {
 		// claimed by p
 		readonly name: G['identifier'];
-		readonly value: G['expression'] | G['identifier'] | G['literal'];
+		readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export type Kinds<G extends GrammarContext> = V.Argument.Keyword<G>;
 }
