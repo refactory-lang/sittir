@@ -70,6 +70,10 @@ Factory-render-parse error bucketing (top-8 buckets)
 
 - `grammars…` (optional) — Grammars to validate; defaults to all
 
+**Options**
+
+- `--surface <surface>` — Factory surface to build through: raw builders or the ir bindings — choices: `raw` | `ir` (default: `raw`)
+
 **Example**
 
 ```sh
@@ -268,6 +272,22 @@ Diagnostic for read-render-parse AST gaps
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool dump-ast-mismatches [options]
+```
+
+### `tool bindings-inventory`
+
+Compile the bindings, derive the vocabulary they imply, and draft the base interface tree for comparison
+
+**Options**
+
+- `--check` — Compile every bindings.scm against its parser and report totality diagnostics
+- `--members` — Print member names and kinds per shared kind
+- `--emit <dir>` — Draft the vocabulary tree into a directory (never over the authored tree)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory [options]
 ```
 
 ### `tool emit-factory-source`

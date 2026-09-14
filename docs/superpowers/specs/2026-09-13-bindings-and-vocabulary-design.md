@@ -1,8 +1,8 @@
 # Bindings, the vocabulary and the portability API
 
 **Status:** Design spec. Supersedes the earlier "Role Interfaces & `roles.scm`" design; §12 states what changed and why.
-**Realized so far:** `packages/<grammar>/bindings.scm` for python, typescript and rust; the hand-maintained base interface tree under `packages/types/src/vocabulary/`, first drafted by `packages/tools/scripts/derive-vocabulary.py`; the convergence record `2026-09-13-base-vocabulary-draft.md`.
-**Not yet realized:** the feature table and per-language compositions (§4), per-language contexts, term aliases, the structure builders, the retirement of the coercer, the CLI form of the inventory (§11).
+**Realized so far:** `packages/<grammar>/bindings.scm` for python, typescript and rust; the hand-maintained base interface tree under `packages/types/src/vocabulary/`; the inventory `sittir tool bindings-inventory` (`packages/tools/src/inventory/`), which compiles the bindings, derives the vocabulary and drafts the tree through the typescript package's own factories; the convergence record `2026-09-13-base-vocabulary-draft.md`.
+**Not yet realized:** the feature table and per-language compositions (§4), per-language contexts, term aliases, the structure builders, the retirement of the coercer.
 
 ---
 
@@ -144,7 +144,7 @@ Decisions the table records: `enumerations` and `algebraic-data-types` are separ
 
 ## 5. The base type tree
 
-`packages/types/src/vocabulary/` is **authored and hand-maintained**. The derivation drafted its first cut from the bindings and each grammar's slot model, and it stays a draft and inventory aid: it prints what the bindings imply so an editor can compare, and it never overwrites the files. The base vocabulary is a designed surface; convergence (§6) is an editorial act on these files, with the bindings edited to match.
+`packages/types/src/vocabulary/` is **authored and hand-maintained**. The inventory (`sittir tool bindings-inventory --emit <dir>`) drafts what the bindings and each grammar's slot model imply into a directory of the caller's choosing so an editor can compare; it never overwrites the files. The draft is itself dogfood: the inventory builds every interface, namespace, union, lookup and template literal type through the typescript package's strict factories and renders it with the native engine, so a defect in that surface shows up in the draft rather than being worked around. The base vocabulary is a designed surface; convergence (§6) is an editorial act on these files, with the bindings edited to match.
 
 - **One file per top-level namespace**, plus `context.ts` and `index.ts`.
 - **Every level is an interface merged with a namespace**: the interface carries the level's members, the namespace its children. A leaf is an interface alone. A refinement is `extends Parent<G> { readonly operator: '+' }`.
@@ -154,7 +154,7 @@ Decisions the table records: `enumerations` and `algebraic-data-types` are separ
 - **A level's members are the union over its descendants**, and a member is **required only when the level's own claim carries it in every claiming grammar and every child by path carries it required**; otherwise it is optional. A child that is a literal refinement (a pinned operator, an accessor kind) declares only what it pins and inherits the rest, so it carries its parent's members; a claimed child carries only what it declares. `Update.content` therefore stays required under `Increment` and `Decrement`, while `accessorKind` is optional on `Method` because the plain method claim does not carry it. A member only a refinement carries (`accessorKind` on a getter, `operator` on a comparison) is therefore optional on the ancestor, and an ordinary function or call satisfies its base interface with the members every claiming grammar has. `T | T[]` where descendants disagree on multiplicity. A base member is typed by a namespace set (`G['expression']`) where a namespace contributes several kinds, and by the specific interface (`V.Identifier.Label<G>`) where it contributes one.
 - **`Unmapped<'grammar:kind'>`** is a nominal placeholder for a grammar kind a member admits that no binding claims yet. It keeps the gap visible in the types and keeps the subtype relation honest; its count is the work list of the next bindings pass (381 at the time of writing).
 - **A refinement only narrows.** It may add members, narrow a member's kind-set, and pin an enumeration; it never makes a parent's required member optional. The compiler reports the widening as an incorrect `extends`.
-- **The derived union table** (grammar union → vocabulary kinds) is printed by the derivation and recorded in the draft; it is how the per-context kind-sets are read.
+- **The derived union table** (grammar union → vocabulary kinds) is what the inventory computes from each grammar's supertypes with full-coverage admission; it is how the per-context kind-sets are read.
 
 ## 6. Convergence rules
 
@@ -189,7 +189,8 @@ Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.s
 ## 10. Verification
 
 1. **Totality and injectivity**, computed from `grammar.json` and the bindings by the inventory: every meaningful visible kind claimed or unclaimed with a reason; no two kinds in one grammar share a leaf; the unclaimed count only falls.
-2. **Inclusion is a DAG**: the derivation reports cycles; there are none.
+1b. **The bindings compile**: `sittir tool bindings-inventory --check` builds each `bindings.scm` against its grammar's parser and reports tree-sitter's own error for a bad node name or field; the set of compiling grammars is a ratchet in `packages/tools/tests/inventory/bindings-inventory.ceiling.json`.
+2. **Inclusion is a DAG**: the inventory reports cycles; there are none.
 3. **The vocabulary type-checks**; a widening refinement fails there.
 4. **`Unmapped` only falls.**
 5. **Read-side differential** against the generated readers, unchanged.
@@ -207,7 +208,7 @@ Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.s
 - Per-language contexts from each language's composition narrowed by its claims, which is what makes cross-language errors fire.
 - Applied: the reversals the feature lens forces, in the tree and the bindings: `accessibility` into `visibility`; `heritage` into `extends` / `implements` / `bases`; `declaration.trait` under `declaration.interface` as the refinement `declaration.interface.trait`; and the placement audit of every single-grammar kind (§12).
 - The next bindings pass, driven by the `Unmapped` counts.
-- `sittir tool bindings-inventory`, the derivation promoted from `packages/tools/scripts/derive-vocabulary.py` with the totality, injectivity and DAG gates, reporting where the bindings and the authored tree disagree.
+- The inventory's totality and injectivity gates, and a diff mode reporting where the bindings and the authored tree disagree.
 - The structure builders and `$structure()`, then the round-trip lane, then the coercer's retirement.
 
 Open: trivia and provenance on a structure (a structure has no coordinates; `doc` survives as a member, free trivia needs a `trivia` member or is declared lost); the names of the read-side consumer surface (`roles.as/is/find`) now that the file is `bindings.scm`.
