@@ -1253,7 +1253,7 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -1282,7 +1282,7 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expressions() {
@@ -1538,7 +1538,7 @@ export function wrapExpressionStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			content() {
@@ -1576,7 +1576,7 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			name() {
@@ -1777,7 +1777,7 @@ export function wrapReturnStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expressions() {
@@ -1946,7 +1946,7 @@ export function wrapDeleteStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expressions() {
@@ -2116,7 +2116,7 @@ export function wrapRaiseStatement(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_cause: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._cause, 'cause', false, data.$type, {
@@ -2125,7 +2125,7 @@ export function wrapRaiseStatement(
 					slotName: 'cause',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expressions() {
@@ -2159,7 +2159,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_consequence: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._consequence, 'consequence', true, data.$type, {
@@ -2168,8 +2168,8 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 					slotName: 'consequence',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_alternative: normalizeRepeatedWrapSlot(data._alternative, false, 'alternative', {
 				tree,
@@ -2218,7 +2218,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_consequence: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._consequence, 'consequence', true, data.$type, {
@@ -2227,8 +2227,8 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
 					slotName: 'consequence',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			condition() {
@@ -2263,8 +2263,8 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			body() {
@@ -2377,8 +2377,8 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 					slotName: 'consequence',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			casePatterns() {
@@ -2431,7 +2431,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_body: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
@@ -2440,8 +2440,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 				tree,
@@ -2495,7 +2495,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_body: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
@@ -2504,8 +2504,8 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 				tree,
@@ -2550,8 +2550,8 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 			_except_clauses: normalizeRepeatedWrapSlot(data._except_clauses, false, 'except_clauses', {
 				tree,
@@ -2601,30 +2601,66 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 
 export function wrapExceptClause(
 	data: T.ExceptClause & {
-		readonly _except_clause_exception?: T.ExceptClauseException | T.ExceptClauseArm1;
-		readonly _except_clause_arm1?: T.ExceptClauseException | T.ExceptClauseArm1;
+		readonly _suite_inline?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
+		readonly _suite_block?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
+		readonly _suite_empty?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_except_clause_exception', '_except_clause_arm1']);
+	data = _keepModelledSlots(data, [
+		'_star_marker',
+		'_exception',
+		'_suite',
+		'_suite_inline',
+		'_suite_block',
+		'_suite_empty'
+	]);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ExceptClause as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_except_clause_arm1', '_except_clause_exception']),
+			..._omitWrapKeys(data, ['_suite_block', '_suite_empty', '_suite_inline']),
 			$type: TSKindId.ExceptClause as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._except_clause_exception ?? data._except_clause_arm1,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_star_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._star_marker, 'star_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'star_marker',
+					span: (data as _NodeData).$span
+				})
+			),
+			_exception: normalizeSingularWrapSlot(data._exception, 'exception', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'exception',
+				span: (data as _NodeData).$span
+			}),
+			_suite: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._suite ?? data._suite_inline ?? data._suite_block ?? data._suite_empty,
+					'suite',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'suite', span: (data as _NodeData).$span }
+				),
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
-			content() {
-				return drillIn<T.ExceptClauseException | T.ExceptClauseArm1>(this._content, tree);
+			starMarker() {
+				return this._star_marker;
+			},
+			exception() {
+				return drillIn<T.ExceptClauseException | undefined>(this._exception, tree);
+			},
+			suite() {
+				return drillIn<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(this._suite, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.ExceptClause['_content']>) =>
-					wrapExceptClause({ ...$edited(data), _content: v }, tree)
+				starMarker: (v: NonNullable<T.ExceptClause['_star_marker']>) =>
+					wrapExceptClause({ ...$edited(data), _star_marker: v }, tree),
+				exception: (v: NonNullable<T.ExceptClause['_exception']>) =>
+					wrapExceptClause({ ...$edited(data), _exception: v }, tree),
+				suite: (v: NonNullable<T.ExceptClause['_suite']>) => wrapExceptClause({ ...$edited(data), _suite: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -2646,8 +2682,8 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
 					slotName: 'block',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			block() {
@@ -2690,8 +2726,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			asyncMarker() {
@@ -2761,7 +2797,7 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			value() {
@@ -2830,8 +2866,8 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			asyncMarker() {
@@ -2945,7 +2981,7 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -2974,7 +3010,7 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -3061,7 +3097,7 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
 					slotName: 'in_clause',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			code() {
@@ -3151,8 +3187,8 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ '\n': 318 },
-				{ 101: 318 }
+				{ '\n': 317 },
+				{ 101: 317 }
 			),
 
 			name() {
@@ -3315,7 +3351,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -3512,7 +3548,7 @@ export function wrapExpressionList(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_tail: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
@@ -3946,8 +3982,8 @@ export function wrapCasePattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, _: 265 },
-				{ 46: 265 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 
 			content() {
@@ -4075,8 +4111,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 					slotName: 'patterns',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, _: 265 },
-				{ 46: 265 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 
 			patterns() {
@@ -4171,8 +4207,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, _: 265 },
-				{ 46: 265 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -4235,8 +4271,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, _: 265 },
-				{ 46: 265 }
+				{ True: 74, False: 75, None: 76, _: 265 },
+				{ 48: 265 }
 			),
 
 			name() {
@@ -4286,7 +4322,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '*': 8, '**': 33 }
+				{ '*': 8, '**': 35 }
 			),
 			_name: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
@@ -4295,7 +4331,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 					slotName: 'name',
 					span: (data as _NodeData).$span
 				}),
-				{ _: 46 }
+				{ _: 48 }
 			),
 
 			operator() {
@@ -4384,7 +4420,7 @@ export function wrapComplexPattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 47, '-': 48 }
+				{ '+': 49, '-': 50 }
 			),
 			_content: normalizeSingularWrapSlot(data._content ?? data._integer ?? data._float, 'content', true, data.$type, {
 				tree,
@@ -4654,7 +4690,7 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			name() {
@@ -4700,7 +4736,7 @@ export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: T
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			name() {
@@ -4807,7 +4843,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_alias: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._alias, 'alias', true, data.$type, {
@@ -4816,7 +4852,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
 					slotName: 'alias',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -5038,7 +5074,7 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle) {
 					slotName: 'argument',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			argument() {
@@ -5069,7 +5105,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
@@ -5079,7 +5115,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ and: 50, or: 51 }
+				{ and: 52, or: 53 }
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -5088,7 +5124,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			left() {
@@ -5128,7 +5164,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
@@ -5154,18 +5190,18 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+': 47,
-					'-': 48,
+					'+': 49,
+					'-': 50,
 					'*': 8,
-					'@': 42,
-					'/': 52,
-					'%': 53,
-					'//': 54,
-					'**': 33,
-					'|': 43,
-					'&': 55,
-					'^': 56,
-					'<<': 57,
+					'@': 44,
+					'/': 54,
+					'%': 55,
+					'//': 56,
+					'**': 35,
+					'|': 45,
+					'&': 57,
+					'^': 58,
+					'<<': 59,
 					'>>': 9
 				}
 			),
@@ -5176,7 +5212,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			left() {
@@ -5215,7 +5251,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 47, '-': 48, '~': 58 }
+				{ '+': 49, '-': 50, '~': 60 }
 			),
 			_argument: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
@@ -5224,7 +5260,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 					slotName: 'argument',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			operator() {
@@ -5258,7 +5294,7 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_comparators: normalizeRepeatedWrapSlot(data._comparators, true, 'comparators', {
 				tree,
@@ -5307,7 +5343,7 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle) {
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			parameters() {
@@ -5345,7 +5381,7 @@ export function wrapLambdaWithinForInClause(data: T.LambdaWithinForInClause, tre
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			parameters() {
@@ -5437,19 +5473,19 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+=': 79,
-					'-=': 80,
-					'*=': 81,
-					'/=': 82,
-					'@=': 83,
-					'//=': 84,
-					'%=': 85,
-					'**=': 86,
-					'>>=': 87,
-					'<<=': 88,
-					'&=': 89,
-					'^=': 90,
-					'|=': 91
+					'+=': 81,
+					'-=': 82,
+					'*=': 83,
+					'/=': 84,
+					'@=': 85,
+					'//=': 86,
+					'%=': 87,
+					'**=': 88,
+					'>>=': 89,
+					'<<=': 90,
+					'&=': 91,
+					'^=': 92,
+					'|=': 93
 				}
 			),
 			_right: projectMixedEnumStorage(
@@ -5459,7 +5495,7 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			left() {
@@ -5765,7 +5801,7 @@ export function wrapYield(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			content() {
@@ -5793,7 +5829,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
 					slotName: 'object',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_attribute: normalizeSingularWrapSlot(data._attribute, 'attribute', true, data.$type, {
 				tree,
@@ -5832,7 +5868,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_subscripts: normalizeSingularWrapSlot(data._subscripts, 'subscripts', true, data.$type, {
 				tree,
@@ -5871,7 +5907,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle) {
 					slotName: 'start',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_stop: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._stop, 'stop', false, data.$type, {
@@ -5880,7 +5916,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle) {
 					slotName: 'stop',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_step: normalizeSingularWrapSlot(data._step, 'step', false, data.$type, {
 				tree,
@@ -5922,7 +5958,7 @@ export function wrapCall(data: T.Call, tree: TreeHandle) {
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,
@@ -6262,7 +6298,7 @@ export function wrapType(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			content() {
@@ -6295,7 +6331,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '*': 8, '**': 33 }
+				{ '*': 8, '**': 35 }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -6334,7 +6370,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 					slotName: 'name',
 					span: (data as _NodeData).$span
 				}),
-				{ type: 37 }
+				{ type: 39 }
 			),
 			_type_parameter: normalizeSingularWrapSlot(data._type_parameter, 'type_parameter', true, data.$type, {
 				tree,
@@ -6487,7 +6523,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			name() {
@@ -6626,7 +6662,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_value: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
@@ -6635,7 +6671,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			key() {
@@ -6667,7 +6703,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_comprehension_clauses: normalizeSingularWrapSlot(
 				data._comprehension_clauses,
@@ -6746,7 +6782,7 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_comprehension_clauses: normalizeSingularWrapSlot(
 				data._comprehension_clauses,
@@ -6787,7 +6823,7 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_comprehension_clauses: normalizeSingularWrapSlot(
 				data._comprehension_clauses,
@@ -6972,7 +7008,7 @@ export function wrapParenthesizedExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			content() {
@@ -7051,7 +7087,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_comma: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
@@ -7104,7 +7140,7 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			condition() {
@@ -7132,7 +7168,7 @@ export function wrapConditionalExpression(data: T.ConditionalExpression, tree: T
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_condition: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._condition, 'condition', true, data.$type, {
@@ -7141,7 +7177,7 @@ export function wrapConditionalExpression(data: T.ConditionalExpression, tree: T
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_alternative: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._alternative, 'alternative', true, data.$type, {
@@ -7150,7 +7186,7 @@ export function wrapConditionalExpression(data: T.ConditionalExpression, tree: T
 					slotName: 'alternative',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			body() {
@@ -7308,7 +7344,7 @@ export function wrapStringContent(
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
 				{ '\\': 235 },
-				{ 64: 235 }
+				{ 66: 235 }
 			),
 
 			contents() {
@@ -7343,7 +7379,7 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_eq_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._eq_marker, 'eq_marker', false, data.$type, {
@@ -7474,7 +7510,7 @@ export function wrapAwait(data: T.Await, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -8190,7 +8226,7 @@ export function wrapSliceGroup(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -8219,7 +8255,7 @@ export function wrapExceptClauseExceptionAs(data: T.ExceptClauseExceptionAs, tre
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 			_alias: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._alias, 'alias', false, data.$type, {
@@ -8228,7 +8264,7 @@ export function wrapExceptClauseExceptionAs(data: T.ExceptClauseExceptionAs, tre
 					slotName: 'alias',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			value() {
@@ -8585,7 +8621,7 @@ export function wrapExceptClauseExceptionList(data: T.ExceptClauseExceptionList,
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			values() {
@@ -8605,42 +8641,14 @@ export function wrapExceptClauseException(
 	data: T.ExceptClauseException & {
 		readonly _except_clause_exception_as?: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList;
 		readonly _except_clause_exception_list?: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList;
-		readonly _suite_inline?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
-		readonly _suite_block?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
-		readonly _suite_empty?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, [
-		'_star_marker',
-		'_content',
-		'_suite',
-		'_except_clause_exception_as',
-		'_except_clause_exception_list',
-		'_suite_inline',
-		'_suite_block',
-		'_suite_empty'
-	]);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ExceptClauseException as const }, _treeEngine(tree));
+	data = _keepModelledSlots(data, ['_content', '_except_clause_exception_as', '_except_clause_exception_list']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_except_clause_exception_as',
-				'_except_clause_exception_list',
-				'_suite_block',
-				'_suite_empty',
-				'_suite_inline'
-			]),
+			..._omitWrapKeys(data, ['_except_clause_exception_as', '_except_clause_exception_list']),
 			$type: TSKindId.ExceptClauseException as const,
-			_star_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._star_marker, 'star_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'star_marker',
-					span: (data as _NodeData).$span
-				})
-			),
 			_content: normalizeSingularWrapSlot(
 				data._content ?? data._except_clause_exception_as ?? data._except_clause_exception_list,
 				'content',
@@ -8648,87 +8656,13 @@ export function wrapExceptClauseException(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			_suite: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._suite ?? data._suite_inline ?? data._suite_block ?? data._suite_empty,
-					'suite',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'suite', span: (data as _NodeData).$span }
-				),
-				{ '\n': 318 },
-				{ 101: 318 }
-			),
 
-			starMarker() {
-				return this._star_marker;
-			},
 			content() {
 				return drillIn<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this._content, tree);
 			},
-			suite() {
-				return drillIn<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(this._suite, tree);
-			},
 			$with: {
-				starMarker: (v: NonNullable<T.ExceptClauseException['_star_marker']>) =>
-					wrapExceptClauseException({ ...$edited(data), _star_marker: v }, tree),
 				content: (v: NonNullable<T.ExceptClauseException['_content']>) =>
-					wrapExceptClauseException({ ...$edited(data), _content: v }, tree),
-				suite: (v: NonNullable<T.ExceptClauseException['_suite']>) =>
-					wrapExceptClauseException({ ...$edited(data), _suite: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapExceptClauseArm1(
-	data: T.ExceptClauseArm1 & {
-		readonly _suite_inline?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
-		readonly _suite_block?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
-		readonly _suite_empty?: T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_star_marker', '_suite', '_suite_inline', '_suite_block', '_suite_empty']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ExceptClauseArm1 as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			..._omitWrapKeys(data, ['_suite_block', '_suite_empty', '_suite_inline']),
-			$type: TSKindId.ExceptClauseArm1 as const,
-			_star_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._star_marker, 'star_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'star_marker',
-					span: (data as _NodeData).$span
-				})
-			),
-			_suite: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._suite ?? data._suite_inline ?? data._suite_block ?? data._suite_empty,
-					'suite',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'suite', span: (data as _NodeData).$span }
-				),
-				{ '\n': 318 },
-				{ 101: 318 }
-			),
-
-			starMarker() {
-				return this._star_marker;
-			},
-			suite() {
-				return drillIn<T.SimpleStatements | T.SuiteBlock | TSKindId._SuiteEmpty>(this._suite, tree);
-			},
-			$with: {
-				starMarker: (v: NonNullable<T.ExceptClauseArm1['_star_marker']>) =>
-					wrapExceptClauseArm1({ ...$edited(data), _star_marker: v }, tree),
-				suite: (v: NonNullable<T.ExceptClauseArm1['_suite']>) =>
-					wrapExceptClauseArm1({ ...$edited(data), _suite: v }, tree)
+					wrapExceptClauseException({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -8755,7 +8689,7 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			left() {
@@ -8836,7 +8770,7 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			left() {
@@ -9123,7 +9057,7 @@ export function wrapComparisonOperatorComparator(
 					'<>': 100,
 					in: 25,
 					'not in': 194,
-					is: 59,
+					is: 61,
 					'is not': 195
 				}
 			),
@@ -9160,7 +9094,7 @@ export function wrapComparisonOperatorComparator(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'primary_expression', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			operators() {
@@ -9330,7 +9264,7 @@ export function wrapYieldFromClause(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
 				),
-				{ True: 72, False: 73, None: 74, '...': 62 }
+				{ True: 74, False: 75, None: 76, '...': 64 }
 			),
 
 			expression() {
@@ -9522,7 +9456,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ExceptClauseExceptionList]: (d, t) =>
 		wrapExceptClauseExceptionList(d as unknown as T.ExceptClauseExceptionList, t),
 	[TSKindId.ExceptClauseException]: (d, t) => wrapExceptClauseException(d as unknown as T.ExceptClauseException, t),
-	[TSKindId.ExceptClauseArm1]: (d, t) => wrapExceptClauseArm1(d as unknown as T.ExceptClauseArm1, t),
 	[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),
 	[TSKindId.AssignmentType]: (d, t) => wrapAssignmentType(d as unknown as T.AssignmentType, t),
 	[TSKindId.AssignmentTyped]: (d, t) => wrapAssignmentTyped(d as unknown as T.AssignmentTyped, t),
@@ -9709,7 +9642,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.SimplePatternNegative]: ReturnType<typeof wrapSimplePatternNegative>;
 	[TSKindId.ExceptClauseExceptionList]: ReturnType<typeof wrapExceptClauseExceptionList>;
 	[TSKindId.ExceptClauseException]: ReturnType<typeof wrapExceptClauseException>;
-	[TSKindId.ExceptClauseArm1]: ReturnType<typeof wrapExceptClauseArm1>;
 	[TSKindId.AssignmentEq]: ReturnType<typeof wrapAssignmentEq>;
 	[TSKindId.AssignmentType]: ReturnType<typeof wrapAssignmentType>;
 	[TSKindId.AssignmentTyped]: ReturnType<typeof wrapAssignmentTyped>;

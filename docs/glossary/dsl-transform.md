@@ -601,7 +601,7 @@ elsewhere. It is what a literal segment matches against.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::planSiblingVariantHoist`
 
-The analysis half of the whole-arm hoist, free of wire context so wire can run it at config time: peels precedence, requires a top-level seq with every `variant()` at one choice position, and completes the arm set with implicit variants for the arms no `variant()` names (`arm`, or `arm1`, `arm2`, … when several, skipping a name the choice already references). Returns the plan `tryHoistSiblingVariants` builds from, or `null` with the reason handed to `onBail`.
+The analysis half of the whole-arm hoist: peels precedence, requires a top-level seq with every `variant()` at one choice position, and pairs each arm no `variant()` names with the enrich lift that already carries it (`enrichLiftArmOf`). Enrich mints; `variant()` labels. An unnamed arm enrich did not lift has no name to take, so the plan bails and the parent keeps its per-arm form: minting a name here would be too late for tree-sitter's rule map. Returns the plan `tryHoistSiblingVariants` builds from, or `null` with the reason handed to `onBail`.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::asChoice`
 
@@ -610,14 +610,6 @@ The choice at a hoist position in the one shape both runtimes agree on: a `CHOIC
 ### `packages/codegen/src/dsl/transform/transform.ts::isBlank`
 
 Whether a rule is tree-sitter's `BLANK`, the empty arm `asChoice` spells for an optional.
-
-### `packages/codegen/src/dsl/transform/transform.ts::referencedNames`
-
-Every symbol name and alias value reachable inside a rule. An implicit arm's name skips any `arm`/`armN` those already use: enrich lifts a choice arm into `_<parent>_arm` before the patches run, and a `variant()` on that lift renames it away through the symbol-rename table, which would otherwise rename the implicit arm too.
-
-### `packages/codegen/src/dsl/transform/transform.ts::implicitArmHiddenNames`
-
-The hidden rule names (`_<parent>_arm`, `_<parent>_armN`) a hoist of this rule would mint for its unnamed arms. Wire calls it while pre-registering placeholder rules, because tree-sitter fixes the rule map before any rule body is evaluated: a name deposited later is an undefined symbol on the parser side.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::tryHoistSiblingVariants`
 
@@ -628,11 +620,10 @@ The hidden rule names (`_<parent>_arm`, `_<parent>_armN`) a hoist of this rule w
  * members around the choice, e.g. `[` and `]` literals, prefix and suffix
  * fields) moves INTO each alias body, so a variant is the whole arm and
  * the parent is a pure choice of its variants. An arm no variant() names
- * is an implicit variant under the mint taxonomy: `arm` when it is the
- * parent's only unnamed arm, `arm1`, `arm2`, … when there are several
- * (the ordinal exists only to tell siblings apart), so an empty arm
- * beside a named one becomes the named kind for the bare form instead of
- * being dropped from the parent. That is what lets a
+ * stays under the name enrich's lift already gave it (`_<parent>_armN`),
+ * and its lift body takes the scaffolding in place; a named arm that is an
+ * enrich lift is renamed to its variant. A choice with an unnamed arm
+ * enrich did not lift is not hoisted. That is what lets a
  * variant parent stand as a supertype, guarantees a non-empty body where
  * an alternative matches empty (tree-sitter rejects a named syntactic rule
  * that can match empty), and disambiguates from sibling rules with

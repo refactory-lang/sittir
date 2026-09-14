@@ -553,20 +553,6 @@ export interface EngineOptions {
   options?: Options
 }
 
-export interface ExceptClauseArm1Transport {
-  '$_trivia'?: TransportTrivia
-  _star_marker?: boolean
-  _suite: SlotValue<ExceptClauseArm1SuiteTransportSlot>
-  _star_marker_before?: number
-  _star_marker_after?: number
-  _colon_before?: number
-  _colon_after?: number
-  _except_keyword_before?: number
-  _except_keyword_after?: number
-  _except_clause_arm1_before?: number
-  _except_clause_arm1_after?: number
-}
-
 export interface ExceptClauseExceptionAsTransport {
   '$_trivia'?: TransportTrivia
   _value: SlotValue<ExpressionTransport>
@@ -586,22 +572,22 @@ export interface ExceptClauseExceptionListTransport {
 
 export interface ExceptClauseExceptionTransport {
   '$_trivia'?: TransportTrivia
-  _star_marker?: boolean
   _content: SlotValue<ExceptClauseExceptionContentTransportSlot>
-  _suite: SlotValue<ExceptClauseExceptionSuiteTransportSlot>
+}
+
+export interface ExceptClauseTransport {
+  '$_trivia'?: TransportTrivia
+  _star_marker?: boolean
+  _exception?: SlotValue<ExceptClauseExceptionTransport>
+  _suite: SlotValue<ExceptClauseSuiteTransportSlot>
   _star_marker_before?: number
   _star_marker_after?: number
   _colon_before?: number
   _colon_after?: number
   _except_keyword_before?: number
   _except_keyword_after?: number
-  _except_clause_exception_before?: number
-  _except_clause_exception_after?: number
-}
-
-export interface ExceptClauseTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<ExceptClauseContentTransportSlot>
+  _except_clause_before?: number
+  _except_clause_after?: number
 }
 
 export interface ExecStatementTransport {

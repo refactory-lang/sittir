@@ -5,10 +5,9 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { transform } from '../transform/transform.ts';
 import { variant } from '../primitives/variant.ts';
-import { withWireContext, getCurrentWireContext } from '../wire/wire.ts';
+import { withWireContext } from '../wire/wire.ts';
+import { setGroupLiftRuleMap } from '../transform/transform-path.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
-
-const ctx0 = () => getCurrentWireContext()!;
 
 describe('tryHoistSiblingVariants (via transform)', () => {
 	beforeAll(() => installFakeDsl());
@@ -78,33 +77,51 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		expect(ctx.conflictGroups).toEqual([['_nonempty_x', '_nonempty_y'], ['_nonempty_x'], ['_nonempty_y']]);
 	});
 
-	it('mints an implicit variant for an arm no variant() names, under the arm naming taxonomy', () => {
-		const { ctx } = withWireContext('partial', () => {
-			ctx0().preRegisteredHidden.add('_partial_arm');
-			const g = globalThis as any;
-			const original = g.seq(
-				{ type: 'STRING', value: '[' } as any,
-				g.choice({ type: 'SYMBOL', name: 'X' } as any, { type: 'BLANK' } as any),
-				{ type: 'STRING', value: ']' } as any
-			);
-			return transform(original, { '1/0': variant('x') });
+	it('carries an unnamed arm that enrich already lifted: the lift keeps its name and takes the scaffolding', () => {
+		const lifts = new Map<string, unknown>([['_lifted_arm', { type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'Y' }] }]]);
+		setGroupLiftRuleMap({
+			get: (n) => lifts.get(n) as never,
+			set: (n, b) => void lifts.set(n, b)
 		});
-		expect([...ctx.deposits.keys()].sort()).toEqual(['_partial_arm', '_partial_x']);
-		const bare = ctx.deposits.get('_partial_arm') as unknown as { members: { type: string; value?: string }[] };
-		expect(bare.members.map((m) => m.value ?? m.type)).toEqual(['[', ']']);
+		try {
+			const { ctx, result } = withWireContext('lifted', () => {
+				const g = globalThis as any;
+				const liftArm = {
+					type: 'ALIAS',
+					content: { type: 'SYMBOL', name: '_lifted_arm', metadata: { author: 'enrich' } },
+					named: true,
+					value: 'lifted_arm'
+				};
+				const original = g.seq(
+					{ type: 'STRING', value: '[' } as any,
+					g.choice({ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'X' }] } as any, liftArm as any),
+					{ type: 'STRING', value: ']' } as any
+				);
+				return transform(original, { '1/0': variant('x') });
+			});
+			expect([...ctx.deposits.keys()]).toEqual(['_lifted_x']);
+			const lift = lifts.get('_lifted_arm') as { members: { type: string; value?: string; name?: string }[] };
+			expect(lift.members.map((m) => m.value ?? m.name ?? m.type)).toEqual(['[', 'SEQ', ']']);
+			expect((result as unknown as { type: string; members: { value?: string }[] }).members.map((m) => m.value)).toEqual([
+				'lifted_x',
+				'lifted_arm'
+			]);
+		} finally {
+			setGroupLiftRuleMap(undefined);
+		}
 	});
 
-	it('bails when an implicit arm was not pre-registered, so the parser never meets an undefined symbol', () => {
-		const { ctx } = withWireContext('unregistered', () => {
+	it('keeps the per-arm form when an unnamed arm has no enrich lift to carry it', () => {
+		const { ctx } = withWireContext('bare', () => {
 			const g = globalThis as any;
 			const original = g.seq(
 				{ type: 'STRING', value: '[' } as any,
-				g.choice({ type: 'SYMBOL', name: 'X' } as any, { type: 'BLANK' } as any),
+				g.choice({ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'X' }] } as any, { type: 'BLANK' } as any),
 				{ type: 'STRING', value: ']' } as any
 			);
 			return transform(original, { '1/0': variant('x') });
 		});
-		expect(ctx.deposits.has('_unregistered_arm')).toBe(false);
+		expect(ctx.conflictGroups).toEqual([]);
 	});
 
 	it('bails on mixed choice positions (variants at different choicePos)', () => {

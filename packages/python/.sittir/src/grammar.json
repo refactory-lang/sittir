@@ -1161,33 +1161,80 @@
       ]
     },
     "except_clause": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_except_clause_exception",
-            "annotations": {
-              "variant": "exception",
-              "variantOf": "except_clause"
-            }
-          },
-          "named": true,
-          "value": "except_clause_exception"
+          "type": "STRING",
+          "value": "except"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_except_clause_arm1",
-            "annotations": {
-              "variant": "arm1",
-              "variantOf": "except_clause"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "star_marker",
+              "content": {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 1,
+                  "content": {
+                    "type": "STRING",
+                    "value": "*"
+                  }
+                }
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "BLANK"
             }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "exception",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_except_clause_exception",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  },
+                  "annotations": {
+                    "variant": "exception",
+                    "variantOf": "except_clause"
+                  }
+                },
+                "named": true,
+                "value": "except_clause_exception",
+                "metadata": {
+                  "author": "enrich"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
-          "named": true,
-          "value": "except_clause_arm1"
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_suite"
         }
       ]
     },
@@ -7131,122 +7178,33 @@
       }
     },
     "_except_clause_exception": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
-          "value": "except"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "star_marker",
-              "content": {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": 1,
-                  "content": {
-                    "type": "STRING",
-                    "value": "*"
-                  }
-                }
-              },
-              "metadata": {
-                "fieldSource": "override"
-              }
-            },
-            {
-              "type": "BLANK"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_except_clause_exception_as",
+            "annotations": {
+              "variant": "as",
+              "variantOf": "except_clause"
             }
-          ]
+          },
+          "named": true,
+          "value": "except_clause_exception_as"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_except_clause_exception_as",
-                "annotations": {
-                  "variant": "as",
-                  "variantOf": "except_clause"
-                }
-              },
-              "named": true,
-              "value": "except_clause_exception_as"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_except_clause_exception_list",
-                "annotations": {
-                  "variant": "list",
-                  "variantOf": "except_clause"
-                }
-              },
-              "named": true,
-              "value": "except_clause_exception_list"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_except_clause_exception_list",
+            "annotations": {
+              "variant": "list",
+              "variantOf": "except_clause"
             }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": ":"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_suite"
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "_except_clause_arm1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "except"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "star_marker",
-              "content": {
-                "type": "TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": 1,
-                  "content": {
-                    "type": "STRING",
-                    "value": "*"
-                  }
-                }
-              },
-              "metadata": {
-                "fieldSource": "override"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": ":"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_suite"
+          },
+          "named": true,
+          "value": "except_clause_exception_list"
         }
       ],
       "annotations": {
@@ -7906,16 +7864,6 @@
     ],
     [
       "_slice_group"
-    ],
-    [
-      "_except_clause_exception",
-      "_except_clause_arm1"
-    ],
-    [
-      "_except_clause_exception"
-    ],
-    [
-      "_except_clause_arm1"
     ],
     [
       "_assignment_eq",

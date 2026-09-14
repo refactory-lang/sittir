@@ -772,21 +772,32 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 	);
 }
 
-export function buildExceptClause(value: T.ExceptClauseException | T.ExceptClauseArm1): T.ExceptClause.Built {
-	const _content = value;
+export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Built {
+	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
+	const _exception = config.exception;
+	const _suite = coerceMixedEnumStorage<NonNullable<T.ExceptClause['_suite']>>(config.suite, [
+		['\n', TSKindId._SuiteEmpty] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ExceptClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_star_marker,
+				_exception,
+				_suite,
 				$with: {
-					content: (value: T.ExceptClauseException | T.ExceptClauseArm1) => buildExceptClause(value)
+					starMarker: (value?: NonNullable<T.ExceptClause.Config>['starMarker']) =>
+						buildExceptClause({ ...config, starMarker: value }),
+					exception: (value?: T.ExceptClauseException) => buildExceptClause({ ...config, exception: value }),
+					suite: (value: NonNullable<T.ExceptClause.Config>['suite']) => buildExceptClause({ ...config, suite: value })
 				}
 			},
 			{
-				content: () => _content
+				starMarker: () => _star_marker,
+				exception: () => _exception,
+				suite: () => _suite
 			}
 		),
 		methodsEngine
@@ -4442,63 +4453,23 @@ export function buildExceptClauseExceptionList(...children: T.Expression[]): T.E
 	);
 }
 
-export function buildExceptClauseException(config: T.ExceptClauseException.Config): T.ExceptClauseException.Built {
-	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
-	const _content = config.content;
-	const _suite = coerceMixedEnumStorage<NonNullable<T.ExceptClauseException['_suite']>>(config.suite, [
-		['\n', TSKindId._SuiteEmpty] as const
-	]);
+export function buildExceptClauseException(
+	value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList
+): T.ExceptClauseException.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ExceptClauseException as const,
 				$source: 2 as const,
 				$named: true as const,
-				_star_marker,
 				_content,
-				_suite,
 				$with: {
-					starMarker: (value?: NonNullable<T.ExceptClauseException.Config>['starMarker']) =>
-						buildExceptClauseException({ ...config, starMarker: value }),
-					content: (value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList) =>
-						buildExceptClauseException({ ...config, content: value }),
-					suite: (value: NonNullable<T.ExceptClauseException.Config>['suite']) =>
-						buildExceptClauseException({ ...config, suite: value })
+					content: (value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList) => buildExceptClauseException(value)
 				}
 			},
 			{
-				starMarker: () => _star_marker,
-				content: () => _content,
-				suite: () => _suite
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExceptClauseArm1(config: T.ExceptClauseArm1.Config): T.ExceptClauseArm1.Built {
-	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
-	const _suite = coerceMixedEnumStorage<NonNullable<T.ExceptClauseArm1['_suite']>>(config.suite, [
-		['\n', TSKindId._SuiteEmpty] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExceptClauseArm1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_star_marker,
-				_suite,
-				$with: {
-					starMarker: (value?: NonNullable<T.ExceptClauseArm1.Config>['starMarker']) =>
-						buildExceptClauseArm1({ ...config, starMarker: value }),
-					suite: (value: NonNullable<T.ExceptClauseArm1.Config>['suite']) =>
-						buildExceptClauseArm1({ ...config, suite: value })
-				}
-			},
-			{
-				starMarker: () => _star_marker,
-				suite: () => _suite
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -5093,7 +5064,6 @@ export type FluentKindMap = {
 	_simple_pattern_negative: T.SimplePatternNegative.Built;
 	_except_clause_exception_list: T.ExceptClauseExceptionList.Built;
 	_except_clause_exception: T.ExceptClauseException.Built;
-	_except_clause_arm1: T.ExceptClauseArm1.Built;
 	_assignment_eq: T.AssignmentEq.Built;
 	_assignment_type: T.AssignmentType.Built;
 	_assignment_typed: T.AssignmentTyped.Built;
@@ -5265,7 +5235,6 @@ export const _factoryMap = {
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_except_clause_exception_list: buildExceptClauseExceptionList,
 	_except_clause_exception: buildExceptClauseException,
-	_except_clause_arm1: buildExceptClauseArm1,
 	_assignment_eq: buildAssignmentEq,
 	_assignment_type: buildAssignmentType,
 	_assignment_typed: buildAssignmentTyped,

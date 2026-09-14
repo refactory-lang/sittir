@@ -161,128 +161,10 @@
 			"name": "element"
 		}
 	],
-	"_except_clause_arm1": [
-		{
-			"kind": "seam",
-			"field": "except_clause_arm1_before"
-		},
-		{
-			"kind": "seam",
-			"field": "except_keyword_before"
-		},
-		{
-			"kind": "text",
-			"text": "except"
-		},
-		{
-			"kind": "seam",
-			"field": "except_keyword_after"
-		},
-		{
-			"kind": "seam",
-			"field": "star_marker_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "star_marker",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "star_marker"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "star_marker_after"
-		},
-		{
-			"kind": "seam",
-			"field": "colon_before"
-		},
-		{
-			"kind": "text",
-			"text": ":"
-		},
-		{
-			"kind": "seam",
-			"field": "colon_after"
-		},
-		{
-			"kind": "slot",
-			"name": "suite"
-		},
-		{
-			"kind": "seam",
-			"field": "except_clause_arm1_after"
-		}
-	],
 	"_except_clause_exception": [
-		{
-			"kind": "seam",
-			"field": "except_clause_exception_before"
-		},
-		{
-			"kind": "seam",
-			"field": "except_keyword_before"
-		},
-		{
-			"kind": "text",
-			"text": "except"
-		},
-		{
-			"kind": "seam",
-			"field": "except_keyword_after"
-		},
-		{
-			"kind": "seam",
-			"field": "star_marker_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "star_marker",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "star_marker"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "star_marker_after"
-		},
 		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "colon_before"
-		},
-		{
-			"kind": "text",
-			"text": ":"
-		},
-		{
-			"kind": "seam",
-			"field": "colon_after"
-		},
-		{
-			"kind": "slot",
-			"name": "suite"
-		},
-		{
-			"kind": "seam",
-			"field": "except_clause_exception_after"
 		}
 	],
 	"_except_clause_exception_as": [
@@ -1885,8 +1767,76 @@
 	],
 	"except_clause": [
 		{
+			"kind": "seam",
+			"field": "except_clause_before"
+		},
+		{
+			"kind": "seam",
+			"field": "except_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "except"
+		},
+		{
+			"kind": "seam",
+			"field": "except_keyword_after"
+		},
+		{
+			"kind": "seam",
+			"field": "star_marker_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "star_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "star_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "star_marker_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "exception",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "exception"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
 			"kind": "slot",
-			"name": "content"
+			"name": "suite"
+		},
+		{
+			"kind": "seam",
+			"field": "except_clause_after"
 		}
 	],
 	"exec_statement": [

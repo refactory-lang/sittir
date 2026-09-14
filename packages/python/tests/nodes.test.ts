@@ -1235,46 +1235,6 @@ describe('try_statement sub-factories', () => {
 describe('except_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.exceptClause({
-			$type: TSKindId.ExceptClauseException,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_content: {
-				$type: TSKindId.ExceptClauseExceptionAs,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			_suite: {
-				$type: TSKindId.SimpleStatements,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_simple_statements_elements: {
-					$type: TSKindId.SimpleStatementsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
-				} as any
-			} as any
-		} as any);
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect(node.$source).toBe(2);
-	});
-});
-
-describe('except_clause sub-factories', () => {
-	it('exception builds the parent', () => {
-		const node = ir.exceptClause.exception({
-			content: {
-				$type: TSKindId.ExceptClauseExceptionAs,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
 			suite: {
 				$type: TSKindId.SimpleStatements,
 				$text: 'test',
@@ -1290,7 +1250,108 @@ describe('except_clause sub-factories', () => {
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExceptClauseException);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.exceptClause({
+			suite: {
+				$type: TSKindId.SimpleStatements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_simple_statements_elements: {
+					$type: TSKindId.SimpleStatementsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				} as any
+			} as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('except_clause sub-factories', () => {
+	it('inline builds the parent', () => {
+		const node = ir.exceptClause.inline({
+			suite: [
+				{
+					$type: TSKindId.SimpleStatementsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExceptClause);
+		expect((node as any).suite()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('block builds the parent', () => {
+		const node = ir.exceptClause.block({
+			suite: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ExceptClause);
+		expect((node as any).suite()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('empty builds the parent', () => {
+		const node = ir.exceptClause.empty({});
+		expect(node.$type).toBe(TSKindId.ExceptClause);
+		const seated = (node as any).suite();
+		expect(seated?.$text ?? seated).toBe(TSKindId._SuiteEmpty);
+		expect(() => node.$render!()).not.toThrow();
+	});
+	it('exception builds the parent', () => {
+		const node = ir.exceptClause.exception({
+			suite: {
+				$type: TSKindId.SimpleStatements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_simple_statements_elements: {
+					$type: TSKindId.SimpleStatementsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				} as any
+			} as any,
+			exception: [
+				{
+					$type: TSKindId.ExceptClauseExceptionAs,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ExceptClause);
+		expect((node as any).exception()?.$type).toBe(TSKindId.ExceptClauseException);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('exception.as builds the parent', () => {
+		const node = ir.exceptClause.exception.as({
+			suite: {
+				$type: TSKindId.SimpleStatements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_simple_statements_elements: {
+					$type: TSKindId.SimpleStatementsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
+				} as any
+			} as any,
+			exception: [{ value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
+		});
+		expect(node.$type).toBe(TSKindId.ExceptClause);
+		expect((node as any).exception()?.$type).toBe(TSKindId.ExceptClauseException);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('exception.list builds the parent', () => {
@@ -1308,76 +1369,11 @@ describe('except_clause sub-factories', () => {
 					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
 				} as any
 			} as any,
-			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			exception: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExceptClauseException);
+		expect((node as any).exception()?.$type).toBe(TSKindId.ExceptClauseException);
 		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('exception.block builds the parent', () => {
-		const node = ir.exceptClause.exception.block({
-			content: {
-				$type: TSKindId.ExceptClauseExceptionAs,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			suite: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExceptClauseException);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('arm1.block builds the parent', () => {
-		const node = ir.exceptClause.arm1.block({
-			suite: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExceptClauseArm1);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('arm1 builds the parent', () => {
-		const node = ir.exceptClause.arm1({
-			suite: {
-				$type: TSKindId.SimpleStatements,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_simple_statements_elements: {
-					$type: TSKindId.SimpleStatementsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
-				} as any
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExceptClauseArm1);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('arm1.inline builds the parent', () => {
-		const node = ir.exceptClause.arm1.inline({
-			suite: [
-				{
-					$type: TSKindId.SimpleStatementsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_simple_statement: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
-				} as any
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExceptClauseArm1);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('arm1.empty builds the parent', () => {
-		const node = ir.exceptClause.arm1.empty({});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExceptClauseArm1);
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

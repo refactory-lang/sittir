@@ -202,10 +202,6 @@ array form `transform()` consumes as its rest parameter.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireHasPreRegisteredRule`
-
-Whether `injectPlaceholderHiddenRules` registered `name` as a deferred-content rule in the active context. The whole-arm hoist asks this for every implicit arm before minting it, since a hidden rule tree-sitter's rule map does not already hold cannot be added once evaluation has begun.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsPrecedenceRankedRule`
 
 Whether `name` is a rule the grammar's `precedences` table ranks by symbol (tree-sitter-javascript ranks `$.arrow_function`, `$.await_expression`, …). The whole-arm hoist leaves such a parent in its per-arm form: its reduction would move into hidden variant rules the table does not rank, and adding those rules to the table beside their parent does not restore the resolution.
@@ -260,8 +256,6 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
  */
 ```
 
-
-Implicit arms are pre-registered here too: for every patch set that carries `variant()` placeholders, the base rule is read (an enriched base already holds rule objects; a raw base rule function is evaluated once with the simple `$` proxy, as the pattern pass evaluates authored rules) and planned on a clone, without running any patch: resolving a placeholder at wire time registers its synthesized rule into a throwaway context and leaves the real `_kw_*` deposit empty, which tree-sitter rejects as a rule matching the empty string. Earlier patch sets wrap positions in fields and never move them, so the variant set's paths hold against the unpatched rule; and `implicitArmHiddenNames` names the arms no variant covers; those names get the same deferred-content registration, and are recorded so the hoist can confirm them. A base rule that cannot be evaluated this way is skipped, and its hoist then bails rather than mint an unregistered name.
 ### `packages/codegen/src/dsl/wire/wire.ts::makeDeferredContentFn`
 
 ```text

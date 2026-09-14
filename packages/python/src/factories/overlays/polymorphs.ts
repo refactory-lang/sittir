@@ -1256,259 +1256,390 @@ export const tryStatement: typeof B.tryStatement & {
 	}
 };
 
+const _exceptClauseException$as =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _exceptClauseException$list =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
-	};
-const _exceptClauseException$block =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
-		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
-	};
-const _exceptClauseException$list$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildExceptClauseException>[0], 'content'> & {
-		content: ArgsOf<typeof F.buildExceptClauseExceptionList>;
-	}
-) => ReturnType<typeof F.buildExceptClauseException> = _exceptClauseException$list(
-	F.buildExceptClauseException,
-	F.buildExceptClauseExceptionList
-);
-const _exceptClauseException$list$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToExceptClauseException>[0], 'content'> & {
-		content: ArgsOf<typeof C.coerceToExceptClauseExceptionList>;
-	}
-) => ReturnType<typeof C.coerceToExceptClauseException> = _exceptClauseException$list(
-	C.coerceToExceptClauseException,
-	C.coerceToExceptClauseExceptionList
-);
-const _exceptClauseException$list$block =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
-		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
-	};
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const _exceptClauseException: {
+	as: {
+		strict: (...args: ArgsOf<typeof F.buildExceptClauseExceptionAs>) => ReturnType<typeof F.buildExceptClauseException>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToExceptClauseExceptionAs>
+		) => ReturnType<typeof C.coerceToExceptClauseException>;
+	};
 	list: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClauseException>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildExceptClauseExceptionList>;
-			}
+			...args: ArgsOf<typeof F.buildExceptClauseExceptionList>
 		) => ReturnType<typeof F.buildExceptClauseException>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExceptClauseException>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToExceptClauseExceptionList>;
-			}
-		) => ReturnType<typeof C.coerceToExceptClauseException>;
-		block: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof _exceptClauseException$list$applied>[0], 'suite'> & {
-					suite: ArgsOf<typeof F.buildSuiteBlock>;
-				}
-			) => ReturnType<typeof _exceptClauseException$list$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof _exceptClauseException$list$appliedCoerce>[0], 'suite'> & {
-					suite: ArgsOf<typeof C.coerceToSuiteBlock>;
-				}
-			) => ReturnType<typeof _exceptClauseException$list$appliedCoerce>;
-		};
-	};
-	block: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClauseException>[0], 'suite'> & {
-				suite: ArgsOf<typeof F.buildSuiteBlock>;
-			}
-		) => ReturnType<typeof F.buildExceptClauseException>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExceptClauseException>[0], 'suite'> & {
-				suite: ArgsOf<typeof C.coerceToSuiteBlock>;
-			}
+			...args: ArgsOf<typeof C.coerceToExceptClauseExceptionList>
 		) => ReturnType<typeof C.coerceToExceptClauseException>;
 	};
-	as: { strict: typeof F.buildExceptClauseExceptionAs; coerce: typeof C.coerceToExceptClauseExceptionAs };
 } = {
+	as: {
+		strict: _exceptClauseException$as(F.buildExceptClauseException, F.buildExceptClauseExceptionAs),
+		coerce: _exceptClauseException$as(C.coerceToExceptClauseException, C.coerceToExceptClauseExceptionAs)
+	},
 	list: {
 		strict: _exceptClauseException$list(F.buildExceptClauseException, F.buildExceptClauseExceptionList),
-		coerce: _exceptClauseException$list(C.coerceToExceptClauseException, C.coerceToExceptClauseExceptionList),
-		block: {
-			strict: _exceptClauseException$list$block(_exceptClauseException$list$applied, F.buildSuiteBlock),
-			coerce: _exceptClauseException$list$block(_exceptClauseException$list$appliedCoerce, C.coerceToSuiteBlock)
-		}
-	},
-	block: {
-		strict: _exceptClauseException$block(F.buildExceptClauseException, F.buildSuiteBlock),
-		coerce: _exceptClauseException$block(C.coerceToExceptClauseException, C.coerceToSuiteBlock)
-	},
-	as: { strict: F.buildExceptClauseExceptionAs, coerce: C.coerceToExceptClauseExceptionAs }
+		coerce: _exceptClauseException$list(C.coerceToExceptClauseException, C.coerceToExceptClauseExceptionList)
+	}
 };
 
-const _exceptClauseArm1$inline =
+const exceptClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
 	};
-const _exceptClauseArm1$block =
+const exceptClause$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
 	};
-const _exceptClauseArm1$empty =
+const exceptClause$empty =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, suite: value });
-const _exceptClauseArm1: {
+const exceptClause$exception =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
+		const { exception: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionAs =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
+		const { exception: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionList =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
+		const { exception: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exception$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+		exception: ArgsOf<typeof F.buildExceptClauseException>;
+	}
+) => ReturnType<typeof F.buildExceptClause> = exceptClause$exception(F.buildExceptClause, F.buildExceptClauseException);
+const exceptClause$exception$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+		exception: ArgsOf<typeof C.coerceToExceptClauseException>;
+	}
+) => ReturnType<typeof C.coerceToExceptClause> = exceptClause$exception(
+	C.coerceToExceptClause,
+	C.coerceToExceptClauseException
+);
+const exceptClause$exception$inline =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+		const { suite: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exception$block =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+		const { suite: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exception$empty =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suite: value });
+const exceptClause$exceptionAs$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+		exception: ArgsOf<typeof _exceptClauseException.as.strict>;
+	}
+) => ReturnType<typeof F.buildExceptClause> = exceptClause$exceptionAs(
+	F.buildExceptClause,
+	_exceptClauseException.as.strict
+);
+const exceptClause$exceptionAs$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+		exception: ArgsOf<typeof _exceptClauseException.as.coerce>;
+	}
+) => ReturnType<typeof C.coerceToExceptClause> = exceptClause$exceptionAs(
+	C.coerceToExceptClause,
+	_exceptClauseException.as.coerce
+);
+const exceptClause$exceptionAs$inline =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+		const { suite: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionAs$block =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+		const { suite: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionAs$empty =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suite: value });
+const exceptClause$exceptionList$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+		exception: ArgsOf<typeof _exceptClauseException.list.strict>;
+	}
+) => ReturnType<typeof F.buildExceptClause> = exceptClause$exceptionList(
+	F.buildExceptClause,
+	_exceptClauseException.list.strict
+);
+const exceptClause$exceptionList$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+		exception: ArgsOf<typeof _exceptClauseException.list.coerce>;
+	}
+) => ReturnType<typeof C.coerceToExceptClause> = exceptClause$exceptionList(
+	C.coerceToExceptClause,
+	_exceptClauseException.list.coerce
+);
+const exceptClause$exceptionList$inline =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+		const { suite: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionList$block =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+		const { suite: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+	};
+const exceptClause$exceptionList$empty =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suite: value });
+export const exceptClause: typeof B.exceptClause & {
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClauseArm1>[0], 'suite'> & {
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & {
 				suite: ArgsOf<typeof F.buildSimpleStatements>;
 			}
-		) => ReturnType<typeof F.buildExceptClauseArm1>;
+		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExceptClauseArm1>[0], 'suite'> & {
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
 				suite: ArgsOf<typeof C.coerceToSimpleStatements>;
 			}
-		) => ReturnType<typeof C.coerceToExceptClauseArm1>;
+		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
 	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClauseArm1>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteBlock> }
-		) => ReturnType<typeof F.buildExceptClauseArm1>;
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteBlock> }
+		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExceptClauseArm1>[0], 'suite'> & {
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
 				suite: ArgsOf<typeof C.coerceToSuiteBlock>;
 			}
-		) => ReturnType<typeof C.coerceToExceptClauseArm1>;
+		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClauseArm1>[0], 'suite'>
-		) => ReturnType<typeof F.buildExceptClauseArm1>;
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'>
+		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExceptClauseArm1>[0], 'suite'>
-		) => ReturnType<typeof C.coerceToExceptClauseArm1>;
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'>
+		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
-} = {
-	inline: {
-		strict: _exceptClauseArm1$inline(F.buildExceptClauseArm1, F.buildSimpleStatements),
-		coerce: _exceptClauseArm1$inline(C.coerceToExceptClauseArm1, C.coerceToSimpleStatements)
-	},
-	block: {
-		strict: _exceptClauseArm1$block(F.buildExceptClauseArm1, F.buildSuiteBlock),
-		coerce: _exceptClauseArm1$block(C.coerceToExceptClauseArm1, C.coerceToSuiteBlock)
-	},
-	empty: {
-		strict: _exceptClauseArm1$empty(F.buildExceptClauseArm1, TSKindId._SuiteEmpty),
-		coerce: _exceptClauseArm1$empty(C.coerceToExceptClauseArm1, TSKindId._SuiteEmpty)
-	}
-};
-
-const exceptClause$exception =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exceptClause$exceptionList =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exceptClause$exceptionSuiteBlock =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exceptClause$arm1SuiteBlock =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exceptClause$arm1 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exceptClause$simpleStatements =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exceptClause$empty =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exceptClause$exceptionList$block =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const exceptClause: typeof B.exceptClause & {
 	exception: {
-		strict: (...args: ArgsOf<typeof F.buildExceptClauseException>) => ReturnType<typeof F.buildExceptClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToExceptClauseException>) => ReturnType<typeof C.coerceToExceptClause>;
-		list: {
-			strict: (...args: ArgsOf<typeof _exceptClauseException.list.strict>) => ReturnType<typeof F.buildExceptClause>;
-			coerce: (...args: ArgsOf<typeof _exceptClauseException.list.coerce>) => ReturnType<typeof C.coerceToExceptClause>;
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+				exception: ArgsOf<typeof F.buildExceptClauseException>;
+			}
+		) => ReturnType<typeof F.buildExceptClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+				exception: ArgsOf<typeof C.coerceToExceptClauseException>;
+			}
+		) => ReturnType<typeof C.coerceToExceptClause>;
+		as: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.as.strict>;
+				}
+			) => ReturnType<typeof F.buildExceptClause>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.as.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToExceptClause>;
+			inline: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$applied>[0], 'suite'> & {
+						suite: ArgsOf<typeof F.buildSimpleStatements>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionAs$applied>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$appliedCoerce>[0], 'suite'> & {
+						suite: ArgsOf<typeof C.coerceToSimpleStatements>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionAs$appliedCoerce>;
+			};
 			block: {
 				strict: (
-					...args: ArgsOf<typeof _exceptClauseException.list.block.strict>
-				) => ReturnType<typeof F.buildExceptClause>;
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$applied>[0], 'suite'> & {
+						suite: ArgsOf<typeof F.buildSuiteBlock>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionAs$applied>;
 				coerce: (
-					...args: ArgsOf<typeof _exceptClauseException.list.block.coerce>
-				) => ReturnType<typeof C.coerceToExceptClause>;
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$appliedCoerce>[0], 'suite'> & {
+						suite: ArgsOf<typeof C.coerceToSuiteBlock>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionAs$appliedCoerce>;
+			};
+			empty: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$applied>[0], 'suite'>
+				) => ReturnType<typeof exceptClause$exceptionAs$applied>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$appliedCoerce>[0], 'suite'>
+				) => ReturnType<typeof exceptClause$exceptionAs$appliedCoerce>;
 			};
 		};
-		block: {
-			strict: (...args: ArgsOf<typeof _exceptClauseException.block.strict>) => ReturnType<typeof F.buildExceptClause>;
+		list: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.list.strict>;
+				}
+			) => ReturnType<typeof F.buildExceptClause>;
 			coerce: (
-				...args: ArgsOf<typeof _exceptClauseException.block.coerce>
+				config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+					exception: ArgsOf<typeof _exceptClauseException.list.coerce>;
+				}
 			) => ReturnType<typeof C.coerceToExceptClause>;
-		};
-	};
-	arm1: {
-		strict: (...args: ArgsOf<typeof F.buildExceptClauseArm1>) => ReturnType<typeof F.buildExceptClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToExceptClauseArm1>) => ReturnType<typeof C.coerceToExceptClause>;
-		block: {
-			strict: (...args: ArgsOf<typeof _exceptClauseArm1.block.strict>) => ReturnType<typeof F.buildExceptClause>;
-			coerce: (...args: ArgsOf<typeof _exceptClauseArm1.block.coerce>) => ReturnType<typeof C.coerceToExceptClause>;
+			inline: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$applied>[0], 'suite'> & {
+						suite: ArgsOf<typeof F.buildSimpleStatements>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionList$applied>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$appliedCoerce>[0], 'suite'> & {
+						suite: ArgsOf<typeof C.coerceToSimpleStatements>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionList$appliedCoerce>;
+			};
+			block: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$applied>[0], 'suite'> & {
+						suite: ArgsOf<typeof F.buildSuiteBlock>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionList$applied>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$appliedCoerce>[0], 'suite'> & {
+						suite: ArgsOf<typeof C.coerceToSuiteBlock>;
+					}
+				) => ReturnType<typeof exceptClause$exceptionList$appliedCoerce>;
+			};
+			empty: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$applied>[0], 'suite'>
+				) => ReturnType<typeof exceptClause$exceptionList$applied>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$appliedCoerce>[0], 'suite'>
+				) => ReturnType<typeof exceptClause$exceptionList$appliedCoerce>;
+			};
 		};
 		inline: {
-			strict: (...args: ArgsOf<typeof _exceptClauseArm1.inline.strict>) => ReturnType<typeof F.buildExceptClause>;
-			coerce: (...args: ArgsOf<typeof _exceptClauseArm1.inline.coerce>) => ReturnType<typeof C.coerceToExceptClause>;
+			strict: (
+				config: OmitEach<ArgsOf<typeof exceptClause$exception$applied>[0], 'suite'> & {
+					suite: ArgsOf<typeof F.buildSimpleStatements>;
+				}
+			) => ReturnType<typeof exceptClause$exception$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof exceptClause$exception$appliedCoerce>[0], 'suite'> & {
+					suite: ArgsOf<typeof C.coerceToSimpleStatements>;
+				}
+			) => ReturnType<typeof exceptClause$exception$appliedCoerce>;
+		};
+		block: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof exceptClause$exception$applied>[0], 'suite'> & {
+					suite: ArgsOf<typeof F.buildSuiteBlock>;
+				}
+			) => ReturnType<typeof exceptClause$exception$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof exceptClause$exception$appliedCoerce>[0], 'suite'> & {
+					suite: ArgsOf<typeof C.coerceToSuiteBlock>;
+				}
+			) => ReturnType<typeof exceptClause$exception$appliedCoerce>;
 		};
 		empty: {
-			strict: (...args: ArgsOf<typeof _exceptClauseArm1.empty.strict>) => ReturnType<typeof F.buildExceptClause>;
-			coerce: (...args: ArgsOf<typeof _exceptClauseArm1.empty.coerce>) => ReturnType<typeof C.coerceToExceptClause>;
+			strict: (
+				config: OmitEach<ArgsOf<typeof exceptClause$exception$applied>[0], 'suite'>
+			) => ReturnType<typeof exceptClause$exception$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof exceptClause$exception$appliedCoerce>[0], 'suite'>
+			) => ReturnType<typeof exceptClause$exception$appliedCoerce>;
 		};
 	};
 } = {
 	...B.exceptClause,
+	inline: {
+		strict: exceptClause$inline(F.buildExceptClause, F.buildSimpleStatements),
+		coerce: exceptClause$inline(C.coerceToExceptClause, C.coerceToSimpleStatements)
+	},
+	block: {
+		strict: exceptClause$block(F.buildExceptClause, F.buildSuiteBlock),
+		coerce: exceptClause$block(C.coerceToExceptClause, C.coerceToSuiteBlock)
+	},
+	empty: {
+		strict: exceptClause$empty(F.buildExceptClause, TSKindId._SuiteEmpty),
+		coerce: exceptClause$empty(C.coerceToExceptClause, TSKindId._SuiteEmpty)
+	},
 	exception: {
 		strict: exceptClause$exception(F.buildExceptClause, F.buildExceptClauseException),
 		coerce: exceptClause$exception(C.coerceToExceptClause, C.coerceToExceptClauseException),
+		as: {
+			strict: exceptClause$exceptionAs(F.buildExceptClause, _exceptClauseException.as.strict),
+			coerce: exceptClause$exceptionAs(C.coerceToExceptClause, _exceptClauseException.as.coerce),
+			inline: {
+				strict: exceptClause$exceptionAs$inline(exceptClause$exceptionAs$applied, F.buildSimpleStatements),
+				coerce: exceptClause$exceptionAs$inline(exceptClause$exceptionAs$appliedCoerce, C.coerceToSimpleStatements)
+			},
+			block: {
+				strict: exceptClause$exceptionAs$block(exceptClause$exceptionAs$applied, F.buildSuiteBlock),
+				coerce: exceptClause$exceptionAs$block(exceptClause$exceptionAs$appliedCoerce, C.coerceToSuiteBlock)
+			},
+			empty: {
+				strict: exceptClause$exceptionAs$empty(exceptClause$exceptionAs$applied, TSKindId._SuiteEmpty),
+				coerce: exceptClause$exceptionAs$empty(exceptClause$exceptionAs$appliedCoerce, TSKindId._SuiteEmpty)
+			}
+		},
 		list: {
 			strict: exceptClause$exceptionList(F.buildExceptClause, _exceptClauseException.list.strict),
 			coerce: exceptClause$exceptionList(C.coerceToExceptClause, _exceptClauseException.list.coerce),
+			inline: {
+				strict: exceptClause$exceptionList$inline(exceptClause$exceptionList$applied, F.buildSimpleStatements),
+				coerce: exceptClause$exceptionList$inline(exceptClause$exceptionList$appliedCoerce, C.coerceToSimpleStatements)
+			},
 			block: {
-				strict: exceptClause$exceptionList$block(F.buildExceptClause, _exceptClauseException.list.block.strict),
-				coerce: exceptClause$exceptionList$block(C.coerceToExceptClause, _exceptClauseException.list.block.coerce)
+				strict: exceptClause$exceptionList$block(exceptClause$exceptionList$applied, F.buildSuiteBlock),
+				coerce: exceptClause$exceptionList$block(exceptClause$exceptionList$appliedCoerce, C.coerceToSuiteBlock)
+			},
+			empty: {
+				strict: exceptClause$exceptionList$empty(exceptClause$exceptionList$applied, TSKindId._SuiteEmpty),
+				coerce: exceptClause$exceptionList$empty(exceptClause$exceptionList$appliedCoerce, TSKindId._SuiteEmpty)
 			}
 		},
-		block: {
-			strict: exceptClause$exceptionSuiteBlock(F.buildExceptClause, _exceptClauseException.block.strict),
-			coerce: exceptClause$exceptionSuiteBlock(C.coerceToExceptClause, _exceptClauseException.block.coerce)
-		}
-	},
-	arm1: {
-		strict: exceptClause$arm1(F.buildExceptClause, F.buildExceptClauseArm1),
-		coerce: exceptClause$arm1(C.coerceToExceptClause, C.coerceToExceptClauseArm1),
-		block: {
-			strict: exceptClause$arm1SuiteBlock(F.buildExceptClause, _exceptClauseArm1.block.strict),
-			coerce: exceptClause$arm1SuiteBlock(C.coerceToExceptClause, _exceptClauseArm1.block.coerce)
-		},
 		inline: {
-			strict: exceptClause$simpleStatements(F.buildExceptClause, _exceptClauseArm1.inline.strict),
-			coerce: exceptClause$simpleStatements(C.coerceToExceptClause, _exceptClauseArm1.inline.coerce)
+			strict: exceptClause$exception$inline(exceptClause$exception$applied, F.buildSimpleStatements),
+			coerce: exceptClause$exception$inline(exceptClause$exception$appliedCoerce, C.coerceToSimpleStatements)
+		},
+		block: {
+			strict: exceptClause$exception$block(exceptClause$exception$applied, F.buildSuiteBlock),
+			coerce: exceptClause$exception$block(exceptClause$exception$appliedCoerce, C.coerceToSuiteBlock)
 		},
 		empty: {
-			strict: exceptClause$empty(F.buildExceptClause, _exceptClauseArm1.empty.strict),
-			coerce: exceptClause$empty(C.coerceToExceptClause, _exceptClauseArm1.empty.coerce)
+			strict: exceptClause$exception$empty(exceptClause$exception$applied, TSKindId._SuiteEmpty),
+			coerce: exceptClause$exception$empty(exceptClause$exception$appliedCoerce, TSKindId._SuiteEmpty)
 		}
 	}
 };

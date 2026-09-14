@@ -1,7 +1,7 @@
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
-import { transform as transformFn, implicitArmHiddenNames } from '../transform/transform.ts';
+import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference } from '../primitives/preference.ts';
 import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
@@ -44,7 +44,6 @@ export interface WireContext {
 	readonly authoredRuleNames: ReadonlySet<string>;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
-	readonly preRegisteredHidden: Set<string>;
 }
 
 export interface RefineForm {
@@ -80,10 +79,6 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
 		currentContext.conflictGroups.push([...names]);
 	}
 	return true;
-}
-
-export function wireHasPreRegisteredRule(name: string): boolean {
-	return currentContext?.preRegisteredHidden.has(name) ?? false;
 }
 
 export function wireIsPrecedenceRankedRule(name: string): boolean {
@@ -132,8 +127,7 @@ export function withWireContext<T>(
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set(),
 		extraRuleNames: new Set(),
-		precedenceRankedNames: new Set(),
-		preRegisteredHidden: new Set()
+		precedenceRankedNames: new Set()
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -304,15 +298,14 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		extraRuleNames: extraRuleNames(cfg, baseArg),
-		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
-		preRegisteredHidden: new Set()
+		precedenceRankedNames: precedenceRankedNames(cfg, baseArg)
 	};
 
 	const patches = cfg.patches ?? {};
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
-	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), baseArg);
+	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
 	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
@@ -560,39 +553,16 @@ function injectPlaceholderHiddenRules(
 	rules: Record<string, RuleFn>,
 	patches: PatchesConfig,
 	context: WireContext,
-	externals: ReadonlySet<string>,
-	base?: BaseArg
+	externals: ReadonlySet<string>
 ): void {
-	const register = (hiddenName: string): void => {
-		if (hiddenName in rules || externals.has(hiddenName)) return;
-		rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-		context.preRegisteredHidden.add(hiddenName);
-	};
-	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, RuleFn>;
-	const $ = makeSimpleDollarProxy();
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
 		for (const patchMap of patchSetsOf(entry)) {
 			for (const value of Object.values(patchMap)) {
 				const hiddenName = placeholderHiddenName(value, kind);
-				if (hiddenName !== undefined) register(hiddenName);
+				if (hiddenName === undefined || hiddenName in rules || externals.has(hiddenName)) continue;
+				rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 			}
-			const variantEntries = Object.entries(patchMap).filter((e): e is [string, VariantPlaceholder] => isVariantPlaceholder(e[1]));
-			if (variantEntries.length === 0) continue;
-			const baseRule = baseRules[kind] as unknown;
-			if (!baseRule) continue;
-			let body: RuntimeRule;
-			try {
-				const evaluated =
-					typeof baseRule === 'function'
-						? withStringGlobalShim(() => (baseRule as RuleFn).call(undefined, $, undefined))
-						: baseRule;
-				if (!evaluated || typeof evaluated !== 'object' || typeof (evaluated as { type?: unknown }).type !== 'string') continue;
-				body = structuredClone(evaluated) as RuntimeRule;
-			} catch {
-				continue;
-			}
-			for (const name of implicitArmHiddenNames(body, variantEntries, kind)) register(name);
 		}
 	}
 }
