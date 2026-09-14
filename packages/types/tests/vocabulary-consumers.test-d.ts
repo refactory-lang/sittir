@@ -27,5 +27,9 @@ export const add: Expression.Binary.Arithmetic.Add<BaseContext> = { operator: '+
 // @ts-expect-error the addition refinement pins '+'
 export const notAdd: Expression.Binary.Arithmetic.Add<BaseContext> = { operator: '-' };
 
+// A refinement inherits what it does not pin: an increment still needs its operand.
+// @ts-expect-error an increment supplies its operand
+export const operandless: Expression.Update.Increment<BaseContext> = { operator: '++' };
+
 // A for statement's C-style members are the refinement's, not the family's.
 export const forIn: Statement.For.In<BaseContext> = {};
