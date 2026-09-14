@@ -3,8 +3,8 @@
 **Status:** review draft, derived. Companion to the bindings spec
 (`sittir-role-interfaces-scm-spec.md`, to become the bindings spec).
 **Derived from:** `packages/<grammar>/bindings.scm` and each grammar package's
-generated `types.ts`, by `packages/tools/scripts/derive-vocabulary.py`, which
-also emits the base interface files under `packages/types/src/vocabulary/`
+slot model, by `sittir tool bindings-inventory` (`packages/tools/src/inventory/`), which
+also drafts the base interface files that are authored under `packages/types/src/vocabulary/`
 (one file per top-level namespace, an interface merged with a namespace at
 every level, an interface alone at a leaf, and `context.ts` holding the
 `GrammarContext` typemap keyed by top-level namespace). Regenerated, never

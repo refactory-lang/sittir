@@ -23,7 +23,7 @@
 ((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.class) (#eq? @_d "classmethod"))
-(decorated_definition (decorator)* @decorator definition: (_) @element)
+(decorated_definition (decorator)* @decorators definition: (_) @element)
 (parameters (identifier) @declaration.parameter)
 (parameters . (identifier) @declaration.parameter.self)
 (lambda_parameters (identifier) @declaration.parameter)
