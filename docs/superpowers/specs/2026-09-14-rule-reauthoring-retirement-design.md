@@ -53,6 +53,8 @@ The tool lives in `packages/tools/src/grammar-diff/` beside the inventory, is re
 
 ## 6. Phases and order
 
+Both phases follow the polymorph flattening (its own design: a polymorph's parent becomes a supertype and its variants its subtypes, removing one level of nesting), so the baseline the gate tool snapshots is the flattened model and every split retired here lands directly as a subtype.
+
 **Phase one, transliteration**, on a branch off master, one rewrite per commit, each quoting the tool's empty output:
 
 1. the gate tool;
