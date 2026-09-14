@@ -5,7 +5,9 @@ A polymorph parent is a kind whose rule is a pure choice of its variants. It cos
 What that removes depends on whether the parent is visible:
 
 - **A visible parent** (`with_clause`, `assignment`) has a node in the parse tree today. Flattening removes that node, so the variant sits directly in the slot.
-- **A hidden or inlined parent** (python's `_suite`, which is in the grammar's `inline` list) has no node today; `suite_inline` and `suite_block` already sit directly in the slot. Flattening removes only sittir's wrapper: the model's `content` slot and the parent factory. The parser gains supertype metadata for the rule and no parse tree changes. The factory overlay keeps the ergonomic surface, `ir.<parent>.<variant>(…)`, so construction reads the same.
+- **A hidden or inlined parent** (python's `_suite`, which is in the grammar's `inline` list) has no node today; `suite_inline` and `suite_block` already sit directly in the slot. Flattening removes only sittir's wrapper: the model's `content` slot and the parent factory. The parser gains supertype metadata for the rule and no parse tree changes.
+
+Either way, the factory overlay keeps the ergonomic surface, `ir.<parent>.<variant>(…)`, so construction reads the same.
 
 It depends on the whole-arm variant hoist, which makes a variant parent a pure choice, and it precedes the rule re-authoring retirement, whose gate snapshots the flattened model.
 
