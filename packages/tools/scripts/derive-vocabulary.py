@@ -74,10 +74,13 @@ def walk(n):
 claims=collections.defaultdict(lambda:collections.defaultdict(list)); content=collections.defaultdict(set); allvocab=set(); members_declared=collections.defaultdict(set)
 holes=collections.defaultdict(dict)   # vocab -> {member: template literal type}; hole names -> 'string'
 renames=collections.defaultdict(dict)   # (g,gk) -> {field_or_childkind: member}
+containers=[]   # (g, top): a wrapper pattern whose `@element` child takes the pattern's other captures as members
 for g in GRAMMARS:
     with open(f'{ROOT}/packages/{g}/bindings.scm') as bindings_file:
         bindings_text=bindings_file.read()
     for top in parse(bindings_text):
+        if top.kind not in (None,'<group>') and not any('.' in c for c in top.captures) and any('element' in n.captures for n in walk(top)):
+            containers.append((g,top)); continue
         haspred=any(n.preds for n in walk(top))
         # a template regex: anchored, literal runs and named holes -> members of the claimed kind
         for n in walk(top):
@@ -209,6 +212,32 @@ for g in GRAMMARS:
                 cm=camel(rn.get(raw) or next((m for k,m in rn.items() if k==raw or snake(k)==raw or k==snake(raw)), None) or re.sub(r'(?:_marker|Marker|_modifier|Modifier)$','',raw))
                 slot=vk[v][cm]
                 for k in mem['kinds']: slot['kinds'].update(kind_to_vocab(g,k).split(' | ')); slot['optional']|=mem['optional']; slot['multiple']|=mem['multiple']; slot['scalar']|=not mem['multiple']; slot['grammars'].add(g)
+# a container's captures become optional members of every kind its element admits
+for g,top in containers:
+    slots=ifaces[g].get(top.kind,[])
+    def slot_for(n):
+        if n.field: return next((m for m in slots if m['name'].lstrip('_')==n.field or snake(m['name'].lstrip('_'))==n.field),None)
+        if n.kind and n.kind not in ('<token>','_','<group>'):
+            return next((m for m in slots if any(snake(k[9:] if k.startswith('TSKindId.') else k)==n.kind for k in m['kinds'])),None)
+        return next((m for m in slots if not all(k in ('boolean','string','number') or k.startswith('text:') for k in m['kinds'])),None)
+    elem=next(n for n in walk(top) if 'element' in n.captures)
+    targets=set()
+    for k in (slot_for(elem) or {'kinds':[]})['kinds']:
+        for v in kind_to_vocab(g,k).split(' | '):
+            if v.startswith('<') or v in ('boolean','string','number') or v.startswith('text:'): continue
+            if '.' in v: targets.add(v)
+            else: targets.update(pth for pth,gs in claimers.items() if g in gs and (pth==v or pth.startswith(v+'.')))
+    for n in walk(top):
+        for cap in n.captures:
+            if cap=='element' or cap.startswith('_'): continue
+            if n.kind=='<token>': kinds={'boolean'}; multiple=False
+            else:
+                sl=slot_for(n)
+                if sl: kinds={x for k in sl['kinds'] for x in kind_to_vocab(g,k).split(' | ')}; multiple=sl['multiple']
+                elif n.kind in gk2v[g]: kinds={gk2v[g][n.kind]}; multiple=False
+                else: continue
+            for t in targets:
+                slot=vk[t][camel(cap)]; slot['kinds'].update(kinds); slot['optional']=True; slot['multiple']|=multiple; slot['scalar']|=not multiple; slot['grammars'].add(g)
 def collapse(kinds):
     ks=set(kinds)
     if any(k.startswith('text:') for k in ks): ks.discard('number')
